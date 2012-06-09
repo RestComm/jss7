@@ -125,6 +125,9 @@ public class DialogicMan implements DialogicManMBean, Stoppable {
 		this.dialogic = new DialogicMtp3UserPart();
 		this.dialogic.setSourceModuleId(sourceModuleId);
 		this.dialogic.setDestinationModuleId(destinationModuleId);
+		
+		// set 8 threads for delivering messages
+		this.dialogic.setDeliveryMessageThreadCount(8);
 
 		this.dialogic.start();
 	}

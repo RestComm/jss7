@@ -48,6 +48,10 @@ import org.mobicents.protocols.ss7.tools.simulator.level3.MapManStandardMBean;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHostMBean;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHostStandardMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsClientManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsClientStandardManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsServerManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsServerStandardManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientStandardManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerManMBean;
@@ -164,6 +168,8 @@ public class MainCore {
 		ObjectName nameMapMan = new ObjectName("SS7_Simulator_" + appName + ":type=MapMan");
 		ObjectName nameUssdClientManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestUssdClientMan");
 		ObjectName nameUssdServerManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestUssdServerMan");
+		ObjectName nameSmsClientManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestSmsClientMan");
+		ObjectName nameSmsServerManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestSmsServerMan");
 
 		// HtmlAdaptorServer
 		HtmlAdaptorServer adapter = null;
@@ -199,6 +205,12 @@ public class MainCore {
 
 			TestUssdServerStandardManMBean ussdServerManMBean = new TestUssdServerStandardManMBean(host.getTestUssdServerMan(), TestUssdServerManMBean.class);
 			mbs.registerMBean(ussdServerManMBean, nameUssdServerManMan);
+
+			TestSmsClientStandardManMBean smsClientManMBean = new TestSmsClientStandardManMBean(host.getTestSmsClientMan(), TestSmsClientManMBean.class);
+			mbs.registerMBean(smsClientManMBean, nameSmsClientManMan);
+
+			TestSmsServerStandardManMBean smsServerManMBean = new TestSmsServerStandardManMBean(host.getTestSmsServerMan(), TestSmsServerManMBean.class);
+			mbs.registerMBean(smsServerManMBean, nameSmsServerManMan);
 
 			System.out.println("All beans have been loaded...");
 
@@ -257,6 +269,8 @@ public class MainCore {
 		mbs.unregisterMBean(nameMapMan);
 		mbs.unregisterMBean(nameUssdClientManMan);
 		mbs.unregisterMBean(nameUssdServerManMan);
+		mbs.unregisterMBean(nameSmsClientManMan);
+		mbs.unregisterMBean(nameSmsServerManMan);
 
 //		Registry.unbind(key);
 		UnicastRemoteObject.unexportObject(reg,true);  

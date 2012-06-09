@@ -41,6 +41,9 @@ import org.mobicents.protocols.ss7.tools.simulator.level1.DialogicMan;
 import org.mobicents.protocols.ss7.tools.simulator.level1.M3uaMan;
 import org.mobicents.protocols.ss7.tools.simulator.level2.SccpMan;
 import org.mobicents.protocols.ss7.tools.simulator.level3.MapMan;
+import org.mobicents.protocols.ss7.tools.simulator.tests.sms.NumberingPlanIdentificationType;
+import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsClientMan;
+import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsServerMan;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientMan;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerMan;
 
@@ -76,6 +79,8 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 	private static final String MAP = "map";
 	private static final String TEST_USSD_CLIENT = "testUssdClient";
 	private static final String TEST_USSD_SERVER = "testUssdServer";
+	private static final String TEST_SMS_CLIENT = "testSmsClient";
+	private static final String TEST_SMS_SERVER = "testSmsServer";
 
 	private final String appName;
 	private String persistDir = null;
@@ -105,6 +110,8 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 	MapMan map;
 	TestUssdClientMan testUssdClientMan;
 	TestUssdServerMan testUssdServerMan;
+	TestSmsClientMan testSmsClientMan;
+	TestSmsServerMan testSmsServerMan;
 	
 	// testers
 
@@ -128,6 +135,12 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
 		this.testUssdServerMan = new TestUssdServerMan(appName);
 		this.testUssdServerMan.setTesterHost(this);
+
+		this.testSmsClientMan = new TestSmsClientMan(appName);
+		this.testSmsClientMan.setTesterHost(this);
+
+		this.testSmsServerMan = new TestSmsServerMan(appName);
+		this.testSmsServerMan.setTesterHost(this);
 		
 		this.setupLog4j(appName);
 
@@ -171,6 +184,14 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
 	public TestUssdServerMan getTestUssdServerMan() {
 		return this.testUssdServerMan;
+	}
+
+	public TestSmsClientMan getTestSmsClientMan() {
+		return this.testSmsClientMan;
+	}
+
+	public TestSmsServerMan getTestSmsServerMan() {
+		return this.testSmsServerMan;
 	}
 
 	private void setupLog4j(String appName) {
@@ -463,6 +484,26 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			}
 			break;
 
+		case Instance_TestTask.VAL_SMS_TEST_CLIENT:
+			if (curMap == null) {
+				this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing SMS_TEST_CLIENT: No MAP stack is defined at L3", "", true);
+			} else {
+				this.instance_TestTask_B = this.testSmsClientMan;
+				this.testSmsClientMan.setMapMan(curMap);
+				started = this.testSmsClientMan.start();
+			}
+			break;
+
+		case Instance_TestTask.VAL_SMS_TEST_SERVER:
+			if (curMap == null) {
+				this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing SMS_TEST_SERVER: No MAP stack is defined at L3", "", true);
+			} else {
+				this.instance_TestTask_B = this.testSmsServerMan;
+				this.testSmsServerMan.setMapMan(curMap);
+				started = this.testSmsServerMan.start();
+			}
+			break;
+
 		default:
 			// TODO: implement others test tasks ...
 			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_TestTask." + this.instance_TestTask.toString() + " has not been implemented yet", "", true);
@@ -600,6 +641,8 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			writer.write(this.map, MAP, MapMan.class);
 			writer.write(this.testUssdClientMan, TEST_USSD_CLIENT, TestUssdClientMan.class);
 			writer.write(this.testUssdServerMan, TEST_USSD_SERVER, TestUssdServerMan.class);
+			writer.write(this.testSmsClientMan, TEST_SMS_CLIENT, TestSmsClientMan.class);
+			writer.write(this.testSmsServerMan, TEST_SMS_SERVER, TestSmsServerMan.class);
 
 //			writer.write(remoteSpcs, REMOTE_SPC, FastMap.class);
 //			writer.write(concernedSpcs, CONCERNED_SPC, FastMap.class);
@@ -659,6 +702,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			this.sccp.setNumberingPlan(_sccp.getNumberingPlan());
 			this.sccp.setTranslationType(_sccp.getTranslationType());
 			this.sccp.setCallingPartyAddressDigits(_sccp.getCallingPartyAddressDigits());
+			this.sccp.setExtraLocalAddressDigits(_sccp.getExtraLocalAddressDigits());
 
 			MapMan _tcap = reader.read(MAP, MapMan.class);
 			this.map.setLocalSsn(_tcap.getLocalSsn());
@@ -692,6 +736,29 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			this.testUssdServerMan.setAutoResponseString(_TestUssdServerMan.getAutoResponseString());
 			this.testUssdServerMan.setAutoUnstructured_SS_RequestString(_TestUssdServerMan.getAutoUnstructured_SS_RequestString());
 			this.testUssdServerMan.setOneNotificationFor100Dialogs(_TestUssdServerMan.isOneNotificationFor100Dialogs());
+
+			TestSmsClientMan _TestSmsClientMan = reader.read(TEST_SMS_CLIENT, TestSmsClientMan.class);
+			this.testSmsClientMan.setAddressNature(_TestSmsClientMan.getAddressNature());
+			this.testSmsClientMan.setNumberingPlan(_TestSmsClientMan.getNumberingPlan());
+			this.testSmsClientMan.setServiceCenterAddress(_TestSmsClientMan.getServiceCenterAddress());
+			this.testSmsClientMan.setMapProtocolVersion(_TestSmsClientMan.getMapProtocolVersion());
+			this.testSmsClientMan.setSRIResponseImsi(_TestSmsClientMan.getSRIResponseImsi());
+			this.testSmsClientMan.setSRIResponseVlr(_TestSmsClientMan.getSRIResponseVlr());
+			this.testSmsClientMan.setSmscSsn(_TestSmsClientMan.getSmscSsn());
+			this.testSmsClientMan.setTypeOfNumber(_TestSmsClientMan.getTypeOfNumber());
+			this.testSmsClientMan.setNumberingPlanIdentification(_TestSmsClientMan.getNumberingPlanIdentification());
+			this.testSmsClientMan.setSmsCodingType(_TestSmsClientMan.getSmsCodingType());
+
+			TestSmsServerMan _TestSmsServerMan = reader.read(TEST_SMS_SERVER, TestSmsServerMan.class);
+			this.testSmsServerMan.setAddressNature(_TestSmsServerMan.getAddressNature());
+			this.testSmsServerMan.setNumberingPlan(_TestSmsServerMan.getNumberingPlan());
+			this.testSmsServerMan.setServiceCenterAddress(_TestSmsServerMan.getServiceCenterAddress());
+			this.testSmsServerMan.setMapProtocolVersion(_TestSmsServerMan.getMapProtocolVersion());
+			this.testSmsServerMan.setHlrSsn(_TestSmsServerMan.getHlrSsn());
+			this.testSmsServerMan.setVlrSsn(_TestSmsServerMan.getVlrSsn());
+			this.testSmsServerMan.setTypeOfNumber(_TestSmsServerMan.getTypeOfNumber());
+			this.testSmsServerMan.setNumberingPlanIdentification(_TestSmsServerMan.getNumberingPlanIdentification());
+			this.testSmsServerMan.setSmsCodingType(_TestSmsServerMan.getSmsCodingType());
 
 //			remoteSsns = reader.read(REMOTE_SSN, FastMap.class);
 //			remoteSpcs = reader.read(REMOTE_SPC, FastMap.class);

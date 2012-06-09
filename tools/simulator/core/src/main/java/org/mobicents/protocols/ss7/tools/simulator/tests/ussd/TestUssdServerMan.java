@@ -34,17 +34,9 @@ import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPMessage;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
-import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
-import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
@@ -58,11 +50,10 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSN
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
 import org.mobicents.protocols.ss7.map.primitives.AlertingPatternImpl;
-import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
+import org.mobicents.protocols.ss7.tools.simulator.common.TesterBase;
 import org.mobicents.protocols.ss7.tools.simulator.level3.MapMan;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
 
@@ -71,7 +62,7 @@ import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
  * @author sergey vetyutnev
  * 
  */
-public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAPDialogListener, MAPServiceSupplementaryListener {
+public class TestUssdServerMan extends TesterBase implements TestUssdServerManMBean, Stoppable, MAPDialogListener, MAPServiceSupplementaryListener {
 
 	public static String SOURCE_NAME = "TestUssdServer";
 
@@ -96,7 +87,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 	private boolean oneNotificationFor100Dialogs = false;
 
 	private final String name;
-	private TesterHost testerHost;
+//	private TesterHost testerHost;
 	private MapMan mapMan;
 
 	private int countProcUnstReq = 0;
@@ -114,10 +105,12 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 
 
 	public TestUssdServerMan() {
+		super(SOURCE_NAME);
 		this.name = "???";
 	}
 
 	public TestUssdServerMan(String name) {
+		super(SOURCE_NAME);
 		this.name = name;
 	}
 
@@ -169,7 +162,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 
 	@Override
 	public void setMsisdnNumberingPlan(NumberingPlanType val) {
-		msisdnNumberingPlan = msisdnNumberingPlan.getInstance(val.intValue());
+		msisdnNumberingPlan = NumberingPlan.getInstance(val.intValue());
 		this.testerHost.markStore();
 	}
 
@@ -572,29 +565,6 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 		}		
 	}
 
-	
-	@Override
-	public void onErrorComponent(MAPDialog mapDialog, Long invokeId, MAPErrorMessage mapErrorMessage) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void onProviderErrorComponent(MAPDialog mapDialog, Long invokeId, MAPProviderError providerError) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onInvokeTimeout(MAPDialog mapDialog, Long invokeId) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public void onMAPMessage(MAPMessage mapMessage) {
@@ -758,50 +728,6 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 	}
 
 	@Override
-	public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, AddressString origReference, IMSI eriImsi, AddressString eriVlrNo) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onDialogAccept(MAPDialog mapDialog, MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
-			ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason, MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason, MAPAbortSource abortSource,
-			MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onDialogClose(MAPDialog mapDialog) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onDialogNotice(MAPDialog mapDialog, MAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void onDialogRelease(MAPDialog mapDialog) {
 		if (this.currentDialog == mapDialog)
 			this.doRemoveDialog();
@@ -813,12 +739,6 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 				}
 			}
 		}
-	}
-
-	@Override
-	public void onDialogTimeout(MAPDialog mapDialog) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	private class DialogData {
