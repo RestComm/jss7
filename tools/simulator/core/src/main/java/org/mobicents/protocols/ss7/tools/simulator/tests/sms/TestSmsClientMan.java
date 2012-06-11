@@ -57,10 +57,6 @@ import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMReque
 import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMResponse;
 import org.mobicents.protocols.ss7.map.api.service.sms.SmsSignalInfo;
 import org.mobicents.protocols.ss7.map.api.smstpdu.AddressField;
-import org.mobicents.protocols.ss7.map.api.smstpdu.CharacterSet;
-import org.mobicents.protocols.ss7.map.api.smstpdu.DataCodingGroup;
-import org.mobicents.protocols.ss7.map.api.smstpdu.DataCodingSchemaIndicationType;
-import org.mobicents.protocols.ss7.map.api.smstpdu.DataCodingSchemaMessageClass;
 import org.mobicents.protocols.ss7.map.api.smstpdu.DataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.smstpdu.NumberingPlanIdentification;
 import org.mobicents.protocols.ss7.map.api.smstpdu.ProtocolIdentifier;
@@ -113,7 +109,7 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 	private int smscSsn = 8;
 	private TypeOfNumber typeOfNumber = TypeOfNumber.InternationalNumber;
 	private NumberingPlanIdentification numberingPlanIdentification = NumberingPlanIdentification.ISDNTelephoneNumberingPlan;
-	private SmsCodingType smsCodingType;
+	private SmsCodingType smsCodingType = new SmsCodingType(SmsCodingType.VAL_GSM7);
 
 	private final String name;
 	private MapMan mapMan;

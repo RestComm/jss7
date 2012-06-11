@@ -108,7 +108,7 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 	private int vlrSsn = 8;
 	private TypeOfNumber typeOfNumber = TypeOfNumber.InternationalNumber;
 	private NumberingPlanIdentification numberingPlanIdentification = NumberingPlanIdentification.ISDNTelephoneNumberingPlan;
-	private SmsCodingType smsCodingType;
+	private SmsCodingType smsCodingType = new SmsCodingType(SmsCodingType.VAL_GSM7);
 
 	private final String name;
 	private MapMan mapMan;
