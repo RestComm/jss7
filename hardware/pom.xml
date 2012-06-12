@@ -29,9 +29,8 @@
 		<profile>
 			<id>maven-release</id>
 			<modules>
-				<!--
+				<!-- -->
 				<module>dahdi</module>
-				-->
 				<module>dialogic</module>
 			</modules>
 		</profile>
