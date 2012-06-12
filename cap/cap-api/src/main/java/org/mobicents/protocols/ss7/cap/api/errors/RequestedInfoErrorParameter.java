@@ -23,30 +23,40 @@
 package org.mobicents.protocols.ss7.cap.api.errors;
 
 /**
- * The factory of CAP ReturnError messages
- * 
- * @author sergey vetyutnev
- * 
- */
-public interface CAPErrorMessageFactory {
+*
 
-	/**
-	 * Generate the empty message depends of the error code (for incoming
-	 * messages)
-	 * 
-	 * @param errorCode
-	 * @return
-	 */
-	public CAPErrorMessage createMessageFromErrorCode(Long errorCode);
+PARAMETER ENUMERATED { 
+   unknownRequestedInfo  (1), 
+   requestedInfoNotAvailable (2) 
+   } 
+ CODE errcode-requestedInfoError
+* 
+* @author sergey vetyutnev
+* 
+*/
+public enum RequestedInfoErrorParameter {
+	unknownRequestedInfo(1), 
+	requestedInfoNotAvailable(2);
 
-	public CAPErrorMessageParameterless createCAPErrorMessageParameterless(Long errorCode);
+	private int code;
 
-	public CAPErrorMessageCancelFailed createCAPErrorMessageCancelFailed(CancelProblem cancelProblem);
+	private RequestedInfoErrorParameter(int code) {
+		this.code = code;
+	}
 
-	public CAPErrorMessageRequestedInfoError createCAPErrorMessageRequestedInfoError(CAPErrorMessageRequestedInfoError capErrorMessageRequestedInfoError);
+	public int getCode() {
+		return this.code;
+	}
 
-	public CAPErrorMessageSystemFailure createCAPErrorMessageSystemFailure(CAPErrorMessageSystemFailure capErrorMessageSystemFailure);
-
-	public CAPErrorMessageTaskRefused createCAPErrorMessageTaskRefused(CAPErrorMessageTaskRefused capErrorMessageTaskRefused);
-
+	public static RequestedInfoErrorParameter getInstance(int code) {
+		switch (code) {
+		case 1:
+			return RequestedInfoErrorParameter.unknownRequestedInfo;
+		case 2:
+			return RequestedInfoErrorParameter.requestedInfoNotAvailable;
+		default:
+			return null;
+		}
+	}
 }
+
