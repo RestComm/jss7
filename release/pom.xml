@@ -44,12 +44,12 @@
  		-->
 		<!-- TRUNK -->
 		<commons.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/commons</commons.connectionURL>
-		<stream.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/stream</stream.connectionURL>
+		<stream.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/protocols/stream</stream.connectionURL>
 		
 
-		<asn.connectionURL>scm:git:https://code.google.com/p/jasn/</asn.connectionURL>
-		<sctp.connectionURL>scm:git:https://code.google.com/p/sctp/</sctp.connectionURL>
-		<ss7.connectionURL>scm:git:https://code.google.com/p/jss7/</ss7.connectionURL>
+		<asn.connectionURL>scm:git:http://code.google.com/p/jasn/</asn.connectionURL>
+		<sctp.connectionURL>scm:git:http://code.google.com/p/sctp/</sctp.connectionURL>
+		<ss7.connectionURL>scm:git:http://code.google.com/p/jss7/</ss7.connectionURL>
 		
 
 		
