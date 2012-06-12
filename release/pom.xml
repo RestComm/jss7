@@ -102,8 +102,10 @@
 									<connectionUrl>
 										${asn.connectionURL}
 							</connectionUrl>
+									<!--
 									<username>${checkout.username}</username>
 									<password>${checkout.password}</password>
+									-->
 								</configuration>
 							</execution>
 							<execution>
@@ -122,8 +124,10 @@
 									<connectionUrl>
 										${sctp.connectionURL}
 									</connectionUrl>
+									<!--
 									<username>${checkout.username}</username>
 									<password>${checkout.password}</password>
+									-->
 								</configuration>
 							</execution>
 							<execution>
@@ -155,8 +159,10 @@
 									<skipCheckoutIfExists>true</skipCheckoutIfExists>
 									<checkoutDirectory>${checkout.basedir}/ss7</checkoutDirectory>
 									<connectionUrl>${ss7.connectionURL}</connectionUrl>
+									<!--
 									<username>${checkout.username}</username>
 									<password>${checkout.password}</password>
+									-->
 								</configuration>
 							</execution>
 						</executions>
