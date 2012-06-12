@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -23,35 +23,44 @@
 package org.mobicents.protocols.ss7.cap.api.errors;
 
 /**
- * Base class of MAP ReturnError messages
- * 
- * @author sergey vetyutnev
- * 
- */
-public interface CAPErrorMessage {
+*
 
-	public Long getErrorCode();
+PARAMETER ENUMERATED { 
+   generic      (0), 
+   unobtainable    (1), 
+   congestion     (2) 
+   }
 
-	
-	public boolean isEmParameterless();
+* 
+* @author sergey vetyutnev
+* 
+*/
+public enum TaskRefusedParameter {
+	generic(0), 
+	unobtainable(1), 
+	congestion(2);
 
-	public boolean isEmCancelFailed();
+	private int code;
 
-	public boolean isEmRequestedInfoError();
+	private TaskRefusedParameter(int code) {
+		this.code = code;
+	}
 
-	public boolean isEmSystemFailure();
+	public int getCode() {
+		return this.code;
+	}
 
-	public boolean isEmTaskRefused();
-
-	
-	public CAPErrorMessageParameterless getEmParameterless();
-	
-	public CAPErrorMessageCancelFailed getEmCancelFailed();
-	
-	public CAPErrorMessageRequestedInfoError getEmRequestedInfoError();
-	
-	public CAPErrorMessageSystemFailure getEmSystemFailure();
-	
-	public CAPErrorMessageTaskRefused getEmTaskRefused();
-
+	public static TaskRefusedParameter getInstance(int code) {
+		switch (code) {
+		case 0:
+			return TaskRefusedParameter.generic;
+		case 1:
+			return TaskRefusedParameter.unobtainable;
+		case 2:
+			return TaskRefusedParameter.congestion;
+		default:
+			return null;
+		}
+	}
 }
+

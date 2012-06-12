@@ -23,30 +23,45 @@
 package org.mobicents.protocols.ss7.cap.api.errors;
 
 /**
- * The factory of CAP ReturnError messages
- * 
- * @author sergey vetyutnev
- * 
- */
-public interface CAPErrorMessageFactory {
+*
 
-	/**
-	 * Generate the empty message depends of the error code (for incoming
-	 * messages)
-	 * 
-	 * @param errorCode
-	 * @return
-	 */
-	public CAPErrorMessage createMessageFromErrorCode(Long errorCode);
+PARAMETER SEQUENCE { 
+  problem     [0] ENUMERATED { 
+   unknownOperation  (0), 
+   tooLate     (1), 
+   operationNotCancellable (2) 
+   },
 
-	public CAPErrorMessageParameterless createCAPErrorMessageParameterless(Long errorCode);
+* 
+* @author sergey vetyutnev
+* 
+*/
+public enum CancelProblem {
+	unknownOperation(0), 
+	tooLate(1), 
+	operationNotCancellable(2);
 
-	public CAPErrorMessageCancelFailed createCAPErrorMessageCancelFailed(CancelProblem cancelProblem);
+	private int code;
 
-	public CAPErrorMessageRequestedInfoError createCAPErrorMessageRequestedInfoError(CAPErrorMessageRequestedInfoError capErrorMessageRequestedInfoError);
+	private CancelProblem(int code) {
+		this.code = code;
+	}
 
-	public CAPErrorMessageSystemFailure createCAPErrorMessageSystemFailure(CAPErrorMessageSystemFailure capErrorMessageSystemFailure);
+	public int getCode() {
+		return this.code;
+	}
 
-	public CAPErrorMessageTaskRefused createCAPErrorMessageTaskRefused(CAPErrorMessageTaskRefused capErrorMessageTaskRefused);
-
+	public static CancelProblem getInstance(int code) {
+		switch (code) {
+		case 0:
+			return CancelProblem.unknownOperation;
+		case 1:
+			return CancelProblem.tooLate;
+		case 2:
+			return CancelProblem.operationNotCancellable;
+		default:
+			return null;
+		}
+	}
 }
+

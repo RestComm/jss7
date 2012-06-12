@@ -23,7 +23,11 @@
 package org.mobicents.protocols.ss7.cap.errors;
 
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
+import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageCancelFailed;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageParameterless;
+import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageRequestedInfoError;
+import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageSystemFailure;
+import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageTaskRefused;
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 
 /**
@@ -52,10 +56,25 @@ public abstract class CAPErrorMessageImpl implements CAPErrorMessage, CAPAsnPrim
 		return false;
 	}
 
-//	@Override
-//	public boolean isEmFacilityNotSup() {
-//		return false;
-//	}
+	@Override
+	public boolean isEmCancelFailed() {
+		return false;
+	}
+
+	@Override
+	public boolean isEmRequestedInfoError() {
+		return false;
+	}
+
+	@Override
+	public boolean isEmSystemFailure() {
+		return false;
+	}
+
+	@Override
+	public boolean isEmTaskRefused() {
+		return false;
+	}
 
 	
 	@Override
@@ -63,9 +82,24 @@ public abstract class CAPErrorMessageImpl implements CAPErrorMessage, CAPAsnPrim
 		return null;
 	}
 
-//	@Override
-//	public CAPErrorMessageFacilityNotSup getEmFacilityNotSup() {
-//		return null;
-//	}
+	@Override
+	public CAPErrorMessageCancelFailed getEmCancelFailed() {
+		return null;
+	}
 
+	@Override
+	public CAPErrorMessageRequestedInfoError getEmRequestedInfoError() {
+		return null;
+	}
+
+	@Override
+	public CAPErrorMessageSystemFailure getEmSystemFailure() {
+		return null;
+	}
+
+	@Override
+	public CAPErrorMessageTaskRefused getEmTaskRefused() {
+		return null;
+	}
 }
+
