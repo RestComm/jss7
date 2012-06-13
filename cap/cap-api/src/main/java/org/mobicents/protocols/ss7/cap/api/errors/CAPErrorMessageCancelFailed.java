@@ -23,30 +23,27 @@
 package org.mobicents.protocols.ss7.cap.api.errors;
 
 /**
- * The factory of CAP ReturnError messages
+ * 
+
+cancelFailed ERROR ::= { 
+ PARAMETER SEQUENCE { 
+  problem     [0] ENUMERATED { 
+   unknownOperation  (0), 
+   tooLate     (1), 
+   operationNotCancellable (2) 
+   }, 
+  operation    [1] InvokeID, 
+  ... 
+  } 
+ CODE errcode-cancelFailed 
+ }
+  
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface CAPErrorMessageFactory {
+public interface CAPErrorMessageCancelFailed extends CAPErrorMessage {
 
-	/**
-	 * Generate the empty message depends of the error code (for incoming
-	 * messages)
-	 * 
-	 * @param errorCode
-	 * @return
-	 */
-	public CAPErrorMessage createMessageFromErrorCode(Long errorCode);
-
-	public CAPErrorMessageParameterless createCAPErrorMessageParameterless(Long errorCode);
-
-	public CAPErrorMessageCancelFailed createCAPErrorMessageCancelFailed(CancelProblem cancelProblem);
-
-	public CAPErrorMessageRequestedInfoError createCAPErrorMessageRequestedInfoError(CAPErrorMessageRequestedInfoError capErrorMessageRequestedInfoError);
-
-	public CAPErrorMessageSystemFailure createCAPErrorMessageSystemFailure(CAPErrorMessageSystemFailure capErrorMessageSystemFailure);
-
-	public CAPErrorMessageTaskRefused createCAPErrorMessageTaskRefused(CAPErrorMessageTaskRefused capErrorMessageTaskRefused);
+	public CancelProblem getCancelProblem();
 
 }

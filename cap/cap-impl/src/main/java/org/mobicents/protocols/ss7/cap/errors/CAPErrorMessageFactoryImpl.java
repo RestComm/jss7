@@ -23,8 +23,13 @@
 package org.mobicents.protocols.ss7.cap.errors;
 
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
+import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageCancelFailed;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageFactory;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageParameterless;
+import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageRequestedInfoError;
+import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageSystemFailure;
+import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageTaskRefused;
+import org.mobicents.protocols.ss7.cap.api.errors.CancelProblem;
 
 /**
  * The factory of CAP ReturnError messages
@@ -44,5 +49,29 @@ public class CAPErrorMessageFactoryImpl implements CAPErrorMessageFactory{
 	@Override
 	public CAPErrorMessageParameterless createCAPErrorMessageParameterless(Long errorCode) {
 		return new CAPErrorMessageParameterlessImpl(errorCode);
+	}
+
+	@Override
+	public CAPErrorMessageCancelFailed createCAPErrorMessageCancelFailed(CancelProblem cancelProblem) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public CAPErrorMessageRequestedInfoError createCAPErrorMessageRequestedInfoError(CAPErrorMessageRequestedInfoError capErrorMessageRequestedInfoError) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public CAPErrorMessageSystemFailure createCAPErrorMessageSystemFailure(CAPErrorMessageSystemFailure capErrorMessageSystemFailure) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public CAPErrorMessageTaskRefused createCAPErrorMessageTaskRefused(CAPErrorMessageTaskRefused capErrorMessageTaskRefused) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

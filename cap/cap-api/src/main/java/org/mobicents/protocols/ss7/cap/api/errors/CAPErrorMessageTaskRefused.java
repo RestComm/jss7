@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -23,30 +23,26 @@
 package org.mobicents.protocols.ss7.cap.api.errors;
 
 /**
- * The factory of CAP ReturnError messages
+ * 
+
+taskRefused ERROR ::= { 
+ PARAMETER ENUMERATED { 
+   generic      (0), 
+   unobtainable    (1), 
+   congestion     (2) 
+   } 
+ CODE errcode-taskRefused 
+ } 
+-- An entity normally capable of the task requested cannot or chooses not to perform the task at 
+-- this time. This includes error situations like congestion and unobtainable address as used in 
+-- e.g. the connect operation.)
+  
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface CAPErrorMessageFactory {
+public interface CAPErrorMessageTaskRefused extends CAPErrorMessage {
 
-	/**
-	 * Generate the empty message depends of the error code (for incoming
-	 * messages)
-	 * 
-	 * @param errorCode
-	 * @return
-	 */
-	public CAPErrorMessage createMessageFromErrorCode(Long errorCode);
-
-	public CAPErrorMessageParameterless createCAPErrorMessageParameterless(Long errorCode);
-
-	public CAPErrorMessageCancelFailed createCAPErrorMessageCancelFailed(CancelProblem cancelProblem);
-
-	public CAPErrorMessageRequestedInfoError createCAPErrorMessageRequestedInfoError(CAPErrorMessageRequestedInfoError capErrorMessageRequestedInfoError);
-
-	public CAPErrorMessageSystemFailure createCAPErrorMessageSystemFailure(CAPErrorMessageSystemFailure capErrorMessageSystemFailure);
-
-	public CAPErrorMessageTaskRefused createCAPErrorMessageTaskRefused(CAPErrorMessageTaskRefused capErrorMessageTaskRefused);
+	TaskRefusedParameter getTaskRefusedParameter();
 
 }
