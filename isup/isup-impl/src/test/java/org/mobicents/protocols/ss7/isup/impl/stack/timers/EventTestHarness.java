@@ -47,6 +47,9 @@ import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPartBaseImpl;
 
+import org.mobicents.protocols.ss7.scheduler.Clock;
+import org.mobicents.protocols.ss7.scheduler.Scheduler;
+import org.mobicents.protocols.ss7.scheduler.DefaultClock;
 /**
  * @author baranowb
  * 
@@ -56,6 +59,9 @@ public abstract class EventTestHarness /*extends TestCase*/ implements ISUPListe
 	protected ISUPStack stack;
 	protected ISUPProvider provider;
 
+	protected Clock clock;
+	protected Scheduler scheduler;
+	
 	protected TimerTestMtp3UserPart userPart;
 
 	// events received by by this listener
@@ -63,21 +69,28 @@ public abstract class EventTestHarness /*extends TestCase*/ implements ISUPListe
 	// events sent to remote ISUP peer.
 	protected List<EventReceived> remoteEventsReceived;
 	
+	protected static final int dpc=1;
+	
 	public void setUp() throws Exception {
-		
+		clock = new DefaultClock();
+		scheduler = new Scheduler();
+        scheduler.setClock(clock);
+        scheduler.start();
+        
 		this.userPart = new TimerTestMtp3UserPart();
 		this.userPart.start();
 		this.stack = new ISUPStackImpl();
+		this.stack.setScheduler(scheduler);		
 		this.stack.configure(getSpecificConfig());
 		this.provider = this.stack.getIsupProvider();
 		this.provider.addListener(this);
 		this.stack.setMtp3UserPart(this.userPart);
 		CircuitManagerImpl cm = new CircuitManagerImpl();
-		cm.addCircuit(1, 1);
+		cm.addCircuit(1, dpc);
 		this.stack.setCircuitManager(cm);
 		this.stack.start();
 		localEventsReceived = new ArrayList<EventTestHarness.EventReceived>();
-		remoteEventsReceived = new ArrayList<EventTestHarness.EventReceived>();
+		remoteEventsReceived = new ArrayList<EventTestHarness.EventReceived>();		
 	}
 
 	
@@ -99,7 +112,7 @@ public abstract class EventTestHarness /*extends TestCase*/ implements ISUPListe
 					doStringCompare(remoteEventsReceived, expectedRemoteEventsReceived));
 		}
 		
-		for (int index = 0; index < expectedLocalEvents.size(); index++) {
+		for (int index = 0; index < expectedLocalEvents.size(); index++) {			
 			assertEquals(localEventsReceived.get(index),expectedLocalEvents.get(index), "Local received event does not match, index[" + index + "]");
 		}
 
@@ -318,7 +331,7 @@ public abstract class EventTestHarness /*extends TestCase*/ implements ISUPListe
 			AbstractISUPMessage msg = (AbstractISUPMessage) provider.getMessageFactory().createCommand(commandCode);
 			try {
 				msg.decode(payload, provider.getParameterFactory());
-				MessageEventReceived event = new MessageEventReceived(tstamp, new ISUPEvent(provider, msg));
+				MessageEventReceived event = new MessageEventReceived(tstamp, new ISUPEvent(provider, msg , dpc));
 				remoteEventsReceived.add(event);
 			} catch (ParameterException e) {
 				e.printStackTrace();

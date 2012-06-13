@@ -28,17 +28,19 @@ package org.mobicents.protocols.ss7.isup;
  * @author baranowb
  *
  */
-public interface CircuitManager {
-
-	
+public interface CircuitManager 
+{	
 	public void addCircuit(int cic, int dpc);
 	
-	public void removeCircuit(int cic);
+	public void removeCircuit(int cic,int dpc);
 	
-	public int[] getCircuits();
+	public boolean isCircuitPresent(int cic, int dpc);
 	
-	public int getDpc(int cic);
+	public long[] getChannelIDs();	
 	
-	public boolean isCircuitPresent(int cic);
+	public int getCIC(long channelID);
 	
+	public int getDPC(long channelID);
+	
+	public long getChannelID(int cic,int dpc);
 }

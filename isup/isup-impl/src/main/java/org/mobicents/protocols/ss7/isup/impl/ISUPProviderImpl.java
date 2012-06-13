@@ -26,8 +26,10 @@
 package org.mobicents.protocols.ss7.isup.impl;
 
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -49,6 +51,7 @@ import org.mobicents.protocols.ss7.isup.impl.message.parameter.ISUPParameterFact
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 
+import org.mobicents.protocols.ss7.scheduler.Scheduler;
 /**
  * @author baranowb
  * 
@@ -58,15 +61,17 @@ public class ISUPProviderImpl implements ISUPProvider {
 	private static final Logger logger = Logger.getLogger(ISUPProviderImpl.class);
 
 	protected final List<ISUPListener> listeners = new FastList<ISUPListener>();
-	protected ScheduledExecutorService executors[]; // assign executor to
-													// circuit?
+
 	protected ISUPStackImpl stack;
 	protected ISUPMessageFactory messageFactory;
 	protected ISUPParameterFactory parameterFactory;
-	protected final FastMap<Integer, Circuit> cic2Circuit = new FastMap<Integer, Circuit>();
+	private Scheduler scheduler;
+	
+	protected final ConcurrentHashMap<Long,Circuit> cic2Circuit = new ConcurrentHashMap<Long,Circuit>();
 	protected int ni, localSpc;
-	public ISUPProviderImpl(ISUPStackImpl isupStackImpl, Properties props) {
+	public ISUPProviderImpl(ISUPStackImpl isupStackImpl,Scheduler scheduler, Properties props) {
 		this.stack = isupStackImpl;
+		this.scheduler=scheduler;
 		this.T1Timeout = Long.parseLong(props.getProperty(T1, this.T1Timeout + ""));
 		this.T5Timeout = Long.parseLong(props.getProperty(T5, this.T5Timeout + ""));
 		this.T7Timeout = Long.parseLong(props.getProperty(T7, this.T7Timeout + ""));
@@ -286,90 +291,75 @@ public class ISUPProviderImpl implements ISUPProvider {
 	 * .protocols.ss7.isup.message.ISUPMessage)
 	 */
 
-	public void sendMessage(ISUPMessage msg) throws ParameterException, IOException {
+	public void sendMessage(ISUPMessage msg,int dpc) throws ParameterException, IOException {
 		if (!msg.hasAllMandatoryParameters()) {
 			throw new ParameterException("Message does not have all required parameters!");
 		}
-		getCircuit(msg).send(msg);
+		getCircuit(msg,dpc).send(msg);
 	}
 
-	public boolean cancelTimer(int cic, int timerId) {
-		if (this.cic2Circuit.containsKey(cic)) {
-			Circuit c = this.cic2Circuit.get(cic);
+	public boolean cancelTimer(int cic,int dpc, int timerId) {
+		long channelID=this.stack.getCircuitManager().getChannelID(cic,dpc);
+		if (this.cic2Circuit.containsKey(channelID)) {
+			Circuit c = this.cic2Circuit.get(channelID);
 			return c.cancelTimer(timerId);
-		} else {
-			return false;
 		}
+
+		return false;
 	}
 
 	// ---------------------- non interface methods ----------------
 
 	public void start() {
 		CircuitManager cm = this.stack.getCircuitManager(); 
-		int[] cics = cm.getCircuits();
+		long[] channelIDs = cm.getChannelIDs();		
 		this.cic2Circuit.clear();
-		this.executors = new ScheduledExecutorService[5];
-		for (int index = 0; index < this.executors.length; index++) {
-			this.executors[index] = Executors.newScheduledThreadPool(1);
-		}
-		for(int cic:cics)
-		{
-			Circuit c = new Circuit(cic, cm.getDpc(cic),this);
-			this.cic2Circuit.put(cic, c);
-		}
 		
+		for(long channelID:channelIDs)
+		{
+			Circuit c = new Circuit(cm.getCIC(channelID), cm.getDPC(channelID),this, scheduler);
+			cic2Circuit.put(channelID, c);
+		}	
 	}
 
-	public void stop() {
-		for (FastMap.Entry<Integer, Circuit> e = this.cic2Circuit.head(), end = this.cic2Circuit
-                .tail(); (e = e.getNext()) != end;) {
+	public void stop() {		
+		Enumeration<Long> keys=cic2Circuit.keys();
+		while(keys.hasMoreElements()) {
 			try{
-				e.getValue().onStop();
-			}catch(Exception ex)
-			{
+				cic2Circuit.remove(keys.nextElement()).onStop();
+			}
+			catch(Exception ex) {
 				ex.printStackTrace();
 			}
-		}
-		for (int index = 0; index < this.executors.length; index++) {
-			this.executors[index].shutdown();
-		}
-		executors = null;
+		}		
 	}
 
 	// --------- private methods and class defs.
-
-	/**
-	 * @param message
-	 */
-	void receive(ISUPMessage message) {
-		Circuit c = getCircuit(message);
-		c.receive(message);
-
-	}
-
 	/**
 	 * @param message
 	 * @return
 	 */
-	private Circuit getCircuit(ISUPMessage message) {
+	void receive(ISUPMessage message, int dpc) {
+        Circuit c = getCircuit(message,dpc);
+        if(c!=null)
+        	c.receive(message);
+	}
+
+	private Circuit getCircuit(ISUPMessage message, int dpc) {
 		Circuit c = null;
 		int cic = message.getCircuitIdentificationCode().getCIC();
-		if (!this.stack.getCircuitManager().isCircuitPresent(cic)) {
-			if (this.cic2Circuit.containsKey(cic)) {
-				this.cic2Circuit.remove(cic).onStop();
+		long channelID=this.stack.getCircuitManager().getChannelID(cic,dpc);
+		if (!this.stack.getCircuitManager().isCircuitPresent(cic,dpc)) {			
+			if (this.cic2Circuit.containsKey(channelID)) {
+				this.cic2Circuit.remove(channelID);
 			}
 			throw new IllegalArgumentException("Curcuit not defined, no route definition present!");
 
 		} else {
-			c = this.cic2Circuit.get(message.getCircuitIdentificationCode().getCIC());
+			c = this.cic2Circuit.get(channelID);
 		}
 		return c;
-	}
-
-	ScheduledExecutorService getExecutor(int cic) {
-		int index = cic % this.executors.length;
-		return this.executors[index];
-	}
+	}	
 
 	void send(Mtp3TransferPrimitive encoded) throws IOException {
 		this.stack.send(encoded);

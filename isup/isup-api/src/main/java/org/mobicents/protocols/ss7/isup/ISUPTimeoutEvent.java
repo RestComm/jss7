@@ -36,15 +36,17 @@ public class ISUPTimeoutEvent extends EventObject {
 
 	protected final ISUPMessage message;
 	protected final int timerId;
-
+	protected final int dpc;
+	
 	/**
 	 * @param message
 	 * @param circuit
 	 */
-	public ISUPTimeoutEvent(Object source, ISUPMessage message, int timerId) {
+	public ISUPTimeoutEvent(Object source, ISUPMessage message, int timerId,int dpc) {
 		super(source);
 		this.message = message;
 		this.timerId = timerId;
+		this.dpc=dpc;
 		new Exception();
 	}
 
@@ -56,6 +58,10 @@ public class ISUPTimeoutEvent extends EventObject {
 		return timerId;
 	}
 
+	public int getDpc() {
+		return dpc;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -66,6 +72,7 @@ public class ISUPTimeoutEvent extends EventObject {
 		}
 
 		result = prime * result + timerId;
+		result = prime * result + dpc;		
 		return result;
 	}
 
@@ -91,8 +98,13 @@ public class ISUPTimeoutEvent extends EventObject {
 
 		if (this.message.getMessageType().getCode() != other.message.getMessageType().getCode())
 			return false;
+		
+		if (dpc != other.dpc)
+			return false;
+		
 		if (timerId != other.timerId)
 			return false;
+		
 		return true;
 	}
 

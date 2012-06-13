@@ -89,7 +89,6 @@ public class Mtp3 implements Runnable {
     protected String name;
     private StreamSelector selector;
     
-    private MTPScheduler executor = new MTPScheduler();
     private Scheduler scheduler;
     
     private static final Logger logger = Logger.getLogger(Mtp3.class);
