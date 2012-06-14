@@ -28,6 +28,6 @@ package org.mobicents.protocols.ss7.cap.api.errors;
  * @author sergey vetyutnev
  * 
  */
-public interface CAPErrorMessageParameterless extends CAPErrorMessage{
+public interface CAPErrorMessageParameterless extends CAPErrorMessage {
 
 }

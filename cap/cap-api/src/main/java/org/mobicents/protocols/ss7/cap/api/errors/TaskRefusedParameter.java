@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,44 +20,47 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.isup;
-
-import java.util.EventObject;
-
-import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
+package org.mobicents.protocols.ss7.cap.api.errors;
 
 /**
- * Class delivered to listeners. To be extended if requried. 
- * @author baranowb
- *
- */
-public class ISUPEvent extends EventObject{
-	
-	protected final ISUPMessage message;
-	private int dpc;
-	
-	/**
-	 * @param message
-	 * @param circuit
-	 */
-	public ISUPEvent(Object source,ISUPMessage message,int dpc) {
-		super(source);
-		this.message = message;
-		this.dpc=dpc;
-	}
-	
-	public ISUPMessage getMessage() {
-		return message;
-	}
-	
-	public int getDpc() {
-		return dpc;
-	}
-	
-	@Override
-	public String toString() {
-		return "ISUPEvent [messageCode=" + message.getMessageType().getCode() + "]";
+*
+
+PARAMETER ENUMERATED { 
+   generic      (0), 
+   unobtainable    (1), 
+   congestion     (2) 
+   }
+
+* 
+* @author sergey vetyutnev
+* 
+*/
+public enum TaskRefusedParameter {
+	generic(0), 
+	unobtainable(1), 
+	congestion(2);
+
+	private int code;
+
+	private TaskRefusedParameter(int code) {
+		this.code = code;
 	}
 
+	public int getCode() {
+		return this.code;
+	}
 
+	public static TaskRefusedParameter getInstance(int code) {
+		switch (code) {
+		case 0:
+			return TaskRefusedParameter.generic;
+		case 1:
+			return TaskRefusedParameter.unobtainable;
+		case 2:
+			return TaskRefusedParameter.congestion;
+		default:
+			return null;
+		}
+	}
 }
+

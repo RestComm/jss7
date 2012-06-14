@@ -20,44 +20,43 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.mtp;
-
+package org.mobicents.protocols.ss7.cap.api.errors;
 
 /**
- *
- * @author kulikov
- */
-public abstract class MTPTask implements Runnable {
+*
 
-    protected boolean canceled = false;
-    protected long deadLine;
-    protected int index;
-    protected MTPScheduler scheduler;
-    public void run() {
-        if (!canceled) {
-        	try{
-        		//exception in caught in scheduler.
-        		perform();
-        	}finally
-        	{
-        		canceled = true;
-        	}
-        }
-        
-    }
+PARAMETER ENUMERATED { 
+   unknownRequestedInfo  (1), 
+   requestedInfoNotAvailable (2) 
+   } 
+ CODE errcode-requestedInfoError
+* 
+* @author sergey vetyutnev
+* 
+*/
+public enum RequestedInfoErrorParameter {
+	unknownRequestedInfo(1), 
+	requestedInfoNotAvailable(2);
 
-    public boolean isCanceled() {
-        return this.canceled;
-    }
-    
-    public abstract void perform();
-    
-    public void cancel() {
-        this.canceled = true;
-        //dont do this, let it be lazely reclaimed if ever, this causes race!
-        //remove task from list
-        //if (scheduler != null && (index >=0) && (index < scheduler.tasks.length)) {
-        //    scheduler.tasks[index] = null;  
-        //}
-    }
+	private int code;
+
+	private RequestedInfoErrorParameter(int code) {
+		this.code = code;
+	}
+
+	public int getCode() {
+		return this.code;
+	}
+
+	public static RequestedInfoErrorParameter getInstance(int code) {
+		switch (code) {
+		case 1:
+			return RequestedInfoErrorParameter.unknownRequestedInfo;
+		case 2:
+			return RequestedInfoErrorParameter.requestedInfoNotAvailable;
+		default:
+			return null;
+		}
+	}
 }
+

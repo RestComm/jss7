@@ -50,7 +50,7 @@ public interface ISUPProvider {
 	 * @throws ParameterException
 	 * @throws IOException
 	 */
-	public void sendMessage(ISUPMessage msg) throws ParameterException, IOException;
+	public void sendMessage(ISUPMessage msg,int dpc) throws ParameterException, IOException;
 
 	/**
 	 * Adds default listener.
@@ -86,6 +86,8 @@ public interface ISUPProvider {
 	 * 
 	 * @param cic
 	 *            - circuit identification code
+	 * @param dpc
+	 *            - destination point code
 	 * @param timerId
 	 *            - integer id of timer. See {@link ISUPTimeoutEvent} static values.
 	 * @return <ul>
@@ -93,6 +95,6 @@ public interface ISUPProvider {
 	 * 				<li><b>false</b> - otherwise</li>
 	 *         </ul>
 	 */
-	public boolean cancelTimer(int cic, int timerId);
+	public boolean cancelTimer(int cic, int dcp, int timerId);
 
 }

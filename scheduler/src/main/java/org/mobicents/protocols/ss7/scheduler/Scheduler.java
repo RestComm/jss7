@@ -47,24 +47,46 @@ import org.apache.log4j.Logger;
  * and other parameters.
  *
  *
- * @author kulikov
+ * @author oifa.yulian
  */
 public class Scheduler  {
 	//MANAGEMENT QUEUE SHOULD CONTAIN ONLY TASKS THAT ARE NOT TIME DEPENDENT
 	public static final Integer MANAGEMENT_QUEUE=0;
-	public static final Integer L2READ_QUEUE=1;
-	public static final Integer L3READ_QUEUE=2;
-	public static final Integer INTERNETWORKING_QUEUE=3;
-	public static final Integer L3WRITE_QUEUE=4;
-	public static final Integer L2WRITE_QUEUE=5;
 	
+	//MTP2/SCTP READ
+	public static final Integer L2READ_QUEUE=1;
+	//MTP3/M3UA READ
+	public static final Integer L3READ_QUEUE=2;
+	//ISUP / SCCP READ
+	public static final Integer L4READ_QUEUE=3;
+	//TCAP READ
+	public static final Integer TCAPREAD_QUEUE=4;
+	//MAP/INUP and other APP LAYER READ
+	public static final Integer APPREAD_QUEUE=5;
+		
+	//MAP/INUP and other APP LAYER WRITE	
+	public static final Integer APPWRITE_QUEUE=6;	
+	//TCAP WRITE
+	public static final Integer TCAPWRITE_QUEUE=7;	
+	//ISUP / SCCP WRITE
+	public static final Integer L4WRITE_QUEUE=8;	
+	//MTP3/M3UA WRITE
+	public static final Integer L3WRITE_QUEUE=9;
+	//MTP2/SCTP WRITE
+	public static final Integer L2WRITE_QUEUE=10;
+	
+	
+	//INTERNETWORKING OCCURES OVER L3 NO HIGHER LAYERS ARE USED
+	//BASICALLY DOEST NOT MATTER WHAT QUEUE WE CHOOSE , IT SHOULD BE BETWEEN L3READ_QUEUE AND L3WRITE_QUEUE
+	public static final Integer INTERNETWORKING_QUEUE=3;
+			
 	public static final Integer HEARTBEAT_QUEUE=-1;
 	
     //The clock for time measurement
     private Clock clock;
 
     //priority queue
-    protected OrderedTaskQueue[] taskQueues = new OrderedTaskQueue[6];
+    protected OrderedTaskQueue[] taskQueues = new OrderedTaskQueue[11];
 
     protected OrderedTaskQueue heartBeatQueue;
     //CPU bound threads

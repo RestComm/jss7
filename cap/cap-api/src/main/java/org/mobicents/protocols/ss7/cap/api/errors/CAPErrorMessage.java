@@ -35,11 +35,23 @@ public interface CAPErrorMessage {
 	
 	public boolean isEmParameterless();
 
-//	public boolean isEmFacilityNotSup();
+	public boolean isEmCancelFailed();
+
+	public boolean isEmRequestedInfoError();
+
+	public boolean isEmSystemFailure();
+
+	public boolean isEmTaskRefused();
 
 	
 	public CAPErrorMessageParameterless getEmParameterless();
-
-//	public MAPErrorMessageFacilityNotSup getEmFacilityNotSup();
+	
+	public CAPErrorMessageCancelFailed getEmCancelFailed();
+	
+	public CAPErrorMessageRequestedInfoError getEmRequestedInfoError();
+	
+	public CAPErrorMessageSystemFailure getEmSystemFailure();
+	
+	public CAPErrorMessageTaskRefused getEmTaskRefused();
 
 }

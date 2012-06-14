@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,44 +20,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * Start time:08:53:28 2009-08-30<br>
- * Project: mobicents-isup-stack<br>
- * 
- * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
- */
-package org.mobicents.protocols.ss7.isup;
+package org.mobicents.protocols.ss7.cap.api.errors;
 
 /**
- * Start time:08:53:28 2009-08-30<br>
- * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski
- *         </a>
+
+taskRefused ERROR ::= { 
+ PARAMETER ENUMERATED { 
+   generic      (0), 
+   unobtainable    (1), 
+   congestion     (2) 
+   } 
+ CODE errcode-taskRefused 
+ } 
+-- An entity normally capable of the task requested cannot or chooses not to perform the task at 
+-- this time. This includes error situations like congestion and unobtainable address as used in 
+-- e.g. the connect operation.)
+  
+ * 
+ * @author sergey vetyutnev
+ * 
  */
-public class TransactionAlredyExistsException extends Exception {
+public interface CAPErrorMessageTaskRefused extends CAPErrorMessage {
 
-	/**
-	 * 	
-	 * @param string
-	 */
-	public TransactionAlredyExistsException(String string) {
-		
-	}
-
-	public TransactionAlredyExistsException() {
-		super();
-		
-	}
-
-	public TransactionAlredyExistsException(String message, Throwable cause) {
-		super(message, cause);
-		
-	}
-
-	public TransactionAlredyExistsException(Throwable cause) {
-		super(cause);
-		
-	}
+	TaskRefusedParameter getTaskRefusedParameter();
 
 }
