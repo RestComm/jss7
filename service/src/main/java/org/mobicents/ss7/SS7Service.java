@@ -60,7 +60,7 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
 		if (name != null) {
 			return name;
 		} else {
-			return "Mobicents JAIN SLEE";
+			return "Mobicents jSS7 Service";
 		}
 	}
 
@@ -69,7 +69,7 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
 		if (vendor != null) {
 			return vendor;
 		} else {
-			return "JBoss, a division of Red Hat";
+			return "TeleStax Inc";
 		}
 	}
 
