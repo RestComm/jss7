@@ -38,6 +38,20 @@
 	</bean>
 
 	<!-- ==================================================================== -->
+	<!-- Scheduler -->
+	<!-- Scheduler for ss7 stack -->
+	<!-- ==================================================================== -->
+	<!-- -->
+	<bean name="SS7Clock" class="org.mobicents.protocols.ss7.scheduler.DefaultClock">
+	</bean>
+
+	<bean name="SS7Scheduler" class="org.mobicents.protocols.ss7.scheduler.Scheduler">
+		<property name="clock">
+			<inject bean="SS7Clock" />
+		</property>
+	</bean>
+	
+	<!-- ==================================================================== -->
 	<!-- Dialogic Mtp3UserPart -->
 	<!-- ==================================================================== -->
 	<!-- <bean name="Mtp3UserPart" class="org.mobicents.ss7.hardware.dialogic.DialogicMtp3UserPart"> 
@@ -111,14 +125,37 @@
 	</bean>	
 	
 	<!-- ==================================================================== -->
+	<!-- ISUP Service -->
+	<!-- ==================================================================== -->
+	<bean name="CircuitManager" class="org.mobicents.protocols.ss7.isup.impl.CircuitManagerImpl">		
+	</bean>
+		
+	<bean name="IsupStack" class="org.mobicents.protocols.ss7.isup.impl.ISUPStackImpl">
+		<constructor>
+		 	<parameter><inject bean="SS7Scheduler" /></parameter>
+		 	<parameter>22234</parameter>
+		 	<parameter>2</parameter>
+		</constructor>
+		<property name="mtp3UserPart"><inject bean="Mtp3UserPart" /></property>
+		<property name="circuitManager"><inject bean="CircuitManager" /></property>			
+	</bean>	
+	<!-- ==================================================================== -->
 	<!-- Mobicents SS7 Service -->
 	<!-- ==================================================================== -->
-	<bean name="SS7Service" class="org.mobicents.ss7.SS7Service">
-		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=SS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
+	<bean name="MAPSS7Service" class="org.mobicents.ss7.SS7Service">
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=MAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
 		</annotation>
 		<property name="jndiName">java:/mobicents/ss7/map</property>
 		<property name="stack">
 			<inject bean="MapStack" property="MAPProvider" />
+		</property>
+	</bean>
+	<bean name="ISUPSS7Service" class="org.mobicents.ss7.SS7Service">
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=ISUPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
+		</annotation>
+		<property name="jndiName">java:/mobicents/ss7/isup</property>
+		<property name="stack">
+			<inject bean="IsupStack" property="isupProvider" />
 		</property>
 	</bean>
 </deployment>

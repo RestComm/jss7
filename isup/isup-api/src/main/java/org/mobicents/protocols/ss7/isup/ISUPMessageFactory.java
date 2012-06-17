@@ -28,6 +28,7 @@
  */
 package org.mobicents.protocols.ss7.isup;
 
+import java.io.Serializable;
 import org.mobicents.protocols.ss7.isup.message.AddressCompleteMessage;
 import org.mobicents.protocols.ss7.isup.message.AnswerMessage;
 import org.mobicents.protocols.ss7.isup.message.ApplicationTransportMessage;

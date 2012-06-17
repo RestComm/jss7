@@ -96,6 +96,10 @@
 			<groupId>org.mobicents.protocols.ss7.management</groupId>
 		</dependency>
 		<dependency>
+			<artifactId>scheduler</artifactId>
+			<groupId>org.mobicents.protocols.ss7.scheduler</groupId>
+		</dependency>
+		<dependency>
 			<groupId>org.mobicents.protocols.sctp</groupId>
 			<artifactId>sctp-api</artifactId>
 		</dependency>
@@ -130,14 +134,22 @@
 		</dependency>
 
 		<dependency>
+			<artifactId>isup-api</artifactId>
+			<groupId>org.mobicents.protocols.ss7.isup</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>isup-impl</artifactId>
+			<groupId>org.mobicents.protocols.ss7.isup</groupId>
+		</dependency>
+		
+		<dependency>
 			<artifactId>tcap-api</artifactId>
 			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
 		</dependency>
 		<dependency>
 			<artifactId>tcap-impl</artifactId>
 			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
-		</dependency>
-				
+		</dependency>				
 	</dependencies>
 	<build>
 		<finalName>${pom.artifactId}-${pom.version}</finalName>

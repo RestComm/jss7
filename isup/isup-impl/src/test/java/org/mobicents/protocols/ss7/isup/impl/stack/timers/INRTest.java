@@ -79,20 +79,5 @@ public class INRTest extends SingleTimers {
 		ii.setCallingPartyAddressResponseIndicator(ii._CPARI_ADDRESS_INCLUDED);
 		ans.setInformationIndicators(ii);
 		return ans;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.isup.impl.stack.timers.EventTestHarness#getSpecificConfig()
-	 */
-	
-	protected Properties getSpecificConfig() {
-		Properties p = new Properties();
-		p.put("t33", getT()+"");
-		p.put("ni", "2");
-		p.put("localspc", "2");
-		return p;
-	}
-	
-
-
+	}	
 }

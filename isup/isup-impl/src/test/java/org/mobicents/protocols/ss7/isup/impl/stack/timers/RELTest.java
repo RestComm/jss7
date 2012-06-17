@@ -43,7 +43,7 @@ public class RELTest extends DoubleTimers {
 	 */
 	
 	protected long getSmallerT() {
-		return ISUPTimeoutEvent.T1_DEFAULT+2000;
+		return ISUPTimeoutEvent.T1_DEFAULT;
 	}
 
 	/* (non-Javadoc)
@@ -99,21 +99,5 @@ public class RELTest extends DoubleTimers {
 	{
 		ResetCircuitMessage rsc = super.provider.getMessageFactory().createRSC(1);
 		return rsc;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.isup.impl.stack.EventTestHarness#getSpecificConfig()
-	 */
-	
-	protected Properties getSpecificConfig() {
-		//ensure proper values;
-		Properties p = new Properties();
-		p.put("t1", getSmallerT()+"");
-		p.put("t5" ,  getBiggerT()+"");
-		p.put("ni", "2");
-		p.put("localspc", "2");
-		return p;
 	}	
-
-
 }

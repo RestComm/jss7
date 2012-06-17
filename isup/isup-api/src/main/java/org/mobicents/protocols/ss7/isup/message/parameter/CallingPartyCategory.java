@@ -68,6 +68,13 @@ public interface CallingPartyCategory extends ISUPParameter {
 	 */
 	public static final byte _CATEGORY_OL_SPANISH = 5;
 	
+	public static final byte _OPERATOR_NATIONAL = 9;
+	public static final byte _ORDINARY_SUBSCRIBER = 10;
+	public static final byte _PRIORITY_SUBSCRIBER = 11;
+	public static final byte _DATA_CALL = 12;
+	public static final byte _TEST_CALL = 13;
+	public static final byte _PAYPHONE = 14;	
+	
 	public byte getCallingPartyCategory();
 
 	public void setCallingPartyCategory(byte callingPartyCategory);

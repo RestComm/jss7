@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.isup;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 
@@ -30,7 +31,7 @@ import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
  * @author baranowb
  * @author kulikov
  */
-public interface ISUPProvider {
+public interface ISUPProvider extends Serializable {
 	
 	/**
 	 * Returns localy configured network indicator.
