@@ -10,6 +10,12 @@
 
 	<name>Mobicents SS7 :: SGW :: Gateway :: ${pom.artifactId}</name>
 
+	<properties>
+		<sgw.name>Mobicents SGW</sgw.name>
+		<sgw.vendor>TeleStax</sgw.vendor>
+		<sgw.version>${pom.version}</sgw.version>
+	</properties>
+
 	<dependencies>
 		<!-- clock -->
 		<dependency>
