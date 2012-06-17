@@ -202,7 +202,7 @@
 		</copy>
 
 		<echo>Copy Native</echo>
-		<copy todir="${zip.dir}/ss7/native" failonerror="${failoncopy}">
+		<copy todir="${zip.dir}/ss7/native" failonerror="false">
 			<fileset dir="${checkout.basedir}/ss7/hardware/dahdi/native/linux/target">
 				<include name="*.so" />
 			</fileset>
