@@ -70,6 +70,8 @@ public abstract class EventTestHarness /*extends TestCase*/ implements ISUPListe
 	protected List<EventReceived> remoteEventsReceived;
 	
 	protected static final int dpc=1;
+	protected static final int localSpc=2;
+	protected static final int ni=2;
 	
 	public void setUp() throws Exception {
 		clock = new DefaultClock();
@@ -79,9 +81,7 @@ public abstract class EventTestHarness /*extends TestCase*/ implements ISUPListe
         
 		this.userPart = new TimerTestMtp3UserPart();
 		this.userPart.start();
-		this.stack = new ISUPStackImpl();
-		this.stack.setScheduler(scheduler);		
-		this.stack.configure(getSpecificConfig());
+		this.stack = new ISUPStackImpl(scheduler,localSpc,ni);		
 		this.provider = this.stack.getIsupProvider();
 		this.provider.addListener(this);
 		this.stack.setMtp3UserPart(this.userPart);
@@ -205,13 +205,6 @@ public abstract class EventTestHarness /*extends TestCase*/ implements ISUPListe
 
 	
 	
-	/**
-	 * callback method, it returns specific configuration properties for stack
-	 * 
-	 * @return
-	 */
-	protected abstract Properties getSpecificConfig();
-
 	protected class EventReceived {
 		private long tstamp;
 

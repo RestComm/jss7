@@ -76,8 +76,14 @@ public class ISUPStackImpl implements ISUPStack, Mtp3UserPartListener {
 
 	private Scheduler scheduler;
 	
-	public ISUPStackImpl() {
+	public ISUPStackImpl(Scheduler scheduler,int localSpc,int ni) {
 		super();
+		this.scheduler=scheduler;		
+		this.provider = new ISUPProviderImpl(this, scheduler , localSpc, ni);
+		this.parameterFactory = this.provider.getParameterFactory();
+		this.messageFactory = this.provider.getMessageFactory();
+		
+		this.state = State.CONFIGURED;
 	}
 
 	public ISUPProvider getIsupProvider() {
@@ -134,25 +140,15 @@ public class ISUPStackImpl implements ISUPStack, Mtp3UserPartListener {
 	/**
      *
      */
-	public void configure(Properties props) {
+	/*public void configure(Properties props) {
 		if (state != State.IDLE) {
 			throw new IllegalStateException("Stack already been configured or is already running!");
 		}
 
-		this.provider = new ISUPProviderImpl(this, scheduler ,props);
-		this.parameterFactory = this.provider.getParameterFactory();
-		this.messageFactory = this.provider.getMessageFactory();
+		
 		this.state = State.CONFIGURED;
-	}
+	}*/
 
-	public Scheduler getScheduler() {
-		return scheduler;
-	}
-
-	public void setScheduler(Scheduler scheduler) {
-		this.scheduler = scheduler;
-	}
-	
 	public Mtp3UserPart getMtp3UserPart() {
 		return mtp3UserPart;
 	}

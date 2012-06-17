@@ -39,7 +39,7 @@ public class BLOTest extends DoubleTimers {
 	 * @see org.mobicents.protocols.ss7.isup.impl.stack.DoubleTimers#getSmallerT()
 	 */
 	protected long getSmallerT() {
-		return ISUPTimeoutEvent.T12_DEFAULT+3000;
+		return ISUPTimeoutEvent.T12_DEFAULT;
 	}
 
 	/* (non-Javadoc)
@@ -85,22 +85,5 @@ public class BLOTest extends DoubleTimers {
 		cic.setCIC(1);
 		bla.setCircuitIdentificationCode(cic);
 		return bla;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.isup.impl.stack.EventTestHarness#getSpecificConfig()
-	 */
-	
-	protected Properties getSpecificConfig() {
-		//ensure proper values;
-		Properties p = new Properties();
-		p.put("t12", getSmallerT()+"");
-		p.put("t13" ,  getBiggerT()+"");
-		p.put("ni", "2");
-		p.put("localspc", "2");
-		return p;
-	}
-	
-	
-	
+	}	
 }

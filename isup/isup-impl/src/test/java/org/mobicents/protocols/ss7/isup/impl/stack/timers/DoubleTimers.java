@@ -57,7 +57,11 @@ public abstract class DoubleTimers extends EventTestHarness {
 		this.BIGGER_T = getBiggerT();
 		this.SMALLER_T_ID = getSmallerT_ID();
 		this.BIGGER_T_ID = getBiggerT_ID();
-		this.numOfTimeouts = BIGGER_T / SMALLER_T;
+		if(BIGGER_T%SMALLER_T==0)
+			this.numOfTimeouts = BIGGER_T / SMALLER_T - 1;
+		else
+			this.numOfTimeouts = BIGGER_T / SMALLER_T;
+		
 		this.request = getRequest();
 		this.answer = getAnswer();
 	}

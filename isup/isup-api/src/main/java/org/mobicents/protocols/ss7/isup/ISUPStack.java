@@ -59,16 +59,6 @@ public interface ISUPStack {
 	 * @throws StartFailedException - if start failed for some other reason.
 	 */
 	public void start() throws IllegalStateException;
-	/**
-	 * Configure this stack and its resources, like MTP.
-	 * @param props
-	 * @throws ConfigurationException
-	 */
-	public void configure(Properties props);
-	
-	public Scheduler getScheduler();
-	
-	public void setScheduler(Scheduler scheduler);
 	
 	public Mtp3UserPart getMtp3UserPart();
 

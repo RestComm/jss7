@@ -80,18 +80,5 @@ public class SAM_ACMTest extends SingleTimers {
 		cic.setCIC(1);
 		ans.setCircuitIdentificationCode(cic);
 		return ans;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.isup.impl.stack.timers.EventTestHarness#getSpecificConfig()
-	 */
-	
-	protected Properties getSpecificConfig() {
-		Properties p = new Properties();
-		p.put("t7", getT()+"");
-		p.put("ni", "2");
-		p.put("localspc", "2");
-		return p;
-	}
-
+	}	
 }
