@@ -51,7 +51,10 @@ public enum MAPApplicationContextName {
 
 	// -- Location Service (lms)
 	locationSvcEnquiryContext(38),
-	locationSvcGatewayContext(37);
+	locationSvcGatewayContext(37),
+	
+	// -- Call Handling Services
+	locationInfoRetrievalContext(5);
 	
 	
 	private int code;
