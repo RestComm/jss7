@@ -63,6 +63,9 @@ public class MainDeployer {
     private File root;
     /** Logger instance */
     private Logger logger = Logger.getLogger(MainDeployer.class);
+    
+	private static final String rLogo = " ]]]]]]]]] ";
+	private static final String lLogo = " [[[[[[[[[ ";
 
     /**
      * Creates new instance of deployer.
@@ -126,18 +129,51 @@ public class MainDeployer {
             URL url = d.getConfig();
             deployment = kernelDeployer.deploy(url);
             kernelDeployer.validate();
+            
+            logger.info(generateMessageWithLogo("service started"));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        logger.info("[[[[[[[[[ " + version.toString() + " Started " + "]]]]]]]]]");
+        
     }
+    
+	private String generateMessageWithLogo(String message) {
+		return lLogo + getSS7Name() + " " + getSS7Version() + " " + message + rLogo;
+	}
+
+	public String getSS7Name() {
+		String name = Version.instance.getProperty("name");
+		if (name != null) {
+			return name;
+		} else {
+			return "Mobicents SGW";
+		}
+	}
+
+	public String getSS7Vendor() {
+		String vendor = Version.instance.getProperty("vendor");
+		if (vendor != null) {
+			return vendor;
+		} else {
+			return "TeleStax Inc";
+		}
+	}
+
+	public String getSS7Version() {
+		String version = Version.instance.getProperty("version");
+		if (version != null) {
+			return version;
+		} else {
+			return "2.0";
+		}
+	}   
 
     /**
      * Shuts down deployer.
      */
     public void stop() {
         kernelDeployer.undeploy(deployment);
-        logger.info("Stopped");
+        logger.info(generateMessageWithLogo("service stopped"));
     }
 
 }
