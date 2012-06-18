@@ -25,6 +25,7 @@ package org.mobicents.ss7.sgw;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
+import org.mobicents.ss7.ShellExecutor;
 import org.mobicents.protocols.ss7.scheduler.Scheduler;
 import org.mobicents.protocols.ss7.scheduler.Task;
 

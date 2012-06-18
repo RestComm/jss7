@@ -91,6 +91,12 @@
 	<!-- ==================================================================== -->
 	<!-- Define Shell Executor -->
 	<bean name="ShellExecutor" class="org.mobicents.ss7.ShellExecutor">
+		<constructor>
+			<parameter>
+				<inject bean="SS7Scheduler" />
+			</parameter>
+		</constructor>
+		
 		<property name="address">${jboss.bind.address}</property>
 		<property name="port">3435</property>
 

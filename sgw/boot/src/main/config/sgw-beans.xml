@@ -74,7 +74,7 @@
 		<uncallback method="removeFactory" />
 	</bean>
 
-	<bean name="ShellExecutor" class="org.mobicents.ss7.sgw.ShellExecutor">
+	<bean name="ShellExecutor" class="org.mobicents.ss7.ShellExecutor">
 		<constructor>
 			<parameter>
 				<inject bean="Scheduler" />
