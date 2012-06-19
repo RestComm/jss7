@@ -5,13 +5,13 @@
 	<parent>
 		<artifactId>ss7-parent</artifactId>
 		<groupId>org.mobicents.protocols.ss7</groupId>
-		<version>6.1.1.GA-TelScale</version>
+		<version>6.1.2-TelScale-SNAPSHOT</version>
 	</parent>
 
 
 	<artifactId>sccp-parent</artifactId>
 	<groupId>org.mobicents.protocols.ss7.sccp</groupId>
-	<version>6.1.1.GA-TelScale</version>
+	<version>6.1.2-TelScale-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 

@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>mobicents-ss7-docs</artifactId>
 		<groupId>org.mobicents.protocols.ss7.docs</groupId>
-		<version>6.1.1.GA-TelScale</version>
+		<version>6.1.2-TelScale-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>mobicents-ss7-docs-jdocbook-mobicents</artifactId>

@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>cap-parent</artifactId>
 		<groupId>org.mobicents.protocols.ss7.cap</groupId>
-		<version>6.1.1.GA-TelScale</version>
+		<version>6.1.2-TelScale-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>cap-api</artifactId>
