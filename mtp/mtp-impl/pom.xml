@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.mobicents.protocols.ss7.mtp</groupId>
 		<artifactId>mtp-parent</artifactId>
-		<version>6.1.1-TelScale-SNAPSHOT</version>
+		<version>6.1.1.GA-TelScale</version>
 	</parent>
 
 	<artifactId>mtp</artifactId>
