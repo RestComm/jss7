@@ -2,9 +2,9 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.mobicents</groupId>
 		<artifactId>mobicents-parent</artifactId>
-		<version>2.22</version>
+                <groupId>org.mobicents</groupId>
+                <version>6.1.1.GA-TelScale</version>
 	</parent>
 
 	<artifactId>ss7-parent</artifactId>
@@ -371,17 +371,6 @@
                         </roles>
                         <timezone>+1</timezone>
                 </developer>
-                <developer>
-                        <id>oleg.kulikoff</id>
-                        <name>Oleg Kulikoff</name>
-                        <email>oleg.kulikoff@gmail.com</email>
-                        <organization>JBoss/Red Hat</organization>
-                        <organizationUrl>http://www.redhat.com/</organizationUrl>
-                        <roles>
-                                <role>Inactive Developer</role>
-                        </roles>
-                        <timezone>+3</timezone>
-                </developer>
 	</developers>
         <licenses>
                 <license>
@@ -435,6 +424,32 @@
         </scm>
         <!-- repositories -->
         <repositories>
+                 <repository>
+                  <id>telscale-releases-repository</id>
+                  <name>TelScale Releases Repository</name>
+                  <url>http://telestax.artifactoryonline.com/telestax/releases</url>
+                  <releases>
+                    <enabled>true</enabled>
+                    <updatePolicy>never</updatePolicy>
+                  </releases>
+                  <snapshots>
+                    <enabled>false</enabled>
+                    <updatePolicy>never</updatePolicy>
+                  </snapshots>                            
+                </repository>
+                <repository>
+                  <id>telscale-snapshots-repository</id>
+                  <name>TelScale Snapshots Repository</name>
+                  <url>http://telestax.artifactoryonline.com/telestax/snapshots</url>
+                  <releases>
+                    <enabled>false</enabled>
+                    <updatePolicy>never</updatePolicy>
+                  </releases>
+                  <snapshots>
+                    <enabled>true</enabled>
+                    <updatePolicy>never</updatePolicy>
+                  </snapshots>                            
+                </repository>
                 <repository>
                           <id>mobicents-public-repository-group</id>
                           <name>Mobicens Public Maven Repository Group</name>
