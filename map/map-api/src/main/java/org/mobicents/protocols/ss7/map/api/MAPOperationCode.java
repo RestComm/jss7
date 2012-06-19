@@ -66,4 +66,6 @@ public interface MAPOperationCode {
 	public static final int subscriberLocationReport = 86;
 	public static final int sendRoutingInfoForLCS = 85;
 
+	// -- call handling service
+	public static final int sendRoutingInfo = 22;
 }

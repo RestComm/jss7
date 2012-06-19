@@ -51,7 +51,7 @@
 			<artifactId>m3ua-impl</artifactId>
 			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
 		</dependency>
-
+		
 		<!-- Hardware Dahdi Java -->
 		<dependency>
 			<artifactId>mobicents-dahdi</artifactId>
@@ -64,6 +64,13 @@
 			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 		</dependency>
 
+		<!-- Service used for Shell Executor -->
+		<dependency>
+			<artifactId>mobicents-ss7</artifactId>
+			<groupId>org.mobicents.protocols.ss7</groupId>
+			<version>${pom.version}</version>
+		</dependency>
+				
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>

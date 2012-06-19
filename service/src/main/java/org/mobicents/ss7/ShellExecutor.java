@@ -29,6 +29,8 @@ import java.nio.channels.SelectionKey;
 import javolution.util.FastSet;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.scheduler.Scheduler;
+import org.mobicents.protocols.ss7.scheduler.Task;
 import org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAShellExecutor;
 import org.mobicents.protocols.ss7.sccp.impl.oam.SccpExecutor;
 import org.mobicents.ss7.linkset.oam.LinksetExecutor;
@@ -45,7 +47,7 @@ import org.mobicents.ss7.management.transceiver.ShellServerChannel;
  * @author amit bhayani
  * @author kulikov
  */
-public class ShellExecutor implements Runnable {
+public class ShellExecutor extends Task {
 
 	Logger logger = Logger.getLogger(ShellExecutor.class);
 
@@ -72,8 +74,8 @@ public class ShellExecutor implements Runnable {
 
 	private volatile SccpExecutor sccpExecutor = null;
 
-	public ShellExecutor() throws IOException {
-
+	public ShellExecutor(Scheduler scheduler) throws IOException {
+		super(scheduler);    	
 	}
 
 	public SccpExecutor getSccpExecutor() {
@@ -115,11 +117,25 @@ public class ShellExecutor implements Runnable {
 		this.logger.info(String.format("ShellExecutor listening at %s", inetSocketAddress));
 
 		this.started = true;
-		new Thread(this).start();
+        this.activate(false);
+		scheduler.submit(this,scheduler.MANAGEMENT_QUEUE);
 	}
 
 	public void stop() {
 		this.started = false;
+		
+		try {
+            skey.cancel();
+            if (channel != null) {
+                channel.close();
+            }
+            serverChannel.close();
+            selector.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+		
+		this.logger.info("Stopped ShellExecutor service");
 	}
 
 	public LinksetExecutor getLinksetExecutor() {
@@ -138,123 +154,113 @@ public class ShellExecutor implements Runnable {
 		m3UAShellExecutor = shellExecutor;
 	}
 
-	public void run() {
-
-		while (started) {
-			try {
-				FastSet<ChannelSelectionKey> keys = selector.selectNow();
-
-				for (FastSet.Record record = keys.head(), end = keys.tail(); (record = record.getNext()) != end;) {
-					ChannelSelectionKey key = (ChannelSelectionKey) keys.valueOf(record);
-
-					if (key.isAcceptable()) {
-						accept();
-					} else if (key.isReadable()) {
-						ShellChannel chan = (ShellChannel) key.channel();
-						Message msg = (Message) chan.receive();
-
-						if (msg != null) {
-							rxMessage = msg.toString();
-							System.out.println("received " + rxMessage);
-							if (rxMessage.compareTo("disconnect") == 0) {
-								this.txMessage = "Bye";
-								chan.send(messageFactory.createMessage(txMessage));
-
-							} else {
-								String[] options = rxMessage.split(" ");
-								Subject subject = Subject.getSubject(options[0]);
-								if (subject == null) {
-									chan.send(messageFactory.createMessage("Invalid Subject"));
-								} else {
-									// Nullify examined options
-									//options[0] = null;
-
-									switch (subject) {
-									case LINKSET:
-										if(this.linksetExecutor == null){
-											this.txMessage = "Error! LinksetExecutor is null";
-										} else{
-											this.txMessage = this.linksetExecutor.execute(options);
-										}
-										break;
-									case SCTP:
-									case M3UA:
-										if(this.m3UAShellExecutor == null){
-											this.txMessage = "Error! M3UAShellExecutor is null";
-										} else {
-											this.txMessage = this.m3UAShellExecutor.execute(options);
-										}
-										break;
-									case SCCP:
-										if(this.sccpExecutor == null){
-											this.txMessage = "Error! SccpExecutor is null";
-										} else {
-											this.txMessage = this.sccpExecutor.execute(options);
-										}
-										break;
-									default:
-										this.txMessage = "Invalid Subject";
-										break;
-									}
-									chan.send(messageFactory.createMessage(this.txMessage));
-								}
-							} // if (rxMessage.compareTo("disconnect")
-						} // if (msg != null)
-
-						// TODO Handle message
-
-						rxMessage = "";
-
-					} else if (key.isWritable() && txMessage.length() > 0) {
-
-						if (this.txMessage.compareTo("Bye") == 0) {
-							this.closeChannel();
-						}
-
-						// else {
-						//
-						// ShellChannel chan = (ShellChannel) key.channel();
-						// System.out.println("Sending " + txMessage);
-						// chan.send(messageFactory.createMessage(txMessage));
-						// }
-
-						this.txMessage = "";
-					}
-				}
-			} catch (IOException e) {
-				logger.error("IO Exception while operating on ChannelSelectionKey. Client CLI connection will be closed now", e);
-				try {
-					this.closeChannel();
-				} catch (IOException e1) {
-					logger.error("IO Exception while closing Channel", e);
-				}
-			} catch (Exception e){
-				logger.error("Exception while operating on ChannelSelectionKey. Client CLI connection will be closed now", e);
-				try {
-					this.closeChannel();
-				} catch (IOException e1) {
-					logger.error("IO Exception while closing Channel", e);
-				}
-			}
-
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-			}
-		}
+	public int getQueueNumber()
+	{
+		return scheduler.MANAGEMENT_QUEUE;
+	}
+	
+	public long perform() {
 
 		try {
-			skey.cancel();
-			if (channel != null) {
-				channel.close();
-			}
-			serverChannel.close();
-			selector.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			FastSet<ChannelSelectionKey> keys = selector.selectNow();
 
-		this.logger.info("Stopped ShellExecutor service");
+			for (FastSet.Record record = keys.head(), end = keys.tail(); (record = record.getNext()) != end;) {
+				ChannelSelectionKey key = (ChannelSelectionKey) keys.valueOf(record);
+
+				if (key.isAcceptable()) {
+					accept();
+				} else if (key.isReadable()) {
+					ShellChannel chan = (ShellChannel) key.channel();
+					Message msg = (Message) chan.receive();
+
+					if (msg != null) {
+						rxMessage = msg.toString();
+						System.out.println("received " + rxMessage);
+						if (rxMessage.compareTo("disconnect") == 0) {
+							this.txMessage = "Bye";
+							chan.send(messageFactory.createMessage(txMessage));
+
+						} else {
+							String[] options = rxMessage.split(" ");
+							Subject subject = Subject.getSubject(options[0]);
+							if (subject == null) {
+								chan.send(messageFactory.createMessage("Invalid Subject"));
+							} else {
+								// Nullify examined options
+								//options[0] = null;
+
+								switch (subject) {
+								case LINKSET:
+									if(this.linksetExecutor == null){
+										this.txMessage = "Error! LinksetExecutor is null";
+									} else{
+										this.txMessage = this.linksetExecutor.execute(options);
+									}
+									break;
+								case SCTP:
+								case M3UA:
+									if(this.m3UAShellExecutor == null){
+										this.txMessage = "Error! M3UAShellExecutor is null";
+									} else {
+										this.txMessage = this.m3UAShellExecutor.execute(options);
+									}
+									break;
+								case SCCP:
+									if(this.sccpExecutor == null){
+										this.txMessage = "Error! SccpExecutor is null";
+									} else {
+										this.txMessage = this.sccpExecutor.execute(options);
+									}
+									break;
+								default:
+									this.txMessage = "Invalid Subject";
+									break;
+								}
+								chan.send(messageFactory.createMessage(this.txMessage));
+							}
+						} // if (rxMessage.compareTo("disconnect")
+					} // if (msg != null)
+
+					// TODO Handle message
+
+					rxMessage = "";
+
+				} else if (key.isWritable() && txMessage.length() > 0) {
+
+					if (this.txMessage.compareTo("Bye") == 0) {
+						this.closeChannel();
+					}
+
+					// else {
+					//
+					// ShellChannel chan = (ShellChannel) key.channel();
+					// System.out.println("Sending " + txMessage);
+					// chan.send(messageFactory.createMessage(txMessage));
+					// }
+
+					this.txMessage = "";
+				}
+			}
+		} catch (IOException e) {
+			logger.error("IO Exception while operating on ChannelSelectionKey. Client CLI connection will be closed now", e);
+			try {
+				this.closeChannel();
+			} catch (IOException e1) {
+				logger.error("IO Exception while closing Channel", e);
+			}
+		} catch (Exception e){
+			logger.error("Exception while operating on ChannelSelectionKey. Client CLI connection will be closed now", e);
+			try {
+				this.closeChannel();
+			} catch (IOException e1) {
+				logger.error("IO Exception while closing Channel", e);
+			}
+		}	
+		
+		if(this.started)
+			scheduler.submit(this,scheduler.MANAGEMENT_QUEUE);
+		
+		return 0;
 	}
 
 	private void accept() throws IOException {

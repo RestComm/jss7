@@ -74,7 +74,10 @@ public enum MAPMessageType {
 	provideSubscriberLocation_Request,
 	provideSubscriberLocation_Response,
 	subscriberLocationReport_Request,
-	subscriberLocationReport_Response;
-
+	subscriberLocationReport_Response,
+	
+	// -- call handling
+	sendRoutingInfo_Request,
+	sendRoutingInfo_Response;
 }
 
