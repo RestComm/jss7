@@ -76,6 +76,8 @@ public class SccpManagement {
 	protected static final int UNAVAILABILITY_CAUSE_UNKNOWN = 0;
 	protected static final int UNAVAILABILITY_CAUSE_UNEQUIPED = 1;
 	protected static final int UNAVAILABILITY_CAUSE_INACCESSIBLE = 2;
+	
+	private static final int ALL_POINT_CODE = -1;
 
 //	private static final int SST_TIMER_DURATION_MIN = 10000;
 //	private static final int SST_TIMER_DURATION_MAX = 600000;
@@ -244,16 +246,24 @@ public class SccpManagement {
 	}
 
 	protected void broadcastChangedSsnState(int affectedSsn, boolean inService) {
+		this.broadcastChangedSsnState(affectedSsn, inService, ALL_POINT_CODE);
+	}
+	
+	private void broadcastChangedSsnState(int affectedSsn, boolean inService, int concernedPointCode) {
 
 		FastMap<Integer, ConcernedSignalingPointCode> lst = this.sccpStackImpl.getSccpResource().getConcernedSpcs();
 		for (FastMap.Entry<Integer, ConcernedSignalingPointCode> e = lst.head(), end = lst.tail(); (e = e.getNext()) != end;) {
 			ConcernedSignalingPointCode concernedSubSystem = e.getValue();
 
 			int dpc = concernedSubSystem.getRemoteSpc();
-			if (inService)
-				this.sendManagementMessage(dpc, SSA, affectedSsn, 0);
-			else
-				this.sendManagementMessage(dpc, SSP, affectedSsn, 0);
+			
+			if(concernedPointCode == ALL_POINT_CODE || concernedPointCode == dpc){
+				//Send SSA/SSP to only passed concerned point code
+				if (inService)
+					this.sendManagementMessage(dpc, SSA, affectedSsn, 0);
+				else
+					this.sendManagementMessage(dpc, SSP, affectedSsn, 0);
+			}
 		}
 	}
 
@@ -286,6 +296,14 @@ public class SccpManagement {
 	protected void handleMtp3Resume(int affectedPc) {
 		// Look at Q.714 Section 5.2.2
 		this.allowRsp(affectedPc, true, RemoteSccpStatus.available);
+		
+		//Send SSA for all SS registered to affectedPc if it's included in concerned point-code
+		FastMap<Integer, SccpListener> lstrs = this.sccpProviderImpl.getAllSccpListeners();
+		for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1.getNext()) != end1;) {
+			int affectedSsn = e1.getKey();
+			
+			this.broadcastChangedSsnState(affectedSsn, true, affectedPc);
+		}
 
 	}
 

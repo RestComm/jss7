@@ -25,12 +25,14 @@ package org.mobicents.protocols.ss7.sccp.impl.mgmt.ssp;
 import org.testng.annotations.*;
 
 import static org.testng.Assert.*;
+
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.impl.ConcernedSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystem;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImplProxy;
 import org.mobicents.protocols.ss7.sccp.impl.User;
+import org.mobicents.protocols.ss7.sccp.impl.mgmt.Mtp3PrimitiveMessage;
 import org.mobicents.protocols.ss7.sccp.impl.mgmt.Mtp3PrimitiveMessageType;
 import org.mobicents.protocols.ss7.sccp.impl.mgmt.SccpMgmtMessage;
 import org.mobicents.protocols.ss7.sccp.impl.mgmt.SccpMgmtMessageType;
@@ -373,7 +375,7 @@ public class SSPTest extends SccpHarness {
 		sccpStack1.setSstTimerDuration_Min(5000);
 		sccpStack1.setSstTimerDuration_IncreaseFactor(1);
 
-		ConcernedSignalingPointCode cspc = new ConcernedSignalingPointCode(2);
+		ConcernedSignalingPointCode cspc = new ConcernedSignalingPointCode(getStack2PC());
 		sccpStack1.getSccpResource().addConcernedSpc(1, cspc);
 
 		Thread.sleep(100);
@@ -391,6 +393,36 @@ public class SSPTest extends SccpHarness {
 		
 		assertEquals(((SccpStackImplProxy) sccpStack2).getManagementProxy().getMgmtMessages().size(), 2);
 		assertEquals(((SccpStackImplProxy) sccpStack2).getManagementProxy().getMgmtMessages().get(1).getType(), SccpMgmtMessageType.SSP);
+		
+		//Now test when the MTP3Pause's and then Resume's, SSA should be sent
+		
+		u1.register();
+		Thread.sleep(100);
+		
+		assertEquals(((SccpStackImplProxy) sccpStack2).getManagementProxy().getMgmtMessages().size(), 3);
+		assertEquals(((SccpStackImplProxy) sccpStack2).getManagementProxy().getMgmtMessages().get(2).getType(), SccpMgmtMessageType.SSA);
+		
+		//Pause Stack2PC
+		this.mtp3UserPart1.sendPauseMessageToLocalUser(getStack2PC());
+		Thread.sleep(100);
+		
+		assertTrue(((SccpStackImplProxy) sccpStack1).getManagementProxy().getMtp3Messages().size() == 1,"U1 did not receive Mtp3 Primitve, it should !");
+		Mtp3PrimitiveMessage rmtpPause = ((SccpStackImplProxy) sccpStack1).getManagementProxy().getMtp3Messages().get(0);
+		Mtp3PrimitiveMessage emtpPause = new Mtp3PrimitiveMessage(0, Mtp3PrimitiveMessageType.MTP3_PAUSE, getStack2PC());
+		assertEquals( rmtpPause,emtpPause,"Failed to match management message in U1");
+		
+		//Resume Stack2PC
+		this.mtp3UserPart1.sendResumeMessageToLocalUser(getStack2PC());
+		Thread.sleep(100);
+		
+		assertTrue(((SccpStackImplProxy) sccpStack1).getManagementProxy().getMtp3Messages().size() == 2,"U1 did not receive Mtp3 Primitve, it should !");
+		rmtpPause = ((SccpStackImplProxy) sccpStack1).getManagementProxy().getMtp3Messages().get(1);
+		emtpPause = new Mtp3PrimitiveMessage(1, Mtp3PrimitiveMessageType.MTP3_RESUME, getStack2PC());
+		assertEquals( rmtpPause,emtpPause,"Failed to match management message in U1");
+		
+		//And stack2 should receive SSA
+		assertEquals(((SccpStackImplProxy) sccpStack2).getManagementProxy().getMgmtMessages().size(), 4);
+		assertEquals(((SccpStackImplProxy) sccpStack2).getManagementProxy().getMgmtMessages().get(3).getType(), SccpMgmtMessageType.SSA);		
 		
 	}
 	
