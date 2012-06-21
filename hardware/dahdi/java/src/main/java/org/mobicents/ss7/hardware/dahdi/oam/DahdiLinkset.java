@@ -337,7 +337,7 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
                 System.arraycopy(data, 0, paramArrayOfByte, 0, data.length);
             }
             
-            return paramArrayOfByte == null ? 0 : paramArrayOfByte.length;
+            return paramArrayOfByte == null ? 0 : data.length;
         }
 
         public SelectorKey register(StreamSelector selector) throws IOException {

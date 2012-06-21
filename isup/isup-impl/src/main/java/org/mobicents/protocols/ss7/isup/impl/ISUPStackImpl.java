@@ -79,7 +79,7 @@ public class ISUPStackImpl implements ISUPStack, Mtp3UserPartListener {
 	public ISUPStackImpl(Scheduler scheduler,int localSpc,int ni) {
 		super();
 		this.scheduler=scheduler;		
-		this.provider = new ISUPProviderImpl(this, scheduler , localSpc, ni);
+		this.provider = new ISUPProviderImpl(this, scheduler , ni, localSpc);
 		this.parameterFactory = this.provider.getParameterFactory();
 		this.messageFactory = this.provider.getMessageFactory();
 		

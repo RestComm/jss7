@@ -47,6 +47,7 @@ import org.mobicents.ss7.linkset.oam.LinksetStream;
 
 import org.mobicents.protocols.ss7.scheduler.Scheduler;
 import org.mobicents.protocols.ss7.scheduler.Task;
+import org.mobicents.protocols.ss7.scheduler.IntConcurrentHashMap;
 
 /** */
 public class NodalInterworkingFunction extends Task implements Layer4,Mtp3UserPartListener {
@@ -64,11 +65,14 @@ public class NodalInterworkingFunction extends Task implements Layer4,Mtp3UserPa
 
 	private int OP_READ_WRITE = 3;
 
-	private byte[] rxBuffer;
-
+	//max data size is 2176;
+	private byte[] rxBuffer=new byte[2176];
+	private byte[] tempBuffer;
+	
 	private ConcurrentLinkedQueue<byte[]> mtpqueue = new ConcurrentLinkedQueue<byte[]>();
 	private ConcurrentLinkedQueue<Mtp3TransferPrimitive> m3uaqueue = new ConcurrentLinkedQueue<Mtp3TransferPrimitive>();
 
+	private IntConcurrentHashMap<Linkset> linksets=new IntConcurrentHashMap<Linkset>();
 	public NodalInterworkingFunction(Scheduler scheduler) {
 		super(scheduler);
 	}
@@ -98,6 +102,8 @@ public class NodalInterworkingFunction extends Task implements Layer4,Mtp3UserPa
 	// Layer4 methods
 	public void add(Linkset linkset) {
 		try {
+			linksets.add(linkset,linkset.getApc());
+			
 			linksetStream = linkset.getLinksetStream();
 			linksetStream.register(this.linkSetSelector);
 		} catch (IOException ex) {
@@ -105,8 +111,8 @@ public class NodalInterworkingFunction extends Task implements Layer4,Mtp3UserPa
 		}
 	}
 
-	public void remove(Linkset arg0) {
-		// TODO Auto-generated method stub
+	public void remove(Linkset linkset) {
+		linksets.remove(linkset.getApc());
 
 	}
 
@@ -144,38 +150,34 @@ public class NodalInterworkingFunction extends Task implements Layer4,Mtp3UserPa
 			FastList<SelectorKey> selected = linkSetSelector.selectNow(OP_READ_WRITE, 1);
 			for (FastList.Node<SelectorKey> n = selected.head(), end = selected.tail(); (n = n.getNext()) != end;) {
 				SelectorKey key = n.getValue();
-				((LinksetStream) key.getStream()).read(rxBuffer);
-
-				// Read data
-				if (rxBuffer != null) {
+				int size=((LinksetStream) key.getStream()).read(rxBuffer);
+				if(size>0)
+				{
+					tempBuffer=new byte[size];
+					System.arraycopy(rxBuffer, 0, tempBuffer, 0, size);
+					
 					currPrimitive=new Mtp3TransferPrimitive();
-					currPrimitive.decodeMtp3(rxBuffer);
-					this.m3UAManagement.sendMessage(currPrimitive);					
-				}				
+					currPrimitive.decodeMtp3(tempBuffer);
+					this.m3UAManagement.sendMessage(currPrimitive);				
+				}
 			}
 		}
 		catch(IOException e)
-		{
-			
+		{			
 		}
 								
 		try
 		{
-			// TODO
-			currPrimitive = null;
-			FastMap<String, Linkset> map = this.linksetManager.getLinksets();
+			currPrimitive = null;			
 			while ((currPrimitive = m3uaqueue.poll()) != null)
-			{							
-				for (FastMap.Entry<String, Linkset> e = map.head(), end = map.tail(); (e = e.getNext()) != end;) {
-					Linkset value = e.getValue();
-					if(value.getApc()==currPrimitive.getDpc())
-						value.getLinksetStream().write(currPrimitive.encodeMtp3());
-				}
-			}									
+			{				
+				Linkset value = linksets.get(currPrimitive.getDpc());
+				if(value!=null)
+					value.getLinksetStream().write(currPrimitive.encodeMtp3());				
+			}
 		}
 		catch(IOException e)
-		{
-			
+		{			
 		}						
 		
 		scheduler.submit(this,scheduler.INTERNETWORKING_QUEUE);

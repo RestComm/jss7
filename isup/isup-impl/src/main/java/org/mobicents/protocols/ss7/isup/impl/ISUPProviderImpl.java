@@ -168,6 +168,15 @@ public class ISUPProviderImpl implements ISUPProvider {
 		return false;
 	}
 
+	public void cancelAllTimers(int cic, int dpc)
+	{
+		long channelID=this.stack.getCircuitManager().getChannelID(cic,dpc);
+		if (this.cic2Circuit.containsKey(channelID)) {
+			Circuit c = this.cic2Circuit.get(channelID);
+			c.onStop();
+		}
+	}
+	
 	// ---------------------- non interface methods ----------------
 
 	public void start() {
@@ -213,8 +222,12 @@ public class ISUPProviderImpl implements ISUPProvider {
 			if (this.cic2Circuit.containsKey(channelID)) {
 				this.cic2Circuit.remove(channelID);
 			}
-			throw new IllegalArgumentException("Curcuit not defined, no route definition present!");
-
+			
+			//what for do we need to throw this error , lets simply add a circuit and return it , we have all parameters anyway
+			//throw new IllegalArgumentException("Curcuit not defined, no route definition present!");
+			this.stack.getCircuitManager().addCircuit(cic,dpc);
+			c = new Circuit(cic, dpc,this, scheduler);
+			cic2Circuit.put(channelID, c);			
 		} else {
 			c = this.cic2Circuit.get(channelID);
 		}

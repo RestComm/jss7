@@ -98,4 +98,13 @@ public interface ISUPProvider extends Serializable {
 	 */
 	public boolean cancelTimer(int cic, int dcp, int timerId);
 
+	/**
+	 * cancel all timers. Useable when circuit usage is ended
+	 * 
+	 * @param cic
+	 *            - circuit identification code
+	 * @param dpc
+	 *            - destination point code             
+	 */
+	public void cancelAllTimers(int cic, int dpc);
 }
