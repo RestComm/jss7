@@ -160,7 +160,9 @@ public class ShellExecutor extends Task {
 	}
 	
 	public long perform() {
-
+		if(!this.started)
+			return 0;
+		
 		try {
 			FastSet<ChannelSelectionKey> keys = selector.selectNow();
 
