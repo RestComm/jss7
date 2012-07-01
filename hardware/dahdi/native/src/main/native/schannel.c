@@ -40,15 +40,15 @@ static int openFileChannel(jint zapid,jint ioBufferSize) {
     int res;
     int fd;
 
-    sprintf(devname,"/dev/dahdi/%d",zapid );
-
-
-
-    fd = open(devname, O_RDWR);
+    fd = open("/dev/dahdi/channel", O_RDWR);	
     if (fd < 0) {
         return -1;
-    }
+    }	
 
+	res = ioctl(fd, DAHDI_SPECIFY, &zapid);
+	if(res<0) {
+		return -1;
+	}
 
     bi.txbufpolicy = DAHDI_POLICY_IMMEDIATE;
     bi.rxbufpolicy = DAHDI_POLICY_IMMEDIATE;
@@ -62,6 +62,11 @@ static int openFileChannel(jint zapid,jint ioBufferSize) {
         return -1;
     }
     
+	res = ioctl(fd, DAHDI_SET_BLOCKSIZE, &ioBufferSize);
+	if (res < 0) {
+        return -1;
+    }
+
     return fd;    	
 }
 
