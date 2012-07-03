@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,113 +19,40 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.mobicents.ss7.management.console;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.util.Scanner;
+import java.io.File;
+import java.util.Collection;
 
 /**
- * <p>
- * Represents the character-based console device associated with current Java
- * virtual machine.
- * </p>
- * 
- * <p>
- * The console instance is created by passing {@link InputStream} and
- * {@link OutputStream} from which this console reads and writes data to. The
- * console blocks till next line of data is available. Once the line is read
- * from {@link InputStream}, it calls {@link ConsoleListener}
- * </p>
- * 
- * 
  * @author amit bhayani
- * 
+ *
  */
-public class Console {
+public interface Console {
+	
+	void stop();
+	
+	void addCompleter(CommandLineCompleter completer);
 
-    private final OutputStream out;
-    private final PrintWriter pw;
-    private final InputStream in;
-    private final Scanner scanner;
+    boolean isUseHistory();
 
-    private String prefix;
+    void setUseHistory(boolean useHistory);
 
-    private boolean stopped = false;
+    CommandHistory getHistory();
 
-    private ConsoleListener consoleListener = null;
+    void setHistoryFile(File f);
 
-    public Console(InputStream in, OutputStream out,
-            ConsoleListener consoleListener, String prefix) {
-        // prefix
-        this.prefix = prefix;
+    void clearScreen();
 
-        // Input
-        this.in = in;
-        this.scanner = new Scanner(this.in);
+    void printColumns(Collection<String> list);
 
-        // Output
-        this.out = out;
-        this.pw = new PrintWriter(this.out);
+    void print(String line);
 
-        // Listener
-        this.consoleListener = consoleListener;
-        this.consoleListener.setConsole(this);
+    void printNewLine();
 
-    }
+    String readLine(String prompt);
 
-    /**
-     * Starts this console. Will block till next line of data is available
-     */
-    public void start() {
-        addPrefix();
-        while (!stopped && scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-            if (this.consoleListener != null) {
-                this.consoleListener.commandEntered(line);
-            }
-
-            if (!this.stopped) {
-                addPrefix();
-            }
-        }
-    }
-
-    /**
-     * Set the prefix. Adds this prefix on next line after reading current line
-     * of data
-     * 
-     * @param prefix
-     */
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
-    }
-
-    private void addPrefix() {
-        if (this.prefix != null) {
-            this.write("\n");
-            this.write(prefix);
-        }
-    }
-
-    /**
-     * Stop the console
-     */
-    public void stop() {
-        this.stopped = true;
-        this.scanner.close();
-    }
-
-    /**
-     * Write the passed text to {@link OutputStream} referenced by this console
-     * 
-     * @param text
-     */
-    public void write(String text) {
-        pw.write(text);
-        pw.flush();
-    }
-
+    String readLine(String prompt, Character mask);
+    
+   
 }

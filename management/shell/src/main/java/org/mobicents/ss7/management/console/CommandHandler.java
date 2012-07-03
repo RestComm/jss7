@@ -19,18 +19,22 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.mobicents.ss7.management.console;
 
+import java.util.List;
+
 /**
- * Listener interface for receiving options specific to linkset. The class that
- * is interested in processing command implements this interface.
- * 
  * @author amit bhayani
  * 
  */
-public interface ShellExecutor {
+public interface CommandHandler {
 
-    public String execute(String[] options);
+	public boolean handles(String command);
+
+	public List<CommandLineCompleter> getCommandLineCompleterList();
+
+	public boolean isAvailable(CommandContext ctx);
+
+	public void handle(CommandContext ctx, String command);
 
 }

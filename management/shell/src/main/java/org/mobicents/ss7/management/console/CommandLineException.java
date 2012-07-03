@@ -19,18 +19,28 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.mobicents.ss7.management.console;
 
 /**
- * Listener interface for receiving options specific to linkset. The class that
- * is interested in processing command implements this interface.
- * 
  * @author amit bhayani
  * 
  */
-public interface ShellExecutor {
+public class CommandLineException extends Exception {
 
-    public String execute(String[] options);
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3970317811436379869L;
 
+	public CommandLineException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public CommandLineException(String message) {
+		super(message);
+	}
+
+	public CommandLineException(Throwable cause) {
+		super(cause);
+	}
 }
