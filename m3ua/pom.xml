@@ -19,6 +19,8 @@
 	<modules>
 		<module>api</module>
 		<module>impl</module>
+		<module>cli/sctp</module>
+		<module>cli/m3ua</module>
 	</modules>
 
 	<!-- -->
