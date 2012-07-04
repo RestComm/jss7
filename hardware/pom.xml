@@ -22,6 +22,7 @@
 
 	<modules>
 		<module>linkset</module>
+		<module>cli</module>
 		<module>dahdi</module>
 		<module>dialogic</module>
 	</modules>
