@@ -21,6 +21,7 @@
 	</properties>
 
 	<modules>
+		<module>linkset</module>
 		<module>dahdi</module>
 		<module>dialogic</module>
 	</modules>
