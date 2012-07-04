@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,7 +19,6 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.mobicents.ss7.management.console;
 
 import java.io.InputStream;
@@ -28,8 +27,8 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Version class reads the version.properties packaged with cli.jar for
- * run time display of Version
+ * Version class reads the version.properties packaged with cli.jar for run time
+ * display of Version
  * 
  * @author amit.bhayani
  * 
@@ -65,8 +64,8 @@ public final class Version {
 	/**
 	 * Returns the value for the given property name.
 	 * 
-	 * @param name -
-	 *            The name of the property.
+	 * @param name
+	 *            - The name of the property.
 	 * @return The property value or null if the property is not set.
 	 */
 	public String getProperty(final String name) {
@@ -79,7 +78,7 @@ public final class Version {
 	 * @return Basic information as a string.
 	 */
 	public String toString() {
-		StringBuilder sb = new StringBuilder("Mobicents SS7: ");
+		StringBuilder sb = new StringBuilder();
 		boolean first = true;
 		for (Object key : props.keySet()) {
 			if (first) {
@@ -100,8 +99,7 @@ public final class Version {
 		props = new Properties();
 
 		try {
-			InputStream in = Version.class
-					.getResourceAsStream("version.properties");
+			InputStream in = Version.class.getResourceAsStream("version.properties");
 			props.load(in);
 			in.close();
 		} catch (Exception e) {

@@ -1,0 +1,39 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.mobicents.protocols.ss7.hardware</groupId>
+		<artifactId>mobicents-hardware</artifactId>
+		<version>2.0.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>cli</artifactId>
+	<name>Mobicents SS7 :: Hardware :: ${pom.artifactId}</name>
+
+	<dependencies>
+		<!-- <dependency> <groupId>log4j</groupId> <artifactId>log4j</artifactId> 
+			<version>${log4j.version}</version> </dependency> -->
+		<!-- MTP3 -->
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.management</groupId>
+			<artifactId>shell</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>${pom.artifactId}-${pom.version}</finalName>
+		<resources>
+			<resource>
+				<directory>src/main/resources/archive-files</directory>
+				<targetPath>META-INF/services</targetPath>
+			</resource>
+		</resources>
+	</build>
+</project>

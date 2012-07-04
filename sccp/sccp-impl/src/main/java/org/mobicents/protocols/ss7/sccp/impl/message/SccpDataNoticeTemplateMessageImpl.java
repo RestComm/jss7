@@ -291,7 +291,7 @@ public abstract class SccpDataNoticeTemplateMessageImpl extends SccpSegmentableM
 			return new EncodingResultData(EncodingResult.ProtocolClassMissing, null, null, null);
 
 		byte[] cdp = SccpAddressCodec.encode(calledParty, this.sccpStackImpl.isRemoveSpc());
-		byte[] cnp = SccpAddressCodec.encode(callingParty, false);
+		byte[] cnp = SccpAddressCodec.encode(callingParty, this.sccpStackImpl.isRemoveSpc());
 
 		if (longMessageRuleType == null)
 			longMessageRuleType = LongMessageRuleType.LongMessagesForbidden;

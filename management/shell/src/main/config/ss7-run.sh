@@ -98,12 +98,13 @@ if [ "x$JAVA" = "x" ]; then
 fi
 
 # Setup the classpath
-runjar="$SHELL_HOME/bin/mobicents-ss7-shell.jar"
+runjar="$SHELL_HOME/lib/mobicents-ss7-shell.jar"
 if [ ! -f "$runjar" ]; then
     die "Missing required file: $runjar"
 fi
 
 SHELL_BOOT_CLASSPATH="$runjar"
+SHELL_CLASSPATH="$SHELL_HOME/lib/*"
 
 if [ "x$SHELL_CLASSPATH" = "x" ]; then
     SHELL_CLASSPATH="$SHELL_BOOT_CLASSPATH"
@@ -146,24 +147,23 @@ if $cygwin; then
 fi
 
 # Display our environment
-echo "========================================================================="
-echo ""
-echo "  Mobicents SS7 Management Shell Bootstrap Environment"
-echo ""
-echo "  SHELL_HOME: $SHELL_HOME"
-echo ""
-echo "  JAVA: $JAVA"
-echo ""
-echo "  JAVA_OPTS: $JAVA_OPTS"
-echo ""
-echo "  CLASSPATH: $SHELL_CLASSPATH"
-echo ""
-echo "========================================================================="
-echo ""
+#echo "========================================================================="
+#echo ""
+#echo "  Mobicents SS7 Management Shell Bootstrap Environment"
+#echo ""
+#echo "  SHELL_HOME: $SHELL_HOME"
+#echo ""
+#echo "  JAVA: $JAVA"
+#echo ""
+#echo "  JAVA_OPTS: $JAVA_OPTS"
+#echo ""
+#echo "  CLASSPATH: $SHELL_CLASSPATH"
+#echo ""
+#echo "========================================================================="
+#echo ""
 
       "$JAVA" $JAVA_OPTS \
          -Djava.ext.dirs="$SHELL_ENDORSED_DIRS" \
-         -Dmbrola.base="$SHELL_HOME/mbrola" \
          -classpath "$SHELL_CLASSPATH" \
          org.mobicents.ss7.management.console.Shell "$@"
       SHELL_STATUS=$?

@@ -29,7 +29,7 @@
 		</dependency>
 		<dependency>
 			<artifactId>linkset</artifactId>
-			<groupId>org.mobicents.protocols.ss7.management</groupId>
+			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 		</dependency>
 
 		<dependency>

@@ -1,5 +1,5 @@
 <assembly>
-	<id>client</id>
+	<id>cli</id>
 	<formats>
 		<format>zip</format>
 	</formats>
@@ -21,7 +21,7 @@
 			<source>target/mobicents-ss7-shell.jar</source>
 			<fileMode>0744</fileMode>
 			<filtered>true</filtered>
-			<destName>bin/mobicents-ss7-shell.jar</destName>
+			<destName>lib/mobicents-ss7-shell.jar</destName>
 		</file>
 
 	</files>

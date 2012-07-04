@@ -485,7 +485,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		try {
 			int fieldsLen = 0;
 			byte[] cdp = SccpAddressCodec.encode(calledPartyAddress, this.isRemoveSpc());
-			byte[] cnp = SccpAddressCodec.encode(callingPartyAddress, false);
+			byte[] cnp = SccpAddressCodec.encode(callingPartyAddress, this.isRemoveSpc());
 			switch (lmrt) {
 			case LongMessagesForbidden:
 				fieldsLen = this.calculateUdtFieldsLengthWithoutData(cdp.length, cnp.length);

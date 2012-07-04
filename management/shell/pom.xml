@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -10,15 +11,7 @@
 	<artifactId>shell</artifactId>
 	<name>Mobicents SS7 :: Management :: ${pom.artifactId}</name>
 
-	<properties>
-		<tool.directory>
-			${project.build.directory}/release
-		</tool.directory>
-		<tool.directory.lib>${tool.directory}/lib</tool.directory.lib>
-	</properties>
-
 	<dependencies>
-
 		<!-- non mobicents -->
 		<dependency>
 			<groupId>log4j</groupId>
@@ -38,169 +31,12 @@
 			<groupId>javolution</groupId>
 			<artifactId>javolution</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.jboss.jreadline</groupId>
+			<artifactId>jreadline</artifactId>
+			<version>0.17</version>
+		</dependency>
 	</dependencies>
-
-	<profiles>
-		<profile>
-			<id>release</id>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<version>1.1</version>
-						<executions>
-							<execution>
-								<id>copy-resources</id>
-								<goals>
-									<goal>run</goal>
-								</goals>
-								<phase>install</phase>
-								<inherited>false</inherited>
-								<configuration>
-									<tasks>
-										<copy todir="${tool.directory}" verbose="true">
-											<fileset dir="src/main/config" includes="*.sh" />
-											<fileset dir="src/main/config" includes="*.bat" />
-										</copy>
-									</tasks>
-								</configuration>
-							</execution>
-						</executions>
-
-					</plugin>
-
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-dependency-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>copy-dependency-jar</id>
-								<phase>install</phase>
-								<goals>
-									<goal>copy</goal>
-								</goals>
-								<configuration>
-
-									<!-- Mobicents part -->
-									<artifactItems>
-										<artifactItem>
-											<groupId>
-												${pom.groupId}
-											</groupId>
-											<artifactId>
-												${pom.artifactId}
-											</artifactId>
-											<version>
-												${pom.version}
-											</version>
-											<type>jar</type>
-											<overWrite>true</overWrite>
-											<outputDirectory>
-												${tool.directory}
-											</outputDirectory>
-											<destFileName>
-												mobicents-ss7-shell.jar
-											</destFileName>
-										</artifactItem>
-									</artifactItems>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>jboss</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>deploy</id>
-								<phase>install</phase>
-								<goals>
-									<goal>run</goal>
-								</goals>
-								<configuration>
-									<tasks>
-										<copy todir="${jboss.home}/bin">
-											<fileset dir="${project.build.directory}">
-												<filename name="mobicents-ss7-shell.jar" />
-											</fileset>
-											<fileset dir="${project.build.directory}/../src/main/config">
-												<include name="*.*" />
-											</fileset>
-										</copy>
-									</tasks>
-								</configuration>
-							</execution>
-							<execution>
-								<id>undeploy</id>
-								<phase>clean</phase>
-								<goals>
-									<goal>run</goal>
-								</goals>
-								<configuration>
-									<tasks>
-										<delete failonerror="false">
-											<fileset dir="${basedir}/src/main/resources">
-												<include name="standard-components-du.jar" />
-											</fileset>
-										</delete>
-										<delete failonerror="false" includeemptydirs="true">
-											<fileset dir="${jboss.home}/server/all/deploy/${build.finalName}" />
-										</delete>
-									</tasks>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-dependency-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>copy</id>
-								<phase>package</phase>
-								<goals>
-									<goal>copy</goal>
-								</goals>
-								<configuration>
-									<artifactItems>
-										<artifactItem>
-											<groupId>
-												javolution
-											</groupId>
-											<artifactId>
-												javolution
-											</artifactId>
-											<version>
-												${javolution.version}
-											</version>
-											<type>jar</type>
-											<outputDirectory>
-												${jboss.home}/bin/lib
-											</outputDirectory>
-											<destFileName>
-												javolution.jar
-											</destFileName>
-										</artifactItem>
-									</artifactItems>
-									<!-- other configurations here -->
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 
 	<build>
 		<finalName>mobicents-ss7-shell</finalName>
@@ -232,5 +68,75 @@
 			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>mobicents</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<cli.name>Mobicents CLI</cli.name>
+				<cli.vendor>TeleStax</cli.vendor>
+				<cli.version>${pom.version}</cli.version>
+				<cli.prefix>mobicents</cli.prefix>
+			</properties>
 
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<configuration>
+							<descriptors>
+								<descriptor>
+									src/main/assembly/pojo.xml
+								</descriptor>
+							</descriptors>
+							<finalName>mobicents</finalName>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>directory-inline</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+
+		</profile>
+		<profile>
+			<id>telscale</id>
+			<properties>
+				<cli.name>TelScale CLI</cli.name>
+				<cli.vendor>TeleStax</cli.vendor>
+				<cli.version>${pom.version}</cli.version>
+				<cli.prefix>telscale</cli.prefix>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<configuration>
+							<descriptors>
+								<descriptor>
+									src/main/assembly/pojo.xml
+								</descriptor>
+							</descriptors>
+							<finalName>telscale</finalName>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>directory-inline</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

@@ -83,7 +83,7 @@ public class Client {
     public Message run(Message outgoing) throws IOException {
 
         if (!this.isConnected) {
-            throw new IllegalStateException("Not yet connected");
+        	return provider.getMessageFactory().createMessage("Not yet connected");
         }
 
         int count = 3;

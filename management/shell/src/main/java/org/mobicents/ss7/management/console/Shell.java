@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,11 +19,8 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.mobicents.ss7.management.console;
 
-import java.io.InputStream;
-import java.io.PrintStream;
 
 /**
  * <p>
@@ -31,71 +28,106 @@ import java.io.PrintStream;
  * SS7 stack.
  * </p>
  * 
- *
+ * 
  * @author amit bhayani
  * 
  */
 public class Shell {
 
-    Version version = Version.instance;
+	Version version = Version.instance;
 
-    public final String WELCOME_MESSAGE = version.toString()
-            + "\n"
-            + "This is free software, with components licensed under the GNU General Public License\n"
-            + "version 2 and other licenses. For further details visit http://mobicents.org\n"
-            + "=========================================================================";
+	public final String WELCOME_MESSAGE = version.toString();
 
-    public static final String CONNECTED_MESSAGE = "Connected to %s currently running on %s";
+	public static final String CONNECTED_MESSAGE = "Connected to %s currently running on %s";
 
-    public static final String CLI_PREFIX = "mobicents";
-    public static final String CLI_POSTFIX = ">";
+	public final String prefix;
+	public static final String CLI_POSTFIX = ">";
 
-    private final ConsoleListener listener;
-    private final Console console;
+	private void showCliHelp() {
+		System.out.println(version.toString());
+		System.out.println("Usage: SS7 [OPTIONS]");
+		System.out.println("Valid Options");
+		System.out.println("-v           Display version number and exit");
+		System.out.println("-h           This help screen");
+	}
 
-    private static final InputStream in = System.in;
-    private static final PrintStream out = System.out;
+	public Shell() {
+		prefix = version.getProperty("prefix");
+	}
 
-    private void showCliHelp() {
-        System.out.println(version.toString());
-        System.out.println("Usage: SS7 [OPTIONS]");
-        System.out.println("Valid Options");
-        System.out.println("-v           Display version number and exit");
-        System.out.println("-h           This help screen");
-    }
+	public static void main(String args[]) throws Exception {
+		Shell shell = new Shell();
+		shell.start(args);
+	}
 
-    public Shell() throws Exception {
-        listener = new ConsoleListenerImpl();
-        console = new Console(in, out, listener, CLI_PREFIX + CLI_POSTFIX);
-    }
+	private void start(String args[]) throws Exception {
 
-    public static void main(String args[]) throws Exception {
-        Shell shell = new Shell();
-        shell.start(args);
-    }
+		// Take care of Cmd Line arguments
+		if (args != null && args.length > 0) {
 
-    private void start(String args[]) throws Exception {
+			String cmd = args[0];
 
-        // Take care of Cmd Line arguments
-        if (args != null && args.length > 0) {
+			if (cmd.compareTo("-v") == 0) {
+				System.out.println(version.toString());
+				System.exit(0);
+			}
 
-            String cmd = args[0];
+			if (cmd.compareTo("-h") == 0) {
+				this.showCliHelp();
+				System.exit(0);
+			}
 
-            if (cmd.compareTo("-v") == 0) {
-                System.out.println(version.toString());
-                System.exit(0);
-            }
+		}
 
-            if (cmd.compareTo("-h") == 0) {
-                this.showCliHelp();
-                System.exit(0);
-            }
+		System.out.println(WELCOME_MESSAGE);
 
-        }
+		CommandContextImpl commandContext = new CommandContextImpl();
+		commandContext.setPrefix(this.prefix);
 
-        System.out.println(WELCOME_MESSAGE);
+		// consoleListener = new ConsoleListenerImpl(this.prefix,
+		// commandContext);
+		// console = new ConsoleImpl(commandContext);
+		// consoleListener.setConsole(console);
+		// console.start();
+		String line;
+		// console.pushToConsole(ANSIColors.GREEN_TEXT());
+		while ((!commandContext.isTerminated() && ((line = commandContext.readLine()) != null))) {
+			line = line.trim();
 
-        console.start();
-    }
+			if (line.equals("")) {
+				continue;
+			}
+			// if (line.equalsIgnoreCase("password")) {
+			// line = console.read("password: ", Character.valueOf((char) 0));
+			// console.pushToConsole("password typed:" + line + "\n");
+			//
+			// }
+			if (line.equals("clear") || line.equals("cls")) {
+				commandContext.clearScreen();
+				continue;
+			}
 
+			// this.consoleListener.commandEntered(line);
+
+			CommandHandler commandHandler = null;
+			for (CommandHandler commandHandlerTemp : ConsoleImpl.commandHandlerList) {
+				if (commandHandlerTemp.handles(line)) {
+					commandHandler = commandHandlerTemp;
+					break;
+				}
+			}
+
+			if (commandHandler != null) {
+
+				if (!commandHandler.isAvailable(commandContext)) {
+					continue;
+				}
+
+				commandHandler.handle(commandContext, line);
+			} else {
+				commandContext.printLine("Unexpected command \"" + line + "\"");
+			}
+
+		}
+	}
 }
