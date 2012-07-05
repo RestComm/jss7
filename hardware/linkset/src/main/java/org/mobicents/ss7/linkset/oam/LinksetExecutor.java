@@ -121,4 +121,12 @@ public class LinksetExecutor implements ShellExecutor {
         return LinkOAMMessages.INVALID_COMMAND;
     }
 
+	/* (non-Javadoc)
+	 * @see org.mobicents.ss7.management.console.ShellExecutor#handles(java.lang.String)
+	 */
+	@Override
+	public boolean handles(String command) {
+		return (command.startsWith("linkset"));
+	}
+
 }

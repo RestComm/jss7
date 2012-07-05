@@ -43,13 +43,14 @@ import org.mobicents.protocols.ss7.sccp.impl.router.Rule;
 import org.mobicents.protocols.ss7.sccp.impl.router.RuleType;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.ss7.management.console.ShellExecutor;
 
 /**
  * 
  * @author amit bhayani
  * 
  */
-public class SccpExecutor {
+public class SccpExecutor implements ShellExecutor {
 
 	private static final Logger logger = Logger.getLogger(SccpExecutor.class);
 
@@ -66,7 +67,6 @@ public class SccpExecutor {
 		this.sccpResource = sccpStack.getSccpResource();
 		this.sccpStack = sccpStack;
 	}
-
 
 	public String execute(String[] options) {
 		if (this.router == null || this.sccpResource == null) {
@@ -213,14 +213,14 @@ public class SccpExecutor {
 				}
 				return rss.toString();
 			}
-			
-			if(this.sccpResource.getRemoteSsns().size() == 0){
+
+			if (this.sccpResource.getRemoteSsns().size() == 0) {
 				return SccpOAMMessage.RSS_DOESNT_EXIST;
 			}
 
 			StringBuffer sb = new StringBuffer();
-			for (FastMap.Entry<Integer, RemoteSubSystem> e = this.sccpResource.getRemoteSsns().head(), end = this.sccpResource
-					.getRemoteSsns().tail(); (e = e.getNext()) != end;) {
+			for (FastMap.Entry<Integer, RemoteSubSystem> e = this.sccpResource.getRemoteSsns().head(), end = this.sccpResource.getRemoteSsns().tail(); (e = e
+					.getNext()) != end;) {
 				int key = e.getKey();
 				RemoteSubSystem rss = e.getValue();
 				sb.append("key=");
@@ -252,7 +252,9 @@ public class SccpExecutor {
 				return SccpOAMMessage.INVALID_COMMAND;
 			}
 
-			int remoteSpcId = Integer.parseInt(options[3]); //FIXME: Amit is this ok? - to use ID?
+			int remoteSpcId = Integer.parseInt(options[3]); // FIXME: Amit is
+															// this ok? - to use
+															// ID?
 			if (this.sccpResource.getRemoteSpc(remoteSpcId) != null) {
 				return SccpOAMMessage.RSPC_ALREADY_EXIST;
 			}
@@ -309,13 +311,13 @@ public class SccpExecutor {
 				return rspc.toString();
 			}
 
-			if(this.sccpResource.getRemoteSpcs().size() == 0){
+			if (this.sccpResource.getRemoteSpcs().size() == 0) {
 				return SccpOAMMessage.RSPC_DOESNT_EXIST;
 			}
-			
+
 			StringBuffer sb = new StringBuffer();
-			for (FastMap.Entry<Integer, RemoteSignalingPointCode> e = this.sccpResource.getRemoteSpcs().head(), end = this.sccpResource
-					.getRemoteSpcs().tail(); (e = e.getNext()) != end;) {
+			for (FastMap.Entry<Integer, RemoteSignalingPointCode> e = this.sccpResource.getRemoteSpcs().head(), end = this.sccpResource.getRemoteSpcs().tail(); (e = e
+					.getNext()) != end;) {
 				int key = e.getKey();
 				RemoteSignalingPointCode rsp = e.getValue();
 				sb.append("key=");
@@ -391,14 +393,14 @@ public class SccpExecutor {
 				}
 				return pa.toString();
 			}
-			
-			if(this.router.getPrimaryAddresses().size() == 0){
+
+			if (this.router.getPrimaryAddresses().size() == 0) {
 				return SccpOAMMessage.ADDRESS_DOESNT_EXIST;
 			}
 
 			StringBuffer sb = new StringBuffer();
-			for (FastMap.Entry<Integer, SccpAddress> e = this.router.getPrimaryAddresses().head(), end = this.router
-					.getPrimaryAddresses().tail(); (e = e.getNext()) != end;) {
+			for (FastMap.Entry<Integer, SccpAddress> e = this.router.getPrimaryAddresses().head(), end = this.router.getPrimaryAddresses().tail(); (e = e
+					.getNext()) != end;) {
 				int key = e.getKey();
 				SccpAddress address = e.getValue();
 				sb.append("key=");
@@ -472,14 +474,14 @@ public class SccpExecutor {
 				}
 				return pa.toString();
 			}
-			
-			if(this.router.getBackupAddresses().size() == 0){
+
+			if (this.router.getBackupAddresses().size() == 0) {
 				return SccpOAMMessage.ADDRESS_DOESNT_EXIST;
 			}
 
 			StringBuffer sb = new StringBuffer();
-			for (FastMap.Entry<Integer, SccpAddress> e = this.router.getBackupAddresses().head(), end = this.router
-					.getBackupAddresses().tail(); (e = e.getNext()) != end;) {
+			for (FastMap.Entry<Integer, SccpAddress> e = this.router.getBackupAddresses().head(), end = this.router.getBackupAddresses().tail(); (e = e
+					.getNext()) != end;) {
 				int key = e.getKey();
 				SccpAddress address = e.getValue();
 				sb.append("key=");
@@ -585,7 +587,7 @@ public class SccpExecutor {
 		} else {
 			return SccpOAMMessage.INVALID_COMMAND;
 		}
-		
+
 		int pAddressId = Integer.parseInt(options[13]);
 
 		SccpAddress pAddress = this.router.getPrimaryAddress(pAddressId);
@@ -756,14 +758,13 @@ public class SccpExecutor {
 			}
 			return rule.toString();
 		}
-		
-		if(this.router.getRules().size() == 0){
+
+		if (this.router.getRules().size() == 0) {
 			return SccpOAMMessage.RULE_DOESNT_EXIST;
 		}
 
 		StringBuffer sb = new StringBuffer();
-		for (FastMap.Entry<Integer, Rule> e = this.router.getRules().head(), end = this.router.getRules().tail(); (e = e
-				.getNext()) != end;) {
+		for (FastMap.Entry<Integer, Rule> e = this.router.getRules().head(), end = this.router.getRules().tail(); (e = e.getNext()) != end;) {
 			int key = e.getKey();
 			Rule rule = e.getValue();
 			sb.append("key=");
@@ -1080,7 +1081,7 @@ public class SccpExecutor {
 			if (options.length < 10) {
 				return SccpOAMMessage.INVALID_COMMAND;
 			}
-			
+
 			int sapId = Integer.parseInt(options[3]);
 			Mtp3ServiceAccessPoint sap = this.router.getMtp3ServiceAccessPoint(sapId);
 			if (sap == null) {
@@ -1220,7 +1221,7 @@ public class SccpExecutor {
 				return conSpc.toString();
 			}
 
-			if(this.sccpResource.getConcernedSpcs().size() == 0){
+			if (this.sccpResource.getConcernedSpcs().size() == 0) {
 				return SccpOAMMessage.CS_DOESNT_EXIST;
 			}
 
@@ -1341,5 +1342,16 @@ public class SccpExecutor {
 			return sb.toString();
 		}
 	}
-}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.ss7.management.console.ShellExecutor#handles(java.lang.
+	 * String)
+	 */
+	@Override
+	public boolean handles(String command) {
+		return command.startsWith("sccp");
+	}
+}

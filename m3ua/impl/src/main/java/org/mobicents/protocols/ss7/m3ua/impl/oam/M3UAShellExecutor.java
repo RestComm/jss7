@@ -28,7 +28,6 @@ import javolution.util.FastList;
 import javolution.util.FastMap;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.api.Management;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.IPSPType;
@@ -55,8 +54,6 @@ public class M3UAShellExecutor implements ShellExecutor {
 
 	protected ParameterFactory parameterFactory = new ParameterFactoryImpl();
 
-	private SCTPShellExecutor sctpShellExecutor = new SCTPShellExecutor();
-
 	public M3UAShellExecutor() {
 
 	}
@@ -67,14 +64,6 @@ public class M3UAShellExecutor implements ShellExecutor {
 
 	public void setM3uaManagement(M3UAManagement m3uaManagement) {
 		this.m3uaManagement = m3uaManagement;
-	}
-
-	public Management getSctpManagement() {
-		return this.sctpShellExecutor.getSctpManagement();
-	}
-
-	public void setSctpManagement(Management sctpManagement) {
-		this.sctpShellExecutor.setSctpManagement(sctpManagement);
 	}
 
 	/**
@@ -440,10 +429,20 @@ public class M3UAShellExecutor implements ShellExecutor {
 	public String execute(String[] args) {
 		if (args[0].equals("m3ua")) {
 			return this.executeM3UA(args);
-		} else if (args[0].equals("sctp")) {
-			return this.sctpShellExecutor.execute(args);
 		}
 		return M3UAOAMMessages.INVALID_COMMAND;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.ss7.management.console.ShellExecutor#handles(java.lang.
+	 * String)
+	 */
+	@Override
+	public boolean handles(String command) {
+		return (command.startsWith("m3ua"));
 	}
 
 }

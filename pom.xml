@@ -114,7 +114,7 @@
 			<dependency>
 				<artifactId>linkset</artifactId>
 				<groupId>
-					org.mobicents.protocols.ss7.management
+					org.mobicents.protocols.ss7.hardware
 				</groupId>
 				<version>${pom.version}</version>
 			</dependency>

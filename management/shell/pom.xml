@@ -36,6 +36,10 @@
 			<artifactId>jreadline</artifactId>
 			<version>0.17</version>
 		</dependency>
+		<dependency>
+			<artifactId>scheduler</artifactId>
+			<groupId>org.mobicents.protocols.ss7.scheduler</groupId>
+		</dependency>
 	</dependencies>
 
 	<build>
