@@ -81,14 +81,20 @@ JNIEXPORT void JNICALL Java_org_mobicents_ss7_hardware_dahdi_Selector_doUnregist
     struct pollfd temp[16];
     
     int i;
-    int k;
+    int k=0;
     
+    int found=0;
     for (i = 0; i < channel_count; i++) {
 	if (fds[i].fd != fd) {
 	    temp[k++] = fds[i];
 	}
+	else
+ 	    found=1;
     }
     
+    if(found==0)
+       return;
+
     channel_count = channel_count - 1;
     
     for (i = 0; i < channel_count; i++) {
