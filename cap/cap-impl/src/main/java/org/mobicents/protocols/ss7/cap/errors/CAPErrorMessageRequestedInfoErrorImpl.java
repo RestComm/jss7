@@ -31,49 +31,41 @@ import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorCode;
-import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageCancelFailed;
-import org.mobicents.protocols.ss7.cap.api.errors.CancelProblem;
+import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageRequestedInfoError;
+import org.mobicents.protocols.ss7.cap.api.errors.RequestedInfoErrorParameter;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class CAPErrorMessageCancelFailedImpl extends CAPErrorMessageImpl implements CAPErrorMessageCancelFailed {
+public class CAPErrorMessageRequestedInfoErrorImpl extends CAPErrorMessageImpl implements CAPErrorMessageRequestedInfoError {
 
-	public static final String _PrimitiveName = "CAPErrorMessageCancelFailed";
+	public static final String _PrimitiveName = "CAPErrorMessageRequestedInfoError";
 
-	private CancelProblem cancelProblem;
+	private RequestedInfoErrorParameter requestedInfoErrorParameter;
 
-	protected CAPErrorMessageCancelFailedImpl(CancelProblem cancelProblem) {
-		super((long) CAPErrorCode.cancelFailed);
 
-		this.cancelProblem = cancelProblem;
+	protected CAPErrorMessageRequestedInfoErrorImpl(RequestedInfoErrorParameter requestedInfoErrorParameter) {
+		super((long) CAPErrorCode.requestedInfoError);
+
+		this.requestedInfoErrorParameter = requestedInfoErrorParameter;
 	}
 
-	protected CAPErrorMessageCancelFailedImpl() {
-		super((long) CAPErrorCode.cancelFailed);
+	protected CAPErrorMessageRequestedInfoErrorImpl() {
+		super((long) CAPErrorCode.requestedInfoError);
 	}
 
-
-	@Override
-	public boolean isEmCancelFailed() {
+	public boolean isEmRequestedInfoError() {
 		return true;
 	}
 
-	@Override
-	public CAPErrorMessageCancelFailed getEmCancelFailed() {
+	public CAPErrorMessageRequestedInfoError getEmRequestedInfoError() {
 		return this;
 	}
-	
 
-	@Override
-	public CancelProblem getCancelProblem() {
-		return cancelProblem;
-	}
-
-	public void setCancelProblem(CancelProblem cancelProblem) {
-		this.cancelProblem = cancelProblem;
+	public RequestedInfoErrorParameter getRequestedInfoErrorParameter() {
+		return requestedInfoErrorParameter;
 	}
 
 	@Override
@@ -122,7 +114,7 @@ public class CAPErrorMessageCancelFailedImpl extends CAPErrorMessageImpl impleme
 
 	private void _decode(AsnInputStream localAis, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		this.cancelProblem = null;
+		this.requestedInfoErrorParameter = null;
 
 		if (localAis.getTagClass() != Tag.CLASS_UNIVERSAL || localAis.getTag() != Tag.ENUMERATED || !localAis.isTagPrimitive())
 			throw new CAPParsingComponentException(
@@ -130,7 +122,7 @@ public class CAPErrorMessageCancelFailedImpl extends CAPErrorMessageImpl impleme
 					CAPParsingComponentExceptionReason.MistypedParameter);
 
 		int i1 = (int) localAis.readIntegerData(length);
-		this.cancelProblem = CancelProblem.getInstance(i1);
+		this.requestedInfoErrorParameter = RequestedInfoErrorParameter.getInstance(i1);
 	}
 
 	@Override
@@ -152,11 +144,11 @@ public class CAPErrorMessageCancelFailedImpl extends CAPErrorMessageImpl impleme
 
 	public void encodeData(AsnOutputStream aos) throws CAPException {
 
-		if (this.cancelProblem == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": cancelProblem field must not be null");
+		if (this.requestedInfoErrorParameter == null)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": requestedInfoErrorParameter field must not be null");
 
 		try {
-			aos.writeIntegerData(this.cancelProblem.getCode());
+			aos.writeIntegerData(this.requestedInfoErrorParameter.getCode());
 
 		} catch (IOException e) {
 			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
@@ -169,9 +161,9 @@ public class CAPErrorMessageCancelFailedImpl extends CAPErrorMessageImpl impleme
 		
 		sb.append(_PrimitiveName);
 		sb.append(" [");
-		if (this.cancelProblem != null) {
-			sb.append("cancelProblem=");
-			sb.append(cancelProblem);
+		if (this.requestedInfoErrorParameter != null) {
+			sb.append("requestedInfoErrorParameter=");
+			sb.append(requestedInfoErrorParameter);
 			sb.append(",");
 		}
 		sb.append("]");
@@ -179,4 +171,3 @@ public class CAPErrorMessageCancelFailedImpl extends CAPErrorMessageImpl impleme
 		return sb.toString();
 	}
 }
-

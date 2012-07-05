@@ -31,49 +31,42 @@ import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorCode;
-import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageCancelFailed;
-import org.mobicents.protocols.ss7.cap.api.errors.CancelProblem;
+import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageSystemFailure;
+import org.mobicents.protocols.ss7.cap.api.errors.UnavailableNetworkResource;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class CAPErrorMessageCancelFailedImpl extends CAPErrorMessageImpl implements CAPErrorMessageCancelFailed {
+public class CAPErrorMessageSystemFailureImpl extends CAPErrorMessageImpl implements CAPErrorMessageSystemFailure {
 
-	public static final String _PrimitiveName = "CAPErrorMessageCancelFailed";
+	public static final String _PrimitiveName = "CAPErrorMessageSystemFailure";
 
-	private CancelProblem cancelProblem;
+	private UnavailableNetworkResource unavailableNetworkResource;
 
-	protected CAPErrorMessageCancelFailedImpl(CancelProblem cancelProblem) {
-		super((long) CAPErrorCode.cancelFailed);
 
-		this.cancelProblem = cancelProblem;
+	protected CAPErrorMessageSystemFailureImpl(UnavailableNetworkResource unavailableNetworkResource) {
+		super((long) CAPErrorCode.systemFailure);
+
+		this.unavailableNetworkResource = unavailableNetworkResource;
 	}
 
-	protected CAPErrorMessageCancelFailedImpl() {
-		super((long) CAPErrorCode.cancelFailed);
+	protected CAPErrorMessageSystemFailureImpl() {
+		super((long) CAPErrorCode.systemFailure);
 	}
 
-
-	@Override
-	public boolean isEmCancelFailed() {
+	public boolean isEmSystemFailure() {
 		return true;
 	}
 
-	@Override
-	public CAPErrorMessageCancelFailed getEmCancelFailed() {
+	public CAPErrorMessageSystemFailure getEmSystemFailure() {
 		return this;
 	}
-	
 
 	@Override
-	public CancelProblem getCancelProblem() {
-		return cancelProblem;
-	}
-
-	public void setCancelProblem(CancelProblem cancelProblem) {
-		this.cancelProblem = cancelProblem;
+	public UnavailableNetworkResource getUnavailableNetworkResource() {
+		return unavailableNetworkResource;
 	}
 
 	@Override
@@ -122,7 +115,7 @@ public class CAPErrorMessageCancelFailedImpl extends CAPErrorMessageImpl impleme
 
 	private void _decode(AsnInputStream localAis, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		this.cancelProblem = null;
+		this.unavailableNetworkResource = null;
 
 		if (localAis.getTagClass() != Tag.CLASS_UNIVERSAL || localAis.getTag() != Tag.ENUMERATED || !localAis.isTagPrimitive())
 			throw new CAPParsingComponentException(
@@ -130,7 +123,7 @@ public class CAPErrorMessageCancelFailedImpl extends CAPErrorMessageImpl impleme
 					CAPParsingComponentExceptionReason.MistypedParameter);
 
 		int i1 = (int) localAis.readIntegerData(length);
-		this.cancelProblem = CancelProblem.getInstance(i1);
+		this.unavailableNetworkResource = UnavailableNetworkResource.getInstance(i1);
 	}
 
 	@Override
@@ -152,11 +145,11 @@ public class CAPErrorMessageCancelFailedImpl extends CAPErrorMessageImpl impleme
 
 	public void encodeData(AsnOutputStream aos) throws CAPException {
 
-		if (this.cancelProblem == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": cancelProblem field must not be null");
+		if (this.unavailableNetworkResource == null)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": unavailableNetworkResource field must not be null");
 
 		try {
-			aos.writeIntegerData(this.cancelProblem.getCode());
+			aos.writeIntegerData(this.unavailableNetworkResource.getCode());
 
 		} catch (IOException e) {
 			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
@@ -169,14 +162,14 @@ public class CAPErrorMessageCancelFailedImpl extends CAPErrorMessageImpl impleme
 		
 		sb.append(_PrimitiveName);
 		sb.append(" [");
-		if (this.cancelProblem != null) {
-			sb.append("cancelProblem=");
-			sb.append(cancelProblem);
+		if (this.unavailableNetworkResource != null) {
+			sb.append("unavailableNetworkResource=");
+			sb.append(unavailableNetworkResource);
 			sb.append(",");
 		}
 		sb.append("]");
 		
 		return sb.toString();
 	}
-}
 
+}
