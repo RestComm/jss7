@@ -22,24 +22,42 @@
 
 package org.mobicents.protocols.ss7.cap.functional;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
-
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
-
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.mobicents.protocols.ss7.cap.CAPStackImpl;
+import org.mobicents.protocols.ss7.cap.api.CAPDialog;
+import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
+import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
+import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageSystemFailure;
+import org.mobicents.protocols.ss7.cap.api.errors.UnavailableNetworkResource;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequest;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.map.api.MAPDialog;
+import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequest;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterTest;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
@@ -51,7 +69,8 @@ import org.testng.annotations.Test;
 public class CAPFunctionalTest extends SccpHarness {
 
 	private static Logger logger = Logger.getLogger(CAPFunctionalTest.class);
-	private static final int _WAIT_TIMEOUT = 5000;
+	private static final int _WAIT_TIMEOUT = 200;
+	private static final int _TCAP_DIALOG_RELEASE_TIMEOUT = 0;
 
 	private CAPStackImpl stack1;
 	private CAPStackImpl stack2;
@@ -70,13 +89,13 @@ public class CAPFunctionalTest extends SccpHarness {
 	public void tearDownClass() throws Exception {
 		System.out.println("tearDownClass");
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see junit.framework.TestCase#setUp()
 	 */
-	@BeforeTest
+	@BeforeMethod
 	public void setUp() {
 		// this.setupLog4j();
 		System.out.println("setUpTest");
@@ -101,8 +120,8 @@ public class CAPFunctionalTest extends SccpHarness {
 		this.stack2.start();
 
 		// create test classes
-		this.client = new Client(this.stack1, this, peer1Address, peer2Address);
-		this.server = new Server(this.stack2, this, peer2Address, peer1Address);
+//		this.client = new Client(this.stack1, this, peer1Address, peer2Address);
+//		this.server = new Server(this.stack2, this, peer2Address, peer1Address);
 	}
 
 	/*
@@ -111,7 +130,7 @@ public class CAPFunctionalTest extends SccpHarness {
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 
-	@AfterTest
+	@AfterMethod
 	public void tearDown() {
 		System.out.println("tearDownTest");
 		this.stack1.stop();
@@ -137,31 +156,126 @@ public class CAPFunctionalTest extends SccpHarness {
 
 	}
 
-	@Test(groups = { "functional.flow","functional"})
-	public void testSimple() throws Exception {
-		server.reset();
-		client.reset();
-		server.setStep(FunctionalTestScenario.Action_InitilDp);
-		client.setStep(FunctionalTestScenario.Action_InitilDp);
-		client.actionA();
+	/**
+	 * InitialDP + Error message SystemFailure
+	 * 
+	 * TC-BEGIN + InitialDP
+	 * TC-END + Error message SystemFailure
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testComplexTCWithDialog() throws Exception {
+		
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			private int dialogStep;
+
+			@Override
+			public void onErrorComponent(CAPDialog capDialog, Long invokeId, CAPErrorMessage capErrorMessage) {
+				super.onErrorComponent(capDialog, invokeId, capErrorMessage);
+
+				assertTrue(capErrorMessage.isEmSystemFailure());
+				CAPErrorMessageSystemFailure em = capErrorMessage.getEmSystemFailure();
+				assertEquals(em.getUnavailableNetworkResource(), UnavailableNetworkResource.endUserFailure);
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			private int dialogStep;
+			private long processUnstructuredSSRequestInvokeId = 0l;
+
+			@Override
+			public void onInitialDPRequestIndication(InitialDPRequest ind) {
+				super.onInitialDPRequestIndication(ind);
+
+				assertTrue(Client.checkTestInitialDp(ind));
+			}
+
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.ErrorComponent, null, sequence++));
+					CAPErrorMessage capErrorMessage = this.capErrorMessageFactory.createCAPErrorMessageSystemFailure(UnavailableNetworkResource.endUserFailure);
+					capDialog.sendErrorComponent(capDialog.getDialogId(), capErrorMessage);
+					capDialog.close(false);
+				} catch (CAPException e) {
+					this.error("Error while trying to send Response SystemFailure", e);
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.InitialDpIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ErrorComponent, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.InitialDpIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ErrorComponent, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendInitialDp();
 		waitForEnd();
-		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
-		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
 	}
+
+
+//	@Test(groups = { "functional.flow","functional"})
+//	public void testSimple() throws Exception {
+//		server.reset();
+//		client.reset();
+//		server.setStep(FunctionalTestScenario.Action_InitilDp);
+//		client.setStep(FunctionalTestScenario.Action_InitilDp);
+//		client.actionA();
+//		waitForEnd();
+//		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
+//		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
+//	}
 
 	private void waitForEnd() {
 		try {
 			Date startTime = new Date();
 			while (true) {
-				if (client.isFinished() && server.isFinished())
-					break;
+//				if (client.isFinished() && server.isFinished())
+//					break;
+//
+//				Thread.currentThread().sleep(100);
+//
+//				if (new Date().getTime() - startTime.getTime() > _WAIT_TIMEOUT)
+//					break;
 
-				Thread.currentThread().sleep(100);
-
-				if (new Date().getTime() - startTime.getTime() > _WAIT_TIMEOUT)
-					break;
-
-//				 Thread.currentThread().sleep(1000000);
+				
+//				Thread.currentThread().sleep(_WAIT_TIMEOUT);
+				 Thread.currentThread().sleep(1000000);
 			}
 		} catch (InterruptedException e) {
 			fail("Interrupted on wait!");

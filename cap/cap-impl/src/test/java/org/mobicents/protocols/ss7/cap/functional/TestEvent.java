@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.functional;
+package org.mobicents.protocols.ss7.cap.functional;
 
 import java.io.Serializable;
 
@@ -149,5 +149,4 @@ public class TestEvent implements Serializable {
 		return "TestEvent [eventType=" + eventType + ", sent=" + sent + ", timestamp=" + timestamp + ", eventSource=" + event + ", sequence=" + sequence
 				+ "]";
 	}
-	
 }

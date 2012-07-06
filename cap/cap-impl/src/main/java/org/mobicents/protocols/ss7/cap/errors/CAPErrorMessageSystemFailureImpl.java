@@ -134,7 +134,7 @@ public class CAPErrorMessageSystemFailureImpl extends CAPErrorMessageImpl implem
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
 		try {
-			asnOs.writeTag(tagClass, false, tag);
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);

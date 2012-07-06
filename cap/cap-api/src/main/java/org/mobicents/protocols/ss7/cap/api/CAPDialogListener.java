@@ -40,9 +40,9 @@ public interface CAPDialogListener {
 	public void onDialogDelimiter(CAPDialog capDialog);
 
 	/**
-	 * When TC-BEGIN received. If CAP user rejects this dialog it should call
-	 * CAPDialog.abort()
-	 */
+     * When TC-BEGIN received. If CAP user rejects this dialog it should call          
+     * CAPDialog.abort()  	 
+     */
 	public void onDialogRequest(CAPDialog capDialog, CAPGprsReferenceNumber capGprsReferenceNumber);
 	
 	/**
