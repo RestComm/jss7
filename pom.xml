@@ -113,21 +113,13 @@
 			<!-- Management linkset -->
 			<dependency>
 				<artifactId>linkset</artifactId>
-				<groupId>
-					org.mobicents.protocols.ss7.hardware
-				</groupId>
+				<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 				<version>${pom.version}</version>
 			</dependency>
 
 			<!-- Hardware Dahdi Java -->
 			<dependency>
 				<artifactId>mobicents-dahdi</artifactId>
-				<groupId>org.mobicents.protocols.ss7.hardware</groupId>
-				<version>${pom.version}</version>
-			</dependency>
-
-			<dependency>
-				<artifactId>linkset</artifactId>
 				<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 				<version>${pom.version}</version>
 			</dependency>
