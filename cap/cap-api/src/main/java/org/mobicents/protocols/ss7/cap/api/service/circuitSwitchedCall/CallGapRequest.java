@@ -22,7 +22,11 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall;
 
-import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
+import org.mobicents.protocols.ss7.cap.api.gap.GapCriteria;
+import org.mobicents.protocols.ss7.cap.api.gap.GapIndicators;
+import org.mobicents.protocols.ss7.cap.api.gap.GapTreatment;
+import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ControlType;
 
 /**
 *
@@ -55,9 +59,13 @@ CallGapArg {PARAMETERS-BOUND : bound}::= SEQUENCE {
 public interface CallGapRequest extends CircuitSwitchedCallMessage {
 
 	public GapCriteria getGapCriteria();
-	
-	// ..................................
-	
-	xxxx;
+
+	public GapIndicators getGapIndicators();
+
+	public ControlType getControlType();
+
+	public GapTreatment getGapTreatment();
+
+	public CAPExtensions getExtensions();
 
 }
