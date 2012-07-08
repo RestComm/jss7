@@ -33,7 +33,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import java.io.IOException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
-import org.mobicents.protocols.ss7.isup.message.parameter.ContinuitiyIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.ContinuityIndicators;
 
 /**
  * Start time:18:28:42 2009-03-30<br>
@@ -42,7 +42,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.ContinuitiyIndicators;
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
  */
-public class ContinuitiyIndicatorsImpl extends AbstractISUPParameter implements ContinuitiyIndicators{
+public class ContinuityIndicatorsImpl extends AbstractISUPParameter implements ContinuityIndicators{
 
 	
 	private final static int _TURN_ON = 1;
@@ -52,17 +52,17 @@ public class ContinuitiyIndicatorsImpl extends AbstractISUPParameter implements 
 
 	private boolean continuityCheck = false;
 
-	public ContinuitiyIndicatorsImpl(byte[] b) throws ParameterException {
+	public ContinuityIndicatorsImpl(byte[] b) throws ParameterException {
 		super();
 		decode(b);
 	}
 
-	public ContinuitiyIndicatorsImpl() {
+	public ContinuityIndicatorsImpl() {
 		super();
 		
 	}
 
-	public ContinuitiyIndicatorsImpl(boolean continuityCheck) {
+	public ContinuityIndicatorsImpl(boolean continuityCheck) {
 		super();
 		this.continuityCheck = continuityCheck;
 	}

@@ -94,7 +94,7 @@ public interface ISUPParameterFactory {
 	
 	ConnectionRequest createConnectionRequest();
 	
-	ContinuitiyIndicators createContinuitiyIndicators();
+	ContinuityIndicators createContinuityIndicators();
 	
 	CorrelationID createCorrelationID();
 	

@@ -34,7 +34,7 @@ package org.mobicents.protocols.ss7.isup.message.parameter;
  * 
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
-public interface ContinuitiyIndicators extends ISUPParameter {
+public interface ContinuityIndicators extends ISUPParameter {
 	public static final int _PARAMETER_CODE = 0x10;
 
 	/**
