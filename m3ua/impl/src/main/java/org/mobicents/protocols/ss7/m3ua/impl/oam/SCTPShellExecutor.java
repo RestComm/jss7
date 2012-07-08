@@ -35,19 +35,18 @@ public class SCTPShellExecutor implements ShellExecutor {
 		StringBuffer sb = new StringBuffer();
 		for (Server server : servers) {
 			sb.append(M3UAOAMMessages.NEW_LINE);
-			sb.append("SERVER ").append(server.getIpChannelType().getType()).append(" name=").append(server.getName())
-					.append(" started=").append(server.isStarted()).append(" hostIp=").append(server.getHostAddress())
-					.append(" hostPort=").append(server.getHostport());
-			
+			sb.append("SERVER ").append(server.getIpChannelType().getType()).append(" name=").append(server.getName()).append(" started=")
+					.append(server.isStarted()).append(" hostIp=").append(server.getHostAddress()).append(" hostPort=").append(server.getHostport());
+
 			String[] secondaryHostAdd = server.getExtraHostAddresses();
-			
-			if(secondaryHostAdd != null && secondaryHostAdd.length > 0){
+
+			if (secondaryHostAdd != null && secondaryHostAdd.length > 0) {
 				sb.append(" secondaryHost=");
-				for(int i=0;i<secondaryHostAdd.length;i++){
+				for (int i = 0; i < secondaryHostAdd.length; i++) {
 					sb.append(secondaryHostAdd[i]).append(" ");
 				}
 			}
-			
+
 			List<String> associations = server.getAssociations();
 			sb.append(M3UAOAMMessages.NEW_LINE);
 			sb.append("Associations:");
@@ -70,26 +69,25 @@ public class SCTPShellExecutor implements ShellExecutor {
 		for (String s : associations.keySet()) {
 			Association asso = associations.get(s);
 			sb.append(M3UAOAMMessages.NEW_LINE);
-			sb.append("ASSOCIATION ").append(asso.getIpChannelType().getType()).append(" name=").append(asso.getName())
-					.append(" started=").append(asso.isStarted()).append(" peerIp=").append(asso.getPeerAddress())
-					.append(" peerPort=").append(asso.getPeerPort());
+			sb.append("ASSOCIATION ").append(asso.getIpChannelType().getType()).append(" name=").append(asso.getName()).append(" started=")
+					.append(asso.isStarted()).append(" peerIp=").append(asso.getPeerAddress()).append(" peerPort=").append(asso.getPeerPort());
 			if (asso.getAssociationType() == AssociationType.CLIENT) {
 				sb.append(" hostIp=").append(asso.getHostAddress()).append(" hostPort").append(asso.getHostPort());
 			} else {
 				sb.append(" server=").append(asso.getServerName());
 			}
-			
+
 			sb.append(" type=").append(asso.getAssociationType());
-			
+
 			String[] secondaryHostAdd = asso.getExtraHostAddresses();
-			
-			if(secondaryHostAdd != null && secondaryHostAdd.length > 0){
+
+			if (secondaryHostAdd != null && secondaryHostAdd.length > 0) {
 				sb.append(" secondaryHost=");
-				for(int i=0;i<secondaryHostAdd.length;i++){
+				for (int i = 0; i < secondaryHostAdd.length; i++) {
 					sb.append(secondaryHostAdd[i]).append(" ");
 				}
 			}
-			
+
 			sb.append(M3UAOAMMessages.NEW_LINE);
 		}
 
@@ -152,8 +150,7 @@ public class SCTPShellExecutor implements ShellExecutor {
 						ipChnnelType = IpChannelType.SCTP;
 					}
 
-					this.sctpManagement.addServer(serverName, primaryAddress, hostPort, ipChnnelType,
-							secondaryAddresses);
+					this.sctpManagement.addServer(serverName, primaryAddress, hostPort, ipChnnelType, secondaryAddresses);
 
 					return String.format(SCTPOAMMessages.ADD_SERVER_SUCCESS, serverName);
 
@@ -251,8 +248,7 @@ public class SCTPShellExecutor implements ShellExecutor {
 							ipChnnelType = IpChannelType.SCTP;
 						}
 
-						this.sctpManagement.addAssociation(primaryAddress, hostPort, peerIp, peerPort, assocName,
-								ipChnnelType, secondaryAddresses);
+						this.sctpManagement.addAssociation(primaryAddress, hostPort, peerIp, peerPort, assocName, ipChnnelType, secondaryAddresses);
 
 						return String.format(SCTPOAMMessages.ADD_CLIENT_ASSOCIATION_SUCCESS, assocName);
 					} else if (type.equals("SERVER")) {
@@ -303,6 +299,18 @@ public class SCTPShellExecutor implements ShellExecutor {
 			logger.error(String.format("Error while executing comand %s", Arrays.toString(args)), e);
 			return e.getMessage();
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.ss7.management.console.ShellExecutor#handles(java.lang.
+	 * String)
+	 */
+	@Override
+	public boolean handles(String command) {
+		return command.startsWith("sctp");
 	}
 
 }

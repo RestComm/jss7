@@ -31,6 +31,8 @@ package org.mobicents.ss7.management.console;
  */
 public interface ShellExecutor {
 
+	public boolean handles(String command);
+	
     public String execute(String[] options);
 
 }

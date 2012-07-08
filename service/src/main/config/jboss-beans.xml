@@ -11,6 +11,13 @@
 		<property name="singleThread">true</property>
 		<property name="connectDelay">30000</property>
 	</bean>
+	
+	<bean name="SCTPShellExecutor"
+		class="org.mobicents.protocols.ss7.m3ua.impl.oam.SCTPShellExecutor">
+		<property name="sctpManagement">
+			<inject bean="SCTPManagement" />
+		</property>
+	</bean>	
 
 	<!-- ==================================================================== -->
 	<!-- M3UA -->
@@ -32,9 +39,6 @@
 		<property name="m3uaManagement">
 			<inject bean="Mtp3UserPart" />
 		</property>
-		<property name="sctpManagement">
-			<inject bean="SCTPManagement" />
-		</property>
 	</bean>
 
 	<!-- ==================================================================== -->
@@ -50,7 +54,7 @@
 			<inject bean="SS7Clock" />
 		</property>
 	</bean>
-	
+
 	<!-- ==================================================================== -->
 	<!-- Dialogic Mtp3UserPart -->
 	<!-- ==================================================================== -->
@@ -90,75 +94,84 @@
 	<!-- Shell Service -->
 	<!-- ==================================================================== -->
 	<!-- Define Shell Executor -->
-	<bean name="ShellExecutor" class="org.mobicents.ss7.ShellExecutor">
+	<bean name="ShellExecutor" class="org.mobicents.ss7.management.console.ShellServer">
 		<constructor>
 			<parameter>
 				<inject bean="SS7Scheduler" />
 			</parameter>
+			<parameter>
+				<list class="javolution.util.FastList" elementClass="org.mobicents.ss7.management.console.ShellExecutor">
+					<inject bean="SccpExecutor" />
+					<inject bean="M3UAShellExecutor" />
+					<inject bean="SCTPShellExecutor" />
+				</list>
+			</parameter>
 		</constructor>
-		
+
 		<property name="address">${jboss.bind.address}</property>
 		<property name="port">3435</property>
-
-		<property name="sccpExecutor">
-			<inject bean="SccpExecutor" />
-		</property>
-		<property name="m3UAShellExecutor">
-			<inject bean="M3UAShellExecutor" />
-		</property>
 	</bean>
 
 	<!-- ==================================================================== -->
 	<!-- TCAP Service -->
-	<!-- ==================================================================== -->	
+	<!-- ==================================================================== -->
 	<bean name="TcapStack" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
 		<constructor>
-			<parameter><inject bean="SccpStack" property="sccpProvider" /></parameter>
+			<parameter>
+				<inject bean="SccpStack" property="sccpProvider" />
+			</parameter>
 			<parameter>8</parameter>
 		</constructor>
 		<property name="dialogIdleTimeout">60000</property>
 		<property name="invokeTimeout">30000</property>
 		<property name="maxDialogs">25000</property>
 	</bean>
-	
+
 	<!-- ==================================================================== -->
 	<!-- MAP Service -->
-	<!-- ==================================================================== -->	
+	<!-- ==================================================================== -->
 	<bean name="MapStack" class="org.mobicents.protocols.ss7.map.MAPStackImpl">
 		<constructor>
-			<parameter><inject bean="TcapStack" property="provider" /></parameter>
+			<parameter>
+				<inject bean="TcapStack" property="provider" />
+			</parameter>
 		</constructor>
-	</bean>	
-	
+	</bean>
+
 	<!-- ==================================================================== -->
 	<!-- ISUP Service -->
 	<!-- ==================================================================== -->
-	<bean name="CircuitManager" class="org.mobicents.protocols.ss7.isup.impl.CircuitManagerImpl">		
+	<bean name="CircuitManager"
+		class="org.mobicents.protocols.ss7.isup.impl.CircuitManagerImpl">
 	</bean>
-		
+
 	<bean name="IsupStack" class="org.mobicents.protocols.ss7.isup.impl.ISUPStackImpl">
 		<constructor>
-		 	<parameter><inject bean="SS7Scheduler" /></parameter>
-		 	<parameter>22234</parameter>
-		 	<parameter>2</parameter>
+			<parameter>
+				<inject bean="SS7Scheduler" />
+			</parameter>
+			<parameter>22234</parameter>
+			<parameter>2</parameter>
 		</constructor>
-		<property name="mtp3UserPart"><inject bean="Mtp3UserPart" /></property>
-		<property name="circuitManager"><inject bean="CircuitManager" /></property>			
-	</bean>	
+		<property name="mtp3UserPart">
+			<inject bean="Mtp3UserPart" />
+		</property>
+		<property name="circuitManager">
+			<inject bean="CircuitManager" />
+		</property>
+	</bean>
 	<!-- ==================================================================== -->
 	<!-- Mobicents SS7 Service -->
 	<!-- ==================================================================== -->
 	<bean name="MAPSS7Service" class="org.mobicents.ss7.SS7Service">
-		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=MAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
-		</annotation>
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=MAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)</annotation>
 		<property name="jndiName">java:/mobicents/ss7/map</property>
 		<property name="stack">
 			<inject bean="MapStack" property="MAPProvider" />
 		</property>
 	</bean>
 	<bean name="ISUPSS7Service" class="org.mobicents.ss7.SS7Service">
-		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=ISUPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
-		</annotation>
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=ISUPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)</annotation>
 		<property name="jndiName">java:/mobicents/ss7/isup</property>
 		<property name="stack">
 			<inject bean="IsupStack" property="isupProvider" />
