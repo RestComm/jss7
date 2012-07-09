@@ -36,24 +36,13 @@ import org.apache.log4j.PropertyConfigurator;
 import org.mobicents.protocols.ss7.cap.CAPStackImpl;
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
-import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageSystemFailure;
 import org.mobicents.protocols.ss7.cap.api.errors.UnavailableNetworkResource;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequest;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
-import org.mobicents.protocols.ss7.map.api.MAPDialog;
-import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequest;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -163,7 +152,7 @@ public class CAPFunctionalTest extends SccpHarness {
 	 * TC-END + Error message SystemFailure
 	 */
 	@Test(groups = { "functional.flow", "dialog" })
-	public void testComplexTCWithDialog() throws Exception {
+	public void testInitialDp_Error() throws Exception {
 		
 		Client client = new Client(stack1, this, peer1Address, peer2Address) {
 			private int dialogStep;
@@ -187,6 +176,14 @@ public class CAPFunctionalTest extends SccpHarness {
 				super.onInitialDPRequestIndication(ind);
 
 				assertTrue(Client.checkTestInitialDp(ind));
+
+				this.observerdEvents.add(TestEvent.createSentEvent(EventType.ErrorComponent, null, sequence++));
+				CAPErrorMessage capErrorMessage = this.capErrorMessageFactory.createCAPErrorMessageSystemFailure(UnavailableNetworkResource.endUserFailure);
+				try {
+					ind.getCAPDialog().sendErrorComponent(ind.getInvokeId(), capErrorMessage);
+				} catch (CAPException e) {
+					this.error("Error while trying to send Response SystemFailure", e);
+				}
 			}
 
 			@Override
@@ -194,12 +191,9 @@ public class CAPFunctionalTest extends SccpHarness {
 				super.onDialogDelimiter(capDialog);
 
 				try {
-					this.observerdEvents.add(TestEvent.createSentEvent(EventType.ErrorComponent, null, sequence++));
-					CAPErrorMessage capErrorMessage = this.capErrorMessageFactory.createCAPErrorMessageSystemFailure(UnavailableNetworkResource.endUserFailure);
-					capDialog.sendErrorComponent(capDialog.getDialogId(), capErrorMessage);
 					capDialog.close(false);
 				} catch (CAPException e) {
-					this.error("Error while trying to send Response SystemFailure", e);
+					this.error("Error while trying to close() Dialog", e);
 				}
 			}
 		};
@@ -232,10 +226,10 @@ public class CAPFunctionalTest extends SccpHarness {
 		te = TestEvent.createReceivedEvent(EventType.InitialDpIndication, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
-		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		te = TestEvent.createSentEvent(EventType.ErrorComponent, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
-		te = TestEvent.createSentEvent(EventType.ErrorComponent, null, count++, stamp);
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
 		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
@@ -264,7 +258,7 @@ public class CAPFunctionalTest extends SccpHarness {
 	private void waitForEnd() {
 		try {
 			Date startTime = new Date();
-			while (true) {
+//			while (true) {
 //				if (client.isFinished() && server.isFinished())
 //					break;
 //
@@ -274,9 +268,9 @@ public class CAPFunctionalTest extends SccpHarness {
 //					break;
 
 				
-//				Thread.currentThread().sleep(_WAIT_TIMEOUT);
-				 Thread.currentThread().sleep(1000000);
-			}
+				Thread.currentThread().sleep(_WAIT_TIMEOUT);
+//				 Thread.currentThread().sleep(1000000);
+//			}
 		} catch (InterruptedException e) {
 			fail("Interrupted on wait!");
 		}

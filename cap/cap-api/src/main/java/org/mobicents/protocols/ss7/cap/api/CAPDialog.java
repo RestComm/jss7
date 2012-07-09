@@ -38,10 +38,10 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 public interface CAPDialog {
 	
 	// Invoke timers
-	public static int _Timer_CircuitSwitchedCallControl_Short = 6; // 1 - 10 sec
-	public static int _Timer_CircuitSwitchedCallControl_Medium = 30; // 1 - 60 sec
-	public static int _Timer_Sms_Short = 10; // 1 - 20 sec
-	public static int _Timer_Gprs_Short = 10; // 1 - 20 sec
+	public static int _Timer_CircuitSwitchedCallControl_Short = 6000; // 1 - 10 sec
+	public static int _Timer_CircuitSwitchedCallControl_Medium = 30000; // 1 - 60 sec
+	public static int _Timer_Sms_Short = 10000; // 1 - 20 sec
+	public static int _Timer_Gprs_Short = 10000; // 1 - 20 sec
 	
 	public static int _Timer_Default = -1;
 
