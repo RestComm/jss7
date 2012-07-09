@@ -186,6 +186,7 @@ public class SccpNoticeMessageTest {
 	public void testEncode() throws Exception {
 
 		// ---- UDTS
+		this.stack.setRemoveSpc(false);
 		GlobalTitle gt = new GT0100(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.INTERNATIONAL, "999999999");
 		SccpAddress calledAdd = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 0, gt, 146);
 		SccpAddress callingAdd = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 1726, null, 146);
@@ -196,6 +197,9 @@ public class SccpNoticeMessageTest {
 		EncodingResultData res = msg.encode(LongMessageRuleType.XudtEnabled, 272, logger);
 		assertEquals(res.getEncodingResult(), EncodingResult.Success);
 		assertTrue(Arrays.equals(res.getSolidData(), getDataUdtS()));
+
+		// ---- UDTS
+		this.stack.setRemoveSpc(false);
 
 		// ---- XUDT without segm
 		calledAdd = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 0, null, 8);
