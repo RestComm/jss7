@@ -23,6 +23,8 @@
 package org.mobicents.protocols.ss7.map.api.smstpdu;
 
 /**
+ * See 3GPP TS 23.038 Chapter 4 SMS Data Coding Scheme
+ *
  * 
  * @author sergey vetyutnev
  * 

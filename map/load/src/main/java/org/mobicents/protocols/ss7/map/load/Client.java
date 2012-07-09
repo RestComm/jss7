@@ -68,6 +68,9 @@ import org.mobicents.protocols.ss7.sccp.impl.SccpResource;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3Destination;
 import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3ServiceAccessPoint;
+import org.mobicents.protocols.ss7.tcap.TCAPStackImpl;
+import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
+import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 
@@ -78,6 +81,9 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 public class Client extends TestHarness {
 
 	private static Logger logger = Logger.getLogger(Client.class);
+	
+	//TCAP
+	private TCAPStack tcapStack;
 
 	// MAP
 	private MAPStackImpl mapStack;
@@ -109,7 +115,10 @@ public class Client extends TestHarness {
 
 		// Initialize SCCP
 		this.initSCCP();
-
+		
+		//Initialize TCAP
+		this.initTCAP();
+		
 		// Initialize MAP
 		this.initMAP();
 
@@ -168,12 +177,21 @@ public class Client extends TestHarness {
 		this.sccpStack.getRouter().addMtp3ServiceAccessPoint(1, sap);
 		this.sccpStack.getRouter().addMtp3Destination(1, 1, dest);
 	}
+	
+	private void initTCAP(){
+		this.tcapStack = new TCAPStackImpl(this.sccpStack.getSccpProvider(), SSN);
+		this.tcapStack.setDialogIdleTimeout(60000);
+		this.tcapStack.setInvokeTimeout(30000);
+		this.tcapStack.setMaxDialogs(2000);
+		this.tcapStack.start();
+	}
 
 	private void initMAP() {
 
 		System.out.println("initMAP");
 
-		this.mapStack = new MAPStackImpl(this.sccpStack.getSccpProvider(), SSN);
+		//this.mapStack = new MAPStackImpl(this.sccpStack.getSccpProvider(), SSN);
+		this.mapStack = new MAPStackImpl(this.tcapStack.getProvider());
 		this.mapProvider = this.mapStack.getMAPProvider();
 
 		System.out.println("this.mapProvider = " + this.mapProvider);
@@ -184,8 +202,6 @@ public class Client extends TestHarness {
 		this.mapProvider.getMAPServiceSupplementary().acivate();
 
 		this.mapStack.start();
-
-		this.mapStack.getMAPProvider().getMAPServiceSupplementary().acivate();
 	}
 
 	private void initiateUSSD() throws MAPException {
