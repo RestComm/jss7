@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.cap.errors;
 
+import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorCode;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageCancelFailed;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageFactory;
@@ -30,6 +31,9 @@ import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageRequestedInfoEr
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageSystemFailure;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageTaskRefused;
 import org.mobicents.protocols.ss7.cap.api.errors.CancelProblem;
+import org.mobicents.protocols.ss7.cap.api.errors.RequestedInfoErrorParameter;
+import org.mobicents.protocols.ss7.cap.api.errors.TaskRefusedParameter;
+import org.mobicents.protocols.ss7.cap.api.errors.UnavailableNetworkResource;
 
 /**
  * The factory of CAP ReturnError messages
@@ -37,13 +41,27 @@ import org.mobicents.protocols.ss7.cap.api.errors.CancelProblem;
  * @author sergey vetyutnev
  * 
  */
-public class CAPErrorMessageFactoryImpl implements CAPErrorMessageFactory{
+public class CAPErrorMessageFactoryImpl implements CAPErrorMessageFactory {
 
 	@Override
 	public CAPErrorMessage createMessageFromErrorCode(Long errorCode) {
-		// TODO Auto-generated method stub
-		// ......................................
-		return null;
+		int ec = (int)(long)errorCode;
+		switch (ec) {
+		case CAPErrorCode.cancelFailed:
+			CAPErrorMessageCancelFailedImpl emCancelFailed = new CAPErrorMessageCancelFailedImpl();
+			return emCancelFailed;
+		case CAPErrorCode.requestedInfoError:
+			CAPErrorMessageRequestedInfoErrorImpl emRequestedInfoError = new CAPErrorMessageRequestedInfoErrorImpl();
+			return emRequestedInfoError;
+		case CAPErrorCode.systemFailure:
+			CAPErrorMessageSystemFailureImpl emSystemFailure = new CAPErrorMessageSystemFailureImpl();
+			return emSystemFailure;
+		case CAPErrorCode.taskRefused:
+			CAPErrorMessageTaskRefusedImpl emTaskRefused = new CAPErrorMessageTaskRefusedImpl();
+			return emTaskRefused;
+		default:
+			return new CAPErrorMessageParameterlessImpl(errorCode);
+		}
 	}
 
 	@Override
@@ -53,25 +71,21 @@ public class CAPErrorMessageFactoryImpl implements CAPErrorMessageFactory{
 
 	@Override
 	public CAPErrorMessageCancelFailed createCAPErrorMessageCancelFailed(CancelProblem cancelProblem) {
-		// TODO Auto-generated method stub
-		return null;
+		return new CAPErrorMessageCancelFailedImpl(cancelProblem);
 	}
 
 	@Override
-	public CAPErrorMessageRequestedInfoError createCAPErrorMessageRequestedInfoError(CAPErrorMessageRequestedInfoError capErrorMessageRequestedInfoError) {
-		// TODO Auto-generated method stub
-		return null;
+	public CAPErrorMessageRequestedInfoError createCAPErrorMessageRequestedInfoError(RequestedInfoErrorParameter requestedInfoErrorParameter) {
+		return new CAPErrorMessageRequestedInfoErrorImpl(requestedInfoErrorParameter);
 	}
 
 	@Override
-	public CAPErrorMessageSystemFailure createCAPErrorMessageSystemFailure(CAPErrorMessageSystemFailure capErrorMessageSystemFailure) {
-		// TODO Auto-generated method stub
-		return null;
+	public CAPErrorMessageSystemFailure createCAPErrorMessageSystemFailure(UnavailableNetworkResource unavailableNetworkResource) {
+		return new CAPErrorMessageSystemFailureImpl(unavailableNetworkResource);
 	}
 
 	@Override
-	public CAPErrorMessageTaskRefused createCAPErrorMessageTaskRefused(CAPErrorMessageTaskRefused capErrorMessageTaskRefused) {
-		// TODO Auto-generated method stub
-		return null;
+	public CAPErrorMessageTaskRefused createCAPErrorMessageTaskRefused(TaskRefusedParameter taskRefusedParameter) {
+		return new CAPErrorMessageTaskRefusedImpl(taskRefusedParameter);
 	}
 }
