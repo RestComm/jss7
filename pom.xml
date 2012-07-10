@@ -41,9 +41,9 @@
 		<module>scheduler</module>
 		<module>congestion</module>
 		<module>clock</module>
-		<module>m3ua</module>
-		<module>mtp</module>
 		<module>management</module>
+		<module>mtp</module>
+		<module>m3ua</module>
 		<module>hardware</module>
 		<module>isup</module>
 		<module>sccp</module>
