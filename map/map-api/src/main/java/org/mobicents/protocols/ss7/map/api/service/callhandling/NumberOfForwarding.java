@@ -22,13 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
-import java.io.Serializable;
-
-
 /*
- * ExtendedRoutingInfo ::= CHOICE {
- * routingInfo RoutingInfo,
- * camelRoutingInfo [8] CamelRoutingInfo}
+ * NumberOfForwarding ::= INTEGER (1..5)
  */
  
 /*
@@ -36,7 +31,37 @@ import java.io.Serializable;
  * @author cristian veliscu
  * 
  */
-public interface ExtendedRoutingInfo extends Serializable {
-	public RoutingInfo getRoutingInfo();
-	public CamelRoutingInfo getCamelRoutingInfo(); // TODO: 
+public enum NumberOfForwarding {
+	one(1),
+	two(2),
+	three(3),
+	four(4),
+	five(5);
+	
+	private int code;
+
+	private NumberOfForwarding(int code) {
+		this.code = code;
+	}
+
+	public int getCode() {
+		return this.code;
+	}
+
+	public static NumberOfForwarding getNumberOfForwarding(int code) {
+		switch (code) {
+		case 1:
+			return one;
+		case 2:
+			return two;
+		case 3:
+			return three;
+		case 4:
+			return four;
+		case 5: 
+			return five;
+		default:
+			return null;
+		}
+	} 
 }

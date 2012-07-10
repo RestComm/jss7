@@ -22,13 +22,16 @@
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
-import java.io.Serializable;
-
-
-/*
- * ExtendedRoutingInfo ::= CHOICE {
- * routingInfo RoutingInfo,
- * camelRoutingInfo [8] CamelRoutingInfo}
+/* 
+ * SS-Code ::= OCTET STRING (SIZE (1))
+ * -- This type is used to represent the code identifying a single
+ * -- supplementary service, a group of supplementary services, or
+ * -- all supplementary services. The services and abbreviations
+ * -- used are defined in TS 3GPP TS 22.004 [5]. The internal structure is
+ * -- defined as follows:
+ * --
+ * -- bits 87654321: group (bits 8765), and specific service
+ * -- (bits 4321)
  */
  
 /*
@@ -36,7 +39,6 @@ import java.io.Serializable;
  * @author cristian veliscu
  * 
  */
-public interface ExtendedRoutingInfo extends Serializable {
-	public RoutingInfo getRoutingInfo();
-	public CamelRoutingInfo getCamelRoutingInfo(); // TODO: 
+public interface SSCode {
+	public byte[] getData(); 
 }

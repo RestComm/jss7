@@ -22,13 +22,11 @@
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
-import java.io.Serializable;
-
-
-/*
- * ExtendedRoutingInfo ::= CHOICE {
- * routingInfo RoutingInfo,
- * camelRoutingInfo [8] CamelRoutingInfo}
+/* 
+ * SuppressMTSS ::= BIT STRING {
+ * suppressCUG (0),
+ * suppressCCBS (1) } (SIZE (2..16))
+ * -- Other bits than listed above shall be discarded
  */
  
 /*
@@ -36,7 +34,7 @@ import java.io.Serializable;
  * @author cristian veliscu
  * 
  */
-public interface ExtendedRoutingInfo extends Serializable {
-	public RoutingInfo getRoutingInfo();
-	public CamelRoutingInfo getCamelRoutingInfo(); // TODO: 
+public interface SuppressMTSS {
+	public boolean getSuppressCUG();
+	public boolean getSuppressCCBS();
 }

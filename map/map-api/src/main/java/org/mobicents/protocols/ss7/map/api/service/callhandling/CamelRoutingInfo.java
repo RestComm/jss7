@@ -21,14 +21,14 @@
  */
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
-import java.io.Serializable;
-
-
-/*
- * ExtendedRoutingInfo ::= CHOICE {
- * routingInfo RoutingInfo,
- * camelRoutingInfo [8] CamelRoutingInfo}
+/* 
+ * CamelRoutingInfo ::= SEQUENCE {
+ * forwardingData ForwardingData OPTIONAL,
+ * gmscCamelSubscriptionInfo [0] GmscCamelSubscriptionInfo,
+ * extensionContainer [1] ExtensionContainer OPTIONAL,
+ * ...}
  */
  
 /*
@@ -36,7 +36,8 @@ import java.io.Serializable;
  * @author cristian veliscu
  * 
  */
-public interface ExtendedRoutingInfo extends Serializable {
-	public RoutingInfo getRoutingInfo();
-	public CamelRoutingInfo getCamelRoutingInfo(); // TODO: 
+public interface CamelRoutingInfo {
+	public ForwardingData getForwardingData();
+	public byte[] getGmscCamelSubscriptionInfo(); // TODO
+	public MAPExtensionContainer getMAPExtensionContainer();
 }

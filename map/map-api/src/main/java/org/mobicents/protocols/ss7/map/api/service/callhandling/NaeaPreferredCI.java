@@ -22,13 +22,13 @@
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
-import java.io.Serializable;
-
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /*
- * ExtendedRoutingInfo ::= CHOICE {
- * routingInfo RoutingInfo,
- * camelRoutingInfo [8] CamelRoutingInfo}
+ * NAEA-PreferredCI ::= SEQUENCE {
+ * naea-PreferredCIC [0] NAEA-CIC,
+ * extensionContainer [1] ExtensionContainer OPTIONAL,
+ * ...}
  */
  
 /*
@@ -36,7 +36,7 @@ import java.io.Serializable;
  * @author cristian veliscu
  * 
  */
-public interface ExtendedRoutingInfo extends Serializable {
-	public RoutingInfo getRoutingInfo();
-	public CamelRoutingInfo getCamelRoutingInfo(); // TODO: 
+public interface NaeaPreferredCI {
+	public NaeaCIC getNaeaPreferredCIC();
+	public MAPExtensionContainer getMAPExtensionContainer();
 }

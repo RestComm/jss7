@@ -1,3 +1,25 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
 package org.mobicents.protocols.ss7.map.service.callhandling;
 
 import java.io.IOException;
@@ -10,6 +32,7 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.CamelRoutingInfo;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.ExtendedRoutingInfo;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.RoutingInfo;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
@@ -23,7 +46,7 @@ import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
  */
 public class ExtendedRoutingInfoImpl implements ExtendedRoutingInfo, MAPAsnPrimitive  {
 	private RoutingInfo routingInfo = null;
-	private byte[] camelRoutingInfo = null;
+	private CamelRoutingInfo camelRoutingInfo = null;
 	
 	private static final int TAG_camel = 8;
 	private static final String _PrimitiveName = "ExtendedRoutingInfo";
@@ -31,8 +54,11 @@ public class ExtendedRoutingInfoImpl implements ExtendedRoutingInfo, MAPAsnPrimi
 	
 	public ExtendedRoutingInfoImpl() {}
 
-	public ExtendedRoutingInfoImpl(RoutingInfo routingInfo, byte[] camelRoutingInfo) {
+	public ExtendedRoutingInfoImpl(RoutingInfo routingInfo) {
 		this.routingInfo = routingInfo;
+	}
+	
+	public ExtendedRoutingInfoImpl(CamelRoutingInfo camelRoutingInfo) {
 		this.camelRoutingInfo = camelRoutingInfo;
 	}
 	
@@ -42,7 +68,7 @@ public class ExtendedRoutingInfoImpl implements ExtendedRoutingInfo, MAPAsnPrimi
 	}
 	
 	@Override
-	public byte[] getCamelRoutingInfo() {
+	public CamelRoutingInfo getCamelRoutingInfo() {
 		return this.camelRoutingInfo;
 	}
 	
@@ -56,7 +82,7 @@ public class ExtendedRoutingInfoImpl implements ExtendedRoutingInfo, MAPAsnPrimi
 	@Override
 	public int getTagClass() {
 		if(routingInfo != null) 
-		  return Tag.CLASS_UNIVERSAL;
+		  return ((RoutingInfoImpl) routingInfo).getTagClass();
 		return Tag.CLASS_CONTEXT_SPECIFIC;
 	}
 	
@@ -147,5 +173,21 @@ public class ExtendedRoutingInfoImpl implements ExtendedRoutingInfo, MAPAsnPrimi
 			((RoutingInfoImpl) this.routingInfo).encodeData(asnOs);
 		} else { // TODO: encode CAMEL routing info
 		}
+	}
+	
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		if (this.routingInfo != null) {
+			sb.append(this.routingInfo.toString());
+		}
+		else if (this.camelRoutingInfo != null) {
+				sb.append(this.camelRoutingInfo.toString());
+		}
+
+		sb.append("]");
+		return sb.toString();
 	}
 }

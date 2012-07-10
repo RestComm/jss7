@@ -21,22 +21,27 @@
  */
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OfferedCamel4CSIs;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
 
-import java.io.Serializable;
-
-
-/*
- * ExtendedRoutingInfo ::= CHOICE {
- * routingInfo RoutingInfo,
- * camelRoutingInfo [8] CamelRoutingInfo}
- */
+/* 
+ * CamelInfo ::= SEQUENCE {
+ * supportedCamelPhases SupportedCamelPhases,
+ * suppress-T-CSI NULL OPTIONAL,
+ * extensionContainer ExtensionContainer OPTIONAL,
+ * ... ,
+ * offeredCamel4CSIs [0] OfferedCamel4CSIs OPTIONAL }
+ */ 
  
 /*
  * 
  * @author cristian veliscu
  * 
  */
-public interface ExtendedRoutingInfo extends Serializable {
-	public RoutingInfo getRoutingInfo();
-	public CamelRoutingInfo getCamelRoutingInfo(); // TODO: 
+public interface CamelInfo {
+	public SupportedCamelPhases getSupportedCamelPhases();
+	public byte[] getSuppressTCSI();
+	public MAPExtensionContainer getMAPExtensionContainer();
+	public OfferedCamel4CSIs getOfferedCamel4CSIs();
 }

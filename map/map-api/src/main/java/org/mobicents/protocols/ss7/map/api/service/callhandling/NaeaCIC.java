@@ -22,13 +22,15 @@
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
-import java.io.Serializable;
-
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /*
- * ExtendedRoutingInfo ::= CHOICE {
- * routingInfo RoutingInfo,
- * camelRoutingInfo [8] CamelRoutingInfo}
+ * NAEA-CIC ::= OCTET STRING (SIZE (3))
+ * -- The internal structure is defined by the Carrier Identification
+ * -- parameter in ANSI T1.113.3. Carrier codes between '000' and '999' may
+ * -- be encoded as 3 digits using '000' to '999' or as 4 digits using
+ * -- '0000' to '0999'. Carrier codes between '1000' and '9999' are encoded
+ * -- using 4 digits.
  */
  
 /*
@@ -36,7 +38,6 @@ import java.io.Serializable;
  * @author cristian veliscu
  * 
  */
-public interface ExtendedRoutingInfo extends Serializable {
-	public RoutingInfo getRoutingInfo();
-	public CamelRoutingInfo getCamelRoutingInfo(); // TODO: 
+public interface NaeaCIC {
+	public byte[] getData(); 
 }

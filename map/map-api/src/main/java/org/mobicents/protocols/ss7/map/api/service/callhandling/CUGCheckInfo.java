@@ -21,22 +21,23 @@
  */
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
-
-import java.io.Serializable;
-
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /*
- * ExtendedRoutingInfo ::= CHOICE {
- * routingInfo RoutingInfo,
- * camelRoutingInfo [8] CamelRoutingInfo}
- */
+ * CUG-CheckInfo ::= SEQUENCE {
+ * cug-Interlock CUG-Interlock,
+ * cug-OutgoingAccess NULL OPTIONAL,
+ * extensionContainer ExtensionContainer OPTIONAL,
+ * ...}
+ */ 
  
 /*
  * 
  * @author cristian veliscu
  * 
  */
-public interface ExtendedRoutingInfo extends Serializable {
-	public RoutingInfo getRoutingInfo();
-	public CamelRoutingInfo getCamelRoutingInfo(); // TODO: 
+public interface CUGCheckInfo {
+	public CUGInterlock getCUGInterlock();
+	public byte[] getCUGOutgoingAccess();
+	public MAPExtensionContainer getMAPExtensionContainer();
 }

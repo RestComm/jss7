@@ -22,13 +22,12 @@
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
-import java.io.Serializable;
-
-
 /*
- * ExtendedRoutingInfo ::= CHOICE {
- * routingInfo RoutingInfo,
- * camelRoutingInfo [8] CamelRoutingInfo}
+ * SupportedCCBS-Phase ::= INTEGER (1..127)
+ * -- exception handling:
+ * -- Only value 1 is used.
+ * -- Values in the ranges 2-127 are reserved for future use.
+ * -- If received values 2-127 shall be mapped on to value 1.
  */
  
 /*
@@ -36,7 +35,6 @@ import java.io.Serializable;
  * @author cristian veliscu
  * 
  */
-public interface ExtendedRoutingInfo extends Serializable {
-	public RoutingInfo getRoutingInfo();
-	public CamelRoutingInfo getCamelRoutingInfo(); // TODO: 
+public interface SupportedCCBSPhase {
+	public int getData(); 
 }
