@@ -22,51 +22,39 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
-import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import java.util.ArrayList;
+
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
  * 
 
-EPS-SubscriptionData ::= SEQUENCE {
-	apn-oi-Replacement	[0]	APN-OI-Replacement	OPTIONAL,
-	-- this apn-oi-Replacement refers to the UE level apn-oi-Replacement.
-	rfsp-id		[2]	RFSP-ID	OPTIONAL,
-	ambr			[3]	AMBR		OPTIONAL,
-	apn-ConfigurationProfile	[4]	APN-ConfigurationProfile	OPTIONAL,
-	stn-sr		[6]	ISDN-AddressString	OPTIONAL,
-	extensionContainer	[5]	ExtensionContainer	OPTIONAL,
-	...,
-	mps-CSPriority	[7]	NULL		OPTIONAL,
-	mps-EPSPriority	[8]	NULL		OPTIONAL }
-	-- mps-CSPriority by its presence indicates that the UE is subscribed to the eMLPP in 
-	-- the CS domain, referring to the 3GPP TS 29.272 [144] for details.
-	-- mps-EPSPriority by its presence indicates that the UE is subscribed to the MPS in 
-	-- the EPS domain, referring to the 3GPP TS 29.272 [144] for details.
+APN-ConfigurationProfile ::= SEQUENCE {
+	defaultContext	ContextId,
+	completeDataListIncluded	NULL			OPTIONAL,
+		-- If segmentation is used, completeDataListIncluded may only be present in the
+		-- first segment of APN-ConfigurationProfile.
+	epsDataList	[1]	EPS-DataList,
+	extensionContainer	[2] ExtensionContainer	OPTIONAL,
+	... }
 
-RFSP-ID ::=  INTEGER (1..256)
+ContextId ::= INTEGER (1..50)
+
+EPS-DataList ::= SEQUENCE SIZE (1..50) OF APN-Configuration
 
  * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface EPSSubscriptionData {
+public interface APNConfigurationProfile {
 
-	public APNOIReplacement getApnOiReplacement();
+	public int getDefaultContext();
 
-	public Integer getRfspId();
+	public boolean getCompleteDataListIncluded();
 
-	public AMBR getAmbr();
-
-	public APNConfigurationProfile getAPNConfigurationProfile();
-
-	public ISDNAddressString getStnSr();
+	public ArrayList<APNConfiguration> getEPSDataList();
 
 	public MAPExtensionContainer getExtensionContainer();
-
-	public boolean getMpsCSPriority();
-
-	public boolean getMpsEPSPriority();
 
 }

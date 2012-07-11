@@ -23,11 +23,10 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
 import java.util.ArrayList;
-
-import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedFeatures;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
 
 /**
  * 
@@ -60,6 +59,8 @@ BearerServiceList ::= SEQUENCE SIZE (1..50) OF Ext-BearerServiceCode
 
 TeleserviceList ::= SEQUENCE SIZE (1..20) OF Ext-TeleserviceCode
 
+SS-List ::= SEQUENCE SIZE (1..30) OF SS-Code
+
  * 
  * 
  * @author sergey vetyutnev
@@ -71,7 +72,7 @@ public interface InsertSubscriberDataResponse extends MobilityMessage {
 
 	public ArrayList<ExtBearerServiceCode> getBearerServiceList();
 
-	public SSList getSSList();
+	public ArrayList<SSCode> getSSList();
 
 	public ODBGeneralData getODBGeneralData();
 

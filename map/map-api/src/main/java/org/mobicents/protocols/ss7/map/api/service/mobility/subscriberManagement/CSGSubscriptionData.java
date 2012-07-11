@@ -22,51 +22,38 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
-import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import java.util.ArrayList;
+
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.Time;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.CSGId;
 
 /**
  * 
 
-EPS-SubscriptionData ::= SEQUENCE {
-	apn-oi-Replacement	[0]	APN-OI-Replacement	OPTIONAL,
-	-- this apn-oi-Replacement refers to the UE level apn-oi-Replacement.
-	rfsp-id		[2]	RFSP-ID	OPTIONAL,
-	ambr			[3]	AMBR		OPTIONAL,
-	apn-ConfigurationProfile	[4]	APN-ConfigurationProfile	OPTIONAL,
-	stn-sr		[6]	ISDN-AddressString	OPTIONAL,
-	extensionContainer	[5]	ExtensionContainer	OPTIONAL,
+CSG-SubscriptionData ::= SEQUENCE {
+	csg-Id	 		CSG-Id,
+	expirationDate		Time		OPTIONAL,
+	extensionContainer		ExtensionContainer 	OPTIONAL,
 	...,
-	mps-CSPriority	[7]	NULL		OPTIONAL,
-	mps-EPSPriority	[8]	NULL		OPTIONAL }
-	-- mps-CSPriority by its presence indicates that the UE is subscribed to the eMLPP in 
-	-- the CS domain, referring to the 3GPP TS 29.272 [144] for details.
-	-- mps-EPSPriority by its presence indicates that the UE is subscribed to the MPS in 
-	-- the EPS domain, referring to the 3GPP TS 29.272 [144] for details.
+	lipa-AllowedAPNList		[0] LIPA-AllowedAPNList		OPTIONAL
+}
 
-RFSP-ID ::=  INTEGER (1..256)
+LIPA-AllowedAPNList ::= SEQUENCE SIZE (1..50) OF APN
 
  * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface EPSSubscriptionData {
+public interface CSGSubscriptionData {
 
-	public APNOIReplacement getApnOiReplacement();
+	public CSGId getCsgId();
 
-	public Integer getRfspId();
-
-	public AMBR getAmbr();
-
-	public APNConfigurationProfile getAPNConfigurationProfile();
-
-	public ISDNAddressString getStnSr();
+	public Time getExpirationDate();
 
 	public MAPExtensionContainer getExtensionContainer();
 
-	public boolean getMpsCSPriority();
-
-	public boolean getMpsEPSPriority();
+	public ArrayList<APN> getLipaAllowedAPNList();
 
 }

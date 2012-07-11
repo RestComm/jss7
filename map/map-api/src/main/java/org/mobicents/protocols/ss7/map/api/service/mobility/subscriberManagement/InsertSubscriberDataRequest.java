@@ -23,8 +23,6 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
 import java.util.ArrayList;
-
-import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
@@ -110,6 +108,14 @@ VGCSDataList ::= SEQUENCE SIZE (1..50) OF VoiceGroupCallData
 
 IST-AlertTimerValue ::= INTEGER (15..255)
 
+CSG-SubscriptionDataList ::= SEQUENCE SIZE (1..50) OF CSG-SubscriptionData
+
+SubscribedPeriodicRAUTAUtimer ::= INTEGER (0..4294967295)
+	-- This parameter carries the subscribed periodic TAU/RAU timer value in seconds.
+
+SubscribedPeriodicLAUtimer ::= INTEGER (0..4294967295)
+	-- This parameter carries the subscribed periodic LAU timer value in seconds.
+
  * 
  * 
  * @author sergey vetyutnev
@@ -177,7 +183,7 @@ public interface InsertSubscriberDataRequest extends MobilityMessage {
 
 	public EPSSubscriptionData getEpsSubscriptionData();
 
-	public CSGSubscriptionDataList getCsgSubscriptionDataList();
+	public ArrayList<CSGSubscriptionData> getCsgSubscriptionDataList();
 
 	public boolean getUeReachabilityRequestIndicator();
 
@@ -185,12 +191,12 @@ public interface InsertSubscriberDataRequest extends MobilityMessage {
 
 	public DiameterIdentity getMmeName();
 
-	public SubscribedPeriodicRAUTAUtimer getSubscribedPeriodicRAUTAUtimer();
+	public Long getSubscribedPeriodicRAUTAUtimer();
 
 	public boolean getVplmnLIPAAllowed();
 
 	public Boolean getMdtUserConsent();
 
-	public SubscribedPeriodicLAUtimer getSubscribedPeriodicLAUtimer();
+	public Long getSubscribedPeriodicLAUtimer();
 
 }
