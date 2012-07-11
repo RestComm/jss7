@@ -22,9 +22,17 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
+import java.util.ArrayList;
+
+import org.mobicents.protocols.ss7.map.api.primitives.ASCICallReference;
+import org.mobicents.protocols.ss7.map.api.primitives.AccessNetworkSignalInfo;
+import org.mobicents.protocols.ss7.map.api.primitives.GlobalCellId;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIu;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ZoneCode;
+import org.mobicents.protocols.ss7.map.api.service.oam.TracePropagationList;
 
 /**
  * 
@@ -62,6 +70,14 @@ PrepareHO-Arg ::= [3] SEQUENCE {
 	globalCallReference	[28]	LCLS-GlobalCallReference	OPTIONAL,
 	lcls-Negotiation	[29]	LCLS-Negotiation	OPTIONAL	 }
 
+RadioResourceList ::= SEQUENCE SIZE (1.. 7) OF RadioResource
+
+RAB-Id ::= INTEGER (1..255)
+
+BSSMAP-ServiceHandoverList ::= SEQUENCE SIZE (1.. 7) OF BSSMAP-ServiceHandoverInfo
+
+ZoneCodeList ::= SEQUENCE SIZE (1..10) OF ZoneCode
+
 
  * 
  * @author sergey vetyutnev
@@ -91,17 +107,17 @@ public interface PrepareHandoverRequest extends MobilityMessage {
 
 	public AllowedUMTSAlgorithms getAllowedUMTSAlgorithms();
 
-	public RadioResourceList getRadioResourceList();
+	public ArrayList<RadioResource> getRadioResourceList();
 
 	public MAPExtensionContainer getExtensionContainer();
 
-	public RABId getRABId();
+	public Integer getRABId();
 
 	public BSSMAPServiceHandover getBSSMAPServiceHandover();
 
 	public RANAPServiceHandover getRANAPServiceHandover();
 
-	public BSSMAPServiceHandoverList getBSSMAPServiceHandoverList();
+	public ArrayList<BSSMAPServiceHandoverInfo> getBSSMAPServiceHandoverList();
 
 	public ASCICallReference getASCICallReference();
 
@@ -121,7 +137,7 @@ public interface PrepareHandoverRequest extends MobilityMessage {
 
 	public AoIPCodecsList getAoipSupportedCodecsListAnchor();
 
-	public ZoneCodeList getRegionalSubscriptionData();
+	public ArrayList<ZoneCode> getRegionalSubscriptionData();
 
 	public LCLSGlobalCallReference getGlobalCallReference();
 

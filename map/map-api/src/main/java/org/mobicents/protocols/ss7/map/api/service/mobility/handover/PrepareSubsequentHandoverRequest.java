@@ -22,62 +22,60 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
-import java.util.ArrayList;
 import org.mobicents.protocols.ss7.map.api.primitives.AccessNetworkSignalInfo;
+import org.mobicents.protocols.ss7.map.api.primitives.GlobalCellId;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.ExternalSignalInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
  * 
 
-PrepareHO-Res ::= [3] SEQUENCE {
-	handoverNumber	[0] ISDN-AddressString	OPTIONAL,
-	relocationNumberList	[1]	RelocationNumberList	OPTIONAL,
-	an-APDU		[2]	AccessNetworkSignalInfo	OPTIONAL,
-	multicallBearerInfo	[3]	MulticallBearerInfo	OPTIONAL,
-	multipleBearerNotSupported	NULL			OPTIONAL,
-	selectedUMTS-Algorithms	[5]	SelectedUMTS-Algorithms	OPTIONAL,
-	chosenRadioResourceInformation	[6] ChosenRadioResourceInformation	 OPTIONAL,
-	extensionContainer	[4]	ExtensionContainer	OPTIONAL,
+MAP V3:
+PrepareSubsequentHO-Arg ::= [3] SEQUENCE {
+	targetCellId	[0] GlobalCellId	OPTIONAL,
+	targetMSC-Number	[1] ISDN-AddressString,
+	targetRNCId	[2] RNCId		OPTIONAL,
+	an-APDU		[3]	AccessNetworkSignalInfo	OPTIONAL,
+	selectedRab-Id	[4]	RAB-Id	OPTIONAL,
+	extensionContainer	[5]	ExtensionContainer	OPTIONAL,
 	...,
-	iuSelectedCodec	[7] Codec		OPTIONAL,
-	iuAvailableCodecsList	[8] CodecList	OPTIONAL,
-	aoipSelectedCodecTarget	[9] AoIPCodec	OPTIONAL,
-	aoipAvailableCodecsListMap	[10] AoIPCodecsList	OPTIONAL }
+	geran-classmark	[6] GERAN-Classmark	OPTIONAL,
+	rab-ConfigurationIndicator	[7] NULL		OPTIONAL }
 
-RelocationNumberList ::= SEQUENCE SIZE (1..7) OF RelocationNumber
+MAP V2:
+PrepareSubsequentHO-Arg ::= SEQUENCE {
+targetCellId		GlobalCellId,
+targetMSC-Number	ISDN-AddressString,
+bss-APDU			ExternalSignalInfo,
+...}
 
-MulticallBearerInfo ::= INTEGER (1..7)
+RAB-Id ::= INTEGER (1..255)
 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface PrepareHandoverResponse extends MobilityMessage {
+public interface PrepareSubsequentHandoverRequest extends MobilityMessage {
 
-	public ISDNAddressString getHandoverNumber();
+	public GlobalCellId getTargetCellId();
 
-	public ArrayList<RelocationNumber> getRelocationNumberList();
+	public ISDNAddressString getTargetMSCNumber();
+
+	public RNCId getTargetRNCId();
 
 	public AccessNetworkSignalInfo getAnAPDU();
 
-	public Integer getMulticallBearerInfo();
-
-	public boolean getMultipleBearerNotSupported();
-
-	public SelectedUMTSAlgorithms getSelectedUMTSAlgorithms();
-
-	public ChosenRadioResourceInformation getChosenRadioResourceInformation();
+	public Integer getSelectedRabId();
 
 	public MAPExtensionContainer getExtensionContainer();
 
-	public Codec getIuSelectedCodec();
+	public GERANClassmark getGERANClassmark();
 
-	public CodecList getIuAvailableCodecsList();
+	public boolean getRabConfigurationIndicator();
 
-	public AoIPCodec getAoipSelectedCodecTarget();
-
-	public AoIPCodecsList getAoipAvailableCodecsListMap();
+	// MAP V2
+	public ExternalSignalInfo getBssAPDU();
 
 }
