@@ -22,14 +22,19 @@
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
+import java.util.ArrayList;
+
+import org.mobicents.protocols.ss7.map.api.primitives.ExternalSignalInfo;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.NAEAPreferredCI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.NumberPortabilityStatus;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OfferedCamel4CSIs;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
 
 /*
  * SendRoutingInfoRes ::= SEQUENCE {
@@ -66,6 +71,11 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
  *  unavailabilityCause [21] UnavailabilityCause OPTIONAL,
  *  releaseResourcesSupported [22] NULL OPTIONAL*,
  *  gsm-BearerCapability [23] ExternalSignalInfo OPTIONAL }
+
+SS-List ::= SEQUENCE SIZE (1..30) OF SS-Code
+
+IST-AlertTimerValue ::= INTEGER (15..255)
+
  */
  
 /*
@@ -79,20 +89,20 @@ public interface SendRoutingInformationResponse extends CallHandlingMessage {
 	public CUGCheckInfo getCUGCheckInfo(); //SEQUENCE
 	public boolean getCUGSubscriptionFlag(); //NULL
 	public SubscriberInfo getSubscriberInfo(); //SEQUENCE
-	public SSList getSSList(); //SEQUENCE
+	public ArrayList<SSCode> getSSList(); //SEQUENCE
 	public ExtBasicServiceCode getBasicService(); //CHOICE
 	public boolean getForwardingInterrogationRequired(); //NULL
 	public ISDNAddressString getVmscAddress(); //OCTET STRING
 	public MAPExtensionContainer getExtensionContainer(); //SEQUENCE
-	public NaeaPreferredCI getNaeaPreferredCI(); //SEQUENCE
+	public NAEAPreferredCI getNaeaPreferredCI(); //SEQUENCE
 	public CCBSIndicators getCCBSIndicators(); //SEQUENCE
 	public ISDNAddressString getMsisdn(); //OCTET STRING
 	public NumberPortabilityStatus getNumberPortabilityStatus(); //ENUMERATED
-	public ISTAlertTimerValue getISTAlertTimer(); //INTEGER
+	public Integer getISTAlertTimer(); //INTEGER
 	public SupportedCamelPhases getSupportedCamelPhasesInVMSC(); //BIT STRING
 	public OfferedCamel4CSIs getOfferedCamel4CSIsInVMSC(); //BIT STRING
 	public RoutingInfo getRoutingInfo2(); //CHOICE
-	public SSList getSSList2(); //SEQUENCE
+	public ArrayList<SSCode> getSSList2(); //SEQUENCE
 	public ExtBasicServiceCode getBasicService2(); //CHOICE
 	public AllowedServices getAllowedServices(); //BIT STRING
 	public UnavailabilityCause getUnavailabilityCause(); //ENUMERATED

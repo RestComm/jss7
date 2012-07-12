@@ -30,7 +30,7 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
-import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.IstSupportIndicator;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ISTSupportIndicator;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SuperChargerInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedLCSCapabilitySets;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedRATTypes;
@@ -91,7 +91,7 @@ public class VlrCapabilityTest {
 		
 		assertFalse(asc.getSolsaSupportIndicator());
 		
-		assertEquals(asc.getIstSupportIndicator(), IstSupportIndicator.istCommandSupported);
+		assertEquals(asc.getIstSupportIndicator(), ISTSupportIndicator.istCommandSupported);
 		
 		assertNull(asc.getSuperChargerSupportedInServingNetworkEntity());
 		assertFalse(asc.getLongFtnSupported());
@@ -219,7 +219,7 @@ public class VlrCapabilityTest {
 
 		SupportedCamelPhases scp = new SupportedCamelPhasesImpl(true, true, false, false);
 		SupportedLCSCapabilitySets slcs = new SupportedLCSCapabilitySetsImpl(true, true, true, true, false);
-		VlrCapabilityImpl asc = new VlrCapabilityImpl(scp, null, false, IstSupportIndicator.istCommandSupported, null, false, slcs, null, null, false, false);
+		VlrCapabilityImpl asc = new VlrCapabilityImpl(scp, null, false, ISTSupportIndicator.istCommandSupported, null, false, slcs, null, null, false, false);
 //		SupportedCamelPhases supportedCamelPhases, MAPExtensionContainer extensionContainer, boolean solsaSupportIndicator,
 //		IstSupportIndicator istSupportIndicator, SuperChargerInfo superChargerSupportedInServingNetworkEntity, boolean longFtnSupported,
 //		SupportedLCSCapabilitySets supportedLCSCapabilitySets, OfferedCamel4CSIs offeredCamel4CSIs, SupportedRATTypes supportedRATTypesIndicator,

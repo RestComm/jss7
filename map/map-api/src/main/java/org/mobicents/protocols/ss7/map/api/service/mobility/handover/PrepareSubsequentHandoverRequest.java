@@ -23,10 +23,10 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
 import org.mobicents.protocols.ss7.map.api.primitives.AccessNetworkSignalInfo;
+import org.mobicents.protocols.ss7.map.api.primitives.ExternalSignalInfo;
 import org.mobicents.protocols.ss7.map.api.primitives.GlobalCellId;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.ExternalSignalInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**

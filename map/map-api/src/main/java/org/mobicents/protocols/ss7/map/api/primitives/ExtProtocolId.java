@@ -20,10 +20,12 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.callhandling;
+package org.mobicents.protocols.ss7.map.api.primitives;
 
 /*
- * IST-AlertTimerValue ::= INTEGER (15..255)
+ * Ext-ProtocolId ::= ENUMERATED {
+ * ets_300356 (1),
+ * ...}
  */
  
 /*
@@ -31,6 +33,25 @@ package org.mobicents.protocols.ss7.map.api.service.callhandling;
  * @author cristian veliscu
  * 
  */
-public interface ISTAlertTimerValue {
-	public int getData();
+public enum ExtProtocolId {
+	ets_300356 (1);
+	 
+	private int code;
+
+	private ExtProtocolId(int code) {
+		this.code = code;
+	}
+
+	public int getCode() {
+		return this.code;
+	}
+
+	public static ExtProtocolId getExtProtocolId(int code) {
+		switch (code) {
+		case 1:
+			return ets_300356;
+		default:
+			return null;
+		}
+	}
 }

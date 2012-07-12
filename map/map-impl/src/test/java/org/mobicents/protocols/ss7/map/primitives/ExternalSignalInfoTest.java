@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.service.callhandling;
+package org.mobicents.protocols.ss7.map.primitives;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -34,11 +34,12 @@ import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.primitives.ProtocolId;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.ForwardingData;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.ForwardingOptions;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.ForwardingReason;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.ProtocolId;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AdditionalNumber;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ForwardingOptions;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ForwardingReason;
+import org.mobicents.protocols.ss7.map.primitives.ExternalSignalInfoImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.service.lsm.AdditionalNumberImpl;
 import org.testng.Assert.*;

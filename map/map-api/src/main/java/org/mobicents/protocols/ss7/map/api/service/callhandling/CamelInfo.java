@@ -41,7 +41,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
  */
 public interface CamelInfo {
 	public SupportedCamelPhases getSupportedCamelPhases();
-	public byte[] getSuppressTCSI();
+	public boolean getSuppressTCSI();
 	public MAPExtensionContainer getMAPExtensionContainer();
 	public OfferedCamel4CSIs getOfferedCamel4CSIs();
 }

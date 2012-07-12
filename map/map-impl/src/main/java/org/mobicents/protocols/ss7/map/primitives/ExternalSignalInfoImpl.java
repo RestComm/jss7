@@ -20,9 +20,11 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.service.callhandling;
+package org.mobicents.protocols.ss7.map.primitives;
 
 import java.io.IOException;
+
+import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -30,15 +32,11 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.map.api.primitives.ExternalSignalInfo;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.ExtExternalSignalInfo;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.ExtProtocolId;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.ProtocolId;
+import org.mobicents.protocols.ss7.map.api.primitives.ProtocolId;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.SignalInfo;
-import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
-import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
-import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 
 /*
@@ -46,20 +44,20 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
  * @author cristian veliscu
  * 
  */
-public class ExtExternalSignalInfoImpl implements ExtExternalSignalInfo, MAPAsnPrimitive {
+public class ExternalSignalInfoImpl implements ExternalSignalInfo, MAPAsnPrimitive {
 	private byte[] signalInfo = null;
-	private ExtProtocolId extProtocolId = null;
+	private ProtocolId protocolId = null;
 	private MAPExtensionContainer extensionContainer = null;
-
-	private static final String _PrimitiveName = "ExtExternalSignalInfo";
+	
+	private static final String _PrimitiveName = "ExternalSignalInfo";
 	
 	
-	public ExtExternalSignalInfoImpl() {}
+	public ExternalSignalInfoImpl() {}
 
-	public ExtExternalSignalInfoImpl(byte[] signalInfo, ExtProtocolId ExtProtocolId, 
-								     MAPExtensionContainer extensionContainer) {
+	public ExternalSignalInfoImpl(byte[] signalInfo, ProtocolId protocolId, 
+								  MAPExtensionContainer extensionContainer) {
 		this.signalInfo = signalInfo;
-		this.extProtocolId = extProtocolId;
+		this.protocolId = protocolId;
 		this.extensionContainer = extensionContainer;
 	}
 
@@ -69,8 +67,8 @@ public class ExtExternalSignalInfoImpl implements ExtExternalSignalInfo, MAPAsnP
 	}
 
 	@Override
-	public ExtProtocolId getExtProtocolId() {
-		return this.extProtocolId;
+	public ProtocolId getProtocolId() {
+		return this.protocolId;
 	}
 
 	@Override
@@ -122,7 +120,7 @@ public class ExtExternalSignalInfoImpl implements ExtExternalSignalInfo, MAPAsnP
 	
 	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 		this.signalInfo = null;
-		this.extProtocolId = null;
+		this.protocolId = null;
 		this.extensionContainer = null;
 		
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
@@ -132,10 +130,10 @@ public class ExtExternalSignalInfoImpl implements ExtExternalSignalInfo, MAPAsnP
 
 			int tag = ais.readTag();
 			if (ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
-				switch (tag) {
+				switch (tag) { 
 				case Tag.ENUMERATED: 
 					int code = (int) ais.readInteger();
-					this.extProtocolId = ExtProtocolId.getExtProtocolId(code);
+					this.protocolId = ProtocolId.getProtocolId(code);
 					break;
 				case Tag.STRING_OCTET: 
 					this.signalInfo = ais.readOctetString();
@@ -154,6 +152,10 @@ public class ExtExternalSignalInfoImpl implements ExtExternalSignalInfo, MAPAsnP
 				}
 			}
 		}
+		
+		if(this.protocolId == null || this.signalInfo == null)
+		  throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName  + 
+				    ": protocolId and signalInfo must not be null", MAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
 	@Override
@@ -175,11 +177,15 @@ public class ExtExternalSignalInfoImpl implements ExtExternalSignalInfo, MAPAsnP
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+		if(this.protocolId == null || this.signalInfo == null)
+		  throw new MAPException("Error while encoding " + _PrimitiveName + 
+				  				 ": protocolId and signalInfo must not be null");
+		
 		try {
-			if(this.extProtocolId != null)
-		 	  asnOs.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, this.extProtocolId.getCode());
+			if(this.protocolId != null)
+		 	  asnOs.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, this.protocolId.getCode());
 			if(this.signalInfo != null)
-		      asnOs.writeOctetString(Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET, this.signalInfo);
+			  asnOs.writeOctetString(Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET, this.signalInfo);
 			if(this.extensionContainer != null)
 			  ((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
 		} catch (IOException e) {
@@ -200,9 +206,9 @@ public class ExtExternalSignalInfoImpl implements ExtExternalSignalInfo, MAPAsnP
 			sb.append("], ");
 		}
 		
-		if (this.extProtocolId != null) {
-			sb.append("extProtocolId=[");
-			sb.append(this.extProtocolId);
+		if (this.protocolId != null) {
+			sb.append("protocolId=[");
+			sb.append(this.protocolId);
 			sb.append("], ");
 		}
 		

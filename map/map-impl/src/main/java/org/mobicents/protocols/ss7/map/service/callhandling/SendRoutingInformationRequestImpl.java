@@ -23,39 +23,34 @@
 package org.mobicents.protocols.ss7.map.service.callhandling;
 
 import java.io.IOException;
-
-import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPMessageType;
 import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
+import org.mobicents.protocols.ss7.map.api.primitives.EMLPPPriority;
+import org.mobicents.protocols.ss7.map.api.primitives.ExtExternalSignalInfo;
+import org.mobicents.protocols.ss7.map.api.primitives.ExternalSignalInfo;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.CUGCheckInfo;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.CallDiversionTreatmentIndicator;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.CallReferenceNumber;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.CamelInfo;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.EMLPPPriority;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.ExtExternalSignalInfo;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.ExternalSignalInfo;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.ForwardingReason;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.InterrogationType;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.NumberOfForwarding;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.ORPhase;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.SendRoutingInformationRequest;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.SupportedCCBSPhase;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.SuppressMTSS;
-import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.IstSupportIndicator;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ISTSupportIndicator;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ForwardingReason;
 import org.mobicents.protocols.ss7.map.primitives.AlertingPatternImpl;
-import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
+import org.mobicents.protocols.ss7.map.primitives.ExtExternalSignalInfoImpl;
+import org.mobicents.protocols.ss7.map.primitives.ExternalSignalInfoImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtBasicServiceCodeImpl;
@@ -69,10 +64,10 @@ import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Ext
 public class SendRoutingInformationRequestImpl extends CallHandlingMessageImpl implements SendRoutingInformationRequest {
 	private ISDNAddressString msisdn;
 	private CUGCheckInfo cugCheckInfo;
-	private NumberOfForwarding numberOfForwarding;
+	private Integer numberOfForwarding;
 	private InterrogationType interrogationType;
 	private boolean orInterrogation;
-	private ORPhase orCapability;
+	private Integer orCapability;
 	private ISDNAddressString gmscAddress;
 	private CallReferenceNumber callReferenceNumber;
 	private ForwardingReason forwardingReason;
@@ -83,9 +78,9 @@ public class SendRoutingInformationRequestImpl extends CallHandlingMessageImpl i
 	private MAPExtensionContainer extensionContainer;
 	private AlertingPattern alertingPattern;
 	private boolean ccbsCall;
-	private SupportedCCBSPhase supportedCCBSPhase;
+	private Integer supportedCCBSPhase;
 	private ExtExternalSignalInfo additionalSignalInfo;
-	private IstSupportIndicator istSupportIndicator;
+	private ISTSupportIndicator istSupportIndicator;
 	private boolean prePagingSupported;
 	private CallDiversionTreatmentIndicator callDiversionTreatmentIndicator;
 	private boolean longFTNSupported;
@@ -157,18 +152,18 @@ public class SendRoutingInformationRequestImpl extends CallHandlingMessageImpl i
 	}
 	
 	public SendRoutingInformationRequestImpl(long mapProtocolVersion, ISDNAddressString msisdn, 
-			CUGCheckInfo cugCheckInfo, NumberOfForwarding numberOfForwarding,
-			InterrogationType interrogationType, boolean orInterrogation, ORPhase orCapability,
+			CUGCheckInfo cugCheckInfo, Integer numberOfForwarding,
+			InterrogationType interrogationType, boolean orInterrogation, Integer orCapability,
 			ISDNAddressString gmscAddress, CallReferenceNumber callReferenceNumber,
 			ForwardingReason forwardingReason, ExtBasicServiceCode basicServiceGroup,
 			ExternalSignalInfo networkSignalInfo, CamelInfo camelInfo, boolean suppressionOfAnnouncement,
 			MAPExtensionContainer extensionContainer, AlertingPattern alertingPattern,
-			boolean ccbsCall, SupportedCCBSPhase supportedCCBSPhase, ExtExternalSignalInfo additionalSignalInfo,
-			IstSupportIndicator istSupportIndicator, boolean prePagingSupported,
+			boolean ccbsCall, Integer supportedCCBSPhase, ExtExternalSignalInfo additionalSignalInfo,
+			ISTSupportIndicator istSupportIndicator, boolean prePagingSupported,
 			CallDiversionTreatmentIndicator callDiversionTreatmentIndicator,
 			boolean longFTNSupported, boolean suppressVtCSI, boolean suppressIncomingCallBarring,
 			boolean gsmSCFInitiatedCall, ExtBasicServiceCode basicServiceGroup2,
-			ExternalSignalInfo networkSignalInfo2, SuppressMTSS supressMTSS,
+			ExternalSignalInfo networkSignalInfo2, SuppressMTSS suppressMTSS,
 			boolean mtRoamingRetrySupported, EMLPPPriority callPriority) { 
 		
 		this.msisdn = msisdn;
@@ -219,7 +214,7 @@ public class SendRoutingInformationRequestImpl extends CallHandlingMessageImpl i
 	}
 	
 	@Override
-	public NumberOfForwarding getNumberOfForwarding() {
+	public Integer getNumberOfForwarding() {
 		return this.numberOfForwarding;
 	}
 
@@ -234,7 +229,7 @@ public class SendRoutingInformationRequestImpl extends CallHandlingMessageImpl i
 	}
 	
 	@Override
-	public ORPhase getORCapability() {
+	public Integer getORCapability() {
 		return this.orCapability;
 	}
 	
@@ -289,7 +284,7 @@ public class SendRoutingInformationRequestImpl extends CallHandlingMessageImpl i
 	}
 	
 	@Override
-	public SupportedCCBSPhase getSupportedCCBSPhase() {
+	public Integer getSupportedCCBSPhase() {
 		return this.supportedCCBSPhase;
 	}
 	
@@ -299,7 +294,7 @@ public class SendRoutingInformationRequestImpl extends CallHandlingMessageImpl i
 	}
 	
 	@Override
-	public IstSupportIndicator getIstSupportIndicator() {
+	public ISTSupportIndicator getIstSupportIndicator() {
 		return this.istSupportIndicator;
 	}
 	
@@ -456,8 +451,7 @@ public class SendRoutingInformationRequestImpl extends CallHandlingMessageImpl i
 					int tag = ais.readTag();
 					switch (tag) {
 					case TAG_numberOfForwarding: 
-						int code = (int) ais.readInteger();
-						this.numberOfForwarding = NumberOfForwarding.getNumberOfForwarding(code);
+						this.numberOfForwarding = (int) ais.readInteger();
 						break; 
 					case TAG_networkSignalInfo:
 						this.networkSignalInfo = new ExternalSignalInfoImpl();
@@ -476,132 +470,147 @@ public class SendRoutingInformationRequestImpl extends CallHandlingMessageImpl i
 			": MSISDN must not be null", MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 		else {
-			int num = TAG_msisdn;
 			while (true) {
 				if (ais.available() == 0)
 					break;
 				
 				int tag = ais.readTag();
-				switch (num) {
-				case TAG_msisdn: 
-					if(ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-						+ ".msisdn: Parameter with bad tag or tag class or not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-				
-					this.msisdn = new ISDNAddressStringImpl();
-					((ISDNAddressStringImpl) this.msisdn).decodeAll(ais);
-					break;
-				case TAG_interrogationType: 
-					if(!ais.isTagPrimitive())
-					    throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-						+ ".interrogationType: Parameter is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-					
-					int code = (int) ais.readInteger();
-					this.interrogationType = InterrogationType.getInterrogationType(code);
-					break;
-				case TAG_gmscOrGsmSCFAddress: 
-					if(ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-						+ ".gmscAddress: Parameter with bad tag or tag class or not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-					
-					this.gmscAddress = new ISDNAddressStringImpl();
-					((ISDNAddressStringImpl) this.gmscAddress).decodeAll(ais);
-					break;
-				default:
-					if(ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-						switch (tag) {
-						case TAG_callReferenceNumber: 
-							this.callReferenceNumber = new CallReferenceNumberImpl();
-							((CallReferenceNumberImpl) this.callReferenceNumber).decodeAll(ais);
-							break; 
-						case TAG_forwardingReason: 
-							int i = (int) ais.readInteger();
-							this.forwardingReason = ForwardingReason.getForwardingReason(i);
-							break; 
-						case TAG_basicServiceGroup: //explicit tag encoding
-							AsnInputStream ais1 = ais.readSequenceStream();
-							ais1.readTag();
-							this.basicServiceGroup = new ExtBasicServiceCodeImpl();
-							((ExtBasicServiceCodeImpl)this.basicServiceGroup).decodeAll(ais1);
-							break;
-						case TAG_basicServiceGroup2: //explicit tag encoding
-							AsnInputStream ais2 = ais.readSequenceStream();
-							ais2.readTag();
-							this.basicServiceGroup2 = new ExtBasicServiceCodeImpl();
-							((ExtBasicServiceCodeImpl)this.basicServiceGroup2).decodeAll(ais2);
-							break;
-						case TAG_networkSignalInfo: 
-							this.networkSignalInfo = new ExternalSignalInfoImpl();
-							((ExternalSignalInfoImpl) this.networkSignalInfo).decodeAll(ais);
-							break; 
-						case TAG_networkSignalInfo2: 
-							this.networkSignalInfo2 = new ExternalSignalInfoImpl();
-							((ExternalSignalInfoImpl) this.networkSignalInfo2).decodeAll(ais);
-							break; 
-						case TAG_additionalSignalInfo: 
-							this.additionalSignalInfo = new ExtExternalSignalInfoImpl();
-							((ExtExternalSignalInfoImpl) this.additionalSignalInfo).decodeAll(ais);
-							break; 
-						case TAG_extensionContainer: 
-							this.extensionContainer = new MAPExtensionContainerImpl();
-							((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
-							break;
-						case TAG_alertingPattern: 
-							this.alertingPattern = new AlertingPatternImpl();
-							((AlertingPatternImpl) this.alertingPattern).decodeAll(ais);
-							break; 
-						case TAG_istSupportIndicator: 
-							int j = (int) ais.readInteger();
-							this.istSupportIndicator = IstSupportIndicator.getInstance(j);
-							break; 
-						case TAG_numberOfForwarding: 
-							this.numberOfForwarding = NumberOfForwarding.getNumberOfForwarding((int) ais.readInteger());
-							break; 
-						case TAG_callPriority: 
-							this.callPriority = EMLPPPriority.getEMLPPPriority((int) ais.readInteger());
-							break;
-						case TAG_suppressMTSS: 
-							this.suppressMTSS = new SuppressMTSSImpl();
-							((SuppressMTSSImpl) this.suppressMTSS).decodeAll(ais);
-							break; 
-						/*// TODO: decode cugCheckInfo only for V3
-						case TAG_cugCheckInfo: break; 
-						case TAG_orInterrogation: break; 
-						case TAG_orCapability: break; 
-						case TAG_camelInfo: break; 
-						case TAG_suppressionOfAnnouncement: break; 
-						case TAG_ccbsCall: break; 
-						case TAG_supportedCCBSPhase: break; 
-						case TAG_prePagingSupported: break; 
-						case TAG_callDiversionTreatmentIndicator: break;
-						case TAG_longFTNSupported: break; 
-						case TAG_suppress_VT_CSI: break; 
-						case TAG_suppressIncomingCallBarring: break; 
-						case TAG_gsmSCFInitiatedCall: break; 
-						case TAG_mtRoamingRetrySupported: break; 
-						*/
-						default:
-							ais.advanceElement();
-							break;
-						}	
-					} else {
+				if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+					switch (tag) {
+					case TAG_msisdn:
+						this.msisdn = new ISDNAddressStringImpl();
+						((ISDNAddressStringImpl) this.msisdn).decodeAll(ais);
+						break;
+					case TAG_cugCheckInfo:
+						// TODO: implement it
 						ais.advanceElement();
-						//break;
+						break;
+					case TAG_numberOfForwarding:
+						this.numberOfForwarding = (int) ais.readInteger();
+						break;
+					case TAG_interrogationType:
+						int code = (int) ais.readInteger();
+						this.interrogationType = InterrogationType.getInterrogationType(code);
+						break;
+					case TAG_orInterrogation:
+						ais.readNull();
+						this.orInterrogation = true;
+						break;
+					case TAG_gmscOrGsmSCFAddress:
+						this.gmscAddress = new ISDNAddressStringImpl();
+						((ISDNAddressStringImpl) this.gmscAddress).decodeAll(ais);
+						break;
+					case TAG_orCapability:
+						this.orCapability = (int) ais.readInteger();
+						break;
+					case TAG_callReferenceNumber:
+						this.callReferenceNumber = new CallReferenceNumberImpl();
+						((CallReferenceNumberImpl) this.callReferenceNumber).decodeAll(ais);
+						break;
+					case TAG_forwardingReason:
+						int i = (int) ais.readInteger();
+						this.forwardingReason = ForwardingReason.getForwardingReason(i);
+						break;
+					case TAG_basicServiceGroup: // explicit tag encoding
+						AsnInputStream ais1 = ais.readSequenceStream();
+						ais1.readTag();
+						this.basicServiceGroup = new ExtBasicServiceCodeImpl();
+						((ExtBasicServiceCodeImpl) this.basicServiceGroup).decodeAll(ais1);
+						break;
+					case TAG_networkSignalInfo:
+						this.networkSignalInfo = new ExternalSignalInfoImpl();
+						((ExternalSignalInfoImpl) this.networkSignalInfo).decodeAll(ais);
+						break;
+					case TAG_camelInfo:
+						// TODO: implement it
+						ais.advanceElement();
+						break;
+					case TAG_suppressionOfAnnouncement:
+						ais.readNull();
+						this.suppressionOfAnnouncement = true;
+						break;
+					case TAG_extensionContainer:
+						this.extensionContainer = new MAPExtensionContainerImpl();
+						((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+						break;
+					case TAG_alertingPattern:
+						this.alertingPattern = new AlertingPatternImpl();
+						((AlertingPatternImpl) this.alertingPattern).decodeAll(ais);
+						break;
+					case TAG_ccbsCall:
+						ais.readNull();
+						this.ccbsCall = true;
+						break;
+					case TAG_supportedCCBSPhase:
+						this.supportedCCBSPhase = (int) ais.readInteger();
+						break;
+					case TAG_additionalSignalInfo:
+						this.additionalSignalInfo = new ExtExternalSignalInfoImpl();
+						((ExtExternalSignalInfoImpl) this.additionalSignalInfo).decodeAll(ais);
+						break;
+					case TAG_istSupportIndicator:
+						int j = (int) ais.readInteger();
+						this.istSupportIndicator = ISTSupportIndicator.getInstance(j);
+						break;
+					case TAG_prePagingSupported:
+						ais.readNull();
+						this.prePagingSupported = true;
+						break;
+					case TAG_callDiversionTreatmentIndicator:
+						// TODO: implement it
+						ais.advanceElement();
+						break;
+					case TAG_longFTNSupported:
+						ais.readNull();
+						this.longFTNSupported = true;
+						break;
+					case TAG_suppress_VT_CSI:
+						ais.readNull();
+						this.suppressVtCSI = true;
+						break;
+					case TAG_suppressIncomingCallBarring:
+						ais.readNull();
+						this.suppressIncomingCallBarring = true;
+						break;
+					case TAG_gsmSCFInitiatedCall:
+						ais.readNull();
+						this.gsmSCFInitiatedCall = true;
+						break;
+					case TAG_basicServiceGroup2: // explicit tag encoding
+						AsnInputStream ais2 = ais.readSequenceStream();
+						ais2.readTag();
+						this.basicServiceGroup2 = new ExtBasicServiceCodeImpl();
+						((ExtBasicServiceCodeImpl) this.basicServiceGroup2).decodeAll(ais2);
+						break;
+					case TAG_networkSignalInfo2:
+						this.networkSignalInfo2 = new ExternalSignalInfoImpl();
+						((ExternalSignalInfoImpl) this.networkSignalInfo2).decodeAll(ais);
+						break;
+					case TAG_suppressMTSS:
+						this.suppressMTSS = new SuppressMTSSImpl();
+						((SuppressMTSSImpl) this.suppressMTSS).decodeAll(ais);
+						break;
+					case TAG_mtRoamingRetrySupported:
+						ais.readNull();
+						this.mtRoamingRetrySupported = true;
+						break;
+					case TAG_callPriority:
+						this.callPriority = EMLPPPriority.getEMLPPPriority((int) ais.readInteger());
+						break;
+
+					default:
+						ais.advanceElement();
+						break;
 					}
-					
-					// default:
-					break;
+				} else {
+					ais.advanceElement();
+					// break;
 				}
-				
-				num += 3; //0,3,6 tag numbers are mandatory
 			}
-			
-			if (num < 9)
-				throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Needs at least 3 mandatory parameters, found " + num,
-						MAPParsingComponentExceptionReason.MistypedParameter);
-			if (this.msisdn == null || this.interrogationType == null || this.gmscAddress == null) 
-				throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName  + 
-					    ": msisdn, interrogationType and GMSCaddress must not be null", MAPParsingComponentExceptionReason.MistypedParameter);
+
+			if (this.msisdn == null || this.interrogationType == null || this.gmscAddress == null)
+				throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+						+ ": msisdn, interrogationType and GMSCaddress must not be null", MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -630,7 +639,7 @@ public class SendRoutingInformationRequestImpl extends CallHandlingMessageImpl i
 		  else throw new MAPException("MSISDN must not be null for MAP V1,2");
 		  
 		  if(this.numberOfForwarding != null)
-			try { asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, TAG_numberOfForwarding, this.numberOfForwarding.getCode());
+			try { asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, TAG_numberOfForwarding, this.numberOfForwarding);
 			} catch (IOException e) {
 				throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 			} catch (AsnException e) {
@@ -646,63 +655,109 @@ public class SendRoutingInformationRequestImpl extends CallHandlingMessageImpl i
 					throw new MAPException("MSISDN, Gateway MSC address and Interrogation Type parameters must not be null");
 				
 				if(this.msisdn != null)
-				  ((ISDNAddressStringImpl) this.msisdn).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, TAG_msisdn);
-				
+					  ((ISDNAddressStringImpl) this.msisdn).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, TAG_msisdn);
+
+				if (this.cugCheckInfo != null) {
+					// TODO: implement it
+					// TAG_cugCheckInfo
+				}				
+
 				if(this.numberOfForwarding != null)
-				  asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, TAG_numberOfForwarding, this.numberOfForwarding.getCode());
-				
+					  asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, TAG_numberOfForwarding, this.numberOfForwarding);
+
 				if(this.interrogationType != null)
-				  asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, TAG_interrogationType, this.interrogationType.getCode());
-				
+					  asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, TAG_interrogationType, this.interrogationType.getCode());
+
+				if (this.orInterrogation)
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, TAG_orInterrogation);
+
+				if(this.orCapability != null)
+					  asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, TAG_orCapability, this.orCapability);
+
 				if(this.gmscAddress != null)
 				  ((ISDNAddressStringImpl) this.gmscAddress).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, TAG_gmscOrGsmSCFAddress);
-				
+
 				if(this.callReferenceNumber != null)
 				  ((CallReferenceNumberImpl) this.callReferenceNumber).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, TAG_callReferenceNumber);
-				
+
 				if(this.forwardingReason != null)
 				  asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, TAG_forwardingReason, this.forwardingReason.getCode());
-				
+
 				if(this.basicServiceGroup != null) { // explicit tag encoding
 				  asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, TAG_basicServiceGroup);
 				  int pos = asnOs.StartContentDefiniteLength();
 				  ((ExtBasicServiceCodeImpl) this.basicServiceGroup).encodeAll(asnOs);
 				  asnOs.FinalizeContent(pos);
 				}
-				
+
 				if(this.networkSignalInfo != null)
 				  ((ExternalSignalInfoImpl) this.networkSignalInfo).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, TAG_networkSignalInfo);
-					
+
+				if (this.camelInfo != null) {
+					// TODO: implement it
+					// TAG_camelInfo
+				}				
+
+				if (this.suppressionOfAnnouncement)
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, TAG_suppressionOfAnnouncement);
+
 				if(this.extensionContainer != null)
 				  ((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, TAG_extensionContainer);
-				
+
 				if(this.alertingPattern != null)
 				  ((AlertingPatternImpl) this.alertingPattern).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, TAG_alertingPattern);
-				
+
+				if (this.suppressionOfAnnouncement)
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, TAG_suppressionOfAnnouncement);
+
+				if (this.ccbsCall)
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, TAG_ccbsCall);
+
+				if(this.supportedCCBSPhase != null)
+				  asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, TAG_supportedCCBSPhase, this.supportedCCBSPhase);
+
 				if(this.additionalSignalInfo != null)
 				   ((ExtExternalSignalInfoImpl) this.additionalSignalInfo).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, TAG_additionalSignalInfo);
-					
+
 				if(this.istSupportIndicator != null)
 				  asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, TAG_istSupportIndicator, this.istSupportIndicator.getCode());
-				
+
+				if (this.prePagingSupported)
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, TAG_prePagingSupported);
+
+				if (this.callDiversionTreatmentIndicator != null) {
+					// TODO: implement it
+					// TAG_callDiversionTreatmentIndicator
+				}				
+
+				if (this.longFTNSupported)
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, TAG_longFTNSupported);
+
+				if (this.suppressVtCSI)
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, TAG_suppress_VT_CSI);
+
+				if (this.suppressIncomingCallBarring)
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, TAG_suppressIncomingCallBarring);
+
+				if (this.gsmSCFInitiatedCall)
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, TAG_gsmSCFInitiatedCall);
+
 				if(this.basicServiceGroup2 != null) { // explicit tag encoding 
 				  asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, TAG_basicServiceGroup2);
 				  int pos = asnOs.StartContentDefiniteLength();
 				  ((ExtBasicServiceCodeImpl) this.basicServiceGroup2).encodeAll(asnOs);
 				  asnOs.FinalizeContent(pos);
 				}
-				
+
 				if(this.networkSignalInfo2 != null)
 				  ((ExternalSignalInfoImpl) this.networkSignalInfo2).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, TAG_networkSignalInfo2);
-			
-				if(this.cugCheckInfo != null) {
-				  if(this.mapProtocolVersion < 3);
-				  else { /* TODO: encode cugCheckInfo only for V3 */ }
-				}
-				
+
 				if(this.suppressMTSS != null)
 				  ((SuppressMTSSImpl) this.suppressMTSS).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, TAG_suppressMTSS);
-				
+
+				if (this.mtRoamingRetrySupported)
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, TAG_mtRoamingRetrySupported);
+
 				if(this.callPriority != null)
 				  asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, TAG_callPriority, this.callPriority.getCode());
 			} catch (IOException e) {
@@ -712,7 +767,7 @@ public class SendRoutingInformationRequestImpl extends CallHandlingMessageImpl i
 			}	
 		}
 	}
-	
+
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(_PrimitiveName);

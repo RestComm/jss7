@@ -23,12 +23,16 @@
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
+import org.mobicents.protocols.ss7.map.api.primitives.EMLPPPriority;
+import org.mobicents.protocols.ss7.map.api.primitives.ExtExternalSignalInfo;
+import org.mobicents.protocols.ss7.map.api.primitives.ExternalSignalInfo;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.IstSupportIndicator;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ISTSupportIndicator;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ForwardingReason;
 
-/* V1
+/* MAP V2
  * SendRoutingInfoArg ::= SEQUENCE {
  * msisdn [0] ISDN-AddressString,
  * cug-CheckInfo [1] CUG-CheckInfo OPTIONAL,
@@ -37,7 +41,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
  * networkSignalInfo [10] ExternalSignalInfo OPTIONAL,
  * ...}
  */
-/*
+/* MAP V3
  *SendRoutingInfoArg ::= SEQUENCE {
  *  msisdn [0] ISDN-AddressString,
  *  cug-CheckInfo [1] CUG-CheckInfo OPTIONAL,
@@ -70,6 +74,19 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
  *  suppressMTSS [27] SuppressMTSS OPTIONAL,
  *  mtRoamingRetrySupported [28] NULL OPTIONAL*,
  *  callPriority [29] EMLPP-Priority OPTIONAL }
+ 
+ SuppressionOfAnnouncement ::= NULL
+ 
+ NumberOfForwarding ::= INTEGER (1..5)
+ 
+ OR-Phase ::= INTEGER (1..127)
+ 
+ SupportedCCBS-Phase ::= INTEGER (1..127) 
+-- exception handling:
+-- Only value 1 is used.
+-- Values in the ranges 2-127 are reserved for future use.
+-- If received values 2-127 shall be mapped on to value 1.
+
  */
  
 /*
@@ -80,10 +97,10 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 public interface SendRoutingInformationRequest extends CallHandlingMessage {
 	public ISDNAddressString getMsisdn(); //OCTET STRING
 	public CUGCheckInfo getCUGCheckInfo(); //SEQUENCE
-	public NumberOfForwarding getNumberOfForwarding(); //INTEGER
+	public Integer getNumberOfForwarding(); //INTEGER
 	public InterrogationType getInterogationType(); // ENUMERATED
 	public boolean getORInterrogation(); //NULL
-	public ORPhase getORCapability(); //NULL
+	public Integer getORCapability(); //NULL
 	public ISDNAddressString getGmscOrGsmSCFAddress(); //OCTET STRING
 	public CallReferenceNumber getCallReferenceNumber(); //OCTET STRING
 	public ForwardingReason getForwardingReason(); //ENUMERATED
@@ -94,9 +111,9 @@ public interface SendRoutingInformationRequest extends CallHandlingMessage {
 	public MAPExtensionContainer getExtensionContainer(); //SEQUENCE
 	public AlertingPattern getAlertingPattern(); // OCTET STRING
 	public boolean getCCBSCall(); //NULL
-	public SupportedCCBSPhase getSupportedCCBSPhase(); //INTEGER
+	public Integer getSupportedCCBSPhase(); //INTEGER
 	public ExtExternalSignalInfo getAdditionalSignalInfo(); //SEQUENCE
-	public IstSupportIndicator getIstSupportIndicator(); // ENUMERATED
+	public ISTSupportIndicator getIstSupportIndicator(); // ENUMERATED
 	public boolean getPrePagingSupported(); //NULL
 	public CallDiversionTreatmentIndicator getCallDiversionTreatmentIndicator(); //OCTET STRING
 	public boolean getLongFTNSupported(); //NULL

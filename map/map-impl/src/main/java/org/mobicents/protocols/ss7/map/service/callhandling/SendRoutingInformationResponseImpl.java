@@ -23,32 +23,26 @@
 package org.mobicents.protocols.ss7.map.service.callhandling;
 
 import java.io.IOException;
-
-import org.apache.log4j.Logger;
+import java.util.ArrayList;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPMessageType;
 import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.map.api.primitives.ExternalSignalInfo;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.NAEAPreferredCI;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.AllowedServices;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.CCBSIndicators;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.CUGCheckInfo;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.ExtendedRoutingInfo;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.ExternalSignalInfo;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.ForwardingReason;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.ISTAlertTimerValue;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.NaeaPreferredCI;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.RoutingInfo;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.SSList;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.SendRoutingInformationRequest;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.SendRoutingInformationResponse;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.UnavailabilityCause;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.NumberPortabilityStatus;
@@ -56,6 +50,8 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OfferedCamel4CSIs;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
+import org.mobicents.protocols.ss7.map.primitives.ExternalSignalInfoImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
@@ -76,20 +72,20 @@ public class SendRoutingInformationResponseImpl extends CallHandlingMessageImpl 
 	private CUGCheckInfo cugCheckInfo;
 	private boolean cugSubscriptionFlag;
 	private SubscriberInfo subscriberInfo; 
-	private SSList ssList;
+	private ArrayList<SSCode> ssList;
 	private ExtBasicServiceCode basicService; 
 	private boolean forwardingInterrogationRequired;
 	private ISDNAddressString vmscAddress; 
 	private MAPExtensionContainer extensionContainer; 
-	private NaeaPreferredCI naeaPreferredCI;
+	private NAEAPreferredCI naeaPreferredCI;
 	private CCBSIndicators ccbsIndicators;
 	private ISDNAddressString msisdn; 
 	private NumberPortabilityStatus nrPortabilityStatus; 
-	private ISTAlertTimerValue istAlertTimer;
+	private Integer istAlertTimer;
 	private SupportedCamelPhases supportedCamelPhases; 
 	private OfferedCamel4CSIs offeredCamel4CSIs; 
 	private RoutingInfo routingInfo2; 
-	private SSList ssList2;
+	private ArrayList<SSCode> ssList2;
 	private ExtBasicServiceCode basicService2; 
 	private AllowedServices allowedServices;
 	private UnavailabilityCause unavailabilityCause; 
@@ -149,13 +145,13 @@ public class SendRoutingInformationResponseImpl extends CallHandlingMessageImpl 
 
 	public SendRoutingInformationResponseImpl(long mapProtocolVersion, 
 			IMSI imsi, ExtendedRoutingInfo extRoutingInfo, CUGCheckInfo cugCheckInfo,
-			boolean cugSubscriptionFlag, SubscriberInfo subscriberInfo, SSList ssList,
+			boolean cugSubscriptionFlag, SubscriberInfo subscriberInfo, ArrayList<SSCode> ssList,
 			ExtBasicServiceCode basicService, boolean forwardingInterrogationRequired,
 			ISDNAddressString vmscAddress, MAPExtensionContainer extensionContainer, 
-			NaeaPreferredCI naeaPreferredCI, CCBSIndicators ccbsIndicators,
+			NAEAPreferredCI naeaPreferredCI, CCBSIndicators ccbsIndicators,
 			ISDNAddressString msisdn, NumberPortabilityStatus nrPortabilityStatus, 
-			ISTAlertTimerValue istAlertTimer, SupportedCamelPhases supportedCamelPhases, 
-			OfferedCamel4CSIs offeredCamel4CSIs, RoutingInfo routingInfo2, SSList ssList2,
+			Integer istAlertTimer, SupportedCamelPhases supportedCamelPhases, 
+			OfferedCamel4CSIs offeredCamel4CSIs, RoutingInfo routingInfo2, ArrayList<SSCode> ssList2,
 			ExtBasicServiceCode basicService2, AllowedServices allowedServices,
 			UnavailabilityCause unavailabilityCause, boolean releaseResourcesSupported,
 			ExternalSignalInfo gsmBearerCapability) { 
@@ -217,7 +213,7 @@ public class SendRoutingInformationResponseImpl extends CallHandlingMessageImpl 
 	}
 	
 	@Override
-	public SSList getSSList() {
+	public ArrayList<SSCode> getSSList() {
 		return this.ssList;
 	}
 	
@@ -242,7 +238,7 @@ public class SendRoutingInformationResponseImpl extends CallHandlingMessageImpl 
 	}
 	
 	@Override
-	public NaeaPreferredCI getNaeaPreferredCI() {
+	public NAEAPreferredCI getNaeaPreferredCI() {
 		return this.naeaPreferredCI;
 	}
 
@@ -262,7 +258,7 @@ public class SendRoutingInformationResponseImpl extends CallHandlingMessageImpl 
 	}
 	
 	@Override
-	public ISTAlertTimerValue getISTAlertTimer() {
+	public Integer getISTAlertTimer() {
 		return this.istAlertTimer;
 	}
 	
@@ -282,7 +278,7 @@ public class SendRoutingInformationResponseImpl extends CallHandlingMessageImpl 
 	}
 	
 	@Override
-	public SSList getSSList2() {
+	public ArrayList<SSCode> getSSList2() {
 		return this.ssList2;
 	}
 

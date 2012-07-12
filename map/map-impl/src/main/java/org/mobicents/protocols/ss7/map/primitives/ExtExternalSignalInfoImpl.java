@@ -20,10 +20,9 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.service.callhandling;
+package org.mobicents.protocols.ss7.map.primitives;
 
 import java.io.IOException;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -31,11 +30,12 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.map.api.primitives.ExtExternalSignalInfo;
+import org.mobicents.protocols.ss7.map.api.primitives.ExtProtocolId;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.ForwardingOptions;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.ForwardingReason;
-import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
-import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.ProtocolId;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.SignalInfo;
 
 
 /*
@@ -43,75 +43,41 @@ import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
  * @author cristian veliscu
  * 
  */
-public class ForwardingOptionsImpl implements ForwardingOptions, MAPAsnPrimitive {
-	private ForwardingReason forwardingReason;
-	private int code = 0;
-	
-	private static final int MASK_notificationForwarding = 0x80;
-	private static final int MASK_redirectingPresentation = 0x40;
-	private static final int MASK_notificationCalling = 0x20;
-	private static final int MASK_forwardingReason = 0x0C;
-	private static final int MASK_forwardingOptions = 0xEC;
-	
-	private static final String _PrimitiveName = "ForwardingOptions";
-	
-	
-	public ForwardingOptionsImpl() {}
+public class ExtExternalSignalInfoImpl implements ExtExternalSignalInfo, MAPAsnPrimitive {
+	private byte[] signalInfo = null;
+	private ExtProtocolId extProtocolId = null;
+	private MAPExtensionContainer extensionContainer = null;
 
-	public ForwardingOptionsImpl(boolean notificationToForwardingParty,
-			 					 boolean redirectingPresentation,
-								 boolean notificationToCallingParty, 
-								 ForwardingReason forwardingReason) {
-		this.forwardingReason = forwardingReason;
-		
-		int forwardingReasonCode = 3;
-		if(forwardingReason != null) {
-		  forwardingReasonCode = forwardingReason.getCode();
-		}
-			
-		code = code & MASK_forwardingOptions; // bit 5 and bits 21 are 0 (unused)
-		code = notificationToForwardingParty ? (code | MASK_notificationForwarding) : 
-			  								   (code & ~MASK_notificationForwarding);
-		code = redirectingPresentation ? (code | MASK_redirectingPresentation) : 
-									     (code & ~MASK_redirectingPresentation);
-		code = notificationToCallingParty ? (code | MASK_notificationCalling) : 
-										    (code & ~MASK_notificationCalling);
-		code = code | (forwardingReasonCode << 2) & MASK_forwardingReason;
-	}
+	private static final String _PrimitiveName = "ExtExternalSignalInfo";
 	
-	@Override
-	public boolean isNotificationToCallingParty() {
-		return ((code & MASK_notificationCalling) >> 5 == 1);
+	
+	public ExtExternalSignalInfoImpl() {}
+
+	public ExtExternalSignalInfoImpl(byte[] signalInfo, ExtProtocolId ExtProtocolId, 
+								     MAPExtensionContainer extensionContainer) {
+		this.signalInfo = signalInfo;
+		this.extProtocolId = extProtocolId;
+		this.extensionContainer = extensionContainer;
 	}
 
 	@Override
-	public boolean isNotificationToForwardingParty() {
-		return ((code & MASK_notificationForwarding) >> 7 == 1);
+	public byte[] getSignalInfo() {
+		return this.signalInfo;
 	}
 
 	@Override
-	public boolean isRedirectingPresentation() {
-		return ((code & MASK_redirectingPresentation) >> 6 == 1);
+	public ExtProtocolId getExtProtocolId() {
+		return this.extProtocolId;
 	}
 
 	@Override
-	public ForwardingReason getForwardingReason() {
-		return this.forwardingReason;
-	}
-
-	@Override
-	public byte[] getEncodedData() {
-		return new byte[] { (byte) code };
+	public MAPExtensionContainer getExtensionContainer() {
+		return this.extensionContainer;
 	}
 	
-	@Override
-	public String getEncodedDataString() {
-		return Integer.toBinaryString(code);
-	}
-
 	@Override
 	public int getTag() throws MAPException {
-		return Tag.STRING_OCTET;
+		return Tag.SEQUENCE;
 	}
 
 	@Override
@@ -120,8 +86,8 @@ public class ForwardingOptionsImpl implements ForwardingOptions, MAPAsnPrimitive
 	}
 
 	@Override
-	public boolean getIsPrimitive() { 
-		return true;
+	public boolean getIsPrimitive() {
+		return false;
 	}
 
 	@Override
@@ -151,14 +117,40 @@ public class ForwardingOptionsImpl implements ForwardingOptions, MAPAsnPrimitive
 		}
 	}
 	
-	private void _decode(AsnInputStream ais, int length) throws MAPParsingComponentException, IOException, AsnException {
-		if(length != 1)
-			throw new MAPParsingComponentException("Error decoding ForwardingOptions: the " + _PrimitiveName + " field must contain 1 octets. Contains: "
-					+ length, MAPParsingComponentExceptionReason.MistypedParameter);
+	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+		this.signalInfo = null;
+		this.extProtocolId = null;
+		this.extensionContainer = null;
 		
-		this.code = ais.readOctetStringData(length)[0];
-		this.forwardingReason = ForwardingReason.getForwardingReason(
-								(code & MASK_forwardingReason) >> 2);	  
+		AsnInputStream ais = ansIS.readSequenceStreamData(length);
+		while (true) {
+			if (ais.available() == 0)
+				break;
+
+			int tag = ais.readTag();
+			if (ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
+				switch (tag) {
+				case Tag.ENUMERATED: 
+					int code = (int) ais.readInteger();
+					this.extProtocolId = ExtProtocolId.getExtProtocolId(code);
+					break;
+				case Tag.STRING_OCTET: 
+					this.signalInfo = ais.readOctetString();
+					break;
+				case Tag.SEQUENCE:
+					if (ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+								+ ".extensionContainer: Parameter extensionContainer is primitive", 
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.extensionContainer = new MAPExtensionContainerImpl();
+					((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+					break;
+				default:
+					ais.advanceElement();
+					break;
+				}
+			}
+		}
 	}
 
 	@Override
@@ -180,7 +172,18 @@ public class ForwardingOptionsImpl implements ForwardingOptions, MAPAsnPrimitive
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		asnOs.writeOctetStringData(getEncodedData());
+		try {
+			if(this.extProtocolId != null)
+		 	  asnOs.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, this.extProtocolId.getCode());
+			if(this.signalInfo != null)
+		      asnOs.writeOctetString(Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET, this.signalInfo);
+			if(this.extensionContainer != null)
+			  ((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
+		} catch (IOException e) {
+			throw new MAPException("IOException when encoding ExternalSignalInfo : " + e.getMessage(), e);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding ExternalSignalInfo : " + e.getMessage(), e);
+		}
 	}
 	
 	public String toString() {
@@ -188,15 +191,24 @@ public class ForwardingOptionsImpl implements ForwardingOptions, MAPAsnPrimitive
 		sb.append(_PrimitiveName);
 		sb.append(" [");
 
-		sb.append("NotificationToCallingParty: ");
-		sb.append(isNotificationToCallingParty());
-		sb.append(',');
-		sb.append("NotificationToForwardingParty: ");
-		sb.append(isNotificationToForwardingParty());
-		sb.append(',');
-		sb.append("RedirectingPresentation: ");
-		sb.append(isRedirectingPresentation());
+		if (this.signalInfo!= null) {
+			sb.append("signalInfo=[");
+			sb.append(this.signalInfo);
+			sb.append("], ");
+		}
 		
+		if (this.extProtocolId != null) {
+			sb.append("extProtocolId=[");
+			sb.append(this.extProtocolId);
+			sb.append("], ");
+		}
+		
+		if (this.extensionContainer != null) {
+			sb.append("extensionContainer=[");
+			sb.append(this.extensionContainer);
+			sb.append("]");
+		}
+
 		sb.append("]");
 		return sb.toString();
 	}

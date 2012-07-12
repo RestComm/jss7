@@ -54,7 +54,7 @@ public interface VlrCapability {
 
 	public boolean getSolsaSupportIndicator();
 
-	public IstSupportIndicator getIstSupportIndicator();
+	public ISTSupportIndicator getIstSupportIndicator();
 
 	public SuperChargerInfo getSuperChargerSupportedInServingNetworkEntity();
 

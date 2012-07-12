@@ -38,6 +38,6 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
  */
 public interface CamelRoutingInfo {
 	public ForwardingData getForwardingData();
-	public byte[] getGmscCamelSubscriptionInfo(); // TODO
+	public GmscCamelSubscriptionInfo getGmscCamelSubscriptionInfo();
 	public MAPExtensionContainer getMAPExtensionContainer();
 }

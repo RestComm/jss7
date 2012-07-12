@@ -20,14 +20,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.callhandling;
+package org.mobicents.protocols.ss7.map.api.service.supplementary;
+
+
 
 /*
- * SupportedCCBS-Phase ::= INTEGER (1..127)
- * -- exception handling:
- * -- Only value 1 is used.
- * -- Values in the ranges 2-127 are reserved for future use.
- * -- If received values 2-127 shall be mapped on to value 1.
+ *	ForwardingOptions ::= OCTET STRING (SIZE (1))
+ *	-- bit 8: notification to forwarding party
+ *	-- 0 no notification
+ *	-- 1 notification
+ *	-- bit 7: redirecting presentation
+ *	-- 0 no presentation
+ *	-- 1 presentation
+ *	-- bit 6: notification to calling party
+ *	-- 0 no notification
+ *	-- 1 notification
+ *	-- bit 5: 0 (unused)
+ *	-- bits 43: forwarding reason
+ *	-- 00 ms not reachable
+ *	-- 01 ms busy
+ *	-- 10 no reply
+ *	-- 11 unconditional when used in a SRI Result,
+ *	-- or call deflection when used in a RCH Argument
+ *	-- bits 21: 00 (unused)
  */
  
 /*
@@ -35,6 +50,11 @@ package org.mobicents.protocols.ss7.map.api.service.callhandling;
  * @author cristian veliscu
  * 
  */
-public interface SupportedCCBSPhase {
-	public int getData(); 
+public interface ForwardingOptions {	
+	public int getData();
+
+	public boolean isNotificationToForwardingParty();
+	public boolean isRedirectingPresentation();
+	public boolean isNotificationToCallingParty();
+	public ForwardingReason getForwardingReason();
 }

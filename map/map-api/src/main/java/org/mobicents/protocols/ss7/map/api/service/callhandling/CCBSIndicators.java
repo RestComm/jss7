@@ -38,7 +38,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
  * 
  */
 public interface CCBSIndicators {
-	public byte[] getCCBSPossible();
-	public byte[] getKeepCCBSCallIndicator();
+	public boolean getCCBSPossible();
+	public boolean getKeepCCBSCallIndicator();
 	public MAPExtensionContainer getMAPExtensionContainer();
 }

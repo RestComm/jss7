@@ -35,5 +35,9 @@ package org.mobicents.protocols.ss7.map.api.service.callhandling;
  * 
  */
 public interface CallDiversionTreatmentIndicator {
-	public byte[] getData();
+
+	public int getData();
+
+	public CallDiversionTreatmentIndicatorValue getCallDiversionTreatmentIndicatorValue();
+
 }

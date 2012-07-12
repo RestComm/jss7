@@ -20,12 +20,23 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.callhandling;
+package org.mobicents.protocols.ss7.map.api.service.supplementary;
+
 
 /*
- * Ext-ProtocolId ::= ENUMERATED {
- * ets_300356 (1),
- * ...}
+ * 
+
+	-- bits 43: forwarding reason
+	-- 00 ms not reachable
+	-- 01 ms busy
+	-- 10 no reply
+	-- 11 unconditional when used in a SRI Result,
+	-- or call deflection when used in a RCH Argument
+
+ *	ForwardingReason ::= ENUMERATED {
+ *  notReachable (0),
+ *  busy (1),
+ *  noReply (2)}
  */
  
 /*
@@ -33,12 +44,15 @@ package org.mobicents.protocols.ss7.map.api.service.callhandling;
  * @author cristian veliscu
  * 
  */
-public enum ExtProtocolId {
-	ets_300356 (1);
-	 
+public enum ForwardingReason {
+	notReachable (0),
+	busy (1),
+    noReply (2),
+    unconditionalOrCallDeflection(3);
+
 	private int code;
 
-	private ExtProtocolId(int code) {
+	private ForwardingReason(int code) {
 		this.code = code;
 	}
 
@@ -46,10 +60,16 @@ public enum ExtProtocolId {
 		return this.code;
 	}
 
-	public static ExtProtocolId getExtProtocolId(int code) {
+	public static ForwardingReason getForwardingReason(int code) {
 		switch (code) {
+		case 0:
+			return notReachable;
 		case 1:
-			return ets_300356;
+			return busy;
+		case 2:
+			return noReply;
+		case 3:
+			return unconditionalOrCallDeflection;
 		default:
 			return null;
 		}

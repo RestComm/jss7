@@ -31,7 +31,7 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.IstSupportIndicator;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ISTSupportIndicator;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SuperChargerInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedLCSCapabilitySets;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedRATTypes;
@@ -66,7 +66,7 @@ public class VlrCapabilityImpl implements VlrCapability, MAPAsnPrimitive {
 	private SupportedCamelPhases supportedCamelPhases;
 	private MAPExtensionContainer extensionContainer;
 	private boolean solsaSupportIndicator;
-	private IstSupportIndicator istSupportIndicator;
+	private ISTSupportIndicator istSupportIndicator;
 	private SuperChargerInfo superChargerSupportedInServingNetworkEntity;
 	private boolean longFtnSupported;
 	private SupportedLCSCapabilitySets supportedLCSCapabilitySets;
@@ -79,7 +79,7 @@ public class VlrCapabilityImpl implements VlrCapability, MAPAsnPrimitive {
 	}	
 
 	public VlrCapabilityImpl(SupportedCamelPhases supportedCamelPhases, MAPExtensionContainer extensionContainer, boolean solsaSupportIndicator,
-			IstSupportIndicator istSupportIndicator, SuperChargerInfo superChargerSupportedInServingNetworkEntity, boolean longFtnSupported,
+			ISTSupportIndicator istSupportIndicator, SuperChargerInfo superChargerSupportedInServingNetworkEntity, boolean longFtnSupported,
 			SupportedLCSCapabilitySets supportedLCSCapabilitySets, OfferedCamel4CSIs offeredCamel4CSIs, SupportedRATTypes supportedRATTypesIndicator,
 			boolean longGroupIDSupported, boolean mtRoamingForwardingSupported) {
 		this.supportedCamelPhases = supportedCamelPhases;
@@ -108,7 +108,7 @@ public class VlrCapabilityImpl implements VlrCapability, MAPAsnPrimitive {
 		return solsaSupportIndicator;
 	}
 
-	public IstSupportIndicator getIstSupportIndicator() {
+	public ISTSupportIndicator getIstSupportIndicator() {
 		return istSupportIndicator;
 	}
 
@@ -224,7 +224,7 @@ public class VlrCapabilityImpl implements VlrCapability, MAPAsnPrimitive {
 						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
 								+ ".istSupportIndicator: Parameter is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
 					int i1 = (int) ais.readInteger();
-					this.istSupportIndicator = IstSupportIndicator.getInstance(i1);
+					this.istSupportIndicator = ISTSupportIndicator.getInstance(i1);
 					break;
 				case _TAG_superChargerSupportedInServingNetworkEntity: // superChargerSupportedInServingNetworkEntity
 					if (ais.isTagPrimitive())

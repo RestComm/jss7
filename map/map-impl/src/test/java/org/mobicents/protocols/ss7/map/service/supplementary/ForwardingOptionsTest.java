@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.service.callhandling;
+package org.mobicents.protocols.ss7.map.service.supplementary;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -34,9 +34,10 @@ import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.ForwardingOptions;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.ForwardingReason;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ForwardingOptions;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ForwardingReason;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
+import org.mobicents.protocols.ss7.map.service.supplementary.ForwardingOptionsImpl;
 import org.testng.Assert.*;
 import org.testng.*;
 import org.testng.annotations.*;

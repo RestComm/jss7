@@ -22,18 +22,26 @@
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
+import java.util.ArrayList;
+
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
+import org.mobicents.protocols.ss7.map.api.primitives.EMLPPPriority;
+import org.mobicents.protocols.ss7.map.api.primitives.ExtExternalSignalInfo;
+import org.mobicents.protocols.ss7.map.api.primitives.ExternalSignalInfo;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.IstSupportIndicator;
+import org.mobicents.protocols.ss7.map.api.primitives.NAEAPreferredCI;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ISTSupportIndicator;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.NumberPortabilityStatus;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OfferedCamel4CSIs;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ForwardingReason;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
 
 
 /*
@@ -44,15 +52,15 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 public interface MAPDialogCallHandling extends MAPDialog {
 	public Long addSendRoutingInformationRequest(
 			long mapProtocolVersion, ISDNAddressString msisdn, 
-			CUGCheckInfo cugCheckInfo, NumberOfForwarding numberOfForwarding,
-			InterrogationType interrogationType, boolean orInterrogation, ORPhase orCapability,
+			CUGCheckInfo cugCheckInfo, Integer numberOfForwarding,
+			InterrogationType interrogationType, boolean orInterrogation, Integer orCapability,
 			ISDNAddressString gmscAddress, CallReferenceNumber callReferenceNumber,
 			ForwardingReason forwardingReason, ExtBasicServiceCode basicServiceGroup,
 			ExternalSignalInfo networkSignalInfo, CamelInfo camelInfo, boolean suppressionOfAnnouncement,
 			MAPExtensionContainer extensionContainer, AlertingPattern alertingPattern,
-			boolean ccbsCall, SupportedCCBSPhase supportedCCBSPhase, 
+			boolean ccbsCall, Integer supportedCCBSPhase, 
 			ExtExternalSignalInfo additionalSignalInfo,
-			IstSupportIndicator istSupportIndicator, boolean prePagingSupported,
+			ISTSupportIndicator istSupportIndicator, boolean prePagingSupported,
 			CallDiversionTreatmentIndicator callDiversionTreatmentIndicator,
 			boolean longFTNSupported, boolean suppressVtCSI, boolean suppressIncomingCallBarring,
 			boolean gsmSCFInitiatedCall, ExtBasicServiceCode basicServiceGroup2,
@@ -62,15 +70,15 @@ public interface MAPDialogCallHandling extends MAPDialog {
 	public Long addSendRoutingInformationRequest(
 			int customInvokeTimeout,
 			long mapProtocolVersion, ISDNAddressString msisdn, 
-			CUGCheckInfo cugCheckInfo, NumberOfForwarding numberOfForwarding,
-			InterrogationType interrogationType, boolean orInterrogation, ORPhase orCapability,
+			CUGCheckInfo cugCheckInfo, Integer numberOfForwarding,
+			InterrogationType interrogationType, boolean orInterrogation, Integer orCapability,
 			ISDNAddressString gmscAddress, CallReferenceNumber callReferenceNumber,
 			ForwardingReason forwardingReason, ExtBasicServiceCode basicServiceGroup,
 			ExternalSignalInfo networkSignalInfo, CamelInfo camelInfo, boolean suppressionOfAnnouncement,
 			MAPExtensionContainer extensionContainer, AlertingPattern alertingPattern,
-			boolean ccbsCall, SupportedCCBSPhase supportedCCBSPhase, 
+			boolean ccbsCall, Integer supportedCCBSPhase, 
 			ExtExternalSignalInfo additionalSignalInfo,
-			IstSupportIndicator istSupportIndicator, boolean prePagingSupported,
+			ISTSupportIndicator istSupportIndicator, boolean prePagingSupported,
 			CallDiversionTreatmentIndicator callDiversionTreatmentIndicator,
 			boolean longFTNSupported, boolean suppressVtCSI, boolean suppressIncomingCallBarring,
 			boolean gsmSCFInitiatedCall, ExtBasicServiceCode basicServiceGroup2,
@@ -80,13 +88,13 @@ public interface MAPDialogCallHandling extends MAPDialog {
 	public void addSendRoutingInformationResponse(
 			long invokeId, long mapProtocolVersion, 
 			IMSI imsi, ExtendedRoutingInfo extRoutingInfo, CUGCheckInfo cugCheckInfo,
-			boolean cugSubscriptionFlag, SubscriberInfo subscriberInfo, SSList ssList,
+			boolean cugSubscriptionFlag, SubscriberInfo subscriberInfo, ArrayList<SSCode> ssList,
 			ExtBasicServiceCode basicService, boolean forwardingInterrogationRequired,
 			ISDNAddressString vmscAddress, MAPExtensionContainer extensionContainer, 
-			NaeaPreferredCI naeaPreferredCI, CCBSIndicators ccbsIndicators,
+			NAEAPreferredCI naeaPreferredCI, CCBSIndicators ccbsIndicators,
 			ISDNAddressString msisdn, NumberPortabilityStatus nrPortabilityStatus, 
-			ISTAlertTimerValue istAlertTimer, SupportedCamelPhases supportedCamelPhases, 
-			OfferedCamel4CSIs offeredCamel4CSIs, RoutingInfo routingInfo2, SSList ssList2,
+			Integer istAlertTimer, SupportedCamelPhases supportedCamelPhases, 
+			OfferedCamel4CSIs offeredCamel4CSIs, RoutingInfo routingInfo2, ArrayList<SSCode> ssList2,
 			ExtBasicServiceCode basicService2, AllowedServices allowedServices,
 			UnavailabilityCause unavailabilityCause, boolean releaseResourcesSupported,
 			ExternalSignalInfo gsmBearerCapability) throws MAPException;
