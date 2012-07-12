@@ -20,40 +20,45 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
-
-import java.util.ArrayList;
-
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
 /**
  * 
 
-LSAInformation ::= SEQUENCE {
-	completeDataListIncluded	NULL			OPTIONAL,
+CliRestrictionOption ::= ENUMERATED {
+	permanent  (0),
+	temporaryDefaultRestricted  (1),
+	temporaryDefaultAllowed  (2)}
 
-		-- If segmentation is used, completeDataListIncluded may only be present in the
-		-- first segment.
-	lsaOnlyAccessIndicator	[1]	LSAOnlyAccessIndicator	OPTIONAL,
-	lsaDataList	[2]	LSADataList	OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
-	...}
-
-LSADataList ::= SEQUENCE SIZE (1..20) OF LSAData
-
- * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LSAInformation {
+public enum CliRestrictionOption {
+	permanent(0), 
+	temporaryDefaultRestricted(1), 
+	temporaryDefaultAllowed(2);
 
-	public boolean getCompleteDataListIncluded();
+	private int code;
 
-	public LSAOnlyAccessIndicator getLSAOnlyAccessIndicator();
+	private CliRestrictionOption(int code) {
+		this.code = code;
+	}
 
-	public ArrayList<LSAData> getLSADataList();
+	public int getCode() {
+		return this.code;
+	}
 
-	public MAPExtensionContainer getExtensionContainer();
-
+	public static CliRestrictionOption getInstance(int code) {
+		switch (code) {
+		case 0:
+			return CliRestrictionOption.permanent;
+		case 1:
+			return CliRestrictionOption.temporaryDefaultRestricted;
+		case 2:
+			return CliRestrictionOption.temporaryDefaultAllowed;
+		default:
+			return null;
+		}
+	}
 }

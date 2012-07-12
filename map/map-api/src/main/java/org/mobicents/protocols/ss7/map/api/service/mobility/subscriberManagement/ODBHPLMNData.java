@@ -22,38 +22,33 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
-import java.util.ArrayList;
-
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-
 /**
  * 
 
-LSAInformation ::= SEQUENCE {
-	completeDataListIncluded	NULL			OPTIONAL,
-
-		-- If segmentation is used, completeDataListIncluded may only be present in the
-		-- first segment.
-	lsaOnlyAccessIndicator	[1]	LSAOnlyAccessIndicator	OPTIONAL,
-	lsaDataList	[2]	LSADataList	OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
-	...}
-
-LSADataList ::= SEQUENCE SIZE (1..20) OF LSAData
+ODB-HPLMN-Data ::= BIT STRING {
+	plmn-SpecificBarringType1  (0),
+	plmn-SpecificBarringType2  (1),
+	plmn-SpecificBarringType3  (2),
+	plmn-SpecificBarringType4  (3)} (SIZE (4..32))
+	-- exception handling: reception of unknown bit assignments in the
+	-- ODB-HPLMN-Data type shall be treated like unsupported ODB-HPLMN-Data 
+	-- When the ODB-HPLMN-Data type is removed from the HLR for a given subscriber, 
+	-- in NoteSubscriberDataModified operation sent toward the gsmSCF
+	-- all bits shall be set to “O“.
 
  * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LSAInformation {
+public interface ODBHPLMNData {
 
-	public boolean getCompleteDataListIncluded();
+	public boolean getPlmnSpecificBarringType1();
 
-	public LSAOnlyAccessIndicator getLSAOnlyAccessIndicator();
+	public boolean getPlmnSpecificBarringType2();
 
-	public ArrayList<LSAData> getLSADataList();
+	public boolean getPlmnSpecificBarringType3();
 
-	public MAPExtensionContainer getExtensionContainer();
+	public boolean getPlmnSpecificBarringType4();
 
 }

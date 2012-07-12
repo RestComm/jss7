@@ -22,38 +22,53 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
-import java.util.ArrayList;
-
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-
 /**
  * 
 
-LSAInformation ::= SEQUENCE {
-	completeDataListIncluded	NULL			OPTIONAL,
-
-		-- If segmentation is used, completeDataListIncluded may only be present in the
-		-- first segment.
-	lsaOnlyAccessIndicator	[1]	LSAOnlyAccessIndicator	OPTIONAL,
-	lsaDataList	[2]	LSADataList	OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
-	...}
-
-LSADataList ::= SEQUENCE SIZE (1..20) OF LSAData
+NotificationToMSUser ::= ENUMERATED {
+	notifyLocationAllowed	(0),
+	notifyAndVerify-LocationAllowedIfNoResponse	(1),
+	notifyAndVerify-LocationNotAllowedIfNoResponse	(2),
+	...,
+	locationNotAllowed (3) }
+-- exception handling:
+-- At reception of any other value than the ones listed the receiver shall ignore
+-- NotificationToMSUser.
 
  * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LSAInformation {
+public enum NotificationToMSUser {
+	notifyLocationAllowed(0), 
+	notifyAndVerifyLocationAllowedIfNoResponse(1), 
+	notifyAndVerifyLocationNotAllowedIfNoResponse(2), 
+	locationNotAllowed(3);
 
-	public boolean getCompleteDataListIncluded();
+	private int code;
 
-	public LSAOnlyAccessIndicator getLSAOnlyAccessIndicator();
+	private NotificationToMSUser(int code) {
+		this.code = code;
+	}
 
-	public ArrayList<LSAData> getLSADataList();
+	public int getCode() {
+		return this.code;
+	}
 
-	public MAPExtensionContainer getExtensionContainer();
-
+	public static NotificationToMSUser getInstance(int code) {
+		switch (code) {
+		case 0:
+			return NotificationToMSUser.notifyLocationAllowed;
+		case 1:
+			return NotificationToMSUser.notifyAndVerifyLocationAllowedIfNoResponse;
+		case 2:
+			return NotificationToMSUser.notifyAndVerifyLocationNotAllowedIfNoResponse;
+		case 3:
+			return NotificationToMSUser.locationNotAllowed;
+		default:
+			return null;
+		}
+	}
 }
+

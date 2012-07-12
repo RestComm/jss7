@@ -22,37 +22,36 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
-import java.util.ArrayList;
-
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
  * 
 
-LSAInformation ::= SEQUENCE {
-	completeDataListIncluded	NULL			OPTIONAL,
+ServiceType ::= SEQUENCE {
+	serviceTypeIdentity	LCSServiceTypeID,
+	gmlc-Restriction	[0] GMLC-Restriction	OPTIONAL,
+	notificationToMSUser	[1] NotificationToMSUser	OPTIONAL,
+	-- If notificationToMSUser is not received, the default value according to 
+	-- 3GPP TS 23.271 shall be assumed.
+	extensionContainer	[2] ExtensionContainer	OPTIONAL,
+	... }
 
-		-- If segmentation is used, completeDataListIncluded may only be present in the
-		-- first segment.
-	lsaOnlyAccessIndicator	[1]	LSAOnlyAccessIndicator	OPTIONAL,
-	lsaDataList	[2]	LSADataList	OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
-	...}
-
-LSADataList ::= SEQUENCE SIZE (1..20) OF LSAData
+LCSServiceTypeID ::= INTEGER (0..127)
+	-- the integer values 0-63 are reserved for Standard LCS service types
+	-- the integer values 64-127 are reserved for Non Standard LCS service types
 
  * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LSAInformation {
+public interface ServiceType {
 
-	public boolean getCompleteDataListIncluded();
+	public int getServiceTypeIdentity();
 
-	public LSAOnlyAccessIndicator getLSAOnlyAccessIndicator();
+	public GMLCRestriction getGMLCRestriction();
 
-	public ArrayList<LSAData> getLSADataList();
+	public NotificationToMSUser getNotificationToMSUser();
 
 	public MAPExtensionContainer getExtensionContainer();
 

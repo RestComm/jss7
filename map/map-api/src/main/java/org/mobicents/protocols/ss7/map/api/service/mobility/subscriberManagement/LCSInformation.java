@@ -22,6 +22,9 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.util.ArrayList;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+
 /**
  * 
 
@@ -38,6 +41,15 @@ LCSInformation ::= SEQUENCE {
 	-- add-lcs-PrivacyExceptionList with the same SS-Code, then the error unexpected 
 	-- data value shall be returned.
 
+GMLC-List ::= SEQUENCE SIZE (1..5) OF ISDN-AddressString
+	-- if segmentation is used, the complete GMLC-List shall be sent in one segment
+
+LCS-PrivacyExceptionList ::= SEQUENCE SIZE (1..4) OF LCS-PrivacyClass
+
+MOLR-List ::= SEQUENCE SIZE (1..3) OF MOLR-Class
+
+LCS-PrivacyExceptionList ::= SEQUENCE SIZE (1..4) OF LCS-PrivacyClass
+
  * 
  * 
  * @author sergey vetyutnev
@@ -45,12 +57,12 @@ LCSInformation ::= SEQUENCE {
  */
 public interface LCSInformation {
 
-	public GMLCList getGmlcList();
+	public ArrayList<ISDNAddressString> getGmlcList();
 
-	public LCSPrivacyExceptionList getLcsPrivacyExceptionList();
+	public ArrayList<LCSPrivacyClass> getLcsPrivacyExceptionList();
 
-	public MOLRList getMOLRList();
+	public ArrayList<MOLRClass> getMOLRList();
 
-	public LCSPrivacyExceptionList getAddLcsPrivacyExceptionList();
+	public ArrayList<LCSPrivacyClass> getAddLcsPrivacyExceptionList();
 
 }

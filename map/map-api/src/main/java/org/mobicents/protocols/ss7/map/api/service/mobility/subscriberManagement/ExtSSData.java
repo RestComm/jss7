@@ -25,34 +25,36 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
 import java.util.ArrayList;
 
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.SSSubscriptionOption;
 
 /**
  * 
 
-LSAInformation ::= SEQUENCE {
-	completeDataListIncluded	NULL			OPTIONAL,
-
-		-- If segmentation is used, completeDataListIncluded may only be present in the
-		-- first segment.
-	lsaOnlyAccessIndicator	[1]	LSAOnlyAccessIndicator	OPTIONAL,
-	lsaDataList	[2]	LSADataList	OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
+Ext-SS-Data ::= SEQUENCE {
+	ss-Code		SS-Code,
+	ss-Status	[4] Ext-SS-Status,
+	ss-SubscriptionOption	SS-SubscriptionOption	OPTIONAL,
+	basicServiceGroupList	Ext-BasicServiceGroupList	OPTIONAL,
+	extensionContainer	[5] ExtensionContainer	OPTIONAL,
 	...}
 
-LSADataList ::= SEQUENCE SIZE (1..20) OF LSAData
+Ext-BasicServiceGroupList ::= SEQUENCE SIZE (1..32) OF Ext-BasicServiceCode
 
  * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LSAInformation {
+public interface ExtSSData {
 
-	public boolean getCompleteDataListIncluded();
+	public SSCode getSsCode();
 
-	public LSAOnlyAccessIndicator getLSAOnlyAccessIndicator();
+	public ExtSSStatus getSsStatus();
 
-	public ArrayList<LSAData> getLSADataList();
+	public SSSubscriptionOption getSSSubscriptionOption();
+
+	public ArrayList<ExtBasicServiceCode> getBasicServiceGroupList();
 
 	public MAPExtensionContainer getExtensionContainer();
 

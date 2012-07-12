@@ -23,60 +23,51 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
 import java.util.ArrayList;
+
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
  * 
 
-VlrCamelSubscriptionInfo ::= SEQUENCE {
-	o-CSI		[0] O-CSI		OPTIONAL,
-	extensionContainer	[1] ExtensionContainer	OPTIONAL,
+O-CSI ::= SEQUENCE {
+	o-BcsmCamelTDPDataList	O-BcsmCamelTDPDataList,
+	extensionContainer	ExtensionContainer	OPTIONAL,
 	...,
-	ss-CSI		[2] SS-CSI	OPTIONAL,
-	o-BcsmCamelTDP-CriteriaList	[4] O-BcsmCamelTDPCriteriaList	OPTIONAL,
-	tif-CSI		[3] NULL	OPTIONAL,
-	m-CSI		[5] M-CSI	OPTIONAL,
-	mo-sms-CSI	[6] SMS-CSI	OPTIONAL,
-	vt-CSI		[7] T-CSI	OPTIONAL,
-	t-BCSM-CAMEL-TDP-CriteriaList	[8] T-BCSM-CAMEL-TDP-CriteriaList	OPTIONAL,
-	d-CSI		[9] D-CSI	OPTIONAL,
-	mt-sms-CSI	[10] SMS-CSI	OPTIONAL,
-	mt-smsCAMELTDP-CriteriaList	[11]	MT-smsCAMELTDP-CriteriaList	OPTIONAL
-	}
+	camelCapabilityHandling	[0] CamelCapabilityHandling	OPTIONAL,
+	notificationToCSE	[1]	NULL		OPTIONAL,
+	csiActive		[2]	NULL		OPTIONAL}
+--	notificationtoCSE and csiActive shall not be present when O-CSI is sent to VLR/GMSC.
+--	They may only be included in ATSI/ATM ack/NSDC message.
+--	O-CSI shall not be segmented.
 
-O-BcsmCamelTDPCriteriaList ::= SEQUENCE SIZE (1..10) OF O-BcsmCamelTDP-Criteria 
+O-BcsmCamelTDPDataList ::= SEQUENCE SIZE (1..10) OF O-BcsmCamelTDPData
+	-- O-BcsmCamelTDPDataList shall not contain more than one instance of
+	-- O-BcsmCamelTDPData containing the same value for o-BcsmTriggerDetectionPoint.
+	-- For CAMEL Phase 2, this means that only one instance of O-BcsmCamelTDPData is allowed
+	-- with o-BcsmTriggerDetectionPoint being equal to DP2.
 
-T-BCSM-CAMEL-TDP-CriteriaList ::= SEQUENCE SIZE (1..10) OF T-BCSM-CAMEL-TDP-Criteria 
-
-MT-smsCAMELTDP-CriteriaList ::= SEQUENCE SIZE (1.. 10) OF MT-smsCAMELTDP-Criteria
+CamelCapabilityHandling ::= INTEGER(1..16) 
+	-- value 1 = CAMEL phase 1,
+	-- value 2 = CAMEL phase 2,
+	-- value 3 = CAMEL Phase 3,
+	-- value 4 = CAMEL phase 4:
+	-- reception of values greater than 4 shall be treated as CAMEL phase 4.
 
  * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface VlrCamelSubscriptionInfo {
+public interface OCSI {
 
-	public OCSI getOCsi();
+	public ArrayList<OBcsmCamelTDPData> getOBcsmCamelTDPDataList();
 
 	public MAPExtensionContainer getExtensionContainer();
 
-	public SSCSI getSsCsi();
+	public Integer getCamelCapabilityHandling();
 
-	public ArrayList<OBcsmCamelTDPCriteria> getOBcsmCamelTDPCriteriaList();
+	public boolean getNotificationToCSE();
 
-	public boolean getTifCsi();
-
-	public MCSI getMCsi();
-
-	public SMSCSI getSmsCsi();
-
-	public TCSI getVtCsi();
-
-	public ArrayList<TBCSMCAMELTDPCriteria> getTBcsmCamelTdpCriteriaList();
-
-	public DCSI getDCsi();
-
-	public ArrayList<MTsmsCAMELTDPCriteria> getMtSmsCamelTdpCriteriaList();
+	public boolean getCsiActive();
 
 }

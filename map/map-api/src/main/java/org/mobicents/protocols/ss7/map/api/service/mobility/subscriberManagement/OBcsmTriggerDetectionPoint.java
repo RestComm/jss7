@@ -22,38 +22,48 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
-import java.util.ArrayList;
-
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-
 /**
  * 
 
-LSAInformation ::= SEQUENCE {
-	completeDataListIncluded	NULL			OPTIONAL,
-
-		-- If segmentation is used, completeDataListIncluded may only be present in the
-		-- first segment.
-	lsaOnlyAccessIndicator	[1]	LSAOnlyAccessIndicator	OPTIONAL,
-	lsaDataList	[2]	LSADataList	OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
-	...}
-
-LSADataList ::= SEQUENCE SIZE (1..20) OF LSAData
+O-BcsmTriggerDetectionPoint ::= ENUMERATED {
+	collectedInfo (2),
+	...,
+	routeSelectFailure (4) }
+	-- exception handling:
+	-- For O-BcsmCamelTDPData sequences containing this parameter with any
+	-- other value than the ones listed the receiver shall ignore the whole 
+	-- O-BcsmCamelTDPDatasequence. 
+	-- For O-BcsmCamelTDP-Criteria sequences containing this parameter with any
+	-- other value than the ones listed the receiver shall ignore the whole
+	-- O-BcsmCamelTDP-Criteria sequence.
 
  * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LSAInformation {
+public enum OBcsmTriggerDetectionPoint {
+	collectedInfo(2), 
+	routeSelectFailure(4);
 
-	public boolean getCompleteDataListIncluded();
+	private int code;
 
-	public LSAOnlyAccessIndicator getLSAOnlyAccessIndicator();
+	private OBcsmTriggerDetectionPoint(int code) {
+		this.code = code;
+	}
 
-	public ArrayList<LSAData> getLSADataList();
+	public int getCode() {
+		return this.code;
+	}
 
-	public MAPExtensionContainer getExtensionContainer();
-
+	public static OBcsmTriggerDetectionPoint getInstance(int code) {
+		switch (code) {
+		case 2:
+			return OBcsmTriggerDetectionPoint.collectedInfo;
+		case 4:
+			return OBcsmTriggerDetectionPoint.routeSelectFailure;
+		default:
+			return null;
+		}
+	}
 }

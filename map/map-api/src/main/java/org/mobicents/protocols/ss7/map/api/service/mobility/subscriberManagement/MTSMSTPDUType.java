@@ -22,38 +22,52 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
-import java.util.ArrayList;
-
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-
 /**
  * 
 
-LSAInformation ::= SEQUENCE {
-	completeDataListIncluded	NULL			OPTIONAL,
+MT-SMS-TPDU-Type ::= ENUMERATED {
+	sms-DELIVER 	(0),
+	sms-SUBMIT-REPORT 	(1),
+	sms-STATUS-REPORT 	(2),
+	... }
 
-		-- If segmentation is used, completeDataListIncluded may only be present in the
-		-- first segment.
-	lsaOnlyAccessIndicator	[1]	LSAOnlyAccessIndicator	OPTIONAL,
-	lsaDataList	[2]	LSADataList	OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
-	...}
-
-LSADataList ::= SEQUENCE SIZE (1..20) OF LSAData
+--	exception handling:
+--	For TPDU-TypeCriterion sequences containing this parameter with any
+--	other value than the ones listed above the receiver shall ignore 
+--	the whole TPDU-TypeCriterion sequence.
+--	In CAMEL phase 4, sms-SUBMIT-REPORT shall not be used and a received TPDU-TypeCriterion
+--	sequence containing sms-SUBMIT-REPORT shall be wholly ignored.
 
  * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LSAInformation {
+public enum MTSMSTPDUType {
+	smsDELIVER(0), 
+	smsSUBMITREPORT(1), 
+	smsSTATUSREPORT(2);
 
-	public boolean getCompleteDataListIncluded();
+	private int code;
 
-	public LSAOnlyAccessIndicator getLSAOnlyAccessIndicator();
+	private MTSMSTPDUType(int code) {
+		this.code = code;
+	}
 
-	public ArrayList<LSAData> getLSADataList();
+	public int getCode() {
+		return this.code;
+	}
 
-	public MAPExtensionContainer getExtensionContainer();
-
+	public static MTSMSTPDUType getInstance(int code) {
+		switch (code) {
+		case 0:
+			return MTSMSTPDUType.smsDELIVER;
+		case 1:
+			return MTSMSTPDUType.smsSUBMITREPORT;
+		case 2:
+			return MTSMSTPDUType.smsSTATUSREPORT;
+		default:
+			return null;
+		}
+	}
 }

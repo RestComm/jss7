@@ -22,38 +22,44 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
-import java.util.ArrayList;
-
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-
 /**
  * 
 
-LSAInformation ::= SEQUENCE {
-	completeDataListIncluded	NULL			OPTIONAL,
-
-		-- If segmentation is used, completeDataListIncluded may only be present in the
-		-- first segment.
-	lsaOnlyAccessIndicator	[1]	LSAOnlyAccessIndicator	OPTIONAL,
-	lsaDataList	[2]	LSADataList	OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
-	...}
-
-LSADataList ::= SEQUENCE SIZE (1..20) OF LSAData
+GMLC-Restriction ::= ENUMERATED {
+	gmlc-List		(0),
+	home-Country	(1) ,
+	... }
+-- exception handling:
+-- At reception of any other value than the ones listed the receiver shall ignore
+-- GMLC-Restriction.
 
  * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LSAInformation {
+public enum GMLCRestriction {
+	gmlcList(0), 
+	homeCountry(1);
 
-	public boolean getCompleteDataListIncluded();
+	private int code;
 
-	public LSAOnlyAccessIndicator getLSAOnlyAccessIndicator();
+	private GMLCRestriction(int code) {
+		this.code = code;
+	}
 
-	public ArrayList<LSAData> getLSADataList();
+	public int getCode() {
+		return this.code;
+	}
 
-	public MAPExtensionContainer getExtensionContainer();
-
+	public static GMLCRestriction getInstance(int code) {
+		switch (code) {
+		case 0:
+			return GMLCRestriction.gmlcList;
+		case 1:
+			return GMLCRestriction.homeCountry;
+		default:
+			return null;
+		}
+	}
 }

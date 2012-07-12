@@ -23,37 +23,51 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
 import java.util.ArrayList;
-
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
  * 
 
-LSAInformation ::= SEQUENCE {
-	completeDataListIncluded	NULL			OPTIONAL,
-
-		-- If segmentation is used, completeDataListIncluded may only be present in the
-		-- first segment.
-	lsaOnlyAccessIndicator	[1]	LSAOnlyAccessIndicator	OPTIONAL,
-	lsaDataList	[2]	LSADataList	OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
+GPRS-CSI ::= SEQUENCE {
+	gprs-CamelTDPDataList	[0] GPRS-CamelTDPDataList	OPTIONAL,
+	camelCapabilityHandling	[1] CamelCapabilityHandling	OPTIONAL,
+	extensionContainer	[2] ExtensionContainer	OPTIONAL,
+	notificationToCSE	[3]	NULL		OPTIONAL,
+	csi-Active	[4]	NULL		OPTIONAL,
 	...}
+--	notificationToCSE and csi-Active shall not be present when GPRS-CSI is sent to SGSN.
+--	They may only be included in ATSI/ATM ack/NSDC message. 
+--	GPRS-CamelTDPData and  camelCapabilityHandling shall be present in 
+--	the GPRS-CSI sequence.
+--	If GPRS-CSI is segmented, gprs-CamelTDPDataList and camelCapabilityHandling shall be 
+--	present in the first segment
 
-LSADataList ::= SEQUENCE SIZE (1..20) OF LSAData
+GPRS-CamelTDPDataList ::= SEQUENCE SIZE (1..10) OF GPRS-CamelTDPData
+--	GPRS-CamelTDPDataList shall not contain more than one instance of
+--	GPRS-CamelTDPData containing the same value for gprs-TriggerDetectionPoint.
+
+CamelCapabilityHandling ::= INTEGER(1..16) 
+	-- value 1 = CAMEL phase 1,
+	-- value 2 = CAMEL phase 2,
+	-- value 3 = CAMEL Phase 3,
+	-- value 4 = CAMEL phase 4:
+	-- reception of values greater than 4 shall be treated as CAMEL phase 4.
 
  * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LSAInformation {
+public interface GPRSCSI {
 
-	public boolean getCompleteDataListIncluded();
+	public ArrayList<GPRSCamelTDPData> getGPRSCamelTDPDataList();
 
-	public LSAOnlyAccessIndicator getLSAOnlyAccessIndicator();
-
-	public ArrayList<LSAData> getLSADataList();
+	public Integer getCamelCapabilityHandling();
 
 	public MAPExtensionContainer getExtensionContainer();
+
+	public boolean getNotificationToCSE();
+
+	public boolean getCsiActive();
 
 }

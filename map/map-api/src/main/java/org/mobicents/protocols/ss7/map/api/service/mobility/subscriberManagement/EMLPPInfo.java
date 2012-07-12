@@ -22,37 +22,33 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
-import java.util.ArrayList;
-
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
  * 
 
-LSAInformation ::= SEQUENCE {
-	completeDataListIncluded	NULL			OPTIONAL,
-
-		-- If segmentation is used, completeDataListIncluded may only be present in the
-		-- first segment.
-	lsaOnlyAccessIndicator	[1]	LSAOnlyAccessIndicator	OPTIONAL,
-	lsaDataList	[2]	LSADataList	OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
+EMLPP-Info ::= SEQUENCE {
+	maximumentitledPriority	EMLPP-Priority,
+	defaultPriority	EMLPP-Priority,
+	extensionContainer	ExtensionContainer	OPTIONAL,
 	...}
 
-LSADataList ::= SEQUENCE SIZE (1..20) OF LSAData
+EMLPP-Priority ::= INTEGER (0..15)
+	-- The mapping from the values A,B,0,1,2,3,4 to the integer-value is
+	-- specified as follows where A is the highest and 4 is the lowest
+	-- priority level
+	-- the integer values 7-15 are spare and shall be mapped to value 4
 
  * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LSAInformation {
+public interface EMLPPInfo {
 
-	public boolean getCompleteDataListIncluded();
+	public int getMaximumentitledPriority();
 
-	public LSAOnlyAccessIndicator getLSAOnlyAccessIndicator();
-
-	public ArrayList<LSAData> getLSADataList();
+	public int getDefaultPriority();
 
 	public MAPExtensionContainer getExtensionContainer();
 

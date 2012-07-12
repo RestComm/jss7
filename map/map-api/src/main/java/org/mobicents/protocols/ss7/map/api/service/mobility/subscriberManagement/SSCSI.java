@@ -22,38 +22,34 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
-import java.util.ArrayList;
-
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
  * 
 
-LSAInformation ::= SEQUENCE {
-	completeDataListIncluded	NULL			OPTIONAL,
-
-		-- If segmentation is used, completeDataListIncluded may only be present in the
-		-- first segment.
-	lsaOnlyAccessIndicator	[1]	LSAOnlyAccessIndicator	OPTIONAL,
-	lsaDataList	[2]	LSADataList	OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
-	...}
-
-LSADataList ::= SEQUENCE SIZE (1..20) OF LSAData
+SS-CSI ::= SEQUENCE {
+	ss-CamelData	SS-CamelData,
+	extensionContainer	ExtensionContainer	OPTIONAL,
+	...,
+	notificationToCSE	[0]	NULL		OPTIONAL,
+	csi-Active	[1]	NULL		OPTIONAL
+--	notificationToCSE and csi-Active shall not be present when SS-CSI is sent to VLR.
+--	They may only be included in ATSI/ATM ack/NSDC message.
+}
 
  * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LSAInformation {
+public interface SSCSI {
 
-	public boolean getCompleteDataListIncluded();
-
-	public LSAOnlyAccessIndicator getLSAOnlyAccessIndicator();
-
-	public ArrayList<LSAData> getLSADataList();
+	public SSCamelData getSsCamelData();
 
 	public MAPExtensionContainer getExtensionContainer();
+
+	public boolean getNotificationToCSE();
+
+	public boolean getCsiActive();
 
 }

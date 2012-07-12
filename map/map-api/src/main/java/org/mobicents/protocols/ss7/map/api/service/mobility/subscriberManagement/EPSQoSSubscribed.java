@@ -22,37 +22,27 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
-import java.util.ArrayList;
-
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
  * 
 
-LSAInformation ::= SEQUENCE {
-	completeDataListIncluded	NULL			OPTIONAL,
-
-		-- If segmentation is used, completeDataListIncluded may only be present in the
-		-- first segment.
-	lsaOnlyAccessIndicator	[1]	LSAOnlyAccessIndicator	OPTIONAL,
-	lsaDataList	[2]	LSADataList	OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
-	...}
-
-LSADataList ::= SEQUENCE SIZE (1..20) OF LSAData
+EPS-QoS-Subscribed ::= SEQUENCE {
+	qos-Class-Identifier	[0] QoS-Class-Identifier,
+	allocation-Retention-Priority	[1] Allocation-Retention-Priority,
+	extensionContainer	[2] ExtensionContainer	OPTIONAL,
+	... }
 
  * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LSAInformation {
+public interface EPSQoSSubscribed {
 
-	public boolean getCompleteDataListIncluded();
+	public QoSClassIdentifier getQoSClassIdentifier();
 
-	public LSAOnlyAccessIndicator getLSAOnlyAccessIndicator();
-
-	public ArrayList<LSAData> getLSADataList();
+	public AllocationRetentionPriority getAllocationRetentionPriority();
 
 	public MAPExtensionContainer getExtensionContainer();
 

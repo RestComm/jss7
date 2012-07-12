@@ -24,37 +24,49 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
 
 import java.util.ArrayList;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.PDPContext;
 
 /**
  * 
 
-GPRSSubscriptionData ::= SEQUENCE {
-	completeDataListIncluded	NULL			OPTIONAL,
-		-- If segmentation is used, completeDataListIncluded may only be present in the
-		-- first segment of GPRSSubscriptionData.
-	gprsDataList	[1]	GPRSDataList,
+D-CSI ::= SEQUENCE {
+	dp-AnalysedInfoCriteriaList	[0] DP-AnalysedInfoCriteriaList	OPTIONAL,
+	camelCapabilityHandling	[1] CamelCapabilityHandling	OPTIONAL,
 	extensionContainer	[2] ExtensionContainer	OPTIONAL,
-	...,
-	apn-oi-Replacement	[3]	APN-OI-Replacement	OPTIONAL
-	-- this apn-oi-Replacement refers to the UE level apn-oi-Replacement.
- }
+	notificationToCSE	[3]	NULL		OPTIONAL,
+	csi-Active	[4]	NULL		OPTIONAL,
+	...} 
+--	notificationToCSE and csi-Active shall not be present when D-CSI is sent to VLR/GMSC.
+--	They may only be included in ATSI/ATM ack/NSDC message.
+--	DP-AnalysedInfoCriteria and  camelCapabilityHandling shall be present in 
+--	the D-CSI sequence.
+--	If D-CSI is segmented, then the first segment shall contain dp-AnalysedInfoCriteriaList
+--	and camelCapabilityHandling. Subsequent segments shall not contain
+--	camelCapabilityHandling, but may contain dp-AnalysedInfoCriteriaList.
 
-GPRSDataList ::= SEQUENCE SIZE (1..50) OF PDP-Context
+DP-AnalysedInfoCriteriaList  ::= SEQUENCE SIZE (1..10) OF DP-AnalysedInfoCriterium
+
+CamelCapabilityHandling ::= INTEGER(1..16) 
+	-- value 1 = CAMEL phase 1,
+	-- value 2 = CAMEL phase 2,
+	-- value 3 = CAMEL Phase 3,
+	-- value 4 = CAMEL phase 4:
+	-- reception of values greater than 4 shall be treated as CAMEL phase 4.
 
  * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface GPRSSubscriptionData {
+public interface DCSI {
 
-	public boolean getCompleteDataListIncluded();
+	public ArrayList<DPAnalysedInfoCriterium> getDPAnalysedInfoCriteriaList();
 
-	public ArrayList<PDPContext> getGPRSDataList();
+	public Integer getCamelCapabilityHandling();
 
 	public MAPExtensionContainer getExtensionContainer();
 
-	public APNOIReplacement getApnOiReplacement();
+	public boolean getNotificationToCSE();
+
+	public boolean getCsiActive();
 
 }

@@ -23,37 +23,36 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
 import java.util.ArrayList;
-
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 
 /**
  * 
 
-LSAInformation ::= SEQUENCE {
-	completeDataListIncluded	NULL			OPTIONAL,
-
-		-- If segmentation is used, completeDataListIncluded may only be present in the
-		-- first segment.
-	lsaOnlyAccessIndicator	[1]	LSAOnlyAccessIndicator	OPTIONAL,
-	lsaDataList	[2]	LSADataList	OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
+DestinationNumberCriteria  ::= SEQUENCE {
+	matchType		[0] MatchType,
+	destinationNumberList 	[1] DestinationNumberList	OPTIONAL,
+	destinationNumberLengthList	[2] DestinationNumberLengthList	OPTIONAL,
+	-- one or both of destinationNumberList and destinationNumberLengthList 
+	-- shall be present
 	...}
 
-LSADataList ::= SEQUENCE SIZE (1..20) OF LSAData
+DestinationNumberList  ::= SEQUENCE SIZE	(1..10) OF ISDN-AddressString
+	-- The receiving entity shall not check the format of a number in
+	-- the dialled number list
+
+DestinationNumberLengthList  ::= SEQUENCE SIZE (1..3) OF INTEGER(1..15)
 
  * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LSAInformation {
+public interface DestinationNumberCriteria {
 
-	public boolean getCompleteDataListIncluded();
+	public MatchType getMatchType();
 
-	public LSAOnlyAccessIndicator getLSAOnlyAccessIndicator();
+	public ArrayList<ISDNAddressString> getDestinationNumberList();
 
-	public ArrayList<LSAData> getLSADataList();
-
-	public MAPExtensionContainer getExtensionContainer();
+	public ArrayList<Integer> getDestinationNumberLengthList();
 
 }

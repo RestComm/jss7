@@ -22,38 +22,40 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
-import java.util.ArrayList;
-
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-
 /**
  * 
 
-LSAInformation ::= SEQUENCE {
-	completeDataListIncluded	NULL			OPTIONAL,
-
-		-- If segmentation is used, completeDataListIncluded may only be present in the
-		-- first segment.
-	lsaOnlyAccessIndicator	[1]	LSAOnlyAccessIndicator	OPTIONAL,
-	lsaDataList	[2]	LSADataList	OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
-	...}
-
-LSADataList ::= SEQUENCE SIZE (1..20) OF LSAData
+LSAOnlyAccessIndicator ::= ENUMERATED {
+	accessOutsideLSAsAllowed  (0),
+	accessOutsideLSAsRestricted (1)}
 
  * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LSAInformation {
+public enum LSAOnlyAccessIndicator {
+	accessOutsideLSAsAllowed(0), 
+	accessOutsideLSAsRestricted(1);
 
-	public boolean getCompleteDataListIncluded();
+	private int code;
 
-	public LSAOnlyAccessIndicator getLSAOnlyAccessIndicator();
+	private LSAOnlyAccessIndicator(int code) {
+		this.code = code;
+	}
 
-	public ArrayList<LSAData> getLSADataList();
+	public int getCode() {
+		return this.code;
+	}
 
-	public MAPExtensionContainer getExtensionContainer();
-
+	public static LSAOnlyAccessIndicator getInstance(int code) {
+		switch (code) {
+		case 0:
+			return LSAOnlyAccessIndicator.accessOutsideLSAsAllowed;
+		case 1:
+			return LSAOnlyAccessIndicator.accessOutsideLSAsRestricted;
+		default:
+			return null;
+		}
+	}
 }

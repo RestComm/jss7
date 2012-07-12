@@ -22,37 +22,35 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
-import java.util.ArrayList;
-
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
  * 
 
-LSAInformation ::= SEQUENCE {
-	completeDataListIncluded	NULL			OPTIONAL,
-
-		-- If segmentation is used, completeDataListIncluded may only be present in the
-		-- first segment.
-	lsaOnlyAccessIndicator	[1]	LSAOnlyAccessIndicator	OPTIONAL,
-	lsaDataList	[2]	LSADataList	OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
+CUG-Subscription ::= SEQUENCE {
+	cug-Index	CUG-Index,
+	cug-Interlock	CUG-Interlock,
+	intraCUG-Options	IntraCUG-Options,
+	basicServiceGroupList	Ext-BasicServiceGroupList	OPTIONAL,
+	extensionContainer	[0] ExtensionContainer	OPTIONAL,
 	...}
 
-LSADataList ::= SEQUENCE SIZE (1..20) OF LSAData
+Ext-BasicServiceGroupList ::= SEQUENCE SIZE (1..32) OF Ext-BasicServiceCode
 
  * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LSAInformation {
+public interface CUGSubscription {
 
-	public boolean getCompleteDataListIncluded();
+	public int getCUGIndex();
 
-	public LSAOnlyAccessIndicator getLSAOnlyAccessIndicator();
+	public byte[] getCugInterlock();
 
-	public ArrayList<LSAData> getLSADataList();
+	public IntraCUGOptions getIntraCugOptions();
+
+	public ExtBasicServiceCode getBasicServiceGroupList();
 
 	public MAPExtensionContainer getExtensionContainer();
 

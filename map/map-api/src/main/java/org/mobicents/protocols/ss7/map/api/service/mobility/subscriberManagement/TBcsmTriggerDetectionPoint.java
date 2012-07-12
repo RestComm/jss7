@@ -22,38 +22,48 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
-import java.util.ArrayList;
-
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-
 /**
  * 
 
-LSAInformation ::= SEQUENCE {
-	completeDataListIncluded	NULL			OPTIONAL,
+T-BcsmTriggerDetectionPoint ::= ENUMERATED {
+	termAttemptAuthorized (12),
+	... ,
+	tBusy (13),
+	tNoAnswer (14)}
+	-- exception handling:
+	-- For T-BcsmCamelTDPData sequences containing this parameter with any other
+	-- value than the ones listed above, the receiver shall ignore the whole
+	-- T-BcsmCamelTDPData sequence.
 
-		-- If segmentation is used, completeDataListIncluded may only be present in the
-		-- first segment.
-	lsaOnlyAccessIndicator	[1]	LSAOnlyAccessIndicator	OPTIONAL,
-	lsaDataList	[2]	LSADataList	OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
-	...}
-
-LSADataList ::= SEQUENCE SIZE (1..20) OF LSAData
-
- * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LSAInformation {
+public enum TBcsmTriggerDetectionPoint {
+	termAttemptAuthorized(12), 
+	tBusy(13), 
+	tNoAnswer(14);
 
-	public boolean getCompleteDataListIncluded();
+	private int code;
 
-	public LSAOnlyAccessIndicator getLSAOnlyAccessIndicator();
+	private TBcsmTriggerDetectionPoint(int code) {
+		this.code = code;
+	}
 
-	public ArrayList<LSAData> getLSADataList();
+	public int getCode() {
+		return this.code;
+	}
 
-	public MAPExtensionContainer getExtensionContainer();
-
+	public static TBcsmTriggerDetectionPoint getInstance(int code) {
+		switch (code) {
+		case 12:
+			return TBcsmTriggerDetectionPoint.termAttemptAuthorized;
+		case 13:
+			return TBcsmTriggerDetectionPoint.tBusy;
+		case 14:
+			return TBcsmTriggerDetectionPoint.tNoAnswer;
+		default:
+			return null;
+		}
+	}
 }

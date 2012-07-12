@@ -22,37 +22,36 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
-import java.util.ArrayList;
-
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
  * 
 
-LSAInformation ::= SEQUENCE {
-	completeDataListIncluded	NULL			OPTIONAL,
-
-		-- If segmentation is used, completeDataListIncluded may only be present in the
-		-- first segment.
-	lsaOnlyAccessIndicator	[1]	LSAOnlyAccessIndicator	OPTIONAL,
-	lsaDataList	[2]	LSADataList	OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
+T-BcsmCamelTDPData ::= SEQUENCE {
+	t-BcsmTriggerDetectionPoint	T-BcsmTriggerDetectionPoint,
+	serviceKey	ServiceKey,
+	gsmSCF-Address	[0] ISDN-AddressString,
+	defaultCallHandling	[1] DefaultCallHandling,
+	extensionContainer	[2] ExtensionContainer	OPTIONAL,
 	...}
 
-LSADataList ::= SEQUENCE SIZE (1..20) OF LSAData
+ServiceKey ::= INTEGER (0..2147483647)
 
  * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LSAInformation {
+public interface TBcsmCamelTDPData {
 
-	public boolean getCompleteDataListIncluded();
+	public TBcsmTriggerDetectionPoint getTBcsmTriggerDetectionPoint();
 
-	public LSAOnlyAccessIndicator getLSAOnlyAccessIndicator();
+	public long getServiceKey();
 
-	public ArrayList<LSAData> getLSADataList();
+	public ISDNAddressString getGsmSCFAddress();
+
+	public DefaultCallHandling getDefaultCallHandling();
 
 	public MAPExtensionContainer getExtensionContainer();
 

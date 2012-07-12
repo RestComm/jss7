@@ -24,36 +24,25 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
 
 import java.util.ArrayList;
 
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-
 /**
  * 
 
-LSAInformation ::= SEQUENCE {
-	completeDataListIncluded	NULL			OPTIONAL,
+MT-smsCAMELTDP-Criteria ::= SEQUENCE {
+	sms-TriggerDetectionPoint	SMS-TriggerDetectionPoint,
+	tpdu-TypeCriterion	[0]	TPDU-TypeCriterion		OPTIONAL,
+	... }
 
-		-- If segmentation is used, completeDataListIncluded may only be present in the
-		-- first segment.
-	lsaOnlyAccessIndicator	[1]	LSAOnlyAccessIndicator	OPTIONAL,
-	lsaDataList	[2]	LSADataList	OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
-	...}
-
-LSADataList ::= SEQUENCE SIZE (1..20) OF LSAData
+TPDU-TypeCriterion ::= SEQUENCE SIZE (1..6) OF MT-SMS-TPDU-Type
 
  * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LSAInformation {
+public interface MTsmsCAMELTDPCriteria {
 
-	public boolean getCompleteDataListIncluded();
+	public SMSTriggerDetectionPoint getSMSTriggerDetectionPoint();
 
-	public LSAOnlyAccessIndicator getLSAOnlyAccessIndicator();
-
-	public ArrayList<LSAData> getLSADataList();
-
-	public MAPExtensionContainer getExtensionContainer();
+	public ArrayList<MTSMSTPDUType> getTPDUTypeCriterion();
 
 }

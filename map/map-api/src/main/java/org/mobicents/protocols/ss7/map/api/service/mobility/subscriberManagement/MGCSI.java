@@ -24,36 +24,44 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
 
 import java.util.ArrayList;
 
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
  * 
 
-LSAInformation ::= SEQUENCE {
-	completeDataListIncluded	NULL			OPTIONAL,
-
-		-- If segmentation is used, completeDataListIncluded may only be present in the
-		-- first segment.
-	lsaOnlyAccessIndicator	[1]	LSAOnlyAccessIndicator	OPTIONAL,
-	lsaDataList	[2]	LSADataList	OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
+MG-CSI ::= SEQUENCE {
+	mobilityTriggers	MobilityTriggers,
+	serviceKey	ServiceKey,
+	gsmSCF-Address	[0]	ISDN-AddressString,
+	extensionContainer	[1]	ExtensionContainer	OPTIONAL,
+	notificationToCSE	[2] NULL		OPTIONAL,
+	csi-Active	[3] NULL		OPTIONAL,
 	...}
+--	notificationToCSE and csi-Active shall not be present when MG-CSI is sent to SGSN.
+--	They may only be included in ATSI/ATM ack/NSDC message.
 
-LSADataList ::= SEQUENCE SIZE (1..20) OF LSAData
+ServiceKey ::= INTEGER (0..2147483647)
+
+MobilityTriggers  ::= SEQUENCE SIZE (1..10) OF MM-Code
 
  * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LSAInformation {
+public interface MGCSI {
 
-	public boolean getCompleteDataListIncluded();
+	public ArrayList<MMCode> getMobilityTriggers();
 
-	public LSAOnlyAccessIndicator getLSAOnlyAccessIndicator();
+	public long getServiceKey();
 
-	public ArrayList<LSAData> getLSADataList();
+	public ISDNAddressString getGsmSCFAddress();
 
 	public MAPExtensionContainer getExtensionContainer();
+
+	public boolean getNotificationToCSE();
+
+	public boolean getCsiActive();
 
 }

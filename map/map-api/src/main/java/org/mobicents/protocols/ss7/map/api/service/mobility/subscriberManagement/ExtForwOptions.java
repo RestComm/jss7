@@ -22,38 +22,53 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
-import java.util.ArrayList;
-
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-
 /**
  * 
 
-LSAInformation ::= SEQUENCE {
-	completeDataListIncluded	NULL			OPTIONAL,
+Ext-ForwOptions ::= OCTET STRING (SIZE (1..5))
 
-		-- If segmentation is used, completeDataListIncluded may only be present in the
-		-- first segment.
-	lsaOnlyAccessIndicator	[1]	LSAOnlyAccessIndicator	OPTIONAL,
-	lsaDataList	[2]	LSADataList	OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
-	...}
+	-- OCTET 1:
 
-LSADataList ::= SEQUENCE SIZE (1..20) OF LSAData
+	--  bit 8: notification to forwarding party
+	--	0  no notification
+	--	1  notification
+
+	--  bit 7: redirecting presentation
+	--	0 no presentation  
+	--	1  presentation
+
+	--  bit 6: notification to calling party
+	--	0  no notification
+	--	1  notification
+
+	--  bit 5: 0 (unused)
+
+	--  bits 43: forwarding reason
+	--	00  ms not reachable
+	--	01  ms busy
+	--	10  no reply
+	--	11  unconditional
+
+	-- bits 21: 00 (unused)
+
+	-- OCTETS 2-5: reserved for future use. They shall be discarded if
+	-- received and not understood.
 
  * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LSAInformation {
+public interface ExtForwOptions {
 
-	public boolean getCompleteDataListIncluded();
+	public byte[] getData();
 
-	public LSAOnlyAccessIndicator getLSAOnlyAccessIndicator();
+	public boolean getNotificationToForwardingParty();
 
-	public ArrayList<LSAData> getLSADataList();
+	public boolean getRedirectingPresentation();
 
-	public MAPExtensionContainer getExtensionContainer();
+	public boolean getNotificationToCallingParty();
+
+	public ExtForwOptionsForwardingReason getExtForwOptionsForwardingReason();
 
 }

@@ -22,38 +22,49 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
-import java.util.ArrayList;
-
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-
 /**
  * 
 
-LSAInformation ::= SEQUENCE {
-	completeDataListIncluded	NULL			OPTIONAL,
-
-		-- If segmentation is used, completeDataListIncluded may only be present in the
-		-- first segment.
-	lsaOnlyAccessIndicator	[1]	LSAOnlyAccessIndicator	OPTIONAL,
-	lsaDataList	[2]	LSADataList	OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
-	...}
-
-LSADataList ::= SEQUENCE SIZE (1..20) OF LSAData
+	--  bits 43: forwarding reason
+	--	00  ms not reachable
+	--	01  ms busy
+	--	10  no reply
+	--	11  unconditional
 
  * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LSAInformation {
+public enum ExtForwOptionsForwardingReason {
+	msNotReachable(0), 
+	msBusy(1), 
+	noReply(2), 
+	unconditional(3);
 
-	public boolean getCompleteDataListIncluded();
+	private int code;
 
-	public LSAOnlyAccessIndicator getLSAOnlyAccessIndicator();
+	private ExtForwOptionsForwardingReason(int code) {
+		this.code = code;
+	}
 
-	public ArrayList<LSAData> getLSADataList();
+	public int getCode() {
+		return this.code;
+	}
 
-	public MAPExtensionContainer getExtensionContainer();
-
+	public static ExtForwOptionsForwardingReason getInstance(int code) {
+		switch (code) {
+		case 0:
+			return ExtForwOptionsForwardingReason.msNotReachable;
+		case 1:
+			return ExtForwOptionsForwardingReason.msBusy;
+		case 2:
+			return ExtForwOptionsForwardingReason.noReply;
+		case 3:
+			return ExtForwOptionsForwardingReason.unconditional;
+		default:
+			return null;
+		}
+	}
 }
+

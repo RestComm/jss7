@@ -22,38 +22,39 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
-import java.util.ArrayList;
-
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-
 /**
  * 
 
-LSAInformation ::= SEQUENCE {
-	completeDataListIncluded	NULL			OPTIONAL,
+PDN-GW-AllocationType ::= ENUMERATED {
+	static	(0),
+	dynamic	(1)}
 
-		-- If segmentation is used, completeDataListIncluded may only be present in the
-		-- first segment.
-	lsaOnlyAccessIndicator	[1]	LSAOnlyAccessIndicator	OPTIONAL,
-	lsaDataList	[2]	LSADataList	OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
-	...}
-
-LSADataList ::= SEQUENCE SIZE (1..20) OF LSAData
-
- * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LSAInformation {
+public enum PDNGWAllocationType {
+	_static(0), 
+	_dynamic(1);
 
-	public boolean getCompleteDataListIncluded();
+	private int code;
 
-	public LSAOnlyAccessIndicator getLSAOnlyAccessIndicator();
+	private PDNGWAllocationType(int code) {
+		this.code = code;
+	}
 
-	public ArrayList<LSAData> getLSADataList();
+	public int getCode() {
+		return this.code;
+	}
 
-	public MAPExtensionContainer getExtensionContainer();
-
+	public static PDNGWAllocationType getInstance(int code) {
+		switch (code) {
+		case 0:
+			return PDNGWAllocationType._static;
+		case 1:
+			return PDNGWAllocationType._dynamic;
+		default:
+			return null;
+		}
+	}
 }

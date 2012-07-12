@@ -22,37 +22,33 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
-import java.util.ArrayList;
-
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientExternalID;
 
 /**
  * 
 
-LSAInformation ::= SEQUENCE {
-	completeDataListIncluded	NULL			OPTIONAL,
-
-		-- If segmentation is used, completeDataListIncluded may only be present in the
-		-- first segment.
-	lsaOnlyAccessIndicator	[1]	LSAOnlyAccessIndicator	OPTIONAL,
-	lsaDataList	[2]	LSADataList	OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
-	...}
-
-LSADataList ::= SEQUENCE SIZE (1..20) OF LSAData
+ExternalClient ::= SEQUENCE {
+	clientIdentity	LCSClientExternalID,
+	gmlc-Restriction	[0] GMLC-Restriction	OPTIONAL,
+	notificationToMSUser	[1] NotificationToMSUser	OPTIONAL,
+	-- If notificationToMSUser is not received, the default value according to 
+	-- 3GPP TS 23.271 shall be assumed.
+	extensionContainer	[2] ExtensionContainer	OPTIONAL,
+	... }
 
  * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LSAInformation {
+public interface ExternalClient {
 
-	public boolean getCompleteDataListIncluded();
+	public LCSClientExternalID getClientIdentity();
 
-	public LSAOnlyAccessIndicator getLSAOnlyAccessIndicator();
+	public GMLCRestriction getGMLCRestriction();
 
-	public ArrayList<LSAData> getLSADataList();
+	public NotificationToMSUser getNotificationToMSUser();
 
 	public MAPExtensionContainer getExtensionContainer();
 

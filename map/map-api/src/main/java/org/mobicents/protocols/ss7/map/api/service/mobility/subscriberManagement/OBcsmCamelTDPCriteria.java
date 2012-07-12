@@ -23,36 +23,40 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
 import java.util.ArrayList;
-
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
  * 
 
-LSAInformation ::= SEQUENCE {
-	completeDataListIncluded	NULL			OPTIONAL,
+O-BcsmCamelTDP-Criteria ::= SEQUENCE {
+	o-BcsmTriggerDetectionPoint	O-BcsmTriggerDetectionPoint,	
+	destinationNumberCriteria 	[0] DestinationNumberCriteria	OPTIONAL,
+	basicServiceCriteria	[1] BasicServiceCriteria	OPTIONAL,
+	callTypeCriteria	[2] CallTypeCriteria	OPTIONAL,
+	...,
+	o-CauseValueCriteria	[3] O-CauseValueCriteria	OPTIONAL,
+	extensionContainer	[4] ExtensionContainer	OPTIONAL }
 
-		-- If segmentation is used, completeDataListIncluded may only be present in the
-		-- first segment.
-	lsaOnlyAccessIndicator	[1]	LSAOnlyAccessIndicator	OPTIONAL,
-	lsaDataList	[2]	LSADataList	OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
-	...}
+BasicServiceCriteria   ::= SEQUENCE SIZE(1..5) OF Ext-BasicServiceCode
 
-LSADataList ::= SEQUENCE SIZE (1..20) OF LSAData
+O-CauseValueCriteria   ::= SEQUENCE SIZE(1..5) OF CauseValue
 
  * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LSAInformation {
+public interface OBcsmCamelTDPCriteria {
 
-	public boolean getCompleteDataListIncluded();
+	public OBcsmTriggerDetectionPoint getOBcsmTriggerDetectionPoint();
 
-	public LSAOnlyAccessIndicator getLSAOnlyAccessIndicator();
+	public DestinationNumberCriteria getDestinationNumberCriteria();
 
-	public ArrayList<LSAData> getLSADataList();
+	public ArrayList<ExtBasicServiceCode> getBasicServiceCriteria();
+
+	public CallTypeCriteria getCallTypeCriteria();
+
+	public ArrayList<CauseValue> getOCauseValueCriteria();
 
 	public MAPExtensionContainer getExtensionContainer();
 

@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
 
 /**
  * 
@@ -35,6 +36,11 @@ MC-SS-Info ::= SEQUENCE {
 	extensionContainer	[4] ExtensionContainer	OPTIONAL,
 	...}
 
+MaxMC-Bearers ::= INTEGER (2..7)
+ 
+MC-Bearers ::= INTEGER (1..7)
+
+ * 
  * 
  * 
  * @author sergey vetyutnev
@@ -46,9 +52,9 @@ public interface MCSSInfo {
 
 	public ExtSSStatus getSSStatus();
 
-	public MaxMCBearers getNbrSB();
+	public int getNbrSB();
 
-	public MCBearers getNbrUser();
+	public int getNbrUser();
 
 	public MAPExtensionContainer getExtensionContainer();
 

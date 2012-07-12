@@ -22,38 +22,45 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
-import java.util.ArrayList;
-
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-
 /**
  * 
 
-LSAInformation ::= SEQUENCE {
-	completeDataListIncluded	NULL			OPTIONAL,
-
-		-- If segmentation is used, completeDataListIncluded may only be present in the
-		-- first segment.
-	lsaOnlyAccessIndicator	[1]	LSAOnlyAccessIndicator	OPTIONAL,
-	lsaDataList	[2]	LSADataList	OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
-	...}
-
-LSADataList ::= SEQUENCE SIZE (1..20) OF LSAData
+IntraCUG-Options ::= ENUMERATED {
+	noCUG-Restrictions  (0),
+	cugIC-CallBarred  (1),
+	cugOG-CallBarred  (2)}
 
  * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LSAInformation {
+public enum IntraCUGOptions {
+	noCUGRestrictions(0), 
+	cugICCallBarred(1), 
+	cugOGCallBarred(2);
 
-	public boolean getCompleteDataListIncluded();
+	private int code;
 
-	public LSAOnlyAccessIndicator getLSAOnlyAccessIndicator();
+	private IntraCUGOptions(int code) {
+		this.code = code;
+	}
 
-	public ArrayList<LSAData> getLSADataList();
+	public int getCode() {
+		return this.code;
+	}
 
-	public MAPExtensionContainer getExtensionContainer();
-
+	public static IntraCUGOptions getInstance(int code) {
+		switch (code) {
+		case 0:
+			return IntraCUGOptions.noCUGRestrictions;
+		case 1:
+			return IntraCUGOptions.cugICCallBarred;
+		case 2:
+			return IntraCUGOptions.cugOGCallBarred;
+		default:
+			return null;
+		}
+	}
 }
+

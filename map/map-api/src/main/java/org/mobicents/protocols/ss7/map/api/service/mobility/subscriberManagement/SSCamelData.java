@@ -24,35 +24,40 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
 
 import java.util.ArrayList;
 
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
 
 /**
  * 
 
-LSAInformation ::= SEQUENCE {
-	completeDataListIncluded	NULL			OPTIONAL,
-
-		-- If segmentation is used, completeDataListIncluded may only be present in the
-		-- first segment.
-	lsaOnlyAccessIndicator	[1]	LSAOnlyAccessIndicator	OPTIONAL,
-	lsaDataList	[2]	LSADataList	OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
+SS-CamelData  ::= SEQUENCE {
+	ss-EventList	SS-EventList,
+	gsmSCF-Address	ISDN-AddressString,
+	extensionContainer	[0] ExtensionContainer	OPTIONAL, 
 	...}
 
-LSADataList ::= SEQUENCE SIZE (1..20) OF LSAData
+SS-EventList  ::= SEQUENCE SIZE (1..10) OF SS-Code
+	-- Actions for the following SS-Code values are defined in CAMEL Phase 3:
+	-- ect		SS-Code ::= '00110001'B
+	-- multiPTY	SS-Code ::= '01010001'B
+	-- cd		SS-Code ::= '00100100'B
+	-- ccbs		SS-Code ::= '01000100'B
+	-- all other SS codes shall be ignored
+	-- When SS-CSI is sent to the VLR, it shall not contain a marking for ccbs.
+	-- If the VLR receives SS-CSI containing a marking for ccbs, the VLR shall discard the
+	-- ccbs marking in SS-CSI.
 
  * 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LSAInformation {
+public interface SSCamelData {
 
-	public boolean getCompleteDataListIncluded();
+	public ArrayList<SSCode> getSsEventList();
 
-	public LSAOnlyAccessIndicator getLSAOnlyAccessIndicator();
-
-	public ArrayList<LSAData> getLSADataList();
+	public ISDNAddressString getGsmSCFAddress();
 
 	public MAPExtensionContainer getExtensionContainer();
 

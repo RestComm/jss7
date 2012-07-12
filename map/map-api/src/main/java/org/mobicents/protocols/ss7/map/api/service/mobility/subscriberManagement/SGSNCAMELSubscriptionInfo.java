@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.util.ArrayList;
+
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
@@ -36,6 +38,8 @@ SGSN-CAMEL-SubscriptionInfo ::= SEQUENCE {
 	mt-smsCAMELTDP-CriteriaList	[4]	MT-smsCAMELTDP-CriteriaList	OPTIONAL,
 	mg-csi		[5]	MG-CSI	OPTIONAL
 	}
+
+MT-smsCAMELTDP-CriteriaList ::= SEQUENCE SIZE (1.. 10) OF MT-smsCAMELTDP-Criteria
 
  * 
  * 
@@ -52,7 +56,7 @@ public interface SGSNCAMELSubscriptionInfo {
 
 	public SMSCSI getMtSmsCsi();
 
-	public MTsmsCAMELTDPCriteriaList getMtSmsCamelTdpCriteriaList();
+	public ArrayList<MTsmsCAMELTDPCriteria> getMtSmsCamelTdpCriteriaList();
 
 	public MGCSI getMgCsi();
 
