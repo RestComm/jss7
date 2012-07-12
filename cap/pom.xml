@@ -41,7 +41,7 @@
 						true
 					</resolveTransitiveDependencies>
 					<eclipseProjectName>
-						mobicents-cap-stack
+						cap
 					</eclipseProjectName>
 				</configuration>
 			</plugin>
