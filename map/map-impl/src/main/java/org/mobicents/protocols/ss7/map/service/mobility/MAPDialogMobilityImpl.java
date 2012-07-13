@@ -32,6 +32,7 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.GSNAddress;
+import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
@@ -44,6 +45,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.Authe
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.EpsAuthenticationSetList;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.ReSynchronisationInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.RequestingNodeType;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.RequestedEquipmentInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PagingArea;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VlrCapability;
@@ -335,6 +337,20 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 	public long addAnyTimeInterrogationResponse(long invokeId) throws MAPException {
 		// TODO Auto-generated method stub
 		throw new MAPException("We dont support this yet");
+	}
+
+
+	@Override
+	public Long addCheckImeiRequest(IMEI imei, RequestedEquipmentInfo requestedEquipmentInfo,
+			MAPExtensionContainer extensionContainer) throws MAPException {
+		
+		if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.equipmentMngtContext)
+				|| (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2
+						&& this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)) {
+			throw new MAPException("Bad application context name for CheckImeiRequest: must be equipmentMngtContext_V2 or V3");
+		}
+		
+		return null;
 	}
 
 }

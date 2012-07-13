@@ -22,24 +22,22 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.imei;
 
+import java.io.Serializable;
+
 /**
+ * RequestedEquipmentInfo::= BIT STRING {
+ * 		equipmentStatus				(0),
+ * 		bmuef						(1)} (SIZE (2..8))
+ * -- exception handling: reception of unknown bit assignments in the
+ * -- RequestedEquipmentInfo data type shall be discarded by the receiver
  * 
-
-RequestedEquipmentInfo::= BIT STRING {
-	equipmentStatus  (0),
-	bmuef  (1)} (SIZE (2..8))
-	-- exception handling: reception of unknown bit assignments in the
-	-- RequestedEquipmentInfo data type shall be discarded by the receiver 
-
- * 
- * 
- * @author sergey vetyutnev
- * 
+ * @author normandes
+ *
  */
-public interface RequestedEquipmentInfo {
+public interface RequestedEquipmentInfo extends Serializable {
 
 	public boolean getEquipmentStatus();
-
+	
 	public boolean getBmuef();
-
+	
 }

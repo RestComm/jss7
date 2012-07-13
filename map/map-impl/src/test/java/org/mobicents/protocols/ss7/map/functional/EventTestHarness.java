@@ -23,6 +23,8 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobilityListener;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationRequest;
@@ -378,6 +380,18 @@ public class EventTestHarness implements MAPDialogListener, MAPServiceSupplement
 	}
 
 	public void onAnyTimeInterrogationResponse(AnyTimeInterrogationResponse response) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCheckImeiRequest(CheckImeiRequest request) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCheckImeiResponse(CheckImeiResponse response) {
 		// TODO Auto-generated method stub
 		
 	}

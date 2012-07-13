@@ -22,42 +22,40 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.imei;
 
+import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
+
 /**
  * 
- * EquipmentStatus ::= ENUMERATED {
- * 		whiteListed 		(0),
- * 		blackListed 		(1),
- * 		greyListed		 	(2) }
+ * -- Version 2
+ * CheckIMEI ::= OPERATION							--Timer m
+ * 		ARGUMENT
+ * 			imei					IMEI
+ * 		RESULT
+ * 			equipmentStatus			EquipmentStatus
+ * 		ERRORS {
+ * 			SystemFailure,
+ * 			DataMissing,
+ * 			UnknownEquipment
+ *  	}
+ * 
+ * -- Version 3
+ * CheckIMEIArg ::= SEQUENCE { 
+ * 		imei						IMEI,
+ * 		requestedEquipmentInfo 		RequestedEquipmentInfo,
+ * 		extensionContainer			ExtensionContainer 			OPTIONAL,
+ * 	...}
  * 
  * @author normandes
  *
  */
-public enum EquipmentStatus {
+public interface CheckImeiRequest extends MobilityMessage {
 
-	whiteListed(0),
-	blackListed(1),
-	greyListed(2);
+	public IMEI getIMEI();
 	
-	private int code;
+	public RequestedEquipmentInfo getRequestedEquipmentInfo();
 	
-	private EquipmentStatus(int code) {
-		this.code = code;
-	}
+	public MAPExtensionContainer getExtensionContainer();
 	
-	public static EquipmentStatus getInstance(int code) {
-		switch (code) {
-		case 0:
-			return whiteListed;
-		case 1:
-			return blackListed;
-		case 2:
-			return greyListed;
-		default:
-			return null;
-		}
-	}
-
-	public int getCode() {
-		return code;
-	}
 }
