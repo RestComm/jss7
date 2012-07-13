@@ -45,7 +45,6 @@ import org.mobicents.protocols.ss7.map.api.service.callhandling.ExtendedRoutingI
 import org.mobicents.protocols.ss7.map.api.service.callhandling.RoutingInfo;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.SendRoutingInformationResponse;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.UnavailabilityCause;
-import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ISTSupportIndicator;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.NumberPortabilityStatus;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
@@ -60,9 +59,6 @@ import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.Su
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtBasicServiceCodeImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.OfferedCamel4CSIsImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.SupportedCamelPhasesImpl;
-import org.mobicents.protocols.ss7.map.service.sms.SM_RP_DAImpl;
-import org.mobicents.protocols.ss7.map.service.sms.SM_RP_OAImpl;
-import org.mobicents.protocols.ss7.map.service.sms.SmsSignalInfoImpl;
 
 
 /*
