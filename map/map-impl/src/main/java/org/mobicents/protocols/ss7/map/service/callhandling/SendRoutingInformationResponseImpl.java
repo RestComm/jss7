@@ -45,6 +45,7 @@ import org.mobicents.protocols.ss7.map.api.service.callhandling.ExtendedRoutingI
 import org.mobicents.protocols.ss7.map.api.service.callhandling.RoutingInfo;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.SendRoutingInformationResponse;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.UnavailabilityCause;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ISTSupportIndicator;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.NumberPortabilityStatus;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
@@ -59,6 +60,9 @@ import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.Su
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtBasicServiceCodeImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.OfferedCamel4CSIsImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.SupportedCamelPhasesImpl;
+import org.mobicents.protocols.ss7.map.service.sms.SM_RP_DAImpl;
+import org.mobicents.protocols.ss7.map.service.sms.SM_RP_OAImpl;
+import org.mobicents.protocols.ss7.map.service.sms.SmsSignalInfoImpl;
 
 
 /*
@@ -117,6 +121,8 @@ public class SendRoutingInformationResponseImpl extends CallHandlingMessageImpl 
 	private static final int TAG_unavailabilityCause = 21;
 	private static final int TAG_releaseResourcesSupported = 22;
 	private static final int TAG_gsmBearerCapability = 23;
+	
+	private static final int TAG_camelRoutingInfo = 8;
 	
 	private static final String _PrimitiveName = "SendRoutingInformationResponse";
 	
@@ -394,36 +400,58 @@ public class SendRoutingInformationResponseImpl extends CallHandlingMessageImpl 
 		this.gsmBearerCapability = null;
 
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		if(this.mapProtocolVersion < 3) {
-		  if(ais.available() > 0) {
-		    if(ais.readTag() == Tag.STRING_OCTET) {
-		      this.imsi = new IMSIImpl();
-		      ((IMSIImpl) this.imsi).decodeAll(ais);
-		    }
-		  
-		    ais.advanceElement();
-		    if(ais.available() > 0) {
-		      int tag = ais.readTag();
-		      if(tag == Tag.STRING_OCTET || tag == Tag.SEQUENCE) {
-			    this.routingInfo2 = new RoutingInfoImpl();
-			    ((RoutingInfoImpl) this.routingInfo2).decodeAll(ais);
-		      }
-		    }
-		  }
-		  
-		  if(this.imsi == null || this.routingInfo2 == null)
-		    throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName  + 
-			": IMSI and RoutingInfo must not be null", MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-		else {
+		int num = 0;
+		if (this.mapProtocolVersion < 3) {
 			while (true) {
 				if (ais.available() == 0)
 					break;
-	
+
+				int tag = ais.readTag();
+
+				switch (num) {
+				case 0:
+					// imsi
+					if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || tag != Tag.STRING_OCTET || !ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter 0 bad tag, tag class or not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.imsi = new IMSIImpl();
+					((IMSIImpl) this.imsi).decodeAll(ais);
+					break;
+
+				case 1:
+					// RoutingInfo
+					if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || (tag != Tag.STRING_OCTET && tag != Tag.SEQUENCE))
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter 1 bad tag or tag class",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.routingInfo2 = new RoutingInfoImpl();
+					((RoutingInfoImpl) this.routingInfo2).decodeAll(ais);
+					break;
+
+				default:
+					if (tag == TAG_cugCheckInfo && ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+						// TODO: implement it
+						ais.advanceElement();
+					} else {
+						ais.advanceElement();
+					}
+					break;
+				}
+
+				num++;
+			}
+
+			if (num < 2)
+				throw new MAPParsingComponentException("Error while decoding forwardShortMessageRequest: Needs at least 2 mandatory parameters, found " + num,
+						MAPParsingComponentExceptionReason.MistypedParameter);
+		} else {
+			while (true) {
+				if (ais.available() == 0)
+					break;
+
 				int tag = ais.readTag();
 				if (ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
 					switch (tag) {
-					case Tag.STRING_OCTET: 
+					case Tag.STRING_OCTET:
 					case Tag.SEQUENCE:
 						this.extRoutingInfo = new ExtendedRoutingInfoImpl();
 						((ExtendedRoutingInfoImpl) this.extRoutingInfo).decodeAll(ais);
@@ -434,17 +462,30 @@ public class SendRoutingInformationResponseImpl extends CallHandlingMessageImpl 
 					}
 				} else if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 					switch (tag) {
+					case TAG_camelRoutingInfo:
+						this.extRoutingInfo = new ExtendedRoutingInfoImpl();
+						((ExtendedRoutingInfoImpl) this.extRoutingInfo).decodeAll(ais);
+						break;
+
 					case TAG_imsi: 
 						this.imsi = new IMSIImpl();
 						((IMSIImpl) this.imsi).decodeAll(ais);
 						break; 
-					case TAG_msisdn: 
-						this.msisdn = new ISDNAddressStringImpl();
-						((ISDNAddressStringImpl) this.msisdn).decodeAll(ais);
+					case TAG_cugCheckInfo: 
+						// TODO: implement it
+						ais.advanceElement();
+						break; 
+					case TAG_cugSubscriptionFlag: 
+						ais.readNull();
+						this.cugSubscriptionFlag = true;
 						break; 
 					case TAG_subscriberInfo: 
 						this.subscriberInfo = new SubscriberInfoImpl();
 						((SubscriberInfoImpl) this.subscriberInfo).decodeAll(ais);
+						break; 
+					case TAG_ssList: 
+						// TODO: implement it
+						ais.advanceElement();
 						break; 
 					case TAG_basicService: // explicit tag encoding
 						AsnInputStream ais1 = ais.readSequenceStream();
@@ -452,18 +493,10 @@ public class SendRoutingInformationResponseImpl extends CallHandlingMessageImpl 
 						this.basicService = new ExtBasicServiceCodeImpl();
 						((ExtBasicServiceCodeImpl) this.basicService).decodeAll(ais1);
 						break; 
-					case TAG_basicService2: // explicit tag encoding
-						AsnInputStream ais2 = ais.readSequenceStream();
-						ais2.readTag();
-						this.basicService2 = new ExtBasicServiceCodeImpl();
-						((ExtBasicServiceCodeImpl) this.basicService2).decodeAll(ais2);
-						break;  
-					case TAG_routingInfo2: 
-						AsnInputStream ais0 = ais.readSequenceStream();
-						ais0.readTag();
-						this.routingInfo2 = new RoutingInfoImpl();
-						((RoutingInfoImpl) this.routingInfo2).decodeAll(ais0);
-						break;
+					case TAG_forwardingInterrogationRequired: 
+						ais.readNull();
+						this.forwardingInterrogationRequired = true;
+						break; 
 					case TAG_vmscAddress:
 						this.vmscAddress = new ISDNAddressStringImpl();
 						((ISDNAddressStringImpl) this.vmscAddress).decodeAll(ais);
@@ -472,14 +505,25 @@ public class SendRoutingInformationResponseImpl extends CallHandlingMessageImpl 
 						this.extensionContainer = new MAPExtensionContainerImpl();
 						((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
 						break;
+					case TAG_naeaPreferredCI: 
+						// TODO: implement it
+						ais.advanceElement();
+						break; 
+					case TAG_ccbsIndicators: 
+						// TODO: implement it
+						ais.advanceElement();
+						break; 
+					case TAG_msisdn: 
+						this.msisdn = new ISDNAddressStringImpl();
+						((ISDNAddressStringImpl) this.msisdn).decodeAll(ais);
+						break; 
 					case TAG_numberPortabilityStatus: 
 						int type = (int) ais.readInteger();
 						this.nrPortabilityStatus = NumberPortabilityStatus.getInstance(type);
 						break; 
-					case TAG_gsmBearerCapability: 
-						this.gsmBearerCapability = new ExternalSignalInfoImpl();
-						((ExternalSignalInfoImpl) this.gsmBearerCapability).decodeAll(ais);
-						break; 
+					case TAG_istAlertTimer: 
+						this.istAlertTimer = (int) ais.readInteger();
+						break;
 					case TAG_supportedCamelPhasesInVMSC: 
 						this.supportedCamelPhases = new SupportedCamelPhasesImpl();
 						((SupportedCamelPhasesImpl) this.supportedCamelPhases).decodeAll(ais);
@@ -488,25 +532,39 @@ public class SendRoutingInformationResponseImpl extends CallHandlingMessageImpl 
 						this.offeredCamel4CSIs = new OfferedCamel4CSIsImpl();
 						((OfferedCamel4CSIsImpl) this.offeredCamel4CSIs).decodeAll(ais);
 						break; 
-					case TAG_unavailabilityCause: 
-						int code = (int) ais.readInteger();
-						this.unavailabilityCause = UnavailabilityCause.getUnavailabilityCause(code);
+					case TAG_routingInfo2: 
+						AsnInputStream ais0 = ais.readSequenceStream();
+						ais0.readTag();
+						this.routingInfo2 = new RoutingInfoImpl();
+						((RoutingInfoImpl) this.routingInfo2).decodeAll(ais0);
+						break;
+					case TAG_ssList2: 
+						// TODO: implement it
+						ais.advanceElement();
 						break; 
+					case TAG_basicService2: // explicit tag encoding
+						AsnInputStream ais2 = ais.readSequenceStream();
+						ais2.readTag();
+						this.basicService2 = new ExtBasicServiceCodeImpl();
+						((ExtBasicServiceCodeImpl) this.basicService2).decodeAll(ais2);
+						break;  
 					case TAG_allowedServices: 
 						this.allowedServices = new AllowedServicesImpl();
 						((AllowedServicesImpl) this.allowedServices).decodeAll(ais);
 						break; 
-					/*// TODO: decode cugCheckInfo only for V3
-					case TAG_cugCheckInfo: break; 
-					case TAG_cugSubscriptionFlag: break; 
-					case TAG_ssList: break; 
-					case TAG_forwardingInterrogationRequired: break; 
-					case TAG_naeaPreferredCI: break; 
-					case TAG_ccbsIndicators: break; 
-					case TAG_istAlertTimer: break;
-					case TAG_ssList2: break; 
-					case TAG_releaseResourcesSupported: break; 
-					*/
+					case TAG_unavailabilityCause: 
+						int code = (int) ais.readInteger();
+						this.unavailabilityCause = UnavailabilityCause.getUnavailabilityCause(code);
+						break; 
+					case TAG_releaseResourcesSupported: 
+						ais.readNull();
+						this.releaseResourcesSupported = true;
+						break; 
+					case TAG_gsmBearerCapability: 
+						this.gsmBearerCapability = new ExternalSignalInfoImpl();
+						((ExternalSignalInfoImpl) this.gsmBearerCapability).decodeAll(ais);
+						break; 
+
 					default:
 						ais.advanceElement();
 						break;
@@ -514,7 +572,6 @@ public class SendRoutingInformationResponseImpl extends CallHandlingMessageImpl 
 				}
 				else {
 					 ais.advanceElement();
-					 //break;
 				}
 			}
 		}
@@ -539,17 +596,19 @@ public class SendRoutingInformationResponseImpl extends CallHandlingMessageImpl 
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		if(this.mapProtocolVersion < 3) {
-		  if(this.imsi == null || this.routingInfo2 == null) 
-		    throw new MAPException("IMSI and RoutingInfo must not be null for MAP V1,2");
-			
-		  if(this.imsi != null) 
-		    ((IMSIImpl) this.imsi).encodeAll(asnOs);
-		 
-		  if(this.routingInfo2 != null) 
-		    ((RoutingInfoImpl) this.routingInfo2).encodeAll(asnOs);
-		}
-		else {	
+		if (this.mapProtocolVersion < 3) {
+			if (this.imsi == null || this.routingInfo2 == null)
+				throw new MAPException("IMSI and RoutingInfo must not be null for MAP V1,2");
+
+			((IMSIImpl) this.imsi).encodeAll(asnOs);
+			((RoutingInfoImpl) this.routingInfo2).encodeAll(asnOs);
+
+			if (this.cugCheckInfo != null) {
+				// TODO: implement it
+				// TAG_cugCheckInfo
+			}
+
+		} else {
 			try {
 				if(this.imsi != null) 
 				  ((IMSIImpl) this.imsi).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, TAG_imsi);
@@ -557,29 +616,58 @@ public class SendRoutingInformationResponseImpl extends CallHandlingMessageImpl 
 				if(this.extRoutingInfo != null) { // Universal TAG class here
 				  ((ExtendedRoutingInfoImpl) this.extRoutingInfo).encodeAll(asnOs);
 				}
-				
+
+				if (this.cugCheckInfo != null) {
+					// TODO: implement it
+					// TAG_cugCheckInfo
+				}
+
+				if (this.cugSubscriptionFlag)
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, TAG_cugSubscriptionFlag);
+
 				if(this.subscriberInfo != null)
 				  ((SubscriberInfoImpl) this.subscriberInfo).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, TAG_subscriberInfo);
-				
+
+				if (this.ssList != null) {
+					// TODO: implement it
+					// TAG_ssList
+				}
+
 				if(this.basicService != null) { // explicit tag encoding
 				  asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, TAG_basicService);
 				  int pos = asnOs.StartContentDefiniteLength();
 				  ((ExtBasicServiceCodeImpl) this.basicService).encodeAll(asnOs);
 				  asnOs.FinalizeContent(pos);
 				}
-				
+
+				if (this.forwardingInterrogationRequired)
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, TAG_forwardingInterrogationRequired);
+
 				if(this.vmscAddress != null)
 				  ((ISDNAddressStringImpl) this.vmscAddress).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, TAG_vmscAddress);
 				
 				if(this.extensionContainer != null)
 				  ((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, TAG_extensionContainer);
-			
+
+				if (this.naeaPreferredCI != null) {
+					// TODO: implement it
+					// TAG_naeaPreferredCI
+				}
+
+				if (this.ccbsIndicators != null) {
+					// TODO: implement it
+					// TAG_ccbsIndicators
+				}
+				
 				if(this.msisdn != null)
 				  ((ISDNAddressStringImpl) this.msisdn).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, TAG_msisdn);
 				
 				if(this.nrPortabilityStatus != null)
 				  asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, TAG_numberPortabilityStatus, this.nrPortabilityStatus.getType());
-			
+				
+				if(this.istAlertTimer != null)
+				  asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, TAG_istAlertTimer, this.istAlertTimer);
+				
 				if(this.supportedCamelPhases != null)
 				  ((SupportedCamelPhasesImpl) this.supportedCamelPhases).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, TAG_supportedCamelPhasesInVMSC);
 				
@@ -592,6 +680,11 @@ public class SendRoutingInformationResponseImpl extends CallHandlingMessageImpl 
 				  ((RoutingInfoImpl) this.routingInfo2).encodeAll(asnOs);
 				  asnOs.FinalizeContent(pos);
 				}
+
+				if (this.ssList2 != null) {
+					// TODO: implement it
+					// TAG_ssList2
+				}
 				
 				if(this.basicService2 != null) {
 				  asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, TAG_basicService2);
@@ -602,17 +695,16 @@ public class SendRoutingInformationResponseImpl extends CallHandlingMessageImpl 
 				
 				if(this.allowedServices != null)
 				  ((AllowedServicesImpl) this.allowedServices).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, TAG_allowedServices);
-					
+				
 				if(this.unavailabilityCause != null)
 				  asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, TAG_unavailabilityCause, this.unavailabilityCause.getCode());
-				
+
+				if (this.releaseResourcesSupported)
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, TAG_releaseResourcesSupported);
+
 				if(this.gsmBearerCapability != null)
 				  ((ExternalSignalInfoImpl) this.gsmBearerCapability).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, TAG_gsmBearerCapability);
-				
-				if(this.cugCheckInfo != null) {
-				  if(this.mapProtocolVersion < 3);
-				  else { /* TODO: encode cugCheckInfo only for V3 */ }
-				}
+
 			} catch (IOException e) {
 				throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 			} catch (AsnException e) {
@@ -620,7 +712,7 @@ public class SendRoutingInformationResponseImpl extends CallHandlingMessageImpl 
 			}
 		}
 	}
-	
+
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(_PrimitiveName);

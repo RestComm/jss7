@@ -23,7 +23,6 @@
 package org.mobicents.protocols.ss7.map.service.callhandling;
 
 import java.io.IOException;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -31,11 +30,9 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.CamelRoutingInfo;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.ExtendedRoutingInfo;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.RoutingInfo;
-import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 
@@ -131,10 +128,14 @@ public class ExtendedRoutingInfoImpl implements ExtendedRoutingInfo, MAPAsnPrimi
 			case Tag.STRING_OCTET: this.routingInfo = new RoutingInfoImpl();
 								   ((RoutingInfoImpl) this.routingInfo).decodeData(ais, length); 
 								   break;
+			default: throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tagNumber",
+					 MAPParsingComponentExceptionReason.MistypedParameter);
 			}
 		} else if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 			switch (tag) {
-			case TAG_camel: break; // TODO: decode CAMEL routing info
+			case TAG_camel:
+				// TODO: decode CAMEL routing info - implement it
+				break; 
 			default: throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tagNumber",
 					 MAPParsingComponentExceptionReason.MistypedParameter);
 			}
@@ -171,10 +172,11 @@ public class ExtendedRoutingInfoImpl implements ExtendedRoutingInfo, MAPAsnPrimi
 
 		if (this.routingInfo != null) {
 			((RoutingInfoImpl) this.routingInfo).encodeData(asnOs);
-		} else { // TODO: encode CAMEL routing info
+		} else { 
+			// TODO: encode CAMEL routing info implement it
 		}
 	}
-	
+
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(_PrimitiveName);

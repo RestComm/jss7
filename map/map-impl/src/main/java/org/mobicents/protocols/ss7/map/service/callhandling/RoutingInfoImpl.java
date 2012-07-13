@@ -134,7 +134,11 @@ public class RoutingInfoImpl implements RoutingInfo, MAPAsnPrimitive {
 			default: throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tagNumber",
 					 MAPParsingComponentExceptionReason.MistypedParameter);
 			}
-		} 
+		} else {
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tagClass",
+					MAPParsingComponentExceptionReason.MistypedParameter);
+
+		}
 	}
 
 	@Override

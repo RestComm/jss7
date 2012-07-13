@@ -38,5 +38,5 @@ import java.io.Serializable;
  */
 public interface ExtendedRoutingInfo extends Serializable {
 	public RoutingInfo getRoutingInfo();
-	public CamelRoutingInfo getCamelRoutingInfo(); // TODO: 
+	public CamelRoutingInfo getCamelRoutingInfo();
 }

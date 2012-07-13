@@ -85,7 +85,10 @@ IST-AlertTimerValue ::= INTEGER (15..255)
  */
 public interface SendRoutingInformationResponse extends CallHandlingMessage {	
 	public IMSI getIMSI(); //TBCD-STRING
+
+	// This is used for MAP V3 only
 	public ExtendedRoutingInfo getExtendedRoutingInfo(); //CHOICE
+	
 	public CUGCheckInfo getCUGCheckInfo(); //SEQUENCE
 	public boolean getCUGSubscriptionFlag(); //NULL
 	public SubscriberInfo getSubscriberInfo(); //SEQUENCE
@@ -101,7 +104,10 @@ public interface SendRoutingInformationResponse extends CallHandlingMessage {
 	public Integer getISTAlertTimer(); //INTEGER
 	public SupportedCamelPhases getSupportedCamelPhasesInVMSC(); //BIT STRING
 	public OfferedCamel4CSIs getOfferedCamel4CSIsInVMSC(); //BIT STRING
+
+	// This is used as RoutingInfo parameter for V2 and as RoutingInfo2 parameter for MAP V3
 	public RoutingInfo getRoutingInfo2(); //CHOICE
+	
 	public ArrayList<SSCode> getSSList2(); //SEQUENCE
 	public ExtBasicServiceCode getBasicService2(); //CHOICE
 	public AllowedServices getAllowedServices(); //BIT STRING
