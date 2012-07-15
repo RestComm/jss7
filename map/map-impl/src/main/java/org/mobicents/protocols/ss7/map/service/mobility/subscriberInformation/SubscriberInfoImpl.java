@@ -46,9 +46,12 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
+
+	public static final String _PrimitiveName = "SubscriberInfo";
 
 	public static final int _ID_locationInformation = 0;
 	public static final int _ID_subscriberState = 1;
@@ -70,11 +73,21 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 	private GPRSMSClass gprsMSClass = null;
 	private MNPInfoRes mnpInfoRes = null;
 
-	/**
-	 * 
-	 */
 	public SubscriberInfoImpl() {
-		// TODO Auto-generated constructor stub
+	}
+
+	public SubscriberInfoImpl(LocationInformation locationInformation, SubscriberState subscriberState, MAPExtensionContainer extensionContainer,
+			LocationInformationGPRS locationInformationGPRS, PSSubscriberState psSubscriberState, IMEI imei, MSClassmark2 msClassmark2,
+			GPRSMSClass gprsMSClass, MNPInfoRes mnpInfoRes) {
+		this.locationInformation = locationInformation;
+		this.subscriberState = subscriberState;
+		this.extensionContainer = extensionContainer;
+		this.locationInformationGPRS = locationInformationGPRS;
+		this.psSubscriberState = psSubscriberState;
+		this.imei = imei;
+		this.msClassmark2 = msClassmark2;
+		this.gprsMSClass = gprsMSClass;
+		this.mnpInfoRes = mnpInfoRes;
 	}
 
 	/*
@@ -209,10 +222,10 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding SubscriberInfo: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding SubscriberInfo: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -228,72 +241,89 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding SubscriberInfo: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding SubscriberInfo: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
 	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+		this.locationInformation = null;
+		this.subscriberState = null;
+		this.extensionContainer = null;
+		this.locationInformationGPRS = null;
+		this.psSubscriberState = null;
+		this.imei = null;
+		this.msClassmark2 = null;
+		this.gprsMSClass = null;
+		this.mnpInfoRes = null;
+
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 
-		int num = 0;
 		while (true) {
 			if (ais.available() == 0)
 				break;
 
 			int tag = ais.readTag();
-			switch (tag) {
-			case _ID_locationInformation:
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding locationInformation: Parameter 0 bad tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				this.locationInformation = new LocationInformationImpl();
-				((LocationInformationImpl) this.locationInformation).decodeAll(ais);
-				break;
-			case _ID_subscriberState:
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding SubscriberState: Parameter 1 bad tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				int length1 = ais.readLength();
-				tag = ais.readTag();
+			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+				switch (tag) {
+				case _ID_locationInformation:
+					if (ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding locationInformation: Parameter is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.locationInformation = new LocationInformationImpl();
+					((LocationInformationImpl) this.locationInformation).decodeAll(ais);
+					break;
+				case _ID_subscriberState:
+					this.subscriberState = new SubscriberStateImpl();
+					AsnInputStream ais2 = ais.readSequenceStream();
+					ais2.readTag();
+					((SubscriberStateImpl)this.subscriberState).decodeAll(ais2);
+					break;
+				case _ID_extensionContainer:
+					if (ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding MAPExtensionContainer: Parameter is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					extensionContainer = new MAPExtensionContainerImpl();
+					((MAPExtensionContainerImpl) extensionContainer).decodeAll(ais);
+					break;
 
-				this.subscriberState = new SubscriberStateImpl();
-				((SubscriberStateImpl) this.subscriberState).decodeAll(ais);
-				break;
-			case _ID_extensionContainer:
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding MAPExtensionContainer: Parameter 2 bad tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				extensionContainer = new MAPExtensionContainerImpl();
-				((MAPExtensionContainerImpl) extensionContainer).decodeAll(ais);
-				break;
+				case _ID_locationInformationGPRS:
+					locationInformationGPRS = new LocationInformationGPRSImpl();
+					((LocationInformationGPRSImpl) locationInformationGPRS).decodeAll(ais);
+					break;
+				case _ID_psSubscriberState:
+					this.subscriberState = new SubscriberStateImpl();
+					ais2 = ais.readSequenceStream();
+					ais2.readTag();
+					((SubscriberStateImpl)this.psSubscriberState).decodeAll(ais2);
+					break;
+				case _ID_imei:
+					imei = new IMEIImpl();
+					((IMEIImpl) imei).decodeAll(ais);
+					break;
+				case _ID_msclassmark2:
+					msClassmark2 = new MSClassmark2Impl();
+					((MSClassmark2Impl) msClassmark2).decodeAll(ais);
+					break;
+				case _ID_gprsMSClass:
+					gprsMSClass = new GPRSMSClassImpl();
+					((GPRSMSClassImpl) gprsMSClass).decodeAll(ais);
+					break;
+				case _ID_mnpInfoRes:
+					mnpInfoRes = new MNPInfoResImpl();
+					((MNPInfoResImpl) mnpInfoRes).decodeAll(ais);
+					break;
 
-			case _ID_locationInformationGPRS:
-				((LocationInformationGPRSImpl) locationInformationGPRS).decodeAll(ais);
-				break;
-			case _ID_psSubscriberState:
-				((PSSubscriberStateImpl) psSubscriberState).decodeAll(ais);
-				break;
-			case _ID_imei:
-				((IMEIImpl) imei).decodeAll(ais);
-				break;
-			case _ID_msclassmark2:
-				((MSClassmark2Impl) msClassmark2).decodeAll(ais);
-				break;
-			case _ID_gprsMSClass:
-				((GPRSMSClassImpl) gprsMSClass).decodeAll(ais);
-				break;
-			case _ID_mnpInfoRes:
-				((MNPInfoResImpl) mnpInfoRes).decodeAll(ais);
-				break;
+				default:
+					ais.advanceElement();
+					break;
 
-			default:
+				}
+			} else {
 				ais.advanceElement();
-				break;
-
 			}
 		}
 	}
@@ -335,32 +365,92 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		if (this.locationInformation != null)
-			((LocationInformationImpl) this.locationInformation).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_locationInformation);
+		try {
 
-		if (this.subscriberState != null)
-			((SubscriberStateImpl) this.subscriberState).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_subscriberState);
+			if (this.locationInformation != null)
+				((LocationInformationImpl) this.locationInformation).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_locationInformation);
 
-		if (this.extensionContainer != null)
-			((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensionContainer);
+			if (this.subscriberState != null) {
+				asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_subscriberState);
+				int pos = asnOs.StartContentDefiniteLength();
+				((SubscriberStateImpl) this.subscriberState).encodeAll(asnOs);
+				asnOs.FinalizeContent(pos);
+			}
 
-		if (this.locationInformationGPRS != null)
-			((LocationInformationGPRSImpl) this.locationInformationGPRS).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_locationInformationGPRS);
+			if (this.extensionContainer != null)
+				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensionContainer);
 
-		if (this.psSubscriberState != null)
-			((PSSubscriberStateImpl) this.psSubscriberState).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_psSubscriberState);
+			if (this.locationInformationGPRS != null)
+				((LocationInformationGPRSImpl) this.locationInformationGPRS).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_locationInformationGPRS);
 
-		if (this.imei != null)
-			((IMEIImpl) this.imei).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_imei);
+			if (this.psSubscriberState != null) {
+				asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_psSubscriberState);
+				int pos = asnOs.StartContentDefiniteLength();
+				((SubscriberStateImpl) this.psSubscriberState).encodeAll(asnOs);
+				asnOs.FinalizeContent(pos);
+			}
 
-		if (this.msClassmark2 != null)
-			((MSClassmark2Impl) this.msClassmark2).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_msclassmark2);
+			if (this.imei != null)
+				((IMEIImpl) this.imei).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_imei);
 
-		if (this.gprsMSClass != null)
-			((GPRSMSClassImpl) this.gprsMSClass).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_gprsMSClass);
+			if (this.msClassmark2 != null)
+				((MSClassmark2Impl) this.msClassmark2).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_msclassmark2);
 
-		if (this.mnpInfoRes != null)
-			((MNPInfoResImpl) this.mnpInfoRes).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_mnpInfoRes);
+			if (this.gprsMSClass != null)
+				((GPRSMSClassImpl) this.gprsMSClass).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_gprsMSClass);
+
+			if (this.mnpInfoRes != null)
+				((MNPInfoResImpl) this.mnpInfoRes).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_mnpInfoRes);
+
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+		
+		if (this.locationInformation != null) {
+			sb.append(", locationInformation=");
+			sb.append(this.locationInformation);
+		}
+		if (this.subscriberState != null) {
+			sb.append(", subscriberState=");
+			sb.append(this.subscriberState);
+		}
+		if (this.extensionContainer != null) {
+			sb.append(", extensionContainer=");
+			sb.append(this.extensionContainer);
+		}
+		if (this.locationInformationGPRS != null) {
+			sb.append(", locationInformationGPRS=");
+			sb.append(this.locationInformationGPRS);
+		}
+		if (this.psSubscriberState != null) {
+			sb.append(", psSubscriberState=");
+			sb.append(this.psSubscriberState);
+		}
+		if (this.imei != null) {
+			sb.append(", imei=");
+			sb.append(this.imei);
+		}
+		if (this.msClassmark2 != null) {
+			sb.append(", msClassmark2=");
+			sb.append(this.msClassmark2);
+		}
+		if (this.gprsMSClass != null) {
+			sb.append(", gprsMSClass=");
+			sb.append(this.gprsMSClass);
+		}
+		if (this.mnpInfoRes != null) {
+			sb.append(", mnpInfoRes=");
+			sb.append(this.mnpInfoRes);
+		}
+		
+		sb.append("]");
+		return sb.toString();
+	}
 }
+

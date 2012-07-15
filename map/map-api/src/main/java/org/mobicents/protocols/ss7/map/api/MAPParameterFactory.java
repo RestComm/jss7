@@ -38,6 +38,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.GSNAddress;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.LAIFixedLength;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
@@ -56,13 +57,12 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.Tripl
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ISTSupportIndicator;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LAC;
-import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LAIFixedLength;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LocationArea;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PagingArea;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SuperChargerInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedLCSCapabilitySets;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedRATTypes;
-import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VlrCapability;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VLRCapability;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GeodeticInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GeographicalInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformation;
@@ -334,7 +334,7 @@ public interface MAPParameterFactory {
 	public EpsAuthenticationSetList createEpsAuthenticationSetList(ArrayList<EpcAv> epcAv);
 	public EpcAv createEpcAv(byte[] rand, byte[] xres, byte[] autn, byte[] kasme, MAPExtensionContainer extensionContainer);
 
-	public VlrCapability createVlrCapability(SupportedCamelPhases supportedCamelPhases, MAPExtensionContainer extensionContainer,
+	public VLRCapability createVlrCapability(SupportedCamelPhases supportedCamelPhases, MAPExtensionContainer extensionContainer,
 			boolean solsaSupportIndicator, ISTSupportIndicator istSupportIndicator, SuperChargerInfo superChargerSupportedInServingNetworkEntity,
 			boolean longFtnSupported, SupportedLCSCapabilitySets supportedLCSCapabilitySets, OfferedCamel4CSIs offeredCamel4CSIs,
 			SupportedRATTypes supportedRATTypesIndicator, boolean longGroupIDSupported, boolean mtRoamingForwardingSupported);

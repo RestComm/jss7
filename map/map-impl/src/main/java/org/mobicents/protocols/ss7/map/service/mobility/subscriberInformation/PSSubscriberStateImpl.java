@@ -1,6 +1,7 @@
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -10,6 +11,7 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.NotReachableReason;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.PDPContextInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.PSSubscriberState;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
@@ -35,6 +37,7 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 	private boolean psPDPActiveNotReachableForPaging = false;
 	private boolean psPDPActiveReachableForPaging = false;
 	private NotReachableReason netDetNotReachable = null;
+	private ArrayList<PDPContextInfo> getPDPContextInfoList;
 
 	/**
 	 * 
@@ -123,6 +126,11 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 	 */
 	public NotReachableReason getNetDetNotReachable() {
 		return this.netDetNotReachable;
+	}
+
+	@Override
+	public ArrayList<PDPContextInfo> getPDPContextInfoList() {
+		return getPDPContextInfoList;
 	}
 
 	/*

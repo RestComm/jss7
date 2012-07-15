@@ -46,7 +46,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
  * @author sergey vetyutnev
  * 
  */
-public interface VlrCapability {
+public interface VLRCapability {
 
 	public SupportedCamelPhases getSupportedCamelPhases();
 

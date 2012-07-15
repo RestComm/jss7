@@ -48,7 +48,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.Reque
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.RequestedEquipmentInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PagingArea;
-import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VlrCapability;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VLRCapability;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.SendAuthenticationInfoRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.SendAuthenticationInfoResponseImpl;
@@ -168,7 +168,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
 	
 	public Long addUpdateLocationRequest(IMSI imsi, ISDNAddressString mscNumber, ISDNAddressString roamingNumber, ISDNAddressString vlrNumber, LMSI lmsi,
-			MAPExtensionContainer extensionContainer, VlrCapability vlrCapability, boolean informPreviousNetworkEntity, boolean csLCSNotSupportedByUE,
+			MAPExtensionContainer extensionContainer, VLRCapability vlrCapability, boolean informPreviousNetworkEntity, boolean csLCSNotSupportedByUE,
 			GSNAddress vGmlcAddress, ADDInfo addInfo, PagingArea pagingArea, boolean skipSubscriberDataUpdate, boolean restorationIndicator)
 			throws MAPException {
 		return addUpdateLocationRequest(_Timer_Default, imsi, mscNumber, roamingNumber, vlrNumber, lmsi, extensionContainer, vlrCapability,
@@ -176,7 +176,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 	}
 
 	public Long addUpdateLocationRequest(int customInvokeTimeout, IMSI imsi, ISDNAddressString mscNumber, ISDNAddressString roamingNumber,
-			ISDNAddressString vlrNumber, LMSI lmsi, MAPExtensionContainer extensionContainer, VlrCapability vlrCapability, boolean informPreviousNetworkEntity,
+			ISDNAddressString vlrNumber, LMSI lmsi, MAPExtensionContainer extensionContainer, VLRCapability vlrCapability, boolean informPreviousNetworkEntity,
 			boolean csLCSNotSupportedByUE, GSNAddress vGmlcAddress, ADDInfo addInfo, PagingArea pagingArea, boolean skipSubscriberDataUpdate,
 			boolean restorationIndicator) throws MAPException {
 

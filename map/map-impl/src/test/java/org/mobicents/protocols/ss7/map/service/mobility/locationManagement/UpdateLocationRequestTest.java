@@ -35,7 +35,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LocationArea;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedLCSCapabilitySets;
-import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VlrCapability;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VLRCapability;
 import org.mobicents.protocols.ss7.map.primitives.GSNAddressImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMEIImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
@@ -107,7 +107,7 @@ public class UpdateLocationRequestTest {
 		assertEquals(vlrNumber.getAddressNature(), AddressNature.international_number);		
 		assertEquals(vlrNumber.getNumberingPlan(), NumberingPlan.ISDN);		
 
-		VlrCapability vlrCap = asc.getVlrCapability();
+		VLRCapability vlrCap = asc.getVlrCapability();
 		assertTrue(vlrCap.getSupportedLCSCapabilitySets().getCapabilitySetRelease98_99());
 		assertFalse(vlrCap.getSupportedLCSCapabilitySets().getCapabilitySetRelease4());		
 
@@ -243,7 +243,7 @@ public class UpdateLocationRequestTest {
 		ISDNAddressStringImpl mscNumber = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "22228");
 		ISDNAddressStringImpl vlrNumber = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "22229");
 		SupportedLCSCapabilitySets supportedLCSCapabilitySets = new SupportedLCSCapabilitySetsImpl(true, false, false, false, false);
-		VlrCapability vlrCap = new VlrCapabilityImpl(null, null, false, null, null, false, supportedLCSCapabilitySets, null, null, false, false);
+		VLRCapability vlrCap = new VLRCapabilityImpl(null, null, false, null, null, false, supportedLCSCapabilitySets, null, null, false, false);
 		UpdateLocationRequestImpl asc = new UpdateLocationRequestImpl(3, imsi, mscNumber, null, vlrNumber, null, null, vlrCap, false, false, null, null, null,
 				false, false);
 //		long mapProtocolVersion, IMSI imsi, ISDNAddressString mscNumber, ISDNAddressString roamingNumber,
@@ -264,7 +264,7 @@ public class UpdateLocationRequestTest {
 		mscNumber = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "22228");
 		vlrNumber = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "22229");
 		supportedLCSCapabilitySets = new SupportedLCSCapabilitySetsImpl(true, false, false, false, false);
-		vlrCap = new VlrCapabilityImpl(null, null, false, null, null, false, supportedLCSCapabilitySets, null, null, false, false);
+		vlrCap = new VLRCapabilityImpl(null, null, false, null, null, false, supportedLCSCapabilitySets, null, null, false, false);
 		LMSIImpl lmsi = new LMSIImpl(getLmsiData());
 		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
 		asc = new UpdateLocationRequestImpl(3, imsi, mscNumber, null, vlrNumber, lmsi, extensionContainer, vlrCap, true, true, null, null, null,

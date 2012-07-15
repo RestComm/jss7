@@ -23,13 +23,14 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
 import java.util.ArrayList;
+
+import org.mobicents.protocols.ss7.map.api.primitives.DiameterIdentity;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NAEAPreferredCI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.AgeIndicator;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.DiameterIdentity;
 
 /**
  * 

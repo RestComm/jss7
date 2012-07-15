@@ -10,10 +10,11 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.CSGId;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.UserCSGInformation;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CSGId;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.CSGIdImpl;
 
 /**
  * @author amit bhayani

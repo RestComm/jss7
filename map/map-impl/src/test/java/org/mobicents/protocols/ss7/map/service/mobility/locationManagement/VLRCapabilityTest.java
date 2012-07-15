@@ -42,7 +42,7 @@ import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Off
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.SupportedCamelPhasesImpl;
 import org.testng.annotations.Test;
 
-public class VlrCapabilityTest {
+public class VLRCapabilityTest {
 
 	private byte[] getEncodedData() {
 		return new byte[] { 48, 11, (byte) 128, 2, 4, (byte) 192, (byte) 129, 1, 1, (byte) 133, 2, 3, (byte) 240 };
@@ -75,7 +75,7 @@ public class VlrCapabilityTest {
 		AsnInputStream asn = new AsnInputStream(rawData);
 
 		int tag = asn.readTag();
-		VlrCapabilityImpl asc = new VlrCapabilityImpl();
+		VLRCapabilityImpl asc = new VLRCapabilityImpl();
 		asc.decodeAll(asn);
 
 		assertEquals( tag,Tag.SEQUENCE);
@@ -113,7 +113,7 @@ public class VlrCapabilityTest {
 		asn = new AsnInputStream(rawData);
 
 		tag = asn.readTag();
-		asc = new VlrCapabilityImpl();
+		asc = new VLRCapabilityImpl();
 		asc.decodeAll(asn);
 
 		assertEquals( tag,Tag.SEQUENCE);
@@ -148,7 +148,7 @@ public class VlrCapabilityTest {
 		asn = new AsnInputStream(rawData);
 
 		tag = asn.readTag();
-		asc = new VlrCapabilityImpl();
+		asc = new VLRCapabilityImpl();
 		asc.decodeAll(asn);
 
 		assertEquals( tag,Tag.SEQUENCE);
@@ -176,7 +176,7 @@ public class VlrCapabilityTest {
 		asn = new AsnInputStream(rawData);
 
 		tag = asn.readTag();
-		asc = new VlrCapabilityImpl();
+		asc = new VLRCapabilityImpl();
 		asc.decodeAll(asn);
 
 		assertEquals( tag,Tag.SEQUENCE);
@@ -219,7 +219,7 @@ public class VlrCapabilityTest {
 
 		SupportedCamelPhases scp = new SupportedCamelPhasesImpl(true, true, false, false);
 		SupportedLCSCapabilitySets slcs = new SupportedLCSCapabilitySetsImpl(true, true, true, true, false);
-		VlrCapabilityImpl asc = new VlrCapabilityImpl(scp, null, false, ISTSupportIndicator.istCommandSupported, null, false, slcs, null, null, false, false);
+		VLRCapabilityImpl asc = new VLRCapabilityImpl(scp, null, false, ISTSupportIndicator.istCommandSupported, null, false, slcs, null, null, false, false);
 //		SupportedCamelPhases supportedCamelPhases, MAPExtensionContainer extensionContainer, boolean solsaSupportIndicator,
 //		IstSupportIndicator istSupportIndicator, SuperChargerInfo superChargerSupportedInServingNetworkEntity, boolean longFtnSupported,
 //		SupportedLCSCapabilitySets supportedLCSCapabilitySets, OfferedCamel4CSIs offeredCamel4CSIs, SupportedRATTypes supportedRATTypesIndicator,
@@ -238,7 +238,7 @@ public class VlrCapabilityTest {
 		MAPPrivateExtensionImpl pe = new MAPPrivateExtensionImpl(getECOid(), getECData());
 		privateExtensionList.add(pe);
 		MAPExtensionContainerImpl ext = new MAPExtensionContainerImpl(privateExtensionList, null);
-		asc = new VlrCapabilityImpl(scp, ext, false, null, null, false, null, null, null, false, false);
+		asc = new VLRCapabilityImpl(scp, ext, false, null, null, false, null, null, null, false, false);
 
 		asnOS = new AsnOutputStream();
 		asc.encodeAll(asnOS);
@@ -249,7 +249,7 @@ public class VlrCapabilityTest {
 
 
 		SuperChargerInfo sci = new SuperChargerInfoImpl(true);
-		asc = new VlrCapabilityImpl(null, null, false, null, sci, false, null, null, null, false, false);
+		asc = new VLRCapabilityImpl(null, null, false, null, sci, false, null, null, null, false, false);
 
 		asnOS = new AsnOutputStream();
 		asc.encodeAll(asnOS);
@@ -261,7 +261,7 @@ public class VlrCapabilityTest {
 
 		OfferedCamel4CSIsImpl offeredCamel4CSIs = new OfferedCamel4CSIsImpl(false, false, false, false, true, true, true);
 		SupportedRATTypesImpl rat = new SupportedRATTypesImpl(false, true, false, true, false);
-		asc = new VlrCapabilityImpl(null, null, true, null, null, true, null, offeredCamel4CSIs, rat, true, true);
+		asc = new VLRCapabilityImpl(null, null, true, null, null, true, null, offeredCamel4CSIs, rat, true, true);
 
 		asnOS = new AsnOutputStream();
 		asc.encodeAll(asnOS);

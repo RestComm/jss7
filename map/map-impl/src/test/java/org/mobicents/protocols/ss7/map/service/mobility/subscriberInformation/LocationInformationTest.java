@@ -23,9 +23,7 @@
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
 import static org.testng.Assert.*;
-
 import java.util.Arrays;
-
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
@@ -38,7 +36,8 @@ import org.mobicents.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdOrL
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.LocationInformationImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.LocationNumberMapImpl;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.*;
+
 
 /**
  * 

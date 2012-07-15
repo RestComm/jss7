@@ -1,140 +1,47 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
-import java.io.IOException;
-
-import org.mobicents.protocols.asn.AsnException;
-import org.mobicents.protocols.asn.AsnInputStream;
-import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GeographicalInformation;
-import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
+import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
  * TODO add details as described in 3GPP TS 23.032 instead of using rawData
  * @author amit bhayani
+ * @author sergey vetyutnev
  *
  */
-public class GeographicalInformationImpl implements GeographicalInformation, MAPAsnPrimitive {
-	
-	private byte[] data;
+public class GeographicalInformationImpl extends OctetStringBase implements GeographicalInformation {
 
-	/**
-	 * 
-	 */
 	public GeographicalInformationImpl() {
-		super();
-		// TODO Auto-generated constructor stub
+		super(8, 8, "GeographicalInformation");
 	}
 
-	/**
-	 * @param rawData
-	 */
-	public GeographicalInformationImpl(byte[] rawData) {
-		super();
-		this.data = rawData;
+	public GeographicalInformationImpl(byte[] data) {
+		super(8, 8, "GeographicalInformation", data);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.GeographicalInformation#getData()
-	 */
 	public byte[] getData() {
-		return this.data;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTag()
-	 */
-	public int getTag() throws MAPException {
-		return Tag.STRING_OCTET;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTagClass()
-	 */
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getIsPrimitive()
-	 */
-	public boolean getIsPrimitive() {
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeAll(org.mobicents.protocols.asn.AsnInputStream)
-	 */
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding GeographicalInformation: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding GeographicalInformation: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}				
-	}
-	
-	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
-		this.data = asnIS.readOctetStringData(length);
-		if (this.data.length != 8 )
-			throw new MAPParsingComponentException("Error while decoding GeographicalInformation value must be 8 bytes length, found: "
-					+ this.data.length, MAPParsingComponentExceptionReason.MistypedParameter);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeData(org.mobicents.protocols.asn.AsnInputStream, int)
-	 */
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding GeographicalInformation: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding GeographicalInformation: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream)
-	 */
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET);				
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream, int, int)
-	 */
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		try {
-			asnOs.writeTag(tagClass, true, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding GeographicalInformation: " + e.getMessage(), e);
-		}				
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeData(org.mobicents.protocols.asn.AsnOutputStream)
-	 */
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		
-		if (this.data == null)
-			throw new MAPException("Data must not be null");
-		if (this.data.length != 8)
-			throw new MAPException("Data length must be 8");
-		
-		asnOs.writeOctetStringData(this.data);		
-	}
-
+		return data;
+	}	
 }

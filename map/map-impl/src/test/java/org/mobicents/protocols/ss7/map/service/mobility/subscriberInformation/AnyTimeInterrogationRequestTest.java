@@ -83,7 +83,7 @@ public class AnyTimeInterrogationRequestTest {
 		ISDNAddressString isdnAdd = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "553499775190");
 		SubscriberIdentity subsId = new SubscriberIdentityImpl(isdnAdd);
 
-		RequestedInfo requestedInfo = new RequestedInfoImpl(true, true, null, null, null, null, null, null);
+		RequestedInfo requestedInfo = new RequestedInfoImpl(true, true, null, false, null, false, false, false);
 
 		ISDNAddressString gscmSCFAddress = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "553496629943");
 

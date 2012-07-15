@@ -27,8 +27,9 @@ import java.util.Arrays;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.map.api.primitives.LAIFixedLength;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LAC;
-import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LAIFixedLength;
+import org.mobicents.protocols.ss7.map.primitives.LAIFixedLengthImpl;
 import org.testng.annotations.Test;
 
 /**

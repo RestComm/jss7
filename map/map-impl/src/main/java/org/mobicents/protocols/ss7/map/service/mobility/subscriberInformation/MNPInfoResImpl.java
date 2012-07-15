@@ -22,6 +22,7 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public class MNPInfoResImpl implements MNPInfoRes, MAPAsnPrimitive {
@@ -44,7 +45,15 @@ public class MNPInfoResImpl implements MNPInfoRes, MAPAsnPrimitive {
 	 * 
 	 */
 	public MNPInfoResImpl() {
-		// TODO Auto-generated constructor stub
+	}
+
+	public MNPInfoResImpl(RouteingNumber routeingNumber, IMSI imsi, ISDNAddressString msisdn, NumberPortabilityStatus numberPortabilityStatus,
+			MAPExtensionContainer extensionContainer) {
+		this.routeingNumber = routeingNumber;
+		this.imsi = imsi;
+		this.msisdn = msisdn;
+		this.numberPortabilityStatus = numberPortabilityStatus;
+		this.extensionContainer = extensionContainer;
 	}
 
 	/*
@@ -199,10 +208,6 @@ public class MNPInfoResImpl implements MNPInfoRes, MAPAsnPrimitive {
 				((ISDNAddressStringImpl) this.msisdn).decodeAll(ais);
 				break;
 			case _ID_numberPortabilityStatus:
-				if (tag != Tag.ENUMERATED || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException(
-							"Error while decoding MNPInfoRes.numberPortabilityStatus: Parameter bad tag or tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
 				int i1 = (int) ais.readInteger();
 				this.numberPortabilityStatus = NumberPortabilityStatus.getInstance(i1);
 				break;
@@ -275,5 +280,39 @@ public class MNPInfoResImpl implements MNPInfoRes, MAPAsnPrimitive {
 
 		if (this.extensionContainer != null)
 			((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensionContainer);
+	}
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+		
+		if (this.routeingNumber != null) {
+			sb.append("routeingNumber=");
+			sb.append(this.routeingNumber);
+		}
+		
+		if (this.imsi != null) {
+			sb.append(", imsi=");
+			sb.append(this.imsi);
+		}
+		
+		if (this.msisdn != null) {
+			sb.append(", msisdn=");
+			sb.append(this.msisdn);
+		}
+		
+		if (this.numberPortabilityStatus != null) {
+			sb.append(", numberPortabilityStatus=");
+			sb.append(this.numberPortabilityStatus);
+		}
+
+		if (this.extensionContainer != null) {
+			sb.append(", extensionContainer=");
+			sb.append(this.extensionContainer);
+		}
+		
+		sb.append("]");
+		return sb.toString();
 	}
 }

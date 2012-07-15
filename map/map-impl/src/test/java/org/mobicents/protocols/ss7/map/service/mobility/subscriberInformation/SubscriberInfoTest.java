@@ -23,8 +23,11 @@ package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-
+import static org.testng.Assert.assertTrue;
+import java.util.Arrays;
 import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberState;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberStateChoice;
@@ -48,6 +51,7 @@ public class SubscriberInfoTest {
 
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
+		assertEquals(tag, Tag.SEQUENCE);
 
 		SubscriberInfoImpl subscriberInfo = new SubscriberInfoImpl();
 		subscriberInfo.decodeAll(asn);
@@ -58,5 +62,16 @@ public class SubscriberInfoTest {
 		SubscriberState subState = subscriberInfo.getSubscriberState();
 		assertEquals(subState.getSubscriberStateChoice(), SubscriberStateChoice.assumedIdle);
 
+	}
+	
+	@Test(groups = { "functional.encode","subscriberInformation"})
+	public void testEncode() throws Exception {
+
+		SubscriberInfoImpl impl = new SubscriberInfoImpl();
+		AsnOutputStream asnOS = new AsnOutputStream();
+		impl.encodeAll(asnOS);
+		byte[] encodedData = asnOS.toByteArray();
+		byte[] rawData = data;
+		assertTrue(Arrays.equals(rawData, encodedData));		
 	}
 }

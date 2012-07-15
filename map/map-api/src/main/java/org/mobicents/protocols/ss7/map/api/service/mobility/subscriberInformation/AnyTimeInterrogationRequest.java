@@ -28,6 +28,21 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**	
  * 
+
+anyTimeInterrogation  OPERATION ::= {				--Timer m
+	ARGUMENT
+		AnyTimeInterrogationArg
+	RESULT
+		AnyTimeInterrogationRes
+	ERRORS {
+		systemFailure | 
+		ati-NotAllowed |
+		dataMissing |
+		unexpectedDataValue |
+		unknownSubscriber}
+	CODE	local:71 }
+
+ * 
  * AnyTimeInterrogationArg ::= SEQUENCE {
  *		subscriberIdentity		[0] SubscriberIdentity,
  *		requestedInfo			[1] RequestedInfo,

@@ -20,38 +20,59 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
-
-import java.io.Serializable;
-
-import org.mobicents.protocols.ss7.map.api.MAPException;
+package org.mobicents.protocols.ss7.map.api.primitives;
 
 /**
  * 
- LAIFixedLength ::= OCTET STRING (SIZE (5))
-	-- Refers to Location Area Identification defined in 3GPP TS 23.003 [17].
-	-- The internal structure is defined as follows:
-	-- octet 1 bits 4321	Mobile Country Code 1st digit
-	--         bits 8765	Mobile Country Code 2nd digit
-	-- octet 2 bits 4321	Mobile Country Code 3rd digit
-	--         bits 8765	Mobile Network Code 3rd digit
-	--			or filler (1111) for 2 digit MNCs
-	-- octet 3 bits 4321	Mobile Network Code 1st digit
-	--         bits 8765	Mobile Network Code 2nd digit
-	-- octets 4 and 5	Location Area Code according to 3GPP TS 24.008 [35]
-
+ * NetworkResource ::= ENUMERATED {
+ *	plmn  (0),
+ *	hlr  (1),
+ *	vlr  (2),
+ *	pvlr  (3),
+ *	controllingMSC  (4),
+ *	vmsc  (5),
+ *	eir  (6),
+ *	rss  (7)}
+ *
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface LAIFixedLength extends Serializable {
+public enum NetworkResource {
+	plmn(0), hlr(1), vlr(2), pvlr(3), controllingMSC(4), vmsc(5), eir(6), rss(7);
 
-	public byte[] getData();
+	private int code;
 
-	public int getMCC() throws MAPException;
+	private NetworkResource(int code) {
+		this.code = code;
+	}
+	
+	public int getCode() {
+		return code;
+	}
 
-	public int getMNC() throws MAPException;
+	public static NetworkResource getInstance(int code) {
+		switch (code) {
+		case 0:
+			return plmn;
+		case 1:
+			return hlr;
+		case 2:
+			return vlr;
+		case 3:
+			return pvlr;
+		case 4:
+			return controllingMSC;
+		case 5:
+			return vmsc;
+		case 6:
+			return eir;
+		case 7:
+			return rss;
+		default:
+			return null;
+		}
+	}	
 
-	public int getLac() throws MAPException;
 
 }

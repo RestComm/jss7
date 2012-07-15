@@ -40,6 +40,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.GSNAddress;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.LAIFixedLength;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
@@ -58,13 +59,12 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.Tripl
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ISTSupportIndicator;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LAC;
-import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LAIFixedLength;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LocationArea;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PagingArea;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SuperChargerInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedLCSCapabilitySets;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedRATTypes;
-import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VlrCapability;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VLRCapability;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GeodeticInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GeographicalInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformation;
@@ -102,6 +102,7 @@ import org.mobicents.protocols.ss7.map.primitives.GSNAddressImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMEIImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.LAIFixedLengthImpl;
 import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPPrivateExtensionImpl;
@@ -118,13 +119,12 @@ import org.mobicents.protocols.ss7.map.service.mobility.authentication.ReSynchro
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.TripletListImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.ADDInfoImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.LACImpl;
-import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.LAIFixedLengthImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.LocationAreaImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.PagingAreaImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.SuperChargerInfoImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.SupportedLCSCapabilitySetsImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.SupportedRATTypesImpl;
-import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.VlrCapabilityImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.VLRCapabilityImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.LocationInformationImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.LocationNumberMapImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.SubscriberStateImpl;
@@ -442,11 +442,11 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 		return new EpcAvImpl(rand, xres, autn, kasme, extensionContainer);
 	}
 
-	public VlrCapability createVlrCapability(SupportedCamelPhases supportedCamelPhases, MAPExtensionContainer extensionContainer,
+	public VLRCapability createVlrCapability(SupportedCamelPhases supportedCamelPhases, MAPExtensionContainer extensionContainer,
 			boolean solsaSupportIndicator, ISTSupportIndicator istSupportIndicator, SuperChargerInfo superChargerSupportedInServingNetworkEntity,
 			boolean longFtnSupported, SupportedLCSCapabilitySets supportedLCSCapabilitySets, OfferedCamel4CSIs offeredCamel4CSIs,
 			SupportedRATTypes supportedRATTypesIndicator, boolean longGroupIDSupported, boolean mtRoamingForwardingSupported) {
-		return new VlrCapabilityImpl(supportedCamelPhases, extensionContainer, solsaSupportIndicator, istSupportIndicator,
+		return new VLRCapabilityImpl(supportedCamelPhases, extensionContainer, solsaSupportIndicator, istSupportIndicator,
 				superChargerSupportedInServingNetworkEntity, longFtnSupported, supportedLCSCapabilitySets, offeredCamel4CSIs, supportedRATTypesIndicator,
 				longGroupIDSupported, mtRoamingForwardingSupported);
 	}

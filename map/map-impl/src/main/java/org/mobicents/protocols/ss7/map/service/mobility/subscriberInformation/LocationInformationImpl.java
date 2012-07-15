@@ -45,6 +45,7 @@ import org.mobicents.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdOrL
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.LSAIdentityImpl;
 
 /**
  * @author amit bhayani
@@ -278,6 +279,7 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 								"Error while decoding LocationInformation: Parameter [currentLocationRetrieved	[8] NULL ] bad tag class, tag or not primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					}
+					ais.readNull();
 					this.currentLocationRetrieved = true;
 					break;
 				case _ID_sai_Present:
@@ -286,6 +288,7 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 								"Error while decoding LocationInformation: Parameter [sai-Present	[9] NULL ] bad tag class, tag or not primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					}
+					ais.readNull();
 					this.saiPresent = true;
 					break;
 				case _ID_locationInformationEPS:

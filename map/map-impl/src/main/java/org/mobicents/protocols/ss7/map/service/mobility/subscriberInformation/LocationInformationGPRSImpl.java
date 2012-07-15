@@ -21,6 +21,7 @@ import org.mobicents.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdOrL
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.LSAIdentityImpl;
 
 /**
  * @author amit bhayani
@@ -47,9 +48,9 @@ public class LocationInformationGPRSImpl implements LocationInformationGPRS, MAP
 	private ISDNAddressString sgsnNumber = null;
 	private LSAIdentity selectedLSAIdentity = null;
 	private MAPExtensionContainer extensionContainer = null;
-	private Boolean saiPresent = null;
+	private boolean saiPresent = false;
 	private GeodeticInformation geodeticInformation = null;
-	private Boolean currentLocationRetrieved = null;
+	private boolean currentLocationRetrieved = false;
 	private Integer ageOfLocationInformation = null;
 
 	/**
@@ -73,7 +74,7 @@ public class LocationInformationGPRSImpl implements LocationInformationGPRS, MAP
 	 */
 	public LocationInformationGPRSImpl(CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI, RAIdentity routeingAreaIdentity,
 			GeographicalInformation geographicalInformation, ISDNAddressString sgsnNumber, LSAIdentity selectedLSAIdentity,
-			MAPExtensionContainer extensionContainer, Boolean saiPresent, GeodeticInformation geodeticInformation, Boolean currentLocationRetrieved,
+			MAPExtensionContainer extensionContainer, boolean saiPresent, GeodeticInformation geodeticInformation, boolean currentLocationRetrieved,
 			Integer ageOfLocationInformation) {
 		super();
 		this.cellGlobalIdOrServiceAreaIdOrLAI = cellGlobalIdOrServiceAreaIdOrLAI;
@@ -154,7 +155,7 @@ public class LocationInformationGPRSImpl implements LocationInformationGPRS, MAP
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * LocationInformationGPRS#isSaiPresent()
 	 */
-	public Boolean isSaiPresent() {
+	public boolean isSaiPresent() {
 		return this.saiPresent;
 	}
 
@@ -174,7 +175,7 @@ public class LocationInformationGPRSImpl implements LocationInformationGPRS, MAP
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * LocationInformationGPRS#isCurrentLocationRetrieved()
 	 */
-	public Boolean isCurrentLocationRetrieved() {
+	public boolean isCurrentLocationRetrieved() {
 		return this.currentLocationRetrieved;
 	}
 
@@ -265,9 +266,9 @@ public class LocationInformationGPRSImpl implements LocationInformationGPRS, MAP
 		this.sgsnNumber = null;
 		this.selectedLSAIdentity = null;
 		this.extensionContainer = null;
-		this.saiPresent = null;
+		this.saiPresent = false;
 		this.geodeticInformation = null;
-		this.currentLocationRetrieved = null;
+		this.currentLocationRetrieved = false;
 		this.ageOfLocationInformation = null;
 
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
@@ -284,7 +285,9 @@ public class LocationInformationGPRSImpl implements LocationInformationGPRS, MAP
 				switch (tag) {
 				case _ID_cellGlobalIdOrServiceAreaIdOrLAI:
 					this.cellGlobalIdOrServiceAreaIdOrLAI = new CellGlobalIdOrServiceAreaIdOrLAIImpl();
-					((CellGlobalIdOrServiceAreaIdOrLAIImpl) this.cellGlobalIdOrServiceAreaIdOrLAI).decodeAll(ais);
+					AsnInputStream ais2 = ais.readSequenceStream();
+					ais2.readTag();
+					((CellGlobalIdOrServiceAreaIdOrLAIImpl)this.cellGlobalIdOrServiceAreaIdOrLAI).decodeAll(ais2);
 					break;
 				case _ID_routeingAreaIdentity:
 					this.routeingAreaIdentity = new RAIdentityImpl();
@@ -314,7 +317,8 @@ public class LocationInformationGPRSImpl implements LocationInformationGPRS, MAP
 								"Error while decoding LocationInformation: Parameter [sai-Present	[6] NULL ] bad tag class, tag or not primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					}
-					this.saiPresent = Boolean.TRUE;
+					ais.readNull();
+					this.saiPresent = true;
 					break;
 
 				case _ID_geodeticInformation:
@@ -327,7 +331,8 @@ public class LocationInformationGPRSImpl implements LocationInformationGPRS, MAP
 								"Error while decoding LocationInformation: Parameter [currentLocationRetrieved	[8] NULL ] bad tag class, tag or not primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					}
-					this.currentLocationRetrieved = Boolean.TRUE;
+					ais.readNull();
+					this.currentLocationRetrieved = true;
 					break;
 				case _ID_ageOfLocationInformation:
 					this.ageOfLocationInformation = (int) ais.readInteger();
@@ -381,9 +386,12 @@ public class LocationInformationGPRSImpl implements LocationInformationGPRS, MAP
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		try {
 
-			if (this.cellGlobalIdOrServiceAreaIdOrLAI != null)
-				((CellGlobalIdOrServiceAreaIdOrLAIImpl) this.cellGlobalIdOrServiceAreaIdOrLAI).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
-						_ID_cellGlobalIdOrServiceAreaIdOrLAI);
+			if (this.cellGlobalIdOrServiceAreaIdOrLAI != null) {
+				asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_cellGlobalIdOrServiceAreaIdOrLAI);
+				int pos = asnOs.StartContentDefiniteLength();
+				((CellGlobalIdOrServiceAreaIdOrLAIImpl) this.cellGlobalIdOrServiceAreaIdOrLAI).encodeAll(asnOs);
+				asnOs.FinalizeContent(pos);
+			}
 
 			if (this.routeingAreaIdentity != null) {
 				((RAIdentityImpl) this.routeingAreaIdentity).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_routeingAreaIdentity);
@@ -401,7 +409,7 @@ public class LocationInformationGPRSImpl implements LocationInformationGPRS, MAP
 			if (this.extensionContainer != null)
 				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensionContainer);
 
-			if (this.saiPresent != null && this.saiPresent) {
+			if (this.saiPresent) {
 				try {
 					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_sai_Present);
 				} catch (IOException e) {
@@ -414,7 +422,7 @@ public class LocationInformationGPRSImpl implements LocationInformationGPRS, MAP
 			if (this.geodeticInformation != null)
 				((GeodeticInformationImpl) this.geodeticInformation).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_geodeticInformation);
 
-			if (this.currentLocationRetrieved != null && this.currentLocationRetrieved) {
+			if (this.currentLocationRetrieved) {
 				try {
 					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_currentLocationRetrieved);
 				} catch (IOException e) {
@@ -425,13 +433,70 @@ public class LocationInformationGPRSImpl implements LocationInformationGPRS, MAP
 			}
 
 			if (ageOfLocationInformation != null)
-				asnOs.writeInteger((int) ageOfLocationInformation);
+				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_ageOfLocationInformation, (int) ageOfLocationInformation);
 
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		} catch (AsnException e) {
 			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
+	}
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+		
+		if (this.cellGlobalIdOrServiceAreaIdOrLAI != null) {
+			sb.append("cellGlobalIdOrServiceAreaIdOrLAI=");
+			sb.append(this.cellGlobalIdOrServiceAreaIdOrLAI);
+		}
+		
+		if (this.routeingAreaIdentity != null) {
+			sb.append(", routeingAreaIdentity=");
+			sb.append(this.routeingAreaIdentity);
+		}
+		
+		if (this.geographicalInformation != null) {
+			sb.append(", geographicalInformation=");
+			sb.append(this.geographicalInformation);
+		}
+		
+		if (this.sgsnNumber != null) {
+			sb.append(", sgsnNumber=");
+			sb.append(this.sgsnNumber);
+		}
+		
+		if (this.selectedLSAIdentity != null) {
+			sb.append(", selectedLSAIdentity=");
+			sb.append(this.selectedLSAIdentity);
+		}
+		
+		if (this.extensionContainer != null) {
+			sb.append(", extensionContainer=");
+			sb.append(this.extensionContainer);
+		}
+		
+		if (saiPresent) {
+			sb.append(", saiPresent");
+		}
+		
+		if (this.geodeticInformation != null) {
+			sb.append(", geodeticInformation=");
+			sb.append(this.geodeticInformation);
+		}
+		
+		if (currentLocationRetrieved) {
+			sb.append(", currentLocationRetrieved");
+		}
+
+		if (this.ageOfLocationInformation != null) {
+			sb.append(", ageOfLocationInformation=");
+			sb.append(this.ageOfLocationInformation);
+		}
+		
+		sb.append("]");
+		return sb.toString();
 	}
 
 }

@@ -45,11 +45,11 @@ import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSubscriberBusyF
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSystemFailure;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageUnauthorizedLCSClient;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageUnknownSubscriber;
-import org.mobicents.protocols.ss7.map.api.errors.NetworkResource;
 import org.mobicents.protocols.ss7.map.api.errors.PositionMethodFailureDiagnostic;
 import org.mobicents.protocols.ss7.map.api.errors.SMEnumeratedDeliveryFailureCause;
 import org.mobicents.protocols.ss7.map.api.errors.UnauthorizedLCSClientDiagnostic;
 import org.mobicents.protocols.ss7.map.api.errors.UnknownSubscriberDiagnostic;
+import org.mobicents.protocols.ss7.map.api.primitives.NetworkResource;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.mobicents.protocols.ss7.tcap.asn.ParameterImpl;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;

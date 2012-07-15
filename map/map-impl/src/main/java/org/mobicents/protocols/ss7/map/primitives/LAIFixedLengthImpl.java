@@ -20,21 +20,16 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.service.mobility.locationManagement;
+package org.mobicents.protocols.ss7.map.primitives;
 
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LAIFixedLength;
-import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
-import org.mobicents.protocols.ss7.map.primitives.TbcdString;
+import org.mobicents.protocols.ss7.map.api.primitives.LAIFixedLength;
 
 
 /**
@@ -43,18 +38,19 @@ import org.mobicents.protocols.ss7.map.primitives.TbcdString;
 * @author sergey vetyutnev
 * 
 */
-public class LAIFixedLengthImpl implements LAIFixedLength, MAPAsnPrimitive {
-	
-	private byte[] data;
-	
+public class LAIFixedLengthImpl extends OctetStringBase implements LAIFixedLength {
+
+
 	public LAIFixedLengthImpl() {
-	}
-	
-	public LAIFixedLengthImpl(byte[] data) {
-		this.data = data;
+		super(5, 5, "LAIFixedLength");
 	}
 
+	public LAIFixedLengthImpl(byte[] data) {
+		super(5, 5, "LAIFixedLength", data);
+	}
+	
 	public LAIFixedLengthImpl(int mcc, int mnc, int lac) throws MAPException {
+		super(5, 5, "LAIFixedLength");
 
 		if (mcc < 1 || mcc > 999)
 			throw new MAPException("Bad mcc value");
@@ -92,10 +88,13 @@ public class LAIFixedLengthImpl implements LAIFixedLength, MAPAsnPrimitive {
 		data[4] = (byte)(lac % 256);
 	}
 
+
+	
+	
 	public byte[] getData() {
 		return data;
-	}
-
+	}	
+	
 	public int getMCC() throws MAPException {
 		
 		if (data == null)
@@ -161,84 +160,6 @@ public class LAIFixedLengthImpl implements LAIFixedLength, MAPAsnPrimitive {
 		int res = (data[3] & 0xFF) * 256 + (data[4] & 0xFF);
 		return res;
 	}
-
-	
-	public int getTag() throws MAPException {
-		return Tag.STRING_OCTET;
-	}
-
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
-
-	public boolean getIsPrimitive() {
-		return true;
-	}
-
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding LAIFixedLength: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding LAIFixedLength: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding LAIFixedLength: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding LAIFixedLength: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
-
-		try {
-			this.data = ansIS.readOctetStringData(length);
-			if (this.data.length != 5)
-				throw new MAPParsingComponentException("Error decoding LAIFixedLength: the LAIFixedLength field must contain from 5 to 5 octets. Contains: " + length,
-						MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding LAIFixedLength: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}	
-
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET);
-	}
-
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		
-		try {
-			asnOs.writeTag(tagClass, true, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding LAIFixedLength: " + e.getMessage(), e);
-		}
-	}
-
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-
-		if (this.data == null)
-			throw new MAPException("Error while encoding the LAIFixedLength: data is not defined");
-		if (this.data.length != 5)
-			throw new MAPException("Error while encoding the LAIFixedLength: field length must be equal 5");
-
-		asnOs.writeOctetStringData(this.data);
-	}
 	
 	@Override
 	public String toString() {
@@ -270,18 +191,6 @@ public class LAIFixedLengthImpl implements LAIFixedLength, MAPAsnPrimitive {
 			sb.append(this.printDataArr());
 		}
 		sb.append("]");
-		
-		return sb.toString();
-	}
-	
-	private String printDataArr() {
-		StringBuilder sb = new StringBuilder();
-		if( this.data!=null ) {
-			for( int b : this.data ) {
-				sb.append(b);
-				sb.append(" ");
-			}
-		}
 		
 		return sb.toString();
 	}

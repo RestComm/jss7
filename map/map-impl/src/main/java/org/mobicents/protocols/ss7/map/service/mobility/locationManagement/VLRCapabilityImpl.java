@@ -35,7 +35,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.I
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SuperChargerInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedLCSCapabilitySets;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedRATTypes;
-import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VlrCapability;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VLRCapability;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OfferedCamel4CSIs;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
@@ -48,7 +48,7 @@ import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Sup
  * @author sergey vetyutnev
  * 
  */
-public class VlrCapabilityImpl implements VlrCapability, MAPAsnPrimitive {
+public class VLRCapabilityImpl implements VLRCapability, MAPAsnPrimitive {
 
 	public static final int _TAG_supportedCamelPhases = 0;
 	public static final int _TAG_solsaSupportIndicator = 2;
@@ -75,10 +75,10 @@ public class VlrCapabilityImpl implements VlrCapability, MAPAsnPrimitive {
 	private boolean longGroupIDSupported;
 	private boolean mtRoamingForwardingSupported;	
 
-	public VlrCapabilityImpl() {
+	public VLRCapabilityImpl() {
 	}	
 
-	public VlrCapabilityImpl(SupportedCamelPhases supportedCamelPhases, MAPExtensionContainer extensionContainer, boolean solsaSupportIndicator,
+	public VLRCapabilityImpl(SupportedCamelPhases supportedCamelPhases, MAPExtensionContainer extensionContainer, boolean solsaSupportIndicator,
 			ISTSupportIndicator istSupportIndicator, SuperChargerInfo superChargerSupportedInServingNetworkEntity, boolean longFtnSupported,
 			SupportedLCSCapabilitySets supportedLCSCapabilitySets, OfferedCamel4CSIs offeredCamel4CSIs, SupportedRATTypes supportedRATTypesIndicator,
 			boolean longGroupIDSupported, boolean mtRoamingForwardingSupported) {

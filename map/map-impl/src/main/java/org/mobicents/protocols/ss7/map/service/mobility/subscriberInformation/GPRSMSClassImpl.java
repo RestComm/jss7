@@ -37,6 +37,7 @@ import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
  * @author abhayani
+ * @author sergey vetyutnev
  * 
  */
 public class GPRSMSClassImpl implements GPRSMSClass, MAPAsnPrimitive {
@@ -53,7 +54,11 @@ public class GPRSMSClassImpl implements GPRSMSClass, MAPAsnPrimitive {
 	 * 
 	 */
 	public GPRSMSClassImpl() {
-		// TODO Auto-generated constructor stub
+	}
+
+	public GPRSMSClassImpl(MSNetworkCapability mSNetworkCapability, MSRadioAccessCapability mSRadioAccessCapability) {
+		this.mSNetworkCapability = mSNetworkCapability;
+		this.mSRadioAccessCapability = mSRadioAccessCapability;
 	}
 
 	/*
@@ -151,6 +156,10 @@ public class GPRSMSClassImpl implements GPRSMSClass, MAPAsnPrimitive {
 
 			}
 		}
+
+		if (this.mSNetworkCapability == null)
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+					+ ": mSNetworkCapability must not be null", MAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
 	/*
@@ -161,7 +170,7 @@ public class GPRSMSClassImpl implements GPRSMSClass, MAPAsnPrimitive {
 	 * org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, this.getTag());
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	/*
@@ -173,7 +182,7 @@ public class GPRSMSClassImpl implements GPRSMSClass, MAPAsnPrimitive {
 	 */
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
-			asnOs.writeTag(tagClass, true, tag);
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
@@ -219,6 +228,25 @@ public class GPRSMSClassImpl implements GPRSMSClass, MAPAsnPrimitive {
 	 */
 	public MSRadioAccessCapability getMSRadioAccessCapability() {
 		return this.mSRadioAccessCapability;
+	}
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+		
+		if (this.mSNetworkCapability != null) {
+			sb.append("mSNetworkCapability=");
+			sb.append(this.mSNetworkCapability);
+		}
+		
+		if (this.mSRadioAccessCapability != null) {
+			sb.append(", mSRadioAccessCapability=");
+			sb.append(this.mSRadioAccessCapability);
+		}
+		
+		sb.append("]");
+		return sb.toString();
 	}
 
 }

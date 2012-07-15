@@ -26,7 +26,6 @@ import java.util.ArrayList;
 
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.Time;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.CSGId;
 
 /**
  * 

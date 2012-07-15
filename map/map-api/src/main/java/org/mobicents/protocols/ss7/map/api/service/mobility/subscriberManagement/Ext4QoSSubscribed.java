@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,19 +20,23 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
+package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
 /**
 *
-DiameterIdentity ::= OCTET STRING (SIZE(9..55))
--- content of DiameterIdentity is defined in IETF RFC 3588 [139]
+
+Ext4-QoS-Subscribed ::= OCTET STRING (SIZE (1))
+	-- Octet 1:
+	--  Evolved Allocation/Retention Priority. This octet encodes the Priority Level (PL),
+	--  the Preemption Capability (PCI) and Preemption Vulnerability  (PVI) values, as
+	--  described in 3GPP TS 29.060 [105].
 
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface DiameterIdentity {
+public interface Ext4QoSSubscribed {
 
-	public byte[] getData();
+	public int getData();
 
 }

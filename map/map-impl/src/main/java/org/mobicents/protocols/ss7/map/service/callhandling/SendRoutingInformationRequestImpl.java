@@ -771,6 +771,7 @@ public class SendRoutingInformationRequestImpl extends CallHandlingMessageImpl i
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(_PrimitiveName);
+		sb.append(" [");
 		
 		sb.append("mapProtocolVersion=");
 		sb.append(mapProtocolVersion);

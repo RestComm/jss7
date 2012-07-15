@@ -1,5 +1,7 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
+import java.util.ArrayList;
+
 
 /**
  * PS-SubscriberState ::= CHOICE {
@@ -10,7 +12,10 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformati
  *		ps-PDP-ActiveNotReachableForPaging [4] PDP-ContextInfoList,
  *		ps-PDP-ActiveReachableForPaging [5] PDP-ContextInfoList,
  *		netDetNotReachable NotReachableReason }
- *
+
+PDP-ContextInfoList ::= SEQUENCE SIZE (1..50) OF PDP-ContextInfo
+
+
  * @author amit bhayani
  *
  */
@@ -28,10 +33,11 @@ public interface PSSubscriberState {
 	
 	public boolean isPsPDPActiveReachableForPaging();
 	
+
 	public void setNetDetNotReachable(NotReachableReason notReachableReason);
 	
 	public NotReachableReason getNetDetNotReachable();
-	
-	//TODO : Implement PDP-ContextInfoList 
+
+	public ArrayList<PDPContextInfo> getPDPContextInfoList();
 
 }

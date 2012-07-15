@@ -30,6 +30,5 @@ public interface MNPInfoRes {
 	public NumberPortabilityStatus getNumberPortabilityStatus();
 	
 	public MAPExtensionContainer getExtensionContainer();
-	
 
 }
