@@ -1,3 +1,25 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
 import java.io.IOException;
@@ -13,10 +35,12 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.NotReachableReason;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.PDPContextInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.PSSubscriberState;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.PSSubscriberStateChoice;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive {
@@ -30,92 +54,24 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 
 	public static final String _PrimitiveName = "PSSubscriberState";
 
-	private boolean notProvidedFromSGSNorMME = false;
-	private boolean psDetached = false;
-	private boolean psAttachedNotReachableForPaging = false;
-	private boolean psAttachedReachableForPaging = false;
-	private boolean psPDPActiveNotReachableForPaging = false;
-	private boolean psPDPActiveReachableForPaging = false;
-	private NotReachableReason netDetNotReachable = null;
-	private ArrayList<PDPContextInfo> getPDPContextInfoList;
+	private PSSubscriberStateChoice choice;
+	private NotReachableReason netDetNotReachable;
+	private ArrayList<PDPContextInfo> pdpContextInfoList;
 
-	/**
-	 * 
-	 */
+
 	public PSSubscriberStateImpl() {
-		// TODO Auto-generated constructor stub
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
-	 * PSSubscriberState#isNotProvidedFromSGSNorMME()
-	 */
-	public boolean isNotProvidedFromSGSNorMME() {
-		return this.notProvidedFromSGSNorMME;
+	public PSSubscriberStateImpl(PSSubscriberStateChoice choice, NotReachableReason netDetNotReachable, ArrayList<PDPContextInfo> pdpContextInfoList) {
+		this.choice = choice;
+		this.netDetNotReachable = netDetNotReachable;
+		this.pdpContextInfoList = pdpContextInfoList;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
-	 * PSSubscriberState#isPsDetached()
-	 */
-	public boolean isPsDetached() {
-		return this.psDetached;
-	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
-	 * PSSubscriberState#isPsAttachedNotReachableForPaging()
-	 */
-	public boolean isPsAttachedNotReachableForPaging() {
-		return this.psAttachedNotReachableForPaging;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
-	 * PSSubscriberState#isPsAttachedReachableForPaging()
-	 */
-	public boolean isPsAttachedReachableForPaging() {
-		return this.psAttachedReachableForPaging;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
-	 * PSSubscriberState#isPsPDPActiveNotReachableForPaging()
-	 */
-	public boolean isPsPDPActiveNotReachableForPaging() {
-		return this.psPDPActiveNotReachableForPaging;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
-	 * PSSubscriberState#isPsPDPActiveReachableForPaging()
-	 */
-	public boolean isPsPDPActiveReachableForPaging() {
-		return this.psPDPActiveReachableForPaging;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
-	 * PSSubscriberState
-	 * #setNetDetNotReachable(org.mobicents.protocols.ss7.map.api
-	 * .service.subscriberInformation.NotReachableReason)
-	 */
-	public void setNetDetNotReachable(NotReachableReason notReachableReason) {
-		this.netDetNotReachable = notReachableReason;
+	@Override
+	public PSSubscriberStateChoice getChoice() {
+		return choice;
 	}
 
 	/*
@@ -130,7 +86,7 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 
 	@Override
 	public ArrayList<PDPContextInfo> getPDPContextInfoList() {
-		return getPDPContextInfoList;
+		return pdpContextInfoList;
 	}
 
 	/*
@@ -139,20 +95,23 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTag()
 	 */
 	public int getTag() throws MAPException {
-		if (this.notProvidedFromSGSNorMME) {
+		if (this.choice == PSSubscriberStateChoice.notProvidedFromSGSNorMME) {
 			return _ID_notProvidedFromSGSNorMME;
-		} else if (this.psDetached) {
+		} else if (this.choice == PSSubscriberStateChoice.psDetached) {
 			return _ID_ps_Detached;
-		} else if (this.psAttachedNotReachableForPaging) {
+		} else if (this.choice == PSSubscriberStateChoice.psAttachedNotReachableForPaging) {
 			return _ID_ps_AttachedNotReachableForPaging;
-		} else if (this.psAttachedReachableForPaging) {
+		} else if (this.choice == PSSubscriberStateChoice.psAttachedReachableForPaging) {
 			return _ID_ps_AttachedReachableForPaging;
-		} else if (this.psPDPActiveNotReachableForPaging) {
+		} else if (this.choice == PSSubscriberStateChoice.psPDPActiveNotReachableForPaging) {
 			return _ID_ps_PDP_ActiveNotReachableForPaging;
-		} else if (this.psPDPActiveReachableForPaging) {
+		} else if (this.choice == PSSubscriberStateChoice.psPDPActiveReachableForPaging) {
 			return _ID_ps_PDP_ActiveReachableForPaging;
+		} else if (this.choice == PSSubscriberStateChoice.netDetNotReachable) {
+			return Tag.ENUMERATED;
 		}
-		return 0;
+
+		throw new MAPException("Error encoding " + _PrimitiveName + ": Bad hoice value");
 	}
 
 	/*
@@ -162,7 +121,10 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTagClass()
 	 */
 	public int getTagClass() {
-		return Tag.CLASS_CONTEXT_SPECIFIC;
+		if (this.choice == PSSubscriberStateChoice.netDetNotReachable)
+			return Tag.CLASS_UNIVERSAL;
+		else
+			return Tag.CLASS_CONTEXT_SPECIFIC;
 	}
 
 	/*
@@ -173,7 +135,10 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 	 * ()
 	 */
 	public boolean getIsPrimitive() {
-		return true;
+		if (this.choice == PSSubscriberStateChoice.psPDPActiveNotReachableForPaging || this.choice == PSSubscriberStateChoice.psPDPActiveReachableForPaging)
+			return false;
+		else
+			return true;
 	}
 
 	/*
@@ -217,43 +182,84 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 
 	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-		if (ansIS.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ansIS.isTagPrimitive())
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag class or is not primitive: TagClass="
-					+ ansIS.getTagClass(), MAPParsingComponentExceptionReason.MistypedParameter);
+		this.choice = null;
+		this.netDetNotReachable = null;
+		this.pdpContextInfoList = null;
 
-		switch (ansIS.getTag()) {
-		case _ID_notProvidedFromSGSNorMME:
-			this.notProvidedFromSGSNorMME = true;
-			ansIS.readNullData(length);
-			break;
+		if (ansIS.getTagClass() == Tag.CLASS_UNIVERSAL) {
+			switch (ansIS.getTag()) {
+			case Tag.ENUMERATED:
+				if (!ansIS.isTagPrimitive())
+					throw new MAPParsingComponentException("Error while decoding netDetNotReachable choice: Parameter is not primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
+				this.choice = PSSubscriberStateChoice.netDetNotReachable;
+				int i1 = (int)ansIS.readIntegerData(length);
+				this.netDetNotReachable = NotReachableReason.getInstance(i1); 
+				break;
 
-		case _ID_ps_Detached:
-			this.psDetached = true;
-			ansIS.readNullData(length);
-			break;
+			default:
+				throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag for Universal TagClass: " + ansIS.getTag(),
+						MAPParsingComponentExceptionReason.MistypedParameter);
+			}
+		} else if (ansIS.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+			switch (ansIS.getTag()) {
+			case _ID_notProvidedFromSGSNorMME:
+				if (!ansIS.isTagPrimitive())
+					throw new MAPParsingComponentException("Error while decoding notProvidedFromSGSNorMME choice: Parameter is not primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
+				this.choice = PSSubscriberStateChoice.notProvidedFromSGSNorMME;
+				ansIS.readNullData(length);
+				break;
 
-		case _ID_ps_AttachedNotReachableForPaging:
-			this.psAttachedNotReachableForPaging = true;
-			ansIS.readNullData(length);
-			break;
+			case _ID_ps_Detached:
+				if (!ansIS.isTagPrimitive())
+					throw new MAPParsingComponentException("Error while decoding psDetached choice: Parameter is not primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
+				this.choice = PSSubscriberStateChoice.psDetached;
+				ansIS.readNullData(length);
+				break;
 
-		case _ID_ps_AttachedReachableForPaging:
-			this.psAttachedReachableForPaging = true;
-			ansIS.readNullData(length);
-			break;
+			case _ID_ps_AttachedNotReachableForPaging:
+				if (!ansIS.isTagPrimitive())
+					throw new MAPParsingComponentException("Error while decoding psAttachedNotReachableForPaging choice: Parameter is not primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
+				this.choice = PSSubscriberStateChoice.psAttachedNotReachableForPaging;
+				ansIS.readNullData(length);
+				break;
 
-		case _ID_ps_PDP_ActiveNotReachableForPaging:
-			this.psPDPActiveNotReachableForPaging = true;
-			ansIS.readNullData(length);
-			break;
+			case _ID_ps_AttachedReachableForPaging:
+				if (!ansIS.isTagPrimitive())
+					throw new MAPParsingComponentException("Error while decoding psAttachedReachableForPaging choice: Parameter is not primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
+				this.choice = PSSubscriberStateChoice.psAttachedReachableForPaging;
+				ansIS.readNullData(length);
+				break;
 
-		case _ID_ps_PDP_ActiveReachableForPaging:
-			this.psPDPActiveReachableForPaging = true;
-			ansIS.readNullData(length);
-			break;
+			case _ID_ps_PDP_ActiveNotReachableForPaging:
+				if (ansIS.isTagPrimitive())
+					throw new MAPParsingComponentException("Error while decoding psPDPActiveNotReachableForPaging choice: Parameter is primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
+				this.choice = PSSubscriberStateChoice.psPDPActiveNotReachableForPaging;
+				// TODO: implement it
+				ansIS.advanceElement();
+				break;
 
-		default:
-			throw new MAPParsingComponentException("Error while SM_RP_DA: bad tag: " + ansIS.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+			case _ID_ps_PDP_ActiveReachableForPaging:
+				if (ansIS.isTagPrimitive())
+					throw new MAPParsingComponentException("Error while decoding psPDPActiveReachableForPaging choice: Parameter is primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
+				this.choice = PSSubscriberStateChoice.psPDPActiveReachableForPaging;
+				// TODO: implement it
+				ansIS.advanceElement();
+				break;
+
+			default:
+				throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag for ContextSpecific TagClass: " + ansIS.getTag(),
+						MAPParsingComponentExceptionReason.MistypedParameter);
+			}
+		} else {
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tagClass: " + ansIS.getTagClass(),
+					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -265,7 +271,7 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 	 * org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, this.getTag());
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	/*
@@ -277,7 +283,7 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 	 */
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
-			asnOs.writeTag(tagClass, true, tag);
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
@@ -294,6 +300,66 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		asnOs.writeNullData();
+
+		try {
+			if (this.choice == null)
+				throw new MAPException("Error while encoding the " + _PrimitiveName + ": choice is not defined");
+
+			if ((this.choice == PSSubscriberStateChoice.psPDPActiveNotReachableForPaging || this.choice == PSSubscriberStateChoice.psPDPActiveReachableForPaging)
+					&& this.pdpContextInfoList == null)
+				throw new MAPException("Error while encoding the " + _PrimitiveName
+						+ ": for choice psPDPActiveNotReachableForPaging or psPDPActiveReachableForPaging - pdpContextInfoList must not be null");
+
+			if ((this.choice == PSSubscriberStateChoice.netDetNotReachable) && this.netDetNotReachable == null)
+				throw new MAPException("Error while encoding the " + _PrimitiveName + ": for choice netDetNotReachable - netDetNotReachable must not be null");
+
+			switch (this.choice) {
+			case notProvidedFromSGSNorMME:
+			case psDetached:
+			case psAttachedNotReachableForPaging:
+			case psAttachedReachableForPaging:
+				asnOs.writeNullData();
+				break;
+			case psPDPActiveNotReachableForPaging:
+			case psPDPActiveReachableForPaging:
+				// TODO: implement it
+				asnOs.writeNullData();
+				break;
+			case netDetNotReachable:
+				asnOs.writeIntegerData(this.netDetNotReachable.getCode());
+				break;
+			}
+
+		} catch (IOException e) {
+			throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+		
+		if (this.choice != null)
+			sb.append(this.choice.toString());
+		if (this.netDetNotReachable != null) {
+			sb.append(", netDetNotReachable=");
+			sb.append(this.netDetNotReachable.toString());
+		}
+		if (this.pdpContextInfoList != null && this.pdpContextInfoList.size() > 0) {
+			sb.append(", pdpContextInfoList [");
+			for (PDPContextInfo p : pdpContextInfoList) {
+				sb.append("PDPContextInfo=");
+				sb.append(p);
+				sb.append(", ");
+			}
+			sb.append("]");
+		}
+
+		sb.append("]");
+
+		return sb.toString();
 	}
 }

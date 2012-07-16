@@ -38,8 +38,10 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.primitives.SubscriberIdentityImpl;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterTest;
@@ -72,40 +74,52 @@ public class SubscriberIdentityTest {
 	public void tearDown() {
 	}
 
+	byte[] data = new byte[] { (byte) 0x80, 0x08, 0x27, (byte) 0x94, (byte) 0x99, 0x09, 0x00, 0x00, 0x00, (byte) 0xf7 };
+	byte[] dataMsIsdn = new byte[] { -127, 7, -111, 34, 34, 34, 51, 51, -13 };
+
 	@Test(groups = { "functional.decode","primitives"})
 	public void testDecode() throws Exception {
-		byte[] data = new byte[] { (byte) 0x80, 0x08, 0x27, (byte) 0x94, (byte) 0x99, 0x09, 0x00, 0x00, 0x00, (byte) 0xf7 };
 
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
-
-
 		SubscriberIdentityImpl subsIdent = new SubscriberIdentityImpl();
 		subsIdent.decodeAll(asn);
 		IMSI imsi = subsIdent.getIMSI();
 		ISDNAddressString msisdn  = subsIdent.getMSISDN();
-		
 		assertNotNull(imsi);
 		assertNull(msisdn);
-		
-//		assertEquals( imsi.getMCC(),new Long(724l));
-//		assertEquals( imsi.getMNC(),new Long(99l));
-		assertEquals( imsi.getData(),"724999900000007");
-		
+		assertTrue(imsi.getData().equals("724999900000007"));
+
+		asn = new AsnInputStream(dataMsIsdn);
+		tag = asn.readTag();
+		subsIdent = new SubscriberIdentityImpl();
+		subsIdent.decodeAll(asn);
+		imsi = subsIdent.getIMSI();
+		msisdn  = subsIdent.getMSISDN();
+		assertNull(imsi);
+		assertNotNull(msisdn);
+		assertTrue(msisdn.getAddress().equals("22222233333"));
+		assertEquals(msisdn.getAddressNature(), AddressNature.international_number);
+		assertEquals(msisdn.getNumberingPlan(), NumberingPlan.ISDN);
+
 	}
 
 	@Test(groups = { "functional.encode","primitives"})
 	public void testEncode() throws Exception {
-		byte[] data = new byte[] { (byte) 0x80, 0x08, 0x27, (byte) 0x94, (byte) 0x99, 0x09, 0x00, 0x00, 0x00, (byte) 0xf7 };
 
 		IMSI imsi = this.MAPParameterFactory.createIMSI("724999900000007");
 		SubscriberIdentityImpl subsIdent = new SubscriberIdentityImpl(imsi);
 		AsnOutputStream asnOS = new AsnOutputStream();
 		subsIdent.encodeAll(asnOS);
-		
 		byte[] encodedData = asnOS.toByteArray();
-
 		assertTrue( Arrays.equals(data,encodedData));
+
+		ISDNAddressString msisdn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "22222233333");
+		subsIdent = new SubscriberIdentityImpl(msisdn);
+		asnOS = new AsnOutputStream();
+		subsIdent.encodeAll(asnOS);
+		encodedData = asnOS.toByteArray();
+		assertTrue( Arrays.equals(dataMsIsdn,encodedData));
 	}
 	
 	@Test(groups = { "functional.serialize", "primitives" })

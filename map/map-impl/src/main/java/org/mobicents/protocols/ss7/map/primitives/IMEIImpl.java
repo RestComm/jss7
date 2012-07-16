@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.primitives;
 
+import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 
 /**
@@ -41,5 +43,15 @@ public class IMEIImpl extends TbcdString implements IMEI {
 
 	public String getIMEI() {
 		return this.data;
+	}
+
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+		if (this.data == null)
+			throw new MAPException("Error while encoding the IMEI: IMEI must not be null");
+		if (this.data.length() < 15 || this.data.length() > 16)
+			throw new MAPException("Error while encoding the IMEI: Bad IMEI length - must be 15 or 16");
+		
+		super.encodeData(asnOs);
 	}
 }

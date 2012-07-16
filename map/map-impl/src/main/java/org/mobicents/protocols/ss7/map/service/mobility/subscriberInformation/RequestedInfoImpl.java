@@ -180,67 +180,71 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 				break;
 
 			int tag = ais.readTag();
-			switch (tag) {
-			case _ID_locationInformation:
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter 0 bad tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				ais.readNull();
-				this.locationInformation = Boolean.TRUE;
-				break;
-			case _ID_subscriberState:
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter 0 bad tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				ais.readNull();
-				this.subscriberState = Boolean.TRUE;
-				break;
-			case _ID_extensionContainer:
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter 0 bad tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				extensionContainer = new MAPExtensionContainerImpl();
-				((MAPExtensionContainerImpl) extensionContainer).decodeAll(ais);
-				break;
-			case _ID_currentLocation:
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter 0 bad tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				ais.readNull();
-				this.currentLocation = Boolean.TRUE;
-				break;
-			case _ID_requestedDomain:
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter 0 bad tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				int i1 = (int) ais.readInteger();
-				this.requestedDomain = DomainType.getInstance(i1);
-				break;
-			case _ID_msclassmark:
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter 0 bad tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				ais.readNull();
-				this.msClassmark = Boolean.TRUE;
-				break;
-			case _ID_imei:
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter 0 bad tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				ais.readNull();
-				this.imei = Boolean.TRUE;
-				break;
-			case _ID_mnpRequestedInfo:
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter 0 bad tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				ais.readNull();
-				this.mnpRequestedInfo = Boolean.TRUE;
-				break;
-			default:
-				ais.advanceElement();
-				break;
 
+			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+				switch (tag) {
+				case _ID_locationInformation:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					ais.readNull();
+					this.locationInformation = Boolean.TRUE;
+					break;
+				case _ID_subscriberState:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					ais.readNull();
+					this.subscriberState = Boolean.TRUE;
+					break;
+				case _ID_extensionContainer:
+					if (ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					extensionContainer = new MAPExtensionContainerImpl();
+					((MAPExtensionContainerImpl) extensionContainer).decodeAll(ais);
+					break;
+				case _ID_currentLocation:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					ais.readNull();
+					this.currentLocation = Boolean.TRUE;
+					break;
+				case _ID_requestedDomain:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					int i1 = (int) ais.readInteger();
+					this.requestedDomain = DomainType.getInstance(i1);
+					break;
+				case _ID_msclassmark:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					ais.readNull();
+					this.msClassmark = Boolean.TRUE;
+					break;
+				case _ID_imei:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					ais.readNull();
+					this.imei = Boolean.TRUE;
+					break;
+				case _ID_mnpRequestedInfo:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					ais.readNull();
+					this.mnpRequestedInfo = Boolean.TRUE;
+					break;
+				default:
+					ais.advanceElement();
+					break;
+				}
+			} else {
+				ais.advanceElement();
 			}
 		}
 	}

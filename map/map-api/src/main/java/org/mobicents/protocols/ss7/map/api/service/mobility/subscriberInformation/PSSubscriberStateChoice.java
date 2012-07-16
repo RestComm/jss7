@@ -22,9 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
-import java.util.ArrayList;
-
-
 /**
  * PS-SubscriberState ::= CHOICE {
  *		notProvidedFromSGSNorMME [0] NULL,
@@ -35,19 +32,17 @@ import java.util.ArrayList;
  *		ps-PDP-ActiveReachableForPaging [5] PDP-ContextInfoList,
  *		netDetNotReachable NotReachableReason }
 
-PDP-ContextInfoList ::= SEQUENCE SIZE (1..50) OF PDP-ContextInfo
 
-
- * @author amit bhayani
  * @author sergey vetyutnev
  *
  */
-public interface PSSubscriberState {
-
-	public PSSubscriberStateChoice getChoice();
-
-	public ArrayList<PDPContextInfo> getPDPContextInfoList();
-
-	public NotReachableReason getNetDetNotReachable();
+public enum PSSubscriberStateChoice {
+	 notProvidedFromSGSNorMME,
+	 psDetached,
+	 psAttachedNotReachableForPaging,
+	 psAttachedReachableForPaging,
+	 psPDPActiveNotReachableForPaging,
+	 psPDPActiveReachableForPaging,
+	 netDetNotReachable;
 
 }

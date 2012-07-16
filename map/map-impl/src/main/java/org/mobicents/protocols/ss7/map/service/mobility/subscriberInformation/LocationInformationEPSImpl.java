@@ -19,6 +19,7 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
+
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
 import java.io.IOException;
@@ -272,39 +273,60 @@ public class LocationInformationEPSImpl implements LocationInformationEPS, MAPAs
 
 				switch (tag) {
 				case _ID_eUtranCellGlobalIdentity:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " eUtranCellGlobalIdentity: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
 					this.eUtranCellGlobalIdentity = new EUtranCgiImpl();
 					((EUtranCgiImpl) this.eUtranCellGlobalIdentity).decodeAll(ais);
 					break;
 				case _ID_trackingAreaIdentity:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " trackingAreaIdentity: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
 					this.trackingAreaIdentity = new TAIdImpl();
 					((TAIdImpl) this.trackingAreaIdentity).decodeAll(ais);
 					break;
 				case _ID_extensionContainer:
+					if (ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " extensionContainer: Parameter is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
 					this.extensionContainer = new MAPExtensionContainerImpl();
 					((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
 					break;
 				case _ID_geographicalInformation:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " geographicalInformation: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
 					this.geographicalInformation = new GeographicalInformationImpl();
 					((GeographicalInformationImpl) this.geographicalInformation).decodeAll(ais);
 					break;
 
 				case _ID_geodeticInformation:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " geodeticInformation: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
 					this.geodeticInformation = new GeodeticInformationImpl();
 					((GeodeticInformationImpl) this.geodeticInformation).decodeAll(ais);
 					break;
 				case _ID_currentLocationRetrieved:
-					if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
+					if (!ais.isTagPrimitive()) {
 						throw new MAPParsingComponentException(
-								"Error while decoding LocationInformation: Parameter [currentLocationRetrieved	[8] NULL ] bad tag class, tag or not primitive",
+								"Error while decoding LocationInformation: Parameter [currentLocationRetrieved	[8] NULL ] not primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					}
 					ais.readNull();
 					this.currentLocationRetrieved = true;
 					break;
 				case _ID_ageOfLocationInformation:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " ageOfLocationInformation: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
 					this.ageOfLocationInformation = (int) ais.readInteger();
 					break;
 				case _ID_mme_Name:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " mmeName: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
 					this.mmeName = new DiameterIdentityImpl();
 					((DiameterIdentityImpl) this.mmeName).decodeAll(ais);
 					break;

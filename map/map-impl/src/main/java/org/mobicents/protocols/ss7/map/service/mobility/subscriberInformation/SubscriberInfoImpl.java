@@ -19,6 +19,7 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
+
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
 import java.io.IOException;
@@ -291,28 +292,43 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 					break;
 
 				case _ID_locationInformationGPRS:
+					if (ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding locationInformationGPRS: Parameter is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
 					locationInformationGPRS = new LocationInformationGPRSImpl();
 					((LocationInformationGPRSImpl) locationInformationGPRS).decodeAll(ais);
 					break;
 				case _ID_psSubscriberState:
-					this.subscriberState = new SubscriberStateImpl();
+					this.psSubscriberState = new PSSubscriberStateImpl();
 					ais2 = ais.readSequenceStream();
 					ais2.readTag();
-					((SubscriberStateImpl)this.psSubscriberState).decodeAll(ais2);
+					((PSSubscriberStateImpl)this.psSubscriberState).decodeAll(ais2);
 					break;
 				case _ID_imei:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding IMEI: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
 					imei = new IMEIImpl();
 					((IMEIImpl) imei).decodeAll(ais);
 					break;
 				case _ID_msclassmark2:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding msClassmark2is: Parameter not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
 					msClassmark2 = new MSClassmark2Impl();
 					((MSClassmark2Impl) msClassmark2).decodeAll(ais);
 					break;
 				case _ID_gprsMSClass:
+					if (ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding gprsMSClass: Parameter is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
 					gprsMSClass = new GPRSMSClassImpl();
 					((GPRSMSClassImpl) gprsMSClass).decodeAll(ais);
 					break;
 				case _ID_mnpInfoRes:
+					if (ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding mnpInfoRes: Parameter is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
 					mnpInfoRes = new MNPInfoResImpl();
 					((MNPInfoResImpl) mnpInfoRes).decodeAll(ais);
 					break;
@@ -336,7 +352,7 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 	 * org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, this.getTag());
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	/*
@@ -348,12 +364,12 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 	 */
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
-			asnOs.writeTag(tagClass, true, tag);
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding SubscriberInfo : " + e.getMessage(), e);
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 
@@ -386,7 +402,7 @@ public class SubscriberInfoImpl implements SubscriberInfo, MAPAsnPrimitive {
 			if (this.psSubscriberState != null) {
 				asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_psSubscriberState);
 				int pos = asnOs.StartContentDefiniteLength();
-				((SubscriberStateImpl) this.psSubscriberState).encodeAll(asnOs);
+				((PSSubscriberStateImpl) this.psSubscriberState).encodeAll(asnOs);
 				asnOs.FinalizeContent(pos);
 			}
 

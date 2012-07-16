@@ -45,8 +45,8 @@ public interface UserCSGInformation {
 
 	public MAPExtensionContainer getExtensionContainer();
 
-	public byte[] getAccessMode();
+	public Integer getAccessMode();
 
-	public byte[] getCmi();
+	public Integer getCmi();
 
 }

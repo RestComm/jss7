@@ -23,15 +23,13 @@
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
 import static org.testng.Assert.*;
-
 import java.util.Arrays;
-
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.NotReachableReason;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberStateChoice;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.SubscriberStateImpl;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.*;
 
 /**
  * 

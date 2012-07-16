@@ -140,20 +140,30 @@ public class GPRSMSClassImpl implements GPRSMSClass, MAPAsnPrimitive {
 			if (ais.available() == 0)
 				break;
 
-			int tag = ais.readTag();
-			switch (tag) {
-			case _ID_mSNetworkCapability:
-				this.mSNetworkCapability = new MSNetworkCapabilityImpl();
-				((MSNetworkCapabilityImpl) this.mSNetworkCapability).decodeAll(ais);
-				break;
-			case _ID_mSRadioAccessCapability:
-				this.mSRadioAccessCapability = new MSRadioAccessCapabilityImpl();
-				((MSRadioAccessCapabilityImpl) this.mSRadioAccessCapability).decodeAll(ais);
-				break;
-			default:
-				ais.advanceElement();
-				break;
+			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 
+				int tag = ais.readTag();
+				switch (tag) {
+				case _ID_mSNetworkCapability:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " mSNetworkCapability: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.mSNetworkCapability = new MSNetworkCapabilityImpl();
+					((MSNetworkCapabilityImpl) this.mSNetworkCapability).decodeAll(ais);
+					break;
+				case _ID_mSRadioAccessCapability:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+								+ " mSRadioAccessCapability: Parameter is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+					this.mSRadioAccessCapability = new MSRadioAccessCapabilityImpl();
+					((MSRadioAccessCapabilityImpl) this.mSRadioAccessCapability).decodeAll(ais);
+					break;
+				default:
+					ais.advanceElement();
+					break;
+				}
+			} else {
+				ais.advanceElement();
 			}
 		}
 

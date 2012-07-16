@@ -194,30 +194,51 @@ public class MNPInfoResImpl implements MNPInfoRes, MAPAsnPrimitive {
 				break;
 
 			int tag = ais.readTag();
-			switch (tag) {
-			case _ID_routeingNumber:
-				this.routeingNumber = new RouteingNumberImpl();
-				((RouteingNumberImpl) this.routeingNumber).decodeAll(ais);
-				break;
-			case _ID_imsi:
-				this.imsi = new IMSIImpl();
-				((IMSIImpl) this.imsi).decodeAll(ais);
-				break;
-			case _ID_msisdn:
-				this.msisdn = new ISDNAddressStringImpl();
-				((ISDNAddressStringImpl) this.msisdn).decodeAll(ais);
-				break;
-			case _ID_numberPortabilityStatus:
-				int i1 = (int) ais.readInteger();
-				this.numberPortabilityStatus = NumberPortabilityStatus.getInstance(i1);
-				break;
-			case _ID_extensionContainer:
-				this.extensionContainer = new MAPExtensionContainerImpl();
-				((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
-				break;
-			default:
+
+			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+				
+				switch (tag) {
+				case _ID_routeingNumber:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " routeingNumber: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.routeingNumber = new RouteingNumberImpl();
+					((RouteingNumberImpl) this.routeingNumber).decodeAll(ais);
+					break;
+				case _ID_imsi:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " imsi: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.imsi = new IMSIImpl();
+					((IMSIImpl) this.imsi).decodeAll(ais);
+					break;
+				case _ID_msisdn:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " msisdn: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.msisdn = new ISDNAddressStringImpl();
+					((ISDNAddressStringImpl) this.msisdn).decodeAll(ais);
+					break;
+				case _ID_numberPortabilityStatus:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " numberPortabilityStatus: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					int i1 = (int) ais.readInteger();
+					this.numberPortabilityStatus = NumberPortabilityStatus.getInstance(i1);
+					break;
+				case _ID_extensionContainer:
+					if (ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " extensionContainer: Parameter is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.extensionContainer = new MAPExtensionContainerImpl();
+					((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+					break;
+				default:
+					ais.advanceElement();
+					break;
+				}
+			} else {
 				ais.advanceElement();
-				break;
 			}
 		}
 	}
@@ -230,7 +251,7 @@ public class MNPInfoResImpl implements MNPInfoRes, MAPAsnPrimitive {
 	 * org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, this.getTag());
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	/*
@@ -242,7 +263,7 @@ public class MNPInfoResImpl implements MNPInfoRes, MAPAsnPrimitive {
 	 */
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
-			asnOs.writeTag(tagClass, true, tag);
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);

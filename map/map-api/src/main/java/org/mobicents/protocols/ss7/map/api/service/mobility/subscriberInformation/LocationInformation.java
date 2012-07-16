@@ -54,6 +54,16 @@ LocationInformation ::= SEQUENCE {
 -- absent. 
 -- UserCSGInformation contains the CSG ID, Access mode, and the CSG Membership Indication in
 -- the case the Access mode is Hybrid Mode.
+
+AgeOfLocationInformation ::= INTEGER (0..32767)
+-- the value represents the elapsed time in minutes since the last
+-- network contact of the mobile station (i.e. the actuality of the
+-- location information).
+-- value “0” indicates that the MS is currently in contact with the
+--           network
+-- value “32767” indicates that the location information is at least
+--               32767 minutes old
+
 * 
 * @author sergey vetyutnev
 * 
@@ -78,9 +88,9 @@ public interface LocationInformation {
 
 	public GeodeticInformation getGeodeticInformation();
 
-	public Boolean getCurrentLocationRetrieved();
+	public boolean getCurrentLocationRetrieved();
 
-	public Boolean getSaiPresent();
+	public boolean getSaiPresent();
 
 	public LocationInformationEPS getLocationInformationEPS();
 
