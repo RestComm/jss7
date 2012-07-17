@@ -268,7 +268,6 @@ public class LocationInformationEPSImpl implements LocationInformationEPS, MAPAs
 
 			int tag = ais.readTag();
 
-			// optional parameters
 			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 
 				switch (tag) {

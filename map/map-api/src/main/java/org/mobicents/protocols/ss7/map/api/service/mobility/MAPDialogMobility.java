@@ -41,6 +41,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.A
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PagingArea;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VLRCapability;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberInfo;
 
 /**
  * 
@@ -84,8 +85,8 @@ public interface MAPDialogMobility extends MAPDialog {
 
 	public long addAnyTimeInterrogationRequest(long customInvokeTimeout, SubscriberIdentity subscriberIdentity, RequestedInfo requestedInfo,
 			ISDNAddressString gsmSCFAddress, MAPExtensionContainer extensionContainer) throws MAPException;
-	
-	public long addAnyTimeInterrogationResponse(long invokeId) throws MAPException;
+
+	public void addAnyTimeInterrogationResponse(long invokeId, SubscriberInfo subscriberInfo, MAPExtensionContainer extensionContainer) throws MAPException;
 
 	// TODO: add service component adders
 	

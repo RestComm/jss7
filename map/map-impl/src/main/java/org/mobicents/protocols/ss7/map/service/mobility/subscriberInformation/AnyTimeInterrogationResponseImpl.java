@@ -19,10 +19,10 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
+
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
 import java.io.IOException;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -45,8 +45,10 @@ import org.mobicents.protocols.ss7.map.service.mobility.MobilityMessageImpl;
  */
 public class AnyTimeInterrogationResponseImpl extends MobilityMessageImpl implements AnyTimeInterrogationResponse, MAPAsnPrimitive {
 
-	private SubscriberInfo subscriberInfo = null;
-	private MAPExtensionContainer extensionContainer = null;
+	public static final String _PrimitiveName = "AnyTimeInterrogationResponse";
+
+	private SubscriberInfo subscriberInfo;
+	private MAPExtensionContainer extensionContainer;
 
 	/**
 	 * 
@@ -124,10 +126,10 @@ public class AnyTimeInterrogationResponseImpl extends MobilityMessageImpl implem
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding anyTimeInterrogationResponseIndication: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding anyTimeInterrogationResponseIndication: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -143,10 +145,10 @@ public class AnyTimeInterrogationResponseImpl extends MobilityMessageImpl implem
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding anyTimeInterrogationRequestIndication: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding anyTimeInterrogationRequestIndication: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -155,35 +157,37 @@ public class AnyTimeInterrogationResponseImpl extends MobilityMessageImpl implem
 
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 
-		int tag = ais.readTag();
-
 		// decode subscriberInfo
-		if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || ais.isTagPrimitive())
-			throw new MAPParsingComponentException("Error while decoding anyTimeInterrogationResponseIndication: Parameter 0 bad tag class or not primitive",
-					MAPParsingComponentExceptionReason.MistypedParameter);
-
+		int tag = ais.readTag();
+		if (tag != Tag.SEQUENCE || ais.getTagClass() != Tag.CLASS_UNIVERSAL || ais.isTagPrimitive())
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+					+ ": Parameter subscriberInfo has bad tag or tag class or not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
 		this.subscriberInfo = new SubscriberInfoImpl();
 		((SubscriberInfoImpl) this.subscriberInfo).decodeAll(ais);
-
-		if (ais.available() > 0) {
-
-			tag = ais.readTag();
-
-			// decode extensionContainer
-			if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || ais.isTagPrimitive())
-				throw new MAPParsingComponentException(
-						"Error while decoding anyTimeInterrogationResponseIndication: Parameter 1 bad tag class or not primitive",
-						MAPParsingComponentExceptionReason.MistypedParameter);
-			extensionContainer = new MAPExtensionContainerImpl();
-			((MAPExtensionContainerImpl) extensionContainer).decodeAll(ais);
-		}
 
 		while (true) {
 			if (ais.available() == 0)
 				break;
+
 			tag = ais.readTag();
 
-			ais.advanceElement();
+			// optional parameters
+			if (ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
+				switch (tag) {
+				case Tag.SEQUENCE:
+					if (ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter extensionContainer is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					extensionContainer = new MAPExtensionContainerImpl();
+					((MAPExtensionContainerImpl) extensionContainer).decodeAll(ais);
+					break;
+				default:
+					ais.advanceElement();
+					break;
+				}
+			} else {
+				ais.advanceElement();
+			}
 		}
 	}
 
@@ -195,7 +199,7 @@ public class AnyTimeInterrogationResponseImpl extends MobilityMessageImpl implem
 	 * org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, this.getTag());
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	/*
@@ -207,12 +211,12 @@ public class AnyTimeInterrogationResponseImpl extends MobilityMessageImpl implem
 	 */
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
-			asnOs.writeTag(tagClass, true, tag);
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding AnyTimeInterrogationResponse : " + e.getMessage(), e);
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + " : " + e.getMessage(), e);
 		}
 	}
 
@@ -225,7 +229,7 @@ public class AnyTimeInterrogationResponseImpl extends MobilityMessageImpl implem
 	 */
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.subscriberInfo == null)
-			throw new MAPException("SubscriberInfo cannot be null");
+			throw new MAPException("Error when encoding " + _PrimitiveName + ": SubscriberInfo cannot be null");
 
 		((SubscriberInfoImpl) this.subscriberInfo).encodeAll(asnOs);
 
@@ -253,4 +257,22 @@ public class AnyTimeInterrogationResponseImpl extends MobilityMessageImpl implem
 		return this.extensionContainer;
 	}
 
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+		
+		if (this.subscriberInfo != null) {
+			sb.append("subscriberInfo=");
+			sb.append(this.subscriberInfo);
+		}
+		if (this.extensionContainer != null) {
+			sb.append(", extensionContainer=");
+			sb.append(this.extensionContainer);
+		}
+
+		sb.append("]");
+		return sb.toString();
+	}
 }
+

@@ -3407,6 +3407,133 @@ public class MAPFunctionalTest extends SccpHarness {
 
 	}
 
+	/**
+	 * TC-BEGIN + anyTimeInterrogationRequest
+	 * TC-END + anyTimeInterrogationResponse
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testAnyTimeInterrogation() throws Exception {
+
+		// ......................................
+		
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onUpdateLocationResponse(UpdateLocationResponse ind) {
+				super.onUpdateLocationResponse(ind);
+
+				ISDNAddressString hlrNumber = ind.getHlrNumber();
+
+				Assert.assertEquals(hlrNumber.getAddressNature(), AddressNature.international_number);
+				Assert.assertEquals(hlrNumber.getNumberingPlan(), NumberingPlan.ISDN);
+				Assert.assertTrue(hlrNumber.getAddress().equals("765765765"));
+				Assert.assertNull(ind.getExtensionContainer());
+				Assert.assertTrue(ind.getAddCapability());
+				Assert.assertFalse(ind.getPagingAreaCapability());
+			}
+
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onUpdateLocationRequest(UpdateLocationRequest ind) {
+				super.onUpdateLocationRequest(ind);
+
+				MAPDialogMobility d = ind.getMAPDialog();
+
+				IMSI imsi = ind.getImsi();
+				ISDNAddressString mscNumber = ind.getMscNumber();
+				ISDNAddressString vlrNumber = ind.getVlrNumber();
+				LMSI lmsi = ind.getLmsi();
+				ADDInfo addInfo = ind.getADDInfo();
+
+				Assert.assertEquals(ind.getMapProtocolVersion(), 3);
+				Assert.assertTrue(imsi.getData().equals("45670000"));
+				Assert.assertEquals(mscNumber.getAddressNature(), AddressNature.international_number);
+				Assert.assertEquals(mscNumber.getNumberingPlan(), NumberingPlan.ISDN);
+				Assert.assertTrue(mscNumber.getAddress().equals("8222333444"));
+				Assert.assertNull(ind.getRoamingNumber());
+				Assert.assertEquals(vlrNumber.getAddressNature(), AddressNature.network_specific_number);
+				Assert.assertEquals(vlrNumber.getNumberingPlan(), NumberingPlan.ISDN);
+				Assert.assertTrue(vlrNumber.getAddress().equals("700000111"));
+				Assert.assertTrue(Arrays.equals(lmsi.getData(), new byte[] { 1, 2, 3, 4 }));
+				Assert.assertNull(ind.getExtensionContainer());
+				Assert.assertNull(ind.getVlrCapability());
+				Assert.assertTrue(ind.getInformPreviousNetworkEntity());
+				Assert.assertFalse(ind.getCsLCSNotSupportedByUE());
+				Assert.assertNull(ind.getVGmlcAddress());
+				Assert.assertTrue(addInfo.getImeisv().getIMEI().equals("987654321098765"));
+				Assert.assertNull(ind.getPagingArea());
+				Assert.assertFalse(ind.getSkipSubscriberDataUpdate());
+				Assert.assertTrue(ind.getRestorationIndicator());
+
+
+				ISDNAddressString hlrNumber = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "765765765");
+
+				try {
+					d.addUpdateLocationResponse(ind.getInvokeId(), hlrNumber, null, true, false);
+				} catch (MAPException e) {
+					this.error("Error while adding UpdateLocationResponse", e);
+					fail("Error while adding UpdateLocationResponse");
+				}
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.UpdateLocationResp, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending the empty UpdateLocationResponse", e);
+					fail("Error while sending the empty UpdateLocationResponse");
+				}
+			}
+		};
+		
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.UpdateLocation, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.UpdateLocationResp, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.UpdateLocation, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.UpdateLocationResp, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendUpdateLocation();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
 	
 	
 	

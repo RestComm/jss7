@@ -19,10 +19,10 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
+
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
 import java.io.IOException;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -55,10 +55,12 @@ public class AnyTimeInterrogationRequestImpl extends MobilityMessageImpl impleme
 	private static final int _TAG_EXTENSION_CONTAINER = 2;
 	private static final int _TAG_GSM_SCF_ADDRESS = 3;
 
-	private SubscriberIdentity subscriberIdentity = null;
-	private RequestedInfo requestedInfo = null;
-	private ISDNAddressString gsmSCFAddress = null;
-	private MAPExtensionContainer extensionContainer = null;
+	public static final String _PrimitiveName = "AnyTimeInterrogationRequest";
+
+	private SubscriberIdentity subscriberIdentity;
+	private RequestedInfo requestedInfo;
+	private ISDNAddressString gsmSCFAddress;
+	private MAPExtensionContainer extensionContainer;
 
 	public AnyTimeInterrogationRequestImpl() {
 
@@ -114,10 +116,10 @@ public class AnyTimeInterrogationRequestImpl extends MobilityMessageImpl impleme
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding anyTimeInterrogationRequestIndication: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding anyTimeInterrogationRequestIndication: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -133,10 +135,10 @@ public class AnyTimeInterrogationRequestImpl extends MobilityMessageImpl impleme
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding anyTimeInterrogationRequestIndication: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding anyTimeInterrogationRequestIndication: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -144,56 +146,67 @@ public class AnyTimeInterrogationRequestImpl extends MobilityMessageImpl impleme
 	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 
+		this.subscriberIdentity = null;
+		this.requestedInfo = null;
+		this.gsmSCFAddress = null;
+		this.extensionContainer = null;
+
 		while (true) {
 			if (ais.available() == 0)
 				break;
 
 			int tag = ais.readTag();
 
-			switch (tag) {
-			case _TAG_SUBSCRIBER_IDENTITY:
-				// decode SubscriberIdentity
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive())
-					throw new MAPParsingComponentException(
-							"Error while decoding anyTimeInterrogationRequestIndication: Parameter 0 bad tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
+			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+				switch (tag) {
+				case _TAG_SUBSCRIBER_IDENTITY:
+					// decode SubscriberIdentity
+					if (ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter subscriberIdentity is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
 
-				int length1 = ais.readLength();
-				tag = ais.readTag();
-
-				this.subscriberIdentity = new SubscriberIdentityImpl();
-				((SubscriberIdentityImpl) this.subscriberIdentity).decodeAll(ais);
-				break;
-			case _TAG_REQUESTED_INFO:
-				// decode RequestedInfo
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive())
-					throw new MAPParsingComponentException(
-							"Error while decoding anyTimeInterrogationRequestIndication: Parameter 1 bad tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				this.requestedInfo = new RequestedInfoImpl();
-				((RequestedInfoImpl) this.requestedInfo).decodeAll(ais);
-				break;
-			case _TAG_EXTENSION_CONTAINER:
-				// decode extensionContainer
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter 2 bad tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				extensionContainer = new MAPExtensionContainerImpl();
-				((MAPExtensionContainerImpl) extensionContainer).decodeAll(ais);
-				break;
-			case _TAG_GSM_SCF_ADDRESS:
-				// decode gsmSCF-Address
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter 3 bad tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				this.gsmSCFAddress = new ISDNAddressStringImpl();
-				((ISDNAddressStringImpl) this.gsmSCFAddress).decodeAll(ais);
-				break;
-			default:
+					this.subscriberIdentity = new SubscriberIdentityImpl();
+					AsnInputStream ais2 = ais.readSequenceStream();
+					ais2.readTag();
+					((SubscriberIdentityImpl)this.subscriberIdentity).decodeAll(ais2);
+					break;
+				case _TAG_REQUESTED_INFO:
+					// decode RequestedInfo
+					if (ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter requestedInfo is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.requestedInfo = new RequestedInfoImpl();
+					((RequestedInfoImpl) this.requestedInfo).decodeAll(ais);
+					break;
+				case _TAG_EXTENSION_CONTAINER:
+					// decode extensionContainer
+					if (ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter extensionContainer is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					extensionContainer = new MAPExtensionContainerImpl();
+					((MAPExtensionContainerImpl) extensionContainer).decodeAll(ais);
+					break;
+				case _TAG_GSM_SCF_ADDRESS:
+					// decode gsmSCF-Address
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter gsmSCFAddress is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.gsmSCFAddress = new ISDNAddressStringImpl();
+					((ISDNAddressStringImpl) this.gsmSCFAddress).decodeAll(ais);
+					break;
+				default:
+					ais.advanceElement();
+					break;
+				}
+			} else {
 				ais.advanceElement();
-				break;
 			}
 		}
+
+		if (this.subscriberIdentity == null || this.requestedInfo == null || this.gsmSCFAddress == null)
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+					+ ": subscriberIdentity, requestedInfo and gsmSCFAddress parameters are mandatory but some of them are not found",
+					MAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
 	/*
@@ -204,7 +217,7 @@ public class AnyTimeInterrogationRequestImpl extends MobilityMessageImpl impleme
 	 * org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	/*
@@ -216,12 +229,12 @@ public class AnyTimeInterrogationRequestImpl extends MobilityMessageImpl impleme
 	 */
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
-			asnOs.writeTag(tagClass, false, tag);
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding anyTimeInterrogationRequestIndication: " + e.getMessage(), e);
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 
@@ -234,26 +247,24 @@ public class AnyTimeInterrogationRequestImpl extends MobilityMessageImpl impleme
 	 */
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.subscriberIdentity == null) {
-			throw new MAPException("Error while encoding anyTimeInterrogationRequestIndication the mandatory parameter subscriberIdentity is not defined");
+			throw new MAPException("Error while encoding " + _PrimitiveName + " the mandatory parameter subscriberIdentity is not defined");
 		}
-
 		if (this.requestedInfo == null) {
-			throw new MAPException("Error while encoding anyTimeInterrogationRequestIndication the mandatory parameter requestedInfo is not defined");
+			throw new MAPException("Error while encoding " + _PrimitiveName + " the mandatory parameter requestedInfo is not defined");
+		}
+		if (this.gsmSCFAddress == null) {
+			throw new MAPException("Error while encoding " + _PrimitiveName + " the mandatory parameter gsmSCF-Address is not defined");
 		}
 
-		if (this.gsmSCFAddress == null) {
-			throw new MAPException("Error while encoding anyTimeInterrogationRequestIndication the mandatory parameter gsmSCF-Address is not defined");
-		}
 		try {
 			asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG_SUBSCRIBER_IDENTITY);
+			int pos = asnOs.StartContentDefiniteLength();
+			((SubscriberIdentityImpl) this.subscriberIdentity).encodeAll(asnOs);
+			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException while encoding parameter subscriberIdentity	[0] SubscriberIdentity");
+			throw new MAPException("AsnException while encoding " + _PrimitiveName + " parameter subscriberIdentity [0] SubscriberIdentity");
 		}
 
-		int pos = asnOs.StartContentDefiniteLength();
-		((SubscriberIdentityImpl) this.subscriberIdentity).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, ((SubscriberIdentityImpl)this.subscriberIdentity).getTag());
-		asnOs.FinalizeContent(pos);
-		
 		((RequestedInfoImpl) this.requestedInfo).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_REQUESTED_INFO);
 
 		((ISDNAddressStringImpl) this.gsmSCFAddress).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_GSM_SCF_ADDRESS);
@@ -318,4 +329,30 @@ public class AnyTimeInterrogationRequestImpl extends MobilityMessageImpl impleme
 		return MAPOperationCode.anyTimeInterrogation;
 	}
 
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		if (this.subscriberIdentity != null) {
+			sb.append("subscriberIdentity=");
+			sb.append(this.subscriberIdentity);
+		}
+		if (this.requestedInfo != null) {
+			sb.append(", requestedInfo=");
+			sb.append(this.requestedInfo);
+		}
+		if (this.gsmSCFAddress != null) {
+			sb.append(", gsmSCFAddress=");
+			sb.append(this.gsmSCFAddress);
+		}
+		if (this.extensionContainer != null) {
+			sb.append(", extensionContainer=");
+			sb.append(this.extensionContainer);
+		}
+
+		sb.append("]");
+		return sb.toString();
+	}
 }
+

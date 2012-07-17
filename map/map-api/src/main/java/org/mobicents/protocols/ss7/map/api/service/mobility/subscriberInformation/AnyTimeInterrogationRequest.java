@@ -19,6 +19,7 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
+
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;

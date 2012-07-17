@@ -540,5 +540,5 @@ public class LocationInformationGPRSImpl implements LocationInformationGPRS, MAP
 		sb.append("]");
 		return sb.toString();
 	}
-
 }
+
