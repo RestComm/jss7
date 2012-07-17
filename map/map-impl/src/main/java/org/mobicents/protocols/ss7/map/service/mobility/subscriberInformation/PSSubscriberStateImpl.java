@@ -24,7 +24,6 @@ package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
 import java.io.IOException;
 import java.util.ArrayList;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -37,6 +36,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.PSSubscriberState;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.PSSubscriberStateChoice;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.PDPContextInfoImpl;
 
 /**
  * @author amit bhayani
@@ -240,8 +240,7 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 					throw new MAPParsingComponentException("Error while decoding psPDPActiveNotReachableForPaging choice: Parameter is primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.choice = PSSubscriberStateChoice.psPDPActiveNotReachableForPaging;
-				// TODO: implement it
-				ansIS.advanceElement();
+				this.decodePdpContextInfoList(ansIS, length);
 				break;
 
 			case _ID_ps_PDP_ActiveReachableForPaging:
@@ -249,8 +248,7 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 					throw new MAPParsingComponentException("Error while decoding psPDPActiveReachableForPaging choice: Parameter is primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.choice = PSSubscriberStateChoice.psPDPActiveReachableForPaging;
-				// TODO: implement it
-				ansIS.advanceElement();
+				this.decodePdpContextInfoList(ansIS, length);
 				break;
 
 			default:
@@ -260,6 +258,24 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 		} else {
 			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tagClass: " + ansIS.getTagClass(),
 					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	private void decodePdpContextInfoList(AsnInputStream ansIS, int length) throws AsnException, IOException, MAPParsingComponentException {
+		this.pdpContextInfoList = new ArrayList<PDPContextInfo>();
+		while (true) {
+			if (ansIS.available() == 0)
+				break;
+
+			int tag2 = ansIS.readTag();
+			if (ansIS.getTagClass() != Tag.CLASS_UNIVERSAL || tag2 != Tag.SEQUENCE || ansIS.isTagPrimitive())
+				throw new MAPParsingComponentException("Error when decoding " + _PrimitiveName
+						+ " pdpContextInfoList parameter components: bad tag class or tag or is primitive",
+						MAPParsingComponentExceptionReason.MistypedParameter);
+
+			PDPContextInfoImpl elem = new PDPContextInfoImpl();
+			elem.decodeAll(ansIS);
+			this.pdpContextInfoList.add(elem);
 		}
 	}
 
@@ -322,8 +338,14 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
 				break;
 			case psPDPActiveNotReachableForPaging:
 			case psPDPActiveReachableForPaging:
-				// TODO: implement it
-				asnOs.writeNullData();
+
+				if (this.pdpContextInfoList.size() < 1 || this.pdpContextInfoList.size() > 50)
+					throw new MAPException("Error while encoding " + _PrimitiveName + ": pdpContextInfoList size must be from 1 to 50");
+
+				for (PDPContextInfo cii : this.pdpContextInfoList) {
+					PDPContextInfoImpl ci = (PDPContextInfoImpl) cii;
+					ci.encodeAll(asnOs);
+				}
 				break;
 			case netDetNotReachable:
 				asnOs.writeIntegerData(this.netDetNotReachable.getCode());
