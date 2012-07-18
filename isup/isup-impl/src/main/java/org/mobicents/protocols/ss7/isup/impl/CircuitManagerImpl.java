@@ -101,7 +101,7 @@ public class CircuitManagerImpl implements CircuitManager {
 	public long getChannelID(int cic,int dpc)
 	{
 		long currValue=dpc;
-		currValue=currValue<<14 + cic;
+		currValue=(currValue<<14) + (long)cic;
 		return currValue;
 	}
 }

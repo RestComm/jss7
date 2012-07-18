@@ -209,7 +209,7 @@ public class ISUPProviderImpl implements ISUPProvider {
 	 * @return
 	 */
 	void receive(ISUPMessage message, int dpc) {
-        Circuit c = getCircuit(message,dpc);
+		Circuit c = getCircuit(message,dpc);
         if(c!=null)
         	c.receive(message);
 	}

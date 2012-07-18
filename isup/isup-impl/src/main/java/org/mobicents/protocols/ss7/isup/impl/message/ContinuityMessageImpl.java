@@ -28,6 +28,12 @@
  */
 package org.mobicents.protocols.ss7.isup.impl.message;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.ContinuityMessage;
@@ -44,19 +50,30 @@ import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
  */
 public class ContinuityMessageImpl extends ISUPMessageImpl implements ContinuityMessage {
 	public static final MessageType _MESSAGE_TYPE = new MessageTypeImpl(MESSAGE_CODE);
-	private static final int _MANDATORY_VAR_COUNT = 1;
+	private static final int _MANDATORY_VAR_COUNT = 0;
 
 	static final int _INDEX_F_MessageType = 0;
 	static final int _INDEX_F_ContinuityIndicators = 1;
+	
+	protected static final List<Integer> mandatoryParam;
+	static {
+		List<Integer> tmp = new ArrayList<Integer>();
+		tmp.add(_INDEX_F_MessageType);
+		tmp.add(_INDEX_F_ContinuityIndicators);
+		
+		mandatoryParam = Collections.unmodifiableList(tmp);
+	}
 	
 	/**
 	 * 	
 	 * @param source
 	 * @throws ParameterException
 	 */
-	public ContinuityMessageImpl(){
-		
-		
+	public ContinuityMessageImpl(Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes,
+			Map<Integer, Integer> mandatoryCode2Index, Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index){
+		super(mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
+
+		super.f_Parameters.put(_INDEX_F_MessageType, this.getMessageType());		
 	}
 
 	/* (non-Javadoc)
@@ -105,7 +122,7 @@ public class ContinuityMessageImpl extends ISUPMessageImpl implements Continuity
 	 * getContinuitiyIndicators()
 	 */
 	public ContinuityIndicators getContinuityIndicators() {
-		return (ContinuityIndicators) super.o_Parameters.get(this._INDEX_F_ContinuityIndicators);
+		return (ContinuityIndicators) super.f_Parameters.get(this._INDEX_F_ContinuityIndicators);
 	}
 	
 	/*
@@ -117,7 +134,7 @@ public class ContinuityMessageImpl extends ISUPMessageImpl implements Continuity
 	 * .ContinuitiyIndicators)
 	 */
 	public void setContinuityIndicators(ContinuityIndicators value) {
-		super.o_Parameters.put(this._INDEX_F_ContinuityIndicators, value);
+		super.f_Parameters.put(this._INDEX_F_ContinuityIndicators, value);
 
 	}
 	
