@@ -22,37 +22,29 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
-/**
- * SIPTO-Permission ::= ENUMERATED {
- *	siptoAllowed (0),
- *	siptoNotAllowed (1)
- *	}
- *
- * @author amit bhayani
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+
+/**	
  * 
+
+MSISDN-BS ::= SEQUENCE {
+	msisdn			ISDN-AddressString,	
+	basicServiceList	[0]	BasicServiceList	OPTIONAL,
+	extensionContainer	[1]	ExtensionContainer	OPTIONAL,
+	...}
+
+
+ * 
+ * @author sergey vetyutnev
+ *
  */
-public enum SIPTOPermission {
-	siptoAllowed(0), siptoNotAllowed(1);
+public interface MSISDNBS {
 
-	private int code;
+	public ISDNAddressString getMsisdn();
 
-	private SIPTOPermission(int code) {
-		this.code = code;
-	}
+	public BasicServiceList getBasicServiceList();
 
-	public static SIPTOPermission getInstance(int code) {
-		switch (code) {
-		case 0:
-			return siptoAllowed;
-		case 1:
-			return siptoNotAllowed;
-		default:
-			return null;
-		}
-	}
-
-	public int getCode() {
-		return code;
-	}
+	public MAPExtensionContainer getExtensionContainer();
 
 }

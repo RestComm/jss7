@@ -22,35 +22,55 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
-import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
+import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
-/**
- * MNPInfoRes ::= SEQUENCE {
- *		routeingNumber 			[0] RouteingNumber OPTIONAL,
- *		imsi 					[1] IMSI OPTIONAL,
- *		msisdn 					[2] ISDN-AddressString OPTIONAL,
- *		numberPortabilityStatus [3] NumberPortabilityStatus OPTIONAL,
- *		extensionContainer 		[4] ExtensionContainer OPTIONAL,
- *	... }
- *	-- The IMSI parameter contains a generic IMSI, i.e. it is not tied necessarily to the
- *	-- Subscriber. MCC and MNC values in this IMSI shall point to the Subscription Network of
- *	-- the Subscriber. See 3GPP TS 23.066 [108].
+/**	
  * 
- * @author amit bhayani
+
+anyTimeSubscriptionInterrogation  OPERATION ::= {			--Timer m
+	ARGUMENT
+		AnyTimeSubscriptionInterrogationArg
+	RESULT
+		AnyTimeSubscriptionInterrogationRes
+	ERRORS {
+		atsi-NotAllowed |
+		dataMissing |
+		unexpectedDataValue |
+		unknownSubscriber |
+		bearerServiceNotProvisioned |
+		teleserviceNotProvisioned |
+		callBarred |
+		illegalSS-Operation |
+		ss-NotAvailable |
+		informationNotAvailable}
+	CODE	local:62 }
+
+AnyTimeSubscriptionInterrogationArg ::= SEQUENCE {
+	subscriberIdentity	[0] SubscriberIdentity,
+	requestedSubscriptionInfo	[1] RequestedSubscriptionInfo,
+	gsmSCF-Address	[2] ISDN-AddressString,
+	extensionContainer	[3] ExtensionContainer	OPTIONAL,
+	longFTN-Supported	[4]	NULL		OPTIONAL,
+	...}
+
+
+ * 
+ * @author sergey vetyutnev
  *
  */
-public interface MNPInfoRes {
-	
-	public RouteingNumber getRouteingNumber();
-	
-	public IMSI getIMSI();
-	
-	public ISDNAddressString getMSISDN();
-	
-	public NumberPortabilityStatus getNumberPortabilityStatus();
-	
+public interface AnyTimeSubscriptionInterrogationRequest extends MobilityMessage {
+
+	public SubscriberIdentity getSubscriberIdentity();
+
+	public RequestedSubscriptionInfo getRequestedSubscriptionInfo();
+
+	public ISDNAddressString getGsmScfAddress();
+
 	public MAPExtensionContainer getExtensionContainer();
+
+	public boolean getLongFTNSupported();
 
 }

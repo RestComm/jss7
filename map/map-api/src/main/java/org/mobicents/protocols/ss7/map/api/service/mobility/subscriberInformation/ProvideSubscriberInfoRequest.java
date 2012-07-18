@@ -22,37 +22,49 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
-/**
- * SIPTO-Permission ::= ENUMERATED {
- *	siptoAllowed (0),
- *	siptoNotAllowed (1)
- *	}
- *
- * @author amit bhayani
+import org.mobicents.protocols.ss7.map.api.primitives.EMLPPPriority;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
+
+/**	
  * 
+
+provideSubscriberInfo  OPERATION ::= {				--Timer m
+	ARGUMENT
+		ProvideSubscriberInfoArg
+	RESULT
+		ProvideSubscriberInfoRes
+	ERRORS {
+		dataMissing |
+		unexpectedDataValue}
+	CODE	local:70 }
+
+ProvideSubscriberInfoArg ::= SEQUENCE {
+	imsi		[0] IMSI,
+	lmsi		[1] LMSI	OPTIONAL,
+	requestedInfo	[2] RequestedInfo,
+	extensionContainer	[3] ExtensionContainer	OPTIONAL,
+	...,
+	callPriority	[4]	EMLPP-Priority	OPTIONAL
+	}
+
+
+ * 
+ * @author sergey vetyutnev
+ *
  */
-public enum SIPTOPermission {
-	siptoAllowed(0), siptoNotAllowed(1);
+public interface ProvideSubscriberInfoRequest extends MobilityMessage {
 
-	private int code;
+	public IMSI getImsi();
 
-	private SIPTOPermission(int code) {
-		this.code = code;
-	}
+	public LMSI getLmsi();
 
-	public static SIPTOPermission getInstance(int code) {
-		switch (code) {
-		case 0:
-			return siptoAllowed;
-		case 1:
-			return siptoNotAllowed;
-		default:
-			return null;
-		}
-	}
+	public RequestedInfo getRequestedInfo();
 
-	public int getCode() {
-		return code;
-	}
+	public MAPExtensionContainer getExtensionContainer();
+
+	public EMLPPPriority getCallPriority();
 
 }

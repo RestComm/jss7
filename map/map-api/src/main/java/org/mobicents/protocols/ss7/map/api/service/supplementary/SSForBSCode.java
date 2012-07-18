@@ -20,39 +20,28 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
+package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
-/**
- * SIPTO-Permission ::= ENUMERATED {
- *	siptoAllowed (0),
- *	siptoNotAllowed (1)
- *	}
- *
- * @author amit bhayani
+/**	
  * 
+
+SS-ForBS-Code ::= SEQUENCE {
+	ss-Code		SS-Code,
+	basicService	BasicServiceCode	OPTIONAL,
+	...,
+	longFTN-Supported	[4]	NULL		OPTIONAL }
+
+
+ * 
+ * @author sergey vetyutnev
+ *
  */
-public enum SIPTOPermission {
-	siptoAllowed(0), siptoNotAllowed(1);
+public interface SSForBSCode {
 
-	private int code;
+	public SSCode getSsCode();
 
-	private SIPTOPermission(int code) {
-		this.code = code;
-	}
+	public BasicServiceCode getBasicService();  // -> BasicServiceCode -> subscriber management !!!!!
 
-	public static SIPTOPermission getInstance(int code) {
-		switch (code) {
-		case 0:
-			return siptoAllowed;
-		case 1:
-			return siptoNotAllowed;
-		default:
-			return null;
-		}
-	}
-
-	public int getCode() {
-		return code;
-	}
+	public boolean getLongFtnSupported();
 
 }

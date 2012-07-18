@@ -22,37 +22,29 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
-/**
- * SIPTO-Permission ::= ENUMERATED {
- *	siptoAllowed (0),
- *	siptoNotAllowed (1)
- *	}
- *
- * @author amit bhayani
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtSSStatus;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.OverrideCategory;
+
+/**	
  * 
+
+ClipData ::= SEQUENCE {
+	ss-Status		[1] Ext-SS-Status,
+	overrideCategory	[2] OverrideCategory,
+	notificationToCSE	[3] NULL		OPTIONAL,
+	... }
+
+
+ * 
+ * @author sergey vetyutnev
+ *
  */
-public enum SIPTOPermission {
-	siptoAllowed(0), siptoNotAllowed(1);
+public interface ClipData {
 
-	private int code;
+	public ExtSSStatus getSsStatus();
 
-	private SIPTOPermission(int code) {
-		this.code = code;
-	}
+	public OverrideCategory getOverrideCategory();
 
-	public static SIPTOPermission getInstance(int code) {
-		switch (code) {
-		case 0:
-			return siptoAllowed;
-		case 1:
-			return siptoNotAllowed;
-		default:
-			return null;
-		}
-	}
-
-	public int getCode() {
-		return code;
-	}
+	public boolean getNotificationToCSE();
 
 }
