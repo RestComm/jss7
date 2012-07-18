@@ -375,13 +375,16 @@ public class EventTestHarness implements MAPDialogListener, MAPServiceSupplement
 	}
 
 	public void onAnyTimeInterrogationRequest(AnyTimeInterrogationRequest request) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("onAnyTimeInterrogationRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.AnyTimeInterrogation, request,
+				sequence++);
+		this.observerdEvents.add(te);
 	}
 
 	public void onAnyTimeInterrogationResponse(AnyTimeInterrogationResponse response) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("onAnyTimeInterrogationResponse");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.AnyTimeInterrogationResp, response, sequence++);
+		this.observerdEvents.add(te);
 	}
 
 	@Override

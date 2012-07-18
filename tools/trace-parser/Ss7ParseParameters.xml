@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="1.7.0-ea" class="java.beans.XMLDecoder">
+ <object class="org.mobicents.protocols.ss7.tools.traceparser.Ss7ParseParameters">
+  <void property="detailedComponents">
+   <boolean>true</boolean>
+  </void>
+  <void property="detailedDialog">
+   <boolean>true</boolean>
+  </void>
+  <void property="fileTypeN">
+   <object class="java.lang.Enum" method="valueOf">
+    <class>org.mobicents.protocols.ss7.tools.traceparser.ParseDriverType</class>
+    <string>Pcap</string>
+   </object>
+  </void>
+  <void property="msgLogFilePath">
+   <string>C:\111\MsgLog.txt</string>
+  </void>
+  <void property="sourceFilePath">
+   <string>E:\Java_workspace\Trace\Amit\may2615_18.pcap</string>
+  </void>
+  <void property="tcapMsgData">
+   <boolean>true</boolean>
+  </void>
+ </object>
+</java>

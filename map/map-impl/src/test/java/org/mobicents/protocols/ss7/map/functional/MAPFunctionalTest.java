@@ -67,6 +67,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPDialogMobility;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationSetList;
@@ -78,6 +79,12 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.Tripl
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberState;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberStateChoice;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequest;
 import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageRequest;
 import org.mobicents.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
@@ -3414,66 +3421,57 @@ public class MAPFunctionalTest extends SccpHarness {
 	@Test(groups = { "functional.flow", "dialog" })
 	public void testAnyTimeInterrogation() throws Exception {
 
-		// ......................................
-		
 		Client client = new Client(stack1, this, peer1Address, peer2Address) {
 			@Override
-			public void onUpdateLocationResponse(UpdateLocationResponse ind) {
-				super.onUpdateLocationResponse(ind);
+			public void onAnyTimeInterrogationResponse(AnyTimeInterrogationResponse ind) {
+				super.onAnyTimeInterrogationResponse(ind);
 
-				ISDNAddressString hlrNumber = ind.getHlrNumber();
-
-				Assert.assertEquals(hlrNumber.getAddressNature(), AddressNature.international_number);
-				Assert.assertEquals(hlrNumber.getNumberingPlan(), NumberingPlan.ISDN);
-				Assert.assertTrue(hlrNumber.getAddress().equals("765765765"));
+				SubscriberInfo si = ind.getSubscriberInfo();
+				SubscriberState ss = si.getSubscriberState();
+				Assert.assertEquals(ss.getSubscriberStateChoice(), SubscriberStateChoice.camelBusy);
+				Assert.assertNull(ss.getNotReachableReason());
+				Assert.assertNull(si.getLocationInformation());
+				Assert.assertNull(si.getExtensionContainer());
+				Assert.assertNull(si.getGPRSMSClass());
+				Assert.assertNull(si.getIMEI());
+				Assert.assertNull(si.getLocationInformationGPRS());
+				Assert.assertNull(si.getMNPInfoRes());
+				Assert.assertNull(si.getMSClassmark2());
+				Assert.assertNull(si.getPSSubscriberState());
 				Assert.assertNull(ind.getExtensionContainer());
-				Assert.assertTrue(ind.getAddCapability());
-				Assert.assertFalse(ind.getPagingAreaCapability());
 			}
 
 		};
 
 		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
 			@Override
-			public void onUpdateLocationRequest(UpdateLocationRequest ind) {
-				super.onUpdateLocationRequest(ind);
+			public void onAnyTimeInterrogationRequest(AnyTimeInterrogationRequest ind) {
+				super.onAnyTimeInterrogationRequest(ind);
 
 				MAPDialogMobility d = ind.getMAPDialog();
-
-				IMSI imsi = ind.getImsi();
-				ISDNAddressString mscNumber = ind.getMscNumber();
-				ISDNAddressString vlrNumber = ind.getVlrNumber();
-				LMSI lmsi = ind.getLmsi();
-				ADDInfo addInfo = ind.getADDInfo();
-
-				Assert.assertEquals(ind.getMapProtocolVersion(), 3);
-				Assert.assertTrue(imsi.getData().equals("45670000"));
-				Assert.assertEquals(mscNumber.getAddressNature(), AddressNature.international_number);
-				Assert.assertEquals(mscNumber.getNumberingPlan(), NumberingPlan.ISDN);
-				Assert.assertTrue(mscNumber.getAddress().equals("8222333444"));
-				Assert.assertNull(ind.getRoamingNumber());
-				Assert.assertEquals(vlrNumber.getAddressNature(), AddressNature.network_specific_number);
-				Assert.assertEquals(vlrNumber.getNumberingPlan(), NumberingPlan.ISDN);
-				Assert.assertTrue(vlrNumber.getAddress().equals("700000111"));
-				Assert.assertTrue(Arrays.equals(lmsi.getData(), new byte[] { 1, 2, 3, 4 }));
-				Assert.assertNull(ind.getExtensionContainer());
-				Assert.assertNull(ind.getVlrCapability());
-				Assert.assertTrue(ind.getInformPreviousNetworkEntity());
-				Assert.assertFalse(ind.getCsLCSNotSupportedByUE());
-				Assert.assertNull(ind.getVGmlcAddress());
-				Assert.assertTrue(addInfo.getImeisv().getIMEI().equals("987654321098765"));
-				Assert.assertNull(ind.getPagingArea());
-				Assert.assertFalse(ind.getSkipSubscriberDataUpdate());
-				Assert.assertTrue(ind.getRestorationIndicator());
+				SubscriberIdentity subscriberIdentity = ind.getSubscriberIdentity();
+				Assert.assertTrue(subscriberIdentity.getIMSI().getData().equals("33334444"));
+				RequestedInfo requestedInfo = ind.getRequestedInfo();
+				Assert.assertTrue(requestedInfo.getLocationInformation());
+				Assert.assertTrue(requestedInfo.getSubscriberState());
+				Assert.assertFalse(requestedInfo.getCurrentLocation());
+				Assert.assertNull(requestedInfo.getRequestedDomain());
+				Assert.assertFalse(requestedInfo.getImei());
+				Assert.assertFalse(requestedInfo.getMsClassmark());
+				ISDNAddressString gsmSCFAddress = ind.getGsmSCFAddress();
+				Assert.assertTrue(gsmSCFAddress.getAddress().equals("11112222"));
+				Assert.assertEquals(gsmSCFAddress.getAddressNature(), AddressNature.international_number);
+				Assert.assertEquals(gsmSCFAddress.getNumberingPlan(), NumberingPlan.ISDN);
 
 
-				ISDNAddressString hlrNumber = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "765765765");
+				SubscriberState ss = this.mapParameterFactory.createSubscriberState(SubscriberStateChoice.camelBusy, null);
+				SubscriberInfo si = this.mapParameterFactory.createSubscriberInfo(null, ss, null, null, null, null, null, null, null);
 
 				try {
-					d.addUpdateLocationResponse(ind.getInvokeId(), hlrNumber, null, true, false);
+					d.addAnyTimeInterrogationResponse(ind.getInvokeId(), si, null);
 				} catch (MAPException e) {
-					this.error("Error while adding UpdateLocationResponse", e);
-					fail("Error while adding UpdateLocationResponse");
+					this.error("Error while adding AnyTimeInterrogationResponse", e);
+					fail("Error while adding AnyTimeInterrogationResponse");
 				}
 			}
 
@@ -3481,26 +3479,26 @@ public class MAPFunctionalTest extends SccpHarness {
 			public void onDialogDelimiter(MAPDialog mapDialog) {
 				super.onDialogDelimiter(mapDialog);
 				try {
-					this.observerdEvents.add(TestEvent.createSentEvent(EventType.UpdateLocationResp, null, sequence++));
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.AnyTimeInterrogationResp, null, sequence++));
 					mapDialog.close(false);
 				} catch (MAPException e) {
-					this.error("Error while sending the empty UpdateLocationResponse", e);
-					fail("Error while sending the empty UpdateLocationResponse");
+					this.error("Error while sending the empty AnyTimeInterrogationResponse", e);
+					fail("Error while sending the empty AnyTimeInterrogationResponse");
 				}
 			}
 		};
-		
+
 		long stamp = System.currentTimeMillis();
 		int count = 0;
 		// Client side events
 		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
-		TestEvent te = TestEvent.createSentEvent(EventType.UpdateLocation, null, count++, stamp);
+		TestEvent te = TestEvent.createSentEvent(EventType.AnyTimeInterrogation, null, count++, stamp);
 		clientExpectedEvents.add(te);
 
 		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
 		clientExpectedEvents.add(te);
 
-		te = TestEvent.createReceivedEvent(EventType.UpdateLocationResp, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		te = TestEvent.createReceivedEvent(EventType.AnyTimeInterrogationResp, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
 		clientExpectedEvents.add(te);
 
 		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
@@ -3515,19 +3513,19 @@ public class MAPFunctionalTest extends SccpHarness {
 		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
 		serverExpectedEvents.add(te);
 
-		te = TestEvent.createReceivedEvent(EventType.UpdateLocation, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		te = TestEvent.createReceivedEvent(EventType.AnyTimeInterrogation, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
 		serverExpectedEvents.add(te);
 
 		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
 		serverExpectedEvents.add(te);
 
-		te = TestEvent.createSentEvent(EventType.UpdateLocationResp, null, count++, stamp);
+		te = TestEvent.createSentEvent(EventType.AnyTimeInterrogationResp, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
 		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
 		serverExpectedEvents.add(te);
 
-		client.sendUpdateLocation();
+		client.sendAnyTimeInterrogation();
 		waitForEnd();
 		client.compareEvents(clientExpectedEvents);
 		server.compareEvents(serverExpectedEvents);
