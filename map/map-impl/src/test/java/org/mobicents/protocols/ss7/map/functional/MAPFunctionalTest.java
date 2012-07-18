@@ -67,6 +67,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPDialogMobility;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationSetList;
@@ -78,6 +79,12 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.Tripl
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberState;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberStateChoice;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequest;
 import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageRequest;
 import org.mobicents.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
@@ -3401,6 +3408,124 @@ public class MAPFunctionalTest extends SccpHarness {
 		serverExpectedEvents.add(te);
 
 		client.sendUpdateLocation();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	/**
+	 * TC-BEGIN + anyTimeInterrogationRequest
+	 * TC-END + anyTimeInterrogationResponse
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testAnyTimeInterrogation() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onAnyTimeInterrogationResponse(AnyTimeInterrogationResponse ind) {
+				super.onAnyTimeInterrogationResponse(ind);
+
+				SubscriberInfo si = ind.getSubscriberInfo();
+				SubscriberState ss = si.getSubscriberState();
+				Assert.assertEquals(ss.getSubscriberStateChoice(), SubscriberStateChoice.camelBusy);
+				Assert.assertNull(ss.getNotReachableReason());
+				Assert.assertNull(si.getLocationInformation());
+				Assert.assertNull(si.getExtensionContainer());
+				Assert.assertNull(si.getGPRSMSClass());
+				Assert.assertNull(si.getIMEI());
+				Assert.assertNull(si.getLocationInformationGPRS());
+				Assert.assertNull(si.getMNPInfoRes());
+				Assert.assertNull(si.getMSClassmark2());
+				Assert.assertNull(si.getPSSubscriberState());
+				Assert.assertNull(ind.getExtensionContainer());
+			}
+
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onAnyTimeInterrogationRequest(AnyTimeInterrogationRequest ind) {
+				super.onAnyTimeInterrogationRequest(ind);
+
+				MAPDialogMobility d = ind.getMAPDialog();
+				SubscriberIdentity subscriberIdentity = ind.getSubscriberIdentity();
+				Assert.assertTrue(subscriberIdentity.getIMSI().getData().equals("33334444"));
+				RequestedInfo requestedInfo = ind.getRequestedInfo();
+				Assert.assertTrue(requestedInfo.getLocationInformation());
+				Assert.assertTrue(requestedInfo.getSubscriberState());
+				Assert.assertFalse(requestedInfo.getCurrentLocation());
+				Assert.assertNull(requestedInfo.getRequestedDomain());
+				Assert.assertFalse(requestedInfo.getImei());
+				Assert.assertFalse(requestedInfo.getMsClassmark());
+				ISDNAddressString gsmSCFAddress = ind.getGsmSCFAddress();
+				Assert.assertTrue(gsmSCFAddress.getAddress().equals("11112222"));
+				Assert.assertEquals(gsmSCFAddress.getAddressNature(), AddressNature.international_number);
+				Assert.assertEquals(gsmSCFAddress.getNumberingPlan(), NumberingPlan.ISDN);
+
+
+				SubscriberState ss = this.mapParameterFactory.createSubscriberState(SubscriberStateChoice.camelBusy, null);
+				SubscriberInfo si = this.mapParameterFactory.createSubscriberInfo(null, ss, null, null, null, null, null, null, null);
+
+				try {
+					d.addAnyTimeInterrogationResponse(ind.getInvokeId(), si, null);
+				} catch (MAPException e) {
+					this.error("Error while adding AnyTimeInterrogationResponse", e);
+					fail("Error while adding AnyTimeInterrogationResponse");
+				}
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.AnyTimeInterrogationResp, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending the empty AnyTimeInterrogationResponse", e);
+					fail("Error while sending the empty AnyTimeInterrogationResponse");
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.AnyTimeInterrogation, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.AnyTimeInterrogationResp, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.AnyTimeInterrogation, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.AnyTimeInterrogationResp, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendAnyTimeInterrogation();
 		waitForEnd();
 		client.compareEvents(clientExpectedEvents);
 		server.compareEvents(serverExpectedEvents);

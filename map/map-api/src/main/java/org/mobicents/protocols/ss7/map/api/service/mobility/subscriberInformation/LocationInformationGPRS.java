@@ -26,6 +26,7 @@ import java.io.Serializable;
 import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdOrLAI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.LSAIdentity;
 
 /**
  * LocationInformationGPRS ::= SEQUENCE {
@@ -51,15 +52,15 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
  *
  */
 public interface LocationInformationGPRS extends Serializable {
-	CellGlobalIdOrServiceAreaIdOrLAI getCellGlobalIdOrServiceAreaIdOrLAI();
-	RAIdentity getRouteingAreaIdentity();
-	GeographicalInformation getGeographicalInformation();
-	ISDNAddressString getSGSNNumber();
-	LSAIdentity getLSAIdentity();
-	MAPExtensionContainer getExtensionContainer();
-	Boolean isSaiPresent();
-	GeodeticInformation getGeodeticInformation();
-	Boolean isCurrentLocationRetrieved();
-	Integer getAgeOfLocationInformation();
+	public CellGlobalIdOrServiceAreaIdOrLAI getCellGlobalIdOrServiceAreaIdOrLAI();
+	public RAIdentity getRouteingAreaIdentity();
+	public GeographicalInformation getGeographicalInformation();
+	public ISDNAddressString getSGSNNumber();
+	public LSAIdentity getLSAIdentity();
+	public MAPExtensionContainer getExtensionContainer();
+	public boolean isSaiPresent();
+	public GeodeticInformation getGeodeticInformation();
+	public boolean isCurrentLocationRetrieved();
+	public Integer getAgeOfLocationInformation();
 	
 }

@@ -41,10 +41,12 @@ import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPDialogMobility;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.RequestingNodeType;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPDialogSms;
 import org.mobicents.protocols.ss7.map.api.service.sms.SMDeliveryOutcome;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
@@ -561,7 +563,28 @@ public class Client extends EventTestHarness {
 		this.observerdEvents.add(TestEvent.createSentEvent(EventType.UpdateLocation, null, sequence++));
 		clientDialogMobility.send();
 
-	}		
+	}
+
+	public void sendAnyTimeInterrogation() throws Exception {
+
+		this.mapProvider.getMAPServiceMobility().acivate();
+
+		MAPApplicationContext appCnt = null;
+
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.anyTimeEnquiryContext, MAPApplicationContextVersion.version3);
+
+		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+
+		IMSI imsi = this.mapParameterFactory.createIMSI("33334444");
+		SubscriberIdentity subscriberIdentity = this.mapParameterFactory.createSubscriberIdentity(imsi);
+		RequestedInfo requestedInfo = this.mapParameterFactory.createRequestedInfo(true, true, null, false, null, false, false, false);
+		ISDNAddressString gsmSCFAddress = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "11112222");
+
+		clientDialogMobility.addAnyTimeInterrogationRequest(subscriberIdentity, requestedInfo, gsmSCFAddress, null);
+
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.AnyTimeInterrogation, null, sequence++));
+		clientDialogMobility.send();
+	}
 
 	public MAPDialog getMapDialog() {
 		return this.clientDialog;

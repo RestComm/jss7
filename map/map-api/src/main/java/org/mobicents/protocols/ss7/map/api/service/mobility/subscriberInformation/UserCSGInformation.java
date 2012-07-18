@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CSGId;
 
 /**
 *
@@ -44,8 +45,8 @@ public interface UserCSGInformation {
 
 	public MAPExtensionContainer getExtensionContainer();
 
-	public byte[] getAccessMode();
+	public Integer getAccessMode();
 
-	public byte[] getCmi();
+	public Integer getCmi();
 
 }

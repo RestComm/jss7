@@ -57,6 +57,17 @@ public class CAPErrorMessageCancelFailedImpl extends CAPErrorMessageImpl impleme
 
 
 	@Override
+	public boolean isEmCancelFailed() {
+		return true;
+	}
+
+	@Override
+	public CAPErrorMessageCancelFailed getEmCancelFailed() {
+		return this;
+	}
+	
+
+	@Override
 	public CancelProblem getCancelProblem() {
 		return cancelProblem;
 	}
@@ -130,7 +141,7 @@ public class CAPErrorMessageCancelFailedImpl extends CAPErrorMessageImpl impleme
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
 		try {
-			asnOs.writeTag(tagClass, false, tag);
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
@@ -142,7 +153,7 @@ public class CAPErrorMessageCancelFailedImpl extends CAPErrorMessageImpl impleme
 	public void encodeData(AsnOutputStream aos) throws CAPException {
 
 		if (this.cancelProblem == null)
-			return;
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": cancelProblem field must not be null");
 
 		try {
 			aos.writeIntegerData(this.cancelProblem.getCode());

@@ -1,0 +1,208 @@
+package org.mobicents.protocols.ss7.map.service.mobility.imei;
+
+import java.io.IOException;
+
+import org.mobicents.protocols.asn.AsnException;
+import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.MAPMessageType;
+import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
+import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
+import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.EquipmentStatus;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIu;
+import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
+import org.mobicents.protocols.ss7.map.service.mobility.MobilityMessageImpl;
+
+public class CheckImeiResponseImpl extends MobilityMessageImpl implements CheckImeiResponse, MAPAsnPrimitive {
+
+	public static final String _PrimitiveName = "CheckImeiResponse";
+	
+	private EquipmentStatus equipmentStatus;
+	private UESBIIu bmuef;
+	private MAPExtensionContainer extensionContainer;
+	
+	private long mapProtocolVersion;
+	
+	public CheckImeiResponseImpl(long mapProtocolVersion) {
+		this.mapProtocolVersion = mapProtocolVersion;
+	}
+	
+	public CheckImeiResponseImpl(long mapProtocolVersion, UESBIIu bmuef, EquipmentStatus equipmentStatus) {
+		this.mapProtocolVersion = mapProtocolVersion;
+		this.bmuef = bmuef;
+		this.equipmentStatus = equipmentStatus;
+	}
+	
+	public long getMapProtocolVersion() {
+		return this.mapProtocolVersion;
+	}
+	
+	@Override
+	public int getTag() throws MAPException {
+		if (this.mapProtocolVersion >= 3) {
+			return Tag.SEQUENCE;
+		} else {
+			return Tag.ENUMERATED;
+		}
+	}
+
+	@Override
+	public int getTagClass() {
+		return Tag.CLASS_UNIVERSAL;
+	}
+
+	@Override
+	public boolean getIsPrimitive() {
+		if (this.mapProtocolVersion >= 3) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+		try {
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+	
+	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+		
+		if (mapProtocolVersion >= 3) {
+			AsnInputStream ais = ansIS.readSequenceStreamData(length);
+			int num = 0;
+			while (true) {
+				if (ais.available() == 0) {
+					break;
+				}
+				
+				int tag = ais.readTag(); 
+				
+				switch(num) {
+				case 0:
+					// equipmentStatus 
+					if (tag != Tag.ENUMERATED || ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+							"Error while decoding CheckImeiResponse.requestedEquipmentInfo: bad tag or tag class or is not primitive: TagClass=" + ais.getTagClass()
+									+ ", tag=" + tag, MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					int i1 = (int)ansIS.readInteger();
+					this.equipmentStatus = EquipmentStatus.getInstance(i1);
+					break;
+				case 1:
+					// bmuef
+					//TODO: Implement
+					break;
+				case 2:
+					// extensionContainer 
+					//TODO: Implement
+					break;
+				default:
+					ais.advanceElement();
+					break;
+				}
+				
+				num++;
+			}
+		} else {
+			int i1 = ansIS.read();
+			this.equipmentStatus = EquipmentStatus.getInstance(i1);
+		}
+	}
+
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	@Override
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+	}
+
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		try {
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
+
+	}
+
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+		/* Fazer as validacoes e lancar essas excecoes caso ocorram
+		 * if (this.hlrNumber == null)
+			throw new MAPException("hlrNumber parameter must not be null");*/
+		
+		try {
+			if (mapProtocolVersion >= 3) {
+				
+			} else {
+				asnOs.writeIntegerData(this.equipmentStatus.getCode());
+			}
+		} catch (IOException e) {
+			throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		} /*catch (AsnException e) {
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}*/
+
+	}
+
+	@Override
+	public MAPMessageType getMessageType() {
+		return MAPMessageType.checkIMEI_Response;
+	}
+
+	@Override
+	public int getOperationCode() {
+		return MAPOperationCode.checkIMEI;
+	}
+
+	@Override
+	public EquipmentStatus getEquipmentStatus() {
+		return this.equipmentStatus;
+	}
+
+	@Override
+	public UESBIIu getBmuef() {
+		return bmuef;
+	}
+
+	@Override
+	public MAPExtensionContainer getExtensionContainer() {
+		return this.extensionContainer;
+	}
+	
+	@Override
+	public String toString() {
+		//TODO: Implements this
+		return super.toString();
+	}
+
+}
+

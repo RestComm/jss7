@@ -43,6 +43,6 @@ taskRefused ERROR ::= {
  */
 public interface CAPErrorMessageTaskRefused extends CAPErrorMessage {
 
-	TaskRefusedParameter getTaskRefusedParameter();
+	public TaskRefusedParameter getTaskRefusedParameter();
 
 }

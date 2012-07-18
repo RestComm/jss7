@@ -68,6 +68,9 @@ import org.mobicents.protocols.ss7.sccp.impl.SccpResource;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3Destination;
 import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3ServiceAccessPoint;
+import org.mobicents.protocols.ss7.tcap.TCAPStackImpl;
+import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
+import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 
@@ -78,6 +81,9 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 public class Client extends TestHarness {
 
 	private static Logger logger = Logger.getLogger(Client.class);
+	
+	//TCAP
+	private TCAPStack tcapStack;
 
 	// MAP
 	private MAPStackImpl mapStack;
@@ -109,7 +115,10 @@ public class Client extends TestHarness {
 
 		// Initialize SCCP
 		this.initSCCP();
-
+		
+		//Initialize TCAP
+		this.initTCAP();
+		
 		// Initialize MAP
 		this.initMAP();
 
@@ -168,12 +177,21 @@ public class Client extends TestHarness {
 		this.sccpStack.getRouter().addMtp3ServiceAccessPoint(1, sap);
 		this.sccpStack.getRouter().addMtp3Destination(1, 1, dest);
 	}
+	
+	private void initTCAP(){
+		this.tcapStack = new TCAPStackImpl(this.sccpStack.getSccpProvider(), SSN);
+		this.tcapStack.setDialogIdleTimeout(60000);
+		this.tcapStack.setInvokeTimeout(30000);
+		this.tcapStack.setMaxDialogs(2000);
+		this.tcapStack.start();
+	}
 
 	private void initMAP() {
 
 		System.out.println("initMAP");
 
-		this.mapStack = new MAPStackImpl(this.sccpStack.getSccpProvider(), SSN);
+		//this.mapStack = new MAPStackImpl(this.sccpStack.getSccpProvider(), SSN);
+		this.mapStack = new MAPStackImpl(this.tcapStack.getProvider());
 		this.mapProvider = this.mapStack.getMAPProvider();
 
 		System.out.println("this.mapProvider = " + this.mapProvider);
@@ -184,8 +202,6 @@ public class Client extends TestHarness {
 		this.mapProvider.getMAPServiceSupplementary().acivate();
 
 		this.mapStack.start();
-
-		this.mapStack.getMAPProvider().getMAPServiceSupplementary().acivate();
 	}
 
 	private void initiateUSSD() throws MAPException {
@@ -221,9 +237,54 @@ public class Client extends TestHarness {
 		int noOfCalls = Integer.parseInt(args[0]);
 		int noOfConcurrentCalls = Integer.parseInt(args[1]);
 		IpChannelType ipChannelType = IpChannelType.SCTP;
-		if (args.length >= 3 && args[2].toLowerCase().equals("tcp"))
+		if (args.length >= 3 && args[2].toLowerCase().equals("tcp")){
 			ipChannelType = IpChannelType.TCP;
+		} else {
+			ipChannelType = IpChannelType.SCTP;
+		}
+		
+		if (args.length >= 4  ){
+			TestHarness.CLIENT_IP = args[3];
+		} 
+		
+		if (args.length >=  5 ){
+			TestHarness.CLIENT_PORT = Integer.parseInt(args[4]);
+		} 
+		
+		if (args.length >= 6  ){
+			TestHarness.SERVER_IP = args[5];
+		} 
+		
+		if (args.length >=  7 ){
+			TestHarness.SERVER_PORT = Integer.parseInt(args[6]);
+		} 
 
+		if (args.length >=  8 ){
+			TestHarness.CLIENT_SPC = Integer.parseInt(args[7]);
+		}
+		
+		if (args.length >=  9 ){
+			TestHarness.SERVET_SPC = Integer.parseInt(args[8]);
+		}
+		
+		if (args.length >=  10 ){
+			TestHarness.NETWORK_INDICATOR = Integer.parseInt(args[9]);
+		}
+		
+		if (args.length >=  11 ){
+			TestHarness.SERVICE_INIDCATOR = Integer.parseInt(args[10]);
+		}
+		
+		if (args.length >=  12 ){
+			TestHarness.SSN = Integer.parseInt(args[11]);
+		}
+		
+		if (args.length >=  13 ){
+			TestHarness.ROUTING_CONTEXT = Integer.parseInt(args[12]);
+		}		
+		
+		
+		
 		// logger.info("Number of calls to be completed = " + noOfCalls +
 		// " Number of concurrent calls to be maintained = " +
 		// noOfConcurrentCalls);

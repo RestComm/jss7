@@ -1,3 +1,25 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
 package org.mobicents.protocols.ss7.map.service.callhandling;
 
 import java.io.IOException;
@@ -10,13 +32,15 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.FTNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNSubaddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.ForwardingData;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.ForwardingOptions;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ForwardingOptions;
 import org.mobicents.protocols.ss7.map.primitives.FTNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
+import org.mobicents.protocols.ss7.map.service.supplementary.ForwardingOptionsImpl;
 
 
 /*
@@ -26,7 +50,7 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
  */
 public class ForwardingDataImpl implements ForwardingData, MAPAsnPrimitive {
 	private ISDNAddressString forwardedToNumber;
-	private byte[] forwardedToSubaddress;
+	private ISDNSubaddressString forwardedToSubaddress;
 	private ForwardingOptions forwardingOptions;
 	private MAPExtensionContainer extensionContainer; 
 	private FTNAddressString longForwardedToNumber;
@@ -42,7 +66,7 @@ public class ForwardingDataImpl implements ForwardingData, MAPAsnPrimitive {
 	
 	public ForwardingDataImpl() {}
 
-	public ForwardingDataImpl(ISDNAddressString forwardedToNumber, byte[] forwardedToSubaddress, 
+	public ForwardingDataImpl(ISDNAddressString forwardedToNumber, ISDNSubaddressString forwardedToSubaddress, 
 							  ForwardingOptions forwardingOptions, MAPExtensionContainer extensionContainer,
 							  FTNAddressString longForwardedToNumber) {
 		this.forwardedToNumber = forwardedToNumber;
@@ -58,7 +82,7 @@ public class ForwardingDataImpl implements ForwardingData, MAPAsnPrimitive {
 	}
 
 	@Override
-	public byte[] getForwardedToSubaddress() {
+	public ISDNSubaddressString getForwardedToSubaddress() {
 		return this.forwardedToSubaddress;
 	}
 
@@ -142,12 +166,7 @@ public class ForwardingDataImpl implements ForwardingData, MAPAsnPrimitive {
 					 this.forwardedToNumber = new ISDNAddressStringImpl();
 					 ((ISDNAddressStringImpl) this.forwardedToNumber).decodeAll(ais);
 					 break;
-				case TAG_forwardedToSubaddress: 
-					 this.forwardedToSubaddress = ais.readOctetString();
-					 
-					 if(this.forwardedToSubaddress.length > 21)
-						throw new MAPParsingComponentException("Error when decoding " + _PrimitiveName + ": forwardedToSubaddress length must be <22, found: "
-								+ this.forwardedToSubaddress.length, MAPParsingComponentExceptionReason.MistypedParameter);
+				case TAG_forwardedToSubaddress: // TODO: 
 					 break;
 				case TAG_forwardingOptions: 
 					 if(!ais.isTagPrimitive())
@@ -202,35 +221,67 @@ public class ForwardingDataImpl implements ForwardingData, MAPAsnPrimitive {
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		try {
-			if(this.forwardedToNumber != null) {
-			  ((ISDNAddressStringImpl) this.forwardedToNumber).encodeAll(asnOs, 
-					  Tag.CLASS_CONTEXT_SPECIFIC, TAG_forwardedToNumber);
-			}
-			
-			if(this.forwardedToSubaddress != null) {
-			  asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, TAG_forwardedToSubaddress, 
-					  				 this.forwardedToSubaddress);
-			}
-			
-			if(this.forwardingOptions != null) {
-			  ((ForwardingOptionsImpl) this.forwardingOptions).encodeAll(asnOs, 
-					  Tag.CLASS_CONTEXT_SPECIFIC, TAG_forwardingOptions);	
-			}
-			
-			if(this.extensionContainer != null) {
-			   ((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, 
-					   Tag.CLASS_CONTEXT_SPECIFIC, TAG_extensionContainer);	
-			}
-			
-			if(this.longForwardedToNumber != null) {
-			  ((FTNAddressStringImpl) this.longForwardedToNumber).encodeAll(asnOs, 
-					  Tag.CLASS_CONTEXT_SPECIFIC, TAG_longForwardedToNumber);
-			}
-		} catch (IOException e) {
-			throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		if(this.forwardedToNumber != null) {
+		  ((ISDNAddressStringImpl) this.forwardedToNumber).encodeAll(asnOs, 
+				  Tag.CLASS_CONTEXT_SPECIFIC, TAG_forwardedToNumber);
 		}
+			
+		if(this.forwardedToSubaddress != null) { 
+			// TODO: 
+		}
+			
+		if(this.forwardingOptions != null) {
+		  ((ForwardingOptionsImpl) this.forwardingOptions).encodeAll(asnOs, 
+				  Tag.CLASS_CONTEXT_SPECIFIC, TAG_forwardingOptions);	
+		}
+			
+		if(this.extensionContainer != null) {
+		   ((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, 
+				   Tag.CLASS_CONTEXT_SPECIFIC, TAG_extensionContainer);	
+		}
+			
+		if(this.longForwardedToNumber != null) {
+		  ((FTNAddressStringImpl) this.longForwardedToNumber).encodeAll(asnOs, 
+				  Tag.CLASS_CONTEXT_SPECIFIC, TAG_longForwardedToNumber);
+		}
+	}
+	
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		if (this.forwardedToNumber != null) {
+			sb.append("forwardedToNumber=[");
+			sb.append(this.forwardedToNumber);
+			sb.append("], ");
+		}
+		
+		if (this.forwardedToSubaddress != null) {
+			sb.append("forwardedToSubaddress=[");
+			sb.append(this.forwardedToSubaddress);
+			sb.append("], ");
+		}
+		
+		if (this.forwardingOptions != null) {
+			sb.append("forwardingOptions=[");
+			sb.append(this.forwardingOptions);
+			sb.append("], ");
+		}
+		
+		if (this.extensionContainer != null) {
+			sb.append("extensionContainer=[");
+			sb.append(this.extensionContainer);
+			sb.append("], ");
+		}
+		
+		if (this.longForwardedToNumber != null) {
+			sb.append("longForwardedToNumber=[");
+			sb.append(this.longForwardedToNumber);
+			sb.append("]");
+		}
+		
+		sb.append("]");
+		return sb.toString();
 	}
 }

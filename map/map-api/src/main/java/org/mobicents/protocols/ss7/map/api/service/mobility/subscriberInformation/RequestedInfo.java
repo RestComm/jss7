@@ -43,20 +43,20 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
  *
  */
 public interface RequestedInfo extends Serializable {
-	public Boolean getLocationInformation();
+	public boolean getLocationInformation();
 	
-	public Boolean getSubscriberState();
+	public boolean getSubscriberState();
 	
 	public MAPExtensionContainer getExtensionContainer();
 	
-	public Boolean getCurrentLocation();
+	public boolean getCurrentLocation();
 	
 	public DomainType getRequestedDomain();
 	
-	public Boolean getImei();
+	public boolean getImei();
 	
-	public Boolean getMsClassmark();
+	public boolean getMsClassmark();
 	
-	public Boolean getMnpRequestedInfo();
+	public boolean getMnpRequestedInfo();
 	
 }

@@ -1,3 +1,25 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
 package org.mobicents.protocols.ss7.map.service.callhandling;
 
 import static org.testng.Assert.assertEquals;
@@ -13,9 +35,10 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.ForwardingData;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.ForwardingOptions;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.ForwardingReason;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ForwardingOptions;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ForwardingReason;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
+import org.mobicents.protocols.ss7.map.service.supplementary.ForwardingOptionsImpl;
 import org.testng.Assert.*;
 import org.testng.*;
 import org.testng.annotations.*;
@@ -94,7 +117,7 @@ public class RoutingInfoTest {
 		
 		ISDNAddressString isdnAdd = new ISDNAddressStringImpl(AddressNature.international_number, 
 									NumberingPlan.ISDN, "79273605819");
-		RoutingInfoImpl routeInfo = new RoutingInfoImpl(isdnAdd, null);
+		RoutingInfoImpl routeInfo = new RoutingInfoImpl(isdnAdd);
 
 		AsnOutputStream asnOS = new AsnOutputStream();
 	    routeInfo.encodeAll(asnOS);
@@ -110,7 +133,7 @@ public class RoutingInfoTest {
 		_forwardingOptions = new ForwardingOptionsImpl(false, false, true, ForwardingReason.busy);
 		_forwardingData = new ForwardingDataImpl(_isdnAdd, null, _forwardingOptions, null, null);
 		
-		RoutingInfoImpl _routeInfo = new RoutingInfoImpl(null, _forwardingData);
+		RoutingInfoImpl _routeInfo = new RoutingInfoImpl(_forwardingData);
 
 		AsnOutputStream _asnOS = new AsnOutputStream();
 	    _routeInfo.encodeAll(_asnOS);

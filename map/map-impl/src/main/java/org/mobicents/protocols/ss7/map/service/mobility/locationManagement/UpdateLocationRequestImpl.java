@@ -40,7 +40,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PagingArea;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationRequest;
-import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VlrCapability;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VLRCapability;
 import org.mobicents.protocols.ss7.map.primitives.GSNAddressImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
@@ -75,7 +75,7 @@ public class UpdateLocationRequestImpl extends MobilityMessageImpl implements Up
 	private ISDNAddressString vlrNumber;
 	private LMSI lmsi;
 	private MAPExtensionContainer extensionContainer;
-	private VlrCapability vlrCapability;
+	private VLRCapability vlrCapability;
 	private boolean informPreviousNetworkEntity;
 	private boolean csLCSNotSupportedByUE;
 	private GSNAddress vGmlcAddress;
@@ -91,7 +91,7 @@ public class UpdateLocationRequestImpl extends MobilityMessageImpl implements Up
 	}
 
 	public UpdateLocationRequestImpl(long mapProtocolVersion, IMSI imsi, ISDNAddressString mscNumber, ISDNAddressString roamingNumber,
-			ISDNAddressString vlrNumber, LMSI lmsi, MAPExtensionContainer extensionContainer, VlrCapability vlrCapability, boolean informPreviousNetworkEntity,
+			ISDNAddressString vlrNumber, LMSI lmsi, MAPExtensionContainer extensionContainer, VLRCapability vlrCapability, boolean informPreviousNetworkEntity,
 			boolean csLCSNotSupportedByUE, GSNAddress vGmlcAddress, ADDInfo addInfo, PagingArea pagingArea, boolean skipSubscriberDataUpdate,
 			boolean restorationIndicator) {
 		this.mapProtocolVersion = mapProtocolVersion;
@@ -145,7 +145,7 @@ public class UpdateLocationRequestImpl extends MobilityMessageImpl implements Up
 		return extensionContainer;
 	}
 
-	public VlrCapability getVlrCapability() {
+	public VLRCapability getVlrCapability() {
 		return vlrCapability;
 	}
 
@@ -295,8 +295,8 @@ public class UpdateLocationRequestImpl extends MobilityMessageImpl implements Up
 						if (ais.isTagPrimitive())
 							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
 									+ ".vlrCapability: Parameter is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-						this.vlrCapability = new VlrCapabilityImpl();
-						((VlrCapabilityImpl) this.vlrCapability).decodeAll(ais);
+						this.vlrCapability = new VLRCapabilityImpl();
+						((VLRCapabilityImpl) this.vlrCapability).decodeAll(ais);
 						break;
 					case _TAG_informPreviousNetworkEntity:
 						// informPreviousNetworkEntity
@@ -423,7 +423,7 @@ public class UpdateLocationRequestImpl extends MobilityMessageImpl implements Up
 			if (this.extensionContainer != null)
 				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
 			if(this.vlrCapability != null)
-				((VlrCapabilityImpl) this.vlrCapability).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_vlrCapability);
+				((VLRCapabilityImpl) this.vlrCapability).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_vlrCapability);
 			if (informPreviousNetworkEntity)
 				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_informPreviousNetworkEntity);
 			if (csLCSNotSupportedByUE)

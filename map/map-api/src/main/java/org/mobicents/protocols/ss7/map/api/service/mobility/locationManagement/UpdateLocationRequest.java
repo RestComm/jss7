@@ -80,7 +80,7 @@ public interface UpdateLocationRequest extends MobilityMessage {
 
 	public MAPExtensionContainer getExtensionContainer();
 
-	public VlrCapability getVlrCapability();
+	public VLRCapability getVlrCapability();
 
 	public boolean getInformPreviousNetworkEntity();
 

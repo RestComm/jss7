@@ -32,6 +32,7 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.GSNAddress;
+import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
@@ -44,15 +45,18 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.Authe
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.EpsAuthenticationSetList;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.ReSynchronisationInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.RequestingNodeType;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.RequestedEquipmentInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PagingArea;
-import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VlrCapability;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VLRCapability;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberInfo;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.SendAuthenticationInfoRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.SendAuthenticationInfoResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateLocationRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateLocationResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.AnyTimeInterrogationRequestImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.AnyTimeInterrogationResponseImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
@@ -166,7 +170,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
 	
 	public Long addUpdateLocationRequest(IMSI imsi, ISDNAddressString mscNumber, ISDNAddressString roamingNumber, ISDNAddressString vlrNumber, LMSI lmsi,
-			MAPExtensionContainer extensionContainer, VlrCapability vlrCapability, boolean informPreviousNetworkEntity, boolean csLCSNotSupportedByUE,
+			MAPExtensionContainer extensionContainer, VLRCapability vlrCapability, boolean informPreviousNetworkEntity, boolean csLCSNotSupportedByUE,
 			GSNAddress vGmlcAddress, ADDInfo addInfo, PagingArea pagingArea, boolean skipSubscriberDataUpdate, boolean restorationIndicator)
 			throws MAPException {
 		return addUpdateLocationRequest(_Timer_Default, imsi, mscNumber, roamingNumber, vlrNumber, lmsi, extensionContainer, vlrCapability,
@@ -174,7 +178,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 	}
 
 	public Long addUpdateLocationRequest(int customInvokeTimeout, IMSI imsi, ISDNAddressString mscNumber, ISDNAddressString roamingNumber,
-			ISDNAddressString vlrNumber, LMSI lmsi, MAPExtensionContainer extensionContainer, VlrCapability vlrCapability, boolean informPreviousNetworkEntity,
+			ISDNAddressString vlrNumber, LMSI lmsi, MAPExtensionContainer extensionContainer, VLRCapability vlrCapability, boolean informPreviousNetworkEntity,
 			boolean csLCSNotSupportedByUE, GSNAddress vGmlcAddress, ADDInfo addInfo, PagingArea pagingArea, boolean skipSubscriberDataUpdate,
 			boolean restorationIndicator) throws MAPException {
 
@@ -332,9 +336,47 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * MAPDialogSubscriberInformation#addAnyTimeInterrogationResponse(long)
 	 */
-	public long addAnyTimeInterrogationResponse(long invokeId) throws MAPException {
-		// TODO Auto-generated method stub
-		throw new MAPException("We dont support this yet");
+	public void addAnyTimeInterrogationResponse(long invokeId, SubscriberInfo subscriberInfo, MAPExtensionContainer extensionContainer) throws MAPException {
+
+		if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.anyTimeEnquiryContext)
+				|| (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
+			throw new MAPException("Bad application context name for AnyTimeInterrogationRequest: must be networkLocUpContext_V3");
+
+		ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
+
+		resultLast.setInvokeId(invokeId);
+
+		// Operation Code
+		OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+		oc.setLocalOperationCode((long) MAPOperationCode.anyTimeInterrogation);
+		resultLast.setOperationCode(oc);
+
+		AnyTimeInterrogationResponseImpl req = new AnyTimeInterrogationResponseImpl(subscriberInfo, extensionContainer);
+		AsnOutputStream aos = new AsnOutputStream();
+		req.encodeData(aos);
+
+		Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+		p.setTagClass(req.getTagClass());
+		p.setPrimitive(req.getIsPrimitive());
+		p.setTag(req.getTag());
+		p.setData(aos.toByteArray());
+		resultLast.setParameter(p);
+
+		this.sendReturnResultLastComponent(resultLast);
+	}
+
+
+	@Override
+	public Long addCheckImeiRequest(IMEI imei, RequestedEquipmentInfo requestedEquipmentInfo,
+			MAPExtensionContainer extensionContainer) throws MAPException {
+		
+		if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.equipmentMngtContext)
+				|| (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2
+						&& this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)) {
+			throw new MAPException("Bad application context name for CheckImeiRequest: must be equipmentMngtContext_V2 or V3");
+		}
+		
+		return null;
 	}
 
 }

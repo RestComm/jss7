@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.map.api.errors;
 
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.NetworkResource;
 
 /**
  * The factory of MAP ReturnError messages

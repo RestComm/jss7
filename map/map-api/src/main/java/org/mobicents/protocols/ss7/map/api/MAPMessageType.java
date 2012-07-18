@@ -37,6 +37,8 @@ public enum MAPMessageType {
 	sendAuthenticationInfo_Response,
 	updateLocation_Request,
 	updateLocation_Response,
+	checkIMEI_Request,
+	checkIMEI_Response,
 	
 	// -- supplementary
 	processUnstructuredSSRequest_Request,

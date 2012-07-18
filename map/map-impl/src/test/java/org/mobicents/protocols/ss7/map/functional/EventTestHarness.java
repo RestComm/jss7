@@ -23,6 +23,8 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobilityListener;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationRequest;
@@ -373,11 +375,26 @@ public class EventTestHarness implements MAPDialogListener, MAPServiceSupplement
 	}
 
 	public void onAnyTimeInterrogationRequest(AnyTimeInterrogationRequest request) {
+		this.logger.debug("onAnyTimeInterrogationRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.AnyTimeInterrogation, request,
+				sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	public void onAnyTimeInterrogationResponse(AnyTimeInterrogationResponse response) {
+		this.logger.debug("onAnyTimeInterrogationResponse");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.AnyTimeInterrogationResp, response, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onCheckImeiRequest(CheckImeiRequest request) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void onAnyTimeInterrogationResponse(AnyTimeInterrogationResponse response) {
+	@Override
+	public void onCheckImeiResponse(CheckImeiResponse response) {
 		// TODO Auto-generated method stub
 		
 	}

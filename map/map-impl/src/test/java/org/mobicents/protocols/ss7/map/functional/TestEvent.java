@@ -35,7 +35,7 @@ public class TestEvent implements Serializable {
 	private long timestamp;
 	private Object event;
 	private int sequence;
-	
+
 	public static TestEvent createReceivedEvent(EventType eventType, Object eventSource, int sequence)
 	{
 		TestEvent te = new TestEvent(eventType, false, System.currentTimeMillis(), eventSource, sequence);

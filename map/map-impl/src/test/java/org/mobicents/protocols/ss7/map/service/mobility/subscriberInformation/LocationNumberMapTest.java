@@ -32,7 +32,7 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.LocationNumberImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.LocationNumberMapImpl;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.*;
 
 /**
  * 

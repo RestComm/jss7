@@ -19,6 +19,7 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
+
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
 import java.io.IOException;
@@ -38,6 +39,7 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
@@ -50,16 +52,17 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	public static final int _ID_imei = 6;
 	public static final int _ID_msclassmark = 5;
 	public static final int _ID_mnpRequestedInfo = 7;
+
+	public static final String _PrimitiveName = "RequestedInfo";
 	
-	
-	private Boolean locationInformation;
-	private Boolean subscriberState;
+	private boolean locationInformation;
+	private boolean subscriberState;
 	private MAPExtensionContainer extensionContainer;
-	private Boolean currentLocation;
+	private boolean currentLocation;
 	private DomainType requestedDomain;
-	private Boolean imei;
-	private Boolean msClassmark;
-	private Boolean mnpRequestedInfo;
+	private boolean imei;
+	private boolean msClassmark;
+	private boolean mnpRequestedInfo;
 
 	/**
 	 * 
@@ -79,8 +82,8 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	 * @param msClassmark
 	 * @param mnpRequestedInfo
 	 */
-	public RequestedInfoImpl(Boolean locationInformation, Boolean subscriberState, MAPExtensionContainer extensionContainer, Boolean currentLocation,
-			DomainType requestedDomain, Boolean imei, Boolean msClassmark, Boolean mnpRequestedInfo) {
+	public RequestedInfoImpl(boolean locationInformation, boolean subscriberState, MAPExtensionContainer extensionContainer, boolean currentLocation,
+			DomainType requestedDomain, boolean imei, boolean msClassmark, boolean mnpRequestedInfo) {
 		super();
 		this.locationInformation = locationInformation;
 		this.subscriberState = subscriberState;
@@ -134,10 +137,10 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding RequestedInfo: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding RequestedInfo: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -153,10 +156,10 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding RequestedInfo: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding RequestedInfo: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -164,73 +167,85 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 
-		int num = 0;
+		locationInformation = false;
+		subscriberState = false;
+		extensionContainer = null;
+		currentLocation = false;
+		requestedDomain = null;
+		imei = false;
+		msClassmark = false;
+		mnpRequestedInfo = false;
+
 		while (true) {
 			if (ais.available() == 0)
 				break;
 
 			int tag = ais.readTag();
-			switch (tag) {
-			case _ID_locationInformation:
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter 0 bad tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				ais.readNull();
-				this.locationInformation = Boolean.TRUE;
-				break;
-			case _ID_subscriberState:
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter 0 bad tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				ais.readNull();
-				this.subscriberState = Boolean.TRUE;
-				break;
-			case _ID_extensionContainer:
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter 0 bad tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				extensionContainer = new MAPExtensionContainerImpl();
-				((MAPExtensionContainerImpl) extensionContainer).decodeAll(ais);
-				break;
-			case _ID_currentLocation:
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter 0 bad tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				ais.readNull();
-				this.currentLocation = Boolean.TRUE;
-				break;
-			case _ID_requestedDomain:
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter 0 bad tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				int i1 = (int) ais.readInteger();
-				this.requestedDomain = DomainType.getInstance(i1);
-				break;
-			case _ID_msclassmark:
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter 0 bad tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				ais.readNull();
-				this.msClassmark = Boolean.TRUE;
-				break;
-			case _ID_imei:
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter 0 bad tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				ais.readNull();
-				this.imei = Boolean.TRUE;
-				break;
-			case _ID_mnpRequestedInfo:
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter 0 bad tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				ais.readNull();
-				this.mnpRequestedInfo = Boolean.TRUE;
-				break;
-			default:
-				ais.advanceElement();
-				break;
 
+			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+				switch (tag) {
+				case _ID_locationInformation:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					ais.readNull();
+					this.locationInformation = Boolean.TRUE;
+					break;
+				case _ID_subscriberState:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					ais.readNull();
+					this.subscriberState = Boolean.TRUE;
+					break;
+				case _ID_extensionContainer:
+					if (ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					extensionContainer = new MAPExtensionContainerImpl();
+					((MAPExtensionContainerImpl) extensionContainer).decodeAll(ais);
+					break;
+				case _ID_currentLocation:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					ais.readNull();
+					this.currentLocation = Boolean.TRUE;
+					break;
+				case _ID_requestedDomain:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					int i1 = (int) ais.readInteger();
+					this.requestedDomain = DomainType.getInstance(i1);
+					break;
+				case _ID_msclassmark:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					ais.readNull();
+					this.msClassmark = Boolean.TRUE;
+					break;
+				case _ID_imei:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					ais.readNull();
+					this.imei = Boolean.TRUE;
+					break;
+				case _ID_mnpRequestedInfo:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding RequestedInfo: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					ais.readNull();
+					this.mnpRequestedInfo = Boolean.TRUE;
+					break;
+				default:
+					ais.advanceElement();
+					break;
+				}
+			} else {
+				ais.advanceElement();
 			}
 		}
 	}
@@ -243,7 +258,7 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	 * org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	/*
@@ -255,12 +270,12 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	 */
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
-			asnOs.writeTag(tagClass, false, tag);
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding reportSMDeliveryStatusRequest: " + e.getMessage(), e);
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 
@@ -273,7 +288,7 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	 */
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		try {
-			if (this.locationInformation != null) {
+			if (this.locationInformation) {
 				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_locationInformation);
 			}
 		} catch (IOException e) {
@@ -283,20 +298,20 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 		}
 
 		try {
-			if (this.subscriberState != null) {
+			if (this.subscriberState) {
 				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_subscriberState);
 			}
 		} catch (IOException e) {
-			throw new MAPException("IOException when encoding parameter locationInformation: ", e);
+			throw new MAPException("IOException when encoding parameter subscriberState: ", e);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding parameter locationInformation: ", e);
+			throw new MAPException("AsnException when encoding parameter subscriberState: ", e);
 		}
 
 		if (this.extensionContainer != null)
 			((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensionContainer);
 
 		try {
-			if (this.currentLocation != null) {
+			if (this.currentLocation) {
 				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_currentLocation);
 			}
 		} catch (IOException e) {
@@ -316,7 +331,7 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 		}
 
 		try {
-			if (this.imei != null) {
+			if (this.imei) {
 				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_imei);
 			}
 		} catch (IOException e) {
@@ -326,7 +341,7 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 		}
 
 		try {
-			if (this.msClassmark != null) {
+			if (this.msClassmark) {
 				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_msclassmark);
 			}
 		} catch (IOException e) {
@@ -336,7 +351,7 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 		}
 
 		try {
-			if (this.mnpRequestedInfo != null) {
+			if (this.mnpRequestedInfo) {
 				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_mnpRequestedInfo);
 			}
 		} catch (IOException e) {
@@ -352,7 +367,7 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * RequestedInfo#getLocationInformation()
 	 */
-	public Boolean getLocationInformation() {
+	public boolean getLocationInformation() {
 		return this.locationInformation;
 	}
 
@@ -362,7 +377,7 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * RequestedInfo#getSubscriberState()
 	 */
-	public Boolean getSubscriberState() {
+	public boolean getSubscriberState() {
 		return this.subscriberState;
 	}
 
@@ -382,7 +397,7 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * RequestedInfo#getCurrentLocation()
 	 */
-	public Boolean getCurrentLocation() {
+	public boolean getCurrentLocation() {
 		return this.currentLocation;
 	}
 
@@ -402,7 +417,7 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * RequestedInfo#getImei()
 	 */
-	public Boolean getImei() {
+	public boolean getImei() {
 		return this.imei;
 	}
 
@@ -412,7 +427,7 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * RequestedInfo#getMsClassmark()
 	 */
-	public Boolean getMsClassmark() {
+	public boolean getMsClassmark() {
 		return this.msClassmark;
 	}
 
@@ -422,7 +437,50 @@ public class RequestedInfoImpl implements RequestedInfo, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * RequestedInfo#getMnpRequestedInfo()
 	 */
-	public Boolean getMnpRequestedInfo() {
+	public boolean getMnpRequestedInfo() {
 		return this.mnpRequestedInfo;
+	}
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		if (locationInformation) {
+			sb.append(", locationInformation");
+		}
+		
+		if (subscriberState) {
+			sb.append(", subscriberState");
+		}
+
+		if (this.extensionContainer != null) {
+			sb.append(", extensionContainer=");
+			sb.append(this.extensionContainer);
+		}
+		
+		if (currentLocation) {
+			sb.append(", currentLocation");
+		}
+		
+		if (this.requestedDomain != null) {
+			sb.append("requestedDomain=");
+			sb.append(this.requestedDomain);
+		}
+		
+		if (imei) {
+			sb.append(", imei");
+		}
+		
+		if (msClassmark) {
+			sb.append(", msClassmark");
+		}
+		
+		if (mnpRequestedInfo) {
+			sb.append(", mnpRequestedInfo");
+		}
+		
+		sb.append("]");
+		return sb.toString();
 	}
 }

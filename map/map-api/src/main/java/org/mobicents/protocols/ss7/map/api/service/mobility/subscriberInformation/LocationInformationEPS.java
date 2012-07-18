@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
+import org.mobicents.protocols.ss7.map.api.primitives.DiameterIdentity;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
@@ -55,7 +56,7 @@ public interface LocationInformationEPS {
 
 	public GeodeticInformation getGeodeticInformation();
 
-	public Boolean getCurrentLocationRetrieved();
+	public boolean getCurrentLocationRetrieved();
 
 	public Integer getAgeOfLocationInformation();
 

@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.map;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
+import org.mobicents.protocols.asn.BitSetStrictLength;
 import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
@@ -35,16 +36,19 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
 import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdFixedLength;
 import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdOrLAI;
+import org.mobicents.protocols.ss7.map.api.primitives.DiameterIdentity;
 import org.mobicents.protocols.ss7.map.api.primitives.FTNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.GSNAddress;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.LAIFixedLength;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.primitives.PlmnId;
+import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.CallReferenceNumber;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationQuintuplet;
@@ -56,29 +60,60 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.Quint
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.ReSynchronisationInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.TripletList;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
-import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.IstSupportIndicator;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ISTSupportIndicator;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LAC;
-import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LAIFixedLength;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LocationArea;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PagingArea;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SuperChargerInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedLCSCapabilitySets;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedRATTypes;
-import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VlrCapability;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VLRCapability;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.DomainType;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.EUtranCgi;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GPRSChargingID;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GPRSMSClass;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GeodeticInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GeographicalInformation;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LSAIdentity;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformationEPS;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformationGPRS;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationNumberMap;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.MNPInfoRes;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.MSClassmark2;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.MSNetworkCapability;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.MSRadioAccessCapability;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.NotReachableReason;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.NumberPortabilityStatus;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.PDPContextInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.PSSubscriberState;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.PSSubscriberStateChoice;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RAIdentity;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RouteingNumber;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberState;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberStateChoice;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.TAId;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.TEID;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.TransactionId;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.UserCSGInformation;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.APN;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CSGId;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ChargingCharacteristics;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.Ext2QoSSubscribed;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.Ext3QoSSubscribed;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.Ext4QoSSubscribed;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBearerServiceCode;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtPDPType;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtQoSSubscribed;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtTeleserviceCode;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.LSAIdentity;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OfferedCamel4CSIs;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.PDPAddress;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.PDPType;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
 import org.mobicents.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
 import org.mobicents.protocols.ss7.map.api.service.sms.MWStatus;
@@ -97,15 +132,18 @@ import org.mobicents.protocols.ss7.map.dialog.MAPUserAbortChoiceImpl;
 import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdFixedLengthImpl;
 import org.mobicents.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdOrLAIImpl;
+import org.mobicents.protocols.ss7.map.primitives.DiameterIdentityImpl;
 import org.mobicents.protocols.ss7.map.primitives.FTNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.GSNAddressImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMEIImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.LAIFixedLengthImpl;
 import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPPrivateExtensionImpl;
 import org.mobicents.protocols.ss7.map.primitives.PlmnIdImpl;
+import org.mobicents.protocols.ss7.map.primitives.SubscriberIdentityImpl;
 import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
 import org.mobicents.protocols.ss7.map.service.callhandling.CallReferenceNumberImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.AuthenticationQuintupletImpl;
@@ -118,20 +156,53 @@ import org.mobicents.protocols.ss7.map.service.mobility.authentication.ReSynchro
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.TripletListImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.ADDInfoImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.LACImpl;
-import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.LAIFixedLengthImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.LocationAreaImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.PagingAreaImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.SuperChargerInfoImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.SupportedLCSCapabilitySetsImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.SupportedRATTypesImpl;
-import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.VlrCapabilityImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.VLRCapabilityImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.AnyTimeInterrogationRequestImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.AnyTimeInterrogationResponseImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.EUtranCgiImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.GPRSMSClassImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.GeodeticInformationImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.GeographicalInformationImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.LocationInformationEPSImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.LocationInformationGPRSImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.LocationInformationImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.LocationNumberMapImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.MNPInfoResImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.MSClassmark2Impl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.MSNetworkCapabilityImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.MSRadioAccessCapabilityImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.PSSubscriberStateImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.RAIdentityImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.RequestedInfoImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.RouteingNumberImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.SubscriberInfoImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.SubscriberStateImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.TAIdImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.TEIDImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.TransactionIdImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.UserCSGInformationImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.APNImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.CSGIdImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ChargingCharacteristicsImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Ext2QoSSubscribedImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Ext3QoSSubscribedImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Ext4QoSSubscribedImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtBasicServiceCodeImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtBearerServiceCodeImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtPDPTypeImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtQoSSubscribedImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtTeleserviceCodeImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.GPRSChargingIDImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.LSAIdentityImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.OfferedCamel4CSIsImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.PDPAddressImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.PDPContextInfoImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.PDPTypeImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.SupportedCamelPhasesImpl;
 import org.mobicents.protocols.ss7.map.service.sms.LocationInfoWithLMSIImpl;
 import org.mobicents.protocols.ss7.map.service.sms.MWStatusImpl;
@@ -442,11 +513,11 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 		return new EpcAvImpl(rand, xres, autn, kasme, extensionContainer);
 	}
 
-	public VlrCapability createVlrCapability(SupportedCamelPhases supportedCamelPhases, MAPExtensionContainer extensionContainer,
-			boolean solsaSupportIndicator, IstSupportIndicator istSupportIndicator, SuperChargerInfo superChargerSupportedInServingNetworkEntity,
+	public VLRCapability createVlrCapability(SupportedCamelPhases supportedCamelPhases, MAPExtensionContainer extensionContainer,
+			boolean solsaSupportIndicator, ISTSupportIndicator istSupportIndicator, SuperChargerInfo superChargerSupportedInServingNetworkEntity,
 			boolean longFtnSupported, SupportedLCSCapabilitySets supportedLCSCapabilitySets, OfferedCamel4CSIs offeredCamel4CSIs,
 			SupportedRATTypes supportedRATTypesIndicator, boolean longGroupIDSupported, boolean mtRoamingForwardingSupported) {
-		return new VlrCapabilityImpl(supportedCamelPhases, extensionContainer, solsaSupportIndicator, istSupportIndicator,
+		return new VLRCapabilityImpl(supportedCamelPhases, extensionContainer, solsaSupportIndicator, istSupportIndicator,
 				superChargerSupportedInServingNetworkEntity, longFtnSupported, supportedLCSCapabilitySets, offeredCamel4CSIs, supportedRATTypesIndicator,
 				longGroupIDSupported, mtRoamingForwardingSupported);
 	}
@@ -500,6 +571,215 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 
 	public LocationArea createLocationArea(LAC lac) {
 		return new LocationAreaImpl(lac);
+	}
+
+	@Override
+	public AnyTimeInterrogationRequest createAnyTimeInterrogationRequest(SubscriberIdentity subscriberIdentity, RequestedInfo requestedInfo,
+			ISDNAddressString gsmSCFAddress, MAPExtensionContainer extensionContainer) {
+		return new AnyTimeInterrogationRequestImpl(subscriberIdentity, requestedInfo, gsmSCFAddress, extensionContainer);
+	}
+
+	@Override
+	public AnyTimeInterrogationResponse createAnyTimeInterrogationResponse(SubscriberInfo subscriberInfo, MAPExtensionContainer extensionContainer) {
+		return new AnyTimeInterrogationResponseImpl(subscriberInfo, extensionContainer);
+	}
+
+	@Override
+	public DiameterIdentity createDiameterIdentity(byte[] data) {
+		return new DiameterIdentityImpl(data);
+	}
+
+	@Override
+	public SubscriberIdentity createSubscriberIdentity(IMSI imsi) {
+		return new SubscriberIdentityImpl(imsi);
+	}
+
+	@Override
+	public SubscriberIdentity createSubscriberIdentity(ISDNAddressString msisdn) {
+		return new SubscriberIdentityImpl(msisdn);
+	}
+
+	@Override
+	public APN createAPN(byte[] data) {
+		return new APNImpl(data);
+	}
+
+	@Override
+	public PDPAddress createPDPAddress(byte[] data) {
+		return new PDPAddressImpl(data);
+	}
+
+	@Override
+	public PDPType createPDPType(byte[] data) {
+		return new PDPTypeImpl(data);
+	}
+
+	@Override
+	public PDPContextInfo createPDPContextInfo(int pdpContextIdentifier, boolean pdpContextActive, PDPType pdpType, PDPAddress pdpAddress, APN apnSubscribed,
+			APN apnInUse, Integer asapi, TransactionId transactionId, TEID teidForGnAndGp, TEID teidForIu, GSNAddress ggsnAddress,
+			ExtQoSSubscribed qosSubscribed, ExtQoSSubscribed qosRequested, ExtQoSSubscribed qosNegotiated, GPRSChargingID chargingId,
+			ChargingCharacteristics chargingCharacteristics, GSNAddress rncAddress, MAPExtensionContainer extensionContainer, Ext2QoSSubscribed qos2Subscribed,
+			Ext2QoSSubscribed qos2Requested, Ext2QoSSubscribed qos2Negotiated, Ext3QoSSubscribed qos3Subscribed, Ext3QoSSubscribed qos3Requested,
+			Ext3QoSSubscribed qos3Negotiated, Ext4QoSSubscribed qos4Subscribed, Ext4QoSSubscribed qos4Requested, Ext4QoSSubscribed qos4Negotiated,
+			ExtPDPType extPdpType, PDPAddress extPdpAddress) {
+		return new PDPContextInfoImpl(pdpContextIdentifier, pdpContextActive, pdpType, pdpAddress, apnSubscribed, apnInUse, asapi, transactionId,
+				teidForGnAndGp, teidForIu, ggsnAddress, qosSubscribed, qosRequested, qosNegotiated, chargingId, chargingCharacteristics, rncAddress,
+				extensionContainer, qos2Subscribed, qos2Requested, qos2Negotiated, qos3Subscribed, qos3Requested, qos3Negotiated, qos4Subscribed,
+				qos4Requested, qos4Negotiated, extPdpType, extPdpAddress);
+	}
+
+	@Override
+	public CSGId createCSGId(BitSetStrictLength data) {
+		return new CSGIdImpl(data);
+	}
+
+	@Override
+	public LSAIdentity createLSAIdentity(byte[] data) {
+		return new LSAIdentityImpl(data);
+	}
+
+	@Override
+	public GPRSChargingID createGPRSChargingID(byte[] data) {
+		return new GPRSChargingIDImpl(data);
+	}
+
+	@Override
+	public ChargingCharacteristics createChargingCharacteristics(byte[] data) {
+		return new ChargingCharacteristicsImpl(data);
+	}
+
+	@Override
+	public ExtQoSSubscribed createExtQoSSubscribed(byte[] data) {
+		return new ExtQoSSubscribedImpl(data);
+	}
+
+	@Override
+	public Ext2QoSSubscribed createExt2QoSSubscribed(byte[] data) {
+		return new Ext2QoSSubscribedImpl(data);
+	}
+
+	@Override
+	public Ext3QoSSubscribed createExt3QoSSubscribed(byte[] data) {
+		return new Ext3QoSSubscribedImpl(data);
+	}
+
+	@Override
+	public Ext4QoSSubscribed createExt4QoSSubscribed(int data) {
+		return new Ext4QoSSubscribedImpl(data);
+	}
+
+	@Override
+	public ExtPDPType createExtPDPType(byte[] data) {
+		return new ExtPDPTypeImpl(data);
+	}
+
+	@Override
+	public TransactionId createTransactionId(byte[] data) {
+		return new TransactionIdImpl(data);
+	}
+
+	@Override
+	public TAId createTAId(byte[] data) {
+		return new TAIdImpl(data);
+	}
+
+	@Override
+	public RAIdentity createRAIdentity(byte[] data) {
+		return new RAIdentityImpl(data);
+	}
+
+	@Override
+	public EUtranCgi createEUtranCgi(byte[] data) {
+		return new EUtranCgiImpl(data);
+	}
+
+	@Override
+	public TEID createTEID(byte[] data) {
+		return new TEIDImpl(data);
+	}
+
+	@Override
+	public GPRSMSClass createGPRSMSClass(MSNetworkCapability mSNetworkCapability, MSRadioAccessCapability mSRadioAccessCapability) {
+		return new GPRSMSClassImpl(mSNetworkCapability, mSRadioAccessCapability);
+	}
+
+	@Override
+	public GeodeticInformation createGeodeticInformation(byte[] data) {
+		return new GeodeticInformationImpl(data);
+	}
+
+	@Override
+	public GeographicalInformation createGeographicalInformation(byte[] data) {
+		return new GeographicalInformationImpl(data);
+	}
+
+	@Override
+	public LocationInformationEPS createLocationInformationEPS(EUtranCgi eUtranCellGlobalIdentity, TAId trackingAreaIdentity,
+			MAPExtensionContainer extensionContainer, GeographicalInformation geographicalInformation, GeodeticInformation geodeticInformation,
+			boolean currentLocationRetrieved, Integer ageOfLocationInformation, DiameterIdentity mmeName) {
+		return new LocationInformationEPSImpl(eUtranCellGlobalIdentity, trackingAreaIdentity, extensionContainer, geographicalInformation, geodeticInformation,
+				currentLocationRetrieved, ageOfLocationInformation, mmeName);
+	}
+
+	@Override
+	public LocationInformationGPRS createLocationInformationGPRS(CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI,
+			RAIdentity routeingAreaIdentity, GeographicalInformation geographicalInformation, ISDNAddressString sgsnNumber, LSAIdentity selectedLSAIdentity,
+			MAPExtensionContainer extensionContainer, boolean saiPresent, GeodeticInformation geodeticInformation, boolean currentLocationRetrieved,
+			Integer ageOfLocationInformation) {
+		return new LocationInformationGPRSImpl(cellGlobalIdOrServiceAreaIdOrLAI, routeingAreaIdentity, geographicalInformation, sgsnNumber,
+				selectedLSAIdentity, extensionContainer, saiPresent, geodeticInformation, currentLocationRetrieved, ageOfLocationInformation);
+	}
+
+	@Override
+	public MSNetworkCapability createMSNetworkCapability(byte[] data) {
+		return new MSNetworkCapabilityImpl(data);
+	}
+
+	@Override
+	public MSRadioAccessCapability createMSRadioAccessCapability(byte[] data) {
+		return new MSRadioAccessCapabilityImpl(data);
+	}
+
+	@Override
+	public MSClassmark2 createMSClassmark2(byte[] data) {
+		return new MSClassmark2Impl(data);
+	}
+
+	@Override
+	public MNPInfoRes createMNPInfoRes(RouteingNumber routeingNumber, IMSI imsi, ISDNAddressString msisdn, NumberPortabilityStatus numberPortabilityStatus,
+			MAPExtensionContainer extensionContainer) {
+		return new MNPInfoResImpl(routeingNumber, imsi, msisdn, numberPortabilityStatus, extensionContainer);
+	}
+
+	@Override
+	public RequestedInfo createRequestedInfo(boolean locationInformation, boolean subscriberState, MAPExtensionContainer extensionContainer,
+			boolean currentLocation, DomainType requestedDomain, boolean imei, boolean msClassmark, boolean mnpRequestedInfo) {
+		return new RequestedInfoImpl(locationInformation, subscriberState, extensionContainer, currentLocation, requestedDomain, imei, msClassmark,
+				mnpRequestedInfo);
+	}
+
+	@Override
+	public RouteingNumber createRouteingNumber(String data) {
+		return new RouteingNumberImpl(data);
+	}
+
+	@Override
+	public SubscriberInfo createSubscriberInfo(LocationInformation locationInformation, SubscriberState subscriberState,
+			MAPExtensionContainer extensionContainer, LocationInformationGPRS locationInformationGPRS, PSSubscriberState psSubscriberState, IMEI imei,
+			MSClassmark2 msClassmark2, GPRSMSClass gprsMSClass, MNPInfoRes mnpInfoRes) {
+		return new SubscriberInfoImpl(locationInformation, subscriberState, extensionContainer, locationInformationGPRS, psSubscriberState, imei, msClassmark2,
+				gprsMSClass, mnpInfoRes);
+	}
+
+	@Override
+	public UserCSGInformation createUserCSGInformation(CSGId csgId, MAPExtensionContainer extensionContainer, Integer accessMode, Integer cmi) {
+		return new UserCSGInformationImpl(csgId, extensionContainer, accessMode, cmi);
+	}
+
+	@Override
+	public PSSubscriberState createPSSubscriberState(PSSubscriberStateChoice choice, NotReachableReason netDetNotReachable,
+			ArrayList<PDPContextInfo> pdpContextInfoList) {
+		return new PSSubscriberStateImpl(choice, netDetNotReachable, pdpContextInfoList);
 	}
 }
 

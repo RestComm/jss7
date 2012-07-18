@@ -507,8 +507,51 @@ public class Server extends TestHarness {
 
 	public static void main(String args[]) {
 		IpChannelType ipChannelType = IpChannelType.SCTP;
-		if (args.length >= 1 && args[0].toLowerCase().equals("tcp"))
+		if (args.length >= 1 && args[0].toLowerCase().equals("tcp")){
 			ipChannelType = IpChannelType.TCP;
+		} else {
+			ipChannelType = IpChannelType.SCTP;
+		}
+		
+		if (args.length >= 2  ){
+			TestHarness.CLIENT_IP = args[1];
+		} 
+		
+		if (args.length >=  3 ){
+			TestHarness.CLIENT_PORT = Integer.parseInt(args[2]);
+		} 
+		
+		if (args.length >= 4  ){
+			TestHarness.SERVER_IP = args[3];
+		} 
+		
+		if (args.length >=  5 ){
+			TestHarness.SERVER_PORT = Integer.parseInt(args[4]);
+		} 
+
+		if (args.length >=  6 ){
+			TestHarness.CLIENT_SPC = Integer.parseInt(args[5]);
+		}
+		
+		if (args.length >=  7 ){
+			TestHarness.SERVET_SPC = Integer.parseInt(args[6]);
+		}
+		
+		if (args.length >=  8 ){
+			TestHarness.NETWORK_INDICATOR = Integer.parseInt(args[7]);
+		}
+		
+		if (args.length >=  9 ){
+			TestHarness.SERVICE_INIDCATOR = Integer.parseInt(args[8]);
+		}
+		
+		if (args.length >=  10 ){
+			TestHarness.SSN = Integer.parseInt(args[9]);
+		}
+		
+		if (args.length >=  11 ){
+			TestHarness.ROUTING_CONTEXT = Integer.parseInt(args[10]);
+		}
 
 		final Server server = new Server();
 		try {
