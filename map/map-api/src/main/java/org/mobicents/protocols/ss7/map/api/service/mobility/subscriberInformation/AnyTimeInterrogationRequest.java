@@ -55,12 +55,12 @@ anyTimeInterrogation  OPERATION ::= {				--Timer m
  *
  */
 public interface AnyTimeInterrogationRequest extends MobilityMessage {
-	
+
 	public SubscriberIdentity getSubscriberIdentity();
 	
 	public RequestedInfo getRequestedInfo();
 	
 	public ISDNAddressString getGsmSCFAddress();
-	
+
 	public MAPExtensionContainer getExtensionContainer();
 }
