@@ -22,16 +22,19 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
-import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import java.util.ArrayList;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.DCSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.GPRSCSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.MCSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.MGCSI;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.MTsmsCAMELTDPCriteria;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OBcsmCamelTDPCriteria;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OCSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SMSCSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SSCSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SpecificCSIWithdraw;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TBCSMCAMELTDPCriteria;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TCSI;
 
 /**	
@@ -64,6 +67,11 @@ CAMEL-SubscriptionInfo ::= SEQUENCE {
 	vt-IM-BCSM-CAMEL-TDP-CriteriaList	[22]	T-BCSM-CAMEL-TDP-CriteriaList	OPTIONAL
 	}
 
+O-BcsmCamelTDPCriteriaList ::= SEQUENCE SIZE (1..10) OF O-BcsmCamelTDP-Criteria 
+
+T-BCSM-CAMEL-TDP-CriteriaList ::= SEQUENCE SIZE (1..10) OF T-BCSM-CAMEL-TDP-Criteria 
+
+MT-smsCAMELTDP-CriteriaList ::= SEQUENCE SIZE (1.. 10) OF MT-smsCAMELTDP-Criteria
 
  * 
  * @author sergey vetyutnev
@@ -73,17 +81,17 @@ public interface CAMELSubscriptionInfo {
 
 	public OCSI getOCsi();
 
-	public OBcsmCamelTDPCriteriaList getOBcsmCamelTDPCriteriaList();
+	public ArrayList<OBcsmCamelTDPCriteria> getOBcsmCamelTDPCriteriaList();
 
 	public DCSI getDCsi();
 
 	public TCSI getTCsi();
 
-	public TBCSMCAMELTDPCriteriaList getTBcsmCamelTdpCriteriaList();
+	public ArrayList<TBCSMCAMELTDPCriteria> getTBcsmCamelTdpCriteriaList();
 
 	public TCSI getVtCsi();
 
-	public TBCSMCAMELTDPCriteriaList getVtBcsmCamelTdpCriteriaList();
+	public ArrayList<TBCSMCAMELTDPCriteria> getVtBcsmCamelTdpCriteriaList();
 
 	public boolean getTifCsi();
 
@@ -103,18 +111,18 @@ public interface CAMELSubscriptionInfo {
 
 	public SMSCSI getMtSmsCsi();
 
-	public MTsmsCAMELTDPCriteriaList getMtSmsCamelTdpCriteriaList();
+	public ArrayList<MTsmsCAMELTDPCriteria> getMtSmsCamelTdpCriteriaList();
 
 	public MGCSI getMgCsi();
 
 	public OCSI geToImCsi();
 
-	public OBcsmCamelTDPCriteriaList getOImBcsmCamelTdpCriteriaList();
+	public ArrayList<OBcsmCamelTDPCriteria> getOImBcsmCamelTdpCriteriaList();
 
 	public DCSI getDImCsi();
 
 	public TCSI getVtImCsi();
 
-	public TBCSMCAMELTDPCriteriaList getVtImBcsmCamelTdpCriteriaList();
+	public ArrayList<TBCSMCAMELTDPCriteria> getVtImBcsmCamelTdpCriteriaList();
 
 }

@@ -20,30 +20,30 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.supplementary;
+package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ODBData;
 
-/**	
+/**
  * 
 
-SS-ForBS-Code ::= SEQUENCE {
-	ss-Code		SS-Code,
-	basicService	BasicServiceCode	OPTIONAL,
-	...,
-	longFTN-Supported	[4]	NULL		OPTIONAL }
-
+ModificationRequestFor-ODB-data ::= SEQUENCE {
+	odb-data		[0]	ODB-Data	OPTIONAL,
+	modifyNotificationToCSE	[1]	ModificationInstruction	OPTIONAL,
+	extensionContainer	[2]	ExtensionContainer	OPTIONAL,
+	...}
 
  * 
  * @author sergey vetyutnev
- *
+ * 
  */
-public interface SSForBSCode {
+public interface ModificationRequestForODBdata {
 
-	public SSCode getSsCode();
+	public ODBData getOdbData();
 
-	public BasicServiceCode getBasicService();  // -> BasicServiceCode -> subscriber management !!!!!
+	public ModificationInstruction getModifyNotificationToCSE();
 
-	public boolean getLongFtnSupported();
+	public MAPExtensionContainer getExtensionContainer();
 
 }

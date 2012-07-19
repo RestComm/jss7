@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
+import java.util.ArrayList;
+
 /**	
  * 
 
@@ -30,6 +32,8 @@ CallWaitingData ::= SEQUENCE {
 	notificationToCSE	[2] NULL		OPTIONAL,
 	... }
 
+Ext-CwFeatureList ::= SEQUENCE SIZE (1..32) OF Ext-CwFeature
+
 
  * 
  * @author sergey vetyutnev
@@ -37,7 +41,7 @@ CallWaitingData ::= SEQUENCE {
  */
 public interface CallWaitingData {
 
-	public ExtCwFeatureList getCwFeatureList();
+	public ArrayList<ExtCwFeature> getCwFeatureList();
 
 	public boolean getNotificationToCSE();
 

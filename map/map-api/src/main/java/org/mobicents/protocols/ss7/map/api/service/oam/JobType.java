@@ -20,30 +20,50 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.supplementary;
+package org.mobicents.protocols.ss7.map.api.service.oam;
 
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
-
-/**	
+/**
  * 
 
-SS-ForBS-Code ::= SEQUENCE {
-	ss-Code		SS-Code,
-	basicService	BasicServiceCode	OPTIONAL,
-	...,
-	longFTN-Supported	[4]	NULL		OPTIONAL }
-
+JobType ::= ENUMERATED {
+	immediate-MDT-only (0),
+	logged-MDT-only (1),
+	trace-only (2),
+	immediate-MDT-and-trace (3)}
 
  * 
  * @author sergey vetyutnev
- *
+ * 
  */
-public interface SSForBSCode {
+public enum JobType {
+	immediateMdtOnly(0), 
+	loggedMdtOnly(1), 
+	traceOnly(2), 
+	immediateMdtAndTrace(3);
 
-	public SSCode getSsCode();
+	private int code;
 
-	public BasicServiceCode getBasicService();  // -> BasicServiceCode -> subscriber management !!!!!
+	private JobType(int code) {
+		this.code = code;
+	}
 
-	public boolean getLongFtnSupported();
+	public int getCode() {
+		return this.code;
+	}
 
+	public static JobType getInstance(int code) {
+		switch (code) {
+		case 0:
+			return JobType.immediateMdtOnly;
+		case 1:
+			return JobType.loggedMdtOnly;
+		case 2:
+			return JobType.traceOnly;
+		case 3:
+			return JobType.immediateMdtAndTrace;
+		default:
+			return null;
+		}
+	}
 }
+

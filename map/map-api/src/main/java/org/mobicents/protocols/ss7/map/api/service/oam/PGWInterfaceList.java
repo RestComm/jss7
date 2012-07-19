@@ -20,30 +20,42 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.supplementary;
+package org.mobicents.protocols.ss7.map.api.service.oam;
 
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
-
-/**	
+/**
  * 
 
-SS-ForBS-Code ::= SEQUENCE {
-	ss-Code		SS-Code,
-	basicService	BasicServiceCode	OPTIONAL,
-	...,
-	longFTN-Supported	[4]	NULL		OPTIONAL }
-
+PGW-InterfaceList ::= BIT STRING {
+	s2a (0),
+	s2b (1),
+	s2c (2),
+	s5 (3),
+	s6b (4),
+	gx (5),
+	s8b (6),
+	sgi (7)} (SIZE (8..16))
+-- Other bits than listed above shall be discarded.
 
  * 
  * @author sergey vetyutnev
- *
+ * 
  */
-public interface SSForBSCode {
+public interface PGWInterfaceList {
 
-	public SSCode getSsCode();
+	public boolean getS2a();
 
-	public BasicServiceCode getBasicService();  // -> BasicServiceCode -> subscriber management !!!!!
+	public boolean getS2b();
 
-	public boolean getLongFtnSupported();
+	public boolean getS2c();
+
+	public boolean getS5();
+
+	public boolean getS6b();
+
+	public boolean getGx();
+
+	public boolean getS8b();
+
+	public boolean getSgi();
 
 }

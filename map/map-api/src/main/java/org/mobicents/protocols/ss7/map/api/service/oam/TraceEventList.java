@@ -20,30 +20,42 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.supplementary;
+package org.mobicents.protocols.ss7.map.api.service.oam;
 
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
-
-/**	
+/**
  * 
 
-SS-ForBS-Code ::= SEQUENCE {
-	ss-Code		SS-Code,
-	basicService	BasicServiceCode	OPTIONAL,
+TraceEventList ::= SEQUENCE {
+	msc-s-List	[0] MSC-S-EventList	OPTIONAL,
+	mgw-List		[1] MGW-EventList	OPTIONAL,
+	sgsn-List		[2] SGSN-EventList	OPTIONAL,
+	ggsn-List		[3] GGSN-EventList	OPTIONAL,
+	bmsc-List		[4] BMSC-EventList	OPTIONAL,
 	...,
-	longFTN-Supported	[4]	NULL		OPTIONAL }
-
+	mme-List		[5] MME-EventList	OPTIONAL,
+	sgw-List		[6] SGW-EventList	OPTIONAL,
+	pgw-List		[7] PGW-EventList	OPTIONAL}
 
  * 
  * @author sergey vetyutnev
- *
+ * 
  */
-public interface SSForBSCode {
+public interface TraceEventList {
 
-	public SSCode getSsCode();
+	public MSCSEventList getMscSList();
 
-	public BasicServiceCode getBasicService();  // -> BasicServiceCode -> subscriber management !!!!!
+	public MGWEventList getMgwList();
 
-	public boolean getLongFtnSupported();
+	public SGSNEventList getSgsnList();
+
+	public GGSNEventList getGgsnList();
+
+	public BMSCEventList getBmscList();
+
+	public MMEEventList getMmeList();
+
+	public SGWEventList getSgwList();
+
+	public PGWEventList getPgwList();
 
 }

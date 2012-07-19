@@ -20,30 +20,48 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.supplementary;
+package org.mobicents.protocols.ss7.map.api.service.oam;
 
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
-
-/**	
+/**
  * 
 
-SS-ForBS-Code ::= SEQUENCE {
-	ss-Code		SS-Code,
-	basicService	BasicServiceCode	OPTIONAL,
+TraceInterfaceList ::= SEQUENCE {
+	msc-s-List	[0] MSC-S-InterfaceList	OPTIONAL,
+	mgw-List		[1] MGW-InterfaceList	OPTIONAL,
+	sgsn-List		[2] SGSN-InterfaceList	OPTIONAL,
+	ggsn-List		[3] GGSN-InterfaceList	OPTIONAL,
+	rnc-List		[4] RNC-InterfaceList	OPTIONAL,
+	bmsc-List		[5] BMSC-InterfaceList	OPTIONAL,
 	...,
-	longFTN-Supported	[4]	NULL		OPTIONAL }
-
+	mme-List		[6] MME-InterfaceList	OPTIONAL,
+	sgw-List		[7] SGW-InterfaceList	OPTIONAL,
+	pgw-List		[8] PGW-InterfaceList	OPTIONAL,
+	eNB-List		[9] ENB-InterfaceList	OPTIONAL}
 
  * 
  * @author sergey vetyutnev
- *
+ * 
  */
-public interface SSForBSCode {
+public interface TraceInterfaceList {
 
-	public SSCode getSsCode();
+	public MSCSInterfaceList getMscSList();
 
-	public BasicServiceCode getBasicService();  // -> BasicServiceCode -> subscriber management !!!!!
+	public MGWInterfaceList getMgwList();
 
-	public boolean getLongFtnSupported();
+	public SGSNInterfaceList getSgsnList();
+
+	public GGSNInterfaceList getGgsnList();
+
+	public RNCInterfaceList getRncList();
+
+	public BMSCInterfaceList getBmscList();
+
+	public MMEInterfaceList getMmeList();
+
+	public SGWInterfaceList getSgwList();
+
+	public PGWInterfaceList getPgwList();
+
+	public ENBInterfaceList getEnbList();
 
 }

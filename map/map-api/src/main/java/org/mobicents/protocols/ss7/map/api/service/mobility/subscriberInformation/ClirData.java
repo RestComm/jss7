@@ -23,7 +23,7 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtSSStatus;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.OverrideCategory;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.CliRestrictionOption;
 
 /**	
  * 

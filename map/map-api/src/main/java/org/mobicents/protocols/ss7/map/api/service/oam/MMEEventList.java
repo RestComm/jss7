@@ -20,30 +20,36 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.supplementary;
+package org.mobicents.protocols.ss7.map.api.service.oam;
 
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
-
-/**	
+/**
  * 
 
-SS-ForBS-Code ::= SEQUENCE {
-	ss-Code		SS-Code,
-	basicService	BasicServiceCode	OPTIONAL,
-	...,
-	longFTN-Supported	[4]	NULL		OPTIONAL }
-
+MME-EventList ::= BIT STRING {
+	ue-initiatedPDNconectivityRequest (0),
+	serviceRequestts (1),
+	initialAttachTrackingAreaUpdateDetach (2),
+	ue-initiatedPDNdisconnection (3),
+	bearerActivationModificationDeletion (4),
+	handover (5)} (SIZE (6..8))
+-- Other bits than listed above shall be discarded.
 
  * 
  * @author sergey vetyutnev
- *
+ * 
  */
-public interface SSForBSCode {
+public interface MMEEventList {
 
-	public SSCode getSsCode();
+	public boolean getUeInitiatedPDNconectivityRequest();
 
-	public BasicServiceCode getBasicService();  // -> BasicServiceCode -> subscriber management !!!!!
+	public boolean getServiceRequestts();
 
-	public boolean getLongFtnSupported();
+	public boolean getInitialAttachTrackingAreaUpdateDetach();
+
+	public boolean getUeInitiatedPDNdisconnection();
+
+	public boolean getBearerActivationModificationDeletion();
+
+	public boolean getHandover();
 
 }

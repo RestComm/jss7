@@ -22,39 +22,44 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
-import java.util.ArrayList;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtCallBarringFeature;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtSSStatus;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.Password;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
 
-/**	
+/**
  * 
 
-CallBarringData ::= SEQUENCE {
-	callBarringFeatureList	Ext-CallBarFeatureList,
-	password		Password		OPTIONAL,
-	wrongPasswordAttemptsCounter	WrongPasswordAttemptsCounter	OPTIONAL,
-	notificationToCSE	NULL			OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
+ModificationRequestFor-CB-Info ::= SEQUENCE {
+	ss-Code		[0]	SS-Code,
+	basicService	[1]	Ext-BasicServiceCode	OPTIONAL,
+	ss-Status		[2]	Ext-SS-Status	OPTIONAL,
+	password		[3]	Password	OPTIONAL,
+	wrongPasswordAttemptsCounter	[4]	WrongPasswordAttemptsCounter	OPTIONAL,
+	modifyNotificationToCSE	[5]	ModificationInstruction	OPTIONAL,
+	extensionContainer	[6]	ExtensionContainer	OPTIONAL,
 	...}
-
-Ext-CallBarFeatureList ::= SEQUENCE SIZE (1..32) OF Ext-CallBarringFeature
-
+	
 WrongPasswordAttemptsCounter ::= INTEGER (0..4)
 
  * 
  * @author sergey vetyutnev
- *
+ * 
  */
-public interface CallBarringData {
+public interface ModificationRequestForCBInfo {
 
-	public ArrayList<ExtCallBarringFeature> getCallBarringFeatureList();
+	public SSCode getSsCode();
+
+	public ExtBasicServiceCode getBasicService();
+
+	public ExtSSStatus getSsStatus();
 
 	public Password getPassword();
 
 	public Integer getWrongPasswordAttemptsCounter();
 
-	public boolean getNotificationToCSE();
+	public ModificationInstruction getModifyNotificationToCSE();
 
 	public MAPExtensionContainer getExtensionContainer();
 

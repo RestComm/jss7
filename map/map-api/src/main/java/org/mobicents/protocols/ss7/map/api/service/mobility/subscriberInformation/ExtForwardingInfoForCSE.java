@@ -20,30 +20,37 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.supplementary;
+package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
+import java.util.ArrayList;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtForwFeature;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
 
 /**	
  * 
 
-SS-ForBS-Code ::= SEQUENCE {
-	ss-Code		SS-Code,
-	basicService	BasicServiceCode	OPTIONAL,
-	...,
-	longFTN-Supported	[4]	NULL		OPTIONAL }
+Ext-ForwardingInfoFor-CSE ::= SEQUENCE {
+	ss-Code		[0]	SS-Code,
+	forwardingFeatureList	[1]	Ext-ForwFeatureList,
+	notificationToCSE	[2]	NULL		OPTIONAL,
+	extensionContainer	[3]	ExtensionContainer	OPTIONAL,
+	...}
 
+Ext-ForwFeatureList ::= SEQUENCE SIZE (1..32) OF Ext-ForwFeature
 
  * 
  * @author sergey vetyutnev
  *
  */
-public interface SSForBSCode {
+public interface ExtForwardingInfoForCSE {
 
 	public SSCode getSsCode();
 
-	public BasicServiceCode getBasicService();  // -> BasicServiceCode -> subscriber management !!!!!
+	public ArrayList<ExtForwFeature> getForwardingFeatureList();
 
-	public boolean getLongFtnSupported();
+	public boolean getNotificationToCSE();
+
+	public MAPExtensionContainer getExtensionContainer();
 
 }

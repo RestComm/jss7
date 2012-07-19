@@ -20,30 +20,33 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.supplementary;
+package org.mobicents.protocols.ss7.map.api.service.oam;
 
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
-
-/**	
+/**
  * 
 
-SS-ForBS-Code ::= SEQUENCE {
-	ss-Code		SS-Code,
-	basicService	BasicServiceCode	OPTIONAL,
-	...,
-	longFTN-Supported	[4]	NULL		OPTIONAL }
-
+MME-InterfaceList ::= BIT STRING {
+	s1-mme (0),
+	s3 (1),
+	s6a (2),
+	s10 (3),
+	s11 (4)} (SIZE (5..8))
+-- Other bits than listed above shall be discarded.
 
  * 
  * @author sergey vetyutnev
- *
+ * 
  */
-public interface SSForBSCode {
+public interface MMEInterfaceList {
 
-	public SSCode getSsCode();
+	public boolean getS1Mme();
 
-	public BasicServiceCode getBasicService();  // -> BasicServiceCode -> subscriber management !!!!!
+	public boolean getS3();
 
-	public boolean getLongFtnSupported();
+	public boolean getS6a();
+
+	public boolean getS10();
+
+	public boolean getS11();
 
 }

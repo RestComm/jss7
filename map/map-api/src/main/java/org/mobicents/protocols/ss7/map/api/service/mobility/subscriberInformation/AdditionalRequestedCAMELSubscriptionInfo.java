@@ -22,40 +22,54 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
-import java.util.ArrayList;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtCallBarringFeature;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.Password;
-
-/**	
+/**
  * 
 
-CallBarringData ::= SEQUENCE {
-	callBarringFeatureList	Ext-CallBarFeatureList,
-	password		Password		OPTIONAL,
-	wrongPasswordAttemptsCounter	WrongPasswordAttemptsCounter	OPTIONAL,
-	notificationToCSE	NULL			OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
+AdditionalRequestedCAMEL-SubscriptionInfo ::= ENUMERATED {
+	mt-sms-CSI	(0),
+	mg-csi		(1),
+	o-IM-CSI 		(2),
+	d-IM-CSI		(3),
+	vt-IM-CSI	 	(4),
 	...}
-
-Ext-CallBarFeatureList ::= SEQUENCE SIZE (1..32) OF Ext-CallBarringFeature
-
-WrongPasswordAttemptsCounter ::= INTEGER (0..4)
+--	exception handling: unknown values shall be discarded by the receiver.
 
  * 
  * @author sergey vetyutnev
- *
+ * 
  */
-public interface CallBarringData {
+public enum AdditionalRequestedCAMELSubscriptionInfo {
+	mtSmsCSI(0), 
+	mgCsi(1), 
+	oImCSI(2), 
+	dImCSI(3), 
+	vtImCSI(4);
 
-	public ArrayList<ExtCallBarringFeature> getCallBarringFeatureList();
+	private int code;
 
-	public Password getPassword();
+	private AdditionalRequestedCAMELSubscriptionInfo(int code) {
+		this.code = code;
+	}
 
-	public Integer getWrongPasswordAttemptsCounter();
+	public int getCode() {
+		return this.code;
+	}
 
-	public boolean getNotificationToCSE();
-
-	public MAPExtensionContainer getExtensionContainer();
-
+	public static AdditionalRequestedCAMELSubscriptionInfo getInstance(int code) {
+		switch (code) {
+		case 0:
+			return AdditionalRequestedCAMELSubscriptionInfo.mtSmsCSI;
+		case 1:
+			return AdditionalRequestedCAMELSubscriptionInfo.mgCsi;
+		case 2:
+			return AdditionalRequestedCAMELSubscriptionInfo.oImCSI;
+		case 3:
+			return AdditionalRequestedCAMELSubscriptionInfo.dImCSI;
+		case 4:
+			return AdditionalRequestedCAMELSubscriptionInfo.vtImCSI;
+		default:
+			return null;
+		}
+	}
 }
+

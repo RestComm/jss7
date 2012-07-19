@@ -22,40 +22,51 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
-import java.util.ArrayList;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtCallBarringFeature;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.Password;
+import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**	
  * 
 
-CallBarringData ::= SEQUENCE {
-	callBarringFeatureList	Ext-CallBarFeatureList,
-	password		Password		OPTIONAL,
-	wrongPasswordAttemptsCounter	WrongPasswordAttemptsCounter	OPTIONAL,
-	notificationToCSE	NULL			OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...}
-
-Ext-CallBarFeatureList ::= SEQUENCE SIZE (1..32) OF Ext-CallBarringFeature
-
-WrongPasswordAttemptsCounter ::= INTEGER (0..4)
+AnyTimeModificationRes ::= SEQUENCE {
+	ss-InfoFor-CSE	[0]	Ext-SS-InfoFor-CSE	OPTIONAL,
+	camel-SubscriptionInfo	[1]	CAMEL-SubscriptionInfo	OPTIONAL,
+	extensionContainer	[2]	ExtensionContainer	OPTIONAL,
+	...,
+	odb-Info		[3]	ODB-Info	OPTIONAL,
+	cw-Data		[4]	CallWaitingData	OPTIONAL,
+	ch-Data		[5]	CallHoldData	OPTIONAL,
+	clip-Data 	[6] ClipData	OPTIONAL,
+	clir-Data		[7]	ClirData	OPTIONAL,
+	ect-data		[8] EctData	OPTIONAL,
+	serviceCentreAddress	[9] AddressString	OPTIONAL
+ }
 
  * 
  * @author sergey vetyutnev
  *
  */
-public interface CallBarringData {
+public interface AnyTimeModificationResponse extends MobilityMessage {
 
-	public ArrayList<ExtCallBarringFeature> getCallBarringFeatureList();
+	public ExtSSInfoForCSE getSsInfoForCSE();
 
-	public Password getPassword();
-
-	public Integer getWrongPasswordAttemptsCounter();
-
-	public boolean getNotificationToCSE();
+	public CAMELSubscriptionInfo getCamelSubscriptionInfo();
 
 	public MAPExtensionContainer getExtensionContainer();
+
+	public ODBInfo getOdbInfo();
+
+	public CallWaitingData getCwData();
+
+	public CallHoldData getChData();
+
+	public ClipData getClipData();
+
+	public ClirData getClirData();
+
+	public EctData getEctData();
+
+	public AddressString getServiceCentreAddress();
 
 }

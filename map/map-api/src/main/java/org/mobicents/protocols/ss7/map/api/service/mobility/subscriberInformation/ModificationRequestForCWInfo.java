@@ -20,30 +20,34 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.supplementary;
+package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtSSStatus;
 
-/**	
+/**
  * 
 
-SS-ForBS-Code ::= SEQUENCE {
-	ss-Code		SS-Code,
-	basicService	BasicServiceCode	OPTIONAL,
-	...,
-	longFTN-Supported	[4]	NULL		OPTIONAL }
-
+ModificationRequestFor-CW-Info ::= SEQUENCE {
+	basicService	[0]	Ext-BasicServiceCode	OPTIONAL,
+	ss-Status		[1]	Ext-SS-Status	OPTIONAL,
+	modifyNotificationToCSE	[2]	ModificationInstruction	OPTIONAL,
+	extensionContainer	[3]	ExtensionContainer	OPTIONAL,
+	...}
 
  * 
  * @author sergey vetyutnev
- *
+ * 
  */
-public interface SSForBSCode {
+public interface ModificationRequestForCWInfo {
 
-	public SSCode getSsCode();
+	public ExtBasicServiceCode getBasicService();
 
-	public BasicServiceCode getBasicService();  // -> BasicServiceCode -> subscriber management !!!!!
+	public ExtSSStatus getSsStatus();
 
-	public boolean getLongFtnSupported();
+	public ModificationInstruction getModifyNotificationToCSE();
+
+	public MAPExtensionContainer getExtensionContainer();
 
 }

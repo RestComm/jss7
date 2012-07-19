@@ -22,40 +22,37 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
-import java.util.ArrayList;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtCallBarringFeature;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.Password;
 
-/**	
+/**
  * 
 
-CallBarringData ::= SEQUENCE {
-	callBarringFeatureList	Ext-CallBarFeatureList,
-	password		Password		OPTIONAL,
-	wrongPasswordAttemptsCounter	WrongPasswordAttemptsCounter	OPTIONAL,
-	notificationToCSE	NULL			OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...}
-
-Ext-CallBarFeatureList ::= SEQUENCE SIZE (1..32) OF Ext-CallBarringFeature
-
-WrongPasswordAttemptsCounter ::= INTEGER (0..4)
+ModificationRequestFor-CSI ::= SEQUENCE {
+	requestedCamel-SubscriptionInfo	[0]	RequestedCAMEL-SubscriptionInfo,
+	modifyNotificationToCSE	[1]	ModificationInstruction	OPTIONAL,
+	modifyCSI-State	[2]	ModificationInstruction	OPTIONAL,
+	extensionContainer	[3]	ExtensionContainer	OPTIONAL,
+	...,
+	additionalRequestedCAMEL-SubscriptionInfo
+				[4] AdditionalRequestedCAMEL-SubscriptionInfo
+							OPTIONAL }
+-- requestedCamel-SubscriptionInfo shall be discarded if
+-- additionalRequestedCAMEL-SubscriptionInfo is received
 
  * 
  * @author sergey vetyutnev
- *
+ * 
  */
-public interface CallBarringData {
+public interface ModificationRequestForCSI {
 
-	public ArrayList<ExtCallBarringFeature> getCallBarringFeatureList();
+	public RequestedCAMELSubscriptionInfo getRequestedCamelSubscriptionInfo();
 
-	public Password getPassword();
+	public ModificationInstruction getModifyNotificationToCSE();
 
-	public Integer getWrongPasswordAttemptsCounter();
-
-	public boolean getNotificationToCSE();
+	public ModificationInstruction getModifyCSIState();
 
 	public MAPExtensionContainer getExtensionContainer();
+
+	public AdditionalRequestedCAMELSubscriptionInfo getAdditionalRequestedCamelSubscriptionInfo();
 
 }

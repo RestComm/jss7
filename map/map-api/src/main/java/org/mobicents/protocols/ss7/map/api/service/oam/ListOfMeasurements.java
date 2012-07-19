@@ -20,30 +20,20 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.supplementary;
+package org.mobicents.protocols.ss7.map.api.service.oam;
 
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
-
-/**	
+/**
  * 
 
-SS-ForBS-Code ::= SEQUENCE {
-	ss-Code		SS-Code,
-	basicService	BasicServiceCode	OPTIONAL,
-	...,
-	longFTN-Supported	[4]	NULL		OPTIONAL }
-
+ListOfMeasurements ::= OCTET STRING (SIZE (4))
+	-- Octets are coded as described in 3GPP TS 32.422.
 
  * 
  * @author sergey vetyutnev
- *
+ * 
  */
-public interface SSForBSCode {
+public interface ListOfMeasurements {
 
-	public SSCode getSsCode();
-
-	public BasicServiceCode getBasicService();  // -> BasicServiceCode -> subscriber management !!!!!
-
-	public boolean getLongFtnSupported();
+	public byte[] getData();
 
 }

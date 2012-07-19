@@ -20,30 +20,56 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.supplementary;
+package org.mobicents.protocols.ss7.map.api.service.oam;
 
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**	
  * 
 
-SS-ForBS-Code ::= SEQUENCE {
-	ss-Code		SS-Code,
-	basicService	BasicServiceCode	OPTIONAL,
-	...,
-	longFTN-Supported	[4]	NULL		OPTIONAL }
+activateTraceMode  OPERATION ::= {				--Timer m
+	ARGUMENT
+		ActivateTraceModeArg
+	RESULT
+		ActivateTraceModeRes
+		-- optional
+	ERRORS {
+		systemFailure |
+		dataMissing |
+		unexpectedDataValue |
+		facilityNotSupported |
+		unidentifiedSubscriber |
+		tracingBufferFull}
+	CODE	local:50 }
 
+MAP V3:
+DeactivateTraceModeArg ::= SEQUENCE {
+	imsi			[0] IMSI		OPTIONAL,
+	traceReference	[1] TraceReference,
+	extensionContainer	[2] ExtensionContainer	OPTIONAL,
+	...,
+	traceReference2	[3] TraceReference2	OPTIONAL
+	}
+
+MAP V2:
+DeactivateTraceModeArg ::= SEQUENCE {
+	imsi[0] 			IMSI	OPTIONAL,
+	traceReference[1] 	TraceReference,
+...}
 
  * 
  * @author sergey vetyutnev
  *
  */
-public interface SSForBSCode {
+public interface DeactivateTraceModeRequest extends OamMessage {
 
-	public SSCode getSsCode();
+	public IMSI getImsi();
 
-	public BasicServiceCode getBasicService();  // -> BasicServiceCode -> subscriber management !!!!!
+	public TraceReference getTraceReference();
 
-	public boolean getLongFtnSupported();
+	public MAPExtensionContainer getExtensionContainer();
+
+	public TraceReference2 getTraceReference2();
 
 }

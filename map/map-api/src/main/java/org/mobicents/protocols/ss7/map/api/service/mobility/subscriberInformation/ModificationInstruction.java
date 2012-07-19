@@ -20,30 +20,41 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.supplementary;
+package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
-
-/**	
+/**
  * 
 
-SS-ForBS-Code ::= SEQUENCE {
-	ss-Code		SS-Code,
-	basicService	BasicServiceCode	OPTIONAL,
-	...,
-	longFTN-Supported	[4]	NULL		OPTIONAL }
-
+ModificationInstruction ::= ENUMERATED {
+	deactivate	(0),
+	activate		(1)}
 
  * 
  * @author sergey vetyutnev
- *
+ * 
  */
-public interface SSForBSCode {
+public enum ModificationInstruction {
+	deactivate(0), 
+	activate(1);
 
-	public SSCode getSsCode();
+	private int code;
 
-	public BasicServiceCode getBasicService();  // -> BasicServiceCode -> subscriber management !!!!!
+	private ModificationInstruction(int code) {
+		this.code = code;
+	}
 
-	public boolean getLongFtnSupported();
+	public int getCode() {
+		return this.code;
+	}
 
+	public static ModificationInstruction getInstance(int code) {
+		switch (code) {
+		case 0:
+			return ModificationInstruction.deactivate;
+		case 1:
+			return ModificationInstruction.activate;
+		default:
+			return null;
+		}
+	}
 }

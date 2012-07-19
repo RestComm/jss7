@@ -20,41 +20,56 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
+package org.mobicents.protocols.ss7.map.api.service.oam;
 
-import java.util.ArrayList;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtCallBarringFeature;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.Password;
 
-/**	
+/**
  * 
 
-CallBarringData ::= SEQUENCE {
-	callBarringFeatureList	Ext-CallBarFeatureList,
-	password		Password		OPTIONAL,
-	wrongPasswordAttemptsCounter	WrongPasswordAttemptsCounter	OPTIONAL,
-	notificationToCSE	NULL			OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...}
+MDT-Configuration ::= SEQUENCE {
+	jobType		JobType,
+	areaScope		AreaScope		OPTIONAL,
+	listOfMeasurements	ListOfMeasurements	OPTIONAL,
+	reportingTrigger	[0] ReportingTrigger	OPTIONAL,
+	reportInterval	ReportInterval	OPTIONAL,
+	reportAmount	[1] ReportAmount	OPTIONAL,
+	eventThresholdRSRP	EventThresholdRSRP	OPTIONAL,
+	eventThresholdRSRQ	[2] EventThresholdRSRQ	OPTIONAL,
+	loggingInterval	[3] LoggingInterval	OPTIONAL,
+	loggingDuration	[4] LoggingDuration	OPTIONAL,
+	extensionContainer	[5] ExtensionContainer	OPTIONAL,
+	... }
 
-Ext-CallBarFeatureList ::= SEQUENCE SIZE (1..32) OF Ext-CallBarringFeature
+EventThresholdRSRP ::= INTEGER	(0..97)
+EventThresholdRSRQ ::= INTEGER	(0..34)
 
-WrongPasswordAttemptsCounter ::= INTEGER (0..4)
 
  * 
  * @author sergey vetyutnev
- *
+ * 
  */
-public interface CallBarringData {
+public interface MDTConfiguration {
 
-	public ArrayList<ExtCallBarringFeature> getCallBarringFeatureList();
+	public JobType getJobType();
 
-	public Password getPassword();
+	public AreaScope getAreaScope();
 
-	public Integer getWrongPasswordAttemptsCounter();
+	public ListOfMeasurements getListOfMeasurements();
 
-	public boolean getNotificationToCSE();
+	public ReportingTrigger getReportingTrigger();
+
+	public ReportInterval getReportInterval();
+
+	public ReportAmount getReportAmount();
+
+	public Integer getEventThresholdRSRP();
+
+	public Integer getEventThresholdRSRQ();
+
+	public LoggingInterval getLoggingInterval();
+
+	public LoggingDuration getLoggingDuration();
 
 	public MAPExtensionContainer getExtensionContainer();
 

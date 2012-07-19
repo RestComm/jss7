@@ -22,7 +22,9 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
+import java.util.ArrayList;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtForwFeature;
 
 /**	
  * 
@@ -33,6 +35,8 @@ CallForwardingData ::= SEQUENCE {
 	extensionContainer	[0] ExtensionContainer	OPTIONAL,
 	...}
 
+Ext-ForwFeatureList ::= SEQUENCE SIZE (1..32) OF Ext-ForwFeature
+
 
  * 
  * @author sergey vetyutnev
@@ -40,7 +44,7 @@ CallForwardingData ::= SEQUENCE {
  */
 public interface CallForwardingData {
 
-	public ExtForwFeatureList getForwardingFeatureList();
+	public ArrayList<ExtForwFeature> getForwardingFeatureList();
 
 	public MAPExtensionContainer getNotificationToCSE();
 
