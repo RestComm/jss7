@@ -21,25 +21,48 @@
  */
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGInterlock;
 
-/*
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+
+/**
  * 
- * CUG-CheckInfo ::= SEQUENCE {
- * cug-Interlock CUG-Interlock,
- * cug-OutgoingAccess NULL OPTIONAL,
- * extensionContainer ExtensionContainer OPTIONAL,
- * ...}
- */ 
- 
-/*
+
+setReportingState  OPERATION ::= {				--Timer m
+	ARGUMENT
+		SetReportingStateArg
+	RESULT
+		SetReportingStateRes
+		-- optional
+	ERRORS {
+		systemFailure |
+		unidentifiedSubscriber |
+		unexpectedDataValue |
+		dataMissing |
+		resourceLimitation |
+		facilityNotSupported}
+	CODE	local:73 }
+
+SetReportingStateArg ::= SEQUENCE {
+	imsi			[0]	IMSI		OPTIONAL,
+	lmsi			[1]	LMSI		OPTIONAL,
+	ccbs-Monitoring	[2]	ReportingState	OPTIONAL,
+	extensionContainer	[3]	ExtensionContainer	OPTIONAL,
+	...}
+
  * 
- * @author cristian veliscu
+ * @author sergey vetyutnev
  * 
  */
-public interface CUGCheckInfo {
-	public CUGInterlock getCUGInterlock();
-	public boolean getCUGOutgoingAccess();
-	public MAPExtensionContainer getMAPExtensionContainer();
+public interface SetReportingStateRequest {
+
+	public IMSI getImsi();
+
+	public LMSI getLmsi();
+
+	public ReportingState getCcbsMonitoring();
+
+	public MAPExtensionContainer getExtensionContainer();
+
 }

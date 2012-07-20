@@ -20,26 +20,48 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.callhandling;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGInterlock;
+package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
-/*
+/**
  * 
- * CUG-CheckInfo ::= SEQUENCE {
- * cug-Interlock CUG-Interlock,
- * cug-OutgoingAccess NULL OPTIONAL,
- * extensionContainer ExtensionContainer OPTIONAL,
- * ...}
- */ 
- 
-/*
+
+GuidanceInfo ::= ENUMERATED {
+	enterPW  (0),
+	enterNewPW  (1),
+	enterNewPW-Again  (2)}
+	-- How this information is really delivered to the subscriber
+	-- (display, announcement, ...) is not part of this
+	-- specification.
+
  * 
- * @author cristian veliscu
+ * @author sergey vetyutnev
  * 
  */
-public interface CUGCheckInfo {
-	public CUGInterlock getCUGInterlock();
-	public boolean getCUGOutgoingAccess();
-	public MAPExtensionContainer getMAPExtensionContainer();
+public enum GuidanceInfo {
+	enterPW(0), 
+	enterNewPW(1), 
+	enterNewPWAgain(2);
+
+	private int code;
+
+	private GuidanceInfo(int code) {
+		this.code = code;
+	}
+
+	public int getCode() {
+		return this.code;
+	}
+
+	public static GuidanceInfo getInstance(int code) {
+		switch (code) {
+		case 0:
+			return GuidanceInfo.enterPW;
+		case 1:
+			return GuidanceInfo.enterNewPW;
+		case 2:
+			return GuidanceInfo.enterNewPWAgain;
+		default:
+			return null;
+		}
+	}
 }

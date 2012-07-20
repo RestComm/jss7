@@ -21,25 +21,40 @@
  */
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGInterlock;
 
-/*
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.AdditionalInfo;
+
+/**
  * 
- * CUG-CheckInfo ::= SEQUENCE {
- * cug-Interlock CUG-Interlock,
- * cug-OutgoingAccess NULL OPTIONAL,
- * extensionContainer ExtensionContainer OPTIONAL,
- * ...}
- */ 
- 
-/*
+
+sendGroupCallEndSignal  OPERATION ::= {				--Timer l
+	ARGUMENT
+		SendGroupCallEndSignalArg
+	RESULT
+		SendGroupCallEndSignalRes
+	CODE	local:40 }
+
+SendGroupCallEndSignalArg ::= SEQUENCE {
+	imsi			IMSI			OPTIONAL,
+	extensionContainer	ExtensionContainer	OPTIONAL,
+	...,
+	talkerPriority	[0]TalkerPriority	OPTIONAL,
+	additionalInfo	[1]AdditionalInfo	OPTIONAL }
+
  * 
- * @author cristian veliscu
+ * @author sergey vetyutnev
  * 
  */
-public interface CUGCheckInfo {
-	public CUGInterlock getCUGInterlock();
-	public boolean getCUGOutgoingAccess();
-	public MAPExtensionContainer getMAPExtensionContainer();
+public interface SendGroupCallEndSignalRequest extends CallHandlingMessage {
+
+	public IMSI getImsi();
+
+	public MAPExtensionContainer getExtensionContainer();
+
+	public TalkerPriority getTalkerPriority();
+
+	public AdditionalInfo getAdditionalInfo();
+
 }

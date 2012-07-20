@@ -21,25 +21,45 @@
  */
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGInterlock;
 
-/*
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+
+/**
  * 
- * CUG-CheckInfo ::= SEQUENCE {
- * cug-Interlock CUG-Interlock,
- * cug-OutgoingAccess NULL OPTIONAL,
- * extensionContainer ExtensionContainer OPTIONAL,
- * ...}
- */ 
- 
-/*
+
+statusReport  OPERATION ::= {				--Timer m
+	ARGUMENT
+		StatusReportArg
+	RESULT
+		StatusReportRes
+		-- optional
+	ERRORS {
+		unknownSubscriber |
+		systemFailure |
+		unexpectedDataValue |
+		dataMissing}
+	CODE	local:74 }
+
+StatusReportArg ::= SEQUENCE{
+	imsi 		[0]	IMSI,
+	eventReportData	[1]	EventReportData	OPTIONAL,
+	callReportdata	[2]	CallReportData	OPTIONAL,
+	extensionContainer	[3]	ExtensionContainer	OPTIONAL,
+	...}
+
  * 
- * @author cristian veliscu
+ * @author sergey vetyutnev
  * 
  */
-public interface CUGCheckInfo {
-	public CUGInterlock getCUGInterlock();
-	public boolean getCUGOutgoingAccess();
-	public MAPExtensionContainer getMAPExtensionContainer();
+public interface StatusReportRequest extends CallHandlingMessage {
+
+	public IMSI getImsi();
+
+	public EventReportData getEventReportData();
+
+	public CallReportData getCallReportData();
+
+	public MAPExtensionContainer getExtensionContainer();
+
 }

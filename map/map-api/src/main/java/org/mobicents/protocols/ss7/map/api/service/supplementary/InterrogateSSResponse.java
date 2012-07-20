@@ -20,26 +20,36 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.callhandling;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGInterlock;
+package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
-/*
+import java.util.ArrayList;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
+
+/**
  * 
- * CUG-CheckInfo ::= SEQUENCE {
- * cug-Interlock CUG-Interlock,
- * cug-OutgoingAccess NULL OPTIONAL,
- * extensionContainer ExtensionContainer OPTIONAL,
- * ...}
- */ 
- 
-/*
+
+InterrogateSS-Res ::= CHOICE {
+	ss-Status		[0] SS-Status,
+	basicServiceGroupList	[2] BasicServiceGroupList,
+	forwardingFeatureList	[3] ForwardingFeatureList,
+	genericServiceInfo	[4]	GenericServiceInfo }
+
+BasicServiceGroupList ::= SEQUENCE SIZE (1..13) OF BasicServiceCode
+
+ForwardingFeatureList ::= SEQUENCE SIZE (1..13) OF ForwardingFeature
+
  * 
- * @author cristian veliscu
+ * @author sergey vetyutnev
  * 
  */
-public interface CUGCheckInfo {
-	public CUGInterlock getCUGInterlock();
-	public boolean getCUGOutgoingAccess();
-	public MAPExtensionContainer getMAPExtensionContainer();
+public interface InterrogateSSResponse extends SupplementaryMessage {
+
+	public SSStatus getSsStatus();
+
+	public ArrayList<BasicServiceCode> getBasicServiceGroupList();
+
+	public ArrayList<ForwardingFeature> getForwardingFeatureList();
+
+	public GenericServiceInfo getGenericServiceInfo();
+
 }

@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
 
 
 
+
 /*
  *  ExternalSignalInfo ::= SEQUENCE {
  *  protocolId ProtocolId,
@@ -39,7 +40,11 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * 
  */
 public interface ExternalSignalInfo {
-	public byte[] getSignalInfo(); 
+
 	public ProtocolId getProtocolId();
+
+	public SignalInfo getSignalInfo();
+
 	public MAPExtensionContainer getExtensionContainer();
+
 }

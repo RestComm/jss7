@@ -21,25 +21,25 @@
  */
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGInterlock;
 
-/*
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+
+/**
  * 
- * CUG-CheckInfo ::= SEQUENCE {
- * cug-Interlock CUG-Interlock,
- * cug-OutgoingAccess NULL OPTIONAL,
- * extensionContainer ExtensionContainer OPTIONAL,
- * ...}
- */ 
- 
-/*
+
+RemoteUserFreeRes ::= SEQUENCE{
+	ruf-Outcome	[0]	RUF-Outcome,
+	extensionContainer	[1]	ExtensionContainer	OPTIONAL,
+	...}
+
  * 
- * @author cristian veliscu
+ * @author sergey vetyutnev
  * 
  */
-public interface CUGCheckInfo {
-	public CUGInterlock getCUGInterlock();
-	public boolean getCUGOutgoingAccess();
-	public MAPExtensionContainer getMAPExtensionContainer();
+public interface RemoteUserFreeResponse extends CallHandlingMessage {
+
+	public RUFOutcome getRufOutcome();
+
+	public MAPExtensionContainer getExtensionContainer();
+
 }

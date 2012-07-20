@@ -21,25 +21,32 @@
  */
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGInterlock;
 
-/*
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+
+/**
  * 
- * CUG-CheckInfo ::= SEQUENCE {
- * cug-Interlock CUG-Interlock,
- * cug-OutgoingAccess NULL OPTIONAL,
- * extensionContainer ExtensionContainer OPTIONAL,
- * ...}
- */ 
- 
-/*
+
+ProvideRoamingNumberRes ::= SEQUENCE {
+	roamingNumber	ISDN-AddressString,
+	extensionContainer	ExtensionContainer	OPTIONAL,
+	...,
+	releaseResourcesSupported	NULL			OPTIONAL,
+	vmsc-Address	ISDN-AddressString	OPTIONAL }
+
  * 
- * @author cristian veliscu
+ * @author sergey vetyutnev
  * 
  */
-public interface CUGCheckInfo {
-	public CUGInterlock getCUGInterlock();
-	public boolean getCUGOutgoingAccess();
-	public MAPExtensionContainer getMAPExtensionContainer();
+public interface ProvideRoamingNumberResponse extends CallHandlingMessage {
+
+	public ISDNAddressString getRoamingNumber();
+
+	public MAPExtensionContainer getExtensionContainer();
+
+	public boolean getReleaseResourcesSupported();
+
+	public ISDNAddressString getVmscAddress();
+
 }

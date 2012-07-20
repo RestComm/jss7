@@ -20,26 +20,35 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.callhandling;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGInterlock;
+package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
-/*
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
+
+/**
  * 
- * CUG-CheckInfo ::= SEQUENCE {
- * cug-Interlock CUG-Interlock,
- * cug-OutgoingAccess NULL OPTIONAL,
- * extensionContainer ExtensionContainer OPTIONAL,
- * ...}
- */ 
- 
-/*
+
+CCBS-Feature ::= SEQUENCE {
+	ccbs-Index	[0] CCBS-Index	OPTIONAL,
+	b-subscriberNumber	[1] ISDN-AddressString	OPTIONAL,
+	b-subscriberSubaddress	[2] ISDN-SubaddressString	OPTIONAL,
+	basicServiceGroup	[3] BasicServiceCode	OPTIONAL,
+	...}
+
+CCBS-Index  ::= INTEGER (1..5)
+
  * 
- * @author cristian veliscu
+ * @author sergey vetyutnev
  * 
  */
-public interface CUGCheckInfo {
-	public CUGInterlock getCUGInterlock();
-	public boolean getCUGOutgoingAccess();
-	public MAPExtensionContainer getMAPExtensionContainer();
+public interface CCBSFeature {
+
+	public Integer getCcbsIndex();
+
+	public ISDNAddressString getBSubscriberNumber();
+
+	public ISDNAddressString getBSubscriberSubaddress();
+
+	public BasicServiceCode getBasicServiceCode();
+
 }

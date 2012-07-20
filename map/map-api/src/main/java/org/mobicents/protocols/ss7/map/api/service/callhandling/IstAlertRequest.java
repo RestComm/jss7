@@ -21,25 +21,40 @@
  */
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGInterlock;
 
-/*
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+
+/**
  * 
- * CUG-CheckInfo ::= SEQUENCE {
- * cug-Interlock CUG-Interlock,
- * cug-OutgoingAccess NULL OPTIONAL,
- * extensionContainer ExtensionContainer OPTIONAL,
- * ...}
- */ 
- 
-/*
+
+ist-Alert  OPERATION ::= {				--Timer m
+	ARGUMENT
+		IST-AlertArg
+	RESULT
+		IST-AlertRes
+		-- optional
+	ERRORS {
+		unexpectedDataValue |
+		resourceLimitation |
+		unknownSubscriber |
+		systemFailure |
+		facilityNotSupported}
+	CODE	local:87 }
+
+IST-AlertArg ::= SEQUENCE{
+	imsi			[0]	IMSI,
+	extensionContainer	[1]	ExtensionContainer	OPTIONAL,
+	...}
+
  * 
- * @author cristian veliscu
+ * @author sergey vetyutnev
  * 
  */
-public interface CUGCheckInfo {
-	public CUGInterlock getCUGInterlock();
-	public boolean getCUGOutgoingAccess();
-	public MAPExtensionContainer getMAPExtensionContainer();
+public interface IstAlertRequest extends CallHandlingMessage {
+
+	public IMSI getImsi();
+
+	public MAPExtensionContainer getExtensionContainer();
+
 }

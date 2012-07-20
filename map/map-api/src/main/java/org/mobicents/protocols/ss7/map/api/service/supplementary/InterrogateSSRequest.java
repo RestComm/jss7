@@ -20,26 +20,33 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.callhandling;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGInterlock;
+package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
-/*
+/**
  * 
- * CUG-CheckInfo ::= SEQUENCE {
- * cug-Interlock CUG-Interlock,
- * cug-OutgoingAccess NULL OPTIONAL,
- * extensionContainer ExtensionContainer OPTIONAL,
- * ...}
- */ 
- 
-/*
+
+interrogateSS  OPERATION ::= {				--Timer m
+	ARGUMENT
+		SS-ForBS-Code
+	RESULT
+		InterrogateSS-Res
+	ERRORS {
+		systemFailure |
+		dataMissing |
+		unexpectedDataValue |
+		bearerServiceNotProvisioned |
+		teleserviceNotProvisioned |
+		callBarred |
+		illegalSS-Operation |
+		ss-NotAvailable}
+	CODE	local:14 }
+
  * 
- * @author cristian veliscu
+ * @author sergey vetyutnev
  * 
  */
-public interface CUGCheckInfo {
-	public CUGInterlock getCUGInterlock();
-	public boolean getCUGOutgoingAccess();
-	public MAPExtensionContainer getMAPExtensionContainer();
+public interface InterrogateSSRequest extends SupplementaryMessage {
+
+	public SSForBSCode getSsForBSCode();
+
 }

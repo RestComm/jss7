@@ -21,25 +21,33 @@
  */
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGInterlock;
 
-/*
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+
+/**
  * 
- * CUG-CheckInfo ::= SEQUENCE {
- * cug-Interlock CUG-Interlock,
- * cug-OutgoingAccess NULL OPTIONAL,
- * extensionContainer ExtensionContainer OPTIONAL,
- * ...}
- */ 
- 
-/*
+
+IST-AlertRes ::= SEQUENCE{
+	istAlertTimer	[0]	IST-AlertTimerValue 	OPTIONAL,
+	istInformationWithdraw	[1]	NULL		OPTIONAL,
+	callTerminationIndicator	[2]	CallTerminationIndicator	OPTIONAL,
+	extensionContainer	[3]	ExtensionContainer	OPTIONAL,
+	...}
+
+IST-AlertTimerValue ::= INTEGER (15..255)
+
  * 
- * @author cristian veliscu
+ * @author sergey vetyutnev
  * 
  */
-public interface CUGCheckInfo {
-	public CUGInterlock getCUGInterlock();
-	public boolean getCUGOutgoingAccess();
-	public MAPExtensionContainer getMAPExtensionContainer();
+public interface IstAlertResponse extends CallHandlingMessage {
+
+	public Integer getIstAlertTimer();
+
+	public boolean getIstInformationWithdraw();
+
+	public CallTerminationIndicator getCallTerminationIndicator();
+
+	public MAPExtensionContainer getExtensionContainer();
+
 }

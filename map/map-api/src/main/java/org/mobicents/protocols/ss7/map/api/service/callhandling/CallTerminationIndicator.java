@@ -21,25 +21,43 @@
  */
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGInterlock;
 
-/*
+/**
  * 
- * CUG-CheckInfo ::= SEQUENCE {
- * cug-Interlock CUG-Interlock,
- * cug-OutgoingAccess NULL OPTIONAL,
- * extensionContainer ExtensionContainer OPTIONAL,
- * ...}
- */ 
- 
-/*
+
+CallTerminationIndicator ::= ENUMERATED {
+	terminateCallActivityReferred	(0),
+	terminateAllCallActivities	(1),
+	...}
+	-- exception handling:
+	-- reception of values 2-10 shall be mapped to ' terminateCallActivityReferred ' 
+	-- reception of values > 10 shall be mapped to ' terminateAllCallActivities '
+
+	-- In MSCs not supporting linkage of all call activities, any value received shall
+	-- be interpreted as ' terminateCallActivityReferred '
+
  * 
- * @author cristian veliscu
+ * @author sergey vetyutnev
  * 
  */
-public interface CUGCheckInfo {
-	public CUGInterlock getCUGInterlock();
-	public boolean getCUGOutgoingAccess();
-	public MAPExtensionContainer getMAPExtensionContainer();
+public enum CallTerminationIndicator {
+	terminateCallActivityReferred(0), 
+	terminateAllCallActivities(1);
+
+	private int code;
+
+	private CallTerminationIndicator(int code) {
+		this.code = code;
+	}
+
+	public int getCode() {
+		return this.code;
+	}
+
+	public static CallTerminationIndicator getInstance(int code) {
+		if (code == 0 || code >= 2 && code <= 10)
+			return CallTerminationIndicator.terminateCallActivityReferred;
+		else
+			return CallTerminationIndicator.terminateAllCallActivities;
+	}
 }

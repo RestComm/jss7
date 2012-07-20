@@ -21,25 +21,40 @@
  */
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGInterlock;
 
-/*
+/**
  * 
- * CUG-CheckInfo ::= SEQUENCE {
- * cug-Interlock CUG-Interlock,
- * cug-OutgoingAccess NULL OPTIONAL,
- * extensionContainer ExtensionContainer OPTIONAL,
- * ...}
- */ 
- 
-/*
+
+ReportingState ::= ENUMERATED {
+	stopMonitoring	(0),
+	startMonitoring	(1),
+	...}
+	-- exception handling:
+	-- reception of values 2-10 shall be mapped to 'stopMonitoring' 
+	-- reception of values > 10 shall be mapped to 'startMonitoring'
+
  * 
- * @author cristian veliscu
+ * @author sergey vetyutnev
  * 
  */
-public interface CUGCheckInfo {
-	public CUGInterlock getCUGInterlock();
-	public boolean getCUGOutgoingAccess();
-	public MAPExtensionContainer getMAPExtensionContainer();
+public enum ReportingState {
+	stopMonitoring(0), 
+	startMonitoring(1);
+
+	private int code;
+
+	private ReportingState(int code) {
+		this.code = code;
+	}
+
+	public int getCode() {
+		return this.code;
+	}
+
+	public static ReportingState getInstance(int code) {
+		if (code == 0 || code >= 2 && code <= 10)
+			return ReportingState.stopMonitoring;
+		else
+			return ReportingState.startMonitoring;
+	}
 }

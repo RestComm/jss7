@@ -20,26 +20,45 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.callhandling;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGInterlock;
+package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
-/*
+import java.util.ArrayList;
+import org.mobicents.protocols.ss7.map.api.primitives.EMLPPPriority;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
+
+/**
  * 
- * CUG-CheckInfo ::= SEQUENCE {
- * cug-Interlock CUG-Interlock,
- * cug-OutgoingAccess NULL OPTIONAL,
- * extensionContainer ExtensionContainer OPTIONAL,
- * ...}
- */ 
- 
-/*
+
+SS-Data ::= SEQUENCE {
+	ss-Code		SS-Code		OPTIONAL,
+	ss-Status		[4] SS-Status	OPTIONAL,
+	ss-SubscriptionOption	SS-SubscriptionOption	OPTIONAL,
+	basicServiceGroupList	BasicServiceGroupList	OPTIONAL,
+	...,
+	defaultPriority	EMLPP-Priority	OPTIONAL,
+	nbrUser		[5] MC-Bearers	OPTIONAL
+	}
+
+BasicServiceGroupList ::= SEQUENCE SIZE (1..13) OF BasicServiceCode
+
+MC-Bearers ::= INTEGER (1..7)
+
  * 
- * @author cristian veliscu
+ * @author sergey vetyutnev
  * 
  */
-public interface CUGCheckInfo {
-	public CUGInterlock getCUGInterlock();
-	public boolean getCUGOutgoingAccess();
-	public MAPExtensionContainer getMAPExtensionContainer();
+public interface SSData {
+
+	public SSCode getCode();
+
+	public SSStatus getSsStatus();
+
+	public SSSubscriptionOption getSsSubscriptionOption();
+
+	public ArrayList<BasicServiceCode> getBasicServiceGroupList();
+
+	public EMLPPPriority getDefaultPriority();
+
+	public Integer getNbrUser();
+
 }

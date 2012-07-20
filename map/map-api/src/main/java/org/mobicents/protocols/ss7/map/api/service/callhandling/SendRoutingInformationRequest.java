@@ -32,7 +32,33 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.I
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ForwardingReason;
 
-/* MAP V2
+/* 
+ * 
+sendRoutingInfo  OPERATION ::= {				--Timer m
+-- The timer is set to the upper limit of the range if the GMSC supports pre-paging.
+	ARGUMENT
+		SendRoutingInfoArg
+	RESULT
+		SendRoutingInfoRes
+	ERRORS {
+		systemFailure |
+		dataMissing |
+		unexpectedDataValue |
+		facilityNotSupported |
+		or-NotAllowed |
+		unknownSubscriber |
+		numberChanged |
+		bearerServiceNotProvisioned |
+		teleserviceNotProvisioned |
+		absentSubscriber |
+		busySubscriber |
+		noSubscriberReply |
+		callBarred |
+		cug-Reject |
+		forwardingViolation}
+	CODE	local:22 }
+
+ * MAP V2
  * SendRoutingInfoArg ::= SEQUENCE {
  * msisdn [0] ISDN-AddressString,
  * cug-CheckInfo [1] CUG-CheckInfo OPTIONAL,
