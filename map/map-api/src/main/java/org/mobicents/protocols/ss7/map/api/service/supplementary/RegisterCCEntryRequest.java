@@ -20,34 +20,42 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
-
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
+package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
 /**
  * 
 
-MAP V3:
-PurgeMS-Res ::= SEQUENCE {
-	freezeTMSI	[0]	NULL		OPTIONAL,
-	freezeP-TMSI	[1]	NULL		OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...,
-	freezeM-TMSI	[2]	NULL		OPTIONAL }
+registerCC-Entry  OPERATION ::= {				--Timer m
+	ARGUMENT
+		RegisterCC-EntryArg
+	RESULT
+		RegisterCC-EntryRes
+	ERRORS {
+		systemFailure |
+		dataMissing |
+		unexpectedDataValue |
+		callBarred |
+		illegalSS-Operation |
+		ss-ErrorStatus |
+		ss-Incompatibility |
+		shortTermDenial |
+		longTermDenial |
+		facilityNotSupported}
+	CODE	local:76 }
+
+RegisterCC-EntryArg ::= SEQUENCE {
+	ss-Code		[0]	SS-Code,
+	ccbs-Data		[1]	CCBS-Data	OPTIONAL,
+	...}
 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface PurgeMSResponse extends MobilityMessage {
+public interface RegisterCCEntryRequest extends SupplementaryMessage {
 
-	public boolean getFreezeTMSI();
+	public SSCode getSsCode();
 
-	public boolean getFreezePTMSI();
-
-	public MAPExtensionContainer getExtensionContainer();
-
-	public boolean getFreezeMTMSI();
+	public CCBSData getCcbsData();
 
 }

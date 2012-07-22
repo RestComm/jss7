@@ -26,6 +26,7 @@ import java.util.ArrayList;
 
 import org.mobicents.protocols.ss7.map.api.primitives.ASCICallReference;
 import org.mobicents.protocols.ss7.map.api.primitives.AccessNetworkSignalInfo;
+import org.mobicents.protocols.ss7.map.api.primitives.ExternalSignalInfo;
 import org.mobicents.protocols.ss7.map.api.primitives.GlobalCellId;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
@@ -37,6 +38,35 @@ import org.mobicents.protocols.ss7.map.api.service.oam.TracePropagationList;
 /**
  * 
 
+MAP V2-3:
+
+MAP V3:
+prepareHandover  OPERATION ::= {				--Timer m
+	ARGUMENT
+		PrepareHO-Arg
+	RESULT
+		PrepareHO-Res
+	ERRORS {
+		systemFailure |
+		dataMissing |
+		unexpectedDataValue |
+		noHandoverNumberAvailable |
+		targetCellOutsideGroupCallArea }
+	CODE	local:68 }
+
+MAP V2:
+PrepareHandover ::= OPERATION --Timer m
+ARGUMENT
+	prepareHO-Arg PrepareHO-Arg
+RESULT
+	prepareHO-Res PrepareHO-Res
+ERRORS {
+	SystemFailure,
+	DataMissing,
+	UnexpectedDataValue,
+	NoHandoverNumberAvailable}
+
+MAP V3:
 PrepareHO-Arg ::= [3] SEQUENCE {
 	targetCellId	[0] GlobalCellId	OPTIONAL,
 	ho-NumberNotRequired	NULL			OPTIONAL, 
@@ -69,6 +99,13 @@ PrepareHO-Arg ::= [3] SEQUENCE {
 	regionalSubscriptionData	[27] ZoneCodeList	OPTIONAL,
 	globalCallReference	[28]	LCLS-GlobalCallReference	OPTIONAL,
 	lcls-Negotiation	[29]	LCLS-Negotiation	OPTIONAL	 }
+
+MAP V2:
+PrepareHO-Arg ::= SEQUENCE {
+	targetCellId 			GlobalCellId OPTIONAL,
+	ho-NumberNotRequired 	NULL OPTIONAL,
+	bss-APDU 				ExternalSignalInfo OPTIONAL,
+	...}
 
 RadioResourceList ::= SEQUENCE SIZE (1.. 7) OF RadioResource
 
@@ -143,4 +180,7 @@ public interface PrepareHandoverRequest extends MobilityMessage {
 
 	public LCLSNegotiation getLCLSNegotiation();
 
+	// this parameter is for MAP V2 only
+	public ExternalSignalInfo getBssAPDU();
+	
 }

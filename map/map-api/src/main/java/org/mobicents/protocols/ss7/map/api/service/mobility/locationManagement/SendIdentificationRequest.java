@@ -32,6 +32,30 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 /**
  * 
 
+MAP V2-3:
+
+MAP V3:
+sendIdentification  OPERATION ::= {				--Timer s
+	ARGUMENT
+		SendIdentificationArg
+	RESULT
+		SendIdentificationRes
+	ERRORS {
+		dataMissing |
+		unidentifiedSubscriber}
+	CODE	local:55 }
+
+MAP V2:
+SendIdentification::= OPERATION --Timer s
+ARGUMENT
+	tmsi TMSI
+RESULT
+	sendIdentificationRes SendIdentificationRes
+ERRORS {
+	DataMissing,
+	UnidentifiedSubscriber}
+
+
 MAP V3:
 SendIdentificationArg ::= SEQUENCE {
 	tmsi			TMSI,
@@ -48,9 +72,6 @@ SendIdentificationArg ::= SEQUENCE {
 	mtRoamingForwardingSupported	[2] NULL		OPTIONAL,
 	newVLR-Number	[3] ISDN-AddressString	OPTIONAL,
 	new-lmsi		[4] LMSI		OPTIONAL }
-
-MAP V2:
-tmsi	TMSI
 
 NumberOfRequestedVectors ::= INTEGER (1..5)
 HopCounter ::= INTEGER (0..3)

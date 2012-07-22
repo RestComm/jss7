@@ -20,34 +20,41 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
-
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
+package org.mobicents.protocols.ss7.map.api.service.sms;
 
 /**
  * 
 
-MAP V3:
-PurgeMS-Res ::= SEQUENCE {
-	freezeTMSI	[0]	NULL		OPTIONAL,
-	freezeP-TMSI	[1]	NULL		OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...,
-	freezeM-TMSI	[2]	NULL		OPTIONAL }
+AlertReason ::= ENUMERATED {
+	ms-Present  (0),
+	memoryAvailable  (1)}
 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface PurgeMSResponse extends MobilityMessage {
+public enum AlertReason {
+	msPresent(0), 
+	memoryAvailable(1);
 
-	public boolean getFreezeTMSI();
+	private int code;
 
-	public boolean getFreezePTMSI();
+	private AlertReason(int code) {
+		this.code = code;
+	}
 
-	public MAPExtensionContainer getExtensionContainer();
+	public int getCode() {
+		return this.code;
+	}
 
-	public boolean getFreezeMTMSI();
-
+	public static AlertReason getInstance(int code) {
+		switch (code) {
+		case 0:
+			return AlertReason.msPresent;
+		case 1:
+			return AlertReason.memoryAvailable;
+		default:
+			return null;
+		}
+	}
 }

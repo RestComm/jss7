@@ -20,34 +20,63 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
-
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
+package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
 /**
  * 
 
-MAP V3:
-PurgeMS-Res ::= SEQUENCE {
-	freezeTMSI	[0]	NULL		OPTIONAL,
-	freezeP-TMSI	[1]	NULL		OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...,
-	freezeM-TMSI	[2]	NULL		OPTIONAL }
+CCBS-RequestState ::= ENUMERATED {
+	request  	(0),
+	recall  	(1),
+	active  	(2),
+	completed	(3),
+	suspended	(4),
+	frozen	(5),
+	deleted	(6)
+	}
 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface PurgeMSResponse extends MobilityMessage {
+public enum CCBSRequestState {
+	request(0), 
+	recall(1), 
+	active(2), 
+	completed(3), 
+	suspended(4), 
+	frozen(5), 
+	deleted(6);
 
-	public boolean getFreezeTMSI();
+	private int code;
 
-	public boolean getFreezePTMSI();
+	private CCBSRequestState(int code) {
+		this.code = code;
+	}
 
-	public MAPExtensionContainer getExtensionContainer();
+	public int getCode() {
+		return this.code;
+	}
 
-	public boolean getFreezeMTMSI();
-
+	public static CCBSRequestState getInstance(int code) {
+		switch (code) {
+		case 0:
+			return CCBSRequestState.request;
+		case 1:
+			return CCBSRequestState.recall;
+		case 2:
+			return CCBSRequestState.active;
+		case 3:
+			return CCBSRequestState.completed;
+		case 4:
+			return CCBSRequestState.suspended;
+		case 5:
+			return CCBSRequestState.frozen;
+		case 6:
+			return CCBSRequestState.deleted;
+		default:
+			return null;
+		}
+	}
 }
+

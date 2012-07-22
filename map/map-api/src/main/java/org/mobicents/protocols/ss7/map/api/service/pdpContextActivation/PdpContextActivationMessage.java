@@ -20,34 +20,17 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
+package org.mobicents.protocols.ss7.map.api.service.pdpContextActivation;
 
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
+import org.mobicents.protocols.ss7.map.api.MAPMessage;
 
 /**
- * 
-
-MAP V3:
-PurgeMS-Res ::= SEQUENCE {
-	freezeTMSI	[0]	NULL		OPTIONAL,
-	freezeP-TMSI	[1]	NULL		OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...,
-	freezeM-TMSI	[2]	NULL		OPTIONAL }
-
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface PurgeMSResponse extends MobilityMessage {
+public interface PdpContextActivationMessage extends MAPMessage {
 
-	public boolean getFreezeTMSI();
-
-	public boolean getFreezePTMSI();
-
-	public MAPExtensionContainer getExtensionContainer();
-
-	public boolean getFreezeMTMSI();
+	public MAPDialogPdpContextActivation getMAPDialog();
 
 }

@@ -20,34 +20,48 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
+package org.mobicents.protocols.ss7.map.api.service.pdpContextActivation;
 
+import org.mobicents.protocols.ss7.map.api.primitives.GSNAddress;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
  * 
 
-MAP V3:
-PurgeMS-Res ::= SEQUENCE {
-	freezeTMSI	[0]	NULL		OPTIONAL,
-	freezeP-TMSI	[1]	NULL		OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...,
-	freezeM-TMSI	[2]	NULL		OPTIONAL }
+failureReport  OPERATION ::= {				--Timer m
+	ARGUMENT
+		FailureReportArg
+	RESULT
+		FailureReportRes
+			-- optional
+	ERRORS {
+		systemFailure |
+		dataMissing |
+		unexpectedDataValue |
+		unknownSubscriber}
+	CODE	local:25 }
+
+FailureReportArg ::= SEQUENCE {
+	imsi				[0] IMSI,
+	ggsn-Number		[1] ISDN-AddressString	,
+	ggsn-Address		[2] GSN-Address	OPTIONAL,
+	extensionContainer		[3] ExtensionContainer	OPTIONAL,
+	...}
 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface PurgeMSResponse extends MobilityMessage {
+public interface FailureReportRequest extends PdpContextActivationMessage {
 
-	public boolean getFreezeTMSI();
+	public IMSI getImsi();
 
-	public boolean getFreezePTMSI();
+	public ISDNAddressString getGgsnNumber();
+
+	public GSNAddress getGgsnAddress();
 
 	public MAPExtensionContainer getExtensionContainer();
-
-	public boolean getFreezeMTMSI();
 
 }

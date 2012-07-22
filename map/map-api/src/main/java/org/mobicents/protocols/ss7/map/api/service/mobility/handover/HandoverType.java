@@ -20,34 +20,41 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
-
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
+package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
 /**
  * 
 
-MAP V3:
-PurgeMS-Res ::= SEQUENCE {
-	freezeTMSI	[0]	NULL		OPTIONAL,
-	freezeP-TMSI	[1]	NULL		OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...,
-	freezeM-TMSI	[2]	NULL		OPTIONAL }
+HandoverType ::= ENUMERATED { 
+	interBSS (0), 
+	intraBSS (1)}
 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface PurgeMSResponse extends MobilityMessage {
+public enum HandoverType {
+	interBSS(0), 
+	intraBSS(1);
 
-	public boolean getFreezeTMSI();
+	private int code;
 
-	public boolean getFreezePTMSI();
+	private HandoverType(int code) {
+		this.code = code;
+	}
 
-	public MAPExtensionContainer getExtensionContainer();
+	public int getCode() {
+		return this.code;
+	}
 
-	public boolean getFreezeMTMSI();
-
+	public static HandoverType getInstance(int code) {
+		switch (code) {
+		case 0:
+			return HandoverType.interBSS;
+		case 1:
+			return HandoverType.intraBSS;
+		default:
+			return null;
+		}
+	}
 }

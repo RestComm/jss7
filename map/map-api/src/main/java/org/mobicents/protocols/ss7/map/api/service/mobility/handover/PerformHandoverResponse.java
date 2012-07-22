@@ -20,34 +20,28 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
+package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.ExternalSignalInfo;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
  * 
 
-MAP V3:
-PurgeMS-Res ::= SEQUENCE {
-	freezeTMSI	[0]	NULL		OPTIONAL,
-	freezeP-TMSI	[1]	NULL		OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...,
-	freezeM-TMSI	[2]	NULL		OPTIONAL }
+MAP V1:
+PerformHO-Res ::= SEQUENCE {
+	handoverNumber 		ISDN-AddressString,
+	accessSignalInfo 	ExternalSignalInfo}
 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface PurgeMSResponse extends MobilityMessage {
+public interface PerformHandoverResponse extends MobilityMessage {
 
-	public boolean getFreezeTMSI();
+	public ISDNAddressString getHandoverNumber();
 
-	public boolean getFreezePTMSI();
-
-	public MAPExtensionContainer getExtensionContainer();
-
-	public boolean getFreezeMTMSI();
+	public ExternalSignalInfo getAccessSignalInfo();
 
 }

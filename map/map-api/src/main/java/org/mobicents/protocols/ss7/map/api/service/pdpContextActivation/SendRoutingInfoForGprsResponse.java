@@ -20,34 +20,36 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
+package org.mobicents.protocols.ss7.map.api.service.pdpContextActivation;
 
+import org.mobicents.protocols.ss7.map.api.primitives.GSNAddress;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
  * 
 
-MAP V3:
-PurgeMS-Res ::= SEQUENCE {
-	freezeTMSI	[0]	NULL		OPTIONAL,
-	freezeP-TMSI	[1]	NULL		OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...,
-	freezeM-TMSI	[2]	NULL		OPTIONAL }
+SendRoutingInfoForGprsRes ::= SEQUENCE {
+	sgsn-Address		[0] GSN-Address,
+	ggsn-Address		[1]	GSN-Address	OPTIONAL,
+	mobileNotReachableReason		[2]	AbsentSubscriberDiagnosticSM		OPTIONAL,
+	extensionContainer		[3] ExtensionContainer	OPTIONAL,
+	...}
+
+AbsentSubscriberDiagnosticSM ::= INTEGER (0..255)
+	-- AbsentSubscriberDiagnosticSM values are defined in 3GPP TS 23.040
 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface PurgeMSResponse extends MobilityMessage {
+public interface SendRoutingInfoForGprsResponse extends PdpContextActivationMessage {
 
-	public boolean getFreezeTMSI();
+	public GSNAddress getSgsnAddress();
 
-	public boolean getFreezePTMSI();
+	public GSNAddress getGgsnAddress();
+
+	public Integer getMobileNotReachableReason();
 
 	public MAPExtensionContainer getExtensionContainer();
-
-	public boolean getFreezeMTMSI();
 
 }

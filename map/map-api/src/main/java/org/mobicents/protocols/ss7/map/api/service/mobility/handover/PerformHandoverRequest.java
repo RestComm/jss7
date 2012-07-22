@@ -20,34 +20,55 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
+package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.GlobalCellId;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
  * 
 
-MAP V3:
-PurgeMS-Res ::= SEQUENCE {
-	freezeTMSI	[0]	NULL		OPTIONAL,
-	freezeP-TMSI	[1]	NULL		OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...,
-	freezeM-TMSI	[2]	NULL		OPTIONAL }
+MAP V1:
+PerformHandover ::= OPERATION --Timer s
+ARGUMENT
+	performHO-Arg PerformHO-Arg
+RESULT
+	performHO-Res PerformHO-Res
+ERRORS {
+	SystemFailure, 
+	UnexpectedDataValue,
+	UnknownBaseStation, 
+	InvalidTargetBaseStation, 
+	NoRadioResourceAvailable, 
+	NoHandoverNumberAvailable}
+
+MAP V1:
+PerformHO-Arg ::= SEQUENCE { 146
+	targetCellId 		GlobalCellId, 
+	servingCellId 		GlobalCellId, 
+	channelType 		ChannelType, 
+	classmarkInfo 		ClassmarkInfo, 
+	handoverPriority 	[11] HandoverPriority OPTIONAL, 
+	kc 					[12] Kc OPTIONAL}
+
+Kc ::= octet STRING (SIZE (8))
 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface PurgeMSResponse extends MobilityMessage {
+public interface PerformHandoverRequest extends MobilityMessage {
 
-	public boolean getFreezeTMSI();
+	public GlobalCellId getTargetCellId();
 
-	public boolean getFreezePTMSI();
+	public GlobalCellId getServingCellId();
 
-	public MAPExtensionContainer getExtensionContainer();
+	public ChannelType getChannelType();
 
-	public boolean getFreezeMTMSI();
+	public ClassmarkInfo getClassmarkInfo();
+
+	public HandoverPriority getHandoverPriority();
+
+	public byte[] getKc();
 
 }

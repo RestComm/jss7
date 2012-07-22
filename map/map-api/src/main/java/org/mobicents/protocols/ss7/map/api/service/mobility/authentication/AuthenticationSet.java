@@ -20,34 +20,31 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
-
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
+package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
 
 /**
  * 
 
-MAP V3:
-PurgeMS-Res ::= SEQUENCE {
-	freezeTMSI	[0]	NULL		OPTIONAL,
-	freezeP-TMSI	[1]	NULL		OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...,
-	freezeM-TMSI	[2]	NULL		OPTIONAL }
+AuthenticationSet ::= SEQUENCE { 
+	rand RAND, 
+	sres SRES, 
+	kc Kc, 
+	...}
+
+RAND ::= octet STRING (SIZE (16))
+SRES ::= octet STRING (SIZE (4))
+Kc ::= octet STRING (SIZE (8))
 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface PurgeMSResponse extends MobilityMessage {
+public interface AuthenticationSet {
 
-	public boolean getFreezeTMSI();
+	public byte[] getRand();
 
-	public boolean getFreezePTMSI();
+	public byte[] getSres();
 
-	public MAPExtensionContainer getExtensionContainer();
-
-	public boolean getFreezeMTMSI();
+	public byte[] getKc();
 
 }

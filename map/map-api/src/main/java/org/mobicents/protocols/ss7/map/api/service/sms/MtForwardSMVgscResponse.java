@@ -20,34 +20,36 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
+package org.mobicents.protocols.ss7.map.api.service.sms;
 
+import java.util.ArrayList;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
  * 
 
-MAP V3:
-PurgeMS-Res ::= SEQUENCE {
-	freezeTMSI	[0]	NULL		OPTIONAL,
-	freezeP-TMSI	[1]	NULL		OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...,
-	freezeM-TMSI	[2]	NULL		OPTIONAL }
+MT-ForwardSM-VGCS-Res ::= SEQUENCE {
+	sm-RP-UI		[0] SignalInfo	OPTIONAL,
+	dispatcherList	[1] DispatcherList	OPTIONAL,
+	ongoingCall	NULL			OPTIONAL,
+	extensionContainer	[2] ExtensionContainer	OPTIONAL,
+	...}
+
+DispatcherList ::= SEQUENCE SIZE (1..5) OF ISDN-AddressString
 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface PurgeMSResponse extends MobilityMessage {
+public interface MtForwardSMVgscResponse extends SmsMessage {
 
-	public boolean getFreezeTMSI();
+	public SmsSignalInfo getSM_RP_UI();
 
-	public boolean getFreezePTMSI();
+	public ArrayList<ISDNAddressString> getDispatcherList();
+
+	public boolean getOngoingCall();
 
 	public MAPExtensionContainer getExtensionContainer();
-
-	public boolean getFreezeMTMSI();
 
 }

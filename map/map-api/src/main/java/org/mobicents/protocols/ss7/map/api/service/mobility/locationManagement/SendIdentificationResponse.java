@@ -31,6 +31,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.Curre
 /**
  * 
 
+MAP V3:
 SendIdentificationRes ::= [3] SEQUENCE {
 	imsi			IMSI			OPTIONAL,
 	-- IMSI shall be present in the first (or only) service response of a dialogue.
@@ -40,6 +41,13 @@ SendIdentificationRes ::= [3] SEQUENCE {
 	currentSecurityContext	[2]CurrentSecurityContext	OPTIONAL,
 	extensionContainer	[3] ExtensionContainer	OPTIONAL,
 	...}
+
+MAP V2:
+SendIdentificationRes ::= SEQUENCE {
+	imsi IMSI
+	authenticationSetList AuthenticationSetList OPTIONAL,
+	...}
+
 
  * 
  * @author sergey vetyutnev

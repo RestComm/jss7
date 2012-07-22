@@ -20,34 +20,40 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
-
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
+package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
 /**
  * 
 
-MAP V3:
-PurgeMS-Res ::= SEQUENCE {
-	freezeTMSI	[0]	NULL		OPTIONAL,
-	freezeP-TMSI	[1]	NULL		OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...,
-	freezeM-TMSI	[2]	NULL		OPTIONAL }
+eraseCC-Entry  OPERATION ::= {				--Timer m
+	ARGUMENT
+		EraseCC-EntryArg
+	RESULT
+		EraseCC-EntryRes
+	ERRORS {
+		systemFailure |
+		dataMissing |
+		unexpectedDataValue |
+		callBarred |
+		illegalSS-Operation |
+		ss-ErrorStatus}
+	CODE	local:77 }
+
+EraseCC-EntryArg ::= SEQUENCE {
+	ss-Code		[0]	SS-Code,
+	ccbs-Index	[1]	CCBS-Index	OPTIONAL,
+	...}
+
+CCBS-Index  ::= INTEGER (1..5)
 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface PurgeMSResponse extends MobilityMessage {
+public interface EraseCCEntryRequest extends SupplementaryMessage {
 
-	public boolean getFreezeTMSI();
+	public SSCode getSsEvent();
 
-	public boolean getFreezePTMSI();
-
-	public MAPExtensionContainer getExtensionContainer();
-
-	public boolean getFreezeMTMSI();
+	public Integer getCCBSIndex();
 
 }

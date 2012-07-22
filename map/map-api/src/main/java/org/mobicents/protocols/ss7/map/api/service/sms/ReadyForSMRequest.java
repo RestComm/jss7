@@ -20,34 +20,54 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
+package org.mobicents.protocols.ss7.map.api.service.sms;
 
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
  * 
 
-MAP V3:
-PurgeMS-Res ::= SEQUENCE {
-	freezeTMSI	[0]	NULL		OPTIONAL,
-	freezeP-TMSI	[1]	NULL		OPTIONAL,
+readyForSM  OPERATION ::= {				--Timer m
+	ARGUMENT
+		ReadyForSM-Arg
+	RESULT
+		ReadyForSM-Res
+		-- optional
+	ERRORS {
+		dataMissing |
+		unexpectedDataValue |
+		facilityNotSupported |
+		unknownSubscriber}
+	CODE	local:66 }
+
+ReadyForSM-Arg ::= SEQUENCE {
+	imsi			[0] IMSI,
+	alertReason	AlertReason,
+	alertReasonIndicator	NULL			OPTIONAL,
+	-- alertReasonIndicator is set only when the alertReason 
+	-- sent to HLR is for GPRS
 	extensionContainer	ExtensionContainer	OPTIONAL,
 	...,
-	freezeM-TMSI	[2]	NULL		OPTIONAL }
+	additionalAlertReasonIndicator	[1] NULL		OPTIONAL
+	-- additionalAlertReasonIndicator is set only when the alertReason
+	-- sent to HLR is for IP-SM-GW
+	}
 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface PurgeMSResponse extends MobilityMessage {
+public interface ReadyForSMRequest extends SmsMessage {
 
-	public boolean getFreezeTMSI();
+	public IMSI getImsi();
 
-	public boolean getFreezePTMSI();
+	public AlertReason getAlertReason();
+
+	public boolean getAlertReasonIndicator();
 
 	public MAPExtensionContainer getExtensionContainer();
 
-	public boolean getFreezeMTMSI();
+	public boolean getAdditionalAlertReasonIndicator();
 
 }

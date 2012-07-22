@@ -20,64 +20,66 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
+package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
+import java.util.ArrayList;
+
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
  * 
 
-MAP V2-3:
-
-MAP V3:
-purgeMS  OPERATION ::= {				--Timer m
+ss-InvocationNotification  OPERATION ::= {				--Timer m
 	ARGUMENT
-		PurgeMS-Arg
+		SS-InvocationNotificationArg
 	RESULT
-		PurgeMS-Res
-			-- optional
-	ERRORS{
+		SS-InvocationNotificationRes
+		-- optional
+	ERRORS {
 		dataMissing |
-		unexpectedDataValue|
+		unexpectedDataValue |
 		unknownSubscriber}
-	CODE	local:67 }
+	CODE	local:72 }
 
-MAP V2:
-PurgeMS ::= OPERATION --Timer m
-ARGUMENT
-	purgeMS-Arg PurgeMS-Arg
-RESULT
+SS-InvocationNotificationArg ::= SEQUENCE {
+	imsi			[0] IMSI,
+	msisdn		[1] ISDN-AddressString,
+	ss-Event		[2] SS-Code,
+	-- The following SS-Code values are allowed :
+	-- ect		SS-Code ::= '00110001'B
+	-- multiPTY	SS-Code ::= '01010001'B
+	-- cd		SS-Code ::= '00100100'B
+	-- ccbs		SS-Code ::= '01000100'B
+	ss-EventSpecification	[3] SS-EventSpecification	OPTIONAL,
+	extensionContainer	[4] ExtensionContainer	OPTIONAL,
+	...,
+	b-subscriberNumber	[5]	ISDN-AddressString	OPTIONAL,
+	ccbs-RequestState	[6]	CCBS-RequestState	OPTIONAL
+	}
 
-
-MAP V3:
-PurgeMS-Arg ::= [3] SEQUENCE {
-	imsi			IMSI,
-	vlr-Number	[0] ISDN-AddressString	OPTIONAL,
-	sgsn-Number	[1]	ISDN-AddressString	OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...}
-
-MAP V2:
-PurgeMS-Arg ::= SEQUENCE {
-	imsi		IMSI,
-	vlr-Number	ISDN-AddressString,
-	...}
+SS-EventSpecification ::= SEQUENCE SIZE (1..2) OF AddressString
 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface PurgeMSRequest extends MobilityMessage {
+public interface SSInvocationNotificationRequest extends SupplementaryMessage {
 
 	public IMSI getImsi();
 
-	public ISDNAddressString getVlrNumber();
+	public ISDNAddressString getMsisdn();
 
-	public ISDNAddressString getSgsnNumber();
+	public SSCode getSsEvent();
+
+	public ArrayList<AddressString> getSsEventSpecification();
 
 	public MAPExtensionContainer getExtensionContainer();
+
+	public ISDNAddressString getBSubscriberNumber();
+
+	public CCBSRequestState getCcbsRequestState();
 
 }

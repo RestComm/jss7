@@ -20,34 +20,49 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
-
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
+package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
 
 /**
  * 
 
-MAP V3:
-PurgeMS-Res ::= SEQUENCE {
-	freezeTMSI	[0]	NULL		OPTIONAL,
-	freezeP-TMSI	[1]	NULL		OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...,
-	freezeM-TMSI	[2]	NULL		OPTIONAL }
+RequestParameter ::= ENUMERATED { 
+	requestIMSI (0), 
+	requestAuthenticationSet (1), 
+	requestSubscriberData (2), 
+	requestKi (4)}
 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface PurgeMSResponse extends MobilityMessage {
+public enum RequestParameter {
+	requestIMSI(0), 
+	requestAuthenticationSet(1), 
+	requestSubscriberData(2), 
+	requestKi(4);
 
-	public boolean getFreezeTMSI();
+	private int code;
 
-	public boolean getFreezePTMSI();
+	private RequestParameter(int code) {
+		this.code = code;
+	}
 
-	public MAPExtensionContainer getExtensionContainer();
+	public int getCode() {
+		return this.code;
+	}
 
-	public boolean getFreezeMTMSI();
-
+	public static RequestParameter getInstance(int code) {
+		switch (code) {
+		case 0:
+			return RequestParameter.requestIMSI;
+		case 1:
+			return RequestParameter.requestAuthenticationSet;
+		case 2:
+			return RequestParameter.requestSubscriberData;
+		case 4:
+			return RequestParameter.requestKi;
+		default:
+			return null;
+		}
+	}
 }

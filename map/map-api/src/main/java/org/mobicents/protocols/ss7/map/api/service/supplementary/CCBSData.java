@@ -20,34 +20,36 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
+package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
+import org.mobicents.protocols.ss7.map.api.primitives.ExternalSignalInfo;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 
 /**
  * 
 
-MAP V3:
-PurgeMS-Res ::= SEQUENCE {
-	freezeTMSI	[0]	NULL		OPTIONAL,
-	freezeP-TMSI	[1]	NULL		OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...,
-	freezeM-TMSI	[2]	NULL		OPTIONAL }
+CCBS-Data ::= SEQUENCE {
+	ccbs-Feature	[0]	CCBS-Feature,
+	translatedB-Number	[1]	ISDN-AddressString,
+	serviceIndicator	[2]	ServiceIndicator	OPTIONAL,
+	callInfo		[3]	ExternalSignalInfo,
+	networkSignalInfo	[4]	ExternalSignalInfo,
+	...}
 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface PurgeMSResponse extends MobilityMessage {
+public interface CCBSData {
 
-	public boolean getFreezeTMSI();
+	public CCBSFeature getCcbsFeature();
 
-	public boolean getFreezePTMSI();
+	public ISDNAddressString getTranslatedBNumber();
 
-	public MAPExtensionContainer getExtensionContainer();
+	public ServiceIndicator getServiceIndicator();
 
-	public boolean getFreezeMTMSI();
+	public ExternalSignalInfo getCallInfo();
+
+	public ExternalSignalInfo getNetworkSignalInfo();
 
 }
