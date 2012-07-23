@@ -36,6 +36,8 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 
 /**
  * 
+ 
+MAP V1-2-3:
 
 MAP V3:
 provideRoamingNumber  OPERATION ::= {				--Timer m
@@ -57,9 +59,9 @@ provideRoamingNumber  OPERATION ::= {				--Timer m
 MAP V2:
 ProvideRoamingNumber ::= OPERATION--Timer m
 ARGUMENT
-	provideRoamingNumberArgProvideRoamingNumberArg
+	provideRoamingNumber	ArgProvideRoamingNumberArg
 RESULT
-	roamingNumberISDN-AddressString
+	roamingNumber			ISDN-AddressString
 ERRORS {
 	SystemFailure,
 	DataMissing,

@@ -30,11 +30,13 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 /**
  * 
 
+MAP V3:
+
 prepareGroupCall  OPERATION ::= {				--Timer m
 	ARGUMENT
 		PrepareGroupCallArg
 	RESULT
-	PrepareGroupCallRes
+		PrepareGroupCallRes
 	ERRORS {
 		systemFailure |
 		noGroupCallNumberAvailable |

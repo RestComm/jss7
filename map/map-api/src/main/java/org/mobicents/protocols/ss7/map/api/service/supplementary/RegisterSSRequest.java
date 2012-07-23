@@ -30,6 +30,8 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 /**
  * 
 
+MAP V2:
+
 registerSS  OPERATION ::= {				--Timer m
 	ARGUMENT
 		RegisterSS-Arg

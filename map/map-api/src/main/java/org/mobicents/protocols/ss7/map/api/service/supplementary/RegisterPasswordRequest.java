@@ -25,6 +25,8 @@ package org.mobicents.protocols.ss7.map.api.service.supplementary;
 /**
  * 
 
+MAP V2:
+
 registerPassword  OPERATION ::= {				--Timer ml
 	ARGUMENT
 		SS-Code
@@ -42,6 +44,9 @@ registerPassword  OPERATION ::= {				--Timer ml
 	LINKED {
 		getPassword}
 	CODE	local:17 }
+
+	RESULT
+		Password
 
  * 
  * @author sergey vetyutnev

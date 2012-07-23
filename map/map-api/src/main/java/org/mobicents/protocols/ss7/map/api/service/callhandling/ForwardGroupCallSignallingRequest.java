@@ -31,6 +31,8 @@ import org.mobicents.protocols.ss7.map.api.service.sms.SmsSignalInfo;
 /**
  * 
 
+MAP V3:
+
 forwardGroupCallSignalling  OPERATION ::= {				--Timer s
 	ARGUMENT
 		ForwardGroupCallSignallingArg

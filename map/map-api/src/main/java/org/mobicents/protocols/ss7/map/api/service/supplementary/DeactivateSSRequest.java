@@ -25,6 +25,8 @@ package org.mobicents.protocols.ss7.map.api.service.supplementary;
 /**
  * 
 
+MAP V2:
+
 deactivateSS  OPERATION ::= {				--Timer m
 	ARGUMENT
 		SS-ForBS-Code
@@ -44,6 +46,9 @@ deactivateSS  OPERATION ::= {				--Timer m
 		negativePW-Check |
 		numberOfPW-AttemptsViolation}
 	CODE	local:13 }
+
+	ARGUMENT
+		SS-ForBS-Code
 
  * 
  * @author sergey vetyutnev

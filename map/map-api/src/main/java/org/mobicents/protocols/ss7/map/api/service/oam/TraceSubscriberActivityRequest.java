@@ -20,40 +20,41 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.supplementary;
+package org.mobicents.protocols.ss7.map.api.service.oam;
 
-/**
+import org.mobicents.protocols.ss7.isup.message.parameter.CallReference;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+
+/**	
  * 
 
-MAP V2:
+MAP V1:
+TraceSubscriberActivity ::= OPERATION--Timer s
+ARGUMENT
+	traceSubscriberActivityArg	TraceSubscriberActivityArg
 
-eraseSS  OPERATION ::= {				--Timer m
-	ARGUMENT
-		SS-ForBS-Code
-	RESULT
-		SS-Info
-		-- optional
-	ERRORS {
-		systemFailure |
-		dataMissing |
-		unexpectedDataValue |
-		bearerServiceNotProvisioned |
-		teleserviceNotProvisioned |
-		callBarred |
-		illegalSS-Operation |
-		ss-ErrorStatus
-		}
-	CODE	local:11 }
-
-	ARGUMENT
-		SS-ForBS-Code
+TraceSubscriberActivityArg ::= SEQUENCE {
+	imsi				[0] IMSI	OPTIONAL,
+	traceReference		[1] TraceReference,
+	traceType			[2] TraceType,
+	omc-Id				[3] AddressString	OPTIONAL,
+	callReference		[4] CallReference	OPTIONAL}
 
  * 
  * @author sergey vetyutnev
- * 
+ *
  */
-public interface EraseSSRequest extends SupplementaryMessage {
+public interface TraceSubscriberActivityRequest extends OamMessage {
 
-	public SSForBSCode getSsForBSCode();
+	public IMSI getImsi();
+
+	public TraceReference getTraceReference();
+
+	public TraceType getTraceType();
+
+	public AddressString getOmcId();
+
+	public CallReference getCallReference();
 
 }

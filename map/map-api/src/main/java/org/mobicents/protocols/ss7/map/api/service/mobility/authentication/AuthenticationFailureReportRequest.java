@@ -30,6 +30,19 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 /**
  * 
 
+MAP V3:
+authenticationFailureReport  OPERATION ::= {			--Timer m
+	ARGUMENT
+		AuthenticationFailureReportArg
+	RESULT
+		AuthenticationFailureReportRes
+		-- optional
+	ERRORS {
+		systemFailure |
+		unexpectedDataValue |
+		unknownSubscriber}
+	CODE	local:15 }
+
 AuthenticationFailureReportArg ::= SEQUENCE {
 	imsi			IMSI,
 	failureCause	FailureCause,

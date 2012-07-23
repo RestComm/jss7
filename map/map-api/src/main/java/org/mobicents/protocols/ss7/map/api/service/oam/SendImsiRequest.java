@@ -20,40 +20,34 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.supplementary;
+package org.mobicents.protocols.ss7.map.api.service.oam;
 
-/**
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+
+/**	
  * 
-
+ 
 MAP V2:
-
-eraseSS  OPERATION ::= {				--Timer m
+sendIMSI  OPERATION ::= {				--Timer m
 	ARGUMENT
-		SS-ForBS-Code
+		ISDN-AddressString
 	RESULT
-		SS-Info
-		-- optional
+		IMSI
 	ERRORS {
-		systemFailure |
 		dataMissing |
 		unexpectedDataValue |
-		bearerServiceNotProvisioned |
-		teleserviceNotProvisioned |
-		callBarred |
-		illegalSS-Operation |
-		ss-ErrorStatus
-		}
-	CODE	local:11 }
+		unknownSubscriber}
+	CODE	local:58 }
 
 	ARGUMENT
-		SS-ForBS-Code
+		ISDN-AddressString
 
  * 
  * @author sergey vetyutnev
- * 
+ *
  */
-public interface EraseSSRequest extends SupplementaryMessage {
+public interface SendImsiRequest extends OamMessage {
 
-	public SSForBSCode getSsForBSCode();
+	public ISDNAddressString getMsisdn();
 
 }

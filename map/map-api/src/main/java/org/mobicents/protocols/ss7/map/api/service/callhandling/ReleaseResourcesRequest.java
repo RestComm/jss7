@@ -28,6 +28,8 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 /**
  * 
 
+MAP V3:
+
 releaseResources  OPERATION::= {				--Timer m
 	ARGUMENT
 		ReleaseResourcesArg

@@ -27,23 +27,27 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 
 
 /**
- * unstructuredSS-Request OPERATION ::= { --Timer ml
- *	ARGUMENT
- *		USSD-Arg
- *	RESULT
- *		USSD-Res
- *		-- optional
- *	ERRORS {
- *		systemFailure |
- *		dataMissing |
- *		unexpectedDataValue |
- *		absentSubscriber |
- *		illegalSubscriber |
- *		illegalEquipment |
- *		unknownAlphabet |
- *		ussd-Busy}
- *		CODE local:60 }
  * 
+ 
+MAP V2:
+
+ unstructuredSS-Request OPERATION ::= { --Timer ml
+	ARGUMENT
+		USSD-Arg
+	RESULT
+		USSD-Res
+		-- optional
+	ERRORS {
+		systemFailure |
+		dataMissing |
+		unexpectedDataValue |
+		absentSubscriber |
+		illegalSubscriber |
+		illegalEquipment |
+		unknownAlphabet |
+		ussd-Busy}
+		CODE local:60 }
+ 
  * This service is used between the HLR and the VLR and between the VLR and the
  * MSC when the invoking entity requires information from the mobile user, in
  * connection with unstructured supplementary service handling.

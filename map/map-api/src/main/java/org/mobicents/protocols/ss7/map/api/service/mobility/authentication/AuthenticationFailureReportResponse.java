@@ -28,6 +28,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 /**
  * 
 
+MAP V3:
 AuthenticationFailureReportRes ::= SEQUENCE {
 	extensionContainer	ExtensionContainer	OPTIONAL,
 	...}

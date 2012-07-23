@@ -35,6 +35,35 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.A
 /**
  * 
 
+MAP V1-2-3:
+
+MAP V3:
+insertSubscriberData  OPERATION ::= {				--Timer m
+	ARGUMENT
+		InsertSubscriberDataArg
+	RESULT
+		InsertSubscriberDataRes
+		-- optional
+	ERRORS {
+		dataMissing |
+		unexpectedDataValue |
+		unidentifiedSubscriber}
+	CODE	local:7 }
+
+
+MAP V2:
+InsertSubscriberData ::= OPERATION--Timer m
+ARGUMENT
+	insertSubscriberDataArg		InsertSubscriberDataArg
+RESULT
+	insertSubscriberDataRes		InsertSubscriberDataRes
+	-- optional
+	-- insertSubscriberDataRes must be absent in version 1
+ERRORS {
+	DataMissing,
+	UnexpectedDataValue,
+	UnidentifiedSubscriber}
+
 MAP V3:
 InsertSubscriberDataArg ::= SEQUENCE {
 	imsi			[0] IMSI		OPTIONAL,
@@ -72,8 +101,8 @@ InsertSubscriberDataArg ::= SEQUENCE {
 
 MAP V2:
 InsertSubscriberDataArg ::= SEQUENCE {
-imsi[0] 		IMSI	OPTIONAL,
-COMPONENTS OF	SubscriberData,
+	imsi[0] 		IMSI	OPTIONAL,
+	COMPONENTS OF	SubscriberData,
 ...}
 
 SubscriberData ::= SEQUENCE {

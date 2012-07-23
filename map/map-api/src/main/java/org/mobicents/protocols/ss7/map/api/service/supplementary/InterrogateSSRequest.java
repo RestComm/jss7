@@ -25,6 +25,8 @@ package org.mobicents.protocols.ss7.map.api.service.supplementary;
 /**
  * 
 
+MAP V2:
+
 interrogateSS  OPERATION ::= {				--Timer m
 	ARGUMENT
 		SS-ForBS-Code
@@ -40,6 +42,9 @@ interrogateSS  OPERATION ::= {				--Timer m
 		illegalSS-Operation |
 		ss-NotAvailable}
 	CODE	local:14 }
+
+ARGUMENT
+		SS-ForBS-Code
 
  * 
  * @author sergey vetyutnev

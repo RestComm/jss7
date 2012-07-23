@@ -29,7 +29,10 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**	
  * 
+ 
+MAP V1-2-3:
 
+MAP V3:
 activateTraceMode  OPERATION ::= {				--Timer m
 	ARGUMENT
 		ActivateTraceModeArg
@@ -44,6 +47,19 @@ activateTraceMode  OPERATION ::= {				--Timer m
 		unidentifiedSubscriber |
 		tracingBufferFull}
 	CODE	local:50 }
+
+MAP V2:
+ActivateTraceMode ::= OPERATION--Timer m
+ARGUMENT
+	activateTraceModeArg	ActivateTraceModeArg
+RESULT
+ERRORS {
+	SystemFailure,
+	DataMissing,
+	UnexpectedDataValue,
+	FacilityNotSupported,
+	UnidentifiedSubscriber,
+	TracingBufferFull}
 
 MAP V3:
 ActivateTraceModeArg ::= SEQUENCE {

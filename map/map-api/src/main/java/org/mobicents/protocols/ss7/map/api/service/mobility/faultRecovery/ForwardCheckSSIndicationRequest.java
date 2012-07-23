@@ -20,40 +20,22 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.supplementary;
+package org.mobicents.protocols.ss7.map.api.service.mobility.faultRecovery;
+
+import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
  * 
+ 
+MAP V1-2-3:
 
-MAP V2:
-
-eraseSS  OPERATION ::= {				--Timer m
-	ARGUMENT
-		SS-ForBS-Code
-	RESULT
-		SS-Info
-		-- optional
-	ERRORS {
-		systemFailure |
-		dataMissing |
-		unexpectedDataValue |
-		bearerServiceNotProvisioned |
-		teleserviceNotProvisioned |
-		callBarred |
-		illegalSS-Operation |
-		ss-ErrorStatus
-		}
-	CODE	local:11 }
-
-	ARGUMENT
-		SS-ForBS-Code
+forwardCheckSS-Indication  OPERATION ::= {			--Timer s
+	CODE	local:38 }
 
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface EraseSSRequest extends SupplementaryMessage {
-
-	public SSForBSCode getSsForBSCode();
+public interface ForwardCheckSSIndicationRequest extends MobilityMessage {
 
 }

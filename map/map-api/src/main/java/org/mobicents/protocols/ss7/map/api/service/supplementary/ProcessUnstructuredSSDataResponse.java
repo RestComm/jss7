@@ -22,38 +22,21 @@
 
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
-/**
+/**	
  * 
+ 
+RESULT
+	ss-UserData
+	-- optional
 
-MAP V2:
-
-eraseSS  OPERATION ::= {				--Timer m
-	ARGUMENT
-		SS-ForBS-Code
-	RESULT
-		SS-Info
-		-- optional
-	ERRORS {
-		systemFailure |
-		dataMissing |
-		unexpectedDataValue |
-		bearerServiceNotProvisioned |
-		teleserviceNotProvisioned |
-		callBarred |
-		illegalSS-Operation |
-		ss-ErrorStatus
-		}
-	CODE	local:11 }
-
-	ARGUMENT
-		SS-ForBS-Code
+SS-UserData ::= IA5String (SIZE (1.. 200))
 
  * 
  * @author sergey vetyutnev
- * 
+ *
  */
-public interface EraseSSRequest extends SupplementaryMessage {
+public interface ProcessUnstructuredSSDataResponse extends  SupplementaryMessage {
 
-	public SSForBSCode getSsForBSCode();
+	String getData();
 
 }

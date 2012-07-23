@@ -22,38 +22,31 @@
 
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
-/**
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+
+/**	
  * 
+ 
+MAP V1:
+BeginSubscriberActivity ::= OPERATION--Timer m
+ARGUMENT
+	beginSubscriberActivityArg	BeginSubscriberActivityArg
 
-MAP V2:
+BeginSubscriberActivityArg ::= SEQUENCE {
+	imsi						IMSI,
+	originatingEntityNumber		ISDN-AddressString
+}
 
-eraseSS  OPERATION ::= {				--Timer m
-	ARGUMENT
-		SS-ForBS-Code
-	RESULT
-		SS-Info
-		-- optional
-	ERRORS {
-		systemFailure |
-		dataMissing |
-		unexpectedDataValue |
-		bearerServiceNotProvisioned |
-		teleserviceNotProvisioned |
-		callBarred |
-		illegalSS-Operation |
-		ss-ErrorStatus
-		}
-	CODE	local:11 }
-
-	ARGUMENT
-		SS-ForBS-Code
 
  * 
  * @author sergey vetyutnev
- * 
+ *
  */
-public interface EraseSSRequest extends SupplementaryMessage {
+public interface BeginSubscriberActivityRequest extends  SupplementaryMessage {
 
-	public SSForBSCode getSsForBSCode();
+	public IMSI getImsi();
+
+	public ISDNAddressString getOriginatingEntityNumber();
 
 }

@@ -32,6 +32,8 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.CCBSFeature;
 /**
  * 
 
+MAP V3:
+
 remoteUserFree  OPERATION ::= {				--Timer ml
 	ARGUMENT
 		RemoteUserFreeArg

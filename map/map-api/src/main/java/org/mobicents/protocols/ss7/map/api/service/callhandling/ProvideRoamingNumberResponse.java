@@ -28,12 +28,17 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 /**
  * 
 
+MAP V3:
 ProvideRoamingNumberRes ::= SEQUENCE {
 	roamingNumber	ISDN-AddressString,
 	extensionContainer	ExtensionContainer	OPTIONAL,
 	...,
 	releaseResourcesSupported	NULL			OPTIONAL,
 	vmsc-Address	ISDN-AddressString	OPTIONAL }
+
+MAP V2:
+RESULT
+	roamingNumberISDN-AddressString
 
  * 
  * @author sergey vetyutnev

@@ -25,6 +25,13 @@ package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
 /**
  * 
+
+USSD-Res ::= SEQUENCE {
+		ussd-DataCodingScheme USSD-DataCodingScheme,
+		ussd-String USSD-String,
+		...}
+
+ * 
  * @author amit bhayani
  * 
  */
