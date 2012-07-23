@@ -32,6 +32,8 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 /**
  * 
 
+MAP V3:
+
 ss-InvocationNotification  OPERATION ::= {				--Timer m
 	ARGUMENT
 		SS-InvocationNotificationArg

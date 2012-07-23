@@ -25,6 +25,8 @@ package org.mobicents.protocols.ss7.map.api.service.supplementary;
 /**
  * 
 
+MAP V3:
+
 registerCC-Entry  OPERATION ::= {				--Timer m
 	ARGUMENT
 		RegisterCC-EntryArg

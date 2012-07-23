@@ -28,6 +28,9 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 /**
  * 
 
+MAP V2-3:
+
+MAP V3:
 readyForSM  OPERATION ::= {				--Timer m
 	ARGUMENT
 		ReadyForSM-Arg
@@ -41,6 +44,19 @@ readyForSM  OPERATION ::= {				--Timer m
 		unknownSubscriber}
 	CODE	local:66 }
 
+MAP V2:
+ReadyForSM ::= OPERATION --Timer m
+ARGUMENT
+	readyForSM-Arg ReadyForSM-Arg
+RESULT
+ERRORS {
+	DataMissing,
+	UnexpectedDataValue,
+	FacilityNotSupported,
+	UnknownSubscriber}
+
+
+MAP V3:
 ReadyForSM-Arg ::= SEQUENCE {
 	imsi			[0] IMSI,
 	alertReason	AlertReason,
@@ -53,6 +69,12 @@ ReadyForSM-Arg ::= SEQUENCE {
 	-- additionalAlertReasonIndicator is set only when the alertReason
 	-- sent to HLR is for IP-SM-GW
 	}
+
+MAP V2:
+ReadyForSM-Arg ::= SEQUENCE {
+	imsi 			[0] IMSI,
+	alertReason 	AlertReason,
+	...}
 
  * 
  * @author sergey vetyutnev

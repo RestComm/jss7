@@ -25,6 +25,8 @@ package org.mobicents.protocols.ss7.map.api.service.supplementary;
 /**
  * 
 
+MAP V3:
+
 eraseCC-Entry  OPERATION ::= {				--Timer m
 	ARGUMENT
 		EraseCC-EntryArg

@@ -57,7 +57,7 @@ public enum MAPApplicationContextName {
 	
 	// --- Subscriber management services
 	subscriberDataMngtContext(16),
-	
+
 	// --- Fault recovery services
 	resetContext(10),
 	// networkLocUpContext(1), doubled in Location management services
@@ -93,8 +93,8 @@ public enum MAPApplicationContextName {
 	ssInvocationNotificationContext(36),
 	callCompletionContext(8),
 
-	
-	// -- SMS
+
+	//-- short message service
 	shortMsgGatewayContext(20),
 	shortMsgMORelayContext(21),
 	shortMsgMTRelayContext(25),

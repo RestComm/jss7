@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
+import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+
 
 /**
  * 
@@ -37,5 +39,8 @@ USSD-Res ::= SEQUENCE {
  */
 public interface ProcessUnstructuredSSResponse extends SupplementaryMessage {
 
+	public byte getUSSDDataCodingScheme();
+
+	public USSDString getUSSDString();
 
 }

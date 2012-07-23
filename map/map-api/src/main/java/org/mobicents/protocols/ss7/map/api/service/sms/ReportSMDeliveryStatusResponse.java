@@ -27,10 +27,17 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
 *
-* ReportSM-DeliveryStatusRes ::= SEQUENCE {
-* 	storedMSISDN	ISDN-AddressString	OPTIONAL,
-* 	extensionContainer	ExtensionContainer	OPTIONAL,
-* 	...}
+
+MAP V3:
+ReportSM-DeliveryStatusRes ::= SEQUENCE {
+	storedMSISDN	ISDN-AddressString	OPTIONAL,
+	extensionContainer	ExtensionContainer	OPTIONAL,
+	...}
+
+MAP V2:
+RESULT
+	storedMSISDN ISDN-AddressString
+
 * 
 * 
 * 

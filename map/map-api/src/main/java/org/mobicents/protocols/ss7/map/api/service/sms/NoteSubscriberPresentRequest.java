@@ -22,22 +22,23 @@
 
 package org.mobicents.protocols.ss7.map.api.service.sms;
 
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 
 /**
- * 
+*
 
-MAP V3:
-ReadyForSM-Res ::= SEQUENCE {
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...}
+MAP V1:
+NoteSubscriberPresent ::= OPERATION --Timer s
+ARGUMENT
+	imsi IMSI
 
- * 
- * @author sergey vetyutnev
- * 
- */
-public interface ReadyForSMResponse extends SmsMessage {
+*
+* 
+* @author sergey vetyutnev
+* 
+*/
+public interface NoteSubscriberPresentRequest extends SmsMessage {
 
-	public MAPExtensionContainer getExtensionContainer();
+	public IMSI getIMSI();
 
 }

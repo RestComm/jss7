@@ -30,6 +30,8 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 /**
  * 
 
+MAP V3-4:
+
 sendRoutingInfoForGprs  OPERATION ::= {				--Timer m
 	ARGUMENT
 		SendRoutingInfoForGprsArg

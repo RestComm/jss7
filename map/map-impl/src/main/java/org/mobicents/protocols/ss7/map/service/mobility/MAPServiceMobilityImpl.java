@@ -180,7 +180,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 			return MAPApplicationContext.getInstance(MAPApplicationContextName.networkLocUpContext, MAPApplicationContextVersion.version1);
 			
 		// -- Authentication management services
-		case MAPOperationCode.SendParameters:
+		case MAPOperationCode.sendParameters:
 			return MAPApplicationContext.getInstance(MAPApplicationContextName.infoRetrievalContext, MAPApplicationContextVersion.version1);
 		
 		// -- International mobile equipment identities management services

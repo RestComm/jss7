@@ -23,11 +23,14 @@ package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
 
 /**
- * @author amit bhayani
+ * 
+
+RETURN RESULT TRUE
+
  *
+ * @author amit bhayani
+ * 
  */
 public interface UnstructuredSSNotifyResponse extends SupplementaryMessage {
-	
-	public MAPDialogSupplementary getMAPDialog();
 
 }
