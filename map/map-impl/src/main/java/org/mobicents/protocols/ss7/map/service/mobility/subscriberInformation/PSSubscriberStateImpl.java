@@ -36,7 +36,6 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.PSSubscriberState;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.PSSubscriberStateChoice;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
-import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.PDPContextInfoImpl;
 
 /**
  * @author amit bhayani

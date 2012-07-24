@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
+package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GPRSChargingID;
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;

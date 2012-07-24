@@ -31,7 +31,6 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.NotReachableReason;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.PDPContextInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.PSSubscriberStateChoice;
-import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.PDPContextInfoImpl;
 import org.testng.annotations.Test;
 
 /**
