@@ -33,6 +33,7 @@ import org.mobicents.protocols.ss7.map.api.MAPMessageType;
 import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.map.api.primitives.GSNAddress;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
@@ -41,11 +42,13 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AreaEventInfo;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientID;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSCodeword;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSPriority;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSPrivacyCheck;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSQoS;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LocationType;
 import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationRequest;
 import org.mobicents.protocols.ss7.map.api.service.lsm.SupportedGADShapes;
+import org.mobicents.protocols.ss7.map.primitives.GSNAddressImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMEIImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
@@ -83,7 +86,7 @@ public class ProvideSubscriberLocationRequestImpl extends LsmMessageImpl impleme
 	private ISDNAddressString msisdn;
 	private LMSI lmsi = null;
 	private IMEI imei = null;
-	private Integer lcsPriority = 1;
+	private LCSPriority lcsPriority;
 	private LCSQoS lcsQoS = null;
 	private MAPExtensionContainer extensionContainer = null;
 	private SupportedGADShapes supportedGADShapes = null;
@@ -92,7 +95,7 @@ public class ProvideSubscriberLocationRequestImpl extends LsmMessageImpl impleme
 	private LCSCodeword lcsCodeword = null;
 	private LCSPrivacyCheck lcsPrivacyCheck = null;
 	private AreaEventInfo areaEventInfo = null;
-	private byte[] hgmlcAddress = null;
+	private GSNAddress hgmlcAddress = null;
 
 	/**
 	 * 
@@ -122,9 +125,9 @@ public class ProvideSubscriberLocationRequestImpl extends LsmMessageImpl impleme
 	 * @param hgmlcAddress
 	 */
 	public ProvideSubscriberLocationRequestImpl(LocationType locationType, ISDNAddressString mlcNumber, LCSClientID lcsClientID,
-			Boolean privacyOverride, IMSI imsi, ISDNAddressString msisdn, LMSI lmsi, IMEI imei, Integer lcsPriority, LCSQoS lcsQoS,
+			Boolean privacyOverride, IMSI imsi, ISDNAddressString msisdn, LMSI lmsi, IMEI imei, LCSPriority lcsPriority, LCSQoS lcsQoS,
 			MAPExtensionContainer extensionContainer, SupportedGADShapes supportedGADShapes, Byte lcsReferenceNumber, Integer lcsServiceTypeID,
-			LCSCodeword lcsCodeword, LCSPrivacyCheck lcsPrivacyCheck, AreaEventInfo areaEventInfo, byte[] hgmlcAddress) {
+			LCSCodeword lcsCodeword, LCSPrivacyCheck lcsPrivacyCheck, AreaEventInfo areaEventInfo, GSNAddress hgmlcAddress) {
 		super();
 		this.locationType = locationType;
 		this.mlcNumber = mlcNumber;
@@ -230,7 +233,7 @@ public class ProvideSubscriberLocationRequestImpl extends LsmMessageImpl impleme
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.
 	 * ProvideSubscriberLocationRequestIndication#getLCSPriority()
 	 */
-	public Integer getLCSPriority() {
+	public LCSPriority getLCSPriority() {
 		return this.lcsPriority;
 	}
 
@@ -330,7 +333,7 @@ public class ProvideSubscriberLocationRequestImpl extends LsmMessageImpl impleme
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.
 	 * ProvideSubscriberLocationRequestIndication#getHGMLCAddress()
 	 */
-	public byte[] getHGMLCAddress() {
+	public GSNAddress getHGMLCAddress() {
 		return this.hgmlcAddress;
 	}
 
@@ -506,7 +509,7 @@ public class ProvideSubscriberLocationRequestImpl extends LsmMessageImpl impleme
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 				int length1 = ais.readLength();
-				this.lcsPriority = (int) ais.readOctetStringData(length1)[0];
+				this.lcsPriority = LCSPriority.getInstance((int) ais.readOctetStringData(length1)[0]);
 
 				break;
 			case _TAG_LCS_QOS:
@@ -591,8 +594,8 @@ public class ProvideSubscriberLocationRequestImpl extends LsmMessageImpl impleme
 							"Error while decoding ProvideSubscriberLocationRequestIndication: Parameter [h-gmlc-Address [15] GSN-Address] bad tag class or not primitive or not Sequence",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
-				length1 = ais.readLength();
-				this.hgmlcAddress = ais.readOctetStringData(length1);
+				this.hgmlcAddress = new GSNAddressImpl();
+				((GSNAddressImpl)this.hgmlcAddress).decodeAll(ais);
 				break;
 			default:
 				// Do we care?
@@ -690,7 +693,7 @@ public class ProvideSubscriberLocationRequestImpl extends LsmMessageImpl impleme
 		if (this.lcsPriority != null) {
 			// lcs-Priority [6] LCS-Priority OPTIONAL,
 			try {
-				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LCS_PRIORITY, new byte[] { this.lcsPriority.byteValue() });
+				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LCS_PRIORITY, new byte[] { (byte)this.lcsPriority.getCode() });
 			} catch (IOException e) {
 				throw new MAPException("IOException while encoding parameter lcsPriority", e);
 			} catch (AsnException e) {
@@ -751,13 +754,7 @@ public class ProvideSubscriberLocationRequestImpl extends LsmMessageImpl impleme
 		}
 
 		if (this.hgmlcAddress != null) {
-			try {
-				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_H_GMLC_ADDRESS, this.hgmlcAddress);
-			} catch (IOException e) {
-				throw new MAPException("IOException while encoding parameter hgmlcAddress", e);
-			} catch (AsnException e) {
-				throw new MAPException("AsnException while encoding parameter hgmlcAddress", e);
-			}
+			((GSNAddressImpl)this.hgmlcAddress).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_H_GMLC_ADDRESS);
 		}
 	}
 

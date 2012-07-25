@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import org.mobicents.protocols.ss7.map.api.primitives.GSNAddress;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
@@ -106,7 +107,7 @@ public interface ProvideSubscriberLocationRequest extends LsmMessage {
      *		-- all other values treated as 1
 	 * @return
 	 */
-	public Integer getLCSPriority();
+	public LCSPriority getLCSPriority();
 	
 	public LCSQoS getLCSQoS();	
 	
@@ -160,5 +161,5 @@ public interface ProvideSubscriberLocationRequest extends LsmMessage {
      *     
 	 * @return
 	 */
-	public byte[] getHGMLCAddress();
+	public GSNAddress getHGMLCAddress();
 }

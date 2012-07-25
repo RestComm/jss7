@@ -119,7 +119,7 @@ public interface ProvideSubscriberLocationResponse extends LsmMessage {
 	 * 
 	 * @return
 	 */
-	public byte[] getLocationEstimate();
+	public ExtGeographicalInformation getLocationEstimate();
 	
 	/**
 	 * PositioningDataInformation ::= OCTET STRING (SIZE (2..maxPositioningDataInformation))
@@ -131,8 +131,9 @@ public interface ProvideSubscriberLocationResponse extends LsmMessage {
 	 * 
 	 * @return
 	 */
-	public byte[] getGeranPositioningData();
-	
+	public PositioningDataInformation getGeranPositioningData();
+
+	// ............................
 	
 	/**
 	 * UtranPositioningDataInfo ::= OCTET STRING (SIZE (3..maxUtranPositioningDataInfo))

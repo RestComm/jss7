@@ -39,6 +39,7 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientID;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientInternalID;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientName;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSPriority;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSQoS;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LocationEstimateType;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LocationType;
@@ -112,7 +113,7 @@ public class ProvideSubscriberLocationRequestTest {
 //		assertEquals( imsi.getMNC(),new Long(99l));
 		assertEquals( imsi.getData(),"724999900000007");
 
-		assertEquals( reqInd.getLCSPriority(),new Integer(1));
+		assertEquals(reqInd.getLCSPriority(), LCSPriority.normalPriority);
 
 		LCSQoS lcsQoS = reqInd.getLCSQoS();
 		assertNotNull(lcsQoS);
@@ -157,7 +158,7 @@ public class ProvideSubscriberLocationRequestTest {
 		SupportedGADShapes supportedGADShapes = new SupportedGADShapesImpl(true, true, true, true, true, true, true);
 
 		ProvideSubscriberLocationRequestImpl reqInd = new ProvideSubscriberLocationRequestImpl(locationType, mlcNumber, lcsClientID, null,
-				imsi, null, null, null, 1, lcsQoS, null, supportedGADShapes, null, null, null, null, null, null);
+				imsi, null, null, null, LCSPriority.normalPriority, lcsQoS, null, supportedGADShapes, null, null, null, null, null, null);
 
 		AsnOutputStream asnOS = new AsnOutputStream();
 		reqInd.encodeAll(asnOS);
