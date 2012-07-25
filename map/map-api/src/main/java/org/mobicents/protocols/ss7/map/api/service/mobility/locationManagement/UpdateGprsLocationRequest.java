@@ -30,6 +30,20 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 /**
  * 
 
+MAP V3:
+updateGprsLocation  OPERATION ::= {				--Timer m
+	ARGUMENT
+		UpdateGprsLocationArg
+	RESULT
+		UpdateGprsLocationRes
+	ERRORS {
+		systemFailure |
+		unexpectedDataValue |
+		unknownSubscriber |
+		roamingNotAllowed}
+	CODE	local:23 }
+
+
 UpdateGprsLocationArg ::= SEQUENCE {
 	imsi			IMSI,
 	sgsn-Number	ISDN-AddressString,	

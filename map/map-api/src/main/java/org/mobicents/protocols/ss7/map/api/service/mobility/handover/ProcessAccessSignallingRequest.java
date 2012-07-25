@@ -30,6 +30,20 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 /**
  * 
 
+MAP V1-2-3:
+
+MAP V3:
+processAccessSignalling  OPERATION ::= {				--Timer s
+	ARGUMENT
+		ProcessAccessSignalling-Arg
+	CODE	local:33 }
+
+MAP V2:
+ProcessAccessSignalling ::= OPERATION--Timer s
+ARGUMENT
+bss-APDU	ExternalSignalInfo
+
+
 MAP V3:
 ProcessAccessSignalling-Arg ::= [3] SEQUENCE {
 	an-APDU		AccessNetworkSignalInfo,
@@ -44,11 +58,6 @@ ProcessAccessSignalling-Arg ::= [3] SEQUENCE {
 	aoipSelectedCodecTarget	[7] AoIPCodec	OPTIONAL,
 	aoipAvailableCodecsListMap	[8] AoIPCodecsList	OPTIONAL }
 
-MAP V2:
-ProcessAccessSignalling ::= OPERATION--Timer s
-ARGUMENT
-bss-APDU	ExternalSignalInfo
-
 RAB-Id ::= INTEGER (1..255)
 
  * 
@@ -57,7 +66,7 @@ RAB-Id ::= INTEGER (1..255)
  */
 public interface ProcessAccessSignallingRequest extends MobilityMessage {
 
-	public AccessNetworkSignalInfo getAn_APDU();
+	public AccessNetworkSignalInfo getAnApdu();
 
 	public SelectedUMTSAlgorithms getSelectedUMTSAlgorithms();
 
@@ -77,6 +86,7 @@ public interface ProcessAccessSignallingRequest extends MobilityMessage {
 
 	public AoIPCodecsList getAoipAvailableCodecsListMap();
 
+	// for MAP V1-2 only
 	public ExternalSignalInfo getBssAPDU();
 
 }

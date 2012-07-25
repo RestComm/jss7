@@ -23,8 +23,6 @@
 package org.mobicents.protocols.ss7.map.primitives;
 
 import java.io.IOException;
-
-import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -33,10 +31,9 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.ExternalSignalInfo;
-import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.ProtocolId;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.SignalInfo;
+import org.mobicents.protocols.ss7.map.api.primitives.SignalInfo;
 
 
 /*
@@ -45,7 +42,7 @@ import org.mobicents.protocols.ss7.map.api.service.callhandling.SignalInfo;
  * 
  */
 public class ExternalSignalInfoImpl implements ExternalSignalInfo, MAPAsnPrimitive {
-	private byte[] signalInfo = null;
+	private SignalInfo signalInfo = null;
 	private ProtocolId protocolId = null;
 	private MAPExtensionContainer extensionContainer = null;
 	
@@ -54,7 +51,7 @@ public class ExternalSignalInfoImpl implements ExternalSignalInfo, MAPAsnPrimiti
 	
 	public ExternalSignalInfoImpl() {}
 
-	public ExternalSignalInfoImpl(byte[] signalInfo, ProtocolId protocolId, 
+	public ExternalSignalInfoImpl(SignalInfo signalInfo, ProtocolId protocolId, 
 								  MAPExtensionContainer extensionContainer) {
 		this.signalInfo = signalInfo;
 		this.protocolId = protocolId;
@@ -62,7 +59,7 @@ public class ExternalSignalInfoImpl implements ExternalSignalInfo, MAPAsnPrimiti
 	}
 
 	@Override
-	public byte[] getSignalInfo() {
+	public SignalInfo getSignalInfo() {
 		return this.signalInfo;
 	}
 
@@ -136,7 +133,12 @@ public class ExternalSignalInfoImpl implements ExternalSignalInfo, MAPAsnPrimiti
 					this.protocolId = ProtocolId.getProtocolId(code);
 					break;
 				case Tag.STRING_OCTET: 
-					this.signalInfo = ais.readOctetString();
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+								+ ".signalInfo: Parameter extensionContainer is not primitive", 
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.signalInfo = new SignalInfoImpl();
+					((SignalInfoImpl) this.signalInfo).decodeAll(ais);
 					break;
 				case Tag.SEQUENCE:
 					if (ais.isTagPrimitive())
@@ -184,8 +186,8 @@ public class ExternalSignalInfoImpl implements ExternalSignalInfo, MAPAsnPrimiti
 		try {
 			if(this.protocolId != null)
 		 	  asnOs.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, this.protocolId.getCode());
-			if(this.signalInfo != null)
-			  asnOs.writeOctetString(Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET, this.signalInfo);
+			if (this.signalInfo != null)
+				((SignalInfoImpl) this.signalInfo).encodeAll(asnOs);
 			if(this.extensionContainer != null)
 			  ((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
 		} catch (IOException e) {

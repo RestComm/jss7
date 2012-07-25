@@ -29,29 +29,52 @@ import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * ProvideSubscriberLocation-Arg ::= SEQUENCE {
- *     locationType LocationType,
- *     mlc-Number ISDN-AddressString,
- *     lcs-ClientID [0] LCS-ClientID OPTIONAL,
- *     privacyOverride [1] NULL OPTIONAL,
- *     imsi [2] IMSI OPTIONAL,
- *     msisdn [3] ISDN-AddressString OPTIONAL,
- *     lmsi [4] LMSI OPTIONAL,
- *     imei [5] IMEI OPTIONAL,
- *     lcs-Priority [6] LCS-Priority OPTIONAL,
- *     lcs-QoS [7] LCS-QoS OPTIONAL,
- *     extensionContainer [8] ExtensionContainer OPTIONAL,
- *     ... ,
- *     supportedGADShapes [9] SupportedGADShapes OPTIONAL,
- *     lcs-ReferenceNumber [10] LCS-ReferenceNumber OPTIONAL,
- *     lcsServiceTypeID [11] LCSServiceTypeID OPTIONAL,
- *     lcsCodeword [12] LCSCodeword OPTIONAL,
- *     lcs-PrivacyCheck [13] LCS-PrivacyCheck OPTIONAL,
- *     areaEventInfo [14] AreaEventInfo OPTIONAL,
- *     h-gmlc-Address [15] GSN-Address OPTIONAL }
- *     -- one of imsi or msisdn is mandatory
- *     -- If a location estimate type indicates activate deferred location or cancel deferred
- *     -- location, a lcs-Reference number shall be included
+
+MAP V3:
+
+provideSubscriberLocation  OPERATION ::= {				--Timer ml
+	ARGUMENT
+		ProvideSubscriberLocation-Arg
+	RESULT
+		ProvideSubscriberLocation-Res
+	ERRORS {
+		systemFailure |
+		dataMissing |
+		unexpectedDataValue |
+		facilityNotSupported |
+		unidentifiedSubscriber |
+		illegalSubscriber |
+		illegalEquipment |
+		absentSubscriber |
+		unauthorizedRequestingNetwork |
+		unauthorizedLCSClient |
+		positionMethodFailure }
+	CODE	local:83 }
+
+ProvideSubscriberLocation-Arg ::= SEQUENCE {
+     locationType LocationType,
+     mlc-Number ISDN-AddressString,
+     lcs-ClientID [0] LCS-ClientID OPTIONAL,
+     privacyOverride [1] NULL OPTIONAL,
+     imsi [2] IMSI OPTIONAL,
+     msisdn [3] ISDN-AddressString OPTIONAL,
+     lmsi [4] LMSI OPTIONAL,
+     imei [5] IMEI OPTIONAL,
+     lcs-Priority [6] LCS-Priority OPTIONAL,
+     lcs-QoS [7] LCS-QoS OPTIONAL,
+     extensionContainer [8] ExtensionContainer OPTIONAL,
+     ... ,
+     supportedGADShapes [9] SupportedGADShapes OPTIONAL,
+     lcs-ReferenceNumber [10] LCS-ReferenceNumber OPTIONAL,
+     lcsServiceTypeID [11] LCSServiceTypeID OPTIONAL,
+     lcsCodeword [12] LCSCodeword OPTIONAL,
+     lcs-PrivacyCheck [13] LCS-PrivacyCheck OPTIONAL,
+     areaEventInfo [14] AreaEventInfo OPTIONAL,
+     h-gmlc-Address [15] GSN-Address OPTIONAL }
+     -- one of imsi or msisdn is mandatory
+     -- If a location estimate type indicates activate deferred location or cancel deferred
+     -- location, a lcs-Reference number shall be included
+
  * 
  * @author amit bhayani
  *

@@ -33,6 +33,8 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 /**	
  * 
 
+MAP V3:
+
 noteSubscriberDataModified  OPERATION ::= {				--Timer m
 	ARGUMENT
 		NoteSubscriberDataModifiedArg

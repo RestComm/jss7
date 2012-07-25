@@ -22,22 +22,24 @@
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
-/*
- * SignalInfo ::= OCTET STRING (SIZE (1..maxSignalInfoLength))
- * maxSignalInfoLength INTEGER ::= 200
- * -- This NamedValue represents the theoretical maximum number of octets which is
- * -- available to carry a single instance of the SignalInfo data type,
- * -- without requiring segmentation to cope with the network layer service.
- * -- However, the actual maximum size available for an instance of the data
- * -- type may be lower, especially when other information elements
- * -- have to be included in the same component
- */
- 
-/*
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+
+/**
  * 
- * @author cristian veliscu
+
+EventReportData ::= SEQUENCE{
+	ccbs-SubscriberStatus	[0]	CCBS-SubscriberStatus	OPTIONAL,
+	extensionContainer	[1]	ExtensionContainer	OPTIONAL,
+	...}
+
+ * 
+ * @author sergey vetyutnev
  * 
  */
-public interface SignalInfo {
-	public byte[] getData();
+public interface EventReportData {
+
+	public CCBSSubscriberStatus getCcbsSubscriberStatus();
+
+	public MAPExtensionContainer getExtensionContainer();
+
 }

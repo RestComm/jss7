@@ -27,22 +27,32 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 
 /**
 *
-* alertServiceCentre  OPERATION ::= {				--Timer s
-* 	ARGUMENT
-* 		AlertServiceCentreArg
-* 	RETURN RESULT TRUE
-* 	ERRORS {
-* 		systemFailure |
-* 		dataMissing |
-* 		unexpectedDataValue}
-* 	CODE	local:64 }
-* 
-* 
-* AlertServiceCentreArg ::= SEQUENCE {
-* 	msisdn		ISDN-AddressString,
-* 	serviceCentreAddress	AddressString,
-* 	...}
-* 
+
+MAP V1-2:
+
+MAP V2:
+alertServiceCentre  OPERATION ::= {				--Timer s
+	ARGUMENT
+		AlertServiceCentreArg
+	RETURN RESULT TRUE
+	ERRORS {
+		systemFailure |
+		dataMissing |
+		unexpectedDataValue}
+	CODE	local:64 }
+
+MAP V1:
+alertServiceCentreWithoutResult ::= OPERATION --Timer s
+ARGUMENT
+	alertServiceCentreArg AlertServiceCentreArg
+
+
+MAP V1-2:
+AlertServiceCentreArg ::= SEQUENCE {
+	msisdn		ISDN-AddressString,
+	serviceCentreAddress	AddressString,
+	...}
+
 * 
 * 
 * @author sergey vetyutnev

@@ -27,6 +27,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 /**	
  * 
 
+MAP V3:
 ActivateTraceModeRes ::= SEQUENCE {
 	extensionContainer	[0] ExtensionContainer	OPTIONAL,
 	...,

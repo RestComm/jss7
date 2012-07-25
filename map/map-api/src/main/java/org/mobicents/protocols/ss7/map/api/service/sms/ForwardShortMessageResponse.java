@@ -24,7 +24,10 @@ package org.mobicents.protocols.ss7.map.api.service.sms;
 
 /**
  * 
- * Empty response
+
+RESULT
+(Empty response)
+
  * 
  * 
  * @author sergey vetyutnev

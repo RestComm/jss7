@@ -35,6 +35,19 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 /**
  * 
 
+MAP V3:
+noteMM-Event  OPERATION ::= {				--Timer m
+	ARGUMENT
+		NoteMM-EventArg
+	RESULT
+		NoteMM-EventRes
+	ERRORS {
+		dataMissing |
+		unexpectedDataValue |
+		unknownSubscriber |
+		mm-EventNotSupported}
+	CODE	local:89 }
+
 NoteMM-EventArg::= SEQUENCE {
 	serviceKey	ServiceKey,
 	eventMet		[0]	MM-Code,

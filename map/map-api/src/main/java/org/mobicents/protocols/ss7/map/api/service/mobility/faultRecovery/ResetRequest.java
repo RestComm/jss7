@@ -31,6 +31,8 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
  * 
+ 
+MAP V1-2:
 
 reset  OPERATION ::= {				--Timer m
 	ARGUMENT

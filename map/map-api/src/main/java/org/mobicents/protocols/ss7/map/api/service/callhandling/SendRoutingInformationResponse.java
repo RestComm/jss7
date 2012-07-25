@@ -37,40 +37,42 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
 
 /*
- * SendRoutingInfoRes ::= SEQUENCE {
- * imsi IMSI,
- * routingInfo RoutingInfo,
- * cug-CheckInfo CUG-CheckInfo OPTIONAL,
- * -- cug-CheckInfo must be absent in version 1
- * ...}
- */
-/*
- *SendRoutingInfoRes ::= [3] SEQUENCE {
- *  imsi [9] IMSI OPTIONAL,
- *  extendedRoutingInfo ExtendedRoutingInfo OPTIONAL,
- *  cug-CheckInfo [3] CUG-CheckInfo OPTIONAL,
- *  cugSubscriptionFlag [6] NULL OPTIONAL*,
- *  subscriberInfo [7] SubscriberInfo OPTIONAL,
- *  ss-List [1] SS-List OPTIONAL,
- *  basicService [5] Ext-BasicServiceCode OPTIONAL,
- *  forwardingInterrogationRequired [4] NULL OPTIONAL*,
- *  vmsc-Address [2] ISDN-AddressString OPTIONAL,
- *  extensionContainer [0] ExtensionContainer OPTIONAL,
- *  ... ,
- *  naea-PreferredCI [10] NAEA-PreferredCI OPTIONAL,
- *  ccbs-Indicators [11] CCBS-Indicators OPTIONAL,
- *  msisdn [12] ISDN-AddressString OPTIONAL,
- *  numberPortabilityStatus [13] NumberPortabilityStatus OPTIONAL,
- *  istAlertTimer [14] IST-AlertTimerValue OPTIONAL,
- *  supportedCamelPhasesInVMSC [15] SupportedCamelPhases OPTIONAL,
- *  offeredCamel4CSIsInVMSC [16] OfferedCamel4CSIs OPTIONAL,
- *  routingInfo2 [17] RoutingInfo OPTIONAL,
- *  ss-List2 [18] SS-List OPTIONAL,
- *  basicService2 [19] Ext-BasicServiceCode OPTIONAL,
- *  allowedServices [20] AllowedServices OPTIONAL,
- *  unavailabilityCause [21] UnavailabilityCause OPTIONAL,
- *  releaseResourcesSupported [22] NULL OPTIONAL*,
- *  gsm-BearerCapability [23] ExternalSignalInfo OPTIONAL }
+
+MAP V3:
+SendRoutingInfoRes ::= [3] SEQUENCE {
+  imsi [9] IMSI OPTIONAL,
+  extendedRoutingInfo ExtendedRoutingInfo OPTIONAL,
+  cug-CheckInfo [3] CUG-CheckInfo OPTIONAL,
+  cugSubscriptionFlag [6] NULL OPTIONAL*,
+  subscriberInfo [7] SubscriberInfo OPTIONAL,
+  ss-List [1] SS-List OPTIONAL,
+  basicService [5] Ext-BasicServiceCode OPTIONAL,
+  forwardingInterrogationRequired [4] NULL OPTIONAL*,
+  vmsc-Address [2] ISDN-AddressString OPTIONAL,
+  extensionContainer [0] ExtensionContainer OPTIONAL,
+  ... ,
+  naea-PreferredCI [10] NAEA-PreferredCI OPTIONAL,
+  ccbs-Indicators [11] CCBS-Indicators OPTIONAL,
+  msisdn [12] ISDN-AddressString OPTIONAL,
+  numberPortabilityStatus [13] NumberPortabilityStatus OPTIONAL,
+  istAlertTimer [14] IST-AlertTimerValue OPTIONAL,
+  supportedCamelPhasesInVMSC [15] SupportedCamelPhases OPTIONAL,
+  offeredCamel4CSIsInVMSC [16] OfferedCamel4CSIs OPTIONAL,
+  routingInfo2 [17] RoutingInfo OPTIONAL,
+  ss-List2 [18] SS-List OPTIONAL,
+  basicService2 [19] Ext-BasicServiceCode OPTIONAL,
+  allowedServices [20] AllowedServices OPTIONAL,
+  unavailabilityCause [21] UnavailabilityCause OPTIONAL,
+  releaseResourcesSupported [22] NULL OPTIONAL*,
+  gsm-BearerCapability [23] ExternalSignalInfo OPTIONAL }
+
+MAP V2:
+SendRoutingInfoRes ::= SEQUENCE {
+	imsi 				IMSI,
+ 	routingInfo 		RoutingInfo,
+ 	cug-CheckInfo 		CUG-CheckInfo OPTIONAL,
+ 	-- cug-CheckInfo must be absent in version 1
+ 	...}
 
 SS-List ::= SEQUENCE SIZE (1..30) OF SS-Code
 

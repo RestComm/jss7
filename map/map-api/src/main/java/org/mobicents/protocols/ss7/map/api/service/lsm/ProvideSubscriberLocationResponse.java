@@ -26,28 +26,30 @@ import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaI
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * ProvideSubscriberLocation-Res ::= SEQUENCE {
- *      locationEstimate Ext-GeographicalInformation,
- *      ageOfLocationEstimate [0] AgeOfLocationInformation OPTIONAL,
- *      extensionContainer [1] ExtensionContainer OPTIONAL,
- *      ... ,
- *      add-LocationEstimate [2] Add-GeographicalInformation OPTIONAL,
- *      deferredmt-lrResponseIndicator [3] NULL OPTIONAL,
- *      geranPositioningData [4] PositioningDataInformation OPTIONAL,
- *      utranPositioningData [5] UtranPositioningDataInfo OPTIONAL,
- *      cellIdOrSai [6] CellGlobalIdOrServiceAreaIdOrLAI OPTIONAL,
- *      sai-Present [7] NULL OPTIONAL,
- *      accuracyFulfilmentIndicator [8] AccuracyFulfilmentIndicator OPTIONAL }
- *   -- if deferredmt-lrResponseIndicator is set, locationEstimate is ignored.
- *   -- the add-LocationEstimate parameter shall not be sent to a node that did not indicate the
- *   -- geographic shapes supported in the ProvideSubscriberLocation-Arg
- *   -- The locationEstimate and the add-locationEstimate parameters shall not be sent if
- *   -- the supportedGADShapes parameter has been received in ProvideSubscriberLocation-Arg
- *   -- and the shape encoded in locationEstimate or add-LocationEstimate is not marked
- *   -- as supported in supportedGADShapes. In such a case ProvideSubscriberLocation
- *   -- shall be rejected with error FacilityNotSupported with additional indication
- *   -- shapeOfLocationEstimateNotSupported.
- *   -- sai-Present indicates that the cellIdOrSai parameter contains a Service Area Identity.
+
+ProvideSubscriberLocation-Res ::= SEQUENCE {
+      locationEstimate Ext-GeographicalInformation,
+      ageOfLocationEstimate [0] AgeOfLocationInformation OPTIONAL,
+      extensionContainer [1] ExtensionContainer OPTIONAL,
+      ... ,
+      add-LocationEstimate [2] Add-GeographicalInformation OPTIONAL,
+      deferredmt-lrResponseIndicator [3] NULL OPTIONAL,
+      geranPositioningData [4] PositioningDataInformation OPTIONAL,
+      utranPositioningData [5] UtranPositioningDataInfo OPTIONAL,
+      cellIdOrSai [6] CellGlobalIdOrServiceAreaIdOrLAI OPTIONAL,
+      sai-Present [7] NULL OPTIONAL,
+      accuracyFulfilmentIndicator [8] AccuracyFulfilmentIndicator OPTIONAL }
+   -- if deferredmt-lrResponseIndicator is set, locationEstimate is ignored.
+   -- the add-LocationEstimate parameter shall not be sent to a node that did not indicate the
+   -- geographic shapes supported in the ProvideSubscriberLocation-Arg
+   -- The locationEstimate and the add-locationEstimate parameters shall not be sent if
+   -- the supportedGADShapes parameter has been received in ProvideSubscriberLocation-Arg
+   -- and the shape encoded in locationEstimate or add-LocationEstimate is not marked
+   -- as supported in supportedGADShapes. In such a case ProvideSubscriberLocation
+   -- shall be rejected with error FacilityNotSupported with additional indication
+   -- shapeOfLocationEstimateNotSupported.
+   -- sai-Present indicates that the cellIdOrSai parameter contains a Service Area Identity.
+
  * 
  * @author amit bhayani
  *

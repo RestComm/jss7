@@ -32,48 +32,100 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.I
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ForwardingReason;
 
-/* MAP V2
- * SendRoutingInfoArg ::= SEQUENCE {
- * msisdn [0] ISDN-AddressString,
- * cug-CheckInfo [1] CUG-CheckInfo OPTIONAL,
--- cug-CheckInfo must be absent in version 1
- * numberOfForwarding [2] NumberOfForwarding OPTIONAL,
- * networkSignalInfo [10] ExternalSignalInfo OPTIONAL,
- * ...}
- */
-/* MAP V3
- *SendRoutingInfoArg ::= SEQUENCE {
- *  msisdn [0] ISDN-AddressString,
- *  cug-CheckInfo [1] CUG-CheckInfo OPTIONAL,
- *  numberOfForwarding [2] NumberOfForwarding OPTIONAL,
- *  interrogationType [3] InterrogationType,
- *  or-Interrogation [4] NULL OPTIONAL*,
- *  or-Capability [5] OR-Phase OPTIONAL,
- *  gmsc-OrGsmSCF-Address [6] ISDN-AddressString,
- *  callReferenceNumber [7] CallReferenceNumber OPTIONAL,
- *  forwardingReason [8] ForwardingReason OPTIONAL,
- *  basicServiceGroup [9] Ext-BasicServiceCode OPTIONAL,
- *  networkSignalInfo [10] ExternalSignalInfo OPTIONAL,
- *  camelInfo [11] CamelInfo OPTIONAL,
- *  suppressionOfAnnouncement [12] SuppressionOfAnnouncement OPTIONAL,
- *  extensionContainer [13] ExtensionContainer OPTIONAL,
- *  ...,
- *  alertingPattern [14] AlertingPattern OPTIONAL,
- *  ccbs-Call [15] NULL OPTIONAL*,
- *  supportedCCBS-Phase [16] SupportedCCBS-Phase OPTIONAL,
- *  additionalSignalInfo [17] Ext-ExternalSignalInfo OPTIONAL,
- *  istSupportIndicator [18] IST-SupportIndicator OPTIONAL,
- *  pre-pagingSupported [19] NULL OPTIONAL*,
- *  callDiversionTreatmentIndicator [20] CallDiversionTreatmentIndicator OPTIONAL,
- *  longFTN-Supported [21] NULL OPTIONAL*,
- *  suppress-VT-CSI [22] NULL OPTIONAL*,
- *  suppressIncomingCallBarring [23] NULL OPTIONAL*,
- *  gsmSCF-InitiatedCall [24] NULL OPTIONAL*,
- *  basicServiceGroup2 [25] Ext-BasicServiceCode OPTIONAL,
- *  networkSignalInfo2 [26] ExternalSignalInfo OPTIONAL,
- *  suppressMTSS [27] SuppressMTSS OPTIONAL,
- *  mtRoamingRetrySupported [28] NULL OPTIONAL*,
- *  callPriority [29] EMLPP-Priority OPTIONAL }
+/* 
+ * 
+ 
+MAP V1-2-3:
+ 
+MAP V3:
+sendRoutingInfo  OPERATION ::= {				--Timer m
+-- The timer is set to the upper limit of the range if the GMSC supports pre-paging.
+	ARGUMENT
+		SendRoutingInfoArg
+	RESULT
+		SendRoutingInfoRes
+	ERRORS {
+		systemFailure |
+		dataMissing |
+		unexpectedDataValue |
+		facilityNotSupported |
+		or-NotAllowed |
+		unknownSubscriber |
+		numberChanged |
+		bearerServiceNotProvisioned |
+		teleserviceNotProvisioned |
+		absentSubscriber |
+		busySubscriber |
+		noSubscriberReply |
+		callBarred |
+		cug-Reject |
+		forwardingViolation}
+	CODE	local:22 }
+
+MAP V2:
+SendRoutingInfo ::= OPERATION--Timer m
+ARGUMENT
+	sendRoutingInfoArg	SendRoutingInfoArg
+RESULT
+	sendRoutingInfoRes	SendRoutingInfoRes
+ERRORS {
+	SystemFailure,
+	DataMissing,
+	UnexpectedDataValue,
+	FacilityNotSupported,
+	UnknownSubscriber,
+	NumberChanged,
+	-- NumberChanged must not be used in version 1
+	BearerServiceNotProvisioned,
+	TeleserviceNotProvisioned,
+	AbsentSubscriber,
+	CallBarred,
+	CUG-Reject,
+	-- CUG-Reject must not be used in version 1
+	ForwardingViolation}
+
+MAP V3:
+SendRoutingInfoArg ::= SEQUENCE {
+  msisdn [0] ISDN-AddressString,
+  cug-CheckInfo [1] CUG-CheckInfo OPTIONAL,
+  numberOfForwarding [2] NumberOfForwarding OPTIONAL,
+  interrogationType [3] InterrogationType,
+  or-Interrogation [4] NULL OPTIONAL*,
+  or-Capability [5] OR-Phase OPTIONAL,
+  gmsc-OrGsmSCF-Address [6] ISDN-AddressString,
+  callReferenceNumber [7] CallReferenceNumber OPTIONAL,
+  forwardingReason [8] ForwardingReason OPTIONAL,
+  basicServiceGroup [9] Ext-BasicServiceCode OPTIONAL,
+  networkSignalInfo [10] ExternalSignalInfo OPTIONAL,
+  camelInfo [11] CamelInfo OPTIONAL,
+  suppressionOfAnnouncement [12] SuppressionOfAnnouncement OPTIONAL,
+  extensionContainer [13] ExtensionContainer OPTIONAL,
+  ...,
+  alertingPattern [14] AlertingPattern OPTIONAL,
+  ccbs-Call [15] NULL OPTIONAL*,
+  supportedCCBS-Phase [16] SupportedCCBS-Phase OPTIONAL,
+  additionalSignalInfo [17] Ext-ExternalSignalInfo OPTIONAL,
+  istSupportIndicator [18] IST-SupportIndicator OPTIONAL,
+  pre-pagingSupported [19] NULL OPTIONAL*,
+  callDiversionTreatmentIndicator [20] CallDiversionTreatmentIndicator OPTIONAL,
+  longFTN-Supported [21] NULL OPTIONAL*,
+  suppress-VT-CSI [22] NULL OPTIONAL*,
+  suppressIncomingCallBarring [23] NULL OPTIONAL*,
+  gsmSCF-InitiatedCall [24] NULL OPTIONAL*,
+  basicServiceGroup2 [25] Ext-BasicServiceCode OPTIONAL,
+  networkSignalInfo2 [26] ExternalSignalInfo OPTIONAL,
+  suppressMTSS [27] SuppressMTSS OPTIONAL,
+  mtRoamingRetrySupported [28] NULL OPTIONAL*,
+  callPriority [29] EMLPP-Priority OPTIONAL }
+
+MAP V2:
+SendRoutingInfoArg ::= SEQUENCE {
+	msisdn 				[0] ISDN-AddressString,
+	cug-CheckInfo 		[1] CUG-CheckInfo OPTIONAL,
+	-- cug-CheckInfo must be absent in version 1
+	numberOfForwarding 	[2] NumberOfForwarding OPTIONAL,
+	networkSignalInfo 	[10] ExternalSignalInfo OPTIONAL,
+ 	...}
  
  SuppressionOfAnnouncement ::= NULL
  

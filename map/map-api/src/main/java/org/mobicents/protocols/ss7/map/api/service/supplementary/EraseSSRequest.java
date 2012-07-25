@@ -20,27 +20,40 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
-
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GPRSChargingID;
-import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
+package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
 /**
-*
-* @author sergey vetyutnev
-*
-*/
-public class GPRSChargingIDImpl extends OctetStringBase implements GPRSChargingID {
+ * 
 
-	public GPRSChargingIDImpl() {
-		super(4, 4, "GPRSChargingID");
-	}
+MAP V2:
 
-	public GPRSChargingIDImpl(byte[] data) {
-		super(4, 4, "GPRSChargingID", data);
-	}
+eraseSS  OPERATION ::= {				--Timer m
+	ARGUMENT
+		SS-ForBS-Code
+	RESULT
+		SS-Info
+		-- optional
+	ERRORS {
+		systemFailure |
+		dataMissing |
+		unexpectedDataValue |
+		bearerServiceNotProvisioned |
+		teleserviceNotProvisioned |
+		callBarred |
+		illegalSS-Operation |
+		ss-ErrorStatus
+		}
+	CODE	local:11 }
 
-	public byte[] getData() {
-		return data;
-	}	
+	ARGUMENT
+		SS-ForBS-Code
+
+ * 
+ * @author sergey vetyutnev
+ * 
+ */
+public interface EraseSSRequest extends SupplementaryMessage {
+
+	public SSForBSCode getSsForBSCode();
+
 }
