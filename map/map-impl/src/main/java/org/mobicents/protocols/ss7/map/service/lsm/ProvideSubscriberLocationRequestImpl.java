@@ -46,7 +46,9 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.LCSPriority;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSPrivacyCheck;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSQoS;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LocationType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.PeriodicLDRInfo;
 import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationRequest;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ReportingPLMNList;
 import org.mobicents.protocols.ss7.map.api.service.lsm.SupportedGADShapes;
 import org.mobicents.protocols.ss7.map.primitives.GSNAddressImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMEIImpl;
@@ -57,6 +59,7 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public class ProvideSubscriberLocationRequestImpl extends LsmMessageImpl implements ProvideSubscriberLocationRequest {
@@ -77,11 +80,16 @@ public class ProvideSubscriberLocationRequestImpl extends LsmMessageImpl impleme
 	private static final int _TAG_LCS_PRIVACY_CHECK = 13;
 	private static final int _TAG_AREA_EVENT_INFO = 14;
 	private static final int _TAG_H_GMLC_ADDRESS = 15;
+	private static final int _TAG_mo_lrShortCircuitIndicator = 16;
+	private static final int _TAG_periodicLDRInfo = 17;
+	private static final int _TAG_reportingPLMNList = 18;
+
+	public static final String _PrimitiveName = "ProvideSubscriberLocationRequest";
 
 	private LocationType locationType = null;
 	private ISDNAddressString mlcNumber = null;
 	private LCSClientID lcsClientID = null;
-	private Boolean privacyOverride = false;
+	private boolean privacyOverride = false;
 	private IMSI imsi = null;
 	private ISDNAddressString msisdn;
 	private LMSI lmsi = null;
@@ -90,12 +98,15 @@ public class ProvideSubscriberLocationRequestImpl extends LsmMessageImpl impleme
 	private LCSQoS lcsQoS = null;
 	private MAPExtensionContainer extensionContainer = null;
 	private SupportedGADShapes supportedGADShapes = null;
-	private Byte lcsReferenceNumber = null;
+	private Integer lcsReferenceNumber = null;
 	private Integer lcsServiceTypeID = -1;
 	private LCSCodeword lcsCodeword = null;
 	private LCSPrivacyCheck lcsPrivacyCheck = null;
 	private AreaEventInfo areaEventInfo = null;
 	private GSNAddress hgmlcAddress = null;
+	private boolean moLrShortCircuitIndicator;
+	private PeriodicLDRInfo periodicLDRInfo;
+	private ReportingPLMNList reportingPLMNList;
 
 	/**
 	 * 
@@ -124,10 +135,11 @@ public class ProvideSubscriberLocationRequestImpl extends LsmMessageImpl impleme
 	 * @param areaEventInfo
 	 * @param hgmlcAddress
 	 */
-	public ProvideSubscriberLocationRequestImpl(LocationType locationType, ISDNAddressString mlcNumber, LCSClientID lcsClientID,
-			Boolean privacyOverride, IMSI imsi, ISDNAddressString msisdn, LMSI lmsi, IMEI imei, LCSPriority lcsPriority, LCSQoS lcsQoS,
-			MAPExtensionContainer extensionContainer, SupportedGADShapes supportedGADShapes, Byte lcsReferenceNumber, Integer lcsServiceTypeID,
-			LCSCodeword lcsCodeword, LCSPrivacyCheck lcsPrivacyCheck, AreaEventInfo areaEventInfo, GSNAddress hgmlcAddress) {
+	public ProvideSubscriberLocationRequestImpl(LocationType locationType, ISDNAddressString mlcNumber, LCSClientID lcsClientID, boolean privacyOverride,
+			IMSI imsi, ISDNAddressString msisdn, LMSI lmsi, IMEI imei, LCSPriority lcsPriority, LCSQoS lcsQoS, MAPExtensionContainer extensionContainer,
+			SupportedGADShapes supportedGADShapes, Integer lcsReferenceNumber, Integer lcsServiceTypeID, LCSCodeword lcsCodeword,
+			LCSPrivacyCheck lcsPrivacyCheck, AreaEventInfo areaEventInfo, GSNAddress hgmlcAddress, boolean moLrShortCircuitIndicator,
+			PeriodicLDRInfo periodicLDRInfo, ReportingPLMNList reportingPLMNList) {
 		super();
 		this.locationType = locationType;
 		this.mlcNumber = mlcNumber;
@@ -147,6 +159,9 @@ public class ProvideSubscriberLocationRequestImpl extends LsmMessageImpl impleme
 		this.lcsPrivacyCheck = lcsPrivacyCheck;
 		this.areaEventInfo = areaEventInfo;
 		this.hgmlcAddress = hgmlcAddress;
+		this.moLrShortCircuitIndicator = moLrShortCircuitIndicator;
+		this.periodicLDRInfo = periodicLDRInfo;
+		this.reportingPLMNList = reportingPLMNList;
 	}
 
 	public MAPMessageType getMessageType() {
@@ -193,7 +208,7 @@ public class ProvideSubscriberLocationRequestImpl extends LsmMessageImpl impleme
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.
 	 * ProvideSubscriberLocationRequestIndication#getPrivacyOverride()
 	 */
-	public Boolean getPrivacyOverride() {
+	public boolean getPrivacyOverride() {
 		return this.privacyOverride;
 	}
 
@@ -283,7 +298,7 @@ public class ProvideSubscriberLocationRequestImpl extends LsmMessageImpl impleme
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.
 	 * ProvideSubscriberLocationRequestIndication#getLCSReferenceNumber()
 	 */
-	public Byte getLCSReferenceNumber() {
+	public Integer getLCSReferenceNumber() {
 		return this.lcsReferenceNumber;
 	}
 
@@ -367,6 +382,18 @@ public class ProvideSubscriberLocationRequestImpl extends LsmMessageImpl impleme
 	 */
 	public boolean getIsPrimitive() {
 		return false;
+	}
+
+	public boolean getMoLrShortCircuitIndicator() {
+		return moLrShortCircuitIndicator;
+	}
+
+	public PeriodicLDRInfo getPeriodicLDRInfo() {
+		return periodicLDRInfo;
+	}
+
+	public ReportingPLMNList getReportingPLMNList() {
+		return reportingPLMNList;
 	}
 
 	/*
@@ -545,7 +572,7 @@ public class ProvideSubscriberLocationRequestImpl extends LsmMessageImpl impleme
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 				length1 = ais.readLength();
-				this.lcsReferenceNumber = new Byte(ais.readOctetStringData(length1)[0]);
+				this.lcsReferenceNumber = (int)ais.readOctetStringData(length1)[0];
 				break;
 			case _TAG_LCS_SERVICE_TYPE_ID:
 				// lcsServiceTypeID [11] LCSServiceTypeID OPTIONAL,
@@ -659,7 +686,7 @@ public class ProvideSubscriberLocationRequestImpl extends LsmMessageImpl impleme
 			((LCSClientIDImpl)this.lcsClientID).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LCS_CLIENT_ID);
 		}
 
-		if (this.privacyOverride != null) {
+		if (this.privacyOverride) {
 			// privacyOverride [1] NULL OPTIONAL
 			try {
 				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_PRIVACY_OVERRIDE);
@@ -757,5 +784,5 @@ public class ProvideSubscriberLocationRequestImpl extends LsmMessageImpl impleme
 			((GSNAddressImpl)this.hgmlcAddress).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_H_GMLC_ADDRESS);
 		}
 	}
-
 }
+

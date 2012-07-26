@@ -36,12 +36,19 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdOrLAI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AccuracyFulfilmentIndicator;
+import org.mobicents.protocols.ss7.map.api.service.lsm.AddGeographicalInformation;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ExtGeographicalInformation;
+import org.mobicents.protocols.ss7.map.api.service.lsm.GeranGANSSpositioningData;
+import org.mobicents.protocols.ss7.map.api.service.lsm.PositioningDataInformation;
 import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationResponse;
+import org.mobicents.protocols.ss7.map.api.service.lsm.UtranGANSSpositioningData;
+import org.mobicents.protocols.ss7.map.api.service.lsm.UtranPositioningDataInfo;
+import org.mobicents.protocols.ss7.map.api.service.lsm.VelocityEstimate;
 import org.mobicents.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdOrLAIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
- * TODO Add unit test
+ *
  * 
  * @author amit bhayani
  * 
@@ -58,16 +65,20 @@ public class ProvideSubscriberLocationResponseImpl extends LsmMessageImpl implem
 	private static final int _TAG_SAI_PRESENT = 7;
 	private static final int _TAG_ACCURACY_FULFILMENT_INDICATOR = 8;
 
-	private byte[] locationEstimate = null;
-	private byte[] geranPositioningData = null;
-	private byte[] utranPositioningData = null;
-	private Integer ageOfLocationEstimate = null;
-	private byte[] additionalLocationEstimate = null;
-	private MAPExtensionContainer extensionContainer = null;
-	private Boolean deferredMTLRResponseIndicator = null;
-	private CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI = null;
-	private Boolean saiPresent = null;
-	private AccuracyFulfilmentIndicator accuracyFulfilmentIndicator = null;
+	private ExtGeographicalInformation locationEstimate;
+	private PositioningDataInformation geranPositioningData;
+	private UtranPositioningDataInfo utranPositioningData;
+	private Integer ageOfLocationEstimate;
+	private AddGeographicalInformation additionalLocationEstimate;
+	private MAPExtensionContainer extensionContainer;
+	private boolean deferredMTLRResponseIndicator;
+	private CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI;
+	private boolean saiPresent;
+	private AccuracyFulfilmentIndicator accuracyFulfilmentIndicator;
+	private VelocityEstimate velocityEstimate;
+	private boolean moLrShortCircuitIndicator;
+	private GeranGANSSpositioningData geranGANSSpositioningData;
+	private UtranGANSSpositioningData utranGANSSpositioningData;
 
 	/**
 	 * 
@@ -88,19 +99,12 @@ public class ProvideSubscriberLocationResponseImpl extends LsmMessageImpl implem
 	 * @param saiPresent
 	 * @param accuracyFulfilmentIndicator
 	 */
-	public ProvideSubscriberLocationResponseImpl(byte[] locationEstimate, byte[] geranPositioningData, byte[] utranPositioningData,
-			Integer ageOfLocationEstimate, byte[] additionalLocationEstimate, MAPExtensionContainer extensionContainer, Boolean deferredMTLRResponseIndicator,
-			CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI, Boolean saiPresent, AccuracyFulfilmentIndicator accuracyFulfilmentIndicator)
-			throws MAPException {
+	public ProvideSubscriberLocationResponseImpl(ExtGeographicalInformation locationEstimate, PositioningDataInformation geranPositioningData,
+			UtranPositioningDataInfo utranPositioningData, Integer ageOfLocationEstimate, AddGeographicalInformation additionalLocationEstimate,
+			MAPExtensionContainer extensionContainer, Boolean deferredMTLRResponseIndicator, CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI,
+			Boolean saiPresent, AccuracyFulfilmentIndicator accuracyFulfilmentIndicator, VelocityEstimate velocityEstimate, boolean moLrShortCircuitIndicator,
+			GeranGANSSpositioningData geranGANSSpositioningData, UtranGANSSpositioningData utranGANSSpositioningData) throws MAPException {
 		super();
-
-		if (locationEstimate == null || locationEstimate.length < 1 || locationEstimate.length > 20) {
-			throw new MAPException("Mandatory parameter locationEstimate cannot be null or its length should be between 1 and 20 ");
-		}
-
-		if (ageOfLocationEstimate != null && (ageOfLocationEstimate < 0 || ageOfLocationEstimate > 32767)) {
-			throw new MAPException("ageOfLocationEstimate cannot be less than 0 or greater than 32767");
-		}
 
 		this.locationEstimate = locationEstimate;
 		this.geranPositioningData = geranPositioningData;
@@ -112,6 +116,10 @@ public class ProvideSubscriberLocationResponseImpl extends LsmMessageImpl implem
 		this.cellGlobalIdOrServiceAreaIdOrLAI = cellGlobalIdOrServiceAreaIdOrLAI;
 		this.saiPresent = saiPresent;
 		this.accuracyFulfilmentIndicator = accuracyFulfilmentIndicator;
+		this.velocityEstimate = velocityEstimate;
+		this.moLrShortCircuitIndicator = moLrShortCircuitIndicator;
+		this.geranGANSSpositioningData = geranGANSSpositioningData;
+		this.utranGANSSpositioningData = utranGANSSpositioningData;
 	}
 
 	public MAPMessageType getMessageType() {
@@ -128,7 +136,7 @@ public class ProvideSubscriberLocationResponseImpl extends LsmMessageImpl implem
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.
 	 * ProvideSubscriberLocationResponseIndication#getLocationEstimate()
 	 */
-	public byte[] getLocationEstimate() {
+	public ExtGeographicalInformation getLocationEstimate() {
 		return this.locationEstimate;
 	}
 
@@ -138,7 +146,7 @@ public class ProvideSubscriberLocationResponseImpl extends LsmMessageImpl implem
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.
 	 * ProvideSubscriberLocationResponseIndication#getGeranPositioningData()
 	 */
-	public byte[] getGeranPositioningData() {
+	public PositioningDataInformation getGeranPositioningData() {
 		return this.geranPositioningData;
 	}
 
@@ -148,7 +156,7 @@ public class ProvideSubscriberLocationResponseImpl extends LsmMessageImpl implem
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.
 	 * ProvideSubscriberLocationResponseIndication#getUtranPositioningData()
 	 */
-	public byte[] getUtranPositioningData() {
+	public UtranPositioningDataInfo getUtranPositioningData() {
 		return this.utranPositioningData;
 	}
 
@@ -169,7 +177,7 @@ public class ProvideSubscriberLocationResponseImpl extends LsmMessageImpl implem
 	 * ProvideSubscriberLocationResponseIndication
 	 * #getAdditionalLocationEstimate()
 	 */
-	public byte[] getAdditionalLocationEstimate() {
+	public AddGeographicalInformation getAdditionalLocationEstimate() {
 		return this.additionalLocationEstimate;
 	}
 
@@ -190,7 +198,7 @@ public class ProvideSubscriberLocationResponseImpl extends LsmMessageImpl implem
 	 * ProvideSubscriberLocationResponseIndication
 	 * #getDeferredMTLRResponseIndicator()
 	 */
-	public Boolean getDeferredMTLRResponseIndicator() {
+	public boolean getDeferredMTLRResponseIndicator() {
 		return this.deferredMTLRResponseIndicator;
 	}
 
@@ -201,7 +209,7 @@ public class ProvideSubscriberLocationResponseImpl extends LsmMessageImpl implem
 	 * ProvideSubscriberLocationResponseIndication
 	 * #getCellGlobalIdOrServiceAreaIdOrLAI()
 	 */
-	public CellGlobalIdOrServiceAreaIdOrLAI getCellGlobalIdOrServiceAreaIdOrLAI() {
+	public CellGlobalIdOrServiceAreaIdOrLAI getCellIdOrSai() {
 		return this.cellGlobalIdOrServiceAreaIdOrLAI;
 	}
 
@@ -211,7 +219,7 @@ public class ProvideSubscriberLocationResponseImpl extends LsmMessageImpl implem
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.
 	 * ProvideSubscriberLocationResponseIndication#getSaiPresent()
 	 */
-	public Boolean getSaiPresent() {
+	public boolean getSaiPresent() {
 		return this.saiPresent;
 	}
 
@@ -224,6 +232,22 @@ public class ProvideSubscriberLocationResponseImpl extends LsmMessageImpl implem
 	 */
 	public AccuracyFulfilmentIndicator getAccuracyFulfilmentIndicator() {
 		return this.accuracyFulfilmentIndicator;
+	}
+
+	public VelocityEstimate getVelocityEstimate() {
+		return velocityEstimate;
+	}
+
+	public boolean getMoLrShortCircuitIndicator() {
+		return moLrShortCircuitIndicator;
+	}
+
+	public GeranGANSSpositioningData getGeranGANSSpositioningData() {
+		return geranGANSSpositioningData;
+	}
+
+	public UtranGANSSpositioningData getUtranGANSSpositioningData() {
+		return utranGANSSpositioningData;
 	}
 
 	/*
@@ -344,8 +368,8 @@ public class ProvideSubscriberLocationResponseImpl extends LsmMessageImpl implem
 							"Error while decoding ProvideSubscriberLocationResponseIndication: Parameter [add-LocationEstimate [2] Add-GeographicalInformation] bad tag class or not primitive or not Sequence",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
-				length1 = ais.readLength();
-				this.additionalLocationEstimate = ais.readOctetStringData(length1);
+				this.additionalLocationEstimate = new AddGeographicalInformationImpl();
+				((AddGeographicalInformationImpl)this.additionalLocationEstimate).decodeAll(ais);
 				break;
 			case _TAG_DEFERRED_MT_LR_RESPONSE_IND:
 				// deferredmt-lrResponseIndicator [3] NULL OPTIONAL,
@@ -364,8 +388,8 @@ public class ProvideSubscriberLocationResponseImpl extends LsmMessageImpl implem
 							"Error while decoding ProvideSubscriberLocationResponseIndication: Parameter [geranPositioningData [4] PositioningDataInformation] bad tag class or not primitive or not Sequence",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
-				length1 = ais.readLength();
-				this.geranPositioningData = ais.readOctetStringData(length1);
+				this.geranPositioningData = new PositioningDataInformationImpl();
+				((PositioningDataInformationImpl)this.geranPositioningData).decodeAll(ais);
 				break;
 			case _TAG_UTRAN_POSITIONING_DATA:
 				// utranPositioningData [5] UtranPositioningDataInfo OPTIONAL,
@@ -374,8 +398,8 @@ public class ProvideSubscriberLocationResponseImpl extends LsmMessageImpl implem
 							"Error while decoding ProvideSubscriberLocationResponseIndication: Parameter [utranPositioningData [5] UtranPositioningDataInfo] bad tag class or not primitive or not Sequence",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
-				length1 = ais.readLength();
-				this.utranPositioningData = ais.readOctetStringData(length1);
+				this.utranPositioningData = new UtranPositioningDataInfoImpl();
+				((UtranPositioningDataInfoImpl)this.utranPositioningData).decodeAll(ais);
 				break;
 			case _TAG_CELL_ID_OR_SAI:
 				// cellIdOrSai [6] CellGlobalIdOrServiceAreaIdOrLAI
@@ -460,13 +484,14 @@ public class ProvideSubscriberLocationResponseImpl extends LsmMessageImpl implem
 			throw new MAPException("Error while encoding ProvideSubscriberLocation-Res the mandatory parameter locationEstimate is not defined");
 		}
 
-		try {
-			asnOs.writeOctetString(this.locationEstimate);
-		} catch (IOException e) {
-			throw new MAPException("IOException while encoding parameter locationEstimate", e);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException while encoding parameter locationEstimate", e);
-		}
+		((ExtGeographicalInformationImpl)this.locationEstimate).encodeAll(asnOs);
+//		try {
+//			asnOs.writeOctetString(this.locationEstimate);
+//		} catch (IOException e) {
+//			throw new MAPException("IOException while encoding parameter locationEstimate", e);
+//		} catch (AsnException e) {
+//			throw new MAPException("AsnException while encoding parameter locationEstimate", e);
+//		}
 
 		if (this.ageOfLocationEstimate != null) {
 			try {
@@ -483,16 +508,17 @@ public class ProvideSubscriberLocationResponseImpl extends LsmMessageImpl implem
 		}
 
 		if (this.additionalLocationEstimate != null) {
-			try {
-				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_ADD_LOCATION_ESTIMATE, this.additionalLocationEstimate);
-			} catch (IOException e) {
-				throw new MAPException("IOException while encoding parameter additionalLocationEstimate", e);
-			} catch (AsnException e) {
-				throw new MAPException("AsnException while encoding parameter additionalLocationEstimate", e);
-			}
+			((AddGeographicalInformationImpl)this.additionalLocationEstimate).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_ADD_LOCATION_ESTIMATE);
+//			try {
+//				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_ADD_LOCATION_ESTIMATE, this.additionalLocationEstimate);
+//			} catch (IOException e) {
+//				throw new MAPException("IOException while encoding parameter additionalLocationEstimate", e);
+//			} catch (AsnException e) {
+//				throw new MAPException("AsnException while encoding parameter additionalLocationEstimate", e);
+//			}
 		}
 
-		if (this.deferredMTLRResponseIndicator != null) {
+		if (this.deferredMTLRResponseIndicator) {
 			try {
 				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_DEFERRED_MT_LR_RESPONSE_IND);
 			} catch (IOException e) {
@@ -503,23 +529,25 @@ public class ProvideSubscriberLocationResponseImpl extends LsmMessageImpl implem
 		}
 
 		if (this.geranPositioningData != null) {
-			try {
-				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_GERAN_POSITIONING_DATA, this.geranPositioningData);
-			} catch (IOException e) {
-				throw new MAPException("IOException while encoding parameter geranPositioningData", e);
-			} catch (AsnException e) {
-				throw new MAPException("AsnException while encoding parameter geranPositioningData", e);
-			}
+			((PositioningDataInformationImpl)this.geranPositioningData).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_GERAN_POSITIONING_DATA);
+//			try {
+//				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_GERAN_POSITIONING_DATA, this.geranPositioningData);
+//			} catch (IOException e) {
+//				throw new MAPException("IOException while encoding parameter geranPositioningData", e);
+//			} catch (AsnException e) {
+//				throw new MAPException("AsnException while encoding parameter geranPositioningData", e);
+//			}
 		}
 
 		if (this.utranPositioningData != null) {
-			try {
-				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_UTRAN_POSITIONING_DATA, this.utranPositioningData);
-			} catch (IOException e) {
-				throw new MAPException("IOException while encoding parameter utranPositioningData", e);
-			} catch (AsnException e) {
-				throw new MAPException("AsnException while encoding parameter utranPositioningData", e);
-			}
+			((UtranPositioningDataInfoImpl)this.utranPositioningData).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_UTRAN_POSITIONING_DATA);
+//			try {
+//				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_UTRAN_POSITIONING_DATA, this.utranPositioningData);
+//			} catch (IOException e) {
+//				throw new MAPException("IOException while encoding parameter utranPositioningData", e);
+//			} catch (AsnException e) {
+//				throw new MAPException("AsnException while encoding parameter utranPositioningData", e);
+//			}
 		}
 
 		if (this.cellGlobalIdOrServiceAreaIdOrLAI != null) {
@@ -533,7 +561,7 @@ public class ProvideSubscriberLocationResponseImpl extends LsmMessageImpl implem
 			}
 		}
 
-		if (this.saiPresent != null) {
+		if (this.saiPresent) {
 			try {
 				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_SAI_PRESENT);
 			} catch (IOException e) {

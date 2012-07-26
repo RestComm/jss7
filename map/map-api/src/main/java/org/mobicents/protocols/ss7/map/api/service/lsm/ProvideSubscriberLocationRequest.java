@@ -53,28 +53,32 @@ provideSubscriberLocation  OPERATION ::= {				--Timer ml
 	CODE	local:83 }
 
 ProvideSubscriberLocation-Arg ::= SEQUENCE {
-     locationType LocationType,
-     mlc-Number ISDN-AddressString,
-     lcs-ClientID [0] LCS-ClientID OPTIONAL,
-     privacyOverride [1] NULL OPTIONAL,
-     imsi [2] IMSI OPTIONAL,
-     msisdn [3] ISDN-AddressString OPTIONAL,
-     lmsi [4] LMSI OPTIONAL,
-     imei [5] IMEI OPTIONAL,
-     lcs-Priority [6] LCS-Priority OPTIONAL,
-     lcs-QoS [7] LCS-QoS OPTIONAL,
-     extensionContainer [8] ExtensionContainer OPTIONAL,
-     ... ,
-     supportedGADShapes [9] SupportedGADShapes OPTIONAL,
-     lcs-ReferenceNumber [10] LCS-ReferenceNumber OPTIONAL,
-     lcsServiceTypeID [11] LCSServiceTypeID OPTIONAL,
-     lcsCodeword [12] LCSCodeword OPTIONAL,
-     lcs-PrivacyCheck [13] LCS-PrivacyCheck OPTIONAL,
-     areaEventInfo [14] AreaEventInfo OPTIONAL,
-     h-gmlc-Address [15] GSN-Address OPTIONAL }
-     -- one of imsi or msisdn is mandatory
-     -- If a location estimate type indicates activate deferred location or cancel deferred
-     -- location, a lcs-Reference number shall be included
+	locationType	LocationType,
+	mlc-Number	ISDN-AddressString,
+	lcs-ClientID	[0] LCS-ClientID	OPTIONAL,
+	privacyOverride	[1] NULL		OPTIONAL,
+	imsi			[2] IMSI		OPTIONAL,
+	msisdn		[3] ISDN-AddressString	OPTIONAL,
+	lmsi			[4] LMSI		OPTIONAL,
+	imei			[5] IMEI		OPTIONAL,
+	lcs-Priority	[6] LCS-Priority	OPTIONAL,
+	lcs-QoS		[7] LCS-QoS	OPTIONAL,
+	extensionContainer	[8] ExtensionContainer	OPTIONAL,
+	... ,
+	supportedGADShapes	[9]	SupportedGADShapes	OPTIONAL,
+	lcs-ReferenceNumber	[10]	LCS-ReferenceNumber	OPTIONAL,
+	lcsServiceTypeID	[11]	LCSServiceTypeID	OPTIONAL,
+	lcsCodeword	[12]	LCSCodeword	OPTIONAL,
+	lcs-PrivacyCheck	[13]	LCS-PrivacyCheck	OPTIONAL,
+	areaEventInfo	[14]	AreaEventInfo	OPTIONAL,
+	h-gmlc-Address	[15]	GSN-Address	OPTIONAL,
+	mo-lrShortCircuitIndicator	[16] NULL		OPTIONAL,
+	periodicLDRInfo	[17] PeriodicLDRInfo	OPTIONAL,
+	reportingPLMNList	[18] ReportingPLMNList	OPTIONAL }
+
+	-- one of imsi or msisdn is mandatory
+	-- If a location estimate type indicates activate deferred location or cancel deferred 
+	-- location, a lcs-Reference number shall be included.
 
  * 
  * @author amit bhayani
@@ -92,7 +96,7 @@ public interface ProvideSubscriberLocationRequest extends LsmMessage {
 	
 	public LCSClientID getLCSClientID();
 	
-	public Boolean getPrivacyOverride();
+	public boolean getPrivacyOverride();
 	
 	public IMSI getIMSI();
 	
@@ -136,7 +140,7 @@ public interface ProvideSubscriberLocationRequest extends LsmMessage {
 	 * 
 	 * @return
 	 */
-	public Byte getLCSReferenceNumber();
+	public Integer getLCSReferenceNumber();
 	
 	public LCSCodeword getLCSCodeword();
 
@@ -162,4 +166,11 @@ public interface ProvideSubscriberLocationRequest extends LsmMessage {
 	 * @return
 	 */
 	public GSNAddress getHGMLCAddress();
+
+	public boolean getMoLrShortCircuitIndicator();
+	
+	public PeriodicLDRInfo getPeriodicLDRInfo();
+	
+	public ReportingPLMNList getReportingPLMNList();
+
 }

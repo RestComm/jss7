@@ -157,8 +157,8 @@ public class ProvideSubscriberLocationRequestTest {
 
 		SupportedGADShapes supportedGADShapes = new SupportedGADShapesImpl(true, true, true, true, true, true, true);
 
-		ProvideSubscriberLocationRequestImpl reqInd = new ProvideSubscriberLocationRequestImpl(locationType, mlcNumber, lcsClientID, null,
-				imsi, null, null, null, LCSPriority.normalPriority, lcsQoS, null, supportedGADShapes, null, null, null, null, null, null);
+		ProvideSubscriberLocationRequestImpl reqInd = new ProvideSubscriberLocationRequestImpl(locationType, mlcNumber, lcsClientID, false, imsi, null, null,
+				null, LCSPriority.normalPriority, lcsQoS, null, supportedGADShapes, null, null, null, null, null, null, false, null, null);
 
 		AsnOutputStream asnOS = new AsnOutputStream();
 		reqInd.encodeAll(asnOS);

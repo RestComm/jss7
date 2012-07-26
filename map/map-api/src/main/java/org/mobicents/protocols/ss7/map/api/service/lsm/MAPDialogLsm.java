@@ -39,20 +39,24 @@ import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
  */
 public interface MAPDialogLsm extends MAPDialog {
 
-	public Long addProvideSubscriberLocationRequest(LocationType locationType, ISDNAddressString mlcNumber, LCSClientID lcsClientID, Boolean privacyOverride,
+	public Long addProvideSubscriberLocationRequest(LocationType locationType, ISDNAddressString mlcNumber, LCSClientID lcsClientID, boolean privacyOverride,
 			IMSI imsi, ISDNAddressString msisdn, LMSI lmsi, IMEI imei, LCSPriority lcsPriority, LCSQoS lcsQoS, MAPExtensionContainer extensionContainer,
-			SupportedGADShapes supportedGADShapes, Byte lcsReferenceNumber, Integer lcsServiceTypeID, LCSCodeword lcsCodeword, LCSPrivacyCheck lcsPrivacyCheck,
-			AreaEventInfo areaEventInfo, GSNAddress hgmlcAddress) throws MAPException;
+			SupportedGADShapes supportedGADShapes, Integer lcsReferenceNumber, Integer lcsServiceTypeID, LCSCodeword lcsCodeword,
+			LCSPrivacyCheck lcsPrivacyCheck, AreaEventInfo areaEventInfo, GSNAddress hgmlcAddress, boolean moLrShortCircuitIndicator,
+			PeriodicLDRInfo periodicLDRInfo, ReportingPLMNList reportingPLMNList) throws MAPException;
 
 	public Long addProvideSubscriberLocationRequest(int customInvokeTimeout, LocationType locationType, ISDNAddressString mlcNumber, LCSClientID lcsClientID,
-			Boolean privacyOverride, IMSI imsi, ISDNAddressString msisdn, LMSI lmsi, IMEI imei, LCSPriority lcsPriority, LCSQoS lcsQoS,
-			MAPExtensionContainer extensionContainer, SupportedGADShapes supportedGADShapes, Byte lcsReferenceNumber, Integer lcsServiceTypeID,
-			LCSCodeword lcsCodeword, LCSPrivacyCheck lcsPrivacyCheck, AreaEventInfo areaEventInfo, GSNAddress hgmlcAddress) throws MAPException;
+			boolean privacyOverride, IMSI imsi, ISDNAddressString msisdn, LMSI lmsi, IMEI imei, LCSPriority lcsPriority, LCSQoS lcsQoS,
+			MAPExtensionContainer extensionContainer, SupportedGADShapes supportedGADShapes, Integer lcsReferenceNumber, Integer lcsServiceTypeID,
+			LCSCodeword lcsCodeword, LCSPrivacyCheck lcsPrivacyCheck, AreaEventInfo areaEventInfo, GSNAddress hgmlcAddress, boolean moLrShortCircuitIndicator,
+			PeriodicLDRInfo periodicLDRInfo, ReportingPLMNList reportingPLMNList) throws MAPException;
 
-	public void addProvideSubscriberLocationResponse(long invokeId, byte[] locationEstimate, byte[] geranPositioningData, byte[] utranPositioningData,
-			Integer ageOfLocationEstimate, byte[] additionalLocationEstimate, MAPExtensionContainer extensionContainer, Boolean deferredMTLRResponseIndicator,
-			CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI, Boolean saiPresent, AccuracyFulfilmentIndicator accuracyFulfilmentIndicator)
-			throws MAPException;
+	public void addProvideSubscriberLocationResponse(long invokeId, ExtGeographicalInformation locationEstimate,
+			PositioningDataInformation geranPositioningData, UtranPositioningDataInfo utranPositioningData, Integer ageOfLocationEstimate,
+			AddGeographicalInformation additionalLocationEstimate, MAPExtensionContainer extensionContainer, boolean deferredMTLRResponseIndicator,
+			CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI, boolean saiPresent, AccuracyFulfilmentIndicator accuracyFulfilmentIndicator,
+			VelocityEstimate velocityEstimate, boolean moLrShortCircuitIndicator, GeranGANSSpositioningData geranGANSSpositioningData,
+			UtranGANSSpositioningData utranGANSSpositioningData) throws MAPException;
 
 	public Long addSubscriberLocationReportRequest(LCSEvent lcsEvent, LCSClientID lcsClientID, LCSLocationInfo lcsLocationInfo, ISDNAddressString msisdn,
 			IMSI imsi, IMEI imei, ISDNAddressString naEsrd, ISDNAddressString naEsrk, byte[] locationEstimate, Integer ageOfLocationEstimate,
