@@ -19,43 +19,31 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
+
 package org.mobicents.protocols.ss7.map.service.lsm;
 
-import java.io.IOException;
-
-import org.mobicents.protocols.asn.AsnException;
-import org.mobicents.protocols.asn.AsnInputStream;
-import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.asn.BitSetStrictLength;
-import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.lsm.DeferredLocationEventType;
-import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
+import org.mobicents.protocols.ss7.map.primitives.BitStringBase;
 
 /**
  * @author amit bhayani
+* @author sergey vetyutnev
  *
  */
-public class DeferredLocationEventTypeImpl implements DeferredLocationEventType, MAPAsnPrimitive {
+public class DeferredLocationEventTypeImpl extends BitStringBase implements DeferredLocationEventType {
 	
 	private static final int _INDEX_MS_AVAILABLE = 0;
 	private static final int _INDEX__ENTERING_INTO_AREA = 1;
 	private static final int _INDEX_LEAVING_FROM_AREA = 2;
 	private static final int _INDEX_BEING_INSIDE_AREA = 3;
-	
-	//TODO : Is this correct?
-	private BitSetStrictLength bitString = new BitSetStrictLength(4);
-	
-	/**
-	 * 
-	 */
+
 	public DeferredLocationEventTypeImpl() {
-		super();
+		super(1, 16, 4, "DeferredLocationEventType");
 	}
-	
+
 	public DeferredLocationEventTypeImpl(boolean msAvailable, boolean enteringIntoArea, boolean leavingFromArea, boolean beingInsideArea) {
+		super(1, 16, 4, "DeferredLocationEventType");
+
 		if (msAvailable)
 			this.bitString.set(_INDEX_MS_AVAILABLE);
 		if (enteringIntoArea)
@@ -63,101 +51,7 @@ public class DeferredLocationEventTypeImpl implements DeferredLocationEventType,
 		if (leavingFromArea)
 			this.bitString.set(_INDEX_LEAVING_FROM_AREA);
 		if (beingInsideArea)
-			this.bitString.set(_INDEX_BEING_INSIDE_AREA);	
-		}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
-	 */
-	public int getTag() throws MAPException {
-		return Tag.STRING_BIT;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass()
-	 */
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive()
-	 */
-	public boolean getIsPrimitive() {
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll(org.mobicents.protocols.asn.AsnInputStream)
-	 */
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding MWStatus: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding MWStatus: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData(org.mobicents.protocols.asn.AsnInputStream, int)
-	 */
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding MWStatus: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding MWStatus: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-	
-	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
-		if (length == 0 || length > 4)
-			throw new MAPParsingComponentException("Error decoding DeferredLocationEventType: the DeferredLocationEventType field must contain from 1 or 4 octets. Contains: " + length,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		
-		this.bitString = ansIS.readBitStringData(length);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream)
-	 */
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_BIT);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream, int, int)
-	 */
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		try {
-			asnOs.writeTag(tagClass, true, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding MWStatus: " + e.getMessage(), e);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData(org.mobicents.protocols.asn.AsnOutputStream)
-	 */
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		try {
-			asnOs.writeBitStringData(this.bitString);
-		} catch (IOException e) {
-			throw new MAPException("IOException when encoding MWStatus: " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding MWStatus: " + e.getMessage(), e);
-		}
+			this.bitString.set(_INDEX_BEING_INSIDE_AREA);
 	}
 
 	/* (non-Javadoc)
@@ -189,28 +83,27 @@ public class DeferredLocationEventTypeImpl implements DeferredLocationEventType,
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((bitString == null) ? 0 : bitString.hashCode());
-		return result;
-	}
+	public String toString() {
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		DeferredLocationEventTypeImpl other = (DeferredLocationEventTypeImpl) obj;
-		if (bitString == null) {
-			if (other.bitString != null)
-				return false;
-		} else if (!bitString.equals(other.bitString))
-			return false;
-		return true;
-	}
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
 
+		if (getMsAvailable()) {
+			sb.append("MsAvailable, ");
+		}
+		if (getEnteringIntoArea()) {
+			sb.append("EnteringIntoArea, ");
+		}
+		if (getLeavingFromArea()) {
+			sb.append("LeavingFromArea, ");
+		}
+		if (getBeingInsideArea()) {
+			sb.append("BeingInsideArea, ");
+		}
+		
+		sb.append("]");
+
+		return sb.toString();
+	}
 }

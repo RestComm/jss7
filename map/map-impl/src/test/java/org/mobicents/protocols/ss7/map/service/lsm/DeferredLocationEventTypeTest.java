@@ -22,8 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.service.lsm;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 import java.util.Arrays;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -35,10 +34,10 @@ import org.testng.annotations.Test;
  * @author sergey vetyutnev
  *
  */
-public class PeriodicLDRInfoTest {
+public class DeferredLocationEventTypeTest {
 
 	private byte[] getEncodedData() {
-		return new byte[] { 48, 9, 2, 2, 43, 103, 2, 3, 0, -39, 3 };
+		return new byte[] { 3, 2, 4, -96 };
 	}
 
 	@Test(groups = { "functional.decode","service.lsm"})
@@ -48,20 +47,23 @@ public class PeriodicLDRInfoTest {
 		AsnInputStream asn = new AsnInputStream(rawData);
 
 		int tag = asn.readTag();
-		PeriodicLDRInfoImpl imp = new PeriodicLDRInfoImpl();
+		DeferredLocationEventTypeImpl imp = new DeferredLocationEventTypeImpl();
 		imp.decodeAll(asn);
 
-		assertEquals(tag, Tag.SEQUENCE);
+		assertEquals(tag, Tag.STRING_BIT);
 		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
 
-		assertEquals(imp.getReportingAmount(), 11111);
-		assertEquals(imp.getReportingInterval(), 55555);
+		assertTrue(imp.getMsAvailable());
+		assertFalse(imp.getEnteringIntoArea());
+		assertTrue(imp.getLeavingFromArea());
+		assertFalse(imp.getBeingInsideArea());
 	}
 
 	@Test(groups = { "functional.encode","service.lsm"})
 	public void testEncode() throws Exception {
 
-		PeriodicLDRInfoImpl imp = new PeriodicLDRInfoImpl(11111, 55555);
+		DeferredLocationEventTypeImpl imp = new DeferredLocationEventTypeImpl(true, false, true, false);
+		// boolean msAvailable, boolean enteringIntoArea, boolean leavingFromArea, boolean beingInsideArea
 
 		AsnOutputStream asnOS = new AsnOutputStream();
 		imp.encodeAll(asnOS);
@@ -70,4 +72,5 @@ public class PeriodicLDRInfoTest {
 		byte[] rawData = getEncodedData();		
 		assertTrue( Arrays.equals(rawData,encodedData));
 	}
+
 }

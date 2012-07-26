@@ -22,10 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.service.lsm;
 
-import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
-
+import static org.testng.Assert.*;import org.testng.annotations.*;
 import java.util.Arrays;
-
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
@@ -50,6 +48,7 @@ import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 
 /**
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public class ProvideSubscriberLocationRequestTest {
