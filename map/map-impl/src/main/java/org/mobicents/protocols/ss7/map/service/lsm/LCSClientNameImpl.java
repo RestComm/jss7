@@ -47,6 +47,8 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 	private static final int _TAG_NAME_STRING = 2;
 	private static final int _TAG_LCS_FORMAT_INDICATOR = 3;
 
+	public static final String _PrimitiveName = "LCSClientName";
+
 	private byte dataCodingScheme = 0;
 	private USSDString nameString;
 	private LCSFormatIndicator lcsFormatIndicator;
@@ -145,10 +147,10 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding LCSClientName: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding LCSClientName: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -164,15 +166,19 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding LCSClientName: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding LCSClientName: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
 	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+
+		this.dataCodingScheme = 0;
+		this.nameString = null;
+		this.lcsFormatIndicator = null;
 
 		AsnInputStream ais = asnIS.readSequenceStreamData(length);
 
@@ -218,10 +224,6 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 				break;
 
 			default:
-				// throw new
-				// MAPParsingComponentException("Decoding LCSClientExternalID failed. Expected externalAddress [0] or extensionContainer [1] but found "
-				// + p.getTag(),
-				// MAPParsingComponentExceptionReason.MistypedParameter);
 				ais.advanceElement();
 			}
 		}
@@ -235,7 +237,7 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	/*
@@ -247,12 +249,12 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 	 */
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
-			asnOs.writeTag(tagClass, false, tag);
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding LCSClientName", e);
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + "", e);
 		}
 	}
 
@@ -314,4 +316,26 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		sb.append("dataCodingScheme=");
+		sb.append(this.dataCodingScheme);
+
+		if (this.nameString != null) {
+			sb.append(", nameString=");
+			sb.append(this.nameString.toString());
+		}
+		if (this.lcsFormatIndicator != null) {
+			sb.append(", lcsFormatIndicator=");
+			sb.append(this.lcsFormatIndicator.toString());
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }

@@ -30,6 +30,8 @@ import org.mobicents.protocols.asn.BitSetStrictLength;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
+import org.mobicents.protocols.ss7.map.service.lsm.DeferredLocationEventTypeImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.CSGIdImpl;
 import org.testng.annotations.Test;
 
 /**
@@ -137,6 +139,21 @@ public class BitStringBaseTest {
 			assertNotNull(e);
 		}
 		
+	}
+
+	@Test(groups = { "functional.encode","equality"})
+	public void testEquality() throws Exception {
+		DeferredLocationEventTypeImpl imp1 = new DeferredLocationEventTypeImpl(true, false, true, false);
+		DeferredLocationEventTypeImpl imp2 = new DeferredLocationEventTypeImpl(true, false, true, false);
+		DeferredLocationEventTypeImpl imp3 = new DeferredLocationEventTypeImpl(false, true, true, false);
+		CSGIdImpl implx = new CSGIdImpl();
+
+		assertTrue(imp1.equals(imp2));
+		assertFalse(imp1.equals(imp3));
+		assertFalse(imp2.equals(imp3));
+		assertFalse(implx.equals(imp3));
+		
+		int i1 = imp1.hashCode();
 	}
 
 	private class TestBitStringImpl extends BitStringBase {

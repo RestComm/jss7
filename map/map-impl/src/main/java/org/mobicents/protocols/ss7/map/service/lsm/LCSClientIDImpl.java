@@ -23,8 +23,6 @@
 package org.mobicents.protocols.ss7.map.service.lsm;
 
 import java.io.IOException;
-import java.util.Arrays;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -39,8 +37,10 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientInternalID;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientName;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientType;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSRequestorID;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.APN;
 import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.APNImpl;
 
 /**
  * @author amit bhayani
@@ -55,13 +55,15 @@ public class LCSClientIDImpl implements LCSClientID, MAPAsnPrimitive {
 	private static final int _TAG_LCS_APN = 5;
 	private static final int _TAG_LCS_REQUESTOR_ID = 6;
 
-	private LCSClientType lcsClientType = null;
-	private LCSClientExternalID lcsClientExternalID = null;
-	private LCSClientInternalID lcsClientInternalID = null;
-	private LCSClientName lcsClientName = null;
-	private AddressString lcsClientDialedByMS = null;
-	private byte[] lcsAPN = null;
-	private LCSRequestorID lcsRequestorID = null;
+	public static final String _PrimitiveName = "LCSClientID";
+
+	private LCSClientType lcsClientType;
+	private LCSClientExternalID lcsClientExternalID;
+	private LCSClientInternalID lcsClientInternalID;
+	private LCSClientName lcsClientName;
+	private AddressString lcsClientDialedByMS;
+	private APN lcsAPN;
+	private LCSRequestorID lcsRequestorID;
 
 	/**
 	 * @param lcsClientType
@@ -73,7 +75,7 @@ public class LCSClientIDImpl implements LCSClientID, MAPAsnPrimitive {
 	 * @param lcsRequestorID
 	 */
 	public LCSClientIDImpl(LCSClientType lcsClientType, LCSClientExternalID lcsClientExternalID, LCSClientInternalID lcsClientInternalID,
-			LCSClientName lcsClientName, AddressString lcsClientDialedByMS, byte[] lcsAPN, LCSRequestorID lcsRequestorID) {
+			LCSClientName lcsClientName, AddressString lcsClientDialedByMS, APN lcsAPN, LCSRequestorID lcsRequestorID) {
 		super();
 		this.lcsClientType = lcsClientType;
 		this.lcsClientExternalID = lcsClientExternalID;
@@ -148,7 +150,7 @@ public class LCSClientIDImpl implements LCSClientID, MAPAsnPrimitive {
 	 * @see
 	 * org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientID#getLCSAPN()
 	 */
-	public byte[] getLCSAPN() {
+	public APN getLCSAPN() {
 		return this.lcsAPN;
 	}
 
@@ -207,10 +209,10 @@ public class LCSClientIDImpl implements LCSClientID, MAPAsnPrimitive {
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding SM_RP_DA: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding SM_RP_DA: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -226,15 +228,23 @@ public class LCSClientIDImpl implements LCSClientID, MAPAsnPrimitive {
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding SM_RP_DA: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding SM_RP_DA: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
 	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+
+		this.lcsClientType = null;
+		this.lcsClientExternalID = null;
+		this.lcsClientInternalID = null;
+		this.lcsClientName = null;
+		this.lcsClientDialedByMS = null;
+		this.lcsAPN = null;
+		this.lcsRequestorID = null;
 
 		AsnInputStream ais = asnIS.readSequenceStreamData(length);
 
@@ -245,9 +255,7 @@ public class LCSClientIDImpl implements LCSClientID, MAPAsnPrimitive {
 					"Error while decoding LCSClientID: Parameter 0[lcsClientType [0] LCSClientType] bad tag class, tag or not constructed",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
-		int length1 = ais.readLength();
-		int lcsCltType = (int) ais.readIntegerData(length1);
-
+		int lcsCltType = (int) ais.readInteger();
 		this.lcsClientType = LCSClientType.getLCSClientType(lcsCltType);
 
 		while (true) {
@@ -255,66 +263,70 @@ public class LCSClientIDImpl implements LCSClientID, MAPAsnPrimitive {
 				break;
 
 			tag = ais.readTag();
-			switch (tag) {
-			case _TAG_LCS_CLIENT_EXTERNAL_ID:
-				// Optional lcsClientExternalID [1] LCSClientExternalID
-				// OPTIONAL,
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException("Error while decoding LCSClientExternalID: bad tag class, tag or not constructed",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				this.lcsClientExternalID = new LCSClientExternalIDImpl();
-				((LCSClientExternalIDImpl)this.lcsClientExternalID).decodeAll(ais);
-				break;
-			case _TAG_LCS_CLIENT_DIALED_BY_MS:
-				// lcsClientDialedByMS [2] AddressString OPTIONAL,
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException("Error while decoding lcsClientDialedByMS: bad tag class, tag or not constructed",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				this.lcsClientDialedByMS = new AddressStringImpl();
-				((AddressStringImpl)this.lcsClientDialedByMS).decodeAll(ais);
 
-				break;
-			case _TAG_LCS_CLIENT_INTERNAL_ID:
-				// lcsClientInternalID [3] LCSClientInternalID OPTIONAL
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException("Error while decoding lcsClientInternalID: bad tag class, tag or not constructed",
-							MAPParsingComponentExceptionReason.MistypedParameter);
+			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+				switch (tag) {
+				case _TAG_LCS_CLIENT_EXTERNAL_ID:
+					// Optional lcsClientExternalID [1] LCSClientExternalID
+					// OPTIONAL,
+					if (ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException("Error while decoding LCSClientExternalID: not constructed",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.lcsClientExternalID = new LCSClientExternalIDImpl();
+					((LCSClientExternalIDImpl) this.lcsClientExternalID).decodeAll(ais);
+					break;
+				case _TAG_LCS_CLIENT_DIALED_BY_MS:
+					// lcsClientDialedByMS [2] AddressString OPTIONAL,
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException("Error while decoding lcsClientDialedByMS: not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.lcsClientDialedByMS = new AddressStringImpl();
+					((AddressStringImpl) this.lcsClientDialedByMS).decodeAll(ais);
+
+					break;
+				case _TAG_LCS_CLIENT_INTERNAL_ID:
+					// lcsClientInternalID [3] LCSClientInternalID OPTIONAL
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException("Error while decoding lcsClientInternalID: not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					int i1 = (int) ais.readInteger();
+					this.lcsClientInternalID = LCSClientInternalID.getLCSClientInternalID(i1);
+					break;
+				case _TAG_LCS_CLIENT_NAME:
+					// lcsClientName [4] LCSClientName OPTIONAL,
+					if (ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException("Error while decoding lcsClientName: not constructed",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.lcsClientName = new LCSClientNameImpl();
+					((LCSClientNameImpl) this.lcsClientName).decodeAll(ais);
+					break;
+				case _TAG_LCS_APN:
+					// lcsAPN [5] APN OPTIONAL,
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException("Error while decoding lcsAPN: not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.lcsAPN = new APNImpl();
+					((APNImpl) this.lcsAPN).decodeAll(ais);
+					break;
+				case _TAG_LCS_REQUESTOR_ID:
+					// lcsRequestorID [6] LCSRequestorID OPTIONAL
+					if (ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException("Error while decoding lcsRequestorID: not constructed",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.lcsRequestorID = new LCSRequestorIDImpl();
+					((LCSRequestorIDImpl) this.lcsRequestorID).decodeAll(ais);
+					break;
+				default:
+					ais.advanceElement();
+					break;
 				}
-				length1 = ais.readLength();
-				int i1 = (int) ais.readIntegerData(length1);
-				this.lcsClientInternalID = LCSClientInternalID.getLCSClientInternalID(i1);
-				break;
-			case _TAG_LCS_CLIENT_NAME:
-				// lcsClientName [4] LCSClientName OPTIONAL,
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException("Error while decoding lcsClientName: bad tag class, tag or not constructed",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				this.lcsClientName = new LCSClientNameImpl();
-				((LCSClientNameImpl)this.lcsClientName).decodeAll(ais);
-				break;
-			case _TAG_LCS_APN:
-				// lcsAPN [5] APN OPTIONAL,
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException("Error while decoding lcsAPN: bad tag class, tag or not constructed",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				length1 = ais.readLength();
-				this.lcsAPN = ais.readOctetStringData(length1);
-				break;
-			case _TAG_LCS_REQUESTOR_ID:
-				// lcsRequestorID [6] LCSRequestorID OPTIONAL
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException("Error while decoding lcsRequestorID: bad tag class, tag or not constructed",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				this.lcsRequestorID = new LCSRequestorIDImpl();
-				((LCSRequestorIDImpl)this.lcsRequestorID).decodeAll(ais);
-				break;
-			default:
-				// Do we care?
+			} else {
 				ais.advanceElement();
 			}
 		}// while
@@ -328,7 +340,7 @@ public class LCSClientIDImpl implements LCSClientID, MAPAsnPrimitive {
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	/*
@@ -340,12 +352,12 @@ public class LCSClientIDImpl implements LCSClientID, MAPAsnPrimitive {
 	 */
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
-			asnOs.writeTag(tagClass, false, tag);
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding LCSClientName", e);
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 
@@ -396,13 +408,7 @@ public class LCSClientIDImpl implements LCSClientID, MAPAsnPrimitive {
 
 		if (this.lcsAPN != null) {
 			// lcsAPN [5] APN OPTIONAL,
-			try {
-				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LCS_APN, this.lcsAPN);
-			} catch (IOException e) {
-				throw new MAPException("IOException when encoding parameter lcsAPN: ", e);
-			} catch (AsnException e) {
-				throw new MAPException("AsnException when encoding parameter lcsAPN: ", e);
-			}
+			((APNImpl)this.lcsAPN).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LCS_APN);
 		}
 
 		if (this.lcsRequestorID != null) {
@@ -415,7 +421,7 @@ public class LCSClientIDImpl implements LCSClientID, MAPAsnPrimitive {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + Arrays.hashCode(lcsAPN);
+		result = prime * result + ((lcsAPN == null) ? 0 : lcsAPN.hashCode());
 		result = prime * result + ((lcsClientDialedByMS == null) ? 0 : lcsClientDialedByMS.hashCode());
 		result = prime * result + ((lcsClientExternalID == null) ? 0 : lcsClientExternalID.hashCode());
 		result = prime * result + ((lcsClientInternalID == null) ? 0 : lcsClientInternalID.hashCode());
@@ -434,7 +440,10 @@ public class LCSClientIDImpl implements LCSClientID, MAPAsnPrimitive {
 		if (getClass() != obj.getClass())
 			return false;
 		LCSClientIDImpl other = (LCSClientIDImpl) obj;
-		if (!Arrays.equals(lcsAPN, other.lcsAPN))
+		if (lcsAPN == null) {
+			if (other.lcsAPN != null)
+				return false;
+		} else if (!lcsAPN.equals(other.lcsAPN))
 			return false;
 		if (lcsClientDialedByMS == null) {
 			if (other.lcsClientDialedByMS != null)
@@ -463,4 +472,43 @@ public class LCSClientIDImpl implements LCSClientID, MAPAsnPrimitive {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		if (this.lcsClientType != null) {
+			sb.append("lcsClientType=");
+			sb.append(this.lcsClientType.toString());
+		}
+		if (this.lcsClientExternalID != null) {
+			sb.append(", lcsClientExternalID=");
+			sb.append(this.lcsClientExternalID.toString());
+		}
+		if (this.lcsClientInternalID != null) {
+			sb.append(", lcsClientInternalID=");
+			sb.append(this.lcsClientInternalID.toString());
+		}
+		if (this.lcsClientName != null) {
+			sb.append(", lcsClientName=");
+			sb.append(this.lcsClientName.toString());
+		}
+		if (this.lcsClientDialedByMS != null) {
+			sb.append(", lcsClientDialedByMS=");
+			sb.append(this.lcsClientDialedByMS.toString());
+		}
+		if (this.lcsAPN != null) {
+			sb.append(", lcsAPN=");
+			sb.append(this.lcsAPN.toString());
+		}
+		if (this.lcsRequestorID != null) {
+			sb.append(", lcsRequestorID=");
+			sb.append(this.lcsRequestorID.toString());
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }
