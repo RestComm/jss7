@@ -23,8 +23,6 @@
 package org.mobicents.protocols.ss7.map.service.lsm;
 
 import java.io.IOException;
-import java.util.Arrays;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -33,31 +31,36 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.lsm.Area;
+import org.mobicents.protocols.ss7.map.api.service.lsm.AreaIdentification;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AreaType;
-import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
+import org.mobicents.protocols.ss7.map.primitives.SequenceBase;
 
 /**
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
-public class AreaImpl implements Area, MAPAsnPrimitive {
+public class AreaImpl extends SequenceBase implements Area {
 
-	private AreaType areaType = null;
-	private byte[] areaIdentification = null;
+	private static final int _TAG_areaType = 0;
+	private static final int _TAG_areaIdentification = 1;
+
+	private AreaType areaType;
+	private AreaIdentification areaIdentification;
 
 	/**
 	 * 
 	 */
 	public AreaImpl() {
-		super();
+		super("Area");
 	}
 
 	/**
 	 * @param areaType
 	 * @param areaIdentification
 	 */
-	public AreaImpl(AreaType areaType, byte[] areaIdentification) {
-		super();
+	public AreaImpl(AreaType areaType, AreaIdentification areaIdentification) {
+		super("Area");
 		this.areaType = areaType;
 		this.areaIdentification = areaIdentification;
 	}
@@ -78,102 +81,32 @@ public class AreaImpl implements Area, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.service.lsm.Area#getAreaIdentification
 	 * ()
 	 */
-	public byte[] getAreaIdentification() {
+	public AreaIdentification getAreaIdentification() {
 		return this.areaIdentification;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
-	 */
-	public int getTag() throws MAPException {
-		return Tag.STRING_OCTET;
-	}
+	protected void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass
-	 * ()
-	 */
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive
-	 * ()
-	 */
-	public boolean getIsPrimitive() {
-		return true;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll
-	 * (org.mobicents.protocols.asn.AsnInputStream)
-	 */
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding ReportSMDeliveryStatusRequest: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding ReportSMDeliveryStatusRequest: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData
-	 * (org.mobicents.protocols.asn.AsnInputStream, int)
-	 */
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding ReportSMDeliveryStatusRequest: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding ReportSMDeliveryStatusRequest: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+		this.areaType = null;
+		this.areaIdentification = null;
+		
 		AsnInputStream ais = asnIS.readSequenceStreamData(length);
+		
 		int tag = ais.readTag();
-
-		if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive() || tag != 0) {
-			throw new MAPParsingComponentException("Error while decoding Area: Parameter 0 [areaType [0] AreaType] bad tag class, tag or not primitive",
+		if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive() || tag != _TAG_areaType) {
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter 0 [areaType [0] AreaType] bad tag class, tag or not primitive",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
-
 		int i1 = (int) ais.readInteger();
 		this.areaType = AreaType.getAreaType(i1);
 
 		tag = ais.readTag();
-		if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive() || tag != 1) {
-			throw new MAPParsingComponentException(
-					"Error while decoding Area: Parameter 0 [areaIdentification [1] AreaIdentification] bad tag class, tag or not primitive",
+		if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive() || tag != _TAG_areaIdentification) {
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter 1 [areaIdentification] bad tag class, tag or not primitive",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
-
-		this.areaIdentification = ais.readOctetString();
-		
+		this.areaIdentification = new AreaIdentificationImpl();
+		((AreaIdentificationImpl) this.areaIdentification).decodeAll(ais);
 
 		while (true) {
 			if (ais.available() == 0)
@@ -190,62 +123,27 @@ public class AreaImpl implements Area, MAPAsnPrimitive {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
-	 * (org.mobicents.protocols.asn.AsnOutputStream)
-	 */
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
-	 * (org.mobicents.protocols.asn.AsnOutputStream, int, int)
-	 */
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		try {
-			asnOs.writeTag(tagClass, false, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding reportSMDeliveryStatusRequest: " + e.getMessage(), e);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.areaType == null) {
-			throw new MAPException("Error while encoding Area the mandatory parameter[areaType [0] AreaType] is not defined");
+			throw new MAPException("Error while encoding " + _PrimitiveName + " the mandatory parameter[areaType [0] AreaType] is not defined");
 		}
 
 		if (this.areaIdentification == null) {
-			throw new MAPException("Error while encoding Area the mandatory parameter[areaIdentification [1] AreaIdentification] is not defined");
+			throw new MAPException("Error while encoding " + _PrimitiveName + " the mandatory parameter[areaIdentification [1] AreaIdentification] is not defined");
 		}
 
 		try {
-			asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, 0, this.areaType.getType());
+			asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_areaType, this.areaType.getType());
 
-			asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, true, 1);
-			int pos2 = asnOs.StartContentDefiniteLength();
-
-			asnOs.write(this.areaIdentification);
-
-			asnOs.FinalizeContent(pos2);
+			((AreaIdentificationImpl)this.areaIdentification).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_areaIdentification);
 
 		} catch (IOException e) {
-			throw new MAPException("IOException when encoding Area: " + e.getMessage(), e);
+			throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding Area: " + e.getMessage(), e);
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 
@@ -253,7 +151,7 @@ public class AreaImpl implements Area, MAPAsnPrimitive {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + Arrays.hashCode(areaIdentification);
+		result = prime * result + ((areaIdentification == null) ? 0 : areaIdentification.hashCode());
 		result = prime * result + ((areaType == null) ? 0 : areaType.hashCode());
 		return result;
 	}
@@ -267,11 +165,32 @@ public class AreaImpl implements Area, MAPAsnPrimitive {
 		if (getClass() != obj.getClass())
 			return false;
 		AreaImpl other = (AreaImpl) obj;
-		if (!Arrays.equals(areaIdentification, other.areaIdentification))
+		if (areaIdentification == null) {
+			if (other.areaIdentification != null)
+				return false;
+		} else if (!areaIdentification.equals(other.areaIdentification))
 			return false;
-		if (areaType != other.areaType)
-			return false;
+
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		if (this.areaType != null) {
+			sb.append("areaType=");
+			sb.append(this.areaType);
+		}
+		if (this.areaIdentification != null) {
+			sb.append(", areaIdentification=");
+			sb.append(this.areaIdentification.toString());
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }

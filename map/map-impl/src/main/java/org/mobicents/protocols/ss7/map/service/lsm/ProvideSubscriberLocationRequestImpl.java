@@ -883,7 +883,7 @@ public class ProvideSubscriberLocationRequestImpl extends LsmMessageImpl impleme
 		}
 		if (this.lcsClientID != null) {
 			sb.append(", lcsClientID=");
-			sb.append(locationType.toString());
+			sb.append(lcsClientID.toString());
 		}
 		if (this.privacyOverride) {
 			sb.append(", privacyOverride");

@@ -42,7 +42,8 @@ ProvideSubscriberLocation-Res ::= SEQUENCE {
 	velocityEstimate	[9] VelocityEstimate	OPTIONAL,
 	mo-lrShortCircuitIndicator	[10] NULL		OPTIONAL,
 	geranGANSSpositioningData	[11] GeranGANSSpositioningData	OPTIONAL,
-	utranGANSSpositioningData	[12] UtranGANSSpositioningData	OPTIONAL,	targetServingNodeForHandover	[13] ServingNodeAddress	OPTIONAL }
+	utranGANSSpositioningData	[12] UtranGANSSpositioningData	OPTIONAL,	
+	targetServingNodeForHandover	[13] ServingNodeAddress	OPTIONAL }
 
 --	if deferredmt-lrResponseIndicator is set, locationEstimate is ignored.
 
@@ -213,6 +214,8 @@ public interface ProvideSubscriberLocationResponse extends LsmMessage {
 	public GeranGANSSpositioningData getGeranGANSSpositioningData();
 	
 	public UtranGANSSpositioningData getUtranGANSSpositioningData();
+
+	public ServingNodeAddress getTargetServingNodeForHandover();
 
  }
 

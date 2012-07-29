@@ -58,6 +58,7 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.PeriodicLDRInfo;
 import org.mobicents.protocols.ss7.map.api.service.lsm.PositioningDataInformation;
 import org.mobicents.protocols.ss7.map.api.service.lsm.ReportingPLMNList;
 import org.mobicents.protocols.ss7.map.api.service.lsm.SLRArgExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ServingNodeAddress;
 import org.mobicents.protocols.ss7.map.api.service.lsm.SupportedGADShapes;
 import org.mobicents.protocols.ss7.map.api.service.lsm.UtranGANSSpositioningData;
 import org.mobicents.protocols.ss7.map.api.service.lsm.UtranPositioningDataInfo;
@@ -398,7 +399,7 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 			AddGeographicalInformation additionalLocationEstimate, MAPExtensionContainer extensionContainer, boolean deferredMTLRResponseIndicator,
 			CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI, boolean saiPresent, AccuracyFulfilmentIndicator accuracyFulfilmentIndicator,
 			VelocityEstimate velocityEstimate, boolean moLrShortCircuitIndicator, GeranGANSSpositioningData geranGANSSpositioningData,
-			UtranGANSSpositioningData utranGANSSpositioningData) throws MAPException {
+			UtranGANSSpositioningData utranGANSSpositioningData, ServingNodeAddress targetServingNodeForHandover) throws MAPException {
 
 		if (locationEstimate == null) {
 			throw new MAPException("Mandatroy parameters locationEstimate cannot be null");
@@ -414,7 +415,8 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 
 		ProvideSubscriberLocationResponseImpl resInd = new ProvideSubscriberLocationResponseImpl(locationEstimate, geranPositioningData, utranPositioningData,
 				ageOfLocationEstimate, additionalLocationEstimate, extensionContainer, deferredMTLRResponseIndicator, cellGlobalIdOrServiceAreaIdOrLAI,
-				saiPresent, accuracyFulfilmentIndicator, velocityEstimate, moLrShortCircuitIndicator, geranGANSSpositioningData, utranGANSSpositioningData);
+				saiPresent, accuracyFulfilmentIndicator, velocityEstimate, moLrShortCircuitIndicator, geranGANSSpositioningData, utranGANSSpositioningData,
+				targetServingNodeForHandover);
 
 		AsnOutputStream asnOs = new AsnOutputStream();
 		resInd.encodeAll(asnOs);

@@ -22,15 +22,14 @@
 
 package org.mobicents.protocols.ss7.map.service.lsm;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -41,7 +40,7 @@ import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.service.lsm.Area;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AreaDefinition;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AreaEventInfo;
-import org.mobicents.protocols.ss7.map.api.service.lsm.AreaList;
+import org.mobicents.protocols.ss7.map.api.service.lsm.AreaIdentification;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AreaType;
 import org.mobicents.protocols.ss7.map.api.service.lsm.OccurrenceInfo;
 import org.testng.annotations.AfterClass;
@@ -52,6 +51,7 @@ import org.testng.annotations.Test;
 
 /**
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public class AreaEventInfoTest {
@@ -73,15 +73,19 @@ public class AreaEventInfoTest {
 	public void tearDown() {
 	}
 
+	public byte[] getEncodedData() {
+		// TODO this is self generated trace. We need trace from operator
+		return new byte[] { 48, 24, -96, 15, -96, 13, 48, 11, -128, 1, 3, -127, 6, 18, 112, 113, 3, -24, 100, -127, 1, 1, -126, 2, 127, -2 };
+	}
+	
 	@Test(groups = { "functional.decode","service.lsm"})
 	public void testDecode() throws Exception {
-		// TODO this is self generated trace. We need trace from operator
-		byte[] data = new byte[] { (byte)0xb0, 0x1f, (byte) 0xa0, 0x16, (byte) 0xa0, 0x14, 0x30, 0x08, (byte) 0x80, 0x01, 0x05, (byte) 0x81, 0x03, 0x09, 0x70, 0x71, 0x30, 0x08,
-				(byte) 0x80, 0x01, 0x03, (byte) 0x81, 0x03, 0x04, 0x30, 0x31, (byte) 0x81, 0x01, 0x01, (byte) 0x82, 0x02, 0x7f, (byte) 0xfe };
+		byte[] data = getEncodedData();
 
 		
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
+		assertEquals(tag, Tag.SEQUENCE);
 
 		AreaEventInfo areaEvtInf = new AreaEventInfoImpl();
 		((AreaEventInfoImpl)areaEvtInf).decodeAll(asn);
@@ -89,13 +93,16 @@ public class AreaEventInfoTest {
 		AreaDefinition areaDef = areaEvtInf.getAreaDefinition();
 		assertNotNull(areaDef);
 
-		AreaList areaList = areaDef.getAreaList();
+		ArrayList<Area> areaList = areaDef.getAreaList();
 
 		assertNotNull(areaList);
-		assertEquals( areaList.getAreas().length,2);
-		Area[] areas = areaList.getAreas();
-		assertNotNull(areas[0].getAreaIdentification());
-		assertTrue(Arrays.equals(new byte[] { 0x09, 0x70, 0x71 }, areas[0].getAreaIdentification()));
+		assertEquals( areaList.size(),1);
+		
+		assertEquals(areaList.get(0).getAreaType(), AreaType.routingAreaId);
+		assertEquals(areaList.get(0).getAreaIdentification().getMCC(), 210);
+		assertEquals(areaList.get(0).getAreaIdentification().getMNC(), 177);
+		assertEquals(areaList.get(0).getAreaIdentification().getLac(), 1000);
+		assertEquals(areaList.get(0).getAreaIdentification().getRac(), 100);
 
 		OccurrenceInfo occInfo = areaEvtInf.getOccurrenceInfo();
 		assertNotNull(occInfo);
@@ -108,21 +115,19 @@ public class AreaEventInfoTest {
 
 	@Test(groups = { "functional.encode","service.lsm"})
 	public void testEncode() throws Exception {
-		// TODO this is self generated trace. We need trace from operator
-		byte[] data = new byte[] { (byte)0xb0, 0x1f, (byte) 0xa0, 0x16, (byte) 0xa0, 0x14, 0x30, 0x08, (byte) 0x80, 0x01, 0x05, (byte) 0x81, 0x03, 0x09, 0x70, 0x71, 0x30, 0x08,
-				(byte) 0x80, 0x01, 0x03, (byte) 0x81, 0x03, 0x04, 0x30, 0x31, (byte) 0x81, 0x01, 0x01, (byte) 0x82, 0x02, 0x7f, (byte) 0xfe };
+		byte[] data = getEncodedData();
 
-		Area area1 = new AreaImpl(AreaType.utranCellId, new byte[] { 0x09, 0x70, 0x71 });
-		Area area2 = new AreaImpl(AreaType.routingAreaId, new byte[] { 0x04, 0x30, 0x31 });
+		AreaIdentification ai1 = new AreaIdentificationImpl(AreaType.routingAreaId, 210, 177, 1000, 100);
+		Area area1 = new AreaImpl(AreaType.routingAreaId, ai1);
 
-		AreaList areaList = new AreaListImpl(new Area[] { area1, area2 });
-
+		ArrayList<Area> areaList = new ArrayList<Area>();
+		areaList.add(area1);
 		AreaDefinition areaDef = new AreaDefinitionImpl(areaList);
 
 		AreaEventInfo areaEvtInf = new AreaEventInfoImpl(areaDef, OccurrenceInfo.multipleTimeEvent, 32766);
 
 		AsnOutputStream asnOS = new AsnOutputStream();
-		((AreaEventInfoImpl)areaEvtInf).encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, Tag.SEQUENCE);
+		((AreaEventInfoImpl)areaEvtInf).encodeAll(asnOS);
 		
 		byte[] encodedData = asnOS.toByteArray();
 
@@ -132,11 +137,11 @@ public class AreaEventInfoTest {
 	
 	@Test(groups = { "functional.serialize", "service.lsm" })
 	public void testSerialization() throws Exception {
-		Area area1 = new AreaImpl(AreaType.utranCellId, new byte[] { 0x09, 0x70, 0x71 });
-		Area area2 = new AreaImpl(AreaType.routingAreaId, new byte[] { 0x04, 0x30, 0x31 });
+		AreaIdentification ai1 = new AreaIdentificationImpl(AreaType.routingAreaId, 210, 177, 1000, 100);
+		Area area1 = new AreaImpl(AreaType.routingAreaId, ai1);
 
-		AreaList areaList = new AreaListImpl(new Area[] { area1, area2 });
-
+		ArrayList<Area> areaList = new ArrayList<Area>();
+		areaList.add(area1);
 		AreaDefinition areaDef = new AreaDefinitionImpl(areaList);
 
 		AreaEventInfo original = new AreaEventInfoImpl(areaDef, OccurrenceInfo.multipleTimeEvent, 32766);
@@ -155,9 +160,14 @@ public class AreaEventInfoTest {
 		AreaEventInfoImpl copy = (AreaEventInfoImpl) o;
 		
 		//test result
-		assertEquals(copy.getAreaDefinition(), original.getAreaDefinition());
+		for (int i = 0; i < areaList.size(); i++) {
+			Area a1 = copy.getAreaDefinition().getAreaList().get(i);
+			Area a2 = original.getAreaDefinition().getAreaList().get(i);
+			assertTrue(a1.equals(a2));
+		}
 		assertEquals(copy.getOccurrenceInfo(), original.getOccurrenceInfo());
-		assertEquals(copy.getIntervalTime(), original.getIntervalTime());
+		assertEquals((int)copy.getIntervalTime(), (int)original.getIntervalTime());
+		assertTrue(copy.equals(original));
 		
 	}
 }

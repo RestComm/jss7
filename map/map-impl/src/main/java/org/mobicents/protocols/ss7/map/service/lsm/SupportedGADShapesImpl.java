@@ -19,26 +19,18 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
+
 package org.mobicents.protocols.ss7.map.service.lsm;
 
-import java.io.IOException;
-
-import org.mobicents.protocols.asn.AsnException;
-import org.mobicents.protocols.asn.AsnInputStream;
-import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.asn.BitSetStrictLength;
-import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.lsm.SupportedGADShapes;
-import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
+import org.mobicents.protocols.ss7.map.primitives.BitStringBase;
 
 /**
  * @author amit bhayani
  * 
  */
-public class SupportedGADShapesImpl implements SupportedGADShapes, MAPAsnPrimitive {
+public class SupportedGADShapesImpl extends BitStringBase implements SupportedGADShapes {
+
 	private static final int _INDEX_ELLIPSOID_POINT = 0;
 	private static final int _INDEX_ELLIPSOID_POINT_WITH_UNCERTAINTY_CIRCLE = 1;
 	private static final int _INDEX_ELLIPSOID_POINT_WITH_UNCERTAINTY_ELLIPSE = 2;
@@ -47,18 +39,14 @@ public class SupportedGADShapesImpl implements SupportedGADShapes, MAPAsnPrimiti
 	private static final int _INDEX_ELLIPSOID_WITH_ALTITUDE_AND_UNCERTAINTY_ELIPSOID = 5;
 	private static final int _INDEX_ELLIPSOID_ARC = 6;
 
-	// TODO : Is this correct?
-	private BitSetStrictLength bitString = new BitSetStrictLength(7);
-
-	/**
-	 * 
-	 */
 	public SupportedGADShapesImpl() {
-		super();
+		super(7, 16, 7, "SupportedGADShapes");
 	}
 
 	public SupportedGADShapesImpl(boolean ellipsoidPoint, boolean ellipsoidPointWithUncertaintyCircle, boolean ellipsoidPointWithUncertaintyEllipse,
 			boolean polygon, boolean ellipsoidPointWithAltitude, boolean ellipsoidPointWithAltitudeAndUncertaintyElipsoid, boolean ellipsoidArc) {
+		super(7, 16, 7, "SupportedGADShapes");
+
 		if (ellipsoidPoint)
 			this.bitString.set(_INDEX_ELLIPSOID_POINT);
 		if (ellipsoidPointWithUncertaintyCircle)
@@ -73,131 +61,6 @@ public class SupportedGADShapesImpl implements SupportedGADShapes, MAPAsnPrimiti
 			this.bitString.set(_INDEX_ELLIPSOID_WITH_ALTITUDE_AND_UNCERTAINTY_ELIPSOID);
 		if (ellipsoidArc)
 			this.bitString.set(_INDEX_ELLIPSOID_ARC);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
-	 */
-	public int getTag() throws MAPException {
-		return Tag.STRING_BIT;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass
-	 * ()
-	 */
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive
-	 * ()
-	 */
-	public boolean getIsPrimitive() {
-		return true;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll
-	 * (org.mobicents.protocols.asn.AsnInputStream)
-	 */
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding MWStatus: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding MWStatus: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData
-	 * (org.mobicents.protocols.asn.AsnInputStream, int)
-	 */
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding MWStatus: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding MWStatus: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
-		if (length == 0 || length > 7)
-			throw new MAPParsingComponentException("Error decoding SupportedGADShapes: the SupportedGADShapes field must contain from 7 octets. Contains: "
-					+ length, MAPParsingComponentExceptionReason.MistypedParameter);
-
-		this.bitString = ansIS.readBitStringData(length);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
-	 * (org.mobicents.protocols.asn.AsnOutputStream)
-	 */
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_BIT);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
-	 * (org.mobicents.protocols.asn.AsnOutputStream, int, int)
-	 */
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		try {
-			asnOs.writeTag(tagClass, true, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding MWStatus: " + e.getMessage(), e);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData
-	 * (org.mobicents.protocols.asn.AsnOutputStream)
-	 */
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		try {
-			asnOs.writeBitStringData(this.bitString);
-		} catch (IOException e) {
-			throw new MAPException("IOException when encoding MWStatus: " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding MWStatus: " + e.getMessage(), e);
-		}
 	}
 
 	/*
@@ -272,28 +135,35 @@ public class SupportedGADShapesImpl implements SupportedGADShapes, MAPAsnPrimiti
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((bitString == null) ? 0 : bitString.hashCode());
-		return result;
-	}
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		SupportedGADShapesImpl other = (SupportedGADShapesImpl) obj;
-		if (bitString == null) {
-			if (other.bitString != null)
-				return false;
-		} else if (!bitString.equals(other.bitString))
-			return false;
-		return true;
-	}
+		if (this.getEllipsoidPoint()) {
+			sb.append("ellipsoidPoint");
+		}
+		if (this.getEllipsoidPointWithUncertaintyCircle()) {
+			sb.append(", ellipsoidPointWithUncertaintyCircle");
+		}
+		if (this.getEllipsoidPointWithUncertaintyEllipse()) {
+			sb.append(", ellipsoidPointWithUncertaintyEllipse");
+		}
+		if (this.getPolygon()) {
+			sb.append(", polygon");
+		}
+		if (this.getEllipsoidPointWithAltitude()) {
+			sb.append(", ellipsoidPointWithAltitude");
+		}
+		if (this.getEllipsoidPointWithAltitudeAndUncertaintyElipsoid()) {
+			sb.append(", ellipsoidPointWithAltitudeAndUncertaintyElipsoid");
+		}
+		if (this.getEllipsoidArc()) {
+			sb.append(", ellipsoidArc");
+		}
 
+		sb.append("]");
+
+		return sb.toString();
+	}
 }

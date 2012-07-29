@@ -35,10 +35,18 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientExternalID;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientInternalID;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientName;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSFormatIndicator;
+import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.APNImpl;
 
 /**
  * @author amit bhayani
@@ -63,13 +71,28 @@ public class LCSClientIDTest {
 	public void tearDown() {
 	}
 
+	public byte[] getData() {
+		return new byte[] { (byte) 0xa0, 0x1b, (byte) 0x80, 0x01, 0x02, (byte) 0x83, 0x01, 0x00, (byte) 0xa4, 0x13, (byte) 0x80, 0x01, 0x0f, (byte) 0x82, 0x0e,
+				0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
+	}
+
+	public byte[] getDataFull() {
+		return new byte[] { -96, 69, -128, 1, 2, -95, 7, -128, 5, -111, 68, 51, 34, 17, -126, 6, -111, 85, 68, 51, 34, 17, -125, 1, 0, -92, 19, -128, 1, 15,
+				-126, 14, 110, 114, -5, 28, -122, -61, 101, 110, 114, -5, 28, -122, -61, 101, -123, 2, 11, 12, -90, 19, -128, 1, 15, -127, 14, 110, 114, -5,
+				28, -122, -61, 101, 110, 114, -5, 28, -122, -61, 101 };
+	}
+
+	public byte[] getDataAPN() {
+		return new byte[] { 11, 12 };
+	}
+	
 	@Test(groups = { "functional.decode","service.lsm"})
 	public void testDecode() throws Exception {
-		byte[] data = new byte[] { (byte)0xa0, 0x1b, (byte) 0x80, 0x01, 0x02, (byte) 0x83, 0x01, 0x00, (byte) 0xa4, 0x13, (byte) 0x80, 0x01, 0x0f, (byte) 0x82, 0x0e, 0x6e, 0x72,
-				(byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
+		byte[] data = getData();
 
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
+		assertEquals(tag, 0);
 
 		LCSClientIDImpl lcsClientID = new LCSClientIDImpl();
 		lcsClientID.decodeAll(asn);
@@ -80,19 +103,49 @@ public class LCSClientIDTest {
 		assertNotNull(lcsClientID.getLCSClientInternalID());
 		assertEquals( lcsClientID.getLCSClientInternalID(),LCSClientInternalID.broadcastService);
 
+		assertNull(lcsClientID.getLCSClientExternalID());
+		assertNull(lcsClientID.getLCSClientDialedByMS());
+		assertNull(lcsClientID.getLCSAPN());
+		assertNull(lcsClientID.getLCSRequestorID());
+
 		LCSClientName lcsClientName = lcsClientID.getLCSClientName();
 		assertNotNull(lcsClientName);
 		assertEquals( lcsClientName.getDataCodingScheme(),(byte) 0x0f);
 		USSDString nameString = lcsClientName.getNameString();
+		assertTrue(nameString.getString().equals("ndmgapp2ndmgapp2"));
+
+		
+		data = getDataFull();
+
+		asn = new AsnInputStream(data);
+		tag = asn.readTag();
+
+		lcsClientID = new LCSClientIDImpl();
+		lcsClientID.decodeAll(asn);
+
+		assertNotNull(lcsClientID.getLCSClientType());
+		assertEquals( lcsClientID.getLCSClientType(),LCSClientType.plmnOperatorServices);
+
+		assertNotNull(lcsClientID.getLCSClientInternalID());
+		assertEquals( lcsClientID.getLCSClientInternalID(),LCSClientInternalID.broadcastService);
+
+		lcsClientName = lcsClientID.getLCSClientName();
+		assertNotNull(lcsClientName);
+		assertEquals( lcsClientName.getDataCodingScheme(),(byte) 0x0f);
+		nameString = lcsClientName.getNameString();
 		assertEquals( nameString.getString(),"ndmgapp2ndmgapp2");
 
+		assertTrue(lcsClientID.getLCSClientExternalID().getExternalAddress().getAddress().equals("44332211"));
+		assertTrue(lcsClientID.getLCSClientDialedByMS().getAddress().equals("5544332211"));
+		assertTrue(Arrays.equals(lcsClientID.getLCSAPN().getData(), getDataAPN()));
+		assertEquals( lcsClientID.getLCSRequestorID().getDataCodingScheme(),(byte) 0x0f);
+		assertTrue(lcsClientID.getLCSRequestorID().getRequestorIDString().getString().equals("ndmgapp2ndmgapp2"));
 	}
 
 	@Test(groups = { "functional.encode","service.lsm"})
 	public void testEncode() throws Exception {
 
-		byte[] data = new byte[] { (byte)0xa0, 0x1b, (byte) 0x80, 0x01, 0x02, (byte) 0x83, 0x01, 0x00, (byte) 0xa4, 0x13, (byte) 0x80, 0x01, 0x0f, (byte) 0x82, 0x0e, 0x6e, 0x72,
-				(byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
+		byte[] data = getData();
 
 		USSDString nameString = MAPParameterFactory.createUSSDString("ndmgapp2ndmgapp2");
 		LCSClientName lcsClientName = new LCSClientNameImpl((byte) 0x0f, nameString, null);
@@ -107,8 +160,26 @@ public class LCSClientIDTest {
 
 		assertTrue( Arrays.equals(data,encodedData));
 
+
+		data = getDataFull();
+
+		ISDNAddressString externalAddress = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "44332211");
+		LCSClientExternalID extId = new LCSClientExternalIDImpl(externalAddress, null);
+		AddressStringImpl clientDialedByMS = new AddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "5544332211");
+		APNImpl apn = new APNImpl(getDataAPN()); 
+		LCSRequestorIDImpl reqId = new LCSRequestorIDImpl((byte) 0x0f, nameString, null); 
+		
+		lcsClientID = new LCSClientIDImpl(LCSClientType.plmnOperatorServices, extId, LCSClientInternalID.broadcastService, lcsClientName, clientDialedByMS,
+				apn, reqId);
+
+		asnOS = new AsnOutputStream();
+		lcsClientID.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, 0);
+		
+		encodedData = asnOS.toByteArray();
+
+		assertTrue( Arrays.equals(data,encodedData));
 	}
-	
+
 	@Test(groups = { "functional.serialize", "service.lsm" })
 	public void testSerialization() throws Exception {
 		USSDString nameString = MAPParameterFactory.createUSSDString("ndmgapp2ndmgapp2");

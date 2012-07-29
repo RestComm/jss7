@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,19 +22,27 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
-import java.io.Serializable;
+import org.mobicents.protocols.ss7.map.api.primitives.DiameterIdentity;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 
 /**
- * AreaList ::= SEQUENCE SIZE (1..maxNumOfAreas) OF Area
  * 
- * maxNumOfAreas INTEGER ::= 10
- * 
- * TODO : Should rather just merge with AreaDefinition and avoid unnecessary creation of Objects?
- * 
- * @author amit bhayani
- *
- */
-public interface AreaList extends Serializable {
 
-	public Area[] getAreas();
+ServingNodeAddress ::= CHOICE {
+	msc-Number	[0] ISDN-AddressString,
+	sgsn-Number	[1] ISDN-AddressString,
+	mme-Number	[2] DiameterIdentity }
+
+ * 
+ * @author sergey vetyutnev
+ * 
+ */
+public interface ServingNodeAddress {
+
+	public ISDNAddressString getMscNumber();
+
+	public ISDNAddressString getSgsnNumber();
+
+	public DiameterIdentity getMmeNumber();
+
 }

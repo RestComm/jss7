@@ -34,6 +34,7 @@ import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.service.lsm.ResponseTimeCategory;
@@ -72,6 +73,7 @@ public class ResponseTimeTest {
 
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
+		assertEquals(tag, Tag.SEQUENCE);
 
 		ResponseTimeImpl responseTime = new ResponseTimeImpl();
 		responseTime.decodeAll(asn);
