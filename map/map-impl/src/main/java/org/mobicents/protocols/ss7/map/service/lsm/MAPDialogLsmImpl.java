@@ -110,23 +110,28 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 	 * .protocols.ss7.map.api.service.lsm.AccuracyFulfilmentIndicator)
 	 */
 	public Long addSubscriberLocationReportRequest(LCSEvent lcsEvent, LCSClientID lcsClientID, LCSLocationInfo lcsLocationInfo, ISDNAddressString msisdn,
-			IMSI imsi, IMEI imei, ISDNAddressString naEsrd, ISDNAddressString naEsrk, ExtGeographicalInformation locationEstimate, Integer ageOfLocationEstimate,
-			SLRArgExtensionContainer slrArgExtensionContainer, byte[] addLocationEstimate, DeferredmtlrData deferredmtlrData, Byte lcsReferenceNumber,
-			byte[] geranPositioningData, byte[] utranPositioningData, CellGlobalIdOrServiceAreaIdOrLAI cellIdOrSai, byte[] hgmlcAddress,
-			Integer lcsServiceTypeID, Boolean saiPresent, Boolean pseudonymIndicator, AccuracyFulfilmentIndicator accuracyFulfilmentIndicator)
-			throws MAPException {
+			IMSI imsi, IMEI imei, ISDNAddressString naEsrd, ISDNAddressString naEsrk, ExtGeographicalInformation locationEstimate,
+			Integer ageOfLocationEstimate, SLRArgExtensionContainer slrArgExtensionContainer, AddGeographicalInformation addLocationEstimate,
+			DeferredmtlrData deferredmtlrData, Integer lcsReferenceNumber, PositioningDataInformation geranPositioningData,
+			UtranPositioningDataInfo utranPositioningData, CellGlobalIdOrServiceAreaIdOrLAI cellIdOrSai, GSNAddress hgmlcAddress, Integer lcsServiceTypeID,
+			boolean saiPresent, boolean pseudonymIndicator, AccuracyFulfilmentIndicator accuracyFulfilmentIndicator, VelocityEstimate velocityEstimate,
+			Integer sequenceNumber, PeriodicLDRInfo periodicLDRInfo, boolean moLrShortCircuitIndicator, GeranGANSSpositioningData geranGANSSpositioningData,
+			UtranGANSSpositioningData utranGANSSpositioningData, ServingNodeAddress targetServingNodeForHandover) throws MAPException {
 		return this.addSubscriberLocationReportRequest(_Timer_Default, lcsEvent, lcsClientID, lcsLocationInfo, msisdn, imsi, imei, naEsrd, naEsrk,
 				locationEstimate, ageOfLocationEstimate, slrArgExtensionContainer, addLocationEstimate, deferredmtlrData, lcsReferenceNumber,
 				geranPositioningData, utranPositioningData, cellIdOrSai, hgmlcAddress, lcsServiceTypeID, saiPresent, pseudonymIndicator,
-				accuracyFulfilmentIndicator);
+				accuracyFulfilmentIndicator, velocityEstimate, sequenceNumber, periodicLDRInfo, moLrShortCircuitIndicator, geranGANSSpositioningData,
+				utranGANSSpositioningData, targetServingNodeForHandover);
 	}
 
 	public Long addSubscriberLocationReportRequest(int customInvokeTimeout, LCSEvent lcsEvent, LCSClientID lcsClientID, LCSLocationInfo lcsLocationInfo,
 			ISDNAddressString msisdn, IMSI imsi, IMEI imei, ISDNAddressString naEsrd, ISDNAddressString naEsrk, ExtGeographicalInformation locationEstimate,
-			Integer ageOfLocationEstimate, SLRArgExtensionContainer slrArgExtensionContainer, byte[] addLocationEstimate, DeferredmtlrData deferredmtlrData,
-			Byte lcsReferenceNumber, byte[] geranPositioningData, byte[] utranPositioningData, CellGlobalIdOrServiceAreaIdOrLAI cellIdOrSai,
-			byte[] hgmlcAddress, Integer lcsServiceTypeID, Boolean saiPresent, Boolean pseudonymIndicator,
-			AccuracyFulfilmentIndicator accuracyFulfilmentIndicator) throws MAPException {
+			Integer ageOfLocationEstimate, SLRArgExtensionContainer slrArgExtensionContainer, AddGeographicalInformation addLocationEstimate,
+			DeferredmtlrData deferredmtlrData, Integer lcsReferenceNumber, PositioningDataInformation geranPositioningData,
+			UtranPositioningDataInfo utranPositioningData, CellGlobalIdOrServiceAreaIdOrLAI cellIdOrSai, GSNAddress hgmlcAddress, Integer lcsServiceTypeID,
+			boolean saiPresent, boolean pseudonymIndicator, AccuracyFulfilmentIndicator accuracyFulfilmentIndicator, VelocityEstimate velocityEstimate,
+			Integer sequenceNumber, PeriodicLDRInfo periodicLDRInfo, boolean moLrShortCircuitIndicator, GeranGANSSpositioningData geranGANSSpositioningData,
+			UtranGANSSpositioningData utranGANSSpositioningData, ServingNodeAddress targetServingNodeForHandover) throws MAPException {
 
 		if (lcsEvent == null || lcsClientID == null || lcsLocationInfo == null) {
 			throw new MAPException("Mandatroy parameters lCSEvent, lCSClientID or lCSLocationInfo cannot be null");
@@ -143,10 +148,11 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 			OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
 			oc.setLocalOperationCode((long) MAPOperationCode.provideSubscriberLocation);
 
-			SubscriberLocationReportRequestImpl req = new SubscriberLocationReportRequestImpl(lcsEvent, lcsClientID, lcsLocationInfo,
-					msisdn, imsi, imei, naEsrd, naEsrk, locationEstimate, ageOfLocationEstimate, slrArgExtensionContainer, addLocationEstimate,
-					deferredmtlrData, lcsReferenceNumber, geranPositioningData, utranPositioningData, cellIdOrSai, hgmlcAddress, lcsServiceTypeID, saiPresent,
-					pseudonymIndicator, accuracyFulfilmentIndicator);
+			SubscriberLocationReportRequestImpl req = new SubscriberLocationReportRequestImpl(lcsEvent, lcsClientID, lcsLocationInfo, msisdn, imsi, imei,
+					naEsrd, naEsrk, locationEstimate, ageOfLocationEstimate, slrArgExtensionContainer, addLocationEstimate, deferredmtlrData,
+					lcsReferenceNumber, geranPositioningData, utranPositioningData, cellIdOrSai, hgmlcAddress, lcsServiceTypeID, saiPresent,
+					pseudonymIndicator, accuracyFulfilmentIndicator, velocityEstimate, sequenceNumber, periodicLDRInfo, moLrShortCircuitIndicator,
+					geranGANSSpositioningData, utranGANSSpositioningData, targetServingNodeForHandover);
 
 			AsnOutputStream asnOs = new AsnOutputStream();
 			req.encodeAll(asnOs);

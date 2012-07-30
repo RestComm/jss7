@@ -27,7 +27,7 @@ import org.mobicents.protocols.ss7.map.primitives.BitStringBase;
 
 /**
  * @author amit bhayani
-* @author sergey vetyutnev
+ * @author sergey vetyutnev
  *
  */
 public class DeferredLocationEventTypeImpl extends BitStringBase implements DeferredLocationEventType {

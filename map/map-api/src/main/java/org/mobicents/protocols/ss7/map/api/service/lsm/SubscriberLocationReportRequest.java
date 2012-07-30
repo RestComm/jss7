@@ -48,6 +48,7 @@ subscriberLocationReport  OPERATION ::= {				--Timer m
 		unknownOrUnreachableLCSClient}
 	CODE	local:86 }
 
+SubscriberLocationReport-Arg ::= SEQUENCE {
 	lcs-Event		LCS-Event,
 	lcs-ClientID	LCS-ClientID, 
 	lcsLocationInfo	LCSLocationInfo,
@@ -95,8 +96,11 @@ subscriberLocationReport  OPERATION ::= {				--Timer m
 	-- included. 
 	-- sai-Present indicates that the cellIdOrSai parameter contains a Service Area Identity.
 
+SequenceNumber ::= INTEGER (1..8639999)
+
  * 
  * @author amit bhayani
+ * @author sergey vetyutnev
  *
  */
 public interface SubscriberLocationReportRequest extends LsmMessage {
@@ -221,5 +225,19 @@ public interface SubscriberLocationReportRequest extends LsmMessage {
 	public boolean getPseudonymIndicator();
 	
 	public AccuracyFulfilmentIndicator getAccuracyFulfilmentIndicator();
+
+	public VelocityEstimate getVelocityEstimate();
+
+	public Integer getSequenceNumber();
+
+	public PeriodicLDRInfo getPeriodicLDRInfo();
+
+	public boolean getMoLrShortCircuitIndicator();
+
+	public GeranGANSSpositioningData getGeranGANSSpositioningData();
+
+	public UtranGANSSpositioningData getUtranGANSSpositioningData();
+
+	public ServingNodeAddress getTargetServingNodeForHandover();
 
 }
