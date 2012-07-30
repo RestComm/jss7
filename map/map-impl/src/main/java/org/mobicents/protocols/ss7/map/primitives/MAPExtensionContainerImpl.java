@@ -101,7 +101,7 @@ public class MAPExtensionContainerImpl implements MAPExtensionContainer, MAPAsnP
 		// ... } OPTIONAL,
 		// ... } OPTIONAL,
 		// ... }
-		
+
 		try {
 			AsnInputStream ais = ansIS.readSequenceStream();
 			this._decode(ais);

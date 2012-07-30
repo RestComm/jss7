@@ -70,7 +70,6 @@ public class ProvideSubscriberLocationResponseImpl extends LsmMessageImpl implem
 	private static final int _TAG_geranGANSSpositioningData = 11;
 	private static final int _TAG_utranGANSSpositioningData = 12;
 	private static final int _TAG_targetServingNodeForHandover = 13;
-	
 
 	public static final String _PrimitiveName = "ProvideSubscriberLocationResponse";
 

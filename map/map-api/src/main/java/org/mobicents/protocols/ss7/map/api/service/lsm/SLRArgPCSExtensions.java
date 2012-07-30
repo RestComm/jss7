@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,29 +22,17 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-
-import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
-
 /**
  * 
- SLR-ArgExtensionContainer ::= SEQUENCE {
- 	privateExtensionList [0]PrivateExtensionList OPTIONAL,
- 	slr-Arg-PCS-Extensions [1]SLR-Arg-PCS-Extensions OPTIONAL,
- 	...}
+SLR-Arg-PCS-Extensions ::= SEQUENCE {
+	...,
+	na-ESRK-Request	[0]	NULL		OPTIONAL }
 
-PrivateExtensionList ::= SEQUENCE SIZE (1..10) OF PrivateExtension
-
- * 
- * @author amit bhayani
  * @author sergey vetyutnev
- *
+ * 
  */
-public interface SLRArgExtensionContainer extends Serializable {
+public interface SLRArgPCSExtensions {
 
-	public ArrayList<MAPPrivateExtension> getPrivateExtensionList();
-	
-	public SLRArgPCSExtensions getSlrArgPcsExtensions();
+	public boolean getNaEsrkRequest();
 
 }

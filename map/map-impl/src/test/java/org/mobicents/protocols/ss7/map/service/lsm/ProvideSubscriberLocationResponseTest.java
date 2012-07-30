@@ -29,6 +29,12 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.service.lsm.AccuracyFulfilmentIndicator;
+import org.mobicents.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdOrLAIImpl;
+import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.LAIFixedLengthImpl;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
@@ -66,12 +72,38 @@ public class ProvideSubscriberLocationResponseTest {
 	}
 
 	public byte[] getEncodedDataFull() {
-		return new byte[] { 0 };
+		return new byte[] { 48, 59, 4, 1, 99, -128, 1, 15, -126, 1, 19, -125, 0, -124, 2, 11, 12, -123, 3, 15, 16, 17, -90, 7, -127, 5, 33, -15, 16, 8, -82,
+				-121, 0, -120, 1, 0, -119, 4, 21, 22, 23, 24, -118, 0, -117, 2, 25, 26, -116, 1, 29, -83, 8, -128, 6, -111, 68, 100, 102, -120, -8 };
 	}
 
 	public byte[] getExtGeographicalInformation() {
 		return new byte[] { 99 };
 	}
+	
+	public byte[] getPositioningDataInformation() {
+		return new byte[] { 11, 12 };
+	}
+
+	public byte[] getUtranPositioningDataInfo() {
+		return new byte[] { 15, 16, 17 };
+	}
+
+	public byte[] getAddGeographicalInformation() {
+		return new byte[] { 19 };
+	}
+
+	public byte[] getVelocityEstimate() {
+		return new byte[] { 21, 22, 23, 24 };
+	}
+
+	public byte[] getGeranGANSSpositioningData() {
+		return new byte[] { 25, 26 };
+	}
+
+	public byte[] getUtranGANSSpositioningData() {
+		return new byte[] { 29 };
+	}
+
 
 	@Test(groups = { "functional.decode","service.lsm"})
 	public void testDecodeProvideSubscriberLocationRequestIndication() throws Exception {
@@ -101,37 +133,47 @@ public class ProvideSubscriberLocationResponseTest {
 		assertNull(impl.getGeranGANSSpositioningData());
 		assertNull(impl.getUtranGANSSpositioningData());
 		assertNull(impl.getTargetServingNodeForHandover());
+
+	
+		rawData = getEncodedDataFull();
+
+		asn = new AsnInputStream(rawData);
+
+		tag = asn.readTag();
+		assertEquals(tag, Tag.SEQUENCE);
+
+		impl = new ProvideSubscriberLocationResponseImpl();
+		impl.decodeAll(asn);
+
+		assertTrue(Arrays.equals(impl.getLocationEstimate().getData(), getExtGeographicalInformation()));
+		assertEquals((int)impl.getAgeOfLocationEstimate(), 15);
+
+		assertNull(impl.getExtensionContainer());
+
+		assertTrue(Arrays.equals(impl.getAdditionalLocationEstimate().getData(), getAddGeographicalInformation()));
+		assertTrue(impl.getDeferredMTLRResponseIndicator());
+		assertTrue(Arrays.equals(impl.getGeranPositioningData().getData(), getPositioningDataInformation()));
+		assertTrue(Arrays.equals(impl.getUtranPositioningData().getData(), getUtranPositioningDataInfo()));
+		assertEquals(impl.getCellIdOrSai().getLAIFixedLength().getMCC(), 121);
+		assertEquals(impl.getCellIdOrSai().getLAIFixedLength().getMNC(), 1);
+		assertEquals(impl.getCellIdOrSai().getLAIFixedLength().getLac(), 2222);
+		assertTrue(impl.getSaiPresent());
+		assertEquals(impl.getAccuracyFulfilmentIndicator(), AccuracyFulfilmentIndicator.requestedAccuracyFulfilled);
+		assertTrue(Arrays.equals(impl.getVelocityEstimate().getData(), getVelocityEstimate()));
+		assertTrue(impl.getMoLrShortCircuitIndicator());
+		assertTrue(Arrays.equals(impl.getGeranGANSSpositioningData().getData(), getGeranGANSSpositioningData()));
+		assertTrue(Arrays.equals(impl.getUtranGANSSpositioningData().getData(), getUtranGANSSpositioningData()));
+		assertTrue(impl.getTargetServingNodeForHandover().getMscNumber().getAddress().equals("444666888"));
 	}
 
 	@Test(groups = { "functional.encode","service.lsm"})
 	public void testEncode() throws Exception {
 		byte[] rawData = getEncodedData();
 
-//		LocationType locationType = new LocationTypeImpl(LocationEstimateType.currentLocation, null);
-//		ISDNAddressString mlcNumber = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "55619007");
-//
-//		USSDString nameString = MAPParameterFactory.createUSSDString("ndmgapp2ndmgapp2");
-//		LCSClientName lcsClientName = new LCSClientNameImpl((byte) 0x0f, nameString, null);
-//
-//		LCSClientID lcsClientID = new LCSClientIDImpl(LCSClientType.plmnOperatorServices, null, LCSClientInternalID.broadcastService, lcsClientName, null,
-//				null, null);
-//
-//		IMSI imsi = MAPParameterFactory.createIMSI("724999900000007");
-//
-//		LCSQoS lcsQoS = new LCSQoSImpl(null, null, false, new ResponseTimeImpl(ResponseTimeCategory.lowdelay), null);
-//
-//		SupportedGADShapes supportedGADShapes = new SupportedGADShapesImpl(true, true, true, true, true, true, true);
-
 		ExtGeographicalInformationImpl egeo = new ExtGeographicalInformationImpl(getExtGeographicalInformation());
 
 		ProvideSubscriberLocationResponseImpl reqInd = new ProvideSubscriberLocationResponseImpl(egeo, null, null, 15, null, null, false, null, false, null,
 				null, false, null, null, null);
-//		ExtGeographicalInformation locationEstimate, PositioningDataInformation geranPositioningData,
-//		UtranPositioningDataInfo utranPositioningData, Integer ageOfLocationEstimate, AddGeographicalInformation additionalLocationEstimate,
-//		MAPExtensionContainer extensionContainer, Boolean deferredMTLRResponseIndicator, CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI,
-//		Boolean saiPresent, AccuracyFulfilmentIndicator accuracyFulfilmentIndicator, VelocityEstimate velocityEstimate, boolean moLrShortCircuitIndicator,
-//		GeranGANSSpositioningData geranGANSSpositioningData, UtranGANSSpositioningData utranGANSSpositioningData,
-//		ServingNodeAddress targetServingNodeForHandover
 
 		AsnOutputStream asnOS = new AsnOutputStream();
 		reqInd.encodeAll(asnOS);
@@ -142,39 +184,32 @@ public class ProvideSubscriberLocationResponseTest {
 	
 		rawData = getEncodedDataFull();
 
-//		ISDNAddressStringImpl msisdn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "765432100");
-//		LMSIImpl lmsi = new LMSIImpl(getDataLmsi());
-//		IMEIImpl imei = new IMEIImpl("1234567890123456");
-//		USSDString lcsCodewordString = MAPParameterFactory.createUSSDString("xxyyyzz");
-//		LCSCodewordImpl lcsCodeword = new LCSCodewordImpl((byte) 0x0f, lcsCodewordString);
-//		LCSPrivacyCheckImpl lcsPrivacyCheck = new LCSPrivacyCheckImpl(PrivacyCheckRelatedAction.allowedWithNotification, PrivacyCheckRelatedAction.allowedWithoutNotification);
-//		ArrayList<Area> areaList = new ArrayList<Area>();
-//		AreaIdentification areaIdentification = new AreaIdentificationImpl(AreaType.countryCode, 250, 0, 0, 0);
-//		AreaImpl area = new AreaImpl(AreaType.countryCode, areaIdentification);
-//		areaList.add(area);
-//		AreaDefinition areaDefinition = new AreaDefinitionImpl(areaList);
-//		AreaEventInfoImpl areaEventInfo = new AreaEventInfoImpl(areaDefinition, null, null);
-//		GSNAddress hgmlcAddress = new GSNAddressImpl(getDataHgmlcAddress());
-//		PeriodicLDRInfo periodicLDRInfo = new PeriodicLDRInfoImpl(200, 100);
-//		ArrayList<ReportingPLMN> lstRplmn = new ArrayList<ReportingPLMN>();
-//		PlmnId plmnId = new PlmnIdImpl(getPlmnId());
-//		ReportingPLMN rplmn = new ReportingPLMNImpl(plmnId, null, false);
-//		lstRplmn.add(rplmn);
-//		ReportingPLMNList reportingPLMNList = new ReportingPLMNListImpl(false, lstRplmn);
-//
-//		reqInd = new ProvideSubscriberLocationRequestImpl(locationType, mlcNumber, lcsClientID, true, imsi, msisdn, lmsi, imei, LCSPriority.normalPriority,
-//				lcsQoS, null, supportedGADShapes, 5, 6, lcsCodeword, lcsPrivacyCheck, areaEventInfo, hgmlcAddress, true, periodicLDRInfo, reportingPLMNList);
-//// LocationType locationType, ISDNAddressString mlcNumber, LCSClientID lcsClientID, boolean privacyOverride,
-////		IMSI imsi, ISDNAddressString msisdn, LMSI lmsi, IMEI imei, LCSPriority lcsPriority, LCSQoS lcsQoS, MAPExtensionContainer extensionContainer,
-////		SupportedGADShapes supportedGADShapes, Integer lcsReferenceNumber, Integer lcsServiceTypeID, LCSCodeword lcsCodeword,
-////		LCSPrivacyCheck lcsPrivacyCheck, AreaEventInfo areaEventInfo, GSNAddress hgmlcAddress, boolean moLrShortCircuitIndicator,
-////		PeriodicLDRInfo periodicLDRInfo, ReportingPLMNList reportingPLMNList
-//
-//		asnOS = new AsnOutputStream();
-//		reqInd.encodeAll(asnOS);
-//
-//		encodedData = asnOS.toByteArray();
-//		assertTrue(Arrays.equals(rawData, encodedData));
+		PositioningDataInformationImpl geranPositioningData = new PositioningDataInformationImpl(getPositioningDataInformation());
+		UtranPositioningDataInfoImpl utranPositioningData = new UtranPositioningDataInfoImpl(getUtranPositioningDataInfo());
+		AddGeographicalInformationImpl additionalLocationEstimate = new AddGeographicalInformationImpl(getAddGeographicalInformation());
+		LAIFixedLengthImpl laiFixedLength = new LAIFixedLengthImpl(121, 1, 2222);
+		CellGlobalIdOrServiceAreaIdOrLAIImpl cellGlobalIdOrServiceAreaIdOrLAI = new CellGlobalIdOrServiceAreaIdOrLAIImpl(laiFixedLength);
+		VelocityEstimateImpl velocityEstimate = new VelocityEstimateImpl(getVelocityEstimate());
+		GeranGANSSpositioningDataImpl geranGANSSpositioningData = new GeranGANSSpositioningDataImpl(getGeranGANSSpositioningData());
+		UtranGANSSpositioningDataImpl utranGANSSpositioningData = new UtranGANSSpositioningDataImpl(getUtranGANSSpositioningData());
+		ISDNAddressStringImpl isdnNumber = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "444666888");
+		ServingNodeAddressImpl targetServingNodeForHandover = new ServingNodeAddressImpl(isdnNumber, true);
+		
+		reqInd = new ProvideSubscriberLocationResponseImpl(egeo, geranPositioningData, utranPositioningData, 15, additionalLocationEstimate, null, true,
+				cellGlobalIdOrServiceAreaIdOrLAI, true, AccuracyFulfilmentIndicator.requestedAccuracyFulfilled, velocityEstimate, true,
+				geranGANSSpositioningData, utranGANSSpositioningData, targetServingNodeForHandover);
+//		ExtGeographicalInformation locationEstimate, PositioningDataInformation geranPositioningData,
+//		UtranPositioningDataInfo utranPositioningData, Integer ageOfLocationEstimate, AddGeographicalInformation additionalLocationEstimate,
+//		MAPExtensionContainer extensionContainer, Boolean deferredMTLRResponseIndicator, CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI,
+//		Boolean saiPresent, AccuracyFulfilmentIndicator accuracyFulfilmentIndicator, VelocityEstimate velocityEstimate, boolean moLrShortCircuitIndicator,
+//		GeranGANSSpositioningData geranGANSSpositioningData, UtranGANSSpositioningData utranGANSSpositioningData,
+//		ServingNodeAddress targetServingNodeForHandover
+
+		asnOS = new AsnOutputStream();
+		reqInd.encodeAll(asnOS);
+
+		encodedData = asnOS.toByteArray();
+		assertTrue(Arrays.equals(rawData, encodedData));
 	}
 
 }

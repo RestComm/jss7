@@ -39,6 +39,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AccuracyFulfilmentIndicator;
 import org.mobicents.protocols.ss7.map.api.service.lsm.DeferredmtlrData;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ExtGeographicalInformation;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientID;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSEvent;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSLocationInfo;
@@ -85,7 +86,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
 	private IMEI imei = null;
 	private ISDNAddressString naEsrd = null;
 	private ISDNAddressString naEsrk = null;
-	private byte[] locationEstimate = null;
+	private ExtGeographicalInformation locationEstimate = null;
 	private Integer ageOfLocationEstimate = null;
 	private SLRArgExtensionContainer slrArgExtensionContainer = null;
 	private byte[] addLocationEstimate = null;
@@ -132,7 +133,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
 	 * @param accuracyFulfilmentIndicator
 	 */
 	public SubscriberLocationReportRequestImpl(LCSEvent lcsEvent, LCSClientID lcsClientID, LCSLocationInfo lcsLocationInfo, ISDNAddressString msisdn,
-			IMSI imsi, IMEI imei, ISDNAddressString naEsrd, ISDNAddressString naEsrk, byte[] locationEstimate, Integer ageOfLocationEstimate,
+			IMSI imsi, IMEI imei, ISDNAddressString naEsrd, ISDNAddressString naEsrk, ExtGeographicalInformation locationEstimate, Integer ageOfLocationEstimate,
 			SLRArgExtensionContainer slrArgExtensionContainer, byte[] addLocationEstimate, DeferredmtlrData deferredmtlrData, Byte lcsReferenceNumber,
 			byte[] geranPositioningData, byte[] utranPositioningData, CellGlobalIdOrServiceAreaIdOrLAI cellIdOrSai, byte[] hgmlcAddress,
 			Integer lcsServiceTypeID, Boolean saiPresent, Boolean pseudonymIndicator, AccuracyFulfilmentIndicator accuracyFulfilmentIndicator) {
@@ -255,7 +256,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.
 	 * SubscriberLocationReportRequestIndication#getLocationEstimate()
 	 */
-	public byte[] getLocationEstimate() {
+	public ExtGeographicalInformation getLocationEstimate() {
 		return this.locationEstimate;
 	}
 
@@ -559,8 +560,8 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
 							"Error while decoding SubscriberLocationReportRequestIndication: Parameter [locationEstimate [5] Ext-GeographicalInformation OPTIONAL] bad tag class or not primitive or not Sequence",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				}
-				length1 = ais.readLength();
-				this.locationEstimate = ais.readOctetStringData(length1);
+				this.locationEstimate = new ExtGeographicalInformationImpl();
+				((ExtGeographicalInformationImpl)this.locationEstimate).decodeAll(ais);
 				break;
 			case _TAG_AGE_OF_LOCATION_ESTIMATE:
 				// ageOfLocationEstimate [6] AgeOfLocationInformation OPTIONAL,
@@ -794,13 +795,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
 
 		if (this.locationEstimate != null) {
 			// locationEstimate [5] Ext-GeographicalInformation OPTIONAL,
-			try {
-				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LOCATION_ESTIMATE, this.locationEstimate);
-			} catch (IOException e) {
-				throw new MAPException("IOException while encoding parameter locationEstimate", e);
-			} catch (AsnException e) {
-				throw new MAPException("AsnException while encoding parameter locationEstimate", e);
-			}
+			((ExtGeographicalInformationImpl)this.locationEstimate).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LOCATION_ESTIMATE);
 		}
 
 		// ageOfLocationEstimate [6] AgeOfLocationInformation OPTIONAL,
