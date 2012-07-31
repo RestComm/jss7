@@ -95,6 +95,8 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
 	private static final int _TAG_utranGANSSpositioningData = 25;
 	private static final int _TAG_targetServingNodeForHandover = 26;
 
+	public static final String _PrimitiveName = "SubscriberLocationReportRequest";
+
 	private LCSEvent lcsEvent;
 	private LCSClientID lcsClientID;
 	private LCSLocationInfo lcsLocationInfo;
@@ -426,6 +428,34 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
 		return this.accuracyFulfilmentIndicator;
 	}
 
+	public VelocityEstimate getVelocityEstimate() {
+		return velocityEstimate;
+	}
+
+	public Integer getSequenceNumber() {
+		return sequenceNumber;
+	}
+
+	public PeriodicLDRInfo getPeriodicLDRInfo() {
+		return periodicLDRInfo;
+	}
+
+	public boolean getMoLrShortCircuitIndicator() {
+		return moLrShortCircuitIndicator;
+	}
+
+	public GeranGANSSpositioningData getGeranGANSSpositioningData() {
+		return geranGANSSpositioningData;
+	}
+
+	public UtranGANSSpositioningData getUtranGANSSpositioningData() {
+		return utranGANSSpositioningData;
+	}
+
+	public ServingNodeAddress getTargetServingNodeForHandover() {
+		return targetServingNodeForHandover;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -458,41 +488,6 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
 		return false;
 	}
 
-	@Override
-	public VelocityEstimate getVelocityEstimate() {
-		return velocityEstimate;
-	}
-
-	@Override
-	public Integer getSequenceNumber() {
-		return sequenceNumber;
-	}
-
-	@Override
-	public PeriodicLDRInfo getPeriodicLDRInfo() {
-		return periodicLDRInfo;
-	}
-
-	@Override
-	public boolean getMoLrShortCircuitIndicator() {
-		return moLrShortCircuitIndicator;
-	}
-
-	@Override
-	public GeranGANSSpositioningData getGeranGANSSpositioningData() {
-		return geranGANSSpositioningData;
-	}
-
-	@Override
-	public UtranGANSSpositioningData getUtranGANSSpositioningData() {
-		return utranGANSSpositioningData;
-	}
-
-	@Override
-	public ServingNodeAddress getTargetServingNodeForHandover() {
-		return targetServingNodeForHandover;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -505,10 +500,10 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding ProvideSubscriberLocationRequestIndication: ", e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": ", e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding ProvideSubscriberLocationRequestIndication: ", e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": ", e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -524,33 +519,62 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding ProvideSubscriberLocationRequestIndication: ", e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": ", e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding ProvideSubscriberLocationRequestIndication: ", e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": ", e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
 	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
+		this.lcsEvent = null;
+		this.lcsClientID = null;
+		this.lcsLocationInfo = null;
+		this.msisdn = null;
+		this.imsi = null;
+		this.imei = null;
+		this.naEsrd = null;
+		this.naEsrk = null;
+		this.locationEstimate = null;
+		this.ageOfLocationEstimate = null;
+		this.slrArgExtensionContainer = null;
+		this.addLocationEstimate = null;
+		this.deferredmtlrData = null;
+		this.lcsReferenceNumber = null;
+		this.geranPositioningData = null;
+		this.utranPositioningData = null;
+		this.cellIdOrSai = null;
+		this.hgmlcAddress = null;
+		this.lcsServiceTypeID = null;
+		this.saiPresent = false;
+		this.pseudonymIndicator = false;
+		this.accuracyFulfilmentIndicator = null;
+		this.velocityEstimate = null;
+		this.sequenceNumber = null;
+		this.periodicLDRInfo = null;
+		this.moLrShortCircuitIndicator = false;
+		this.geranGANSSpositioningData = null;
+		this.utranGANSSpositioningData = null;
+		this.targetServingNodeForHandover = null;
+
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 		int tag = ais.readTag();
 		// Decode mandatory lcs-Event LCS-Event,
 		if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive() || tag != Tag.ENUMERATED) {
 			throw new MAPParsingComponentException(
-					"Error while decoding SubscriberLocationReportRequestIndication: Parameter [lcs-Event LCS-Event] bad tag class or not primitive",
+					"Error while decoding " + _PrimitiveName + ": Parameter [lcs-Event LCS-Event] bad tag, tag class or not primitive",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
-		int length1 = ais.readLength();
-		int event = (int) ais.readIntegerData(length1);
+		int event = (int) ais.readInteger();
 		this.lcsEvent = LCSEvent.getLCSEvent(event);
 
 		tag = ais.readTag();
 		// Decode mandatory lcs-ClientID LCS-ClientID
 		if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || ais.isTagPrimitive() || ais.getTag() != Tag.SEQUENCE) {
 			throw new MAPParsingComponentException(
-					"Error while decoding SubscriberLocationReportRequestIndication: Parameter [lcs-ClientID LCS-ClientID] bad tag class or not primitive or not Sequence",
+					"Error while decoding " + _PrimitiveName + ": Parameter [lcs-ClientID LCS-ClientID] bad tag, tag class or primitive",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 		this.lcsClientID = new LCSClientIDImpl();
@@ -560,7 +584,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
 		// Decode mandatory lcsLocationInfo LCSLocationInfo
 		if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || ais.isTagPrimitive() || ais.getTag() != Tag.SEQUENCE) {
 			throw new MAPParsingComponentException(
-					"Error while decoding SubscriberLocationReportRequestIndication: Parameter [lcsLocationInfo LCSLocationInfo] bad tag class or not primitive or not Sequence",
+					"Error while decoding " + _PrimitiveName + ": Parameter [lcsLocationInfo LCSLocationInfo] bad tag, tag class or primitive",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 		this.lcsLocationInfo = new LCSLocationInfoImpl();
@@ -571,205 +595,282 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
 				break;
 
 			tag = ais.readTag();
-			switch (tag) {
-			case _TAG_MSISDN:
-				// msisdn [0] ISDN-AddressString OPTIONAL,
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Error while decoding SubscriberLocationReportRequestIndication: Parameter [msisdn [0] ISDN-AddressString] bad tag class or not primitive or not Sequence",
-							MAPParsingComponentExceptionReason.MistypedParameter);
+
+			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+				switch (tag) {
+				case _TAG_MSISDN:
+					// msisdn [0] ISDN-AddressString OPTIONAL,
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter [msisdn [0] ISDN-AddressString] is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.msisdn = new ISDNAddressStringImpl();
+					((ISDNAddressStringImpl) this.msisdn).decodeAll(ais);
+					break;
+				case _TAG_IMSI:
+					// imsi [1] IMSI OPTIONAL,
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter [imsi [2] IMSI ] is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.imsi = new IMSIImpl();
+					((IMSIImpl) this.imsi).decodeAll(ais);
+					break;
+				case _TAG_IMEI:
+					// imei [2] IMEI OPTIONAL,
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter [imei [2] IMEI OPTIONAL, ] is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.imei = new IMEIImpl();
+					((IMEIImpl) this.imei).decodeAll(ais);
+					break;
+				case _TAG_NA_ESRD:
+					// na-ESRD [3] ISDN-AddressString OPTIONAL,
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter [na-ESRD [3] ISDN-AddressString] is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.naEsrd = new ISDNAddressStringImpl();
+					((ISDNAddressStringImpl) this.naEsrd).decodeAll(ais);
+					break;
+				case _TAG_NA_ESRK:
+					// na-ESRK [4] ISDN-AddressString OPTIONAL,
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter [na-ESRK [4] ISDN-AddressString] is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.naEsrk = new ISDNAddressStringImpl();
+					((ISDNAddressStringImpl) this.naEsrk).decodeAll(ais);
+					break;
+				case _TAG_LOCATION_ESTIMATE:
+					// locationEstimate [5] Ext-GeographicalInformation OPTIONAL
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter [locationEstimate [5] Ext-GeographicalInformation OPTIONAL] is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.locationEstimate = new ExtGeographicalInformationImpl();
+					((ExtGeographicalInformationImpl) this.locationEstimate).decodeAll(ais);
+					break;
+				case _TAG_AGE_OF_LOCATION_ESTIMATE:
+					// ageOfLocationEstimate [6] AgeOfLocationInformation
+					// OPTIONAL,
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter [ageOfLocationEstimate [6] AgeOfLocationInformation] is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.ageOfLocationEstimate = (int) ais.readInteger();
+					break;
+				case _TAG_SLR_ARG_EXTENSION_CONTAINER:
+					// slr-ArgExtensionContainer [7] SLR-ArgExtensionContainer
+					// OPTIONAL,
+					if (ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter [slr-ArgExtensionContainer [7] SLR-ArgExtensionContainer] is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.slrArgExtensionContainer = new SLRArgExtensionContainerImpl();
+					((SLRArgExtensionContainerImpl) this.slrArgExtensionContainer).decodeAll(ais);
+					break;
+				case _TAG_ADD_LOCATION_ESTIMATE:
+					// add-LocationEstimate [8] Add-GeographicalInformation
+					// OPTIONAL,
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter [add-LocationEstimate [8] Add-GeographicalInformation] is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.addLocationEstimate = new AddGeographicalInformationImpl();
+					((AddGeographicalInformationImpl) this.addLocationEstimate).decodeAll(ais);
+					break;
+				case _TAG_DEFERRED_MT_LR_DATA:
+					if (ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter [deferredmt-lrData [9] Deferredmt-lrData ] is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.deferredmtlrData = new DeferredmtlrDataImpl();
+					((DeferredmtlrDataImpl) this.deferredmtlrData).decodeAll(ais);
+					break;
+				case _TAG_LCS_REFERENCE_NUMBER:
+					// lcs-ReferenceNumber [10] LCS-ReferenceNumber OPTIONAL,
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter [lcs-ReferenceNumber [10] LCS-ReferenceNumber] is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.lcsReferenceNumber = (int) ais.readOctetString()[0];
+					break;
+				case _TAG_GERAN_POSITIONING_DATA:
+					// geranPositioningData [11] PositioningDataInformation
+					// OPTIONAL,
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter [geranPositioningData [11] PositioningDataInformation OPTIONAL,] is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.geranPositioningData = new PositioningDataInformationImpl();
+					((PositioningDataInformationImpl) this.geranPositioningData).decodeAll(ais);
+					break;
+				case _TAG_UTRAN_POSITIONING_DATA:
+					// utranPositioningData [12] UtranPositioningDataInfo
+					// OPTIONAL,
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter [utranPositioningData [12] UtranPositioningDataInfo OPTIONAL,] is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.utranPositioningData = new UtranPositioningDataInfoImpl();
+					((UtranPositioningDataInfoImpl) this.utranPositioningData).decodeAll(ais);
+					break;
+				case _TAG_CELL_ID_OR_SAI:
+					// cellIdOrSai [13] CellGlobalIdOrServiceAreaIdOrLAI
+					// OPTIONAL,
+					if ( ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter [cellIdOrSai [13] CellGlobalIdOrServiceAreaIdOrLAI] is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.cellIdOrSai = new CellGlobalIdOrServiceAreaIdOrLAIImpl();
+					AsnInputStream ais2 = ais.readSequenceStream();
+					ais2.readTag();
+					((CellGlobalIdOrServiceAreaIdOrLAIImpl) this.cellIdOrSai).decodeAll(ais2);
+					break;
+				case _TAG_H_GMLC_ADDRESS:
+					// h-gmlc-Address [14] GSN-Address
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter [h-gmlc-Address [14] GSN-Address] is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.hgmlcAddress = new GSNAddressImpl();
+					((GSNAddressImpl) this.hgmlcAddress).decodeAll(ais);
+					break;
+				case _TAG_LCS_SERVICE_TYPE_ID:
+					// lcsServiceTypeID [15] LCSServiceTypeID OPTIONAL,
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter [lcsServiceTypeID [15] LCSServiceTypeID] is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.lcsServiceTypeID = (int) ais.readInteger();
+					break;
+				case _TAG_SAI_PRESENT:
+					// sai-Present [17] NULL OPTIONAL,
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter [sai-Present [17]] is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					ais.readNull();
+					this.saiPresent = true;
+					break;
+				case _TAG_PSEUDONYM_INDICATOR:
+					// pseudonymIndicator [18] NULL OPTIONAL,
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter [pseudonymIndicator [18] NULL] is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					ais.readNull();
+					this.pseudonymIndicator = true;
+					break;
+				case _TAG_ACCURACY_FULFILMENT_INDICATOR:
+					// accuracyFulfilmentIndicator [19]
+					// AccuracyFulfilmentIndicator
+					// OPTIONAL,
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter [accuracyFulfilmentIndicator [19] AccuracyFulfilmentIndicator] is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					int indicator = (int) ais.readInteger();
+					this.accuracyFulfilmentIndicator = AccuracyFulfilmentIndicator.getAccuracyFulfilmentIndicator(indicator);
+					break;
+				case _TAG_velocityEstimate:
+					// velocityEstimate
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter velocityEstimate is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.velocityEstimate = new VelocityEstimateImpl();
+					((VelocityEstimateImpl) this.velocityEstimate).decodeAll(ais);
+					break;
+				case _TAG_sequenceNumber:
+					// sequenceNumber
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter sequenceNumber is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.sequenceNumber = (int)ais.readInteger();
+					break;
+				case _TAG_periodicLDRInfo:
+					// periodicLDRInfo
+					if (ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter periodicLDRInfo is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.periodicLDRInfo = new PeriodicLDRInfoImpl();
+					((PeriodicLDRInfoImpl) this.periodicLDRInfo).decodeAll(ais);
+					break;
+				case _TAG_mo_lrShortCircuitIndicator:
+					// moLrShortCircuitIndicator
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter moLrShortCircuitIndicator is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					ais.readNull();
+					this.moLrShortCircuitIndicator = true;
+					break;
+				case _TAG_geranGANSSpositioningData:
+					// geranGANSSpositioningData
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter geranGANSSpositioningData is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.geranGANSSpositioningData = new GeranGANSSpositioningDataImpl();
+					((GeranGANSSpositioningDataImpl) this.geranGANSSpositioningData).decodeAll(ais);
+					break;
+				case _TAG_utranGANSSpositioningData:
+					// utranGANSSpositioningData
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter utranGANSSpositioningData is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.utranGANSSpositioningData = new UtranGANSSpositioningDataImpl();
+					((UtranGANSSpositioningDataImpl) this.utranGANSSpositioningData).decodeAll(ais);
+					break;
+				case _TAG_targetServingNodeForHandover:
+					// targetServingNodeForHandover
+					if (ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter targetServingNodeForHandover is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.targetServingNodeForHandover = new ServingNodeAddressImpl();
+					ais2 = ais.readSequenceStream();
+					ais2.readTag();
+					((ServingNodeAddressImpl) this.targetServingNodeForHandover).decodeAll(ais2);
+					break;
+				default:
+					ais.advanceElement();
+					break;
 				}
-				this.msisdn = new ISDNAddressStringImpl();
-				((ISDNAddressStringImpl)this.msisdn).decodeAll(ais);
-				break;
-			case _TAG_IMSI:
-				// imsi [1] IMSI OPTIONAL,
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Error while decoding SubscriberLocationReportRequestIndication: Parameter [imsi [2] IMSI ] bad tag class or not primitive or not Sequence",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				this.imsi = new IMSIImpl();
-				((IMSIImpl)this.imsi).decodeAll(ais);
-				break;
-			case _TAG_IMEI:
-				// imei [2] IMEI OPTIONAL,
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Error while decoding SubscriberLocationReportRequestIndication: Parameter [imei [2] IMEI OPTIONAL, ] bad tag class or not primitive or not Sequence",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				this.imei = new IMEIImpl();
-				((IMEIImpl)this.imei).decodeAll(ais);
-				break;
-			case _TAG_NA_ESRD:
-				// na-ESRD [3] ISDN-AddressString OPTIONAL,
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Error while decoding SubscriberLocationReportRequestIndication: Parameter [na-ESRD [3] ISDN-AddressString] bad tag class or not primitive or not Sequence",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				this.naEsrd = new ISDNAddressStringImpl();
-				((ISDNAddressStringImpl)this.naEsrd).decodeAll(ais);
-				break;
-			case _TAG_NA_ESRK:
-				// na-ESRK [4] ISDN-AddressString OPTIONAL,
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Error while decoding SubscriberLocationReportRequestIndication: Parameter [na-ESRK [4] ISDN-AddressString] bad tag class or not primitive or not Sequence",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				this.naEsrk = new ISDNAddressStringImpl();
-				((ISDNAddressStringImpl)this.naEsrk).decodeAll(ais);
-				break;
-			case _TAG_LOCATION_ESTIMATE:
-				// locationEstimate [5] Ext-GeographicalInformation OPTIONAL
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Error while decoding SubscriberLocationReportRequestIndication: Parameter [locationEstimate [5] Ext-GeographicalInformation OPTIONAL] bad tag class or not primitive or not Sequence",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				this.locationEstimate = new ExtGeographicalInformationImpl();
-				((ExtGeographicalInformationImpl)this.locationEstimate).decodeAll(ais);
-				break;
-			case _TAG_AGE_OF_LOCATION_ESTIMATE:
-				// ageOfLocationEstimate [6] AgeOfLocationInformation OPTIONAL,
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Error while decoding SubscriberLocationReportRequestIndication: Parameter [ageOfLocationEstimate [6] AgeOfLocationInformation] bad tag class or not primitive or not Sequence",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				length1 = ais.readLength();
-				this.ageOfLocationEstimate = (int) ais.readIntegerData(length1);
-				break;
-			case _TAG_SLR_ARG_EXTENSION_CONTAINER:
-				// slr-ArgExtensionContainer [7] SLR-ArgExtensionContainer
-				// OPTIONAL,
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Error while decoding SubscriberLocationReportRequestIndication: Parameter [slr-ArgExtensionContainer [7] SLR-ArgExtensionContainer] bad tag class or not primitive or not Sequence",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				this.slrArgExtensionContainer = new SLRArgExtensionContainerImpl();
-				((SLRArgExtensionContainerImpl)this.slrArgExtensionContainer).decodeAll(ais);
-				break;
-			case _TAG_ADD_LOCATION_ESTIMATE:
-				// add-LocationEstimate [8] Add-GeographicalInformation
-				// OPTIONAL,
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Error while decoding SubscriberLocationReportRequestIndication: Parameter [add-LocationEstimate [8] Add-GeographicalInformation] bad tag class or not primitive or not Sequence",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				this.addLocationEstimate = new AddGeographicalInformationImpl();
-				((AddGeographicalInformationImpl)this.addLocationEstimate).decodeAll(ais);
-				break;
-			case _TAG_DEFERRED_MT_LR_DATA:
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Error while decoding SubscriberLocationReportRequestIndication: Parameter [deferredmt-lrData [9] Deferredmt-lrData ] bad tag class or not primitive or not Sequence",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				this.deferredmtlrData = new DeferredmtlrDataImpl();
-				((DeferredmtlrDataImpl)this.deferredmtlrData).decodeAll(ais);
-				break;
-			case _TAG_LCS_REFERENCE_NUMBER:
-				// lcs-ReferenceNumber [10] LCS-ReferenceNumber OPTIONAL,
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Error while decoding SubscriberLocationReportRequestIndication: Parameter [lcs-ReferenceNumber [10] LCS-ReferenceNumber] bad tag class or not primitive or not Sequence",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				this.lcsReferenceNumber = (int) ais.readOctetString()[0];
-				break;
-			case _TAG_GERAN_POSITIONING_DATA:
-				// geranPositioningData [11] PositioningDataInformation
-				// OPTIONAL,
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Error while decoding SubscriberLocationReportRequestIndication: Parameter [geranPositioningData [11] PositioningDataInformation OPTIONAL,] bad tag class or not primitive or not Sequence",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				this.geranPositioningData = new PositioningDataInformationImpl();
-				((PositioningDataInformationImpl)this.geranPositioningData).decodeAll(ais);
-				break;
-			case _TAG_UTRAN_POSITIONING_DATA:
-				// utranPositioningData [12] UtranPositioningDataInfo OPTIONAL,
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Error while decoding SubscriberLocationReportRequestIndication: Parameter [utranPositioningData [12] UtranPositioningDataInfo OPTIONAL,] bad tag class or not primitive or not Sequence",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				this.utranPositioningData = new UtranPositioningDataInfoImpl();
-				((UtranPositioningDataInfoImpl)this.utranPositioningData).decodeAll(ais);
-				break;
-			case _TAG_CELL_ID_OR_SAI:
-				// cellIdOrSai [13] CellGlobalIdOrServiceAreaIdOrLAI OPTIONAL,
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Error while decoding SubscriberLocationReportRequestIndication: Parameter [cellIdOrSai [13] CellGlobalIdOrServiceAreaIdOrLAI] bad tag class or not primitive or not Sequence",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				this.cellIdOrSai = new CellGlobalIdOrServiceAreaIdOrLAIImpl();
-				AsnInputStream ais2 = ais.readSequenceStream();
-				ais2.readTag();
-				((CellGlobalIdOrServiceAreaIdOrLAIImpl)this.cellIdOrSai).decodeAll(ais2);
-				break;
-			case _TAG_H_GMLC_ADDRESS:
-				// h-gmlc-Address [14] GSN-Address
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Error while decoding SubscriberLocationReportRequestIndication: Parameter [h-gmlc-Address [14] GSN-Address] bad tag class or not primitive or not Sequence",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				this.hgmlcAddress = new GSNAddressImpl();
-				((GSNAddressImpl)this.hgmlcAddress).decodeAll(ais);
-				break;
-			case _TAG_LCS_SERVICE_TYPE_ID:
-				// lcsServiceTypeID [15] LCSServiceTypeID OPTIONAL,
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Error while decoding SubscriberLocationReportRequestIndication: Parameter [lcsServiceTypeID [15] LCSServiceTypeID] bad tag class or not primitive or not Sequence",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				length1 = ais.readLength();
-				this.lcsServiceTypeID = (int) ais.readIntegerData(length1);
-				break;
-			case _TAG_SAI_PRESENT:
-				// sai-Present [17] NULL OPTIONAL,
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Error while decoding SubscriberLocationReportRequestIndication: Parameter [sai-Present [17]] bad tag class or not primitive or not Sequence",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				length1 = ais.readLength();
-				this.saiPresent = true;
-				break;
-			case _TAG_PSEUDONYM_INDICATOR:
-				// pseudonymIndicator [18] NULL OPTIONAL,
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Error while decoding SubscriberLocationReportRequestIndication: Parameter [pseudonymIndicator [18] NULL] bad tag class or not primitive or not Sequence",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				length1 = ais.readLength();
-				this.pseudonymIndicator = true;
-				break;
-			case _TAG_ACCURACY_FULFILMENT_INDICATOR:
-				// accuracyFulfilmentIndicator [19] AccuracyFulfilmentIndicator
-				// OPTIONAL,
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Error while decoding SubscriberLocationReportRequestIndication: Parameter [accuracyFulfilmentIndicator [19] AccuracyFulfilmentIndicator] bad tag class or not primitive or not Sequence",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				length1 = ais.readLength();
-				int indicator = (int) ais.readIntegerData(length1);
-				this.accuracyFulfilmentIndicator = AccuracyFulfilmentIndicator.getAccuracyFulfilmentIndicator(indicator);
-				break;
-			default:
+			} else {
 				ais.advanceElement();
-				break;
 			}
 		}
 
@@ -783,7 +884,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	/*
@@ -795,12 +896,12 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
 	 */
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
-			asnOs.writeTag(tagClass, false, tag);
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding MWStatus: " + e.getMessage(), e);
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 
@@ -813,23 +914,23 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
 	 */
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.lcsEvent == null) {
-			throw new MAPException("Error while encoding SubscriberLocationReportRequestIndication the mandatory parameter lcsEvent is not defined");
+			throw new MAPException("Error while encoding " + _PrimitiveName + " the mandatory parameter lcsEvent is not defined");
 		}
 
 		if (this.lcsClientID == null) {
-			throw new MAPException("Error while encoding SubscriberLocationReportRequestIndication the mandatory parameter lcsClientID is not defined");
+			throw new MAPException("Error while encoding " + _PrimitiveName + " the mandatory parameter lcsClientID is not defined");
 		}
 
 		if (this.lcsLocationInfo == null) {
-			throw new MAPException("Error while encoding SubscriberLocationReportRequestIndication the mandatory parameter lcsLocationInfo is not defined");
+			throw new MAPException("Error while encoding " + _PrimitiveName + " the mandatory parameter lcsLocationInfo is not defined");
 		}
 
 		try {
 			asnOs.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, this.lcsEvent.getEvent());
 		} catch (IOException e) {
-			throw new MAPException("IOException while encoding parameter lcsEvent", e);
+			throw new MAPException("IOException while encoding parameter " + _PrimitiveName + ".lcsEvent", e);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException while encoding parameter lcsEvent", e);
+			throw new MAPException("AsnException while encoding parameter " + _PrimitiveName + ".lcsEvent", e);
 		}
 
 		((LCSClientIDImpl)this.lcsClientID).encodeAll(asnOs);
@@ -923,8 +1024,6 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
 			} catch (AsnException e) {
 				throw new MAPException("AsnException while encoding parameter cellIdOrSai", e);
 			}
-
-			((CellGlobalIdOrServiceAreaIdOrLAIImpl)this.cellIdOrSai).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_CELL_ID_OR_SAI);
 		}
 
 		if (this.hgmlcAddress != null) {
@@ -977,6 +1076,184 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
 			}
 		}
 
+		if (this.velocityEstimate != null) {
+			// velocityEstimate
+			((VelocityEstimateImpl)this.velocityEstimate).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_velocityEstimate);
+		}
+
+		if (this.sequenceNumber != null) {
+			// sequenceNumber
+			try {
+				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_sequenceNumber, this.sequenceNumber);
+			} catch (IOException e) {
+				throw new MAPException("IOException while encoding parameter sequenceNumber", e);
+			} catch (AsnException e) {
+				throw new MAPException("AsnException while encoding parameter sequenceNumber", e);
+			}
+		}
+
+		if (this.periodicLDRInfo != null) {
+			// periodicLDRInfo
+			((PeriodicLDRInfoImpl)this.periodicLDRInfo).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_periodicLDRInfo);
+		}
+
+		if (this.moLrShortCircuitIndicator) {
+			// moLrShortCircuitIndicator
+			try {
+				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_mo_lrShortCircuitIndicator);
+			} catch (IOException e) {
+				throw new MAPException("IOException while encoding parameter moLrShortCircuitIndicator", e);
+			} catch (AsnException e) {
+				throw new MAPException("AsnException while encoding parameter moLrShortCircuitIndicator", e);
+			}
+		}
+
+		if (this.geranGANSSpositioningData != null) {
+			// geranGANSSpositioningData
+			((GeranGANSSpositioningDataImpl)this.geranGANSSpositioningData).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_geranGANSSpositioningData);
+		}
+
+		if (this.utranGANSSpositioningData != null) {
+			// utranGANSSpositioningData
+			((UtranGANSSpositioningDataImpl)this.utranGANSSpositioningData).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_utranGANSSpositioningData);
+		}
+
+		if (this.targetServingNodeForHandover != null) {
+			// targetServingNodeForHandover
+			try {
+				asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG_targetServingNodeForHandover);
+				int pos = asnOs.StartContentDefiniteLength();
+				((ServingNodeAddressImpl) this.targetServingNodeForHandover).encodeAll(asnOs);
+				asnOs.FinalizeContent(pos);
+			} catch (AsnException e) {
+				throw new MAPException("AsnException while encoding parameter targetServingNodeForHandover", e);
+			}
+		}
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		if (this.lcsEvent != null) {
+			sb.append("lcsEvent");
+			sb.append(this.lcsEvent);
+		}
+		if (this.lcsClientID != null) {
+			sb.append(", lcsClientID=");
+			sb.append(this.lcsClientID);
+		}
+		if (this.lcsLocationInfo != null) {
+			sb.append(", lcsLocationInfo=");
+			sb.append(this.lcsLocationInfo);
+		}
+		if (this.msisdn != null) {
+			sb.append(", msisdn=");
+			sb.append(this.msisdn);
+		}
+		if (this.imsi != null) {
+			sb.append(", imsi=");
+			sb.append(this.imsi);
+		}
+		if (this.imei != null) {
+			sb.append(", imei=");
+			sb.append(this.imei);
+		}
+		if (this.naEsrd != null) {
+			sb.append(", naEsrd=");
+			sb.append(this.naEsrd);
+		}
+		if (this.naEsrk != null) {
+			sb.append(", naEsrk=");
+			sb.append(this.naEsrk);
+		}
+		if (this.locationEstimate != null) {
+			sb.append(", locationEstimate=");
+			sb.append(this.locationEstimate);
+		}
+		if (this.ageOfLocationEstimate != null) {
+			sb.append(", ageOfLocationEstimate=");
+			sb.append(this.ageOfLocationEstimate);
+		}
+		if (this.slrArgExtensionContainer != null) {
+			sb.append(", slrArgExtensionContainer=");
+			sb.append(this.slrArgExtensionContainer);
+		}
+		if (this.addLocationEstimate != null) {
+			sb.append(", addLocationEstimate=");
+			sb.append(this.addLocationEstimate);
+		}
+		if (this.deferredmtlrData != null) {
+			sb.append(", deferredmtlrData=");
+			sb.append(this.deferredmtlrData);
+		}
+		if (this.lcsReferenceNumber != null) {
+			sb.append(", lcsReferenceNumber=");
+			sb.append(this.lcsReferenceNumber);
+		}
+		if (this.geranPositioningData != null) {
+			sb.append(", geranPositioningData=");
+			sb.append(this.geranPositioningData);
+		}
+		if (this.utranPositioningData != null) {
+			sb.append(", utranPositioningData=");
+			sb.append(this.utranPositioningData);
+		}
+		if (this.cellIdOrSai != null) {
+			sb.append(", cellIdOrSai=");
+			sb.append(this.cellIdOrSai);
+		}
+		if (this.hgmlcAddress != null) {
+			sb.append(", hgmlcAddress=");
+			sb.append(this.hgmlcAddress);
+		}
+		if (this.lcsServiceTypeID != null) {
+			sb.append(", lcsServiceTypeID=");
+			sb.append(this.lcsServiceTypeID);
+		}
+		if (this.saiPresent) {
+			sb.append(", saiPresent");
+		}
+		if (this.pseudonymIndicator) {
+			sb.append(", pseudonymIndicator");
+		}
+		if (this.accuracyFulfilmentIndicator != null) {
+			sb.append(", accuracyFulfilmentIndicator=");
+			sb.append(this.accuracyFulfilmentIndicator);
+		}
+		if (this.velocityEstimate != null) {
+			sb.append(", velocityEstimate=");
+			sb.append(this.velocityEstimate);
+		}
+		if (this.sequenceNumber != null) {
+			sb.append(", sequenceNumber=");
+			sb.append(this.sequenceNumber);
+		}
+		if (this.periodicLDRInfo != null) {
+			sb.append(", periodicLDRInfo=");
+			sb.append(this.periodicLDRInfo);
+		}
+		if (this.moLrShortCircuitIndicator) {
+			sb.append(", moLrShortCircuitIndicator");
+		}
+		if (this.geranGANSSpositioningData != null) {
+			sb.append(", geranGANSSpositioningData=");
+			sb.append(this.geranGANSSpositioningData);
+		}
+		if (this.utranGANSSpositioningData != null) {
+			sb.append(", utranGANSSpositioningData=");
+			sb.append(this.utranGANSSpositioningData);
+		}
+		if (this.targetServingNodeForHandover != null) {
+			sb.append(", targetServingNodeForHandover=");
+			sb.append(this.targetServingNodeForHandover);
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }
+

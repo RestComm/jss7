@@ -17,7 +17,7 @@
    <string>C:\111\MsgLog.txt</string>
   </void>
   <void property="sourceFilePath">
-   <string>E:\Java_workspace\Trace\Amit\may2615_18.pcap</string>
+   <string>E:\Java_workspace\Trace\Amit\sms-1.pcap</string>
   </void>
   <void property="tcapMsgData">
    <boolean>true</boolean>

@@ -74,23 +74,25 @@ public class SLRArgExtensionContainerImpl extends SequenceBase implements SLRArg
 		this.privateExtensionList = null;
 		this.slrArgPcsExtensions = null;
 
+		AsnInputStream ais = ansIS.readSequenceStreamData(length);
+
 		while (true) {
-			if (ansIS.available() == 0)
+			if (ais.available() == 0)
 				break;
 
-			int tag = ansIS.readTag();
+			int tag = ais.readTag();
 			
-			if (ansIS.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 				switch (tag) {
 				case _TAG_privateExtensionList:
-					if (ansIS.isTagPrimitive())
+					if (ais.isTagPrimitive())
 						throw new MAPParsingComponentException("Error while " + _PrimitiveName + " decoding: privateExtensionList is primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					if (this.privateExtensionList != null)
 						throw new MAPParsingComponentException("Error while " + _PrimitiveName + " decoding: More than one PrivateExtensionList has found",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 
-					AsnInputStream localAis2 = ansIS.readSequenceStream();
+					AsnInputStream localAis2 = ais.readSequenceStream();
 					this.privateExtensionList = new ArrayList<MAPPrivateExtension>();
 					while (localAis2.available() > 0) {
 						tag = localAis2.readTag();
@@ -109,22 +111,22 @@ public class SLRArgExtensionContainerImpl extends SequenceBase implements SLRArg
 					break;
 
 				case _TAG_slr_Arg_PCS_Extensions:
-					if (ansIS.isTagPrimitive())
+					if (ais.isTagPrimitive())
 						throw new MAPParsingComponentException("Error while " + _PrimitiveName + " decoding: slrArgPcsExtensions is primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					if (this.slrArgPcsExtensions != null)
 						throw new MAPParsingComponentException("Error while " + _PrimitiveName + " decoding: More than one slrArgPcsExtensions has found",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					this.slrArgPcsExtensions = new SLRArgPCSExtensionsImpl();
-					((SLRArgPCSExtensionsImpl)this.slrArgPcsExtensions).decodeAll(ansIS);
+					((SLRArgPCSExtensionsImpl)this.slrArgPcsExtensions).decodeAll(ais);
 					break;
 
 				default:
-					ansIS.advanceElement();
+					ais.advanceElement();
 					break;
 				}
 			} else {
-				ansIS.advanceElement();
+				ais.advanceElement();
 			}
 		}
 	}
