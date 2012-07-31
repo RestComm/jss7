@@ -348,10 +348,11 @@ public class SendAuthenticationInfoRequestImpl extends MobilityMessageImpl imple
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
-			if (this.mapProtocolVersion >= 3)
-				asnOs.writeTag(tagClass, false, tag);
-			else
-				asnOs.writeTag(tagClass, true, tag);
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+//			if (this.mapProtocolVersion >= 3)
+//				asnOs.writeTag(tagClass, false, tag);
+//			else
+//				asnOs.writeTag(tagClass, true, tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
@@ -404,7 +405,8 @@ public class SendAuthenticationInfoRequestImpl extends MobilityMessageImpl imple
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SendAuthenticationInfoRequest [");
+		sb.append(_PrimitiveName);
+		sb.append(" [");
 
 		if (this.imsi != null) {
 			sb.append("imsi=");

@@ -32,6 +32,8 @@ import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
  *   lcsCodewordString [1] LCSCodewordString,
  *   ...}
  * 
+ * LCSCodewordString ::= USSD-String (SIZE (1..20))
+ * 
  * @author amit bhayani
  *
  */

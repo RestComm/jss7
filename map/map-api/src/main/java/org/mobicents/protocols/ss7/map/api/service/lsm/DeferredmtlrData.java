@@ -39,13 +39,10 @@ import java.io.Serializable;
  */
 public interface DeferredmtlrData extends Serializable {
 	
-	/**
-     *
-	 * @return
-	 */
 	public DeferredLocationEventType getDeferredLocationEventType();
 	
 	public TerminationCause getTerminationCause();
 	
 	public LCSLocationInfo getLCSLocationInfo();
+
 }

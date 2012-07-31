@@ -22,9 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.service.lsm;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -48,6 +46,7 @@ import org.testng.annotations.Test;
 
 /**
  * @author amit bhayani
+ * @author  sergey vetyutnev
  *
  */
 public class AreaTest {
@@ -70,34 +69,41 @@ public class AreaTest {
 	public void tearDown() {
 	}
 
+	public byte[] getEncodedData() {
+		return new byte[] { 48, 8, -128, 1, 1, -127, 3, 9, 112, 113 };
+	}
+
 	@Test(groups = { "functional.decode","service.lsm"})
 	public void testDecode() throws Exception {
-		byte[] data = new byte[] { (byte)0xb0, 0x08, (byte) 0x80, 0x01, 0x05, (byte)0x81, 0x03, 0x09, 0x70, 0x71 };
+		byte[] data = getEncodedData();
 		
 		
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
+		assertEquals(tag, Tag.SEQUENCE);
 		
 		Area area = new AreaImpl();
 		((AreaImpl)area).decodeAll(asn);
 		
 		assertNotNull(area.getAreaType());
-		assertEquals( area.getAreaType(),AreaType.utranCellId);
+		assertEquals( area.getAreaType(),AreaType.plmnId);
 		
 		assertNotNull(area.getAreaIdentification());
-		assertTrue(Arrays.equals(new byte[]{0x09, 0x70, 0x71}, area.getAreaIdentification()));
+		assertEquals(area.getAreaIdentification().getMCC(), 900);
+		assertEquals(area.getAreaIdentification().getMNC(), 177);
 		
 	}
 
 	@Test(groups = { "functional.encode","service.lsm"})
 	public void testEncode() throws Exception {
 		
-		byte[] data = new byte[] { (byte)0xb0, 0x08, (byte) 0x80, 0x01, 0x05, (byte)0x81, 0x03, 0x09, 0x70, 0x71 };
+		byte[] data = getEncodedData();
 
-		Area area = new AreaImpl(AreaType.utranCellId, new byte[]{0x09, 0x70, 0x71});
+		AreaIdentificationImpl ai = new AreaIdentificationImpl(AreaType.plmnId, 900, 177, 0, 0);
+		Area area = new AreaImpl(AreaType.plmnId, ai);
 		
 		AsnOutputStream asnOS = new AsnOutputStream();
-		((AreaImpl)area).encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, Tag.SEQUENCE);
+		((AreaImpl)area).encodeAll(asnOS);
 		
 		byte[] encodedData = asnOS.toByteArray();
 		
@@ -107,7 +113,8 @@ public class AreaTest {
 	
 	@Test(groups = { "functional.serialize", "service.lsm" })
 	public void testSerialization() throws Exception {
-		Area original = new AreaImpl(AreaType.utranCellId, new byte[]{0x09, 0x70, 0x71});
+		AreaIdentificationImpl ai = new AreaIdentificationImpl(AreaType.plmnId, 900, 177, 0, 0);
+		Area original = new AreaImpl(AreaType.utranCellId, ai);
 		
 		// serialize
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -124,7 +131,8 @@ public class AreaTest {
 		
 		//test result
 		assertEquals(copy.getAreaType(), original.getAreaType());
-		assertTrue(Arrays.equals(copy.getAreaIdentification(), original.getAreaIdentification()));
+		assertEquals(copy.getAreaIdentification().getMCC(), original.getAreaIdentification().getMCC());
+		assertEquals(copy.getAreaIdentification().getMNC(), original.getAreaIdentification().getMNC());
 		
 	}
 

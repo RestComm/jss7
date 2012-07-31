@@ -32,6 +32,7 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtPDPTypeImpl;
 import org.testng.annotations.Test;
 
 /**
@@ -146,6 +147,31 @@ public class OctetStringBaseTest {
 			assertNotNull(e);
 		}
 		
+	}
+
+	@Test(groups = { "functional.encode","equality"})
+	public void testEqality() throws Exception {
+		
+		byte[] testD1 = new byte[2];
+		byte[] testD2 = new byte[2];
+		byte[] testD3 = new byte[2];
+		testD1[0] = 11;
+		testD1[1] = 12;
+		testD2[0] = 11;
+		testD2[1] = 12;
+		testD3[0] = 21;
+		testD3[1] = 22;
+		
+		ExtPDPTypeImpl imp1 = new ExtPDPTypeImpl(testD1); 
+		ExtPDPTypeImpl imp2 = new ExtPDPTypeImpl(testD2); 
+		ExtPDPTypeImpl imp3 = new ExtPDPTypeImpl(testD3); 
+
+		assertTrue(imp1.equals(imp1));
+		assertTrue(imp1.equals(imp2));
+		assertFalse(imp1.equals(imp3));
+		assertFalse(imp2.equals(imp3));
+		
+		int i1 = imp1.hashCode();
 	}
 
 	private class TestOctetStringImpl extends OctetStringBase {

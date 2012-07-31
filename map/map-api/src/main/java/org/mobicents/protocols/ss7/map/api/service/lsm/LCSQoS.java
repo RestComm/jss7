@@ -55,7 +55,7 @@ public interface LCSQoS extends Serializable {
 	 * NULL
 	 * @return
 	 */
-	public Boolean getVerticalCoordinateRequest();
+	public boolean getVerticalCoordinateRequest();
 	
 	/**
 	 * Vertical-Accuracy ::= OCTET STRING (SIZE (1))

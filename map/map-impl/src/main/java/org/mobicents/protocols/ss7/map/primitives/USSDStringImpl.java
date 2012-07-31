@@ -52,6 +52,8 @@ public class USSDStringImpl implements USSDString, MAPAsnPrimitive {
 	private String ussdString;
 	private byte[] encodedString;
 
+	public static final String _PrimitiveName = "USSDString";
+
 	//TODO : Should Charset be serializable?
 	private transient Charset charset;
 
@@ -248,6 +250,21 @@ public class USSDStringImpl implements USSDString, MAPAsnPrimitive {
 		} else if (!ussdString.equals(other.ussdString))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		if (this.ussdString != null) {
+			sb.append(ussdString);
+		}
+
+		sb.append("]");
+
+		return sb.toString();
 	}
 }
 

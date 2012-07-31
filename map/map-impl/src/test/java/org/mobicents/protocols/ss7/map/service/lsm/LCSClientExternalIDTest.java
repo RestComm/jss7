@@ -22,10 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.service.lsm;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
-
+import static org.testng.Assert.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -41,6 +38,7 @@ import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
@@ -73,35 +71,68 @@ public class LCSClientExternalIDTest {
 	public void tearDown() {
 	}
 
+	public byte[] getData() {
+		return new byte[] { 48, 0x07, (byte) 0x80, 0x05, (byte) 0x91, 0x55, 0x16, 0x09, 0x70 };
+	}
+
+	public byte[] getDataFull() {
+		return new byte[] { 48, 48, -128, 5, -111, 85, 22, 9, 112, -95, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11,
+				6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
+	}
+
 	@Test(groups = { "functional.decode","service.lsm"})
 	public void testDecode() throws Exception {
-		byte[] data = new byte[] { (byte)0xb0, 0x07, (byte) 0x80, 0x05, (byte) 0x91, 0x55, 0x16, 0x09, 0x70 };
+		byte[] data = getData();
 		
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
+		assertEquals(tag, Tag.SEQUENCE);
 		
 		LCSClientExternalIDImpl lcsClientExterId = new LCSClientExternalIDImpl();
 		lcsClientExterId.decodeAll(asn);
 		
 		assertNotNull(lcsClientExterId.getExternalAddress());
 		assertEquals( lcsClientExterId.getExternalAddress().getAddress(),"55619007");
+		assertNull(lcsClientExterId.getExtensionContainer());
 		
+
+		data = getDataFull();
+		asn = new AsnInputStream(data);
+		tag = asn.readTag();
+		assertEquals(tag, Tag.SEQUENCE);
+		
+		lcsClientExterId = new LCSClientExternalIDImpl();
+		lcsClientExterId.decodeAll(asn);
+		
+		assertNotNull(lcsClientExterId.getExternalAddress());
+		assertEquals( lcsClientExterId.getExternalAddress().getAddress(),"55619007");
+		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(lcsClientExterId.getExtensionContainer()));
 	}
 
 	@Test(groups = { "functional.encode","service.lsm"})
 	public void testEncode() throws Exception {
 		
-		byte[] data = new byte[] { (byte)0xb0, 0x07, (byte) 0x80, 0x05, (byte) 0x91, 0x55, 0x16, 0x09, 0x70 };
+		byte[] data = getData();
 
 		ISDNAddressString externalAddress = MAPParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "55619007");
 		LCSClientExternalIDImpl lcsClientExterId = new LCSClientExternalIDImpl(externalAddress, null);
 		AsnOutputStream asnOS = new AsnOutputStream();
-		lcsClientExterId.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, Tag.SEQUENCE);
+		lcsClientExterId.encodeAll(asnOS);
 		
 		byte[] encodedData = asnOS.toByteArray();
 
 		assertTrue( Arrays.equals(data,encodedData));
 
+		
+		data = getDataFull();
+
+		lcsClientExterId = new LCSClientExternalIDImpl(externalAddress, MAPExtensionContainerTest.GetTestExtensionContainer());
+		asnOS = new AsnOutputStream();
+		lcsClientExterId.encodeAll(asnOS);
+
+		encodedData = asnOS.toByteArray();
+
+		assertTrue( Arrays.equals(data,encodedData));
 	}
 	
 	@Test(groups = { "functional.serialize", "service.lsm" })

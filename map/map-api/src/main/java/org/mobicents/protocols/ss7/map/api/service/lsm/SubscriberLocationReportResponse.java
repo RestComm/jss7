@@ -22,7 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
-import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
@@ -45,7 +45,7 @@ public interface SubscriberLocationReportResponse extends LsmMessage {
 	
 	public MAPExtensionContainer getExtensionContainer();
 	
-	public AddressString getNaESRK();
+	public ISDNAddressString getNaESRK();
 	
-	public AddressString getNaESRD();
+	public ISDNAddressString getNaESRD();
 }

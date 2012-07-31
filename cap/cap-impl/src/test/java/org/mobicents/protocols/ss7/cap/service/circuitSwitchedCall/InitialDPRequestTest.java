@@ -80,7 +80,7 @@ public class InitialDPRequestTest {
 				3, 3, (byte) 151, 87, (byte) 133, 1, 10, (byte) 136, 1, 19, (byte) 138, 2, 22, 11, (byte) 140, 6, (byte) 131, 20, 7, 1, 9, 0, (byte) 175, 18,
 				48, 5, 2, 1, 2, (byte) 129, 0, 48, 9, 2, 1, 3, 10, 1, 1, (byte) 129, 1, (byte) 255, (byte) 151, 2, 8, 9, (byte) 153, 2, 20, 2, (byte) 187, 5,
 				(byte) 128, 3, (byte) 128, (byte) 144, (byte) 163, (byte) 156, 1, 2, (byte) 157, 6, (byte) 131, 20, 7, 1, 9, 0, (byte) 158, 2, 3, 97,
-				(byte) 159, 50, 8, 6, 7, (byte) 146, 9, 16, 4, (byte) 145, (byte) 249, (byte) 191, 51, 2, (byte) 130, 0, (byte) 159, 52, 3, 2, 1, 111,
+				(byte) 159, 50, 8, 6, 7, (byte) 146, 9, 16, 4, (byte) 145, (byte) 249, (byte) 191, 51, 2, (byte) 130, 0, (byte) 191, 52, 3, 2, 1, 111,
 				(byte) 191, 53, 3, (byte) 131, 1, 17, (byte) 159, 54, 5, 19, (byte) 250, 61, 61, (byte) 234, (byte) 159, 55, 6, (byte) 145, 34, 112, 87, 0,
 				112, (byte) 159, 56, 4, 1, 2, 3, 4, (byte) 159, 57, 8, 2, 80, 17, 66, 49, 1, 101, 0, (byte) 159, 58, 0, (byte) 191, 59, 8, (byte) 129, 6,
 				(byte) 145, 34, 112, 87, 0, 112 };
@@ -221,8 +221,7 @@ public class InitialDPRequestTest {
 		assertTrue(elem.getCallForwardingSSPending());
 	}
 
-	//@Test(groups = { "functional.encode","circuitSwitchedCall"})
-	//This test is failing
+	@Test(groups = { "functional.encode","circuitSwitchedCall"})
 	public void testEncode() throws Exception {
 
 		CalledPartyNumberCapImpl calledPartyNumber = new CalledPartyNumberCapImpl(getDataCalledPartyNumber());
@@ -265,7 +264,10 @@ public class InitialDPRequestTest {
 				extBasicServiceCode, callReferenceNumber, mscAddress, calledPartyBCDNumber, timeAndTimezone, true, initialDPArgExtension, false);
 		aos = new AsnOutputStream();
 		elem.encodeAll(aos);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
+		byte[] a1 = this.getData2();
+		byte[] a2 = aos.toByteArray();
+		assertTrue(Arrays.equals(a1, a2));
+//		assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
 
 //		int serviceKey, CalledPartyNumberCap calledPartyNumber, CallingPartyNumberCap callingPartyNumber,
 //		CallingPartysCategoryInap callingPartysCategory, CGEncountered CGEncountered, IPSSPCapabilities IPSSPCapabilities,

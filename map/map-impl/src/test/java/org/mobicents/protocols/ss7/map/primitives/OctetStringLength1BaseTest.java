@@ -31,6 +31,8 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Ext4QoSSubscribedImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtPDPTypeImpl;
 import org.testng.annotations.Test;
 
 
@@ -90,6 +92,21 @@ public class OctetStringLength1BaseTest {
 		byte[] rawData = getEncodedData();		
 		assertTrue( Arrays.equals(rawData,encodedData));
 		
+	}
+
+	@Test(groups = { "functional.encode","equality"})
+	public void testEqality() throws Exception {
+
+		Ext4QoSSubscribedImpl imp1 = new Ext4QoSSubscribedImpl(10);
+		Ext4QoSSubscribedImpl imp2 = new Ext4QoSSubscribedImpl(10);
+		Ext4QoSSubscribedImpl imp3 = new Ext4QoSSubscribedImpl(12);
+
+		assertTrue(imp1.equals(imp1));
+		assertTrue(imp1.equals(imp2));
+		assertFalse(imp1.equals(imp3));
+		assertFalse(imp2.equals(imp3));
+		
+		int i1 = imp1.hashCode();
 	}
 
 	private class TestOctetStringLength1Impl extends OctetStringLength1Base {

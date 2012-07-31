@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
 import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdOrLAI;
+import org.mobicents.protocols.ss7.map.api.primitives.GSNAddress;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
@@ -48,47 +49,58 @@ subscriberLocationReport  OPERATION ::= {				--Timer m
 	CODE	local:86 }
 
 SubscriberLocationReport-Arg ::= SEQUENCE {
-		lcs-Event LCS-Event,
-		lcs-ClientID LCS-ClientID,
-		lcsLocationInfo LCSLocationInfo,
-		msisdn [0] ISDN-AddressString OPTIONAL,
-		imsi [1] IMSI OPTIONAL,
-		imei [2] IMEI OPTIONAL,
-		na-ESRD [3] ISDN-AddressString OPTIONAL,
-		na-ESRK [4] ISDN-AddressString OPTIONAL,
-		locationEstimate [5] Ext-GeographicalInformation OPTIONAL,
-		ageOfLocationEstimate [6] AgeOfLocationInformation OPTIONAL,
-		slr-ArgExtensionContainer [7] SLR-ArgExtensionContainer OPTIONAL,
-		... ,
-		add-LocationEstimate [8] Add-GeographicalInformation OPTIONAL,
-		deferredmt-lrData [9] Deferredmt-lrData OPTIONAL,
-		lcs-ReferenceNumber [10] LCS-ReferenceNumber OPTIONAL,
-		geranPositioningData [11] PositioningDataInformation OPTIONAL,
-		utranPositioningData [12] UtranPositioningDataInfo OPTIONAL,
-		cellIdOrSai [13] CellGlobalIdOrServiceAreaIdOrLAI OPTIONAL,
-		h-gmlc-Address [14] GSN-Address OPTIONAL,
-		lcsServiceTypeID [15] LCSServiceTypeID OPTIONAL,
-		sai-Present [17] NULL OPTIONAL,
-		pseudonymIndicator [18] NULL OPTIONAL,
-		accuracyFulfilmentIndicator [19] AccuracyFulfilmentIndicator OPTIONAL }
-		-- one of msisdn or imsi is mandatory
-		-- a location estimate that is valid for the locationEstimate parameter should
-		-- be transferred in this parameter in preference to the add-LocationEstimate.
-		-- the deferredmt-lrData parameter shall be included if and only if the lcs-Event
-		-- indicates a deferredmt-lrResponse.
-		-- if the lcs-Event indicates a deferredmt-lrResponse then the locationEstimate
-		-- and the add-locationEstimate parameters shall not be sent if the
-		-- supportedGADShapes parameter had been received in ProvideSubscriberLocation-Arg
-		-- and the shape encoded in locationEstimate or add-LocationEstimate was not marked
-		-- as supported in supportedGADShapes. In such a case terminationCause
-		-- in deferredmt-lrData shall be present with value
-		-- shapeOfLocationEstimateNotSupported.
-		-- If a lcs event indicates deferred mt-lr response, the lcs-Reference number shall be
-		-- included.
-		-- sai-Present indicates that the cellIdOrSai parameter contains a Service Area Identity.
+	lcs-Event		LCS-Event,
+	lcs-ClientID	LCS-ClientID, 
+	lcsLocationInfo	LCSLocationInfo,
+	msisdn		[0] ISDN-AddressString	OPTIONAL,
+	imsi			[1] IMSI		OPTIONAL,
+	imei			[2] IMEI		OPTIONAL,
+	na-ESRD		[3] ISDN-AddressString	OPTIONAL,
+	na-ESRK		[4] ISDN-AddressString	OPTIONAL,
+	locationEstimate	[5] Ext-GeographicalInformation	OPTIONAL,
+	ageOfLocationEstimate	[6] AgeOfLocationInformation	OPTIONAL,
+	slr-ArgExtensionContainer	[7] SLR-ArgExtensionContainer	OPTIONAL,
+	... ,
+	add-LocationEstimate	[8] Add-GeographicalInformation	OPTIONAL,
+	deferredmt-lrData	[9] Deferredmt-lrData	OPTIONAL, 
+	lcs-ReferenceNumber	[10] LCS-ReferenceNumber	OPTIONAL,
+	geranPositioningData	[11] PositioningDataInformation	OPTIONAL,
+	utranPositioningData	[12] UtranPositioningDataInfo	OPTIONAL,
+	cellIdOrSai	[13]	CellGlobalIdOrServiceAreaIdOrLAI	OPTIONAL,
+	h-gmlc-Address	[14]	GSN-Address	OPTIONAL,
+	lcsServiceTypeID	[15]	LCSServiceTypeID	OPTIONAL,
+	sai-Present	[17] NULL		OPTIONAL,
+	pseudonymIndicator	[18] NULL		OPTIONAL,
+	accuracyFulfilmentIndicator	[19] AccuracyFulfilmentIndicator	OPTIONAL,
+	velocityEstimate	[20] VelocityEstimate	OPTIONAL,
+	sequenceNumber	[21] SequenceNumber	OPTIONAL,
+	periodicLDRInfo	[22] PeriodicLDRInfo	OPTIONAL,
+	mo-lrShortCircuitIndicator	[23] NULL		OPTIONAL,
+	geranGANSSpositioningData	[24] GeranGANSSpositioningData	OPTIONAL,
+	utranGANSSpositioningData	[25] UtranGANSSpositioningData	OPTIONAL,
+	targetServingNodeForHandover	[26] ServingNodeAddress	OPTIONAL }
+
+	-- one of msisdn or imsi is mandatory
+	-- a location estimate that is valid for the locationEstimate parameter should 
+	-- be transferred in this parameter in preference to the add-LocationEstimate.
+	-- the deferredmt-lrData parameter shall be included if and only if the lcs-Event
+	-- indicates a deferredmt-lrResponse.
+	-- if the lcs-Event indicates a deferredmt-lrResponse then the locationEstimate 
+	-- and the add-locationEstimate parameters shall not be sent if the 
+	-- supportedGADShapes parameter had been received in ProvideSubscriberLocation-Arg
+	-- and the shape encoded in locationEstimate or add-LocationEstimate was not marked
+	-- as supported in supportedGADShapes. In such a case terminationCause 
+	-- in deferredmt-lrData shall be present with value 
+	-- shapeOfLocationEstimateNotSupported. 
+	-- If a lcs event indicates deferred mt-lr response, the lcs-Reference number shall be 
+	-- included. 
+	-- sai-Present indicates that the cellIdOrSai parameter contains a Service Area Identity.
+
+SequenceNumber ::= INTEGER (1..8639999)
 
  * 
  * @author amit bhayani
+ * @author sergey vetyutnev
  *
  */
 public interface SubscriberLocationReportRequest extends LsmMessage {
@@ -109,69 +121,7 @@ public interface SubscriberLocationReportRequest extends LsmMessage {
 	
 	public ISDNAddressString getNaESRK();
 	
-	/**
-	 * Ext-GeographicalInformation ::= OCTET STRING (SIZE (1..maxExt-GeographicalInformation))
-     *   -- Refers to geographical Information defined in 3GPP TS 23.032.
-     *   -- This is composed of 1 or more octets with an internal structure according to
-     *   -- 3GPP TS 23.032
-     *   -- Octet 1: Type of shape, only the following shapes in 3GPP TS 23.032 are allowed:
-     *   -- (a) Ellipsoid point with uncertainty circle
-     *   -- (b) Ellipsoid point with uncertainty ellipse
-     *   -- (c) Ellipsoid point with altitude and uncertainty ellipsoid
-     *   -- (d) Ellipsoid Arc
-     *   -- (e) Ellipsoid Point
-     *   -- Any other value in octet 1 shall be treated as invalid
-     *   -- Octets 2 to 8 for case (a) – Ellipsoid point with uncertainty circle
-     *   -- Degrees of Latitude 3 octets
-     *   -- Degrees of Longitude 3 octets
-     *   -- Uncertainty code 1 octet
-     *   -- Octets 2 to 11 for case (b) – Ellipsoid point with uncertainty ellipse:
-     *   -- Degrees of Latitude 3 octets
-     *   -- Degrees of Longitude 3 octets
-     *   -- Uncertainty semi-major axis 1 octet
-     *   -- Uncertainty semi-minor axis 1 octet
-     *   -- Angle of major axis 1 octet
-     *   -- Confidence 1 octet
-     *   -- Octets 2 to 14 for case (c) – Ellipsoid point with altitude and uncertainty ellipsoid
-     *   -- Degrees of Latitude 3 octets
-     *   -- Degrees of Longitude 3 octets
-     *   -- Altitude 2 octets
-     *   -- Uncertainty semi-major axis 1 octet
-     *   -- Uncertainty semi-minor axis 1 octet
-     *   -- Angle of major axis 1 octet
-     *   -- Uncertainty altitude 1 octet
-     *   -- Confidence 1 octet
-     *   -- Octets 2 to 13 for case (d) – Ellipsoid Arc
-     *   -- Degrees of Latitude 3 octets
-     *   -- Degrees of Longitude 3 octets
-     *   -- Inner radius 2 octets
-     *   -- Uncertainty radius 1 octet
-     *   -- Offset angle 1 octet
-     *   -- Included angle 1 octet
-     *   -- Confidence 1 octet
-     *   -- Octets 2 to 7 for case (e) – Ellipsoid Point
-     *   -- Degrees of Latitude 3 octets
-     *   -- Degrees of Longitude 3 octets
-     *   --
-     *   -- An Ext-GeographicalInformation parameter comprising more than one octet and
-     *   -- containing any other shape or an incorrect number of octets or coding according
-     *   -- to 3GPP TS 23.032 shall be treated as invalid data by a receiver.
-     *   --
-     *   -- An Ext-GeographicalInformation parameter comprising one octet shall be discarded
-     *   -- by the receiver if an Add-GeographicalInformation parameter is received
-     *   -- in the same message.
-     *   --
-     *   -- An Ext-GeographicalInformation parameter comprising one octet shall be treated as
-     *   -- invalid data by the receiver if an Add-GeographicalInformation parameter is not
-     *   -- received in the same message.
-     *   
-     *   maxExt-GeographicalInformation INTEGER ::= 20
-     *		-- the maximum length allows for further shapes in 3GPP TS 23.032 to be included in later
-     *		-- versions of 3GPP TS 29.002
-	 * 
-	 * @return
-	 */
-	public byte[] getLocationEstimate();
+	public ExtGeographicalInformation getLocationEstimate();
 	
 	/**
 	 * AgeOfLocationInformation ::= INTEGER (0..32767)
@@ -215,7 +165,7 @@ public interface SubscriberLocationReportRequest extends LsmMessage {
 	 * 
 	 * @return
 	 */
-	public byte[] getAdditionalLocationEstimate();
+	public AddGeographicalInformation getAdditionalLocationEstimate();
 	
 	public DeferredmtlrData getDeferredmtlrData();
 	
@@ -225,7 +175,7 @@ public interface SubscriberLocationReportRequest extends LsmMessage {
 	 * 
 	 * @return
 	 */
-	public Byte getLCSReferenceNumber();
+	public Integer getLCSReferenceNumber();
 	
 	/**
 	 * PositioningDataInformation ::= OCTET STRING (SIZE (2..maxPositioningDataInformation))
@@ -237,7 +187,7 @@ public interface SubscriberLocationReportRequest extends LsmMessage {
 	 * 
 	 * @return
 	 */
-	public byte[] getGeranPositioningData();
+	public PositioningDataInformation getGeranPositioningData();
 	
 	/**
 	 * UtranPositioningDataInfo ::= OCTET STRING (SIZE (3..maxUtranPositioningDataInfo))
@@ -249,11 +199,9 @@ public interface SubscriberLocationReportRequest extends LsmMessage {
 	 * 
 	 * @return
 	 */
-	public byte[] getUtranPositioningData();
+	public UtranPositioningDataInfo getUtranPositioningData();
 	
 	public CellGlobalIdOrServiceAreaIdOrLAI getCellGlobalIdOrServiceAreaIdOrLAI();
-	
-	public Boolean getSaiPresent();
 	
 	/**
 	 * GSN-Address ::= OCTET STRING (SIZE (5..17))
@@ -261,7 +209,7 @@ public interface SubscriberLocationReportRequest extends LsmMessage {
      *     
 	 * @return
 	 */
-	public byte[] getHGMLCAddress();
+	public GSNAddress getHGMLCAddress();
 	
 	/**
 	 * LCSServiceTypeID ::= INTEGER (0..127)
@@ -271,8 +219,25 @@ public interface SubscriberLocationReportRequest extends LsmMessage {
 	 * @return
 	 */
 	public Integer getLCSServiceTypeID();
+
+	public boolean getSaiPresent();
 	
-	public Boolean getPseudonymIndicator();
+	public boolean getPseudonymIndicator();
 	
 	public AccuracyFulfilmentIndicator getAccuracyFulfilmentIndicator();
+
+	public VelocityEstimate getVelocityEstimate();
+
+	public Integer getSequenceNumber();
+
+	public PeriodicLDRInfo getPeriodicLDRInfo();
+
+	public boolean getMoLrShortCircuitIndicator();
+
+	public GeranGANSSpositioningData getGeranGANSSpositioningData();
+
+	public UtranGANSSpositioningData getUtranGANSSpositioningData();
+
+	public ServingNodeAddress getTargetServingNodeForHandover();
+
 }

@@ -23,7 +23,6 @@
 package org.mobicents.protocols.ss7.map.service.lsm;
 
 import java.io.IOException;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -43,6 +42,7 @@ import org.mobicents.protocols.ss7.map.primitives.SubscriberIdentityImpl;
 
 /**
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public class SendRoutingInfoForLCSRequestImpl extends LsmMessageImpl implements SendRoutingInfoForLCSRequest {
@@ -51,9 +51,11 @@ public class SendRoutingInfoForLCSRequestImpl extends LsmMessageImpl implements 
 	private static final int _TAG_TARGET_MS = 1;
 	private static final int _TAG_EXTENSION_CONTAINER = 2;
 
-	private MAPExtensionContainer extensionContainer = null;
-	private SubscriberIdentity targetMS = null;
-	private ISDNAddressString mlcNumber = null;
+	public static final String _PrimitiveName = "SendRoutingInfoForLCSRequest";
+
+	private MAPExtensionContainer extensionContainer;
+	private SubscriberIdentity targetMS;
+	private ISDNAddressString mlcNumber;
 
 	/**
 	 * 
@@ -164,10 +166,10 @@ public class SendRoutingInfoForLCSRequestImpl extends LsmMessageImpl implements 
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding ProvideSubscriberLocationRequestIndication: ", e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": ", e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding ProvideSubscriberLocationRequestIndication: ", e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": ", e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -183,15 +185,19 @@ public class SendRoutingInfoForLCSRequestImpl extends LsmMessageImpl implements 
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding ProvideSubscriberLocationRequestIndication: ", e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": ", e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding ProvideSubscriberLocationRequestIndication: ", e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": ", e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
 	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+
+		this.extensionContainer = null;
+		this.targetMS = null;
+		this.mlcNumber = null;
 
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 
@@ -200,7 +206,7 @@ public class SendRoutingInfoForLCSRequestImpl extends LsmMessageImpl implements 
 
 		if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive() || tag != _TAG_MLC_NUMBER) {
 			throw new MAPParsingComponentException(
-					"Error while decoding SendRoutingInforForLCSRequestIndication: Parameter [mlcNumber [0] ISDN-AddressString] bad tag class or not primitive or not Sequence",
+					"Error while decoding " + _PrimitiveName + ": Parameter [mlcNumber [0] ISDN-AddressString] bad tag class or not primitive or not Sequence",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 		this.mlcNumber = new ISDNAddressStringImpl();
@@ -210,15 +216,18 @@ public class SendRoutingInfoForLCSRequestImpl extends LsmMessageImpl implements 
 		tag = ais.readTag();
 		if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive() || tag != _TAG_TARGET_MS) {
 			throw new MAPParsingComponentException(
-					"Error while decoding SendRoutingInforForLCSRequestIndication: Parameter [targetMS [1] SubscriberIdentity] bad tag class or not primitive or not Sequence",
+					"Error while decoding " + _PrimitiveName + ": Parameter [targetMS [1] SubscriberIdentity] bad tag class or not primitive or not Sequence",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 
-		int length1 = ais.readLength();
-		tag = ais.readTag();
-
 		this.targetMS = new SubscriberIdentityImpl();
-		((SubscriberIdentityImpl)this.targetMS).decodeAll(ais);
+		AsnInputStream ais2 = ais.readSequenceStream();
+		ais2.readTag();
+		((SubscriberIdentityImpl)this.targetMS).decodeAll(ais2);
+//		this.targetMS = new SubscriberIdentityImpl();
+//		int length1 = ais.readLength();
+//		tag = ais.readTag();
+//		((SubscriberIdentityImpl)this.targetMS).decodeAll(ais);
 
 		while (true) {
 			if (ais.available() == 0)
@@ -226,20 +235,22 @@ public class SendRoutingInfoForLCSRequestImpl extends LsmMessageImpl implements 
 
 			tag = ais.readTag();
 
-			switch (tag) {
-			case _TAG_EXTENSION_CONTAINER:
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Error while decoding SendRoutingInforForLCSRequestIndication: Parameter [extensionContainer [2] ExtensionContainer] bad tag class or not primitive or not Sequence",
-							MAPParsingComponentExceptionReason.MistypedParameter);
+			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+				switch (tag) {
+				case _TAG_EXTENSION_CONTAINER:
+					if (ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+								+ ": Parameter [extensionContainer [2] ExtensionContainer] is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.extensionContainer = new MAPExtensionContainerImpl();
+					((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+					break;
+				default:
+					ais.advanceElement();
+					break;
 				}
-				this.extensionContainer = new MAPExtensionContainerImpl();
-				((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
-				break;
-			default:
-				// DO we care?
+			} else {
 				ais.advanceElement();
-				break;
 			}
 		}
 	}
@@ -252,7 +263,7 @@ public class SendRoutingInfoForLCSRequestImpl extends LsmMessageImpl implements 
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	/*
@@ -269,7 +280,7 @@ public class SendRoutingInfoForLCSRequestImpl extends LsmMessageImpl implements 
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding MWStatus: " + e.getMessage(), e);
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 
@@ -283,29 +294,51 @@ public class SendRoutingInfoForLCSRequestImpl extends LsmMessageImpl implements 
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.mlcNumber == null) {
 			throw new MAPException(
-					"Encoding of SendRoutingInforForLCSRequestIndication failed. Manadatory parameter mlcNumber [0] ISDN-AddressString is not set");
+					"Encoding of " + _PrimitiveName + " failed. Manadatory parameter mlcNumber [0] ISDN-AddressString is not set");
 		}
 
 		if (this.targetMS == null) {
 			throw new MAPException(
-					"Encoding of SendRoutingInforForLCSRequestIndication failed. Manadatory parameter targetMS [1] SubscriberIdentity is not set");
+					"Encoding of " + _PrimitiveName + " failed. Manadatory parameter targetMS [1] SubscriberIdentity is not set");
 		}
 
 		((ISDNAddressStringImpl)this.mlcNumber).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_MLC_NUMBER);
 
 		try {
 			asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG_TARGET_MS);
+			int pos = asnOs.StartContentDefiniteLength();
+			((SubscriberIdentityImpl)this.targetMS).encodeAll(asnOs);
+			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
 			throw new MAPException("AsnException while encoding parameter targetMS [1] SubscriberIdentity");
 		}
-
-		int pos = asnOs.StartContentDefiniteLength();
-		((SubscriberIdentityImpl)this.targetMS).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, ((SubscriberIdentityImpl)this.targetMS).getTag());
-		asnOs.FinalizeContent(pos);
 
 		if (this.extensionContainer != null) {
 			((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_EXTENSION_CONTAINER);
 		}
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		if (this.mlcNumber != null) {
+			sb.append("mlcNumber");
+			sb.append(this.mlcNumber);
+		}
+		if (this.targetMS != null) {
+			sb.append(", targetMS=");
+			sb.append(this.targetMS);
+		}
+		if (this.extensionContainer != null) {
+			sb.append(", extensionContainer=");
+			sb.append(this.extensionContainer);
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }

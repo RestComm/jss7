@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,19 +22,20 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
-import java.io.Serializable;
-
 /**
- * AreaList ::= SEQUENCE SIZE (1..maxNumOfAreas) OF Area
  * 
- * maxNumOfAreas INTEGER ::= 10
- * 
- * TODO : Should rather just merge with AreaDefinition and avoid unnecessary creation of Objects?
- * 
- * @author amit bhayani
- *
- */
-public interface AreaList extends Serializable {
 
-	public Area[] getAreas();
+GeranGANSSpositioningData ::= OCTET STRING (SIZE (2..10))
+	-- Refers to the GANSS Positioning Data defined in 3GPP TS 49.031.
+	-- This is composed of 2 or more octets with an internal structure according to
+	-- 3GPP TS 49.031. 
+
+ * 
+ * @author sergey vetyutnev
+ * 
+ */
+public interface GeranGANSSpositioningData {
+
+	public byte[] getData();
+
 }

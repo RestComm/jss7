@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
 import java.io.Serializable;
 
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.APN;
 
 /**
  * LCS-ClientID ::= SEQUENCE {
@@ -41,22 +42,18 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
  *
  */
 public interface LCSClientID extends Serializable {
-	LCSClientType getLCSClientType();
+	public LCSClientType getLCSClientType();
 	
-	LCSClientExternalID getLCSClientExternalID();
+	public LCSClientExternalID getLCSClientExternalID();
 	
-	AddressString getLCSClientDialedByMS();
+	public AddressString getLCSClientDialedByMS();
 	
-	LCSClientInternalID getLCSClientInternalID();
+	public LCSClientInternalID getLCSClientInternalID();
 	
-	LCSClientName getLCSClientName();
-	
-	/**
-	 * APN ::= OCTET STRING (SIZE (2..63))
-     *      -- Octets are coded according to TS 3GPP TS 23.003 [17]
-	 * @return
-	 */
-	byte[] getLCSAPN();
-	
-	LCSRequestorID getLCSRequestorID();
+	public LCSClientName getLCSClientName();
+
+	public APN getLCSAPN();
+
+	public LCSRequestorID getLCSRequestorID();
+
 }
