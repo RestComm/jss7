@@ -20,6 +20,13 @@ import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsmListener;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationRequest;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationResponse;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SendRoutingInfoForLCSRequest;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SendRoutingInfoForLCSResponse;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberLocationReportRequest;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberLocationReportResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobilityListener;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoResponse;
@@ -58,7 +65,8 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
  * @author amit bhayani
  *
  */
-public class EventTestHarness implements MAPDialogListener, MAPServiceSupplementaryListener, MAPServiceSmsListener, MAPServiceMobilityListener {
+public class EventTestHarness implements MAPDialogListener, MAPServiceSupplementaryListener, MAPServiceSmsListener, MAPServiceMobilityListener,
+		MAPServiceLsmListener {
 	
 	private Logger logger = null;
 
@@ -389,14 +397,59 @@ public class EventTestHarness implements MAPDialogListener, MAPServiceSupplement
 
 	@Override
 	public void onCheckImeiRequest(CheckImeiRequest request) {
-		// TODO Auto-generated method stub
+		this.logger.debug("onCheckImeiRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.CheckImei, request, sequence++);
+		this.observerdEvents.add(te);
 		
 	}
 
 	@Override
 	public void onCheckImeiResponse(CheckImeiResponse response) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("onCheckImeiResponse");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.CheckImeiResp, response, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onProvideSubscriberLocationRequest(ProvideSubscriberLocationRequest request) {
+		this.logger.debug("onProvideSubscriberLocationRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.ProvideSubscriberLocation, request, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onProvideSubscriberLocationResponse(ProvideSubscriberLocationResponse response) {
+		this.logger.debug("onProvideSubscriberLocationResponse");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.ProvideSubscriberLocationResp, response, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onSubscriberLocationReportRequest(SubscriberLocationReportRequest request) {
+		this.logger.debug("onSubscriberLocationReportRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.SubscriberLocationReport, request, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onSubscriberLocationReportResponse(SubscriberLocationReportResponse response) {
+		this.logger.debug("onSubscriberLocationReportResponse");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.SubscriberLocationReportResp, response, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onSendRoutingInfoForLCSRequest(SendRoutingInfoForLCSRequest request) {
+		this.logger.debug("onSendRoutingInforForLCSRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.SendRoutingInfoForLCS, request, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onSendRoutingInfoForLCSResponse(SendRoutingInfoForLCSResponse response) {
+		this.logger.debug("onSendRoutingInforForLCSResponse");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.SendRoutingInfoForLCSResp, response, sequence++);
+		this.observerdEvents.add(te);
 	}
 }
 

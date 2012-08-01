@@ -43,6 +43,13 @@ import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientID;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSEvent;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSLocationInfo;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LocationEstimateType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LocationType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.MAPDialogLsm;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPDialogMobility;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.RequestingNodeType;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
@@ -95,6 +102,7 @@ public class Client extends EventTestHarness {
 	private MAPDialogSupplementary clientDialog;
 	protected MAPDialogSms clientDialogSms;
 	protected MAPDialogMobility clientDialogMobility;
+	protected MAPDialogLsm clientDialogLsm;
 
 	private long savedInvokeId;
 
@@ -111,10 +119,12 @@ public class Client extends EventTestHarness {
 		this.mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
 		this.mapProvider.getMAPServiceSms().addMAPServiceListener(this);
 		this.mapProvider.getMAPServiceMobility().addMAPServiceListener(this);
+		this.mapProvider.getMAPServiceLsm().addMAPServiceListener(this);
 
 		this.mapProvider.getMAPServiceSupplementary().acivate();
 		this.mapProvider.getMAPServiceSms().acivate();
 		this.mapProvider.getMAPServiceMobility().acivate();
+		this.mapProvider.getMAPServiceLsm().acivate();
 	}
 
 	public void start() throws MAPException {
@@ -584,6 +594,67 @@ public class Client extends EventTestHarness {
 
 		this.observerdEvents.add(TestEvent.createSentEvent(EventType.AnyTimeInterrogation, null, sequence++));
 		clientDialogMobility.send();
+	}
+
+	public void sendProvideSubscriberLocation() throws Exception {
+
+		this.mapProvider.getMAPServiceLsm().acivate();
+
+		MAPApplicationContext appCnt = null;
+
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.locationSvcEnquiryContext, MAPApplicationContextVersion.version3);
+
+		clientDialogLsm = this.mapProvider.getMAPServiceLsm().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+
+		LocationType locationType = this.mapParameterFactory.createLocationType(LocationEstimateType.cancelDeferredLocation, null);
+		ISDNAddressString mlcNumber = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "11112222");
+
+		clientDialogLsm.addProvideSubscriberLocationRequest(locationType, mlcNumber, null, false, null, null, null, null, null, null, null, null,
+				null, null, null, null, null, null, false, null, null);
+
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.ProvideSubscriberLocation, null, sequence++));
+		clientDialogLsm.send();
+	}
+
+	public void sendSubscriberLocationReport() throws Exception {
+
+		this.mapProvider.getMAPServiceLsm().acivate();
+
+		MAPApplicationContext appCnt = null;
+
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.locationSvcEnquiryContext, MAPApplicationContextVersion.version3);
+
+		clientDialogLsm = this.mapProvider.getMAPServiceLsm().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+
+		LCSClientID lcsClientID = this.mapParameterFactory.createLCSClientID(LCSClientType.plmnOperatorServices, null, null, null, null, null, null);
+		ISDNAddressString networkNodeNumber = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "11113333");
+		LCSLocationInfo lcsLocationInfo = this.mapParameterFactory.createLCSLocationInfo(networkNodeNumber, null, null, false, null, null, null, null, null);
+
+		clientDialogLsm.addSubscriberLocationReportRequest(LCSEvent.emergencyCallOrigination, lcsClientID, lcsLocationInfo, null, null, null, null, null, null,
+				null, null, null, null, null, null, null, null, null, null, false, false, null, null, null, null, false, null, null, null);
+
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.SubscriberLocationReport, null, sequence++));
+		clientDialogLsm.send();
+	}
+
+	public void sendSendRoutingInforForLCS() throws Exception {
+
+		this.mapProvider.getMAPServiceLsm().acivate();
+
+		MAPApplicationContext appCnt = null;
+
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.locationSvcGatewayContext, MAPApplicationContextVersion.version3);
+
+		clientDialogLsm = this.mapProvider.getMAPServiceLsm().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+
+		ISDNAddressString mlcNumber = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "11112222");
+		IMSI imsi = this.mapParameterFactory.createIMSI("5555544444");
+		SubscriberIdentity targetMS = this.mapParameterFactory.createSubscriberIdentity(imsi);
+
+		clientDialogLsm.addSendRoutingInfoForLCSRequest(mlcNumber, targetMS, null);
+
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.SendRoutingInfoForLCS, null, sequence++));
+		clientDialogLsm.send();
 	}
 
 	public MAPDialog getMapDialog() {

@@ -49,6 +49,47 @@ import org.mobicents.protocols.ss7.map.api.primitives.PlmnId;
 import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.CallReferenceNumber;
+import org.mobicents.protocols.ss7.map.api.service.lsm.AddGeographicalInformation;
+import org.mobicents.protocols.ss7.map.api.service.lsm.AdditionalNumber;
+import org.mobicents.protocols.ss7.map.api.service.lsm.Area;
+import org.mobicents.protocols.ss7.map.api.service.lsm.AreaDefinition;
+import org.mobicents.protocols.ss7.map.api.service.lsm.AreaEventInfo;
+import org.mobicents.protocols.ss7.map.api.service.lsm.AreaIdentification;
+import org.mobicents.protocols.ss7.map.api.service.lsm.AreaType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.DeferredLocationEventType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.DeferredmtlrData;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ExtGeographicalInformation;
+import org.mobicents.protocols.ss7.map.api.service.lsm.GeranGANSSpositioningData;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientExternalID;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientID;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientInternalID;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientName;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSCodeword;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSFormatIndicator;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSLocationInfo;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSPrivacyCheck;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSQoS;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSRequestorID;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LocationEstimateType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LocationType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.OccurrenceInfo;
+import org.mobicents.protocols.ss7.map.api.service.lsm.PeriodicLDRInfo;
+import org.mobicents.protocols.ss7.map.api.service.lsm.PositioningDataInformation;
+import org.mobicents.protocols.ss7.map.api.service.lsm.PrivacyCheckRelatedAction;
+import org.mobicents.protocols.ss7.map.api.service.lsm.RANTechnology;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ReportingPLMN;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ReportingPLMNList;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ResponseTime;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ResponseTimeCategory;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SLRArgExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SLRArgPCSExtensions;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ServingNodeAddress;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SupportedGADShapes;
+import org.mobicents.protocols.ss7.map.api.service.lsm.TerminationCause;
+import org.mobicents.protocols.ss7.map.api.service.lsm.UtranGANSSpositioningData;
+import org.mobicents.protocols.ss7.map.api.service.lsm.UtranPositioningDataInfo;
+import org.mobicents.protocols.ss7.map.api.service.lsm.VelocityEstimate;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationQuintuplet;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationSetList;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationTriplet;
@@ -443,7 +484,50 @@ public interface MAPParameterFactory {
 	public UserCSGInformation createUserCSGInformation(CSGId csgId, MAPExtensionContainer extensionContainer, Integer accessMode, Integer cmi);
 	public PSSubscriberState createPSSubscriberState(PSSubscriberStateChoice choice, NotReachableReason netDetNotReachable,
 			ArrayList<PDPContextInfo> pdpContextInfoList);	
-	
+
+	public AddGeographicalInformation createAddGeographicalInformation(byte[] data);
+	public AdditionalNumber createAdditionalNumberMscNumber(ISDNAddressString mSCNumber);
+	public AdditionalNumber createAdditionalNumberSgsnNumber(ISDNAddressString sGSNNumber);
+	public AreaDefinition createAreaDefinition(ArrayList<Area> areaList);
+	public AreaEventInfo createAreaEventInfo(AreaDefinition areaDefinition, OccurrenceInfo occurrenceInfo, Integer intervalTime);
+	public AreaIdentification createAreaIdentification(byte[] data);
+	public AreaIdentification createAreaIdentification(AreaType type, int mcc, int mnc, int lac, int Rac_CellId_UtranCellId) throws MAPException ;
+	public Area createArea(AreaType areaType, AreaIdentification areaIdentification);
+	public DeferredLocationEventType createDeferredLocationEventType(boolean msAvailable, boolean enteringIntoArea, boolean leavingFromArea,
+			boolean beingInsideArea);
+	public DeferredmtlrData createDeferredmtlrData(DeferredLocationEventType deferredLocationEventType, TerminationCause terminationCause,
+			LCSLocationInfo lcsLocationInfo);
+	public ExtGeographicalInformation createExtGeographicalInformation(byte[] data);
+	public GeranGANSSpositioningData createGeranGANSSpositioningData(byte[] data);
+	public LCSClientID createLCSClientID(LCSClientType lcsClientType, LCSClientExternalID lcsClientExternalID, LCSClientInternalID lcsClientInternalID,
+			LCSClientName lcsClientName, AddressString lcsClientDialedByMS, APN lcsAPN, LCSRequestorID lcsRequestorID);
+	public LCSClientExternalID createLCSClientExternalID(final ISDNAddressString externalAddress, final MAPExtensionContainer extensionContainer);
+	public LCSClientName createLCSClientName(byte dataCodingScheme, USSDString nameString, LCSFormatIndicator lcsFormatIndicator);
+	public LCSCodeword createLCSCodeword(byte dataCodingScheme, USSDString lcsCodewordString);
+	public LCSLocationInfo createLCSLocationInfo(ISDNAddressString networkNodeNumber, LMSI lmsi, MAPExtensionContainer extensionContainer,
+			boolean gprsNodeIndicator, AdditionalNumber additionalNumber, SupportedLCSCapabilitySets supportedLCSCapabilitySets,
+			SupportedLCSCapabilitySets additionalLCSCapabilitySets, DiameterIdentity mmeName, DiameterIdentity aaaServerName);
+	public LCSPrivacyCheck createLCSPrivacyCheck(PrivacyCheckRelatedAction callSessionUnrelated, PrivacyCheckRelatedAction callSessionRelated);
+	public LCSQoS createLCSQoS(Integer horizontalAccuracy, Integer verticalAccuracy, boolean verticalCoordinateRequest, ResponseTime responseTime,
+			MAPExtensionContainer extensionContainer);
+	public LCSRequestorID createLCSRequestorID(byte dataCodingScheme, USSDString requestorIDString, LCSFormatIndicator lcsFormatIndicator);
+	public LocationType createLocationType(final LocationEstimateType locationEstimateType, final DeferredLocationEventType deferredLocationEventType);
+	public PeriodicLDRInfo createPeriodicLDRInfo(int reportingAmount, int reportingInterval);
+	public PositioningDataInformation createPositioningDataInformation(byte[] data);
+	public ReportingPLMN createReportingPLMN(PlmnId plmnId, RANTechnology ranTechnology, boolean ranPeriodicLocationSupport);
+	public ReportingPLMNList createReportingPLMNList(boolean plmnListPrioritized, ArrayList<ReportingPLMN> plmnList);
+	public ResponseTime createResponseTime(ResponseTimeCategory responseTimeCategory);
+	public ServingNodeAddress createServingNodeAddressMscNumber(ISDNAddressString mscNumber);
+	public ServingNodeAddress createServingNodeAddressSgsnNumber(ISDNAddressString sgsnNumber);
+	public ServingNodeAddress createServingNodeAddressMmeNumber(DiameterIdentity mmeNumber);
+	public SLRArgExtensionContainer createSLRArgExtensionContainer(ArrayList<MAPPrivateExtension> privateExtensionList, SLRArgPCSExtensions slrArgPcsExtensions);
+	public SLRArgPCSExtensions createSLRArgPCSExtensions(boolean naEsrkRequest);
+	public SupportedGADShapes createSupportedGADShapes(boolean ellipsoidPoint, boolean ellipsoidPointWithUncertaintyCircle,
+			boolean ellipsoidPointWithUncertaintyEllipse, boolean polygon, boolean ellipsoidPointWithAltitude,
+			boolean ellipsoidPointWithAltitudeAndUncertaintyElipsoid, boolean ellipsoidArc);
+	public UtranGANSSpositioningData createUtranGANSSpositioningData(byte[] data);
+	public UtranPositioningDataInfo createUtranPositioningDataInfo(byte[] data);
+	public VelocityEstimate createVelocityEstimate(byte[] data);
 
 	public ExtBasicServiceCode createExtBasicServiceCode(ExtBearerServiceCode extBearerServiceCode);
 	public ExtBasicServiceCode createExtBasicServiceCode(ExtTeleserviceCode extTeleserviceCode);

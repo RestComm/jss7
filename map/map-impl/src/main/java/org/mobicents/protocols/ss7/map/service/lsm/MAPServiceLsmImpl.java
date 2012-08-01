@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.map.service.lsm;
 
 import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.MAPDialogImpl;
 import org.mobicents.protocols.ss7.map.MAPProviderImpl;
 import org.mobicents.protocols.ss7.map.MAPServiceBaseImpl;
@@ -59,6 +60,67 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 	 */
 	public MAPServiceLsmImpl(MAPProviderImpl mapProviderImpl) {
 		super(mapProviderImpl);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsm#createNewDialog
+	 * (org.mobicents.protocols.ss7.map.api.MAPApplicationContext,
+	 * org.mobicents.protocols.ss7.sccp.parameter.SccpAddress,
+	 * org.mobicents.protocols.ss7.map.api.dialog.AddressString,
+	 * org.mobicents.protocols.ss7.sccp.parameter.SccpAddress,
+	 * org.mobicents.protocols.ss7.map.api.dialog.AddressString)
+	 */
+	public MAPDialogLsm createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress, AddressString origReference, SccpAddress destAddress,
+			AddressString destReference) throws MAPException {
+		// We cannot create a dialog if the service is not activated
+		if (!this.isActivated())
+			throw new MAPException("Cannot create MAPDialogLsm because MAPServiceLsm is not activated");
+
+		Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress);
+
+		MAPDialogLsmImpl dialog = new MAPDialogLsmImpl(appCntx, tcapDialog, this.mapProviderImpl, this, origReference, destReference);
+
+		this.putMAPDialogIntoCollection(dialog);
+
+		return dialog;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsm#
+	 * addMAPServiceListener
+	 * (org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsmListener)
+	 */
+	public void addMAPServiceListener(MAPServiceLsmListener mapServiceListener) {
+		super.addMAPServiceListener(mapServiceListener);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsm#
+	 * removeMAPServiceListener
+	 * (org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsmListener)
+	 */
+	public void removeMAPServiceListener(MAPServiceLsmListener mapServiceListener) {
+		super.removeMAPServiceListener(mapServiceListener);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.protocols.ss7.map.MAPServiceBaseImpl#createNewDialogIncoming
+	 * (org.mobicents.protocols.ss7.map.api.MAPApplicationContext,
+	 * org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog)
+	 */
+	@Override
+	protected MAPDialogImpl createNewDialogIncoming(MAPApplicationContext appCntx, Dialog tcapDialog) {
+		return new MAPDialogLsmImpl(appCntx, tcapDialog, this.mapProviderImpl, this, null, null);
 	}
 
 	/*
@@ -152,15 +214,17 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 
 	private void provideSubscriberLocationReq(Parameter param, MAPDialogLsmImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
 		if (param == null) {
-			throw new MAPParsingComponentException("Error while decoding ProvideSubscriberLocationRequest: Parameter is mandatory but not found",
+			throw new MAPParsingComponentException("Error while decoding provideSubscriberLocationRes: Parameter is mandatory but not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
+		if (param.getTag() != Tag.SEQUENCE || param.getTagClass() != Tag.CLASS_UNIVERSAL || param.isPrimitive())
+			throw new MAPParsingComponentException("Error while decoding provideSubscriberLocationReq: Bad tag or tagClass or parameter is primitive, received tag="
+					+ param.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
 
 		byte[] buf = param.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-
 		ProvideSubscriberLocationRequestImpl provideSubsLoctReqInd = new ProvideSubscriberLocationRequestImpl();
-		provideSubsLoctReqInd.decodeAll(ais);
+		provideSubsLoctReqInd.decodeData(ais, buf.length);
 
 		provideSubsLoctReqInd.setInvokeId(invokeId);
 		provideSubsLoctReqInd.setMAPDialog(mapDialogImpl);
@@ -174,15 +238,17 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 
 	private void provideSubscriberLocationRes(Parameter param, MAPDialogLsmImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
 		if (param == null) {
-			throw new MAPParsingComponentException("Error while decoding ProvideSubscriberLocationRequest: Parameter is mandatory but not found",
+			throw new MAPParsingComponentException("Error while decoding provideSubscriberLocationRes: Parameter is mandatory but not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
+		if (param.getTag() != Tag.SEQUENCE || param.getTagClass() != Tag.CLASS_UNIVERSAL || param.isPrimitive())
+			throw new MAPParsingComponentException("Error while decoding provideSubscriberLocationRes: Bad tag or tagClass or parameter is primitive, received tag="
+					+ param.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
 
 		byte[] buf = param.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-
 		ProvideSubscriberLocationResponseImpl provideSubsLoctResInd = new ProvideSubscriberLocationResponseImpl();
-		provideSubsLoctResInd.decodeAll(ais);
+		provideSubsLoctResInd.decodeData(ais, buf.length);
 
 		provideSubsLoctResInd.setInvokeId(invokeId);
 		provideSubsLoctResInd.setMAPDialog(mapDialogImpl);
@@ -199,12 +265,14 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 			throw new MAPParsingComponentException("Error while decoding subscriberLocationReport: Parameter is mandatory but not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
+		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+			throw new MAPParsingComponentException("Error while decoding subscriberLocationReportReq: Bad tag or tagClass or parameter is primitive, received tag="
+					+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-
 		SubscriberLocationReportRequestImpl reqInd = new SubscriberLocationReportRequestImpl();
-		reqInd.decodeAll(ais);
+		reqInd.decodeData(ais, buf.length);
 
 		reqInd.setInvokeId(invokeId);
 		reqInd.setMAPDialog(mapDialogImpl);
@@ -220,12 +288,14 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 			throw new MAPParsingComponentException("Error while decoding subscriberLocationReport: Parameter is mandatory but not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
+		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+			throw new MAPParsingComponentException("Error while decoding subscriberLocationReportRes: Bad tag or tagClass or parameter is primitive, received tag="
+					+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-
 		SubscriberLocationReportResponseImpl resInd = new SubscriberLocationReportResponseImpl();
-		resInd.decodeAll(ais);
+		resInd.decodeData(ais, buf.length);
 
 		resInd.setInvokeId(invokeId);
 		resInd.setMAPDialog(mapDialogImpl);
@@ -241,19 +311,21 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 			throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForLCS: Parameter is mandatory but not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
+		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+			throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForLCSReq: Bad tag or tagClass or parameter is primitive, received tag="
+					+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-
 		SendRoutingInfoForLCSRequestImpl reqInd = new SendRoutingInfoForLCSRequestImpl();
-		reqInd.decodeAll(ais);
+		reqInd.decodeData(ais, buf.length);
 
 		reqInd.setInvokeId(invokeId);
 		reqInd.setMAPDialog(mapDialogImpl);
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			serLis.onMAPMessage(reqInd);
-			((MAPServiceLsmListener) serLis).onSendRoutingInforForLCSRequest(reqInd);
+			((MAPServiceLsmListener) serLis).onSendRoutingInfoForLCSRequest(reqInd);
 		}
 	}
 
@@ -262,81 +334,22 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 			throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForLCS: Parameter is mandatory but not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
+		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+			throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForLCSRes: Bad tag or tagClass or parameter is primitive, received tag="
+					+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-
 		SendRoutingInfoForLCSResponseImpl resInd = new SendRoutingInfoForLCSResponseImpl();
-		resInd.decodeAll(ais);
+		resInd.decodeData(ais, buf.length);
 
 		resInd.setInvokeId(invokeId);
 		resInd.setMAPDialog(mapDialogImpl);
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			serLis.onMAPMessage(resInd);
-			((MAPServiceLsmListener) serLis).onSendRoutingInforForLCSResponse(resInd);
+			((MAPServiceLsmListener) serLis).onSendRoutingInfoForLCSResponse(resInd);
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsm#createNewDialog
-	 * (org.mobicents.protocols.ss7.map.api.MAPApplicationContext,
-	 * org.mobicents.protocols.ss7.sccp.parameter.SccpAddress,
-	 * org.mobicents.protocols.ss7.map.api.dialog.AddressString,
-	 * org.mobicents.protocols.ss7.sccp.parameter.SccpAddress,
-	 * org.mobicents.protocols.ss7.map.api.dialog.AddressString)
-	 */
-	public MAPDialogLsm createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress, AddressString origReference, SccpAddress destAddress,
-			AddressString destReference) throws MAPException {
-		// We cannot create a dialog if the service is not activated
-		if (!this.isActivated())
-			throw new MAPException("Cannot create MAPDialogLsm because MAPServiceLsm is not activated");
-
-		Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress);
-
-		MAPDialogLsmImpl dialog = new MAPDialogLsmImpl(appCntx, tcapDialog, this.mapProviderImpl, this, origReference, destReference);
-
-		this.putMAPDialogIntoCollection(dialog);
-
-		return dialog;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsm#
-	 * addMAPServiceListener
-	 * (org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsmListener)
-	 */
-	public void addMAPServiceListener(MAPServiceLsmListener mapServiceListener) {
-		super.addMAPServiceListener(mapServiceListener);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsm#
-	 * removeMAPServiceListener
-	 * (org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsmListener)
-	 */
-	public void removeMAPServiceListener(MAPServiceLsmListener mapServiceListener) {
-		super.removeMAPServiceListener(mapServiceListener);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.MAPServiceBaseImpl#createNewDialogIncoming
-	 * (org.mobicents.protocols.ss7.map.api.MAPApplicationContext,
-	 * org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog)
-	 */
-	@Override
-	protected MAPDialogImpl createNewDialogIncoming(MAPApplicationContext appCntx, Dialog tcapDialog) {
-		return new MAPDialogLsmImpl(appCntx, tcapDialog, this.mapProviderImpl, this, null, null);
 	}
 
 }

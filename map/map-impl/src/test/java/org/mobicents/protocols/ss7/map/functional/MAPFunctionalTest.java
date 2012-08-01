@@ -69,6 +69,19 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ExtGeographicalInformation;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientID;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSEvent;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSLocationInfo;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LocationEstimateType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.MAPDialogLsm;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationRequest;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationResponse;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SendRoutingInfoForLCSRequest;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SendRoutingInfoForLCSResponse;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberLocationReportRequest;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberLocationReportResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPDialogMobility;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationSetList;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationTriplet;
@@ -3531,6 +3544,300 @@ public class MAPFunctionalTest extends SccpHarness {
 		server.compareEvents(serverExpectedEvents);
 
 	}
+
+	/**
+	 * TC-BEGIN + provideSubscriberLocationRequest
+	 * TC-END + provideSubscriberLocationResponse
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testProvideSubscriberLocation() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onProvideSubscriberLocationResponse(ProvideSubscriberLocationResponse ind) {
+				super.onProvideSubscriberLocationResponse(ind);
+
+				Assert.assertTrue(Arrays.equals(ind.getLocationEstimate().getData(), new byte[] { 50 }));
+				Assert.assertEquals((int) ind.getAgeOfLocationEstimate(), 6);
+			}
+
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onProvideSubscriberLocationRequest(ProvideSubscriberLocationRequest ind) {
+				super.onProvideSubscriberLocationRequest(ind);
+
+				MAPDialogLsm d = ind.getMAPDialog();
+
+				Assert.assertEquals(ind.getLocationType().getLocationEstimateType(), LocationEstimateType.cancelDeferredLocation);
+				Assert.assertTrue(ind.getMlcNumber().getAddress().equals("11112222"));
+
+
+				ExtGeographicalInformation locationEstimate = this.mapParameterFactory.createExtGeographicalInformation(new byte[] { 50 });
+
+				try {
+					d.addProvideSubscriberLocationResponse(ind.getInvokeId(), locationEstimate, null, null, 6, null, null, false, null, false, null, null,
+							false, null, null, null);
+				} catch (MAPException e) {
+					this.error("Error while adding ProvideSubscriberLocationResponse", e);
+					fail("Error while adding ProvideSubscriberLocationResponse");
+				}
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.ProvideSubscriberLocationResp, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending close()", e);
+					fail("Error while sending close()");
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.ProvideSubscriberLocation, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ProvideSubscriberLocationResp, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ProvideSubscriberLocation, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ProvideSubscriberLocationResp, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendProvideSubscriberLocation();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	/**
+	 * TC-BEGIN + subscriberLocationReportRequest
+	 * TC-END + subscriberLocationReportResponse
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testSubscriberLocationReport() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onSubscriberLocationReportResponse(SubscriberLocationReportResponse ind) {
+				super.onSubscriberLocationReportResponse(ind);
+
+				Assert.assertTrue(ind.getNaESRD().getAddress().equals("11114444"));
+			}
+
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onSubscriberLocationReportRequest(SubscriberLocationReportRequest ind) {
+				super.onSubscriberLocationReportRequest(ind);
+
+				MAPDialogLsm d = ind.getMAPDialog();
+
+				Assert.assertEquals(ind.getLCSEvent(), LCSEvent.emergencyCallOrigination);
+				Assert.assertEquals(ind.getLCSClientID().getLCSClientType(), LCSClientType.plmnOperatorServices);
+				Assert.assertTrue(ind.getLCSLocationInfo().getNetworkNodeNumber().getAddress().equals("11113333"));
+
+
+				ISDNAddressString naEsrd = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "11114444");
+
+				try {
+					d.addSubscriberLocationReportResponse(ind.getInvokeId(), naEsrd, null, null);
+				} catch (MAPException e) {
+					this.error("Error while adding SubscriberLocationReportResponse", e);
+					fail("Error while adding SubscriberLocationReportResponse");
+				}
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.SubscriberLocationReportResp, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending close()", e);
+					fail("Error while sending close()");
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.SubscriberLocationReport, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.SubscriberLocationReportResp, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.SubscriberLocationReport, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.SubscriberLocationReportResp, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendSubscriberLocationReport();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	/**
+	 * TC-BEGIN + sendRoutingInforForLCSRequest
+	 * TC-END + sendRoutingInforForLCSResponse
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testSendRoutingInforForLCS() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onSendRoutingInfoForLCSResponse(SendRoutingInfoForLCSResponse ind) {
+				super.onSendRoutingInfoForLCSResponse(ind);
+
+				Assert.assertTrue(ind.getTargetMS().getIMSI().getData().equals("6666644444"));
+				Assert.assertTrue(ind.getLCSLocationInfo().getNetworkNodeNumber().getAddress().equals("11114444"));
+			}
+
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onSendRoutingInfoForLCSRequest(SendRoutingInfoForLCSRequest ind) {
+				super.onSendRoutingInfoForLCSRequest(ind);
+
+				MAPDialogLsm d = ind.getMAPDialog();
+
+				Assert.assertTrue(ind.getMLCNumber().getAddress().equals("11112222"));
+				Assert.assertTrue(ind.getTargetMS().getIMSI().getData().equals("5555544444"));
+
+
+				IMSI imsi = this.mapParameterFactory.createIMSI("6666644444");
+				SubscriberIdentity targetMS = this.mapParameterFactory.createSubscriberIdentity(imsi);
+				ISDNAddressString networkNodeNumber = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "11114444");;
+				LCSLocationInfo lcsLocationInfo = this.mapParameterFactory.createLCSLocationInfo(networkNodeNumber, null, null, false, null, null, null, null,
+						null);
+
+				try {
+					d.addSendRoutingInfoForLCSResponse(ind.getInvokeId(), targetMS, lcsLocationInfo, null, null, null, null, null);
+				} catch (MAPException e) {
+					this.error("Error while adding SendRoutingInfoForLCSResponse", e);
+					fail("Error while adding SendRoutingInfoForLCSResponse");
+				}
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.SendRoutingInfoForLCSResp, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending close()", e);
+					fail("Error while sending close()");
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.SendRoutingInfoForLCS, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.SendRoutingInfoForLCSResp, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.SendRoutingInfoForLCS, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.SendRoutingInfoForLCSResp, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendSendRoutingInforForLCS();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
 
 	
 	

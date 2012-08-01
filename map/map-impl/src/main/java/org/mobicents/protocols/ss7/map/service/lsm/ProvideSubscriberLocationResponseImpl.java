@@ -101,7 +101,7 @@ public class ProvideSubscriberLocationResponseImpl extends LsmMessageImpl implem
 			MAPExtensionContainer extensionContainer, boolean deferredMTLRResponseIndicator, CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI,
 			boolean saiPresent, AccuracyFulfilmentIndicator accuracyFulfilmentIndicator, VelocityEstimate velocityEstimate, boolean moLrShortCircuitIndicator,
 			GeranGANSSpositioningData geranGANSSpositioningData, UtranGANSSpositioningData utranGANSSpositioningData,
-			ServingNodeAddress targetServingNodeForHandover) throws MAPException {
+			ServingNodeAddress targetServingNodeForHandover) {
 		super();
 
 		this.locationEstimate = locationEstimate;

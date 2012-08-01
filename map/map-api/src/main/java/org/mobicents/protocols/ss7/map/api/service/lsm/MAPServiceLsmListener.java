@@ -38,7 +38,7 @@ public interface MAPServiceLsmListener extends MAPServiceListener {
 
 	public void onSubscriberLocationReportResponse(SubscriberLocationReportResponse subscriberLocationReportResponseIndication);
 	
-	public void onSendRoutingInforForLCSRequest(SendRoutingInfoForLCSRequest sendRoutingInforForLCSRequestIndication);
+	public void onSendRoutingInfoForLCSRequest(SendRoutingInfoForLCSRequest sendRoutingInforForLCSRequestIndication);
 
-	public void onSendRoutingInforForLCSResponse(SendRoutingInfoForLCSResponse sendRoutingInforForLCSResponseIndication);
+	public void onSendRoutingInfoForLCSResponse(SendRoutingInfoForLCSResponse sendRoutingInforForLCSResponseIndication);
 }

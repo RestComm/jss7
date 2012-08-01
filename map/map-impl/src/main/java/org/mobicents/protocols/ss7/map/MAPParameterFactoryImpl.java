@@ -51,6 +51,47 @@ import org.mobicents.protocols.ss7.map.api.primitives.PlmnId;
 import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.CallReferenceNumber;
+import org.mobicents.protocols.ss7.map.api.service.lsm.AddGeographicalInformation;
+import org.mobicents.protocols.ss7.map.api.service.lsm.AdditionalNumber;
+import org.mobicents.protocols.ss7.map.api.service.lsm.Area;
+import org.mobicents.protocols.ss7.map.api.service.lsm.AreaDefinition;
+import org.mobicents.protocols.ss7.map.api.service.lsm.AreaEventInfo;
+import org.mobicents.protocols.ss7.map.api.service.lsm.AreaIdentification;
+import org.mobicents.protocols.ss7.map.api.service.lsm.AreaType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.DeferredLocationEventType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.DeferredmtlrData;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ExtGeographicalInformation;
+import org.mobicents.protocols.ss7.map.api.service.lsm.GeranGANSSpositioningData;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientExternalID;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientID;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientInternalID;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientName;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSCodeword;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSFormatIndicator;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSLocationInfo;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSPrivacyCheck;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSQoS;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSRequestorID;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LocationEstimateType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LocationType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.OccurrenceInfo;
+import org.mobicents.protocols.ss7.map.api.service.lsm.PeriodicLDRInfo;
+import org.mobicents.protocols.ss7.map.api.service.lsm.PositioningDataInformation;
+import org.mobicents.protocols.ss7.map.api.service.lsm.PrivacyCheckRelatedAction;
+import org.mobicents.protocols.ss7.map.api.service.lsm.RANTechnology;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ReportingPLMN;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ReportingPLMNList;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ResponseTime;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ResponseTimeCategory;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SLRArgExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SLRArgPCSExtensions;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ServingNodeAddress;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SupportedGADShapes;
+import org.mobicents.protocols.ss7.map.api.service.lsm.TerminationCause;
+import org.mobicents.protocols.ss7.map.api.service.lsm.UtranGANSSpositioningData;
+import org.mobicents.protocols.ss7.map.api.service.lsm.UtranPositioningDataInfo;
+import org.mobicents.protocols.ss7.map.api.service.lsm.VelocityEstimate;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationQuintuplet;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationSetList;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationTriplet;
@@ -146,6 +187,37 @@ import org.mobicents.protocols.ss7.map.primitives.PlmnIdImpl;
 import org.mobicents.protocols.ss7.map.primitives.SubscriberIdentityImpl;
 import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
 import org.mobicents.protocols.ss7.map.service.callhandling.CallReferenceNumberImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.AddGeographicalInformationImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.AdditionalNumberImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.AreaDefinitionImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.AreaEventInfoImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.AreaIdentificationImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.AreaImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.DeferredLocationEventTypeImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.DeferredmtlrDataImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.ExtGeographicalInformationImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.GeranGANSSpositioningDataImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.LCSClientExternalIDImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.LCSClientIDImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.LCSClientNameImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.LCSCodewordImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.LCSLocationInfoImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.LCSPrivacyCheckImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.LCSQoSImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.LCSRequestorIDImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.LocationTypeImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.PeriodicLDRInfoImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.PositioningDataInformationImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.ReportingPLMNImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.ReportingPLMNListImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.ResponseTimeImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.SLRArgExtensionContainerImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.SLRArgPCSExtensionsImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.ServingNodeAddressImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.SupportedGADShapesImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.UtranGANSSpositioningDataImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.UtranPositioningDataInfoImpl;
+import org.mobicents.protocols.ss7.map.service.lsm.VelocityEstimateImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.AuthenticationQuintupletImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.AuthenticationSetListImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.AuthenticationTripletImpl;
@@ -573,48 +645,39 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 		return new LocationAreaImpl(lac);
 	}
 
-	@Override
 	public AnyTimeInterrogationRequest createAnyTimeInterrogationRequest(SubscriberIdentity subscriberIdentity, RequestedInfo requestedInfo,
 			ISDNAddressString gsmSCFAddress, MAPExtensionContainer extensionContainer) {
 		return new AnyTimeInterrogationRequestImpl(subscriberIdentity, requestedInfo, gsmSCFAddress, extensionContainer);
 	}
 
-	@Override
 	public AnyTimeInterrogationResponse createAnyTimeInterrogationResponse(SubscriberInfo subscriberInfo, MAPExtensionContainer extensionContainer) {
 		return new AnyTimeInterrogationResponseImpl(subscriberInfo, extensionContainer);
 	}
 
-	@Override
 	public DiameterIdentity createDiameterIdentity(byte[] data) {
 		return new DiameterIdentityImpl(data);
 	}
 
-	@Override
 	public SubscriberIdentity createSubscriberIdentity(IMSI imsi) {
 		return new SubscriberIdentityImpl(imsi);
 	}
 
-	@Override
 	public SubscriberIdentity createSubscriberIdentity(ISDNAddressString msisdn) {
 		return new SubscriberIdentityImpl(msisdn);
 	}
 
-	@Override
 	public APN createAPN(byte[] data) {
 		return new APNImpl(data);
 	}
 
-	@Override
 	public PDPAddress createPDPAddress(byte[] data) {
 		return new PDPAddressImpl(data);
 	}
 
-	@Override
 	public PDPType createPDPType(byte[] data) {
 		return new PDPTypeImpl(data);
 	}
 
-	@Override
 	public PDPContextInfo createPDPContextInfo(int pdpContextIdentifier, boolean pdpContextActive, PDPType pdpType, PDPAddress pdpAddress, APN apnSubscribed,
 			APN apnInUse, Integer asapi, TransactionId transactionId, TEID teidForGnAndGp, TEID teidForIu, GSNAddress ggsnAddress,
 			ExtQoSSubscribed qosSubscribed, ExtQoSSubscribed qosRequested, ExtQoSSubscribed qosNegotiated, GPRSChargingID chargingId,
@@ -628,92 +691,74 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 				qos4Requested, qos4Negotiated, extPdpType, extPdpAddress);
 	}
 
-	@Override
 	public CSGId createCSGId(BitSetStrictLength data) {
 		return new CSGIdImpl(data);
 	}
 
-	@Override
 	public LSAIdentity createLSAIdentity(byte[] data) {
 		return new LSAIdentityImpl(data);
 	}
 
-	@Override
 	public GPRSChargingID createGPRSChargingID(byte[] data) {
 		return new GPRSChargingIDImpl(data);
 	}
 
-	@Override
 	public ChargingCharacteristics createChargingCharacteristics(byte[] data) {
 		return new ChargingCharacteristicsImpl(data);
 	}
 
-	@Override
 	public ExtQoSSubscribed createExtQoSSubscribed(byte[] data) {
 		return new ExtQoSSubscribedImpl(data);
 	}
 
-	@Override
 	public Ext2QoSSubscribed createExt2QoSSubscribed(byte[] data) {
 		return new Ext2QoSSubscribedImpl(data);
 	}
 
-	@Override
 	public Ext3QoSSubscribed createExt3QoSSubscribed(byte[] data) {
 		return new Ext3QoSSubscribedImpl(data);
 	}
 
-	@Override
 	public Ext4QoSSubscribed createExt4QoSSubscribed(int data) {
 		return new Ext4QoSSubscribedImpl(data);
 	}
 
-	@Override
 	public ExtPDPType createExtPDPType(byte[] data) {
 		return new ExtPDPTypeImpl(data);
 	}
 
-	@Override
 	public TransactionId createTransactionId(byte[] data) {
 		return new TransactionIdImpl(data);
 	}
 
-	@Override
 	public TAId createTAId(byte[] data) {
 		return new TAIdImpl(data);
 	}
 
-	@Override
 	public RAIdentity createRAIdentity(byte[] data) {
 		return new RAIdentityImpl(data);
 	}
 
-	@Override
 	public EUtranCgi createEUtranCgi(byte[] data) {
 		return new EUtranCgiImpl(data);
 	}
 
-	@Override
 	public TEID createTEID(byte[] data) {
 		return new TEIDImpl(data);
 	}
 
-	@Override
 	public GPRSMSClass createGPRSMSClass(MSNetworkCapability mSNetworkCapability, MSRadioAccessCapability mSRadioAccessCapability) {
 		return new GPRSMSClassImpl(mSNetworkCapability, mSRadioAccessCapability);
 	}
 
-	@Override
 	public GeodeticInformation createGeodeticInformation(byte[] data) {
 		return new GeodeticInformationImpl(data);
 	}
 
-	@Override
 	public GeographicalInformation createGeographicalInformation(byte[] data) {
 		return new GeographicalInformationImpl(data);
 	}
 
-	@Override
 	public LocationInformationEPS createLocationInformationEPS(EUtranCgi eUtranCellGlobalIdentity, TAId trackingAreaIdentity,
 			MAPExtensionContainer extensionContainer, GeographicalInformation geographicalInformation, GeodeticInformation geodeticInformation,
 			boolean currentLocationRetrieved, Integer ageOfLocationInformation, DiameterIdentity mmeName) {
@@ -721,7 +766,6 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 				currentLocationRetrieved, ageOfLocationInformation, mmeName);
 	}
 
-	@Override
 	public LocationInformationGPRS createLocationInformationGPRS(CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI,
 			RAIdentity routeingAreaIdentity, GeographicalInformation geographicalInformation, ISDNAddressString sgsnNumber, LSAIdentity selectedLSAIdentity,
 			MAPExtensionContainer extensionContainer, boolean saiPresent, GeodeticInformation geodeticInformation, boolean currentLocationRetrieved,
@@ -730,40 +774,33 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 				selectedLSAIdentity, extensionContainer, saiPresent, geodeticInformation, currentLocationRetrieved, ageOfLocationInformation);
 	}
 
-	@Override
 	public MSNetworkCapability createMSNetworkCapability(byte[] data) {
 		return new MSNetworkCapabilityImpl(data);
 	}
 
-	@Override
 	public MSRadioAccessCapability createMSRadioAccessCapability(byte[] data) {
 		return new MSRadioAccessCapabilityImpl(data);
 	}
 
-	@Override
 	public MSClassmark2 createMSClassmark2(byte[] data) {
 		return new MSClassmark2Impl(data);
 	}
 
-	@Override
 	public MNPInfoRes createMNPInfoRes(RouteingNumber routeingNumber, IMSI imsi, ISDNAddressString msisdn, NumberPortabilityStatus numberPortabilityStatus,
 			MAPExtensionContainer extensionContainer) {
 		return new MNPInfoResImpl(routeingNumber, imsi, msisdn, numberPortabilityStatus, extensionContainer);
 	}
 
-	@Override
 	public RequestedInfo createRequestedInfo(boolean locationInformation, boolean subscriberState, MAPExtensionContainer extensionContainer,
 			boolean currentLocation, DomainType requestedDomain, boolean imei, boolean msClassmark, boolean mnpRequestedInfo) {
 		return new RequestedInfoImpl(locationInformation, subscriberState, extensionContainer, currentLocation, requestedDomain, imei, msClassmark,
 				mnpRequestedInfo);
 	}
 
-	@Override
 	public RouteingNumber createRouteingNumber(String data) {
 		return new RouteingNumberImpl(data);
 	}
 
-	@Override
 	public SubscriberInfo createSubscriberInfo(LocationInformation locationInformation, SubscriberState subscriberState,
 			MAPExtensionContainer extensionContainer, LocationInformationGPRS locationInformationGPRS, PSSubscriberState psSubscriberState, IMEI imei,
 			MSClassmark2 msClassmark2, GPRSMSClass gprsMSClass, MNPInfoRes mnpInfoRes) {
@@ -771,15 +808,163 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 				gprsMSClass, mnpInfoRes);
 	}
 
-	@Override
 	public UserCSGInformation createUserCSGInformation(CSGId csgId, MAPExtensionContainer extensionContainer, Integer accessMode, Integer cmi) {
 		return new UserCSGInformationImpl(csgId, extensionContainer, accessMode, cmi);
 	}
 
-	@Override
 	public PSSubscriberState createPSSubscriberState(PSSubscriberStateChoice choice, NotReachableReason netDetNotReachable,
 			ArrayList<PDPContextInfo> pdpContextInfoList) {
 		return new PSSubscriberStateImpl(choice, netDetNotReachable, pdpContextInfoList);
+	}
+
+	public AddGeographicalInformation createAddGeographicalInformation(byte[] data) {
+		return new AddGeographicalInformationImpl(data);
+	}
+
+	public AdditionalNumber createAdditionalNumberMscNumber(ISDNAddressString mSCNumber) {
+		return new AdditionalNumberImpl(mSCNumber, null);
+	}
+
+	public AdditionalNumber createAdditionalNumberSgsnNumber(ISDNAddressString sGSNNumber) {
+		return new AdditionalNumberImpl(null, sGSNNumber);
+	}
+
+	public AreaDefinition createAreaDefinition(ArrayList<Area> areaList) {
+		return new AreaDefinitionImpl(areaList);
+	}
+
+	public AreaEventInfo createAreaEventInfo(AreaDefinition areaDefinition, OccurrenceInfo occurrenceInfo, Integer intervalTime) {
+		return new AreaEventInfoImpl(areaDefinition, occurrenceInfo, intervalTime);
+	}
+
+	public AreaIdentification createAreaIdentification(byte[] data) {
+		return new AreaIdentificationImpl(data);
+	}
+
+	public AreaIdentification createAreaIdentification(AreaType type, int mcc, int mnc, int lac, int Rac_CellId_UtranCellId) throws MAPException {
+		return new AreaIdentificationImpl(type, mcc, mnc, lac, Rac_CellId_UtranCellId);
+	}
+
+	public Area createArea(AreaType areaType, AreaIdentification areaIdentification) {
+		return new AreaImpl(areaType, areaIdentification);
+	}
+
+	public DeferredLocationEventType createDeferredLocationEventType(boolean msAvailable, boolean enteringIntoArea, boolean leavingFromArea,
+			boolean beingInsideArea) {
+		return new DeferredLocationEventTypeImpl(msAvailable, enteringIntoArea, leavingFromArea, beingInsideArea);
+	}
+
+	public DeferredmtlrData createDeferredmtlrData(DeferredLocationEventType deferredLocationEventType, TerminationCause terminationCause,
+			LCSLocationInfo lcsLocationInfo) {
+		return new DeferredmtlrDataImpl(deferredLocationEventType, terminationCause, lcsLocationInfo);
+	}
+
+	public ExtGeographicalInformation createExtGeographicalInformation(byte[] data) {
+		return new ExtGeographicalInformationImpl(data);
+	}
+
+	public GeranGANSSpositioningData createGeranGANSSpositioningData(byte[] data) {
+		return new GeranGANSSpositioningDataImpl(data);
+	}
+
+	public LCSClientID createLCSClientID(LCSClientType lcsClientType, LCSClientExternalID lcsClientExternalID, LCSClientInternalID lcsClientInternalID,
+			LCSClientName lcsClientName, AddressString lcsClientDialedByMS, APN lcsAPN, LCSRequestorID lcsRequestorID) {
+		return new LCSClientIDImpl(lcsClientType, lcsClientExternalID, lcsClientInternalID, lcsClientName, lcsClientDialedByMS, lcsAPN, lcsRequestorID);
+	}
+
+	public LCSClientExternalID createLCSClientExternalID(ISDNAddressString externalAddress, MAPExtensionContainer extensionContainer) {
+		return new LCSClientExternalIDImpl(externalAddress, extensionContainer);
+	}
+
+	public LCSClientName createLCSClientName(byte dataCodingScheme, USSDString nameString, LCSFormatIndicator lcsFormatIndicator) {
+		return new LCSClientNameImpl(dataCodingScheme, nameString, lcsFormatIndicator);
+	}
+
+	public LCSCodeword createLCSCodeword(byte dataCodingScheme, USSDString lcsCodewordString) {
+		return new LCSCodewordImpl(dataCodingScheme, lcsCodewordString);
+	}
+
+	public LCSLocationInfo createLCSLocationInfo(ISDNAddressString networkNodeNumber, LMSI lmsi, MAPExtensionContainer extensionContainer,
+			boolean gprsNodeIndicator, AdditionalNumber additionalNumber, SupportedLCSCapabilitySets supportedLCSCapabilitySets,
+			SupportedLCSCapabilitySets additionalLCSCapabilitySets, DiameterIdentity mmeName, DiameterIdentity aaaServerName) {
+		return new LCSLocationInfoImpl(networkNodeNumber, lmsi, extensionContainer, gprsNodeIndicator, additionalNumber, supportedLCSCapabilitySets,
+				additionalLCSCapabilitySets, mmeName, aaaServerName);
+	}
+
+	public LCSPrivacyCheck createLCSPrivacyCheck(PrivacyCheckRelatedAction callSessionUnrelated, PrivacyCheckRelatedAction callSessionRelated) {
+		return new LCSPrivacyCheckImpl(callSessionUnrelated, callSessionRelated);
+	}
+
+	public LCSQoS createLCSQoS(Integer horizontalAccuracy, Integer verticalAccuracy, boolean verticalCoordinateRequest, ResponseTime responseTime,
+			MAPExtensionContainer extensionContainer) {
+		return new LCSQoSImpl(horizontalAccuracy, verticalAccuracy, verticalCoordinateRequest, responseTime, extensionContainer);
+	}
+
+	public LCSRequestorID createLCSRequestorID(byte dataCodingScheme, USSDString requestorIDString, LCSFormatIndicator lcsFormatIndicator) {
+		return new LCSRequestorIDImpl(dataCodingScheme, requestorIDString, lcsFormatIndicator);
+	}
+
+	public LocationType createLocationType(LocationEstimateType locationEstimateType, DeferredLocationEventType deferredLocationEventType) {
+		return new LocationTypeImpl(locationEstimateType, deferredLocationEventType);
+	}
+
+	public PeriodicLDRInfo createPeriodicLDRInfo(int reportingAmount, int reportingInterval) {
+		return new PeriodicLDRInfoImpl(reportingAmount, reportingInterval);
+	}
+
+	public PositioningDataInformation createPositioningDataInformation(byte[] data) {
+		return new PositioningDataInformationImpl(data);
+	}
+
+	public ReportingPLMN createReportingPLMN(PlmnId plmnId, RANTechnology ranTechnology, boolean ranPeriodicLocationSupport) {
+		return new ReportingPLMNImpl(plmnId, ranTechnology, ranPeriodicLocationSupport);
+	}
+
+	public ReportingPLMNList createReportingPLMNList(boolean plmnListPrioritized, ArrayList<ReportingPLMN> plmnList) {
+		return new ReportingPLMNListImpl(plmnListPrioritized, plmnList);
+	}
+
+	public ResponseTime createResponseTime(ResponseTimeCategory responseTimeCategory) {
+		return new ResponseTimeImpl(responseTimeCategory);
+	}
+
+	public ServingNodeAddress createServingNodeAddressMscNumber(ISDNAddressString mscNumber) {
+		return new ServingNodeAddressImpl(mscNumber, true);
+	}
+
+	public ServingNodeAddress createServingNodeAddressSgsnNumber(ISDNAddressString sgsnNumber) {
+		return new ServingNodeAddressImpl(sgsnNumber, false);
+	}
+
+	public ServingNodeAddress createServingNodeAddressMmeNumber(DiameterIdentity mmeNumber) {
+		return new ServingNodeAddressImpl(mmeNumber);
+	}
+
+	public SLRArgExtensionContainer createSLRArgExtensionContainer(ArrayList<MAPPrivateExtension> privateExtensionList, SLRArgPCSExtensions slrArgPcsExtensions) {
+		return new SLRArgExtensionContainerImpl(privateExtensionList, slrArgPcsExtensions);
+	}
+
+	public SLRArgPCSExtensions createSLRArgPCSExtensions(boolean naEsrkRequest) {
+		return new SLRArgPCSExtensionsImpl(naEsrkRequest);
+	}
+
+	public SupportedGADShapes createSupportedGADShapes(boolean ellipsoidPoint, boolean ellipsoidPointWithUncertaintyCircle,
+			boolean ellipsoidPointWithUncertaintyEllipse, boolean polygon, boolean ellipsoidPointWithAltitude,
+			boolean ellipsoidPointWithAltitudeAndUncertaintyElipsoid, boolean ellipsoidArc) {
+		return new SupportedGADShapesImpl(ellipsoidPoint, ellipsoidPointWithUncertaintyCircle, ellipsoidPointWithUncertaintyEllipse, polygon,
+				ellipsoidPointWithAltitude, ellipsoidPointWithAltitudeAndUncertaintyElipsoid, ellipsoidArc);
+	}
+
+	public UtranGANSSpositioningData createUtranGANSSpositioningData(byte[] data) {
+		return new UtranGANSSpositioningDataImpl(data);
+	}
+
+	public UtranPositioningDataInfo createUtranPositioningDataInfo(byte[] data) {
+		return new UtranPositioningDataInfoImpl(data);
+	}
+
+	public VelocityEstimate createVelocityEstimate(byte[] data) {
+		return new VelocityEstimateImpl(data);
 	}
 }
 

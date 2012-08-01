@@ -23,10 +23,11 @@
 package org.mobicents.protocols.ss7.map.service.lsm;
 
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.MAPDialogImpl;
 import org.mobicents.protocols.ss7.map.MAPProviderImpl;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
+import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
+import org.mobicents.protocols.ss7.map.api.MAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPServiceBase;
@@ -93,6 +94,141 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 	 * (non-Javadoc)
 	 * 
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.MAPDialogLsm#
+	 * addProvideSubscriberLocationRequest
+	 * (org.mobicents.protocols.ss7.map.api.service.lsm.LocationType,
+	 * org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString,
+	 * org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientID,
+	 * java.lang.Boolean, org.mobicents.protocols.ss7.map.api.primitives.IMSI,
+	 * org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString,
+	 * org.mobicents.protocols.ss7.map.api.primitives.LMSI,
+	 * org.mobicents.protocols.ss7.map.api.primitives.IMEI, java.lang.Integer,
+	 * org.mobicents.protocols.ss7.map.api.service.lsm.LCSQoS,
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer,
+	 * java.util.BitSet, java.lang.Byte, java.lang.Integer,
+	 * org.mobicents.protocols.ss7.map.api.service.lsm.LCSCodeword,
+	 * org.mobicents.protocols.ss7.map.api.service.lsm.LCSPrivacyCheck,
+	 * org.mobicents.protocols.ss7.map.api.service.lsm.AreaEventInfo, byte[])
+	 */
+	public Long addProvideSubscriberLocationRequest(LocationType locationType, ISDNAddressString mlcNumber, LCSClientID lcsClientID, boolean privacyOverride,
+			IMSI imsi, ISDNAddressString msisdn, LMSI lmsi, IMEI imei, LCSPriority lcsPriority, LCSQoS lcsQoS, MAPExtensionContainer extensionContainer,
+			SupportedGADShapes supportedGADShapes, Integer lcsReferenceNumber, Integer lcsServiceTypeID, LCSCodeword lcsCodeword,
+			LCSPrivacyCheck lcsPrivacyCheck, AreaEventInfo areaEventInfo, GSNAddress hgmlcAddress, boolean moLrShortCircuitIndicator,
+			PeriodicLDRInfo periodicLDRInfo, ReportingPLMNList reportingPLMNList) throws MAPException {
+		return this.addProvideSubscriberLocationRequest(_Timer_Default, locationType, mlcNumber, lcsClientID, privacyOverride, imsi, msisdn, lmsi, imei,
+				lcsPriority, lcsQoS, extensionContainer, supportedGADShapes, lcsReferenceNumber, lcsServiceTypeID, lcsCodeword, lcsPrivacyCheck, areaEventInfo,
+				hgmlcAddress, moLrShortCircuitIndicator, periodicLDRInfo, reportingPLMNList);
+	}
+
+	public Long addProvideSubscriberLocationRequest(int customInvokeTimeout, LocationType locationType, ISDNAddressString mlcNumber, LCSClientID lcsClientID,
+			boolean privacyOverride, IMSI imsi, ISDNAddressString msisdn, LMSI lmsi, IMEI imei, LCSPriority lcsPriority, LCSQoS lcsQoS,
+			MAPExtensionContainer extensionContainer, SupportedGADShapes supportedGADShapes, Integer lcsReferenceNumber, Integer lcsServiceTypeID,
+			LCSCodeword lcsCodeword, LCSPrivacyCheck lcsPrivacyCheck, AreaEventInfo areaEventInfo, GSNAddress hgmlcAddress, boolean moLrShortCircuitIndicator,
+			PeriodicLDRInfo periodicLDRInfo, ReportingPLMNList reportingPLMNList) throws MAPException {
+
+		if (locationType == null || mlcNumber == null) {
+			throw new MAPException("addProvideSubscriberLocationRequest: Mandatroy parameters locationType or mlcNumber cannot be null");
+		}
+
+		if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.locationSvcEnquiryContext)
+				|| this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)
+			throw new MAPException("addProvideSubscriberLocationRequest: Bad application context name for addProvideSubscriberLocationRequest: must be locationSvcEnquiryContext_V3");
+
+		try {
+			Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+			if (customInvokeTimeout == _Timer_Default)
+				invoke.setTimeout(_Timer_ml);
+			else
+				invoke.setTimeout(customInvokeTimeout);
+
+			// Operation Code
+			OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+			oc.setLocalOperationCode((long) MAPOperationCode.provideSubscriberLocation);
+			invoke.setOperationCode(oc);
+
+			ProvideSubscriberLocationRequestImpl req = new ProvideSubscriberLocationRequestImpl(locationType, mlcNumber, lcsClientID, privacyOverride, imsi,
+					msisdn, lmsi, imei, lcsPriority, lcsQoS, extensionContainer, supportedGADShapes, lcsReferenceNumber, lcsServiceTypeID, lcsCodeword,
+					lcsPrivacyCheck, areaEventInfo, hgmlcAddress, moLrShortCircuitIndicator, periodicLDRInfo, reportingPLMNList);
+
+			AsnOutputStream asnOs = new AsnOutputStream();
+			req.encodeData(asnOs);
+
+			Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+			p.setTagClass(req.getTagClass());
+			p.setPrimitive(req.getIsPrimitive());
+			p.setTag(req.getTag());
+			p.setData(asnOs.toByteArray());
+
+			invoke.setParameter(p);
+
+			Long invokeId = this.tcapDialog.getNewInvokeId();
+			invoke.setInvokeId(invokeId);
+
+			this.sendInvokeComponent(invoke);
+
+			return invokeId;
+		} catch (TCAPException e) {
+			throw new MAPException(e.getMessage(), e);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.MAPDialogLsm#
+	 * addProvideSubscriberLocationResponse(long, byte[], byte[], byte[],
+	 * java.lang.Integer, byte[],
+	 * org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer,
+	 * java.lang.Boolean, org.mobicents.protocols.ss7.map.api.service.lsm.
+	 * CellGlobalIdOrServiceAreaIdOrLAI, java.lang.Boolean,
+	 * org.mobicents.protocols
+	 * .ss7.map.api.service.lsm.AccuracyFulfilmentIndicator)
+	 */
+	public void addProvideSubscriberLocationResponse(long invokeId, ExtGeographicalInformation locationEstimate,
+			PositioningDataInformation geranPositioningData, UtranPositioningDataInfo utranPositioningData, Integer ageOfLocationEstimate,
+			AddGeographicalInformation additionalLocationEstimate, MAPExtensionContainer extensionContainer, boolean deferredMTLRResponseIndicator,
+			CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI, boolean saiPresent, AccuracyFulfilmentIndicator accuracyFulfilmentIndicator,
+			VelocityEstimate velocityEstimate, boolean moLrShortCircuitIndicator, GeranGANSSpositioningData geranGANSSpositioningData,
+			UtranGANSSpositioningData utranGANSSpositioningData, ServingNodeAddress targetServingNodeForHandover) throws MAPException {
+
+		if (locationEstimate == null) {
+			throw new MAPException("addProvideSubscriberLocationResponse: Mandatroy parameters locationEstimate cannot be null");
+		}
+
+		if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.locationSvcEnquiryContext)
+				|| this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)
+			throw new MAPException("Bad application context name for addProvideSubscriberLocationResponse: must be locationSvcEnquiryContext_V3");
+
+		ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
+		resultLast.setInvokeId(invokeId);
+
+		// Operation Code
+		OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+		oc.setLocalOperationCode((long) MAPOperationCode.provideSubscriberLocation);
+		resultLast.setOperationCode(oc);
+
+		ProvideSubscriberLocationResponseImpl resInd = new ProvideSubscriberLocationResponseImpl(locationEstimate, geranPositioningData, utranPositioningData,
+				ageOfLocationEstimate, additionalLocationEstimate, extensionContainer, deferredMTLRResponseIndicator, cellGlobalIdOrServiceAreaIdOrLAI,
+				saiPresent, accuracyFulfilmentIndicator, velocityEstimate, moLrShortCircuitIndicator, geranGANSSpositioningData, utranGANSSpositioningData,
+				targetServingNodeForHandover);
+
+		AsnOutputStream asnOs = new AsnOutputStream();
+		resInd.encodeData(asnOs);
+
+		Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+		p.setTagClass(resInd.getTagClass());
+		p.setPrimitive(resInd.getIsPrimitive());
+		p.setTag(resInd.getTag());
+		p.setData(asnOs.toByteArray());
+
+		resultLast.setParameter(p);
+
+		this.sendReturnResultLastComponent(resultLast);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.MAPDialogLsm#
 	 * addSubscriberLocationReportRequestIndication
 	 * (org.mobicents.protocols.ss7.map.api.service.lsm.LCSEvent,
 	 * org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientID,
@@ -136,6 +272,9 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 		if (lcsEvent == null || lcsClientID == null || lcsLocationInfo == null) {
 			throw new MAPException("Mandatroy parameters lCSEvent, lCSClientID or lCSLocationInfo cannot be null");
 		}
+		if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.locationSvcEnquiryContext)
+				|| this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)
+			throw new MAPException("Bad application context name for addSubscriberLocationReportRequest: must be locationSvcEnquiryContext_V3");
 
 		try {
 			Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
@@ -146,7 +285,8 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 
 			// Operation Code
 			OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
-			oc.setLocalOperationCode((long) MAPOperationCode.provideSubscriberLocation);
+			oc.setLocalOperationCode((long) MAPOperationCode.subscriberLocationReport);
+			invoke.setOperationCode(oc);
 
 			SubscriberLocationReportRequestImpl req = new SubscriberLocationReportRequestImpl(lcsEvent, lcsClientID, lcsLocationInfo, msisdn, imsi, imei,
 					naEsrd, naEsrk, locationEstimate, ageOfLocationEstimate, slrArgExtensionContainer, addLocationEstimate, deferredmtlrData,
@@ -155,12 +295,12 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 					geranGANSSpositioningData, utranGANSSpositioningData, targetServingNodeForHandover);
 
 			AsnOutputStream asnOs = new AsnOutputStream();
-			req.encodeAll(asnOs);
+			req.encodeData(asnOs);
 
 			Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-			p.setTagClass(Tag.CLASS_UNIVERSAL);
-			p.setTag(Tag.SEQUENCE);
-			p.setPrimitive(false);
+			p.setTagClass(req.getTagClass());
+			p.setPrimitive(req.getIsPrimitive());
+			p.setTag(req.getTag());
 			p.setData(asnOs.toByteArray());
 
 			invoke.setParameter(p);
@@ -188,23 +328,27 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 	public void addSubscriberLocationReportResponse(long invokeId, ISDNAddressString naEsrd, ISDNAddressString naEsrk, MAPExtensionContainer extensionContainer)
 			throws MAPException {
 
+		if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.locationSvcEnquiryContext)
+				|| this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)
+			throw new MAPException("Bad application context name for addSubscriberLocationReportResponse: must be locationSvcEnquiryContext_V3");
+
 		ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
 		resultLast.setInvokeId(invokeId);
 
 		// Operation Code
 		OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
-		oc.setLocalOperationCode((long) MAPOperationCode.provideSubscriberLocation);
+		oc.setLocalOperationCode((long) MAPOperationCode.subscriberLocationReport);
 		resultLast.setOperationCode(oc);
 
 		SubscriberLocationReportResponseImpl resInd = new SubscriberLocationReportResponseImpl(naEsrd, naEsrk, extensionContainer);
 
 		AsnOutputStream asnOs = new AsnOutputStream();
-		resInd.encodeAll(asnOs);
+		resInd.encodeData(asnOs);
 
 		Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-		p.setTagClass(Tag.CLASS_UNIVERSAL);
-		p.setTag(Tag.SEQUENCE);
-		p.setPrimitive(false);
+		p.setTagClass(resInd.getTagClass());
+		p.setPrimitive(resInd.getIsPrimitive());
+		p.setTag(resInd.getTag());
 		p.setData(asnOs.toByteArray());
 
 		resultLast.setParameter(p);
@@ -232,6 +376,9 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 		if (mlcNumber == null || targetMS == null) {
 			throw new MAPException("Mandatroy parameters mlcNumber or targetMS cannot be null");
 		}
+		if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.locationSvcGatewayContext)
+				|| this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)
+			throw new MAPException("Bad application context name for addSendRoutingInfoForLCSRequest: must be locationSvcGatewayContext_V3");
 
 		try {
 			Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
@@ -243,16 +390,17 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 			// Operation Code
 			OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
 			oc.setLocalOperationCode((long) MAPOperationCode.sendRoutingInfoForLCS);
+			invoke.setOperationCode(oc);
 
 			SendRoutingInfoForLCSRequestImpl req = new SendRoutingInfoForLCSRequestImpl(mlcNumber, targetMS, extensionContainer);
 
 			AsnOutputStream asnOs = new AsnOutputStream();
-			req.encodeAll(asnOs);
+			req.encodeData(asnOs);
 
 			Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-			p.setTagClass(Tag.CLASS_UNIVERSAL);
-			p.setTag(Tag.SEQUENCE);
-			p.setPrimitive(false);
+			p.setTagClass(req.getTagClass());
+			p.setPrimitive(req.getIsPrimitive());
+			p.setTag(req.getTag());
 			p.setData(asnOs.toByteArray());
 
 			invoke.setParameter(p);
@@ -285,6 +433,9 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 		if (targetMS == null || lcsLocationInfo == null) {
 			throw new MAPException("Mandatroy parameters targetMS or lcsLocationInfo cannot be null");
 		}
+		if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.locationSvcGatewayContext)
+				|| this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)
+			throw new MAPException("Bad application context name for addSendRoutingInfoForLCSResponse: must be locationSvcGatewayContext_V3");
 
 		ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
 		resultLast.setInvokeId(invokeId);
@@ -298,12 +449,12 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 				vgmlcAddress, hGmlcAddress, pprAddress, additionalVGmlcAddress);
 
 		AsnOutputStream asnOs = new AsnOutputStream();
-		resInd.encodeAll(asnOs);
+		resInd.encodeData(asnOs);
 
 		Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-		p.setTagClass(Tag.CLASS_UNIVERSAL);
-		p.setTag(Tag.SEQUENCE);
-		p.setPrimitive(false);
+		p.setTagClass(resInd.getTagClass());
+		p.setPrimitive(resInd.getIsPrimitive());
+		p.setTag(resInd.getTag());
 		p.setData(asnOs.toByteArray());
 
 		resultLast.setParameter(p);
@@ -311,132 +462,5 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
 		this.sendReturnResultLastComponent(resultLast);
 
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.MAPDialogLsm#
-	 * addProvideSubscriberLocationRequest
-	 * (org.mobicents.protocols.ss7.map.api.service.lsm.LocationType,
-	 * org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString,
-	 * org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientID,
-	 * java.lang.Boolean, org.mobicents.protocols.ss7.map.api.primitives.IMSI,
-	 * org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString,
-	 * org.mobicents.protocols.ss7.map.api.primitives.LMSI,
-	 * org.mobicents.protocols.ss7.map.api.primitives.IMEI, java.lang.Integer,
-	 * org.mobicents.protocols.ss7.map.api.service.lsm.LCSQoS,
-	 * org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer,
-	 * java.util.BitSet, java.lang.Byte, java.lang.Integer,
-	 * org.mobicents.protocols.ss7.map.api.service.lsm.LCSCodeword,
-	 * org.mobicents.protocols.ss7.map.api.service.lsm.LCSPrivacyCheck,
-	 * org.mobicents.protocols.ss7.map.api.service.lsm.AreaEventInfo, byte[])
-	 */
-	public Long addProvideSubscriberLocationRequest(LocationType locationType, ISDNAddressString mlcNumber, LCSClientID lcsClientID, boolean privacyOverride,
-			IMSI imsi, ISDNAddressString msisdn, LMSI lmsi, IMEI imei, LCSPriority lcsPriority, LCSQoS lcsQoS, MAPExtensionContainer extensionContainer,
-			SupportedGADShapes supportedGADShapes, Integer lcsReferenceNumber, Integer lcsServiceTypeID, LCSCodeword lcsCodeword,
-			LCSPrivacyCheck lcsPrivacyCheck, AreaEventInfo areaEventInfo, GSNAddress hgmlcAddress, boolean moLrShortCircuitIndicator,
-			PeriodicLDRInfo periodicLDRInfo, ReportingPLMNList reportingPLMNList) throws MAPException {
-		return this.addProvideSubscriberLocationRequest(_Timer_Default, locationType, mlcNumber, lcsClientID, privacyOverride, imsi, msisdn, lmsi, imei,
-				lcsPriority, lcsQoS, extensionContainer, supportedGADShapes, lcsReferenceNumber, lcsServiceTypeID, lcsCodeword, lcsPrivacyCheck, areaEventInfo,
-				hgmlcAddress, moLrShortCircuitIndicator, periodicLDRInfo, reportingPLMNList);
-	}
-
-	public Long addProvideSubscriberLocationRequest(int customInvokeTimeout, LocationType locationType, ISDNAddressString mlcNumber, LCSClientID lcsClientID,
-			boolean privacyOverride, IMSI imsi, ISDNAddressString msisdn, LMSI lmsi, IMEI imei, LCSPriority lcsPriority, LCSQoS lcsQoS,
-			MAPExtensionContainer extensionContainer, SupportedGADShapes supportedGADShapes, Integer lcsReferenceNumber, Integer lcsServiceTypeID,
-			LCSCodeword lcsCodeword, LCSPrivacyCheck lcsPrivacyCheck, AreaEventInfo areaEventInfo, GSNAddress hgmlcAddress, boolean moLrShortCircuitIndicator,
-			PeriodicLDRInfo periodicLDRInfo, ReportingPLMNList reportingPLMNList) throws MAPException {
-
-		if (locationType == null || mlcNumber == null) {
-			throw new MAPException("Mandatroy parameters locationType or mlcNumber cannot be null");
-		}
-
-		try {
-			Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
-			if (customInvokeTimeout == _Timer_Default)
-				invoke.setTimeout(_Timer_ml);
-			else
-				invoke.setTimeout(customInvokeTimeout);
-
-			// Operation Code
-			OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
-			oc.setLocalOperationCode((long) MAPOperationCode.provideSubscriberLocation);
-
-			ProvideSubscriberLocationRequestImpl req = new ProvideSubscriberLocationRequestImpl(locationType, mlcNumber, lcsClientID, privacyOverride, imsi,
-					msisdn, lmsi, imei, lcsPriority, lcsQoS, extensionContainer, supportedGADShapes, lcsReferenceNumber, lcsServiceTypeID, lcsCodeword,
-					lcsPrivacyCheck, areaEventInfo, hgmlcAddress, moLrShortCircuitIndicator, periodicLDRInfo, reportingPLMNList);
-
-			AsnOutputStream asnOs = new AsnOutputStream();
-			req.encodeAll(asnOs);
-
-			Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-			p.setTagClass(Tag.CLASS_UNIVERSAL);
-			p.setTag(Tag.SEQUENCE);
-			p.setPrimitive(false);
-			p.setData(asnOs.toByteArray());
-
-			invoke.setParameter(p);
-
-			Long invokeId = this.tcapDialog.getNewInvokeId();
-			invoke.setInvokeId(invokeId);
-
-			this.sendInvokeComponent(invoke);
-
-			return invokeId;
-		} catch (TCAPException e) {
-			throw new MAPException(e.getMessage(), e);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.MAPDialogLsm#
-	 * addProvideSubscriberLocationResponse(long, byte[], byte[], byte[],
-	 * java.lang.Integer, byte[],
-	 * org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer,
-	 * java.lang.Boolean, org.mobicents.protocols.ss7.map.api.service.lsm.
-	 * CellGlobalIdOrServiceAreaIdOrLAI, java.lang.Boolean,
-	 * org.mobicents.protocols
-	 * .ss7.map.api.service.lsm.AccuracyFulfilmentIndicator)
-	 */
-	public void addProvideSubscriberLocationResponse(long invokeId, ExtGeographicalInformation locationEstimate,
-			PositioningDataInformation geranPositioningData, UtranPositioningDataInfo utranPositioningData, Integer ageOfLocationEstimate,
-			AddGeographicalInformation additionalLocationEstimate, MAPExtensionContainer extensionContainer, boolean deferredMTLRResponseIndicator,
-			CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI, boolean saiPresent, AccuracyFulfilmentIndicator accuracyFulfilmentIndicator,
-			VelocityEstimate velocityEstimate, boolean moLrShortCircuitIndicator, GeranGANSSpositioningData geranGANSSpositioningData,
-			UtranGANSSpositioningData utranGANSSpositioningData, ServingNodeAddress targetServingNodeForHandover) throws MAPException {
-
-		if (locationEstimate == null) {
-			throw new MAPException("Mandatroy parameters locationEstimate cannot be null");
-		}
-
-		ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
-		resultLast.setInvokeId(invokeId);
-
-		// Operation Code
-		OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
-		oc.setLocalOperationCode((long) MAPOperationCode.provideSubscriberLocation);
-		resultLast.setOperationCode(oc);
-
-		ProvideSubscriberLocationResponseImpl resInd = new ProvideSubscriberLocationResponseImpl(locationEstimate, geranPositioningData, utranPositioningData,
-				ageOfLocationEstimate, additionalLocationEstimate, extensionContainer, deferredMTLRResponseIndicator, cellGlobalIdOrServiceAreaIdOrLAI,
-				saiPresent, accuracyFulfilmentIndicator, velocityEstimate, moLrShortCircuitIndicator, geranGANSSpositioningData, utranGANSSpositioningData,
-				targetServingNodeForHandover);
-
-		AsnOutputStream asnOs = new AsnOutputStream();
-		resInd.encodeAll(asnOs);
-
-		Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-		p.setTagClass(Tag.CLASS_UNIVERSAL);
-		p.setTag(Tag.SEQUENCE);
-		p.setPrimitive(false);
-		p.setData(asnOs.toByteArray());
-
-		resultLast.setParameter(p);
-
-		this.sendReturnResultLastComponent(resultLast);
-	}
-
-
 }
+
