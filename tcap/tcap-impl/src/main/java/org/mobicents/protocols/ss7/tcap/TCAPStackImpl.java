@@ -156,6 +156,8 @@ public class TCAPStackImpl implements TCAPStack {
 	public void setMaxDialogs(int v) {
 		if (v < 1)
 			throw new IllegalArgumentException("At least one Dialog must be accepted");
+		if (v >= dialogIdRangeEnd - dialogIdRangeStart)
+			throw new IllegalArgumentException("MaxDialog must be less than DialogIdRange");
 
 		maxDialogs = v;
 	}
@@ -173,6 +175,8 @@ public class TCAPStackImpl implements TCAPStack {
 			throw new IllegalArgumentException("Range end value must be less or equal " + Integer.MAX_VALUE);
 		if (end - start < 10000)
 			throw new IllegalArgumentException("Range \"end - start\" must has at least 10000 possible dialogs");
+		if (end - start <= maxDialogs)
+			throw new IllegalArgumentException("MaxDialog must be less than DialogIdRange");
 
 		dialogIdRangeStart = start;
 		dialogIdRangeEnd = end;
