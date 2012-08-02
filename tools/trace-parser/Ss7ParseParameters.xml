@@ -7,17 +7,11 @@
   <void property="detailedDialog">
    <boolean>true</boolean>
   </void>
-  <void property="fileTypeN">
-   <object class="java.lang.Enum" method="valueOf">
-    <class>org.mobicents.protocols.ss7.tools.traceparser.ParseDriverType</class>
-    <string>Pcap</string>
-   </object>
-  </void>
   <void property="msgLogFilePath">
    <string>C:\111\MsgLog.txt</string>
   </void>
   <void property="sourceFilePath">
-   <string>E:\Java_workspace\Trace\Amit\sms-1.pcap</string>
+   <string>E:\Java_workspace\Trace\mi\Eri-Alc\1.p01</string>
   </void>
   <void property="tcapMsgData">
    <boolean>true</boolean>
