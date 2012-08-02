@@ -24,6 +24,8 @@ package org.mobicents.protocols.ss7.tools.simulator.level3;
 
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
+
+import org.apache.log4j.Level;
 import org.mobicents.protocols.ss7.map.MAPStackImpl;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.MAPStack;
@@ -253,10 +255,10 @@ public class MapMan implements MapManMBean, Stoppable {
 	public boolean start() {
 		try {
 			this.initMap(this.sccpStack, this.localSsn);
-			this.testerHost.sendNotif(SOURCE_NAME, "TCAP+MAP has been started", "", true);
+			this.testerHost.sendNotif(SOURCE_NAME, "TCAP+MAP has been started", "", Level.INFO);
 			return true;
 		} catch (Throwable e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when starting MapMan", e, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when starting MapMan", e, Level.ERROR);
 			return false;
 		}
 	}
@@ -265,9 +267,9 @@ public class MapMan implements MapManMBean, Stoppable {
 	public void stop() {
 		try {
 			this.stopMap();
-			this.testerHost.sendNotif(SOURCE_NAME, "TCAP+MAP has been stopped", "", true);
+			this.testerHost.sendNotif(SOURCE_NAME, "TCAP+MAP has been stopped", "", Level.INFO);
 		} catch (Exception e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when stopping MapMan", e, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when stopping MapMan", e, Level.ERROR);
 		}
 	}
 

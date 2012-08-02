@@ -25,6 +25,8 @@ package org.mobicents.protocols.ss7.tools.simulator.level1;
 import javolution.util.FastList;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
+
+import org.apache.log4j.Level;
 import org.mobicents.protocols.api.Association;
 import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.sctp.ManagementImpl;
@@ -440,10 +442,10 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 			this.isSctpConnectionUp = false;
 			this.isM3uaConnectionActive = false;
 			this.initM3ua(this.isSctpServer, this.localHost, this.localPort, this.remoteHost, this.remotePort, this.ipChannelType, this.extraHostAddresses);
-			this.testerHost.sendNotif(SOURCE_NAME, "M3UA has been started", "", true);
+			this.testerHost.sendNotif(SOURCE_NAME, "M3UA has been started", "", Level.INFO);
 			return true;
 		} catch (Throwable e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when starting M3uaMan", e, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when starting M3uaMan", e, Level.ERROR);
 			return false;
 		}
 	}
@@ -451,9 +453,9 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 	public void stop() {
 		try {
 			this.stopM3ua();
-			this.testerHost.sendNotif(SOURCE_NAME, "M3UA has been stopped", "", true);
+			this.testerHost.sendNotif(SOURCE_NAME, "M3UA has been stopped", "", Level.INFO);
 		} catch (Exception e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when stopping M3uaMan", e, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when stopping M3uaMan", e, Level.ERROR);
 		}
 	}
 
@@ -463,7 +465,7 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 			boolean conn = this.assoc.isConnected();
 			if (this.isSctpConnectionUp != conn) {
 				this.isSctpConnectionUp = conn;
-				this.testerHost.sendNotif(SOURCE_NAME, "Sctp connection is " + (conn ? "up" : "down"), this.assoc.getName(), true);
+				this.testerHost.sendNotif(SOURCE_NAME, "Sctp connection is " + (conn ? "up" : "down"), this.assoc.getName(), Level.INFO);
 			}
 		}
 		if (this.m3uaMgmt != null) {
@@ -482,7 +484,7 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 			}
 			if (this.isM3uaConnectionActive != active) {
 				this.isM3uaConnectionActive = active;
-				this.testerHost.sendNotif(SOURCE_NAME, "M3ua connection is " + (active ? "active" : "not active"), this.assoc.getName(), true);
+				this.testerHost.sendNotif(SOURCE_NAME, "M3ua connection is " + (active ? "active" : "not active"), this.assoc.getName(), Level.INFO);
 			}
 		}
 	}
