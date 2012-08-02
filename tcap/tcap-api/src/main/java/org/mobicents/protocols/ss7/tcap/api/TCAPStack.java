@@ -62,8 +62,48 @@ public interface TCAPStack {
 
 	public long getInvokeTimeout();
 	
+	/**
+	* Sets the maximum number of dialogs allowed to be alive at a given time.
+	* If not set, a default value of 5000 dialogs will be used.
+	*
+	* Important a: Default value may vary depending on the future
+	* implementations or changes to current implementation.
+	*
+	* Important b: If stack ranges provided, maximum number dialogs naturally
+	* cannot be greater than the provided range, thus, it will be normalized to
+	* range delta (end - start).
+	*
+	*
+	* @param v number of dialogs
+	*/
 	public void setMaxDialogs(int v); 
 
+	/**
+	*
+	* @return Maximum number of allowed concurrent dialogs.
+	*/
 	public int getMaxDialogs();
 
+	/**
+	* Sets the range of the generated dialog ids.
+	* In order to sanely normalize maxDialogs and avoid complexity,
+	* separate setters are not provided.
+	*
+	* @param start value
+	* @param end value
+	*/
+	public void setDialogIdRanges(long start, long end);
+
+	/**
+	*
+	* @return starting dialog id within the range
+	*/
+	public long getDialogIdRangeStart();
+
+	/**
+	*     
+	* @return ending dialog id within the range
+	*/
+	public long getDialogIdRangeEnd();
+	
 }

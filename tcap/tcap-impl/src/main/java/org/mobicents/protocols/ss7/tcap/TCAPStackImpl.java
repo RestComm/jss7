@@ -58,6 +58,10 @@ public class TCAPStackImpl implements TCAPStack {
 	// TODO: make this configurable
 	private int maxDialogs = _MAX_DIALOGS;
 
+	// TODO: make this configurable
+	private long dialogIdRangeStart = 1;
+	private long dialogIdRangeEnd = Integer.MAX_VALUE;
+
     public TCAPStackImpl() {
         super();
 
@@ -150,10 +154,37 @@ public class TCAPStackImpl implements TCAPStack {
     }
 
 	public void setMaxDialogs(int v) {
+		if (v < 1)
+			throw new IllegalArgumentException("At least one Dialog must be accepted");
+
 		maxDialogs = v;
 	}
+	
 	public int getMaxDialogs() {
 		return maxDialogs;
 	}
 
+	public void setDialogIdRanges(long start, long end) {
+		if (start >= end)
+			throw new IllegalArgumentException("Range start value cannot be equal/greater than Range end value");
+		if (start < 1)
+			throw new IllegalArgumentException("Range start value must be greater or equal 1");
+		if (end > Integer.MAX_VALUE)
+			throw new IllegalArgumentException("Range end value must be less or equal " + Integer.MAX_VALUE);
+		if (end - start < 10000)
+			throw new IllegalArgumentException("Range \"end - start\" must has at least 10000 possible dialogs");
+
+		dialogIdRangeStart = start;
+		dialogIdRangeEnd = end;
+	}
+
+	public long getDialogIdRangeStart() {
+		return dialogIdRangeStart;
+	}
+
+	public long getDialogIdRangeEnd() {
+		return dialogIdRangeEnd;
+	}
+
 }
+
