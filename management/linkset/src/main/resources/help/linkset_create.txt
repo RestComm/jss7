@@ -1,0 +1,57 @@
+Name
+	linkset create
+
+SYNOPSIS
+	linkset create [m3ua | dialogic | dahdi] [parameters] <linkset-name>
+
+	parameters
+		Command Line parameters to specify appropriate values for the linkset based on the type of linkset created.
+
+DESCRIPTION
+	This command is used to create a new Linkset of type M3UA or Dialogic or Dahdi as explained below. You must ensure that appropriate linkset factories are deployed prior to creating any linkset.
+
+USAGE
+	linkset create m3ua opc <point-code> apc <point-code> ni <network-id> as <as-name> <linkset-name>
+
+	linkset create dialogic opc <point-code> apc <point-code> ni <network-id> srcmod <src-mode> destmod <dest-mode>  <linkset-name>
+
+	linkset create dahdi opc <point-code> apc <point-code> ni <network-id> <linkset-name>
+
+PARAMETERS
+
+	Standard Parameters
+
+	opc <point-code> 		-	MTP Point code of the originating signalling point. Takes an Integer Value. 
+
+	apc <point-code>		-	MTP  Point code of the adjacent signalling point. Takes an Integer Value.
+
+	ni <network-id> 		-	Network Identifier and should be one of the following values
+							0 - International Network
+							1 - Spare (for International use only)
+							2 - National Network
+							3 - Reserved for National use
+
+	<linkset-name>			-	Name of the Linkset to be created. This will be used to identify the linkset. Takes a String value.
+	
+	Specific Parameters
+	
+	as <as-name>			-	Name of the Application Server that is wrapped by the newly created Linkset. This parameter is mandatory and applicable only for M3UA linksets. You must ensure that the Application Server is already created before using it in the command here. Refer to 'm3ua as create' for more help on creating an Application Server.
+	
+	srcmod <src-mode>		-	 ??
+
+	destmod <dest-mode>		-	??
+
+EXAMPLES
+
+	linkset create m3ua opc 1 apc 2 ni 2 as AS1 m3ualinkset1
+	- The above command will create a new linkset of type M3UA and name m3ualinkset1 that wraps around the Application Server AS1. The originating point code value is 1 and the adjacent point code value is 2 and the network is a national network.
+	
+	linkset create dahdi opc 3 apc 4 ni 0 dahdilinkset1
+	- The above command will create a new linkset of type Dahdi and name dahdilinkset1. The originating point code value is 3 and the adjacent point code value is 4 and the network is an international network.
+	
+	linkset create dialogic opc 5 apc 6 ni 2 srcmod 1 destmod 2 dialogiclinkset1
+	- The above command will create a new linkset of type Dialogic and name dialogiclinkset. The originating point code value is 5 and the adjacent point code value is 6 and the network is a national network.
+	
+SEE ALSO
+	linkset, linkset delete, linkset activate, linkset deactivate, linkset show, linkset link create, linkset link delete, linkset link activate, linkset link deactivate.
+
