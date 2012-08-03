@@ -47,13 +47,13 @@ InsertSubscriberDataRes ::= SEQUENCE {
 
 MAP V2:
 InsertSubscriberDataRes ::= SEQUENCE {
-teleserviceList[1] 		TeleserviceList		OPTIONAL,
-bearerServiceList[2] 	BearerServiceList	OPTIONAL,
-ss-List[3] 				SS-List				OPTIONAL,
-odb-GeneralData[4] 		ODB-GeneralData		OPTIONAL,
-regionalSubscriptionResponse [5] 	RegionalSubscriptionResponse	OPTIONAL,
--- regionalSubscriptionResponse must be absent in version 1
-...}
+	teleserviceList[1] 		TeleserviceList		OPTIONAL,
+	bearerServiceList[2] 	BearerServiceList	OPTIONAL,
+	ss-List[3] 				SS-List				OPTIONAL,
+	odb-GeneralData[4] 		ODB-GeneralData		OPTIONAL,
+	regionalSubscriptionResponse [5] 	RegionalSubscriptionResponse	OPTIONAL,
+	-- regionalSubscriptionResponse must be absent in version 1
+	...}
 
 BearerServiceList ::= SEQUENCE SIZE (1..50) OF Ext-BearerServiceCode
 

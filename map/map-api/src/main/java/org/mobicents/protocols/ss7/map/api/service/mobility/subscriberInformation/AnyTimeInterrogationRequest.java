@@ -30,6 +30,8 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 /**	
  * 
 
+MAP V3:
+
 anyTimeInterrogation  OPERATION ::= {				--Timer m
 	ARGUMENT
 		AnyTimeInterrogationArg
@@ -55,12 +57,12 @@ anyTimeInterrogation  OPERATION ::= {				--Timer m
  *
  */
 public interface AnyTimeInterrogationRequest extends MobilityMessage {
-	
+
 	public SubscriberIdentity getSubscriberIdentity();
 	
 	public RequestedInfo getRequestedInfo();
 	
 	public ISDNAddressString getGsmSCFAddress();
-	
+
 	public MAPExtensionContainer getExtensionContainer();
 }

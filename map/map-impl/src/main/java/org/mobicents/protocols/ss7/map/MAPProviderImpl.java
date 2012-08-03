@@ -64,6 +64,8 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.MAPServiceCallHandling;
 import org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsm;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobility;
+import org.mobicents.protocols.ss7.map.api.service.oam.MAPServiceOam;
+import org.mobicents.protocols.ss7.map.api.service.pdpContextActivation.MAPServicePdpContextActivation;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSms;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementary;
 import org.mobicents.protocols.ss7.map.dialog.MAPAcceptInfoImpl;
@@ -77,6 +79,8 @@ import org.mobicents.protocols.ss7.map.errors.MAPErrorMessageImpl;
 import org.mobicents.protocols.ss7.map.service.callhandling.MAPServiceCallHandlingImpl;
 import org.mobicents.protocols.ss7.map.service.lsm.MAPServiceLsmImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.MAPServiceMobilityImpl;
+import org.mobicents.protocols.ss7.map.service.oam.MAPServiceOamImpl;
+import org.mobicents.protocols.ss7.map.service.pdpContextActivation.MAPServicePdpContextActivationImpl;
 import org.mobicents.protocols.ss7.map.service.sms.MAPServiceSmsImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.MAPServiceSupplementaryImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
@@ -146,11 +150,13 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 	private final transient MAPErrorMessageFactory mapErrorMessageFactory = new MAPErrorMessageFactoryImpl();
 
 	protected transient Set<MAPServiceBase> mapServices = new HashSet<MAPServiceBase>();
+	private final transient MAPServiceMobility mapServiceMobility = new MAPServiceMobilityImpl(this);
+	private final transient MAPServiceCallHandling mapServiceCallHandling = new MAPServiceCallHandlingImpl(this);
+	private final transient MAPServiceOam mapServiceOam = new MAPServiceOamImpl(this);
+	private final transient MAPServicePdpContextActivation mapServicePdpContextActivation = new MAPServicePdpContextActivationImpl(this);
 	private final transient MAPServiceSupplementary mapServiceSupplementary = new MAPServiceSupplementaryImpl(this);
 	private final transient MAPServiceSms mapServiceSms = new MAPServiceSmsImpl(this);
 	private final transient MAPServiceLsm mapServiceLsm = new MAPServiceLsmImpl(this);
-	private final transient MAPServiceMobility mapServiceMobility = new MAPServiceMobilityImpl(this);
-	private final transient MAPServiceCallHandling mapServiceCallHandling = new MAPServiceCallHandlingImpl(this);
 
 	/**
 	 * public common methods
@@ -159,15 +165,33 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 	public MAPProviderImpl(TCAPProvider tcapProvider) {
 		this.tcapProvider = tcapProvider;
 
+		this.mapServices.add(this.mapServiceMobility);
+		this.mapServices.add(this.mapServiceCallHandling);
+		this.mapServices.add(this.mapServiceOam);
+		this.mapServices.add(this.mapServicePdpContextActivation);
 		this.mapServices.add(this.mapServiceSupplementary);
 		this.mapServices.add(this.mapServiceSms);
 		this.mapServices.add(this.mapServiceLsm);
-		this.mapServices.add(this.mapServiceMobility);
-		this.mapServices.add(this.mapServiceCallHandling);
 	}
 
 	public TCAPProvider getTCAPProvider() {
 		return this.tcapProvider;
+	}
+
+	public MAPServiceMobility getMAPServiceMobility() {
+		return this.mapServiceMobility;
+	}
+	
+	public MAPServiceCallHandling getMAPServiceCallHandling() {
+		return this.mapServiceCallHandling;
+	}
+
+	public MAPServiceOam getMAPServiceOam() {
+		return this.mapServiceOam;
+	}
+
+	public MAPServicePdpContextActivation getMAPServicePdpContextActivation() {
+		return this.mapServicePdpContextActivation;
 	}
 
 	public MAPServiceSupplementary getMAPServiceSupplementary() {
@@ -182,13 +206,6 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		return this.mapServiceLsm;
 	}
 
-	public MAPServiceMobility getMAPServiceMobility() {
-		return this.mapServiceMobility;
-	}
-	
-	public MAPServiceCallHandling getMAPServiceCallHandling() {
-		return this.mapServiceCallHandling;
-	}
 
 	public void addMAPDialogListener(MAPDialogListener mapDialogListener) {
 		this.dialogListeners.add(mapDialogListener);

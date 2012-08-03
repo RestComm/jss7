@@ -311,7 +311,7 @@ public class VLRCapabilityImpl implements VLRCapability, MAPAsnPrimitive {
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		
 		try {
-			asnOs.writeTag(tagClass, false, tag);
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
@@ -361,7 +361,8 @@ public class VLRCapabilityImpl implements VLRCapability, MAPAsnPrimitive {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("VlrCapability [");
+		sb.append(_PrimitiveName);
+		sb.append(" [");
 
 		if (this.supportedCamelPhases != null) {
 			sb.append("supportedCamelPhases=");

@@ -41,6 +41,9 @@ import java.awt.event.ActionEvent;
 import javax.swing.ButtonGroup;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
+
 import javax.swing.JLabel;
 
 import org.mobicents.protocols.ss7.tools.simulator.level1.DialogicManMBean;
@@ -222,8 +225,18 @@ public class ConnectionForm extends JFrame {
 			this.dispose();
 			        
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(this, "Exception: " + e.toString());
-			e.printStackTrace();
+
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			PrintWriter pw = new PrintWriter(baos);
+			e.printStackTrace(pw);
+			pw.close();
+			String s1 = baos.toString();
+			
+//			JOptionPane.showMessageDialog(this, "Exception: " + e.toString() + "/n");
+//			e.printStackTrace();
+			
+			ErrorForm fm = new ErrorForm("Exception: " + e.toString() + "/n" + s1, this);
+			fm.setVisible(true);
 		}
 	}
 }

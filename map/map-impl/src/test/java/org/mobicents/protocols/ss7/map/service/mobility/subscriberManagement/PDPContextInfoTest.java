@@ -28,6 +28,8 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.primitives.GSNAddressImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.GPRSChargingIDImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.PDPContextInfoImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.TEIDImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.TransactionIdImpl;
 import org.testng.annotations.Test;

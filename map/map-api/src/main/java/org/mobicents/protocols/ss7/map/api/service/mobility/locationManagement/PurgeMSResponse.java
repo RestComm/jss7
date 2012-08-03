@@ -28,6 +28,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 /**
  * 
 
+MAP V3:
 PurgeMS-Res ::= SEQUENCE {
 	freezeTMSI	[0]	NULL		OPTIONAL,
 	freezeP-TMSI	[1]	NULL		OPTIONAL,

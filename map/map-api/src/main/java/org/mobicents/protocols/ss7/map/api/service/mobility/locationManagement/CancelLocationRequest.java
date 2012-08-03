@@ -31,6 +31,34 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 /**
  * 
 
+MAP V1-2-3:
+
+MAP V3:
+cancelLocation  OPERATION ::= {				--Timer m
+	ARGUMENT
+		CancelLocationArg
+	RESULT
+		CancelLocationRes
+			-- optional
+	ERRORS {
+		dataMissing |
+		unexpectedDataValue}
+	CODE	local:3 }
+
+MAP V2:
+CancelLocation ::= OPERATION --Timer m
+ARGUMENT
+	cancelLocationArg CancelLocationArg
+RESULT
+ERRORS {
+	DataMissing, 
+	-- DataMissing must not be used in version 1
+	UnexpectedDataValue,
+	UnidentifiedSubscriber}
+	-- UnidentifiedSubscriber must not be used in version
+	-- greater 1
+
+
 MAP V3:
 CancelLocationArg ::= [3] SEQUENCE {
 	identity		Identity,

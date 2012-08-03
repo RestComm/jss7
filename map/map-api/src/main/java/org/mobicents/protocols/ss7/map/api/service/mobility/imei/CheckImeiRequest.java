@@ -28,24 +28,44 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
  * 
- * -- Version 2
- * CheckIMEI ::= OPERATION							--Timer m
- * 		ARGUMENT
- * 			imei					IMEI
- * 		RESULT
- * 			equipmentStatus			EquipmentStatus
- * 		ERRORS {
- * 			SystemFailure,
- * 			DataMissing,
- * 			UnknownEquipment
- *  	}
- * 
- * -- Version 3
- * CheckIMEIArg ::= SEQUENCE { 
- * 		imei						IMEI,
- * 		requestedEquipmentInfo 		RequestedEquipmentInfo,
- * 		extensionContainer			ExtensionContainer 			OPTIONAL,
- * 	...}
+ 
+MAP V1-2-3:
+ 
+MAP V3:
+checkIMEI  OPERATION ::= {				--Timer m
+	ARGUMENT
+		CheckIMEI-Arg
+	RESULT
+		CheckIMEI-Res
+	ERRORS {
+		systemFailure |
+		dataMissing |
+		unknownEquipment}
+	CODE	local:43 }
+
+MAP V2:
+CheckIMEI ::= OPERATION							--Timer m
+ 		ARGUMENT
+ 			imei					IMEI
+ 		RESULT
+ 			equipmentStatus			EquipmentStatus
+ 		ERRORS {
+ 			SystemFailure,
+ 			DataMissing,
+ 			UnknownEquipment
+  	}
+ 
+MAP V3:
+ CheckIMEIArg ::= SEQUENCE { 
+ 		imei						IMEI,
+ 		requestedEquipmentInfo 		RequestedEquipmentInfo,
+ 		extensionContainer			ExtensionContainer 			OPTIONAL,
+ 	...}
+
+MAP V2:
+ 		ARGUMENT
+ 			imei					IMEI
+
  * 
  * @author normandes
  *

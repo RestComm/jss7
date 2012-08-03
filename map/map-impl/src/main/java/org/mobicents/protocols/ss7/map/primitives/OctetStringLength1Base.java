@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.map.primitives;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -118,6 +119,24 @@ public abstract class OctetStringLength1Base implements MAPAsnPrimitive {
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		asnOs.write(this.data);
+	}
+
+	@Override
+	public int hashCode() {
+		return data;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		OctetStringLength1Base other = (OctetStringLength1Base) obj;
+
+		return data == other.data;
 	}
 
 	@Override

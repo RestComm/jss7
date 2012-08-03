@@ -28,6 +28,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 /**
  * 
 
+MAP V3:
 UpdateGprsLocationRes ::= SEQUENCE {
 	hlr-Number	ISDN-AddressString,
 	extensionContainer	ExtensionContainer	OPTIONAL,

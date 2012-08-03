@@ -47,6 +47,8 @@ public class LCSRequestorIDImpl implements LCSRequestorID, MAPAsnPrimitive {
 	private static final int _TAG_NAME_STRING = 1;
 	private static final int _TAG_LCS_FORMAT_INDICATOR = 2;
 
+	public static final String _PrimitiveName = "LCSRequestorID";
+
 	private byte dataCodingScheme;
 	private USSDString requestorIDString;
 	private LCSFormatIndicator lcsFormatIndicator;
@@ -56,7 +58,6 @@ public class LCSRequestorIDImpl implements LCSRequestorID, MAPAsnPrimitive {
 	 */
 	public LCSRequestorIDImpl() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -145,10 +146,10 @@ public class LCSRequestorIDImpl implements LCSRequestorID, MAPAsnPrimitive {
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding LCSRequestorID: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding LCSRequestorID: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -164,15 +165,19 @@ public class LCSRequestorIDImpl implements LCSRequestorID, MAPAsnPrimitive {
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding LCSRequestorID: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding LCSRequestorID: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
 	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+
+		this.dataCodingScheme = 0;
+		this.requestorIDString = null;
+		this.lcsFormatIndicator = null;
 
 		AsnInputStream ais = asnIS.readSequenceStreamData(length);
 
@@ -218,10 +223,6 @@ public class LCSRequestorIDImpl implements LCSRequestorID, MAPAsnPrimitive {
 				break;
 
 			default:
-				// throw new
-				// MAPParsingComponentException("Decoding LCSClientExternalID failed. Expected externalAddress [0] or extensionContainer [1] but found "
-				// + p.getTag(),
-				// MAPParsingComponentExceptionReason.MistypedParameter);
 				ais.advanceElement();
 			}
 		}
@@ -235,7 +236,7 @@ public class LCSRequestorIDImpl implements LCSRequestorID, MAPAsnPrimitive {
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	/*
@@ -247,12 +248,12 @@ public class LCSRequestorIDImpl implements LCSRequestorID, MAPAsnPrimitive {
 	 */
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
-			asnOs.writeTag(tagClass, false, tag);
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding ProcessUnstructuredSSRequestIndication", e);
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 
@@ -277,9 +278,9 @@ public class LCSRequestorIDImpl implements LCSRequestorID, MAPAsnPrimitive {
 				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LCS_FORMAT_INDICATOR, this.lcsFormatIndicator.getIndicator());
 			}
 		} catch (IOException e) {
-			throw new MAPException("IOException when encoding ProcessUnstructuredSSRequestIndication", e);
+			throw new MAPException("IOException when encoding " + _PrimitiveName + "", e);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding ProcessUnstructuredSSRequestIndication", e);
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + "", e);
 		}
 	}
 
@@ -312,5 +313,27 @@ public class LCSRequestorIDImpl implements LCSRequestorID, MAPAsnPrimitive {
 		} else if (!requestorIDString.equals(other.requestorIDString))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		sb.append("dataCodingScheme=");
+		sb.append(this.dataCodingScheme);
+		if (this.requestorIDString != null) {
+			sb.append(", requestorIDString=");
+			sb.append(this.requestorIDString.toString());
+		}
+		if (this.lcsFormatIndicator != null) {
+			sb.append(", lcsFormatIndicator=");
+			sb.append(this.lcsFormatIndicator.toString());
+		}
+
+		sb.append("]");
+
+		return sb.toString();
 	}
 }

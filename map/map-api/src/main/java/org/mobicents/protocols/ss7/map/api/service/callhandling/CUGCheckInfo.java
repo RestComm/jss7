@@ -40,6 +40,6 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
  */
 public interface CUGCheckInfo {
 	public CUGInterlock getCUGInterlock();
-	public byte[] getCUGOutgoingAccess();
+	public boolean getCUGOutgoingAccess();
 	public MAPExtensionContainer getMAPExtensionContainer();
 }

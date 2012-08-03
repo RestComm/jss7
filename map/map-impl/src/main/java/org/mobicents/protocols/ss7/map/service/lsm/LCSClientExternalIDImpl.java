@@ -47,6 +47,8 @@ public class LCSClientExternalIDImpl implements LCSClientExternalID, MAPAsnPrimi
 	private static final int _TAG_EXTERNAL_ADDRESS = 0;
 	private static final int _TAG_EXTENSION_CONTAINER = 1;
 
+	public static final String _PrimitiveName = "LCSClientExternalID";
+
 	private ISDNAddressString externalAddress;
 	private MAPExtensionContainer extensionContainer;
 
@@ -111,10 +113,10 @@ public class LCSClientExternalIDImpl implements LCSClientExternalID, MAPAsnPrimi
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding SM_RP_DA: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding SM_RP_DA: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}				
 	}
@@ -126,35 +128,47 @@ public class LCSClientExternalIDImpl implements LCSClientExternalID, MAPAsnPrimi
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding SM_RP_DA: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding SM_RP_DA: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}			
 	}
 	
 	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
-		
+
+		this.externalAddress = null;
+		this.extensionContainer = null;
+
 		AsnInputStream ais = asnIS.readSequenceStreamData(length);
-		
+
 		while (true) {
 			if (ais.available() == 0)
 				break;
-			
+
 			int tag = ais.readTag();
-			switch (tag) {
-			case _TAG_EXTERNAL_ADDRESS :
-				this.externalAddress = new ISDNAddressStringImpl();
-				((ISDNAddressStringImpl)this.externalAddress).decodeAll(ais);
-				break;
-			case _TAG_EXTENSION_CONTAINER:
-				this.extensionContainer = new MAPExtensionContainerImpl();
-				((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
-				break;
-			default:
-//				throw new MAPParsingComponentException("Decoding LCSClientExternalID failed. Expected externalAddress [0] or extensionContainer [1] but found "
-//						+ p.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);			
+
+			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+				switch (tag) {
+				case _TAG_EXTERNAL_ADDRESS :
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".externalAddress: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.externalAddress = new ISDNAddressStringImpl();
+					((ISDNAddressStringImpl)this.externalAddress).decodeAll(ais);
+					break;
+				case _TAG_EXTENSION_CONTAINER:
+					if (ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: Parameter is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.extensionContainer = new MAPExtensionContainerImpl();
+					((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
+					break;
+				default:
+					ais.advanceElement();
+				}
+			} else {
 				ais.advanceElement();
 			}
 		}
@@ -164,7 +178,7 @@ public class LCSClientExternalIDImpl implements LCSClientExternalID, MAPAsnPrimi
 	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);			
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	/* (non-Javadoc)
@@ -172,12 +186,12 @@ public class LCSClientExternalIDImpl implements LCSClientExternalID, MAPAsnPrimi
 	 */
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
-			asnOs.writeTag(tagClass, false, tag);
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding InformServiceCentreRequest: " + e.getMessage(), e);
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}		
 	}
 
@@ -186,11 +200,11 @@ public class LCSClientExternalIDImpl implements LCSClientExternalID, MAPAsnPrimi
 	 */
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if(this.externalAddress != null){
-			((ISDNAddressStringImpl)this.externalAddress).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, 0);
+			((ISDNAddressStringImpl)this.externalAddress).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_EXTERNAL_ADDRESS);
 		}
 		
 		if(this.extensionContainer != null){
-			((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, 1);
+			((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_EXTENSION_CONTAINER);
 		}
 	}
 
@@ -225,5 +239,23 @@ public class LCSClientExternalIDImpl implements LCSClientExternalID, MAPAsnPrimi
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
 
+		if (this.externalAddress != null) {
+			sb.append("externalAddress=");
+			sb.append(this.externalAddress.toString());
+		}
+		if (this.extensionContainer != null) {
+			sb.append(", extensionContainer=");
+			sb.append(this.extensionContainer.toString());
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }

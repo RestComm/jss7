@@ -27,6 +27,7 @@ import java.io.IOException;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
+import org.apache.log4j.Level;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
@@ -309,10 +310,10 @@ public class SccpMan implements SccpManMBean, Stoppable {
 			this.isRssUp = true;
 			this.initSccp(this.mtp3UserPart, this.remoteSsn, this.localSsn, this.remoteSpc, this.localSpc, this.ni, this.callingPartyAddressDigits,
 					this.extraLocalAddressDigits);
-			this.testerHost.sendNotif(SOURCE_NAME, "SCCP has been started", "", true);
+			this.testerHost.sendNotif(SOURCE_NAME, "SCCP has been started", "", Level.INFO);
 			return true;
 		} catch (Throwable e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when starting SccpMan", e, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when starting SccpMan", e, Level.ERROR);
 			return false;
 		}
 	}
@@ -321,9 +322,9 @@ public class SccpMan implements SccpManMBean, Stoppable {
 	public void stop() {
 		try {
 			this.stopSccp();
-			this.testerHost.sendNotif(SOURCE_NAME, "SCCP has been stopped", "", true);
+			this.testerHost.sendNotif(SOURCE_NAME, "SCCP has been stopped", "", Level.INFO);
 		} catch (Exception e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when stopping SccpMan", e, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when stopping SccpMan", e, Level.ERROR);
 		}
 	}
 
@@ -336,7 +337,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 				boolean conn = !rspc.isRemoteSpcProhibited();
 				if (this.isRspcUp != conn) {
 					this.isRspcUp = conn;
-					this.testerHost.sendNotif(SOURCE_NAME, "SCCP RemoteSignalingPoint is " + (conn ? "enabled" : "disabled"), "Dpc=" + this.remoteSpc, true);
+					this.testerHost.sendNotif(SOURCE_NAME, "SCCP RemoteSignalingPoint is " + (conn ? "enabled" : "disabled"), "Dpc=" + this.remoteSpc, Level.INFO);
 				}
 			}			
 			if (rss != null) {
@@ -344,7 +345,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 				if (this.isRssUp != conn) {
 					this.isRssUp = conn;
 					this.testerHost.sendNotif(SOURCE_NAME, "SCCP RemoteSubSystem is " + (conn ? "enabled" : "disabled"), "Dpc=" + this.remoteSpc + " Ssn="
-							+ this.remoteSsn, true);
+							+ this.remoteSsn, Level.INFO);
 				}
 			}
 		}

@@ -118,34 +118,166 @@ public class MAPApplicationContext {
 	public static boolean availableApplicationContextVersion(MAPApplicationContextName contextName, int contextVersion) {
 		switch (contextName) {
 
-		case anyTimeEnquiryContext:
-			if (contextVersion == 3){
-				return true;
-			}
-
-		case infoRetrievalContext:
+		// -- Mobility Services
+		// --- Location management services
 		case networkLocUpContext:
+		case locationCancellationContext:
+		case gprsLocationUpdateContext:
+			if (contextVersion >= 1 && contextVersion <= 3)
+				return true;
+			else
+				return false;
+		case interVlrInfoRetrievalContext:
+		case msPurgingContext:
+			if (contextVersion >= 2 && contextVersion <= 3)
+				return true;
+			else
+				return false;
+		case mmEventReportingContext:
+			if (contextVersion == 3)
+				return true;
+			else
+				return false;
+
+		// --- Handover services
+		case handoverControlContext:
 			if (contextVersion >= 1 && contextVersion <= 3)
 				return true;
 			else
 				return false;
 
+		// --- Authentication management services
+		case infoRetrievalContext:
+			if (contextVersion >= 1 && contextVersion <= 3)
+				return true;
+			else
+				return false;
+		case authenticationFailureReportContext:
+			if (contextVersion == 3)
+				return true;
+			else
+				return false;
+
+		// --- IMEI management services
+		case equipmentMngtContext:
+			if (contextVersion >= 1 && contextVersion <= 3)
+				return true;
+			else
+				return false;		
+
+		// --- Subscriber management services
+		case subscriberDataMngtContext:
+			if (contextVersion >= 1 && contextVersion <= 3)
+				return true;
+			else
+				return false;		
+
+		// --- Fault recovery services
+		case resetContext:
+			if (contextVersion >= 1 && contextVersion <= 2)
+				return true;
+			else
+				return false;		
+
+		// --- Subscriber Information services
+		case anyTimeEnquiryContext:
+		case subscriberInfoEnquiryContext:
+		case anyTimeInfoHandlingContext:
+		case subscriberDataModificationNotificationContext:
+			if (contextVersion == 3)
+				return true;
+			else
+				return false;
+
+		// -- oam
+		case tracingContext:
+			if (contextVersion >= 1 && contextVersion <= 3)
+				return true;
+			else
+				return false;		
+		case imsiRetrievalContext:
+			if (contextVersion == 2)
+				return true;
+			else
+				return false;
+
+		// -- Call Handling Services
+		case locationInfoRetrievalContext:
+		case roamingNumberEnquiryContext:
+			if (contextVersion >= 1 && contextVersion <= 3)
+				return true;
+			else
+				return false;		
+		case callControlTransferContext:
+			if (contextVersion >= 3 && contextVersion <= 4)
+				return true;
+			else
+				return false;		
+		case groupCallControlContext:
+		case groupCallInfoRetrievalContext:
+		case reportingContext:
+		case istAlertingContext:
+		case ServiceTerminationContext:
+		case resourceManagementContext:
+			if (contextVersion == 3)
+				return true;
+			else
+				return false;
+
+		// -- Supplementary services
+		case networkFunctionalSsContext:
+			if (contextVersion >= 1 && contextVersion <= 2)
+				return true;
+			else
+				return false;
 		case networkUnstructuredSsContext:
+			if (contextVersion == 2)
+				return true;
+			else
+				return false;
+		case ssInvocationNotificationContext:
+		case callCompletionContext:
+			if (contextVersion == 3)
+				return true;
+			else
+				return false;
+
+		//-- short message service
+		case shortMsgGatewayContext:
+		case shortMsgMORelayContext:
+		case shortMsgMTRelayContext:
+		case mwdMngtContext:
+			if (contextVersion >= 1 && contextVersion <= 3)
+				return true;
+			else
+				return false;
+		case shortMsgMTVgcsRelayContext:
+			if (contextVersion == 3)
+				return true;
+			else
+				return false;
 		case shortMsgAlertContext:
 			if (contextVersion >= 1 && contextVersion <= 2)
 				return true;
 			else
 				return false;
 
-		case shortMsgMORelayContext:
-		case shortMsgMTRelayContext:
-		case shortMsgGatewayContext:
-			if (contextVersion >= 1 && contextVersion <= 3)
+		// -- Network-Requested PDP Context Activation services
+		case gprsLocationInfoRetrievalContext:
+			if (contextVersion >= 3 && contextVersion <= 4)
 				return true;
 			else
 				return false;
+		case failureReportContext:
+		case gprsNotifyContext:
+			if (contextVersion == 3)
+				return true;
+			else
+				return false;
+		
+		// -- Location Service (lms)
 		case locationSvcEnquiryContext:
-			//for locationSvcEnquiryContext only version 3 is supported
+		case locationSvcGatewayContext:
 			if (contextVersion == 3) 
 				return true;
 			else

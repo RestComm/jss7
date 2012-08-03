@@ -37,26 +37,83 @@ public enum MAPApplicationContextName {
 	 */
 
 	// -- Mobility Services
+	// --- Location management services
 	networkLocUpContext(1),
-	equipmentMngtContext(13),
-	infoRetrievalContext(14),
-	anyTimeEnquiryContext(29),
-
-	// -- USSD
-	networkUnstructuredSsContext(19),
+	locationCancellationContext(2),
+	interVlrInfoRetrievalContext(15),
+	msPurgingContext(27),
+	gprsLocationUpdateContext(32),
+	mmEventReportingContext(42),
 	
-	// -- SMS
-	shortMsgAlertContext(23), shortMsgMORelayContext(21), shortMsgMTRelayContext(25), shortMsgMTVgcsRelayContext(41), 
-	shortMsgGatewayContext(20), mwdMngtContext(24),
+	// --- Handover services
+	handoverControlContext(11),
+	
+	// --- Authentication management services
+	infoRetrievalContext(14),
+	authenticationFailureReportContext(39),
+	
+	// --- IMEI management services
+	equipmentMngtContext(13),
+	
+	// --- Subscriber management services
+	subscriberDataMngtContext(16),
+
+	// --- Fault recovery services
+	resetContext(10),
+	// networkLocUpContext(1), doubled in Location management services
+
+	// --- Subscriber Information services
+	anyTimeEnquiryContext(29),
+	subscriberInfoEnquiryContext(28),
+	anyTimeInfoHandlingContext(43),
+	subscriberDataModificationNotificationContext(22),
+
+	
+	// -- oam
+	tracingContext(17),
+	//handoverControlContext(11), doubled in Handover services
+	imsiRetrievalContext(26),
+
+	
+	// -- Call Handling Services
+	locationInfoRetrievalContext(5),
+	roamingNumberEnquiryContext(3),
+	callControlTransferContext(6),
+	groupCallControlContext(31),
+	groupCallInfoRetrievalContext(45),
+	reportingContext(7),
+	istAlertingContext(4),
+	ServiceTerminationContext(9),
+	resourceManagementContext(44),
+
+	
+	// -- Supplementary services
+	networkFunctionalSsContext(18),
+	networkUnstructuredSsContext(19),
+	ssInvocationNotificationContext(36),
+	callCompletionContext(8),
+
+
+	//-- short message service
+	shortMsgGatewayContext(20),
+	shortMsgMORelayContext(21),
+	shortMsgMTRelayContext(25),
+	shortMsgMTVgcsRelayContext(41),
+	shortMsgAlertContext(23),
+	mwdMngtContext(24),
+
+
+	// -- Network-Requested PDP Context Activation services
+	gprsLocationInfoRetrievalContext(33),
+	failureReportContext(34),
+	gprsNotifyContext(35),
+	
 
 	// -- Location Service (lms)
 	locationSvcEnquiryContext(38),
-	locationSvcGatewayContext(37),
-	
-	// -- Call Handling Services
-	locationInfoRetrievalContext(5);
-	
-	
+	locationSvcGatewayContext(37);
+
+
 	private int code;
 
 	private MAPApplicationContextName(int code) {

@@ -69,6 +69,12 @@ public class TraceReaderDriverPcap extends TraceReaderDriverBase implements Trac
 			
 			int recCnt = 0;
 			while( fis.available() > 0 ) {
+				
+				if (recCnt == 509) {
+					int gggg = 0;
+					gggg++;
+				}
+				
 				if( this.processControl.checkNeedInterrupt() )
 					return;
 

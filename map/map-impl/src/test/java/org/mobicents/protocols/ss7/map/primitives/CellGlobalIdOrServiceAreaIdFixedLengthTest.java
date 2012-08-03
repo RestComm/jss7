@@ -23,10 +23,8 @@
 package org.mobicents.protocols.ss7.map.primitives;
 
 import static org.testng.Assert.*;
-import org.testng.*;import org.testng.annotations.*;
-
+import org.testng.annotations.*;
 import java.util.Arrays;
-
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 
@@ -48,7 +46,7 @@ public class CellGlobalIdOrServiceAreaIdFixedLengthTest {
 	public byte[] getData2() {
 		return new byte[] { 4, 7, 16, 97, 66, 1, 77, 1, (byte) 188 };
 	};
-	
+
 	@Test(groups = { "functional.decode", "primitives" })
 	public void testDecode() throws Exception {
 

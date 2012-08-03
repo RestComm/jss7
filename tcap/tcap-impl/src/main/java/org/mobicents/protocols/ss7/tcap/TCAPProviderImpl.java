@@ -157,8 +157,10 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 			throw new TCAPException("Current dialog count exceeds its maximum value");
 
 		while (true) {
-			if (++this.curDialogId > Integer.MAX_VALUE)
-				this.curDialogId = 1;
+			if (this.curDialogId < this.stack.getDialogIdRangeStart())
+				this.curDialogId = this.stack.getDialogIdRangeStart() - 1;
+			if (++this.curDialogId > this.stack.getDialogIdRangeEnd())
+				this.curDialogId = this.stack.getDialogIdRangeStart();
 			Long id = this.curDialogId;
 			if (!this.dialogs.containsKey(id))
 				return id;

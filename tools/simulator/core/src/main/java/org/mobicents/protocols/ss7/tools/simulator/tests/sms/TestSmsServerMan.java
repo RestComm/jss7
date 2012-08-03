@@ -26,6 +26,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
+
+import org.apache.log4j.Level;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContextVersion;
@@ -386,7 +388,7 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 		mapProvider.getMAPServiceSms().acivate();
 		mapProvider.getMAPServiceSms().addMAPServiceListener(this);
 		mapProvider.addMAPDialogListener(this);
-		this.testerHost.sendNotif(SOURCE_NAME, "SMS Server has been started", "", true);
+		this.testerHost.sendNotif(SOURCE_NAME, "SMS Server has been started", "", Level.INFO);
 		isStarted = true;
 
 		return true;
@@ -399,7 +401,7 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 		mapProvider.getMAPServiceSms().deactivate();
 		mapProvider.getMAPServiceSms().removeMAPServiceListener(this);
 		mapProvider.removeMAPDialogListener(this);
-		this.testerHost.sendNotif(SOURCE_NAME, "SMS Server has been stopped", "", true);
+		this.testerHost.sendNotif(SOURCE_NAME, "SMS Server has been stopped", "", Level.INFO);
 	}
 
 	@Override
@@ -457,7 +459,7 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 			String sriData = createSriData(curDialog.getDialogId(), destIsdnNumber, serviceCentreAddr);
 			currentRequestDef += "Sent SriReq;";
 			this.countSriReq++;
-			this.testerHost.sendNotif(SOURCE_NAME, "Sent: sriReq", sriData, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Sent: sriReq", sriData, Level.DEBUG);
 
 			return "SendRoutingInfoForSMRequest has been sent";
 		} catch (MAPException ex) {
@@ -575,7 +577,7 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 			String mtData = createMtData(curDialog.getDialogId(), destImsi, vlrNumber, origIsdnNumber, serviceCentreAddr);
 			currentRequestDef += "Sent mtReq;";
 			this.countMtFsmReq++;
-			this.testerHost.sendNotif(SOURCE_NAME, "Sent: mtReq: " + msg, mtData, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Sent: mtReq: " + msg, mtData, Level.DEBUG);
 
 			return "MtForwardShortMessageRequest has been sent";
 		} catch (MAPException ex) {
@@ -618,9 +620,9 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 				this.needSendClose = true;
 
 				this.countMoFsmResp++;
-				this.testerHost.sendNotif(SOURCE_NAME, "Sent: moResp", "", true);
+				this.testerHost.sendNotif(SOURCE_NAME, "Sent: moResp", "", Level.DEBUG);
 			} catch (MAPException e) {
-				this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking addMoForwardShortMessageResponse : " + e.getMessage(), e, true);
+				this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking addMoForwardShortMessageResponse : " + e.getMessage(), e, Level.ERROR);
 			}
 		}
 	}
@@ -635,7 +637,7 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 		MAPDialogSms curDialog = ind.getMAPDialog();
 		long invokeId = curDialog.getDialogId();
 		currentRequestDef += "Rsvd mtResp;";
-		this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: mtResp", "", true);
+		this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: mtResp", "", Level.DEBUG);
 	}
 
 	@Override
@@ -656,9 +658,9 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 			this.needSendClose = true;
 
 			this.countMoFsmResp++;
-			this.testerHost.sendNotif(SOURCE_NAME, "Sent: moResp", "", true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Sent: moResp", "", Level.DEBUG);
 		} catch (MAPException e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking addMoForwardShortMessageResponse : " + e.getMessage(), e, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking addMoForwardShortMessageResponse : " + e.getMessage(), e, Level.ERROR);
 		}
 	}
 
@@ -698,9 +700,9 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 				}
 			}
 			String uData = this.createMoData(curDialog.getDialogId(), destIsdnNumber, origIsdnNumber, serviceCentreAddr);
-			this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: moReq: " + msg, uData, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: moReq: " + msg, uData, Level.DEBUG);
 		} catch (MAPException e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when decoding MoForwardShortMessageRequest tpdu : " + e.getMessage(), e, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when decoding MoForwardShortMessageRequest tpdu : " + e.getMessage(), e, Level.ERROR);
 		}
 	}
 
@@ -740,7 +742,7 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 		MAPDialogSms curDialog = ind.getMAPDialog();
 		long invokeId = curDialog.getDialogId();
 		currentRequestDef += "Rsvd mtResp;";
-		this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: mtResp", "", true);
+		this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: mtResp", "", Level.DEBUG);
 	}
 
 	@Override
@@ -767,7 +769,7 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 		if (ind.getIMSI() != null)
 			destImsi = ind.getIMSI().getData();
 		String uData = this.createSriRespData(invokeId, destImsi, vlrNum);
-		this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: sriReq", uData, true);
+		this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: sriReq", uData, Level.DEBUG);
 
 		if (curDialog.getUserObject() != null && vlrNum != null && !vlrNum.equals("") && destImsi != null && !destImsi.equals("")) {
 			// sending SMS
@@ -826,7 +828,7 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 				mapDialog.send();
 			}
 		} catch (Exception e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking send() : " + e.getMessage(), e, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking send() : " + e.getMessage(), e, Level.ERROR);
 		}
 		try {
 			if (needSendClose) {
@@ -834,7 +836,7 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 				mapDialog.close(false);
 			}
 		} catch (Exception e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking close() : " + e.getMessage(), e, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking close() : " + e.getMessage(), e, Level.ERROR);
 		}
 	}
 

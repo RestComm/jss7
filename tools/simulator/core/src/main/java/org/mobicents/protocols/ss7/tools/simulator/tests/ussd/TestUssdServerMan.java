@@ -26,6 +26,8 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
+
+import org.apache.log4j.Level;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContextVersion;
@@ -299,7 +301,7 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 		mapProvider.getMAPServiceSupplementary().acivate();
 		mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
 		mapProvider.addMAPDialogListener(this);
-		this.testerHost.sendNotif(SOURCE_NAME, "USSD Server has been started", "", true);
+		this.testerHost.sendNotif(SOURCE_NAME, "USSD Server has been started", "", Level.INFO);
 		isStarted = true;
 
 		return true;
@@ -313,7 +315,7 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 		mapProvider.getMAPServiceSupplementary().deactivate();
 		mapProvider.getMAPServiceSupplementary().removeMAPServiceListener(this);
 		mapProvider.removeMAPDialogListener(this);
-		this.testerHost.sendNotif(SOURCE_NAME, "USSD Server has been stopped", "", true);
+		this.testerHost.sendNotif(SOURCE_NAME, "USSD Server has been stopped", "", Level.INFO);
 	}
 
 	@Override
@@ -417,7 +419,7 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 		try {
 			curDialog.addProcessUnstructuredSSResponse(invokeId, (byte) this.dataCodingScheme, ussdString);
 		} catch (MAPException e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking addProcessUnstructuredSSResponse() : " + e.getMessage(), e, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking addProcessUnstructuredSSResponse() : " + e.getMessage(), e, Level.ERROR);
 			return "Exception when sending ProcessUnstructuredSSResponse: " + e.toString();
 		}
 
@@ -431,11 +433,11 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 			int i1 = countProcUnstResp / 100;
 			if (countProcUnstRespNot < i1) {
 				countProcUnstRespNot = i1;
-				this.testerHost.sendNotif(SOURCE_NAME, "Sent: procUnstrSsResp: " + (countProcUnstRespNot * 100) + " messages sent", "", true);
+				this.testerHost.sendNotif(SOURCE_NAME, "Sent: procUnstrSsResp: " + (countProcUnstRespNot * 100) + " messages sent", "", Level.DEBUG);
 			}
 		} else {
 			String uData = this.createUssdMessageData(curDialog.getDialogId(), this.dataCodingScheme, null, null);
-			this.testerHost.sendNotif(SOURCE_NAME, "Sent: procUnstrSsResp: " + msg, uData, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Sent: procUnstrSsResp: " + msg, uData, Level.DEBUG);
 		}
 
 		return "ProcessUnstructuredSSResponse has been sent";
@@ -457,7 +459,7 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 		try {
 			curDialog.addUnstructuredSSRequest((byte) this.dataCodingScheme, ussdString, alPattern, msisdn);
 		} catch (MAPException e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking addUnstructuredSSRequest() : " + e.getMessage(), e, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking addUnstructuredSSRequest() : " + e.getMessage(), e, Level.ERROR);
 			return "Exception when sending UnstructuredSSRequest: " + e.toString();
 		}
 
@@ -468,7 +470,7 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 		}
 		this.countUnstReq++;
 		String uData = this.createUssdMessageData(curDialog.getDialogId(), this.dataCodingScheme, null, null);
-		this.testerHost.sendNotif(SOURCE_NAME, "Sent: unstrSsReq: " + msg, uData, true);
+		this.testerHost.sendNotif(SOURCE_NAME, "Sent: unstrSsReq: " + msg, uData, Level.DEBUG);
 
 		return "UnstructuredSSRequest has been sent";
 	}
@@ -496,7 +498,7 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 		try {
 			curDialog.close(false);
 		} catch (Exception e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking close() : " + e.getMessage(), e, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking close() : " + e.getMessage(), e, Level.ERROR);
 		}
 
 		return res;			
@@ -520,7 +522,7 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 		try {
 			curDialog.send();
 		} catch (Exception e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking send() : " + e.getMessage(), e, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking send() : " + e.getMessage(), e, Level.ERROR);
 		}
 
 		return res;			
@@ -557,7 +559,7 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 
 			this.countUnstNotifReq++;
 			String uData = this.createUssdMessageData(dlg.getDialogId(), this.dataCodingScheme, msisdn, alPattern);
-			this.testerHost.sendNotif(SOURCE_NAME, "Sent: unstrSsNotify: " + msg, uData, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Sent: unstrSsNotify: " + msg, uData, Level.DEBUG);
 
 			return "UnstructuredSSNotify has been sent";
 		} catch (MAPException ex) {
@@ -624,7 +626,7 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 	}
 
 	private void sendRcvdNotice(String msg, String pref, String uData) {
-		this.testerHost.sendNotif(SOURCE_NAME, pref + msg, uData, true);
+		this.testerHost.sendNotif(SOURCE_NAME, pref + msg, uData, Level.DEBUG);
 	}
 
 	@Override
@@ -697,7 +699,7 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 				mapDialog.send();
 			}
 		} catch (Exception e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking send() : " + e.getMessage(), e, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking send() : " + e.getMessage(), e, Level.ERROR);
 		}
 		try {
 			if (needSendClose) {
@@ -705,7 +707,7 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 				mapDialog.close(false);
 			}
 		} catch (Exception e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking close() : " + e.getMessage(), e, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking close() : " + e.getMessage(), e, Level.ERROR);
 		}
 	}
 

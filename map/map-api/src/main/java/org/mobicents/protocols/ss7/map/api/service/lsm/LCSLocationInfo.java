@@ -24,46 +24,53 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
 
 import java.io.Serializable;
 
+import org.mobicents.protocols.ss7.map.api.primitives.DiameterIdentity;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedLCSCapabilitySets;
 
 /**
- * LCSLocationInfo ::= SEQUENCE {
- *		networkNode-Number ISDN-AddressString,
- *		-- NetworkNode-number can be either msc-number or sgsn-number
- *		lmsi [0] LMSI OPTIONAL,
- *		extensionContainer [1] ExtensionContainer OPTIONAL,
- *		... ,
- *		gprsNodeIndicator [2] NULL OPTIONAL,
- *		-- gprsNodeIndicator is set only if the SGSN number is sent as the Network Node Number
- *		additional-Number [3] Additional-Number OPTIONAL,
- *		supportedLCS-CapabilitySets [4] SupportedLCS-CapabilitySets OPTIONAL,
- *		additional-LCS-CapabilitySets [5] SupportedLCS-CapabilitySets OPTIONAL
- *		}
+ * 
+
+LCSLocationInfo ::= SEQUENCE {
+	networkNode-Number	ISDN-AddressString,
+	-- NetworkNode-number can be msc-number, sgsn-number or a dummy value of "0"
+	lmsi			[0] LMSI		OPTIONAL,
+	extensionContainer	[1] ExtensionContainer	OPTIONAL,
+	... ,
+	gprsNodeIndicator 	[2] NULL		OPTIONAL,
+	-- gprsNodeIndicator is set only if the SGSN number is sent as the Network Node Number
+	additional-Number	[3] Additional-Number	OPTIONAL,
+	supportedLCS-CapabilitySets	[4]	SupportedLCS-CapabilitySets	OPTIONAL,
+	additional-LCS-CapabilitySets	[5]	SupportedLCS-CapabilitySets	OPTIONAL,
+	mme-Name		[6]	DiameterIdentity	OPTIONAL,
+	aaa-Server-Name	[8]	DiameterIdentity	OPTIONAL
+	}
+
  * 
  * @author amit bhayani
+ * @author sergey vetyutnev
  *
  */
 public interface LCSLocationInfo extends Serializable {
+
 	public ISDNAddressString getNetworkNodeNumber();
 	
 	public LMSI getLMSI();
 	
 	public MAPExtensionContainer getExtensionContainer();
-	
-	public Boolean getGprsNodeIndicator();
+
+	public boolean getGprsNodeIndicator();
 	
 	public AdditionalNumber getAdditionalNumber();
 	
-	/**
-     * 
-	 * 
-	 * @return
-	 */
 	public SupportedLCSCapabilitySets getSupportedLCSCapabilitySets();
 	
 	public SupportedLCSCapabilitySets getAdditionalLCSCapabilitySets();
+
+	public DiameterIdentity getMmeName();
+
+	public DiameterIdentity getAaaServerName();
 	
 }

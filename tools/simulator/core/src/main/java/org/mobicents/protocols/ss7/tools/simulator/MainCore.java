@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.tools.simulator;
  
+import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.rmi.registry.LocateRegistry;
@@ -73,7 +74,7 @@ public class MainCore {
 	}
 
 	public static void main(String[] args) throws Exception {
-
+		
 		// ........................
 		// SMSC: Hypersonic database
 

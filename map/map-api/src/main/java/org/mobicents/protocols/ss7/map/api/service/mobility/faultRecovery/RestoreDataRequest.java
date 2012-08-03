@@ -30,6 +30,8 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.V
 
 /**
  * 
+ 
+MAP V2-3:
 
 MAP V3:
 restoreData  OPERATION ::= {				--Timer m
@@ -44,6 +46,19 @@ restoreData  OPERATION ::= {				--Timer m
 		unknownSubscriber}
 	CODE	local:57 }
 
+MAP V2:
+RestoreData ::= OPERATION--Timer m
+ARGUMENT
+	restoreDataArg	RestoreDataArg
+RESULT
+	restoreDataRes	RestoreDataRes
+ERRORS {
+	SystemFailure,
+	DataMissing,
+	UnexpectedDataValue,
+	UnknownSubscriber}
+
+MAP V3:
 RestoreDataArg ::= SEQUENCE {
 	imsi			IMSI,
 	lmsi			LMSI			OPTIONAL,

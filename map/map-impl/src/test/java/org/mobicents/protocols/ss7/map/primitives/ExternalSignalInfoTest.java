@@ -35,6 +35,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.primitives.ProtocolId;
+import org.mobicents.protocols.ss7.map.api.primitives.SignalInfo;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.ForwardingData;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AdditionalNumber;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ForwardingOptions;
@@ -83,7 +84,7 @@ public class ExternalSignalInfoTest {
 		extSignalInfo.decodeAll(asn);
 		
 		ProtocolId protocolId = extSignalInfo.getProtocolId();
-		byte[] signalInfo = extSignalInfo.getSignalInfo();
+		byte[] signalInfo = extSignalInfo.getSignalInfo().getData();
 
 		assertTrue(Arrays.equals(data_, signalInfo));
 		assertNotNull(protocolId);
@@ -95,7 +96,7 @@ public class ExternalSignalInfoTest {
 		byte[] data = new byte[] { 48, 9, 10, 1,  2, 4, 4, 10, 20, 30, 40 };
 		byte[] data_ =  new byte[] { 10, 20, 30, 40 };
 		
-		byte[] signalInfo = data_;
+		SignalInfo signalInfo = new SignalInfoImpl(data_);
 		ProtocolId protocolId = ProtocolId.gsm_0806;
 		ExternalSignalInfoImpl extSignalInfo = new ExternalSignalInfoImpl(signalInfo, protocolId, null);
 

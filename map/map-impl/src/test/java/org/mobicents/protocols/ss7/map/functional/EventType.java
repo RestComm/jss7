@@ -24,6 +24,12 @@ public enum EventType {
 	// mobility.locationManagement EventType
 	UpdateLocation, UpdateLocationResp,
 	
-	// mobility.subscriberInformation
-	AnyTimeInterrogation, AnyTimeInterrogationResp;
+	// mobility.subscriberInformation EventType
+	AnyTimeInterrogation, AnyTimeInterrogationResp,
+
+	// mobility.imei EventType
+	CheckImei, CheckImeiResp,
+
+	// lsm EventType
+	ProvideSubscriberLocation, ProvideSubscriberLocationResp, SubscriberLocationReport, SubscriberLocationReportResp, SendRoutingInfoForLCS, SendRoutingInfoForLCSResp;
 }

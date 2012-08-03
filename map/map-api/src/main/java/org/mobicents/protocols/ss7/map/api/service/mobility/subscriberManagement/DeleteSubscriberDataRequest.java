@@ -31,6 +31,8 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
 
 /**
  * 
+ 
+MAP V1-2-3:
 
 MAP V3:
 deleteSubscriberData  OPERATION ::= {				--Timer m
@@ -45,6 +47,20 @@ deleteSubscriberData  OPERATION ::= {				--Timer m
 		unidentifiedSubscriber}
 	CODE	local:8 }
 
+MAP V2:
+DeleteSubscriberData ::= OPERATION--Timer m
+ARGUMENT
+	deleteSubscriberDataArg		DeleteSubscriberDataArg
+RESULT
+	deleteSubscriberDataRes		DeleteSubscriberDataRes
+	-- optional
+	-- deleteSubscriberDataRes must be absent in version 1
+ERRORS {
+	DataMissing,
+	UnexpectedDataValue,
+	UnidentifiedSubscriber}
+
+MAP V3:
 DeleteSubscriberDataArg ::= SEQUENCE {
 	imsi			[0] IMSI,
 	basicServiceList	[1] BasicServiceList	OPTIONAL,
@@ -71,18 +87,6 @@ DeleteSubscriberDataArg ::= SEQUENCE {
 	csg-SubscriptionDeleted	[20]	NULL		OPTIONAL }
 
 MAP V2:
-DeleteSubscriberData ::= OPERATION --Timer m 
-ARGUMENT 
-	deleteSubscriberDataArg DeleteSubscriberDataArg 
-RESULT 
-	deleteSubscriberDataRes DeleteSubscriberDataRes 
-	-- optional
-	-- deleteSubscriberDataRes must be absent in version 1
-ERRORS { 
-	DataMissing, 
-	UnexpectedDataValue, 
-	UnidentifiedSubscriber}
-
 DeleteSubscriberDataArg ::= SEQUENCE { 
 	imsi 				[0] IMSI,
 	basicServiceList 	[1] BasicServiceList OPTIONAL,
@@ -92,7 +96,7 @@ DeleteSubscriberDataArg ::= SEQUENCE {
 	-- in version 1
 	regionalSubscriptionIdentifier [5] ZoneCode OPTIONAL, 
 	-- regionalSubscriptionIdentifier must be absent in version 1
-...}
+	...}
 
 BasicServiceList ::= SEQUENCE SIZE (1..70) OF Ext-BasicServiceCode
 

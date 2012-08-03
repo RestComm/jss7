@@ -28,35 +28,64 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
  *
- * sendRoutingInfoForSM  OPERATION ::= {				--Timer m
- *	ARGUMENT
- *		RoutingInfoForSM-Arg
- *	RESULT
- *		RoutingInfoForSM-Res
- *	ERRORS {
- *		systemFailure |
- *		dataMissing |
- *		unexpectedDataValue |
- *		facilityNotSupported |
- *		unknownSubscriber |
- *		teleserviceNotProvisioned |
- *		callBarred |
- *		absentSubscriberSM}
- *	CODE	local:45 }
- *
- *
- * RoutingInfoForSM-Arg ::= SEQUENCE {
- *	msisdn		[0] ISDN-AddressString,
- *	sm-RP-PRI		[1] BOOLEAN,
- *	serviceCentreAddress	[2] AddressString,
- *	extensionContainer	[6] ExtensionContainer	OPTIONAL,
- *	... ,
- *	gprsSupportIndicator	[7]	NULL		OPTIONAL,
- *	-- gprsSupportIndicator is set only if the SMS-GMSC supports
- *	-- receiving of two numbers from the HLR
- *	sm-RP-MTI		[8] SM-RP-MTI	OPTIONAL,
- *	sm-RP-SMEA	[9] SM-RP-SMEA	OPTIONAL }
- *
+
+MAP V1-2-3:
+
+MAP V3:
+sendRoutingInfoForSM  OPERATION ::= {				--Timer m
+	ARGUMENT
+		RoutingInfoForSM-Arg
+	RESULT
+		RoutingInfoForSM-Res
+	ERRORS {
+		systemFailure |
+		dataMissing |
+		unexpectedDataValue |
+		facilityNotSupported |
+		unknownSubscriber |
+		teleserviceNotProvisioned |
+		callBarred |
+		absentSubscriberSM}
+	CODE	local:45 }
+
+MAP V2:
+SendRoutingInfoForSM ::= OPERATION --Timer m
+ARGUMENT
+	routingInfoForSM-Arg 	RoutingInfoForSM-Arg
+RESULT
+	routingInfoForSM-Res 	RoutingInfoForSM-Res
+ERRORS {
+	SystemFailure,
+	DataMissing,
+	UnexpectedDataValue,
+	FacilityNotSupported,
+	UnknownSubscriber,
+	TeleserviceNotProvisioned,
+	AbsentSubscriber,
+	CallBarred}
+
+
+MAP V3:
+RoutingInfoForSM-Arg ::= SEQUENCE {
+	msisdn						[0] ISDN-AddressString,
+	sm-RP-PRI					[1] BOOLEAN,
+	serviceCentreAddress		[2] AddressString,
+	extensionContainer			[6] ExtensionContainer	OPTIONAL,
+	... ,
+	gprsSupportIndicator		[7]	NULL		OPTIONAL,
+	-- gprsSupportIndicator is set only if the SMS-GMSC supports
+	-- receiving of two numbers from the HLR
+	sm-RP-MTI		[8] SM-RP-MTI	OPTIONAL,
+	sm-RP-SMEA	[9] SM-RP-SMEA	OPTIONAL }
+
+MAP V2:
+RoutingInfoForSM-Arg ::= SEQUENCE {
+	msisdn 					[0] ISDN-AddressString,
+	sm-RP-PRI 				[1] BOOLEAN,
+	serviceCentreAddress 	[2] AddressString,
+	teleservice 			[5] TeleserviceCode OPTIONAL,
+	-- teleservice must be absent in version greater 1
+	...}
  *
  * 
  * @author sergey vetyutnev
