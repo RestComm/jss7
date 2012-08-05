@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap;
+package org.mobicents.protocols.ss7.cap.api.dialog;
 
 /**
  * @author amit bhayani

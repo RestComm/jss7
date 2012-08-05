@@ -22,7 +22,7 @@
 
 package org.mobicents.protocols.ss7.cap.api;
 
-import org.mobicents.protocols.ss7.map.api.dialog.ServingCheckData;
+import org.mobicents.protocols.ss7.cap.api.dialog.ServingCheckData;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**

@@ -71,8 +71,6 @@ public interface CAPProvider {
 	 */
 	public CAPDialog getCAPDialog(Long dialogId);
 
-	public TCAPProvider getTCAPProvider();
-
 	public CAPServiceCircuitSwitchedCall getCAPServiceCircuitSwitchedCall();
 	public CAPServiceGprs getCAPServiceGprs();
 	public CAPServiceSms getCAPServiceSms();

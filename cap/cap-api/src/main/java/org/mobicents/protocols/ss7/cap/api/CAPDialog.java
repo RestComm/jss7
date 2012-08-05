@@ -22,9 +22,11 @@
 
 package org.mobicents.protocols.ss7.cap.api;
 
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPDialogState;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
@@ -53,6 +55,10 @@ public interface CAPDialog {
 	public void setReturnMessageOnError(boolean val);
 
 	public boolean getReturnMessageOnError();
+
+	public SccpAddress getLocalAddress();
+
+    public SccpAddress getRemoteAddress();
 	
 	/**
 	 * This method can be called on timeout of dialog, inside
@@ -76,11 +82,15 @@ public interface CAPDialog {
 	 */
 	public CAPServiceBase getService();
 
+	public CAPDialogState getState();
+
 	/**
 	 * Set CAPGprsReferenceNumber that will be send in 1) T-BEGIN 2) first T-CONTINUE 
 	 * messages. This parameter is applied only to gprsSSF-gsmSCF interface
 	 */
 	public void setGprsReferenceNumber(CAPGprsReferenceNumber capGprsReferenceNumber);
+
+	public void release();
 
 	/**
 	 * Sends TB-BEGIN, TC-CONTINUE depends on dialogue state
