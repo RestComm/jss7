@@ -68,8 +68,7 @@ EstablishTemporaryConnectionArg {PARAMETERS-BOUND : bound} ::= SEQUENCE {
  callingPartyNumber     [53] CallingPartyNumber {bound}    OPTIONAL 
  } 
 
- CallSegmentID {PARAMETERS-BOUND : bound} ::= INTEGER (1..bound.&numOfCSs)
- numOfCSs ::= 127
+ CallSegmentID {PARAMETERS-BOUND : bound} ::= INTEGER (1..127)
  
  * 
  * @author sergey vetyutnev

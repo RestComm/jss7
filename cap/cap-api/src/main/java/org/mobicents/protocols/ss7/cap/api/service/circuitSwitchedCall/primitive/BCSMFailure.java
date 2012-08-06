@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,38 +20,28 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall;
+package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
+
+import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
+import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
 
 /**
 *
 
-specializedResourceReport OPERATION ::= { 
- ARGUMENT  SpecializedResourceReportArg 
- RETURN RESULT FALSE 
- ALWAYS RESPONDS FALSE 
- CODE   opcode-specializedResourceReport} 
--- Direction: gsmSRF -> gsmSCF, Timer: Tsrr 
--- This operation is used as the response to a PlayAnnouncement operation when the announcement  
--- completed report indication is set. 
-
-CAP V2 & V3:
-SpecializedResourceReportArg::=NULL
- 
-CAP V4:
-SpecializedResourceReportArg ::= CHOICE { 
- allAnnouncementsComplete   [50] NULL, 
- firstAnnouncementStarted   [51] NULL 
+BCSM-Failure {PARAMETERS-BOUND : bound} ::= SEQUENCE { 
+ legID        [0] LegID         OPTIONAL, 
+ cause        [2] Cause {bound}       OPTIONAL, 
+ ... 
  } 
 
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface SpecializedResourceReportRequest extends CircuitSwitchedCallMessage {
+public interface BCSMFailure {
 
-	public boolean IsAllAnnouncementsComplete();
+	public LegID getLegID();
 
-	public boolean IsFirstAnnouncementStarted();
+	public CauseCap getCause();
 
 }
-

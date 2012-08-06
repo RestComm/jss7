@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,7 +24,7 @@ package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 
 /**
 *
-ChargeIndicator ::= OCTET STRING (SIZE (1))
+
 -- As specified in ITU-T Recommendation Q.763 as follows:
 -- no indication 'xxxx xx00'B
 -- no charge 'xxxx xx01'B
@@ -37,8 +37,34 @@ ChargeIndicator ::= OCTET STRING (SIZE (1))
 * @author sergey vetyutnev
 * 
 */
-public interface ChargeIndicator {
+public enum ChargeIndicatorValue {
+	noIndication(0), 
+	noCharge(1), 
+	charge(2), 
+	spare(3);
 
-	public ChargeIndicatorValue getData();
+	private int code;
 
+	private ChargeIndicatorValue(int code) {
+		this.code = code;
+	}
+
+	public int getCode() {
+		return this.code;
+	}
+
+	public static ChargeIndicatorValue getInstance(int code) {
+		switch (code) {
+		case 0:
+			return ChargeIndicatorValue.noIndication;
+		case 1:
+			return ChargeIndicatorValue.noCharge;
+		case 2:
+			return ChargeIndicatorValue.charge;
+		case 3:
+			return ChargeIndicatorValue.spare;
+		default:
+			return null;
+		}
+	}
 }

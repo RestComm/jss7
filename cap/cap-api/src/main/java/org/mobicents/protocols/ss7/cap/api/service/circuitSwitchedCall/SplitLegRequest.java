@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -23,48 +23,45 @@
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall;
 
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
-import org.mobicents.protocols.ss7.cap.api.primitives.SendingSideID;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.SCIBillingChargingCharacteristics;
+import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
 
 /**
 *
 
-sendChargingInformation {PARAMETERS-BOUND : bound} OPERATION ::= { 
- ARGUMENT  SendChargingInformationArg {bound} 
- RETURN RESULT FALSE 
+splitLeg {PARAMETERS-BOUND : bound} OPERATION ::= { 
+ ARGUMENT  SplitLegArg {bound} 
+ RETURN RESULT TRUE 
  ERRORS   {missingParameter | 
      unexpectedComponentSequence | 
      unexpectedParameter | 
-     parameterOutOfRange | 
+     unexpectedDataValue | 
      systemFailure | 
      taskRefused | 
-     unexpectedDataValue | 
      unknownLegID} 
- CODE   opcode-sendChargingInformation} 
--- Direction: gsmSCF -> gsmSSF, Timer: Tsci 
--- This operation is used to instruct the gsmSSF on the charging information to send by the gsmSSF. 
--- The charging information can either be sent back by means of signalling or internal 
--- if the gsmSSF is located in the local exchange. In the local exchange 
--- this information may be used to update the charge meter or to create a standard call record. 
+ CODE   opcode-splitLeg} 
+-- Direction: gsmSCF -> gsmSSF, Timer Tsl
+-- This operation is used by the gsmSCF to separate a leg from its source call segment and 
+-- place it in a new call segment within the same call segment association. 
  
-SendChargingInformationArg {PARAMETERS-BOUND : bound}::= SEQUENCE { 
- sCIBillingChargingCharacteristics [0] SCIBillingChargingCharacteristics {bound}, 
- partyToCharge      [1] SendingSideID, 
+SplitLegArg {PARAMETERS-BOUND : bound} ::= SEQUENCE { 
+ legToBeSplit      [0] LegID, 
+ newCallSegment      [1] CallSegmentID {bound}     OPTIONAL, 
  extensions       [2] Extensions {bound}      OPTIONAL, 
  ... 
- } 
+ }
+
+CallSegmentID {PARAMETERS-BOUND : bound} ::= INTEGER (1..127)
 
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface SendChargingInformationRequest extends CircuitSwitchedCallMessage {
+public interface SplitLegRequest extends CircuitSwitchedCallMessage {
 
-	public SCIBillingChargingCharacteristics getSCIBillingChargingCharacteristics();
+	public LegID getLegToBeSplit();
 
-	public SendingSideID getPartyToCharge();
+	public Integer getNewCallSegment();
 
 	public CAPExtensions getExtensions();
 
 }
-

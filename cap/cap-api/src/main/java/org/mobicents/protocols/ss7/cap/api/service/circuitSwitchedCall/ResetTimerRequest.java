@@ -39,8 +39,7 @@ resetTimer {PARAMETERS-BOUND : bound} OPERATION ::= {
      unexpectedParameter | 
      unknownCSID} 
  CODE   opcode-resetTimer} 
--- Direction: gsmSCF -> gsmSSF, Timer: T  
-rt 
+-- Direction: gsmSCF -> gsmSSF, Timer: Trt 
 -- This operation is used to request the gsmSSF to refresh an application timer in the gsmSSF. 
  
 ResetTimerArg {PARAMETERS-BOUND : bound} ::= SEQUENCE { 

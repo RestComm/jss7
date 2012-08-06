@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 
 /**
 *
+
 DpSpecificInfoAlt {PARAMETERS-BOUND : bound} ::= SEQUENCE {
 ...,
 oServiceChangeSpecificInfo [0] SEQUENCE {
@@ -47,6 +48,10 @@ ext-basicServiceCode [0] Ext-BasicServiceCode OPTIONAL,
 */
 public interface DpSpecificInfoAlt {
 
-	// TODO: implement it
-	
+	public OServiceChangeSpecificInfo getOServiceChangeSpecificInfo();
+
+	public CollectedInfoSpecificInfo getCollectedInfoSpecificInfo();
+
+	public TServiceChangeSpecificInfo getTServiceChangeSpecificInfo();
+
 }

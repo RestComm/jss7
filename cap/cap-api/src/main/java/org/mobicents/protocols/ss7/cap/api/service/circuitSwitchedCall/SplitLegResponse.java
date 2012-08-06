@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -25,33 +25,12 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall;
 /**
 *
 
-specializedResourceReport OPERATION ::= { 
- ARGUMENT  SpecializedResourceReportArg 
- RETURN RESULT FALSE 
- ALWAYS RESPONDS FALSE 
- CODE   opcode-specializedResourceReport} 
--- Direction: gsmSRF -> gsmSCF, Timer: Tsrr 
--- This operation is used as the response to a PlayAnnouncement operation when the announcement  
--- completed report indication is set. 
-
-CAP V2 & V3:
-SpecializedResourceReportArg::=NULL
- 
-CAP V4:
-SpecializedResourceReportArg ::= CHOICE { 
- allAnnouncementsComplete   [50] NULL, 
- firstAnnouncementStarted   [51] NULL 
- } 
+ RETURN RESULT TRUE 
 
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface SpecializedResourceReportRequest extends CircuitSwitchedCallMessage {
-
-	public boolean IsAllAnnouncementsComplete();
-
-	public boolean IsFirstAnnouncementStarted();
+public interface SplitLegResponse extends CircuitSwitchedCallMessage {
 
 }
-

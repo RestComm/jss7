@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,36 +22,32 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall;
 
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.BCSMFailure;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CallSegmentFailure;
+
 /**
 *
-
-specializedResourceReport OPERATION ::= { 
- ARGUMENT  SpecializedResourceReportArg 
+ 
+entityReleased {PARAMETERS-BOUND : bound} OPERATION ::= { 
+ ARGUMENT  EntityReleasedArg {bound} 
  RETURN RESULT FALSE 
  ALWAYS RESPONDS FALSE 
- CODE   opcode-specializedResourceReport} 
--- Direction: gsmSRF -> gsmSCF, Timer: Tsrr 
--- This operation is used as the response to a PlayAnnouncement operation when the announcement  
--- completed report indication is set. 
-
-CAP V2 & V3:
-SpecializedResourceReportArg::=NULL
+ CODE   opcode-entityReleased} 
+-- Direction: gsmSSF -> gsmSCF, Timer: Ter
+-- This operation is used by the gsmSSF to inform the gsmSCF of an error or exception 
  
-CAP V4:
-SpecializedResourceReportArg ::= CHOICE { 
- allAnnouncementsComplete   [50] NULL, 
- firstAnnouncementStarted   [51] NULL 
- } 
-
+EntityReleasedArg {PARAMETERS-BOUND : bound} ::= CHOICE { 
+ callSegmentFailure     [0] CallSegmentFailure {bound}, 
+ bCSM-Failure      [1] BCSM-Failure {bound} 
+ }
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface SpecializedResourceReportRequest extends CircuitSwitchedCallMessage {
+public interface EntityReleasedRequest extends CircuitSwitchedCallMessage {
 
-	public boolean IsAllAnnouncementsComplete();
+	public CallSegmentFailure getCallSegmentFailure();
 
-	public boolean IsFirstAnnouncementStarted();
+	public BCSMFailure getBcsmFailure();
 
 }
-

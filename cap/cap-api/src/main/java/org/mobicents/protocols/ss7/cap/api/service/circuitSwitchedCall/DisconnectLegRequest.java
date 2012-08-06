@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,53 +22,45 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall;
 
-import java.util.ArrayList;
-
-import org.mobicents.protocols.ss7.cap.api.primitives.BCSMEvent;
+import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
+import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
 
 /**
 *
 
-requestReportBCSMEvent {PARAMETERS-BOUND : bound} OPERATION ::= { 
- ARGUMENT  RequestReportBCSMEventArg {bound} 
- RETURN RESULT FALSE 
+disconnectLeg {PARAMETERS-BOUND : bound} OPERATION ::= { 
+ ARGUMENT  DisconnectLegArg {bound} 
+ RETURN RESULT TRUE 
  ERRORS   {missingParameter | 
-     parameterOutOfRange | 
      systemFailure | 
      taskRefused | 
      unexpectedComponentSequence | 
      unexpectedDataValue | 
      unexpectedParameter | 
      unknownLegID} 
- CODE   opcode-requestReportBCSMEvent} 
--- Direction: gsmSCF -> gsmSSF, Timer: Trrb
--- This operation is used to request the gsmSSF to monitor for a call-related event 
--- (e.g. BCSM events such as O_Busy or O_No_Answer) and to send a notification 
--- to the gsmSCF when the event is detected. 
--- 
--- NOTE: 
--- Every EDP must be explicitly armed by the gsmSCF via a RequestReportBCSMEvent operation.  
--- No implicit arming of EDPs at the gsmSSF after reception of any operation (different  
--- from RequestReportBCSMEvent) from the gsmSCF is allowed. 
-
-RequestReportBCSMEventArg {PARAMETERS-BOUND : bound} ::= SEQUENCE { 
- bcsmEvents       [0] SEQUENCE SIZE(1..bound.&numOfBCSMEvents) OF 
-            BCSMEvent {bound}, 
+ CODE   opcode-disconnectLeg} 
+-- Direction: gsmSCF -> gsmSSF, Timer Tdl
+-- This operation is used by the gsmSCF to release a specific leg associated with the call and 
+-- retain any other legs not specified in the DisconnectLeg. Refer to clause 11 for a description 
+-- of the procedures associated with this operation. 
+ 
+DisconnectLegArg {PARAMETERS-BOUND : bound} ::= SEQUENCE { 
+ legToBeReleased      [0] LegID, 
+ releaseCause      [1] Cause {bound}       OPTIONAL, 
  extensions       [2] Extensions {bound}      OPTIONAL, 
  ... 
- } 
--- Indicates the BCSM related events for notification. 
-
-numOfBCSMEvents = 30
+ }
 
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface RequestReportBCSMEventRequest extends CircuitSwitchedCallMessage {
+public interface DisconnectLegRequest extends CircuitSwitchedCallMessage {
 
-	public ArrayList<BCSMEvent> getBCSMEventList();
+	public LegID getLegToBeReleased();
+
+	public CauseCap getReleaseCause();
 
 	public CAPExtensions getExtensions();
 

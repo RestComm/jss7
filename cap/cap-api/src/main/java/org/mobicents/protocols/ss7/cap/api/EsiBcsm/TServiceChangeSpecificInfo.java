@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,38 +20,25 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall;
+package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
+
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 
 /**
 *
 
-specializedResourceReport OPERATION ::= { 
- ARGUMENT  SpecializedResourceReportArg 
- RETURN RESULT FALSE 
- ALWAYS RESPONDS FALSE 
- CODE   opcode-specializedResourceReport} 
--- Direction: gsmSRF -> gsmSCF, Timer: Tsrr 
--- This operation is used as the response to a PlayAnnouncement operation when the announcement  
--- completed report indication is set. 
-
-CAP V2 & V3:
-SpecializedResourceReportArg::=NULL
- 
-CAP V4:
-SpecializedResourceReportArg ::= CHOICE { 
- allAnnouncementsComplete   [50] NULL, 
- firstAnnouncementStarted   [51] NULL 
- } 
+tServiceChangeSpecificInfo [1] SEQUENCE {
+ext-basicServiceCode [0] Ext-BasicServiceCode OPTIONAL,
+...
+}
+}
 
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface SpecializedResourceReportRequest extends CircuitSwitchedCallMessage {
+public interface TServiceChangeSpecificInfo {
 
-	public boolean IsAllAnnouncementsComplete();
-
-	public boolean IsFirstAnnouncementStarted();
+	public ExtBasicServiceCode getExtBasicServiceCode();
 
 }
-

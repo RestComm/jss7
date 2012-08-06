@@ -29,6 +29,24 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 
 /**
 *
+
+applyCharging {PARAMETERS-BOUND : bound} OPERATION ::= { 
+ ARGUMENT  ApplyChargingArg {bound} 
+ RETURN RESULT FALSE 
+ ERRORS   {missingParameter | 
+     unexpectedComponentSequence | 
+     unexpectedParameter | 
+     unexpectedDataValue | 
+     parameterOutOfRange | 
+     systemFailure | 
+     taskRefused | 
+     unknownLegID | 
+     unknownCSID} 
+ CODE   opcode-applyCharging} 
+-- Direction: gsmSCF -> gsmSSF, Timer: Tac
+-- This operation is used for interacting from the gsmSCF with the gsmSSF charging mechanisms. 
+-- The ApplyChargingReport operation provides the feedback from the gsmSSF to the gsmSCF. 
+
 ApplyChargingArg {PARAMETERS-BOUND : bound} ::= SEQUENCE {
 aChBillingChargingCharacteristics [0] AChBillingChargingCharacteristics {bound},
 partyToCharge [2] SendingSideID DEFAULT sendingSideID : leg1,

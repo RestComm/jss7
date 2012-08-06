@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,36 +22,41 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall;
 
+import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
+import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
+
 /**
 *
-
-specializedResourceReport OPERATION ::= { 
- ARGUMENT  SpecializedResourceReportArg 
- RETURN RESULT FALSE 
- ALWAYS RESPONDS FALSE 
- CODE   opcode-specializedResourceReport} 
--- Direction: gsmSRF -> gsmSCF, Timer: Tsrr 
--- This operation is used as the response to a PlayAnnouncement operation when the announcement  
--- completed report indication is set. 
-
-CAP V2 & V3:
-SpecializedResourceReportArg::=NULL
  
-CAP V4:
-SpecializedResourceReportArg ::= CHOICE { 
- allAnnouncementsComplete   [50] NULL, 
- firstAnnouncementStarted   [51] NULL 
+moveLeg {PARAMETERS-BOUND : bound} OPERATION ::= { 
+ ARGUMENT  MoveLegArg {bound} 
+ RETURN RESULT TRUE 
+ ERRORS   {missingParameter | 
+     systemFailure | 
+     taskRefused | 
+     unexpectedComponentSequence | 
+     unexpectedDataValue | 
+     unexpectedParameter | 
+     unknownLegID} 
+ CODE   opcode-moveLeg} 
+-- Direction: gsmSCF -> gsmSSF, Timer: Tml
+-- This operation is used by the gsmSCF to move a leg from one call segment to another call segment 
+-- within the same call segment association. 
+ 
+MoveLegArg {PARAMETERS-BOUND : bound} ::= SEQUENCE{ 
+ legIDToMove       [0] LegID, 
+ extensions       [2] Extensions {bound}      OPTIONAL, 
+ ... 
  } 
 
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface SpecializedResourceReportRequest extends CircuitSwitchedCallMessage {
+public interface MoveLegRequest extends CircuitSwitchedCallMessage {
 
-	public boolean IsAllAnnouncementsComplete();
+	public LegID getLegIDToMove();
 
-	public boolean IsFirstAnnouncementStarted();
+	public CAPExtensions getExtensions();
 
 }
-

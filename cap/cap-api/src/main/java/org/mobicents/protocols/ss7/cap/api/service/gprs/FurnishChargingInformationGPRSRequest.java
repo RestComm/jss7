@@ -22,8 +22,6 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.gprs;
 
-import java.util.ArrayList;
-
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.CAMELFCIGPRSBillingChargingCharacteristics;
 
 /**

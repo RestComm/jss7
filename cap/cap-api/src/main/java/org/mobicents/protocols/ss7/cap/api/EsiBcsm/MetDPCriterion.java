@@ -27,8 +27,8 @@ import org.mobicents.protocols.ss7.map.api.primitives.LAIFixedLength;
 
 /**
 *
-MetDPCriteriaList {PARAMETERS-BOUND : bound} ::= SEQUENCE SIZE
-(1..bound.&numOfChangeOfPositionControlInfo) OF MetDPCriterion {bound}
+MetDPCriteriaList {PARAMETERS-BOUND : bound} ::= SEQUENCE SIZE(1..10) OF MetDPCriterion {bound}
+
 MetDPCriterion {PARAMETERS-BOUND : bound} ::= CHOICE {
 enteringCellGlobalId [0] CellGlobalIdOrServiceAreaIdFixedLength,
 leavingCellGlobalId [1] CellGlobalIdOrServiceAreaIdFixedLength,

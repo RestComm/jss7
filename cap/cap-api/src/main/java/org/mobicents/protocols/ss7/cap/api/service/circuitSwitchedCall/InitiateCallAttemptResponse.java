@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,36 +22,30 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall;
 
+import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OfferedCamel4Functionalities;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
+
 /**
 *
 
-specializedResourceReport OPERATION ::= { 
- ARGUMENT  SpecializedResourceReportArg 
- RETURN RESULT FALSE 
- ALWAYS RESPONDS FALSE 
- CODE   opcode-specializedResourceReport} 
--- Direction: gsmSRF -> gsmSCF, Timer: Tsrr 
--- This operation is used as the response to a PlayAnnouncement operation when the announcement  
--- completed report indication is set. 
-
-CAP V2 & V3:
-SpecializedResourceReportArg::=NULL
- 
-CAP V4:
-SpecializedResourceReportArg ::= CHOICE { 
- allAnnouncementsComplete   [50] NULL, 
- firstAnnouncementStarted   [51] NULL 
+InitiateCallAttemptRes {PARAMETERS-BOUND : bound} ::= SEQUENCE { 
+ supportedCamelPhases    [0] SupportedCamelPhases     OPTIONAL, 
+ offeredCamel4Functionalities  [1] OfferedCamel4Functionalities   OPTIONAL, 
+ extensions       [2] Extensions {bound}      OPTIONAL, 
+ ... 
  } 
 
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface SpecializedResourceReportRequest extends CircuitSwitchedCallMessage {
+public interface InitiateCallAttemptResponse extends CircuitSwitchedCallMessage {
 
-	public boolean IsAllAnnouncementsComplete();
+	public SupportedCamelPhases getSupportedCamelPhases();
 
-	public boolean IsFirstAnnouncementStarted();
+	public OfferedCamel4Functionalities getOfferedCamel4Functionalities();
+
+	public CAPExtensions getExtensions();
 
 }
-
