@@ -207,146 +207,146 @@ public class EventTestHarness implements CAPDialogListener, CAPServiceCircuitSwi
 	}
 
 	@Override
-	public void onInitialDPRequestIndication(InitialDPRequest ind) {
+	public void onInitialDPRequest(InitialDPRequest ind) {
 		this.logger.debug("onInitialDPRequestIndication");
 		TestEvent te = TestEvent.createReceivedEvent(EventType.InitialDpIndication, ind, sequence++);
 		this.observerdEvents.add(te);
 	}
 
 	@Override
-	public void onRequestReportBCSMEventRequestIndication(RequestReportBCSMEventRequest ind) {
+	public void onRequestReportBCSMEventRequest(RequestReportBCSMEventRequest ind) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onApplyChargingRequestIndication(ApplyChargingRequest ind) {
+	public void onApplyChargingRequest(ApplyChargingRequest ind) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onEventReportBCSMRequestIndication(EventReportBCSMRequest ind) {
+	public void onEventReportBCSMRequest(EventReportBCSMRequest ind) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onContinueRequestIndication(ContinueRequest ind) {
+	public void onContinueRequest(ContinueRequest ind) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onApplyChargingReportRequestIndication(ApplyChargingReportRequest ind) {
+	public void onApplyChargingReportRequest(ApplyChargingReportRequest ind) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onReleaseCalltRequestIndication(ReleaseCallRequest ind) {
+	public void onReleaseCallRequest(ReleaseCallRequest ind) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onConnectRequestIndication(ConnectRequest ind) {
+	public void onConnectRequest(ConnectRequest ind) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onCallInformationRequestRequestIndication(CallInformationRequestRequest ind) {
+	public void onCallInformationRequestRequest(CallInformationRequestRequest ind) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onCallInformationReportRequestIndication(CallInformationReportRequest ind) {
+	public void onCallInformationReportRequest(CallInformationReportRequest ind) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onActivityTestRequestIndication(ActivityTestRequest ind) {
+	public void onActivityTestRequest(ActivityTestRequest ind) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onActivityTestResponseIndication(ActivityTestResponse ind) {
+	public void onActivityTestResponse(ActivityTestResponse ind) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onAssistRequestInstructionsRequestIndication(AssistRequestInstructionsRequest ind) {
+	public void onAssistRequestInstructionsRequest(AssistRequestInstructionsRequest ind) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onEstablishTemporaryConnectionRequestIndication(EstablishTemporaryConnectionRequest ind) {
+	public void onEstablishTemporaryConnectionRequest(EstablishTemporaryConnectionRequest ind) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onDisconnectForwardConnectionRequestIndication(DisconnectForwardConnectionRequest ind) {
+	public void onDisconnectForwardConnectionRequest(DisconnectForwardConnectionRequest ind) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onConnectToResourceRequestIndication(ConnectToResourceRequest ind) {
+	public void onConnectToResourceRequest(ConnectToResourceRequest ind) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onResetTimerRequestIndication(ResetTimerRequest ind) {
+	public void onResetTimerRequest(ResetTimerRequest ind) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onFurnishChargingInformationRequestIndication(FurnishChargingInformationRequest ind) {
+	public void onFurnishChargingInformationRequest(FurnishChargingInformationRequest ind) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onSendChargingInformationRequestIndication(SendChargingInformationRequest ind) {
+	public void onSendChargingInformationRequest(SendChargingInformationRequest ind) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onSpecializedResourceReportRequestIndication(SpecializedResourceReportRequest ind) {
+	public void onSpecializedResourceReportRequest(SpecializedResourceReportRequest ind) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onPlayAnnouncementRequestIndication(PlayAnnouncementRequest ind) {
+	public void onPlayAnnouncementRequest(PlayAnnouncementRequest ind) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onPromptAndCollectUserInformationRequestIndication(PromptAndCollectUserInformationRequest ind) {
+	public void onPromptAndCollectUserInformationRequest(PromptAndCollectUserInformationRequest ind) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onPromptAndCollectUserInformationResponseIndication(PromptAndCollectUserInformationResponse ind) {
+	public void onPromptAndCollectUserInformationResponse(PromptAndCollectUserInformationResponse ind) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onCancelRequestIndication(CancelRequest ind) {
+	public void onCancelRequest(CancelRequest ind) {
 		// TODO Auto-generated method stub
 		
 	}
