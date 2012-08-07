@@ -74,6 +74,26 @@ public class MAPErrorMessageFactoryImpl implements MAPErrorMessageFactory {
 		case MAPErrorCode.unauthorizedRequestingNetwork:
 		case MAPErrorCode.resourceLimitation:
 		case MAPErrorCode.unknownOrUnreachableLCSClient:
+		case MAPErrorCode.incompatibleTerminal:
+		case MAPErrorCode.noRoamingNumberAvailable:
+		case MAPErrorCode.noSubscriberReply:
+		case MAPErrorCode.forwardingFailed:
+		case MAPErrorCode.orNotAllowed:
+		case MAPErrorCode.forwardingViolation:
+		case MAPErrorCode.numberChanged:
+		case MAPErrorCode.unknownMSC:
+		case MAPErrorCode.unknownEquipment:
+		case MAPErrorCode.bearerServiceNotProvisioned:
+		case MAPErrorCode.mmEventNotSupported:
+		case MAPErrorCode.illegalSSOperation:
+		case MAPErrorCode.ssNotAvailable:
+		case MAPErrorCode.ssSubscriptionViolation:
+		case MAPErrorCode.unknownAlphabet:
+		case MAPErrorCode.ussdBusy:
+		case MAPErrorCode.negativePWCheck:
+		case MAPErrorCode.numberOfPWAttemptsViolation:
+		case MAPErrorCode.shortTermDenial:
+		case MAPErrorCode.longTermDenial:
 			return new MAPErrorMessageExtensionContainerImpl(errorCode);
 
 		case MAPErrorCode.smDeliveryFailure:
