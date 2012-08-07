@@ -31,11 +31,13 @@ import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPServiceBase;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPDialogState;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
 import org.mobicents.protocols.ss7.cap.errors.CAPErrorMessageImpl;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
@@ -83,6 +85,14 @@ public abstract class CAPDialogImpl implements CAPDialog {
 		this.capProviderImpl = capProviderImpl;
 		this.capService = capService;
 	}
+
+	public SccpAddress getLocalAddress(){
+    	return this.tcapDialog.getLocalAddress();
+    }
+
+    public SccpAddress getRemoteAddress(){
+    	return this.tcapDialog.getRemoteAddress();
+    }
 
 	@Override
 	public void setReturnMessageOnError(boolean val) {

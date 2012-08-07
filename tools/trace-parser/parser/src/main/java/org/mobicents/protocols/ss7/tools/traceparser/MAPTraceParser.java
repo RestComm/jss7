@@ -1505,145 +1505,145 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	}
 
 	@Override
-	public void onActivityTestRequestIndication(ActivityTestRequest arg0) {
+	public void onActivityTestRequest(ActivityTestRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onActivityTestResponseIndication(ActivityTestResponse arg0) {
+	public void onActivityTestResponse(ActivityTestResponse arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onApplyChargingReportRequestIndication(ApplyChargingReportRequest arg0) {
+	public void onApplyChargingReportRequest(ApplyChargingReportRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onApplyChargingRequestIndication(ApplyChargingRequest arg0) {
+	public void onApplyChargingRequest(ApplyChargingRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onAssistRequestInstructionsRequestIndication(AssistRequestInstructionsRequest arg0) {
+	public void onAssistRequestInstructionsRequest(AssistRequestInstructionsRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onCallInformationReportRequestIndication(CallInformationReportRequest arg0) {
+	public void onCallInformationReportRequest(CallInformationReportRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onCallInformationRequestRequestIndication(CallInformationRequestRequest arg0) {
+	public void onCallInformationRequestRequest(CallInformationRequestRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onCancelRequestIndication(CancelRequest arg0) {
+	public void onCancelRequest(CancelRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onConnectRequestIndication(ConnectRequest arg0) {
+	public void onConnectRequest(ConnectRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onConnectToResourceRequestIndication(ConnectToResourceRequest arg0) {
+	public void onConnectToResourceRequest(ConnectToResourceRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onContinueRequestIndication(ContinueRequest arg0) {
+	public void onContinueRequest(ContinueRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onDisconnectForwardConnectionRequestIndication(DisconnectForwardConnectionRequest arg0) {
+	public void onDisconnectForwardConnectionRequest(DisconnectForwardConnectionRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onEstablishTemporaryConnectionRequestIndication(EstablishTemporaryConnectionRequest arg0) {
+	public void onEstablishTemporaryConnectionRequest(EstablishTemporaryConnectionRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onEventReportBCSMRequestIndication(EventReportBCSMRequest arg0) {
+	public void onEventReportBCSMRequest(EventReportBCSMRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onFurnishChargingInformationRequestIndication(FurnishChargingInformationRequest arg0) {
+	public void onFurnishChargingInformationRequest(FurnishChargingInformationRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onInitialDPRequestIndication(InitialDPRequest arg0) {
+	public void onInitialDPRequest(InitialDPRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onPlayAnnouncementRequestIndication(PlayAnnouncementRequest arg0) {
+	public void onPlayAnnouncementRequest(PlayAnnouncementRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onPromptAndCollectUserInformationRequestIndication(PromptAndCollectUserInformationRequest arg0) {
+	public void onPromptAndCollectUserInformationRequest(PromptAndCollectUserInformationRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onPromptAndCollectUserInformationResponseIndication(PromptAndCollectUserInformationResponse arg0) {
+	public void onPromptAndCollectUserInformationResponse(PromptAndCollectUserInformationResponse arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onReleaseCalltRequestIndication(ReleaseCallRequest arg0) {
+	public void onReleaseCallRequest(ReleaseCallRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onRequestReportBCSMEventRequestIndication(RequestReportBCSMEventRequest arg0) {
+	public void onRequestReportBCSMEventRequest(RequestReportBCSMEventRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onResetTimerRequestIndication(ResetTimerRequest arg0) {
+	public void onResetTimerRequest(ResetTimerRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onSendChargingInformationRequestIndication(SendChargingInformationRequest arg0) {
+	public void onSendChargingInformationRequest(SendChargingInformationRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onSpecializedResourceReportRequestIndication(SpecializedResourceReportRequest arg0) {
+	public void onSpecializedResourceReportRequest(SpecializedResourceReportRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}

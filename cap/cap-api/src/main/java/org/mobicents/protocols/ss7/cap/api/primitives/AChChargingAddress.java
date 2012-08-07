@@ -31,8 +31,7 @@ legID [2] LegID,
 srfConnection [50] CallSegmentID {bound}
 }
 
-CallSegmentID {PARAMETERS-BOUND : bound} ::= INTEGER (1..bound.&numOfCSs)
-numOfCSs ::= 127
+CallSegmentID {PARAMETERS-BOUND : bound} ::= INTEGER (1..127)
 
 * 
 * @author sergey vetyutnev

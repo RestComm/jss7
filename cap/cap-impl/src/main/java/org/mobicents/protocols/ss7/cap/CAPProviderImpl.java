@@ -44,6 +44,7 @@ import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPProvider;
 import org.mobicents.protocols.ss7.cap.api.CAPServiceBase;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPComponentErrorReason;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPDialogState;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPNoticeProblemDiagnostic;
@@ -61,7 +62,7 @@ import org.mobicents.protocols.ss7.cap.errors.CAPErrorMessageImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.CAPServiceCircuitSwitchedCallImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.CAPServiceGprsImpl;
 import org.mobicents.protocols.ss7.cap.service.sms.CAPServiceSmsImpl;
-import org.mobicents.protocols.ss7.map.api.dialog.ServingCheckData;
+import org.mobicents.protocols.ss7.cap.api.dialog.ServingCheckData;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.TCListener;
@@ -133,7 +134,6 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		this.capServices.add(this.capServiceSms);
 	}
 
-	@Override
 	public TCAPProvider getTCAPProvider() {
 		return this.tcapProvider;
 	}

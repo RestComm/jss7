@@ -38,9 +38,9 @@ import org.mobicents.protocols.ss7.cap.api.CAPServiceListener;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCall;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPServiceCircuitSwitchedCall;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPServiceCircuitSwitchedCallListener;
-import org.mobicents.protocols.ss7.map.api.dialog.ServingCheckData;
-import org.mobicents.protocols.ss7.map.api.dialog.ServingCheckResult;
-import org.mobicents.protocols.ss7.map.dialog.ServingCheckDataImpl;
+import org.mobicents.protocols.ss7.cap.api.dialog.ServingCheckData;
+import org.mobicents.protocols.ss7.cap.api.dialog.ServingCheckResult;
+import org.mobicents.protocols.ss7.cap.dialog.ServingCheckDataImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
@@ -385,7 +385,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		for (CAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onCAPMessage(ind);
-				((CAPServiceCircuitSwitchedCallListener) serLis).onInitialDPRequestIndication(ind);
+				((CAPServiceCircuitSwitchedCallListener) serLis).onInitialDPRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing initialDpRequest: " + e.getMessage(), e);
 			}
@@ -415,7 +415,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		for (CAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onCAPMessage(ind);
-				((CAPServiceCircuitSwitchedCallListener) serLis).onRequestReportBCSMEventRequestIndication(ind);
+				((CAPServiceCircuitSwitchedCallListener) serLis).onRequestReportBCSMEventRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing requestReportBCSMEventRequest: " + e.getMessage(), e);
 			}
@@ -444,7 +444,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		for (CAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onCAPMessage(ind);
-				((CAPServiceCircuitSwitchedCallListener) serLis).onApplyChargingRequestIndication(ind);
+				((CAPServiceCircuitSwitchedCallListener) serLis).onApplyChargingRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing requestReportBCSMEventRequest: " + e.getMessage(), e);
 			}
@@ -473,7 +473,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		for (CAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onCAPMessage(ind);
-				((CAPServiceCircuitSwitchedCallListener) serLis).onEventReportBCSMRequestIndication(ind);
+				((CAPServiceCircuitSwitchedCallListener) serLis).onEventReportBCSMRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing eventReportBCSMRequest: " + e.getMessage(), e);
 			}
@@ -490,7 +490,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		for (CAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onCAPMessage(ind);
-				((CAPServiceCircuitSwitchedCallListener) serLis).onContinueRequestIndication(ind);
+				((CAPServiceCircuitSwitchedCallListener) serLis).onContinueRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing continueRequest: " + e.getMessage(), e);
 			}
@@ -519,7 +519,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		for (CAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onCAPMessage(ind);
-				((CAPServiceCircuitSwitchedCallListener) serLis).onApplyChargingReportRequestIndication(ind);
+				((CAPServiceCircuitSwitchedCallListener) serLis).onApplyChargingReportRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing applyChargingReportRequest: " + e.getMessage(), e);
 			}
@@ -548,7 +548,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		for (CAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onCAPMessage(ind);
-				((CAPServiceCircuitSwitchedCallListener) serLis).onReleaseCalltRequestIndication(ind);
+				((CAPServiceCircuitSwitchedCallListener) serLis).onReleaseCallRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing applyChargingReportRequest: " + e.getMessage(), e);
 			}
@@ -577,7 +577,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		for (CAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onCAPMessage(ind);
-				((CAPServiceCircuitSwitchedCallListener) serLis).onConnectRequestIndication(ind);
+				((CAPServiceCircuitSwitchedCallListener) serLis).onConnectRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing eventReportBCSMRequest: " + e.getMessage(), e);
 			}
@@ -606,7 +606,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		for (CAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onCAPMessage(ind);
-				((CAPServiceCircuitSwitchedCallListener) serLis).onCallInformationRequestRequestIndication(ind);
+				((CAPServiceCircuitSwitchedCallListener) serLis).onCallInformationRequestRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing eventReportBCSMRequest: " + e.getMessage(), e);
 			}
@@ -635,7 +635,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		for (CAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onCAPMessage(ind);
-				((CAPServiceCircuitSwitchedCallListener) serLis).onCallInformationReportRequestIndication(ind);
+				((CAPServiceCircuitSwitchedCallListener) serLis).onCallInformationReportRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing eventReportBCSMRequest: " + e.getMessage(), e);
 			}
@@ -652,7 +652,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		for (CAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onCAPMessage(ind);
-				((CAPServiceCircuitSwitchedCallListener) serLis).onActivityTestRequestIndication(ind);
+				((CAPServiceCircuitSwitchedCallListener) serLis).onActivityTestRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing activityTestRequest: " + e.getMessage(), e);
 			}
@@ -669,7 +669,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		for (CAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onCAPMessage(ind);
-				((CAPServiceCircuitSwitchedCallListener) serLis).onActivityTestResponseIndication(ind);
+				((CAPServiceCircuitSwitchedCallListener) serLis).onActivityTestResponse(ind);
 			} catch (Exception e) {
 				loger.error("Error processing activityTestResponse: " + e.getMessage(), e);
 			}
@@ -698,7 +698,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		for (CAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onCAPMessage(ind);
-				((CAPServiceCircuitSwitchedCallListener) serLis).onAssistRequestInstructionsRequestIndication(ind);
+				((CAPServiceCircuitSwitchedCallListener) serLis).onAssistRequestInstructionsRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing assistRequestInstructionsRequest: " + e.getMessage(), e);
 			}
@@ -728,7 +728,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		for (CAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onCAPMessage(ind);
-				((CAPServiceCircuitSwitchedCallListener) serLis).onEstablishTemporaryConnectionRequestIndication(ind);
+				((CAPServiceCircuitSwitchedCallListener) serLis).onEstablishTemporaryConnectionRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing establishTemporaryConnectionRequest: " + e.getMessage(), e);
 			}
@@ -745,7 +745,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		for (CAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onCAPMessage(ind);
-				((CAPServiceCircuitSwitchedCallListener) serLis).onDisconnectForwardConnectionRequestIndication(ind);
+				((CAPServiceCircuitSwitchedCallListener) serLis).onDisconnectForwardConnectionRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing disconnectForwardConnectionRequest: " + e.getMessage(), e);
 			}
@@ -774,7 +774,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		for (CAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onCAPMessage(ind);
-				((CAPServiceCircuitSwitchedCallListener) serLis).onConnectToResourceRequestIndication(ind);
+				((CAPServiceCircuitSwitchedCallListener) serLis).onConnectToResourceRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing connectToResourceRequest: " + e.getMessage(), e);
 			}
@@ -803,7 +803,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		for (CAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onCAPMessage(ind);
-				((CAPServiceCircuitSwitchedCallListener) serLis).onResetTimerRequestIndication(ind);
+				((CAPServiceCircuitSwitchedCallListener) serLis).onResetTimerRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing resetTimerRequest: " + e.getMessage(), e);
 			}
@@ -832,7 +832,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		for (CAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onCAPMessage(ind);
-				((CAPServiceCircuitSwitchedCallListener) serLis).onFurnishChargingInformationRequestIndication(ind);
+				((CAPServiceCircuitSwitchedCallListener) serLis).onFurnishChargingInformationRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing furnishChargingInformationRequest: " + e.getMessage(), e);
 			}
@@ -861,7 +861,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		for (CAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onCAPMessage(ind);
-				((CAPServiceCircuitSwitchedCallListener) serLis).onSendChargingInformationRequestIndication(ind);
+				((CAPServiceCircuitSwitchedCallListener) serLis).onSendChargingInformationRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing sendChargingInformationRequest: " + e.getMessage(), e);
 			}
@@ -898,7 +898,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		for (CAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onCAPMessage(ind);
-				((CAPServiceCircuitSwitchedCallListener) serLis).onSpecializedResourceReportRequestIndication(ind);
+				((CAPServiceCircuitSwitchedCallListener) serLis).onSpecializedResourceReportRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing specializedResourceReportRequest: " + e.getMessage(), e);
 			}
@@ -927,7 +927,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		for (CAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onCAPMessage(ind);
-				((CAPServiceCircuitSwitchedCallListener) serLis).onPlayAnnouncementRequestIndication(ind);
+				((CAPServiceCircuitSwitchedCallListener) serLis).onPlayAnnouncementRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing playAnnouncementRequest: " + e.getMessage(), e);
 			}
@@ -957,7 +957,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		for (CAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onCAPMessage(ind);
-				((CAPServiceCircuitSwitchedCallListener) serLis).onPromptAndCollectUserInformationRequestIndication(ind);
+				((CAPServiceCircuitSwitchedCallListener) serLis).onPromptAndCollectUserInformationRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing promptAndCollectUserInformationRequest: " + e.getMessage(), e);
 			}
@@ -986,7 +986,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		for (CAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onCAPMessage(ind);
-				((CAPServiceCircuitSwitchedCallListener) serLis).onPromptAndCollectUserInformationResponseIndication(ind);
+				((CAPServiceCircuitSwitchedCallListener) serLis).onPromptAndCollectUserInformationResponse(ind);
 			} catch (Exception e) {
 				loger.error("Error processing promptAndCollectUserInformationResponse: " + e.getMessage(), e);
 			}
@@ -1014,7 +1014,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		for (CAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onCAPMessage(ind);
-				((CAPServiceCircuitSwitchedCallListener) serLis).onCancelRequestIndication(ind);
+				((CAPServiceCircuitSwitchedCallListener) serLis).onCancelRequest(ind);
 			} catch (Exception e) {
 				loger.error("Error processing cancelRequest: " + e.getMessage(), e);
 			}

@@ -41,8 +41,7 @@ sendChargingInformation {PARAMETERS-BOUND : bound} OPERATION ::= {
      unexpectedDataValue | 
      unknownLegID} 
  CODE   opcode-sendChargingInformation} 
--- Direction: gsmSCF -> gsmSSF, Timer: T  
-sci 
+-- Direction: gsmSCF -> gsmSSF, Timer: Tsci 
 -- This operation is used to instruct the gsmSSF on the charging information to send by the gsmSSF. 
 -- The charging information can either be sent back by means of signalling or internal 
 -- if the gsmSSF is located in the local exchange. In the local exchange 

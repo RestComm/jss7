@@ -47,6 +47,7 @@ CODE opcode-callInformationRequest}
 -- Direction: gsmSCF -> gsmSSF, Timer: Tcirq
 -- This operation is used to request the gsmSSF to record specific information about a single
 -- call party and report it to the gsmSCF (with a CallInformationReport operation).
+
 CallInformationRequestArg {PARAMETERS-BOUND : bound}::= SEQUENCE {
 requestedInformationTypeList [0] RequestedInformationTypeList,
 extensions [2] Extensions {bound} OPTIONAL,

@@ -172,8 +172,8 @@ public class CAPFunctionalTest extends SccpHarness {
 			private long processUnstructuredSSRequestInvokeId = 0l;
 
 			@Override
-			public void onInitialDPRequestIndication(InitialDPRequest ind) {
-				super.onInitialDPRequestIndication(ind);
+			public void onInitialDPRequest(InitialDPRequest ind) {
+				super.onInitialDPRequest(ind);
 
 				assertTrue(Client.checkTestInitialDp(ind));
 
