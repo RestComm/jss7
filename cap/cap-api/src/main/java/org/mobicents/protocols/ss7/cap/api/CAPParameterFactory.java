@@ -24,7 +24,6 @@ package org.mobicents.protocols.ss7.cap.api;
 
 import java.util.ArrayList;
 
-import org.mobicents.protocols.ss7.cap.EsiBcsm.OAbandonSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.CallAcceptedSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.ChargeIndicator;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAbandonSpecificInfo;
@@ -123,9 +122,11 @@ import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectingNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformation;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.UUData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.MSClassmark2;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
@@ -152,6 +153,7 @@ public interface CAPParameterFactory {
 			boolean automaticRearm);
 	
 	public CalledPartyBCDNumber createCalledPartyBCDNumber(byte[] data);
+	public CalledPartyBCDNumber createCalledPartyBCDNumber(AddressNature addressNature, NumberingPlan numberingPlan, String address, boolean isExtension) throws CAPException;
 
 	public ExtensionField createExtensionField(Integer localCode, CriticalityType criticalityType, byte[] data);
 	public ExtensionField createExtensionField(long[] globalCode, CriticalityType criticalityType, byte[] data);

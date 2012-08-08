@@ -25,11 +25,18 @@ package org.mobicents.protocols.ss7.cap.primitives;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
 
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.primitives.CalledPartyBCDNumber;
+import org.mobicents.protocols.ss7.map.GSMCharset;
+import org.mobicents.protocols.ss7.map.GSMCharsetDecoder;
+import org.mobicents.protocols.ss7.map.GSMCharsetDecodingData;
+import org.mobicents.protocols.ss7.map.GSMCharsetEncoder;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
@@ -60,13 +67,13 @@ public class CalledPartyBCDNumberImpl extends OctetStringBase implements CalledP
 		super(1, 41, "CalledPartyBCDNumber", data);
 	}
 
-	public CalledPartyBCDNumberImpl(AddressNature addressNature, NumberingPlan numberingPlan, String address) throws CAPException {
+	public CalledPartyBCDNumberImpl(AddressNature addressNature, NumberingPlan numberingPlan, String address, boolean isExtension) throws CAPException {
 		super(1, 41, "CalledPartyBCDNumber");
 
-		this.setParameters(addressNature, numberingPlan, address);
+		this.setParameters(addressNature, numberingPlan, address, isExtension);
 	}
 
-	protected void setParameters(AddressNature addressNature, NumberingPlan numberingPlan, String address) throws CAPException {
+	protected void setParameters(AddressNature addressNature, NumberingPlan numberingPlan, String address, boolean isExtension) throws CAPException {
 
 		if (addressNature == null || numberingPlan == null || address == null)
 			throw new CAPException("Error when encoding " + _PrimitiveName + ": addressNature, numberingPlan or address is empty");
@@ -75,15 +82,15 @@ public class CalledPartyBCDNumberImpl extends OctetStringBase implements CalledP
 
 		ByteArrayOutputStream stm = new ByteArrayOutputStream();
 
-		int nature;
-		if (address.length() % 2 != 0) // odd digits
+		int nature = 0;
+		if (isExtension)
 			nature = 0x80;
 		else
 			nature = 0;
 		nature = nature | (addressNature.getIndicator() << 4);
 		nature = nature | (numberingPlan.getIndicator());
 		stm.write(nature);
-		
+
 		if (numberingPlan == NumberingPlan.spare_5) {
 			// -- In the context of the DestinationSubscriberNumber field in ConnectSMSArg or  
 			// -- InitialDPSMSArg, a CalledPartyBCDNumber may also contain an alphanumeric  
@@ -91,10 +98,23 @@ public class CalledPartyBCDNumberImpl extends OctetStringBase implements CalledP
 			// -- with 3GPP TS 23.040 [6]. The address is coded in accordance with the  
 			// -- GSM 7-bit default alphabet definition and the SMS packing rules  
 			// -- as specified in 3GPP TS 23.038 [15] in this case.
-			
-			// .....................................
 
-
+			GSMCharset cs = new GSMCharset(GSMCharset.GSM_CANONICAL_NAME, new String[] {});
+			GSMCharsetEncoder encoder = (GSMCharsetEncoder) cs.newEncoder();
+			ByteBuffer bb;
+			try {
+				bb = encoder.encode(CharBuffer.wrap(address));
+				int dataLength = bb.limit();
+				byte[] data = new byte[dataLength];
+				bb.get(data);
+				stm.write(data);
+			} catch (CharacterCodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else {
 			try {
 				TbcdString.encodeString(stm, address);
@@ -102,7 +122,9 @@ public class CalledPartyBCDNumberImpl extends OctetStringBase implements CalledP
 				throw new CAPException(e);
 			}
 		}
-	}
+
+		this.data = stm.toByteArray();
+ 	}
 	
 	
 	public byte[] getData() {
@@ -147,6 +169,8 @@ public class CalledPartyBCDNumberImpl extends OctetStringBase implements CalledP
 			return null;
 
 		try {
+			ByteArrayInputStream stm = new ByteArrayInputStream(this.data);
+			stm.read();
 			if (this.getNumberingPlan() == NumberingPlan.spare_5) {
 				// -- In the context of the DestinationSubscriberNumber field in ConnectSMSArg or  
 				// -- InitialDPSMSArg, a CalledPartyBCDNumber may also contain an alphanumeric  
@@ -154,15 +178,22 @@ public class CalledPartyBCDNumberImpl extends OctetStringBase implements CalledP
 				// -- with 3GPP TS 23.040 [6]. The address is coded in accordance with the  
 				// -- GSM 7-bit default alphabet definition and the SMS packing rules  
 				// -- as specified in 3GPP TS 23.038 [15] in this case.
-				
-				// .....................................
-				return null;
 
+				if (data.length == 1)
+					return "";
 
+				int addressLength = this.data.length - 1;
+				ByteBuffer bb = ByteBuffer.wrap(this.data, 1, addressLength);
+				GSMCharset cs = new GSMCharset(GSMCharset.GSM_CANONICAL_NAME, new String[] {});
+				GSMCharsetDecoder decoder = (GSMCharsetDecoder) cs.newDecoder();
+				int totalSeptetCount = addressLength + (addressLength / 8);
+				GSMCharsetDecodingData encodingData = new GSMCharsetDecodingData(totalSeptetCount, 0);
+				decoder.setGSMCharsetDecodingData(encodingData);
+
+				CharBuffer bf = decoder.decode(bb);
+				return bf.toString();
 			} else {
 
-				ByteArrayInputStream stm = new ByteArrayInputStream(this.data);
-				stm.read();
 				String address = TbcdString.decodeString(stm, this.data.length - 1);
 				return address;
 			}
@@ -181,70 +212,6 @@ public class CalledPartyBCDNumberImpl extends OctetStringBase implements CalledP
 		if (address.length() > 38)
 			throw new CAPException("Error when encoding AddressString: address length must not exceed 38 digits");
 	}
-	
-	
-	
-	
-	
-	
-	
-
-
-//	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException {
-//
-//		// The first byte has extension, nature of address indicator and
-//		// numbering plan indicator
-//		int nature = ansIS.read();
-//
-//		if ((nature & NO_EXTENSION_MASK) == 0x80) {
-//			this.isExtension = false;
-//		} else {
-//			this.isExtension = true;
-//		}
-//
-//		int natureOfAddInd = ((nature & NATURE_OF_ADD_IND_MASK) >> 4);
-//
-//		this.addressNature = AddressNature.getInstance(natureOfAddInd);
-//
-//		int numbPlanInd = (nature & NUMBERING_PLAN_IND_MASK);
-//
-//		this.numberingPlan = NumberingPlan.getInstance(numbPlanInd);
-//
-//		try {
-//			this.address = TbcdString.decodeString(ansIS, length - 1);
-//		} catch (MAPParsingComponentException e) {
-//			throw new CAPParsingComponentException(e,CAPParsingComponentExceptionReason.MistypedParameter);
-//		}
-//	}
-
-
-//	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-//
-//		if (this.addressNature == null || this.numberingPlan == null || this.address == null)
-//			throw new CAPException(
-//					"Error when encoding AddressString: addressNature, numberingPlan or address is empty");
-//
-//		this._testLengthEncode();
-//
-//		int nature = 1;
-//
-//		if (this.isExtension) {
-//			nature = 0;
-//		}
-//
-//		nature = nature << 7;
-//
-//		nature = nature | (this.addressNature.getIndicator() << 4);
-//
-//		nature = nature | (this.numberingPlan.getIndicator());
-//
-//		asnOs.write(nature);
-//		try {
-//			TbcdString.encodeString(asnOs, this.address);
-//		} catch (MAPException e) {
-//			throw new CAPException(e);
-//		}
-//	}
 
 	@Override
 	public String toString() {
@@ -264,6 +231,9 @@ public class CalledPartyBCDNumberImpl extends OctetStringBase implements CalledP
 			sb.append(", address=");
 			sb.append(this.getAddress());
 		}
+		if (this.isExtension()) {
+			sb.append(", extension");
+		}
 		sb.append("]");
 
 		return sb.toString();
@@ -280,7 +250,7 @@ public class CalledPartyBCDNumberImpl extends OctetStringBase implements CalledP
 				throws XMLStreamException {
 			try {
 				addressStringImpl.setParameters(AddressNature.getInstance(xml.getAttribute(NAI, 0)), NumberingPlan.getInstance(xml.getAttribute(NPI, 0)),
-						xml.getAttribute(NUMBER, ""));
+						xml.getAttribute(NUMBER, ""), false);
 			} catch (CAPException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

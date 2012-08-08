@@ -62,4 +62,6 @@ public interface CalledPartyBCDNumber extends AddressString{
 
 	public String getAddress();
 
+	public boolean isExtension();
+
 }

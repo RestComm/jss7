@@ -44,6 +44,10 @@ public class CalledPartyBCDNumberTest {
 		return new byte[] { (byte) 159, 56, 7, 17, 20, (byte) 135, 8, 80, 64, (byte) 247 };
 	}
 
+	public byte[] getData2() {
+		return new byte[] { (byte) 159, 56, 6, 21, (byte) 232, 50, (byte) 155, (byte) 253, 6 };
+	}
+
 	public byte[] getIntData1() {
 		return new byte[] { 17, 20, (byte) 135, 8, 80, 64, (byte) 247 };
 	}
@@ -61,6 +65,18 @@ public class CalledPartyBCDNumberTest {
 		assertEquals(elem.getAddressNature(), AddressNature.international_number);
 		assertEquals(elem.getNumberingPlan(), NumberingPlan.ISDN);
 		assertTrue(elem.getAddress().equals("41788005047"));
+		assertFalse(elem.isExtension());
+
+		data = this.getData2();
+		ais = new AsnInputStream(data);
+		elem = new CalledPartyBCDNumberImpl();
+		tag = ais.readTag();
+		elem.decodeAll(ais);
+		
+		assertEquals(elem.getAddressNature(), AddressNature.international_number);
+		assertEquals(elem.getNumberingPlan(), NumberingPlan.spare_5);
+		assertTrue(elem.getAddress().equals("hello"));
+		assertFalse(elem.isExtension());
 	}
 
 	@Test(groups = { "functional.encode","primitives"})
@@ -71,9 +87,15 @@ public class CalledPartyBCDNumberTest {
 		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 56);
 		assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
 
-		elem = new CalledPartyBCDNumberImpl(AddressNature.international_number, NumberingPlan.ISDN, "41788005047");
+		elem = new CalledPartyBCDNumberImpl(AddressNature.international_number, NumberingPlan.ISDN, "41788005047", false);
 		aos = new AsnOutputStream();
 		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 56);
 		assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
+
+		// GSM 7-bit default alphabet definition and the SMS packing rules
+		elem = new CalledPartyBCDNumberImpl(AddressNature.international_number, NumberingPlan.spare_5, "hello", false);
+		aos = new AsnOutputStream();
+		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 56);
+		assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
 	}
 }
