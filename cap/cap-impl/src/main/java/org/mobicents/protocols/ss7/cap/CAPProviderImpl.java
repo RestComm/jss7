@@ -109,21 +109,21 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
  */
 public class CAPProviderImpl implements CAPProvider, TCListener {
 
-	protected Logger loger = Logger.getLogger(CAPProviderImpl.class);
+	protected static final Logger loger = Logger.getLogger(CAPProviderImpl.class);
 
-	private List<CAPDialogListener> dialogListeners = new CopyOnWriteArrayList<CAPDialogListener>();
+	transient private List<CAPDialogListener> dialogListeners = new CopyOnWriteArrayList<CAPDialogListener>();
 
-	protected Map<Long, CAPDialogImpl> dialogs = new HashMap<Long, CAPDialogImpl>();
+	transient protected Map<Long, CAPDialogImpl> dialogs = new HashMap<Long, CAPDialogImpl>();
 
-	private TCAPProvider tcapProvider = null;
+	transient private TCAPProvider tcapProvider = null;
 
-	private final CAPParameterFactory capParameterFactory = new CAPParameterFactoryImpl();
-	private final CAPErrorMessageFactory capErrorMessageFactory = new CAPErrorMessageFactoryImpl();
+	transient private final CAPParameterFactory capParameterFactory = new CAPParameterFactoryImpl();
+	transient private final CAPErrorMessageFactory capErrorMessageFactory = new CAPErrorMessageFactoryImpl();
 
-	protected Set<CAPServiceBase> capServices = new HashSet<CAPServiceBase>();
-	private final CAPServiceCircuitSwitchedCall capServiceCircuitSwitchedCall = new CAPServiceCircuitSwitchedCallImpl(this);
-	private final CAPServiceGprs capServiceGprs = new CAPServiceGprsImpl(this);
-	private final CAPServiceSms capServiceSms = new CAPServiceSmsImpl(this);
+	transient protected Set<CAPServiceBase> capServices = new HashSet<CAPServiceBase>();
+	transient private final CAPServiceCircuitSwitchedCall capServiceCircuitSwitchedCall = new CAPServiceCircuitSwitchedCallImpl(this);
+	transient private final CAPServiceGprs capServiceGprs = new CAPServiceGprsImpl(this);
+	transient private final CAPServiceSms capServiceSms = new CAPServiceSmsImpl(this);
 	
 
 	public CAPProviderImpl(TCAPProvider tcapProvider) {

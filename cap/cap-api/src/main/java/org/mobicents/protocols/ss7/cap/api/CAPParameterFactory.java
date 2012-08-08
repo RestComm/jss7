@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.cap.api;
 
 import java.util.ArrayList;
 
+import org.mobicents.protocols.ss7.cap.EsiBcsm.OAbandonSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.CallAcceptedSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.ChargeIndicator;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAbandonSpecificInfo;
@@ -188,6 +189,7 @@ public interface CAPParameterFactory {
 	
 	public RouteSelectFailureSpecificInfo createRouteSelectFailureSpecificInfo(CauseCap failureCause);
 	public OCalledPartyBusySpecificInfo createOCalledPartyBusySpecificInfo(CauseCap busyCause);
+	public OAbandonSpecificInfo createOAbandonSpecificInfo(boolean routeNotPermitted);
 	public ONoAnswerSpecificInfo createONoAnswerSpecificInfo();
 	public OAnswerSpecificInfo createOAnswerSpecificInfo(CalledPartyNumberCap destinationAddress, boolean orCall, boolean forwardedCall,
 			ChargeIndicator chargeIndicator, ExtBasicServiceCode extBasicServiceCode, ExtBasicServiceCode extBasicServiceCode2);

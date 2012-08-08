@@ -29,7 +29,9 @@ import java.util.Arrays;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
-import org.testng.*;import org.testng.annotations.*;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.testng.annotations.*;
 
 /**
  * 
@@ -54,7 +56,11 @@ public class CalledPartyBCDNumberTest {
 		CalledPartyBCDNumberImpl elem = new CalledPartyBCDNumberImpl();
 		int tag = ais.readTag();
 		elem.decodeAll(ais);
+		
 		assertTrue(Arrays.equals(elem.getData(), this.getIntData1()));
+		assertEquals(elem.getAddressNature(), AddressNature.international_number);
+		assertEquals(elem.getNumberingPlan(), NumberingPlan.ISDN);
+		assertTrue(elem.getAddress().equals("41788005047"));
 	}
 
 	@Test(groups = { "functional.encode","primitives"})
@@ -62,6 +68,11 @@ public class CalledPartyBCDNumberTest {
 
 		CalledPartyBCDNumberImpl elem = new CalledPartyBCDNumberImpl(this.getIntData1());
 		AsnOutputStream aos = new AsnOutputStream();
+		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 56);
+		assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
+
+		elem = new CalledPartyBCDNumberImpl(AddressNature.international_number, NumberingPlan.ISDN, "41788005047");
+		aos = new AsnOutputStream();
 		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 56);
 		assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
 	}

@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.cap;
 
 import java.util.ArrayList;
 
+import org.mobicents.protocols.ss7.cap.EsiBcsm.OAbandonSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.OAnswerSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.OCalledPartyBusySpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.ODisconnectSpecificInfoImpl;
@@ -391,10 +392,17 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
 	}
 
 	@Override
+	public OAbandonSpecificInfo createOAbandonSpecificInfo(boolean routeNotPermitted) {
+		return new OAbandonSpecificInfoImpl(routeNotPermitted);
+	}
+	
+	@Override
 	public ONoAnswerSpecificInfo createONoAnswerSpecificInfo() {
 		return new ONoAnswerSpecificInfoImpl();
 	}
 
+	
+	
 	@Override
 	public OAnswerSpecificInfo createOAnswerSpecificInfo(CalledPartyNumberCap destinationAddress, boolean orCall, boolean forwardedCall,
 			ChargeIndicator chargeIndicator, ExtBasicServiceCode extBasicServiceCode, ExtBasicServiceCode extBasicServiceCode2) {
