@@ -22,8 +22,14 @@
 
 package org.mobicents.protocols.ss7.cap.api.primitives;
 
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+
+
 /**
-*
+ * 
+
 CalledPartyBCDNumber {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE( 
  bound.&minCalledPartyBCDNumberLength .. bound.&maxCalledPartyBCDNumberLength)) 
 -- Indicates the Called Party Number, including service selection information. 
@@ -38,15 +44,24 @@ CalledPartyBCDNumber {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE(
 -- with 3GPP TS 23.040 [6]. The address is coded in accordance with the  
 -- GSM 7-bit default alphabet definition and the SMS packing rules  
 -- as specified in 3GPP TS 23.038 [15] in this case. 
-* 
-* @author sergey vetyutnev
-* 
-*/
-public interface CalledPartyBCDNumber {
+
+minCalledPartyBCDNumberLength ::= 1
+maxCalledPartyBCDNumberLength ::= 41
+
+ * 
+ * @author sergey vetyutnev
+ * 
+ */
+public interface CalledPartyBCDNumber extends AddressString{
 
 	public byte[] getData();
 
-	// TODO: implement "Called party BCD number" from 24.008 (Mobile radio
-	// interface Layer 3 specification; Core network protocols)
+	public AddressNature getAddressNature();
+
+	public NumberingPlan getNumberingPlan();
+
+	public String getAddress();
+
+	public boolean isExtension();
 
 }
