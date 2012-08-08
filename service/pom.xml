@@ -133,6 +133,14 @@
 			<artifactId>map-impl</artifactId>
 			<groupId>org.mobicents.protocols.ss7.map</groupId>
 		</dependency>
+		<dependency>
+			<artifactId>cap-api</artifactId>
+			<groupId>org.mobicents.protocols.ss7.cap</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>cap-impl</artifactId>
+			<groupId>org.mobicents.protocols.ss7.cap</groupId>
+		</dependency>
 
 		<dependency>
 			<artifactId>isup-api</artifactId>
