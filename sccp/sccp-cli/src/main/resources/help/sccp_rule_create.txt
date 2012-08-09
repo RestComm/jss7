@@ -1,0 +1,138 @@
+Name
+	sccp rule create
+
+SYNOPSIS
+	sccp rule create <id> <mask> <address-indicator> <point-code> <subsystem-number> <translation-type> <numbering-plan> <nature-of-address-indicator> <digits> <ruleType> <primary-address-id> <backup-address-id> <loadsharing-algorithm>
+
+
+DESCRIPTION
+	This command is used to create a new SCCP Routing Rule. You must ensure that primary and backup addresses are configured properly prior to executing this command.
+
+PARAMETERS
+
+	Standard Parameters
+                                              
+	<id>			-	A unique number to identify this Rule.
+
+	<mask>			-	A mask defines which part of the originally dialed digits remains in the translated digits and which part is replaced by the digits from primary or backup address. A mask is divided into sections by separator '/'. The number of sections in a mask should be equal to the sections in digits passed in this command and the sections in primary or backup address.
+
+					MASK DEFINITIONS
+
+					Mnemonic	Function
+					----------------------------------	
+					- 		Ignore
+
+					/		Separator used to split the mask into sections.
+
+					K		Retain the original dialed digits of this section 
+							in the translated digits.
+
+					R		Replace the original dialed digits of this section 
+							with the same section from primary or backup address
+							in the translated digits.
+
+	<address-indicator>	-	The address indicator is the first field in a SCCP Party Address (called/calling) and is one octet in length. Its function is to indicate which information elements are present so that the address can be interpreted. In other words, it indicates the type of addressing information that is to be found in the address field. The addressing information from the original global title is then compared with the passed address information to match the rule. 
+
+					SCCP ADDRESS INDICATOR
+					--------------------------------
+					| 8 | 7 | 6 | 5 | 4 |3 | 2 | 1 |
+					--------------------------------
+
+					Bit '1'     : PC Indicator              
+						      (1 = included)
+
+					Bit '2'     : SSN Indicator             
+						      (1 = included)
+
+					Bit '3 - 6' : GT Indicator		
+						      (0000 = GT not included)
+						      (0001 = GT includes Nature of Address)
+						      (0010 = GT includes Translation Type)
+						      (0011 = GT includes Translation Type, Numbering Plan and Encoding Scheme)
+						      (0100 = GT includes Translation Type, Numbering Plan, Encoding Scheme & Nature of Address)
+
+					Bit '7'     : Routing Indicator 	
+						      (0 = Route on GT, 1 = Route on PC + SSN)	
+
+					Bit '8'     : Reserved for National use.
+
+	<point-code>		-	MTP Signaling Point Code. This is ignored if Bit '0' of address-indicator is not set.
+
+	<subsystem-number>	-	This is ignored if Bit '1' of address-indicator is not set.
+
+	<translation-type>	-	This is ignored if GT Indicator is 0000 or 0001.
+
+					TRANSLATION TYPE VALUES
+	
+					Value		Description
+					----------------------------------	
+					0		Unknown
+
+					1  - 63		International Service
+
+					64 - 127	Spare
+
+					128 - 254	National Network Specific
+
+					255		Reserved for Expansion
+
+	<numbering-plan>	-	The Number Plan (NP) field specifies the numbering plan which the address information follows. This is ignored if GT Indicator is 0000, 0001 or 0010.
+
+	<nature-of-address>	-	The Nature of Address Indicator (NAI) field defines the address range for a specific numbering plan. This is only used if GT Indicator is 0100.
+
+	<digits>		-	Specifies the string of digits divided into subsections using separator '/' depending on if the mask contains separator or not. The dialed digits should match with theses digits as per the rule specified below: 
+
+					DIGIT PATTERN
+					
+					Value		Description
+					----------------------------------	
+					-		padding - ignored
+
+					*		wildcard - matches any number of digits
+
+					?		wildcard - matches exactly one digit
+
+					/		separator used to split the digit pattern into sections. 
+							Each section can be processed differently as specified 
+							by the mask parameter.
+
+	<ruleType>		-	Takes one of the following values defined below.
+
+					RULE TYPE VALUES
+					
+					Value		Description
+					----------------------------------	
+					solitary	Only one (primary) address is used for routing.
+							(<backup-address-id> may be missed in this case).
+
+					dominant	Both (primary and backup) addresses are used and mandatory. 
+							If both the addresses are available, the primary address is used for routing.
+
+					loadshared	Both (primary and backup) addresses are used and mandatory. 
+							If both the addresses are available, either primary or backup address is used for routing. 
+							The <loadsharing-algorithm> should be configured in this case.
+
+	<primary-address-id>	-	Identifies the SCCP Address used as the primary translation.
+
+	<backup-address-id>	-	Identifies the SCCP Address used as the backup translation in case the pointcode specified by the primary address is not available. Backup address is used only with dominant and loadshared address types.
+									
+	<loadsharing-algorithm>	-	This parameter is mandatory if <ruleType> is "loadshared". The Loadsharing algorithm is configured here. Possible values of the parameter are:
+
+					LOAD SHARING ALGORITHM VALUES
+					
+					Value		Description
+					----------------------------------	
+					bit4 		if( (SLS & 0x10) == 0 ) <route to primary> else <route to backup>
+							This algorithm is the best if all traffic is local (mobicents stack) originated
+
+					bit3		if( (SLS & 0x08) == 0 ) <route to primary> else <route to backup>
+							This algorithm can be used if not all traffic is local (mobicents stack) originated. 
+							But only 8 links are acceptable in both linksets.
+
+EXAMPLES
+	sccp rule create 1 R 71 2 8 0 0 3 123456789 solitary 1
+	sccp rule create 2 R 71 2 8 0 0 3 123456789 dominant 1 1
+	sccp rule create 2 R 71 2 8 0 0 3 123456789 loadshared 1 1 bit4
+
+SEE ALSO
+	sccp sap create, sccp sap modify, sccp sap delete, sccp sap show, sccp dest create, sccp dest modify, sccp dest delete, sccp dest show, sccp rule modify, sccp rule delete, sccp rule show, sccp primary_add create, sccp primary_add modify, sccp primary_add delete, sccp primary_add show, sccp backup_add create, sccp backup_add modify, sccp backup_add delete, sccp backup_add show, sccp rsp create, sccp rsp modify, sccp rsp delete, sccp rsp show, sccp rss create, sccp rss modify, sccp rss delete, sccp rss show, sccp lmr create, sccp lmr modify, sccp lmr delete, sccp lmr show, sccp csp create, sccp csp modify, sccp csp delete, sccp csp show, sccp get, sccp set

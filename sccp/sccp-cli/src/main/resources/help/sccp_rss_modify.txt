@@ -1,0 +1,28 @@
+Name
+	sccp rss modify
+
+SYNOPSIS
+	sccp rss modify <id> <remote-spc> <remote-ssn> <rss-flag> <mark-prohibited-when-spc-resuming>
+
+DESCRIPTION
+	This command is used to modify the values of a Remote Sub-System previously defined.
+
+PARAMETERS
+
+	Standard Parameters
+                                              
+	<id>			-	Identifier of the Remote Sub-System to be modified.
+
+	<remote-spc>		-	The Remote Signaling Point where this Remote Sub-System is deployed.
+
+	<remote-ssn>		-	The Remote Sub-System number.
+
+	<rss-flag>		-	32 bit value. Not used for now. Reserved for future.
+
+	Optional Parameters
+
+	<mark-prohibited-when-spc-resuming>
+				-	Possible value: prohibitedWhenSpcResuming. When this parameter is specified, the configured subsystem is 						marked as prohibited when its corresponding signaling point code has been resumed.
+
+SEE ALSO
+	sccp sap create, sccp sap modify, sccp sap delete, sccp sap show, sccp dest create, sccp dest modify, sccp dest delete, sccp dest show, sccp rule create, sccp rule modify, sccp rule delete, sccp rule show, sccp primary_add create, sccp primary_add modify, sccp primary_add delete, sccp primary_add show, sccp backup_add create, sccp backup_add modify, sccp backup_add delete, sccp backup_add show, sccp rsp create, sccp rsp modify, sccp rsp delete, sccp rsp show, sccp rss create, sccp rss delete, sccp rss show, sccp lmr create, sccp lmr modify, sccp lmr delete, sccp lmr show, sccp csp create, sccp csp modify, sccp csp delete, sccp csp show, sccp get, sccp set

@@ -1,0 +1,34 @@
+Name
+	sccp dest modify
+
+SYNOPSIS
+	sccp dest modify <sap-id> <id> <first-dpc> <last-dpc> <first-sls> <last-sls> <sls-mask>
+
+
+DESCRIPTION
+	This command is used to modify the values of a Destination previously defined for a Service Access Point.
+
+PARAMETERS
+
+	Standard Parameters
+                                              
+	<sap-id>	-	The identifier of the SAP whose Destination is being modified. 
+
+	<id>		-	The identifier of the Destination that is being modified.
+
+	<first-dpc>	-	The first value of the remote signaling point codes range.
+
+	<last-dpc>	-	The last value of the remote signaling point codes range. If the Destination specifies only a single Signaling Point Code, this value must be equal to the value specified for 'first-dpc'.
+
+	<first-sls>	-	The first value of the SLS range. SLS value range is from 0 to 255.
+
+	<last-sls>	-	The last value of the SLS range. 
+
+	<sls-mask>	-	The mask value. SLS of a message will be exposed by performing a bitwise AND operation with this mask prior to comparing it with first-sls and last-sls values.
+
+EXAMPLES
+	sccp dest modify 1 1 201 299 0 255 255 
+	- The above command will modify the values of the Destination identified by the number '1' within the Service Access Point identified by the number '1'. The new values for 'first-dpc', 'last-dpc', 'first-sls', 'last-sls' and 'sls-mask' are 201, 299, 0, 255 and 255 respectively.
+
+SEE ALSO
+	sccp sap create, sccp sap modify, sccp sap delete, sccp sap show, sccp dest create, sccp dest delete, sccp dest show, sccp rule create, sccp rule modify, sccp rule delete, sccp rule show, sccp primary_add create, sccp primary_add modify, sccp primary_add delete, sccp primary_add show, sccp backup_add create, sccp backup_add modify, sccp backup_add delete, sccp backup_add show, sccp rsp create, sccp rsp modify, sccp rsp delete, sccp rsp show, sccp rss create, sccp rss modify, sccp rss delete, sccp rss show, sccp lmr create, sccp lmr modify, sccp lmr delete, sccp lmr show, sccp csp create, sccp csp modify, sccp csp delete, sccp csp show, sccp get, sccp set

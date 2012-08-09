@@ -1,0 +1,23 @@
+Name
+	sccp rsp modify
+
+SYNOPSIS
+	sccp rsp modify <id> <remote-spc> <rspc-flag> <mask>
+
+DESCRIPTION
+	This command is used to modify the values of a Remote Signaling Point previously defined.
+
+PARAMETERS
+
+	Standard Parameters                     
+                                              
+	<id>			-	Identifier of the Remote Signaling Point to be modified.
+
+	<remote-spc>		-	The Remote Signaling Point
+
+	<rspc-flag>		-	32 bit value. Not used for now. Reserved for future
+
+	<mask>			-	32 bit value. Not used for now. Reserved for future
+
+SEE ALSO
+	sccp sap create, sccp sap modify, sccp sap delete, sccp sap show, sccp dest create, sccp dest modify, sccp dest delete, sccp dest show, sccp rule create, sccp rule modify, sccp rule delete, sccp rule show, sccp primary_add create, sccp primary_add modify, sccp primary_add delete, sccp primary_add show, sccp backup_add create, sccp backup_add modify, sccp backup_add delete, sccp backup_add show, sccp rsp create, sccp rsp delete, sccp rsp show, sccp rss create, sccp rss modify, sccp rss delete, sccp rss show, sccp lmr create, sccp lmr modify, sccp lmr delete, sccp lmr show, sccp csp create, sccp csp modify, sccp csp delete, sccp csp show, sccp get, sccp set
