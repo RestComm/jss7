@@ -22,7 +22,7 @@
 			The index of a sap must correspont to the index of the sap.   
 		</para>
 		<para>
-			The second step is a definition of a list of available remote signalling pointcodes (SPC - rsp) and 
+			The second step is a definition of a list of available remote signaling pointcodes (SPC - rsp) and 
 			a list of available remote Sub-Systems (SNN - rss). This step is also mandatory. 
 			If routing only by GlobalTytle is used the remote Sub-Systems configuring is not required.
 		</para>
@@ -191,7 +191,7 @@ Service access point successfully removed
 						<term>&lt;last-dpc&gt;</term>
 						<listitem>
 							<para>Specifies the last value of the remote signaling point codes range. 
-							If destination specifies a single signalling point code, this value must be equal first-dpc</para>
+							If destination specifies a single signaling point code, this value must be equal first-dpc</para>
 						</listitem>
 					</varlistentry>
 					<varlistentry>
@@ -1200,7 +1200,7 @@ sccp rss create &lt;id&gt; &lt;remote-spc&gt; &lt;remote-ssn&gt; &lt;rss-flag&gt
 					<term>&lt;mark-prohibited-when-spc-resuming&gt;</term>
 					<listitem>
 						<para>This parameter is optional, its possible value is: prohibitedWhenSpcResuming.
-						When this parameter is present configured subsystem is marked as prohibited when its corresponded signalling point code has been resumed.</para>
+						When this parameter is present configured subsystem is marked as prohibited when its corresponded signaling point code has been resumed.</para>
 					</listitem>
 				</varlistentry>	
 			</variablelist>	
@@ -1312,7 +1312,7 @@ sccp lmr create &lt;id&gt; &lt;first-spc&gt; &lt;last-spc&gt; &lt;long-message-r
 						<term>&lt;last-spc&gt;</term>
 						<listitem>
 							<para>Specifies the last value of the remote signaling point codes range.
-							If Long message rule specifies a single signalling point code, this value must be equal first-spc.</para>
+							If Long message rule specifies a single signaling point code, this value must be equal first-spc.</para>
 						</listitem>
 					</varlistentry>	
 					<varlistentry>

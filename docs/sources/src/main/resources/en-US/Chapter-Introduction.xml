@@ -34,7 +34,7 @@ Since &THIS.PLATFORM; jSS7 is Java based, it is cross-platform and can be instal
 	  <section id="ss7_overview">
 	  <title>SS7 Overview</title>
 	  <para>
-    	SS7 (Signalling System No.7) is a set of signaling protocols defined for information exchange in telephony. It is the global standard for telecommunications and is defined by the <ulink url="http://www.voip-info.org/wiki/view/ITU">International Telecommunication Union (ITU) - Telecommunication Standardization Sector (ITU-T)</ulink>. It is also commonly referred to as Common Channel Signaling System No. 7 (i.e., <acronym>SS7</acronym> or <acronym>C7</acronym>).
+    	SS7 (Signaling System No.7) is a set of signaling protocols defined for information exchange in telephony. It is the global standard for telecommunications and is defined by the <ulink url="http://www.voip-info.org/wiki/view/ITU">International Telecommunication Union (ITU) - Telecommunication Standardization Sector (ITU-T)</ulink>. It is also commonly referred to as Common Channel Signaling System No. 7 (i.e., <acronym>SS7</acronym> or <acronym>C7</acronym>).
 		</para>
 		<para>
 		In telephony (wireless and wireline), the information associated with a call must be exchanged between a telephone and the telephone exchange or between exchanges, transit nodes and other elements in the network. Information exchange is required to set up, control and tear down calls and this exchange of information is called Signaling. SS7 is the global standard that defines the procedures and protocol to be followed by network elements in the Public Switched Telephone Network (<acronym>PSTN</acronym>) in order to exchange information over a digital signaling network to effect wireless (cellular) and wireline call setup, route,control, monitor and terminate. 
@@ -106,7 +106,7 @@ Since &THIS.PLATFORM; jSS7 is Java based, it is cross-platform and can be instal
 			Each voice sample timeslot in the <acronym>TDM</acronym> frame is called a channel . In
 			European systems, <acronym>TDM</acronym> frames contain 30 digital voice channels, and
 			in American systems, they contain 24 channels. Both standards also
-			contain extra bits (or bit timeslots) for signalling (SS7) and
+			contain extra bits (or bit timeslots) for signaling (SS7) and
 			synchronisation bits.
 			Multiplexing more than 24 or 30 digital voice channels is called higher order
 			multiplexing. Higher order multiplexing is accomplished by

@@ -177,7 +177,7 @@
 			<title>&THIS.PLATFORM; M3UA Stack</title>
 	
 			<para>
-				<literal>M3UA</literal> is a client-server protocol supporting the transport of any SS7 MTP3-User signalling (e.g. <literal>ISUP</literal> and <literal>SCCP</literal> messages) over IP. <literal>M3UA</literal> is defined
+				<literal>M3UA</literal> is a client-server protocol supporting the transport of any SS7 MTP3-User signaling (e.g. <literal>ISUP</literal> and <literal>SCCP</literal> messages) over IP. <literal>M3UA</literal> is defined
 				by the IETF SIGTRAN working group in RFC 4666. 
 				&THIS.PLATFORM; M3UA Stack can be used on the Application Server side or on the Signaling Gateway side or can also be used in peer-to-peer mode IPSP. 
 			</para>

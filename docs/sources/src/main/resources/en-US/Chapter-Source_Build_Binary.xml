@@ -220,7 +220,7 @@ Halting VM]]></screen>
 		<application>profile_name</application> is the server profile name.</para>
 		
 		<para>The &THIS.PLATFORM; SS7 Layer 4 (<literal>SCCP, ISUP</literal>) leverages either of following <literal>MTP</literal> 
-		layers to exchange signalling messages with remote signalling points</para>
+		layers to exchange signaling messages with remote signaling points</para>
 		
 		<itemizedlist>
 			<listitem>
