@@ -239,9 +239,7 @@
 				</mediaobject>
 				<para>
 					&THIS.PLATFORM; M3UA Stack used on the SG side will share a common point code with a set of M3UA Application Servers. 
-					You can configure the M3UA stack on SG side in one of the two traffic modes: Loadbalance or Override. Broadcast traffic mode is not supported. 
-					Refer to <xref linkend="configuring_sgw"/> for instructions on configuring M3UA Stack as SG. &THIS.PLATFORM; M3UA Stack used on SG side 
-					doesn't support routing key management messages. The Routing Key should be provisioned statically using the management console.
+					You can configure the M3UA stack on SG side in one of the two traffic modes: Loadbalance or Override. Broadcast traffic mode is not supported. Refer to <xref linkend="configuring_sgw"/> for instructions on configuring M3UA Stack as SG. &THIS.PLATFORM; M3UA Stack used on SG side doesn't support routing key management messages. The Routing Key should be provisioned statically using the management console.
 				</para>	
 			</section>	
 		</section>
