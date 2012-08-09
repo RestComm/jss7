@@ -227,6 +227,48 @@ public class RuleTest {
 		assertEquals(translatedAddress.getGlobalTitle().getDigits(), "1234567");
 	}
 
+	@Test(groups = { "router", "functional.translate" })
+	public void testTranslate7() throws Exception {
+		// The case when address length is less then size
+
+		SccpAddress pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "555"), 0);
+
+		SccpAddress primaryAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 123, GlobalTitle.getInstance(1, "-"), 0);
+
+		Rule rule = new Rule(RuleType.Solitary, LoadSharingAlgorithm.Undefined, pattern, "K");
+		rule.setPrimaryAddressId(1);
+
+		SccpAddress address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "55"), 8);
+
+		// TODO: the exception is here
+		assertFalse(rule.matches(address));
+	}
+
+	@Test(groups = { "router", "functional.translate" })
+	public void testTranslate8() throws Exception {
+		// Some bad pattern
+
+		SccpAddress pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "*/5555"), 0);
+
+		SccpAddress primaryAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 123, GlobalTitle.getInstance(1, "-/-"), 0);
+
+		Rule rule = new Rule(RuleType.Solitary, LoadSharingAlgorithm.Undefined, pattern, "K/K");
+		rule.setPrimaryAddressId(1);
+
+		SccpAddress address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "222"), 8);
+
+		assertTrue(rule.matches(address));
+
+		// TODO: the exception is here
+		SccpAddress translatedAddress = rule.translate(address, primaryAddress);
+
+		assertEquals(translatedAddress.getAddressIndicator().getRoutingIndicator(), RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE);
+		assertEquals(translatedAddress.getAddressIndicator().getGlobalTitleIndicator(), GlobalTitleIndicator.GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_ONLY);
+		assertEquals(translatedAddress.getSignalingPointCode(), 123);
+		assertEquals(translatedAddress.getSubsystemNumber(), 8);
+		assertEquals(translatedAddress.getGlobalTitle().getDigits(), "222");
+	}
+
 	@Test(groups = { "router", "functional.encode" })
 	public void testSerialization() throws Exception {
 		SccpAddress pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "441425/*"), 0);

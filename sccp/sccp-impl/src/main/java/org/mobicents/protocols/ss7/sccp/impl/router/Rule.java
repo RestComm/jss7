@@ -44,6 +44,13 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  */
 public class Rule implements Serializable {
 
+	private static final String WILD_CARD_ALL = "*";
+	private static final String WILD_CARD_SINGLE = "?";
+	private static final String MASK_SEPARATOR = "/";
+	private static final String MASK_KEEP = "K";
+	private static final String MASK_REPLACE = "R";
+	private static final String MASK_IGNORE = "-";
+
 	private static final Logger logger = Logger.getLogger(Rule.class);
 	/**
 	 * 
@@ -178,7 +185,7 @@ public class Rule implements Serializable {
 		String primaryDigits = ruleAddress.getGlobalTitle().getDigits();
 
 		// step #1. translate digits
-		String translatedDigits = translateDigits(digits, maskPattern, patternDigits.split("/"), primaryDigits.split("/"));
+		String translatedDigits = translateDigits(digits, maskPattern, patternDigits.split(MASK_SEPARATOR), primaryDigits.split(MASK_SEPARATOR));
 		// step #2. translate global title
 		GlobalTitle gt = null;
 
@@ -230,7 +237,9 @@ public class Rule implements Serializable {
 
 		// Rule is for GTT only
 		if (address.getAddressIndicator().getRoutingIndicator() == RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN) {
-			logger.info("RoutingIndicator == ROUTING_BASED_ON_DPC_AND_SSN. Return");
+			if(logger.isInfoEnabled()){
+				logger.info("RoutingIndicator == ROUTING_BASED_ON_DPC_AND_SSN. Return");
+			}
 			return false;
 		}
 
@@ -242,19 +251,25 @@ public class Rule implements Serializable {
 			GT0001 gt = (GT0001) address.getGlobalTitle();
 
 			if (!(patternGT instanceof GT0001)) {
-				logger.info("patternGT not instanceof GT0001. Return False");
+				if(logger.isInfoEnabled()){
+					logger.info("patternGT not instanceof GT0001. Return False");
+				}
 				return false;
 			}
 
 			// nature of address must match
 			if (((GT0001) patternGT).getNoA() != gt.getNoA()) {
-				logger.info(String.format("Noa didn't match. Pattern Noa=%s Address Noad=%s Return  False", ((GT0001) patternGT).getNoA(), gt.getNoA()));
+				if(logger.isInfoEnabled()){
+					logger.info(String.format("Noa didn't match. Pattern Noa=%s Address Noad=%s Return  False", ((GT0001) patternGT).getNoA(), gt.getNoA()));
+				}
 				return false;
 			}
 
 			// digits must match
 			if (!matchPattern(gt.getDigits().toCharArray(), patternGT.getDigits().toCharArray())) {
-				logger.info(String.format("digits didn't match. Pattern digits=%s Address Digits=%s Return  False", patternGT.getDigits(), gt.getDigits()));
+				if(logger.isInfoEnabled()){
+					logger.info(String.format("digits didn't match. Pattern digits=%s Address Digits=%s Return  False", patternGT.getDigits(), gt.getDigits()));
+				}
 				return false;
 			}
 
@@ -264,26 +279,34 @@ public class Rule implements Serializable {
 			GT0011 gt1 = (GT0011) address.getGlobalTitle();
 
 			if (!(patternGT instanceof GT0011)) {
-				logger.info("patternGT not instanceof GT0011. Return False");
+				if(logger.isInfoEnabled()){
+					logger.info("patternGT not instanceof GT0011. Return False");
+				}
 				return false;
 			}
 
 			// translation type should match
 			if (((GT0011) patternGT).getTranslationType() != gt1.getTranslationType()) {
-				logger.info(String.format("TT didn't match. Pattern TT=%s Address TT=%s Return  False", ((GT0011) patternGT).getTranslationType(),
+				if(logger.isInfoEnabled()){
+					logger.info(String.format("TT didn't match. Pattern TT=%s Address TT=%s Return  False", ((GT0011) patternGT).getTranslationType(),
 						gt1.getTranslationType()));
+				}
 				return false;
 			}
 
 			// numbering plan should match
 			if (((GT0011) patternGT).getNp() != gt1.getNp()) {
-				logger.info(String.format("Np didn't match. Pattern Np=%s Address Np=%s Return  False", ((GT0011) patternGT).getNp(), gt1.getNp()));
+				if(logger.isInfoEnabled()){
+					logger.info(String.format("Np didn't match. Pattern Np=%s Address Np=%s Return  False", ((GT0011) patternGT).getNp(), gt1.getNp()));
+				}
 				return false;
 			}
 
 			// digits must match
 			if (!matchPattern(gt1.getDigits().toCharArray(), patternGT.getDigits().toCharArray())) {
-				logger.info(String.format("digits didn't match. Pattern digits=%s Address Digits=%s Return  False", patternGT.getDigits(), gt1.getDigits()));
+				if(logger.isInfoEnabled()){
+					logger.info(String.format("digits didn't match. Pattern digits=%s Address Digits=%s Return  False", patternGT.getDigits(), gt1.getDigits()));
+				}
 				return false;
 			}
 
@@ -293,34 +316,44 @@ public class Rule implements Serializable {
 			GT0100 gt2 = (GT0100) address.getGlobalTitle();
 
 			if (!(patternGT instanceof GT0100)) {
-				logger.info("patternGT not instanceof GT0100. Return False");
+				if(logger.isInfoEnabled()){
+					logger.info("patternGT not instanceof GT0100. Return False");
+				}
 				return false;
 			}
 
 			// translation type should match
 			if (((GT0100) patternGT).getTranslationType() != gt2.getTranslationType()) {
-				logger.info(String.format("TT didn't match. Pattern TT=%s Address TT=%s Return  False", ((GT0100) patternGT).getTranslationType(),
+				if(logger.isInfoEnabled()){
+					logger.info(String.format("TT didn't match. Pattern TT=%s Address TT=%s Return  False", ((GT0100) patternGT).getTranslationType(),
 						gt2.getTranslationType()));
+				}
 				return false;
 			}
 
 			// numbering plan should match
 			if (((GT0100) patternGT).getNumberingPlan() != gt2.getNumberingPlan()) {
-				logger.info(String.format("Np didn't match. Pattern Np=%s Address Np=%s Return  False", ((GT0100) patternGT).getNumberingPlan(),
+				if(logger.isInfoEnabled()){
+					logger.info(String.format("Np didn't match. Pattern Np=%s Address Np=%s Return  False", ((GT0100) patternGT).getNumberingPlan(),
 						gt2.getNumberingPlan()));
+				}
 				return false;
 			}
 
 			// nature of address must match
 			if (((GT0100) patternGT).getNatureOfAddress() != gt2.getNatureOfAddress()) {
-				logger.info(String.format("Noa didn't match. Pattern Noa=%s Address Noa=%s Return  False", ((GT0100) patternGT).getNatureOfAddress(),
+				if(logger.isInfoEnabled()){
+					logger.info(String.format("Noa didn't match. Pattern Noa=%s Address Noa=%s Return  False", ((GT0100) patternGT).getNatureOfAddress(),
 						gt2.getNatureOfAddress()));
+				}
 				return false;
 			}
 
 			// digits must match
 			if (!matchPattern(gt2.getDigits().toCharArray(), pattern.getGlobalTitle().getDigits().toCharArray())) {
-				logger.info(String.format("digits didn't match. Pattern digits=%s Address Digits=%s Return  False", patternGT.getDigits(), gt2.getDigits()));
+				if(logger.isInfoEnabled()){
+					logger.info(String.format("digits didn't match. Pattern digits=%s Address Digits=%s Return  False", patternGT.getDigits(), gt2.getDigits()));
+				}
 				return false;
 			}
 
@@ -330,20 +363,26 @@ public class Rule implements Serializable {
 			GT0010 gt3 = (GT0010) address.getGlobalTitle();
 
 			if (!(patternGT instanceof GT0010)) {
-				logger.info("patternGT not instanceof GT0100. Return False");
+				if(logger.isInfoEnabled()){
+					logger.info("patternGT not instanceof GT0100. Return False");
+				}
 				return false;
 			}
 
 			// translation type should match
 			if (((GT0010) patternGT).getTranslationType() != gt3.getTranslationType()) {
-				logger.info(String.format("TT didn't match. Pattern TT=%s Address TT=%s Return  False", ((GT0010) patternGT).getTranslationType(),
+				if(logger.isInfoEnabled()){
+					logger.info(String.format("TT didn't match. Pattern TT=%s Address TT=%s Return  False", ((GT0010) patternGT).getTranslationType(),
 						gt3.getTranslationType()));
+				}
 				return false;
 			}
 
 			// digits must match
 			if (!matchPattern(gt3.getDigits().toCharArray(), pattern.getGlobalTitle().getDigits().toCharArray())) {
-				logger.info(String.format("digits didn't match. Pattern digits=%s Address Digits=%s Return  False", patternGT.getDigits(), gt3.getDigits()));
+				if(logger.isInfoEnabled()){
+					logger.info(String.format("digits didn't match. Pattern digits=%s Address Digits=%s Return  False", patternGT.getDigits(), gt3.getDigits()));
+				}
 				return false;
 			}
 
@@ -359,8 +398,9 @@ public class Rule implements Serializable {
 		String[] digitComponents = new String[patternDigits.length];
 		int offset = 0;
 		for (int count = 0; count < patternDigits.length; count++) {
-			if (patternDigits[count].equals("*")) {
+			if (patternDigits[count].equals(WILD_CARD_ALL)) {
 				digitComponents[count] = digits.substring(offset, digits.length());
+				break;
 			} else {
 				digitComponents[count] = digits.substring(offset, offset + patternDigits[count].length());
 			}
@@ -368,11 +408,16 @@ public class Rule implements Serializable {
 		}
 
 		for (int count = 0; count < patternDigits.length; count++) {
-			if (masks[count].equals("K")) {
-				translatedDigits.append(digitComponents[count]);
-			} else if (masks[count].equals("R")) {
+			if (masks[count].equals(MASK_KEEP)) {
+				if (digitComponents[count] != null) {
+					// Check if digits is null? This is possible if user
+					// specified pattern like */5555 where all the digits are
+					// consumed
+					translatedDigits.append(digitComponents[count]);
+				}
+			} else if (masks[count].equals(MASK_REPLACE)) {
 				// If its not padding
-				if (!addressDigits[count].contains("-")) {
+				if (!addressDigits[count].contains(MASK_IGNORE)) {
 					translatedDigits.append(addressDigits[count]);
 				}
 			} else {
@@ -385,6 +430,12 @@ public class Rule implements Serializable {
 	private boolean matchPattern(char[] digits, char[] pattern) {
 		int j = 0;
 		for (int i = 0; i < pattern.length; i++) {
+
+			if (j >= digits.length) {
+				// Pattern has more digits to match than digits; return false
+				return false;
+			}
+
 			if (pattern[i] == '*') {
 				return true;
 			} else if (pattern[i] == '?') {
