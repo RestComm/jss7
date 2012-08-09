@@ -1,3 +1,25 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
 package org.mobicents.protocols.ss7.map.service.mobility.imei;
 
 import java.io.IOException;
@@ -28,8 +50,17 @@ public class CheckImeiResponseImpl extends MobilityMessageImpl implements CheckI
 	
 	private long mapProtocolVersion;
 	
+	public CheckImeiResponseImpl(EquipmentStatus equipmentStatus) {
+		this.equipmentStatus = equipmentStatus;
+	}
+	
 	public CheckImeiResponseImpl(long mapProtocolVersion) {
 		this.mapProtocolVersion = mapProtocolVersion;
+	}
+	
+	public CheckImeiResponseImpl(long mapProtocolVersion, EquipmentStatus equipmentStatus) {
+		this.mapProtocolVersion = mapProtocolVersion;
+		this.equipmentStatus = equipmentStatus;
 	}
 	
 	public CheckImeiResponseImpl(long mapProtocolVersion, UESBIIu bmuef, EquipmentStatus equipmentStatus) {
@@ -91,6 +122,7 @@ public class CheckImeiResponseImpl extends MobilityMessageImpl implements CheckI
 				
 				int tag = ais.readTag(); 
 				
+				// TODO: Implement as callhandling.SendRoutingInformationResponse, do not use "case 0:", "case 1:" because all parameters are optional
 				switch(num) {
 				case 0:
 					// equipmentStatus 
@@ -150,27 +182,23 @@ public class CheckImeiResponseImpl extends MobilityMessageImpl implements CheckI
 		} catch (AsnException e) {
 			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
-
 	}
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		/* Fazer as validacoes e lancar essas excecoes caso ocorram
-		 * if (this.hlrNumber == null)
-			throw new MAPException("hlrNumber parameter must not be null");*/
-		
 		try {
 			if (mapProtocolVersion >= 3) {
 				
 			} else {
+				if (this.equipmentStatus == null) {
+					throw new MAPException("equipmentStatus parameter must not be null at version 2");
+				}
+				
 				asnOs.writeIntegerData(this.equipmentStatus.getCode());
 			}
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} /*catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}*/
-
+		} 
 	}
 
 	@Override
@@ -200,9 +228,33 @@ public class CheckImeiResponseImpl extends MobilityMessageImpl implements CheckI
 	
 	@Override
 	public String toString() {
-		//TODO: Implements this
-		return super.toString();
+		StringBuilder sb = new StringBuilder();
+		sb.append("CheckImeiResponse [");
+
+		if (this.equipmentStatus != null) {
+			sb.append("equipmentStatus=");
+			sb.append(this.equipmentStatus.toString());
+			sb.append(", ");
+		}
+		
+		if (this.bmuef != null) {
+			sb.append("bmuef=");
+			sb.append(bmuef.toString());
+			sb.append(", ");
+		}
+		
+		if (this.extensionContainer != null) {
+			sb.append("extensionContainer=");
+			sb.append(extensionContainer.toString());
+			sb.append(", ");
+		}
+		
+		sb.append("mapProtocolVersion=");
+		sb.append(mapProtocolVersion);
+
+		sb.append("]");
+
+		return sb.toString();
 	}
 
 }
-

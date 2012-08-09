@@ -24,7 +24,6 @@ package org.mobicents.protocols.ss7.map.service.mobility.imei;
 
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -39,7 +38,6 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.RequestedEquipmentInfo;
 import org.mobicents.protocols.ss7.map.primitives.IMEIImpl;
-import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.MobilityMessageImpl;
@@ -50,8 +48,6 @@ import org.mobicents.protocols.ss7.map.service.mobility.MobilityMessageImpl;
  */
 public class CheckImeiRequestImpl extends MobilityMessageImpl implements CheckImeiRequest, MAPAsnPrimitive {
 
-	private static final Logger logger = Logger.getLogger(CheckImeiRequestImpl.class.getName());
-	
 	public static final String _PrimitiveName = "CheckImeiRequest";
 	
 	private IMEI imei = null;
@@ -248,8 +244,31 @@ public class CheckImeiRequestImpl extends MobilityMessageImpl implements CheckIm
 	
 	@Override
 	public String toString() {
-		//TODO: Implements this
-		return super.toString();
+		StringBuilder sb = new StringBuilder();
+		sb.append("CheckImeiRequest [");
+
+		sb.append("imei=");
+		sb.append(imei.toString());
+		sb.append(", ");
+		
+		if (this.requestedEquipmentInfo != null) {
+			sb.append("requestedEquipmentInfo=");
+			sb.append(requestedEquipmentInfo.toString());
+			sb.append(", ");
+		}
+		
+		if (this.extensionContainer != null) {
+			sb.append("extensionContainer=");
+			sb.append(extensionContainer.toString());
+			sb.append(", ");
+		}
+		
+		sb.append("mapProtocolVersion=");
+		sb.append(mapProtocolVersion);
+
+		sb.append("]");
+
+		return sb.toString();
 	}
 
 }

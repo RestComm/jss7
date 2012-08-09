@@ -22,26 +22,26 @@
 
 package org.mobicents.protocols.ss7.map.service.mobility.imei;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.ss7.map.primitives.IMEIImpl;
-
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.EquipmentStatus;
 import org.testng.annotations.Test;
-
-import static org.testng.Assert.*;
 
 /**
  * 
  * @author normandes
  *
  */
-public class CheckImeiRequestTest {
+public class CheckImeiResponseTest {
 
 	// Real Trace
 	private byte[] getEncodedDataV2() {
-		return new byte[] { 0x04, 0x08, 0x53, 0x08, 0x19, 0x10, (byte)0x86, 0x35, 0x55, (byte)0xf0 };
+		return new byte[] { 0x0a, 0x01, 0x00 };
 	}
 	
 	@Test(groups = { "functional.decode", "imei" })
@@ -50,16 +50,15 @@ public class CheckImeiRequestTest {
 		AsnInputStream asnIS = new AsnInputStream(rawData);
 		
 		int tag = asnIS.readTag();
-		CheckImeiRequestImpl checkImeiImpl = new CheckImeiRequestImpl(2);
+		CheckImeiResponseImpl checkImeiImpl = new CheckImeiResponseImpl(2);
 		checkImeiImpl.decodeAll(asnIS);
 		
-		assertEquals(checkImeiImpl.getIMEI().getIMEI(), "358091016853550");
+		assertEquals(checkImeiImpl.getEquipmentStatus(), EquipmentStatus.whiteListed);
 	}
 	
 	@Test(groups = { "functional.encode", "imei" })
 	public void testEncode() throws Exception {
-		IMEIImpl imei = new IMEIImpl("358091016853550");
-		CheckImeiRequestImpl checkImei = new CheckImeiRequestImpl(2, imei, null, null);
+		CheckImeiResponseImpl checkImei = new CheckImeiResponseImpl(2, EquipmentStatus.whiteListed);
 		
 		AsnOutputStream asnOS = new AsnOutputStream();
 		checkImei.encodeAll(asnOS);
@@ -67,7 +66,6 @@ public class CheckImeiRequestTest {
 		byte[] encodedData = asnOS.toByteArray();
 		byte[] rawData = getEncodedDataV2();
 		assertTrue(Arrays.equals(rawData, encodedData));
-		
 	}
 	
 }
