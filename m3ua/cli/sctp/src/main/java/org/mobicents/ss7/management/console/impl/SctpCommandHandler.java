@@ -1,11 +1,30 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package org.mobicents.ss7.management.console.impl;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.mobicents.ss7.management.console.CommandContext;
 import org.mobicents.ss7.management.console.CommandHandlerWithHelp;
-import org.mobicents.ss7.management.console.CommandLineCompleter;
+import org.mobicents.ss7.management.console.Tree;
+import org.mobicents.ss7.management.console.Tree.Node;
 
 /**
  * @author amit bhayani
@@ -13,66 +32,25 @@ import org.mobicents.ss7.management.console.CommandLineCompleter;
  */
 public class SctpCommandHandler extends CommandHandlerWithHelp {
 
-	private final List<CommandLineCompleter> completion;
+	static final Tree commandTree = new Tree("sctp");
+	static {
+		Node parent = commandTree.getTopNode();
+		Node server = parent.addChild("server");
+		server.addChild("create");
+		server.addChild("destroy");
+		server.addChild("start");
+		server.addChild("stop");
+		server.addChild("show");
+
+		Node association = parent.addChild("association");
+		association.addChild("create");
+		association.addChild("destroy");
+		association.addChild("show");
+
+	};
 
 	public SctpCommandHandler() {
-		this.completion = new ArrayList<CommandLineCompleter>();
-
-		CommandLineCompleter commandLineCompleter = new CommandLineCompleter() {
-			@Override
-			public int complete(CommandContext ctx, String buffer, int cursor, List<String> candidates) {
-
-				if (!ctx.isControllerConnected()) {
-					return 0;
-				}
-				// very simple completor
-				if (buffer.equals("") || buffer.equals("s") || buffer.equals("sc") || buffer.equals("sct")) {
-					candidates.add("sctp");
-				} else if (buffer.equals("sctp") || buffer.equals("sctp ")) {
-					candidates.add("server");
-					candidates.add("association");
-				} else if (buffer.equals("sctp s") || buffer.equals("sctp se") || buffer.equals("sctp ser") || buffer.equals("sctp serv")
-						|| buffer.equals("sctp serve")) {
-					candidates.add("sctp server");
-				} else if (buffer.equals("sctp server") || buffer.equals("sctp server ")) {
-					candidates.add("create");
-					candidates.add("destroy");
-					candidates.add("start");
-					candidates.add("stop");
-					candidates.add("show");
-				}
-
-				return 0;
-			}
-		};
-
-		this.completion.add(commandLineCompleter);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.ss7.management.console.CommandHandler#getCompletionList()
-	 */
-	@Override
-	public List<CommandLineCompleter> getCommandLineCompleterList() {
-		return this.completion;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.ss7.management.console.CommandHandler#handles(java.lang
-	 * .String)
-	 */
-	@Override
-	public boolean handles(String command) {
-		if (command.startsWith("sctp")) {
-			return true;
-		}
-		return false;
+		super(commandTree, CONNECT_MANDATORY_FLAG);
 	}
 
 	/*
@@ -85,7 +63,12 @@ public class SctpCommandHandler extends CommandHandlerWithHelp {
 	@Override
 	public void handle(CommandContext ctx, String commandLine) {
 		// TODO Validate command
-		String[] commands = commandLine.split(" ");
+
+		if (commandLine.contains("--help")) {
+			this.printHelp(commandLine, ctx);
+			return;
+		}
+
 		ctx.sendMessage(commandLine);
 	}
 

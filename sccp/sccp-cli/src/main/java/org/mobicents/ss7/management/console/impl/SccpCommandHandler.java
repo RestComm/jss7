@@ -1,11 +1,30 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package org.mobicents.ss7.management.console.impl;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.mobicents.ss7.management.console.CommandContext;
 import org.mobicents.ss7.management.console.CommandHandlerWithHelp;
-import org.mobicents.ss7.management.console.CommandLineCompleter;
+import org.mobicents.ss7.management.console.Tree;
+import org.mobicents.ss7.management.console.Tree.Node;
 
 /**
  * @author amit bhayani
@@ -13,109 +32,69 @@ import org.mobicents.ss7.management.console.CommandLineCompleter;
  */
 public class SccpCommandHandler extends CommandHandlerWithHelp {
 
-	private final List<CommandLineCompleter> completion;
+	static final Tree commandTree = new Tree("sccp");
+	static {
+		Node parent = commandTree.getTopNode();
+		Node sap = parent.addChild("sap");
+		sap.addChild("create");
+		sap.addChild("modify");
+		sap.addChild("delete");
+		sap.addChild("show");
+		
+		Node dest = parent.addChild("dest");
+		dest.addChild("create");
+		dest.addChild("modify");
+		dest.addChild("delete");
+		dest.addChild("show");
 
+		Node rule = parent.addChild("rule");
+		rule.addChild("create");
+		rule.addChild("modify");
+		rule.addChild("delete");
+		rule.addChild("show");
+		
+		Node primaryAddress = parent.addChild("primary_add");
+		primaryAddress.addChild("create");
+		primaryAddress.addChild("modify");
+		primaryAddress.addChild("delete");
+		primaryAddress.addChild("show");
+		
+		Node secondaryAddress = parent.addChild("backup_add");
+		secondaryAddress.addChild("create");
+		secondaryAddress.addChild("modify");
+		secondaryAddress.addChild("delete");
+		secondaryAddress.addChild("show");
+		
+		Node rsp = parent.addChild("rsp");
+		rsp.addChild("create");
+		rsp.addChild("modify");
+		rsp.addChild("delete");
+		rsp.addChild("show");
+		
+		Node rss = parent.addChild("rss");
+		rss.addChild("create");
+		rss.addChild("modify");
+		rss.addChild("delete");
+		rss.addChild("show");
+		
+		Node lmr = parent.addChild("lmr");
+		lmr.addChild("create");
+		lmr.addChild("modify");
+		lmr.addChild("delete");
+		lmr.addChild("show");
+		
+		Node csp = parent.addChild("csp");
+		csp.addChild("create");
+		csp.addChild("modify");
+		csp.addChild("delete");
+		csp.addChild("show");
+		
+		Node set = parent.addChild("set");
+
+	};
+	
 	public SccpCommandHandler() {
-		this.completion = new ArrayList<CommandLineCompleter>();
-
-		CommandLineCompleter commandLineCompleter = new CommandLineCompleter() {
-			@Override
-			public int complete(CommandContext ctx, String buffer, int cursor, List<String> candidates) {
-
-				if (!ctx.isControllerConnected()) {
-					return 0;
-				}
-				// very simple completor
-				if (buffer.equals("") || buffer.equals("s") || buffer.equals("sc") || buffer.equals("scc")) {
-					candidates.add("sccp");
-				} else if (buffer.equals("sccp") || buffer.equals("sccp ")) {
-					candidates.add("sap");
-					candidates.add("dest");
-					candidates.add("rsp");
-					candidates.add("rss");
-					candidates.add("rule");
-					candidates.add("primary_add");
-					candidates.add("backup_add");
-					candidates.add("lmr");
-					candidates.add("csp");
-				} else if (buffer.equals("sccp sap") || buffer.equals("sccp sap ")) {
-					candidates.add("create");
-					candidates.add("delete");
-					candidates.add("modify");
-					candidates.add("show");
-				} else if (buffer.equals("sccp dest") || buffer.equals("sccp dest ")) {
-					candidates.add("create");
-					candidates.add("delete");
-					candidates.add("modify");
-					candidates.add("show");
-				} else if (buffer.equals("sccp rsp") || buffer.equals("sccp rsp ")) {
-					candidates.add("create");
-					candidates.add("delete");
-					candidates.add("modify");
-					candidates.add("show");
-				} else if (buffer.equals("sccp rss") || buffer.equals("sccp rss ")) {
-					candidates.add("create");
-					candidates.add("delete");
-					candidates.add("modify");
-					candidates.add("show");
-				} else if (buffer.equals("m3ua rule") || buffer.equals("m3ua rule ")) {
-					candidates.add("create");
-					candidates.add("delete");
-					candidates.add("modify");
-					candidates.add("show");
-				} else if (buffer.equals("m3ua primary_add") || buffer.equals("m3ua primary_add ")) {
-					candidates.add("create");
-					candidates.add("delete");
-					candidates.add("modify");
-					candidates.add("show");
-				} else if (buffer.equals("m3ua backup_add") || buffer.equals("m3ua backup_add ")) {
-					candidates.add("create");
-					candidates.add("delete");
-					candidates.add("modify");
-					candidates.add("show");
-				} else if (buffer.equals("m3ua lmr") || buffer.equals("m3ua lmr ")) {
-					candidates.add("create");
-					candidates.add("delete");
-					candidates.add("modify");
-					candidates.add("show");
-				} else if (buffer.equals("m3ua csp") || buffer.equals("m3ua csp ")) {
-					candidates.add("create");
-					candidates.add("delete");
-					candidates.add("modify");
-					candidates.add("show");
-				}
-
-				return 0;
-			}
-		};
-
-		this.completion.add(commandLineCompleter);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.ss7.management.console.CommandHandler#getCompletionList()
-	 */
-	@Override
-	public List<CommandLineCompleter> getCommandLineCompleterList() {
-		return this.completion;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.ss7.management.console.CommandHandler#handles(java.lang
-	 * .String)
-	 */
-	@Override
-	public boolean handles(String command) {
-		if (command.startsWith("sccp")) {
-			return true;
-		}
-		return false;
+		super(commandTree, CONNECT_MANDATORY_FLAG);
 	}
 
 	/*
@@ -128,7 +107,10 @@ public class SccpCommandHandler extends CommandHandlerWithHelp {
 	@Override
 	public void handle(CommandContext ctx, String commandLine) {
 		// TODO Validate command
-		String[] commands = commandLine.split(" ");
+		if (commandLine.contains("--help")) {
+			this.printHelp(commandLine, ctx);
+			return;
+		}
 		ctx.sendMessage(commandLine);
 	}
 

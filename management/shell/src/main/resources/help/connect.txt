@@ -5,7 +5,8 @@ SYNOPSIS
 	connect <host-ip> <host-port> 
 
 DESCRIPTION
-	This command is used to connect the Shell to a managed instance. The parameters host-ip and host-port are optional. If you do not specify them, the shell will attempt connecting to 127.0.0.1:3435.
+	This command is used to connect the Shell to a managed instance. The parameters host-ip and 
+	host-port are optional. If you do not specify them, the shell will attempt connecting to 127.0.0.1:3435.
 
 PARAMETERS
 

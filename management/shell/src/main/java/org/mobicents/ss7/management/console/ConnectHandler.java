@@ -21,69 +21,19 @@
  */
 package org.mobicents.ss7.management.console;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author amit bhayani
  * 
  */
 public class ConnectHandler extends CommandHandlerWithHelp {
 
-	private final List<CommandLineCompleter> completion;
+	static final Tree commandTree = new Tree("connect");
 
 	/**
 	 * 
 	 */
 	public ConnectHandler() {
-
-		this.completion = new ArrayList<CommandLineCompleter>();
-
-		CommandLineCompleter commandLineCompleter = new CommandLineCompleter() {
-
-			@Override
-			public int complete(CommandContext ctx, String buffer, int cursor, List<String> candidates) {
-
-				if (ctx.isControllerConnected()) {
-					return 0;
-				}
-
-				if (buffer.equals("") || buffer.equals("c") || buffer.equals("co") || buffer.equals("con") || buffer.equals("conn") || buffer.equals("conne")
-						|| buffer.equals("connec")) {
-					candidates.add("connect");
-				}
-				return 0;
-			}
-
-		};
-
-		this.completion.add(commandLineCompleter);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.ss7.management.console.CommandHandler#handles(java.lang
-	 * .String)
-	 */
-	@Override
-	public boolean handles(String command) {
-		if (command.startsWith("connect")) {
-			return true;
-		}
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.ss7.management.console.CommandHandler#
-	 * getCommandLineCompleterList()
-	 */
-	@Override
-	public List<CommandLineCompleter> getCommandLineCompleterList() {
-		return this.completion;
+		super(commandTree, DISCONNECT_MANDATORY_FLAG);
 	}
 
 	/*
@@ -112,10 +62,21 @@ public class ConnectHandler extends CommandHandlerWithHelp {
 	@Override
 	public void handle(CommandContext ctx, String commandLine) {
 		// TODO Validate command
+
+		if (commandLine.contains("--help")) {
+			this.printHelp(commandLine, ctx);
+			return;
+		}
+
 		String[] commands = commandLine.split(" ");
 
 		if (commands.length == 1) {
 			ctx.connectController(null, -1);
+		} else if (commands.length == 2) {
+			if (commandLine.contains("--help")) {
+				this.printHelp("help/connect.txt", ctx);
+				return;
+			}
 		} else if (commands.length == 3) {
 			String host = commands[1];
 			try {

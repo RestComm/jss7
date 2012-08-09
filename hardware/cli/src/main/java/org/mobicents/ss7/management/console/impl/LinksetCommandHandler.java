@@ -1,11 +1,30 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package org.mobicents.ss7.management.console.impl;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.mobicents.ss7.management.console.CommandContext;
 import org.mobicents.ss7.management.console.CommandHandlerWithHelp;
-import org.mobicents.ss7.management.console.CommandLineCompleter;
+import org.mobicents.ss7.management.console.Tree;
+import org.mobicents.ss7.management.console.Tree.Node;
 
 /**
  * @author amit bhayani
@@ -13,61 +32,25 @@ import org.mobicents.ss7.management.console.CommandLineCompleter;
  */
 public class LinksetCommandHandler extends CommandHandlerWithHelp {
 
-	private final List<CommandLineCompleter> completion;
+	static final Tree commandTree = new Tree("linkset");
+	static {
+		Node parent = commandTree.getTopNode();
+		Node create = parent.addChild("create");
+		Node delete = parent.addChild("delete");
+		Node activate = parent.addChild("activate");
+		Node deactivate = parent.addChild("deactivate");
+		Node show = parent.addChild("show");
+
+		Node link = parent.addChild("link");
+		link.addChild("create");
+		link.addChild("delete");
+		link.addChild("activate");
+		link.addChild("deactivate");
+
+	};
 
 	public LinksetCommandHandler() {
-		this.completion = new ArrayList<CommandLineCompleter>();
-
-		CommandLineCompleter commandLineCompleter = new CommandLineCompleter() {
-			@Override
-			public int complete(CommandContext ctx, String buffer, int cursor, List<String> candidates) {
-
-				if (!ctx.isControllerConnected()) {
-					return 0;
-				}
-				// very simple completor
-				if (buffer.equals("") || buffer.equals("l") || buffer.equals("li") || buffer.equals("lin") || buffer.equals("link") || buffer.equals("links")
-						|| buffer.equals("linkse")) {
-					candidates.add("linkset");
-				} else if (buffer.equals("linkset") || buffer.equals("linkset ")) {
-					candidates.add("create");
-					candidates.add("delete");
-					candidates.add("activate");
-					candidates.add("deactivate");
-					candidates.add("link");
-				}
-
-				return 0;
-			}
-		};
-
-		this.completion.add(commandLineCompleter);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.ss7.management.console.CommandHandler#getCompletionList()
-	 */
-	@Override
-	public List<CommandLineCompleter> getCommandLineCompleterList() {
-		return this.completion;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.ss7.management.console.CommandHandler#handles(java.lang
-	 * .String)
-	 */
-	@Override
-	public boolean handles(String command) {
-		if (command.startsWith("linkset")) {
-			return true;
-		}
-		return false;
+		super(commandTree, CONNECT_MANDATORY_FLAG);
 	}
 
 	/*
@@ -80,7 +63,12 @@ public class LinksetCommandHandler extends CommandHandlerWithHelp {
 	@Override
 	public void handle(CommandContext ctx, String commandLine) {
 		// TODO Validate command
-		String[] commands = commandLine.split(" ");
+		
+		if (commandLine.contains("--help")) {
+			this.printHelp(commandLine, ctx);
+			return;
+		}
+		
 		ctx.sendMessage(commandLine);
 	}
 

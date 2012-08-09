@@ -21,69 +21,19 @@
  */
 package org.mobicents.ss7.management.console;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author abhayani
  * 
  */
 public class DisconnectHandler extends CommandHandlerWithHelp {
 
-	private final List<CommandLineCompleter> completion;
+	static final Tree commandTree = new Tree("disconnect");
 
 	/**
 	 * 
 	 */
 	public DisconnectHandler() {
-
-		this.completion = new ArrayList<CommandLineCompleter>();
-
-		CommandLineCompleter commandLineCompleter = new CommandLineCompleter() {
-
-			@Override
-			public int complete(CommandContext ctx, String buffer, int cursor, List<String> candidates) {
-
-				if (!ctx.isControllerConnected()) {
-					return 0;
-				}
-
-				if (buffer.equals("") || buffer.equals("d") || buffer.equals("di") || buffer.equals("dis") || buffer.equals("disc") || buffer.equals("disco")
-						|| buffer.equals("discon") || buffer.equals("disconn") || buffer.equals("disconne") || buffer.equals("disconnec")) {
-					candidates.add("disconnect");
-				}
-				return 0;
-			}
-
-		};
-
-		this.completion.add(commandLineCompleter);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.ss7.management.console.CommandHandler#handles(java.lang
-	 * .String)
-	 */
-	@Override
-	public boolean handles(String command) {
-		if (command.startsWith("disconnect")) {
-			return true;
-		}
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.ss7.management.console.CommandHandler#
-	 * getCommandLineCompleterList()
-	 */
-	@Override
-	public List<CommandLineCompleter> getCommandLineCompleterList() {
-		return this.completion;
+		super(commandTree, CONNECT_MANDATORY_FLAG);
 	}
 
 	/*
@@ -111,11 +61,21 @@ public class DisconnectHandler extends CommandHandlerWithHelp {
 	 */
 	@Override
 	public void handle(CommandContext ctx, String commandLine) {
+		if (commandLine.contains("--help")) {
+			this.printHelp(commandLine, ctx);
+			return;
+		}
+
 		String[] commands = commandLine.split(" ");
 
 		if (commands.length == 1) {
 			ctx.sendMessage("disconnect");
 			ctx.disconnectController();
+		} else if (commands.length == 2) {
+			if (commandLine.contains("--help")) {
+				this.printHelp("help/disconnect.txt", ctx);
+				return;
+			}
 		} else {
 			ctx.printLine("Invalid command.");
 		}

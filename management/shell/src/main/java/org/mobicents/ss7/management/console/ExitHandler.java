@@ -21,8 +21,6 @@
  */
 package org.mobicents.ss7.management.console;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author amit bhayani
@@ -30,57 +28,13 @@ import java.util.List;
  */
 public class ExitHandler extends CommandHandlerWithHelp {
 
-	private final List<CommandLineCompleter> completion;
+	static final Tree commandTree = new Tree("exit");
 
 	/**
 	 * 
 	 */
 	public ExitHandler() {
-		this.completion = new ArrayList<CommandLineCompleter>();
-
-		CommandLineCompleter commandLineCompleter = new CommandLineCompleter() {
-
-			@Override
-			public int complete(CommandContext ctx, String buffer, int cursor, List<String> candidates) {
-				if (ctx.isControllerConnected()) {
-					return 0;
-				}
-
-				if (buffer.equals("") || buffer.equals("e") || buffer.equals("ex") || buffer.equals("exi")) {
-					candidates.add("exit");
-				}
-				return 0;
-			}
-
-		};
-
-		this.completion.add(commandLineCompleter);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.ss7.management.console.CommandHandler#handles(java.lang
-	 * .String)
-	 */
-	@Override
-	public boolean handles(String command) {
-		if (command.startsWith("exit")) {
-			return true;
-		}
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.ss7.management.console.CommandHandler#
-	 * getCommandLineCompleterList()
-	 */
-	@Override
-	public List<CommandLineCompleter> getCommandLineCompleterList() {
-		return this.completion;
+		super(commandTree, DISCONNECT_MANDATORY_FLAG);
 	}
 
 	/*

@@ -21,8 +21,9 @@
  */
 package org.mobicents.ss7.management.console;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import org.mobicents.ss7.management.console.Tree.Node;
 
 /**
  * @author amit bhayani
@@ -30,59 +31,20 @@ import java.util.List;
  */
 public class HistoryHandler extends CommandHandlerWithHelp {
 
-	private final List<CommandLineCompleter> completion;
+	static final Tree commandTree = new Tree("history");
+	static {
+		Node parent = commandTree.getTopNode();
+		parent.addChild("enable");
+		parent.addChild("disable");
+		parent.addChild("clear");
+	};
 
 	/**
 	 * 
 	 */
 	public HistoryHandler() {
-		this.completion = new ArrayList<CommandLineCompleter>();
+		super(commandTree, DOESNT_CARE_CONNECT_DISCONNECT_FLAG);
 
-		CommandLineCompleter commandLineCompleter = new CommandLineCompleter() {
-
-			@Override
-			public int complete(CommandContext ctx, String buffer, int cursor, List<String> candidates) {
-				if (buffer.equals("") || buffer.equals("h") || buffer.equals("hi") || buffer.equals("his") || buffer.equals("hist") || buffer.equals("histo")
-						|| buffer.equals("histor")) {
-					candidates.add("history");
-				} else if (buffer.equals("history") || buffer.equals("history ")) {
-					candidates.add("clear");
-					candidates.add("enable");
-					candidates.add("disable");
-					candidates.add("--help");
-				}
-				return 0;
-			}
-
-		};
-
-		this.completion.add(commandLineCompleter);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.ss7.management.console.CommandHandler#handles(java.lang
-	 * .String)
-	 */
-	@Override
-	public boolean handles(String command) {
-		if (command.startsWith("history")) {
-			return true;
-		}
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.ss7.management.console.CommandHandler#
-	 * getCommandLineCompleterList()
-	 */
-	@Override
-	public List<CommandLineCompleter> getCommandLineCompleterList() {
-		return this.completion;
 	}
 
 	/*
@@ -106,16 +68,17 @@ public class HistoryHandler extends CommandHandlerWithHelp {
 	 */
 	@Override
 	public void handle(CommandContext ctx, String commandLine) {
+
+		if (commandLine.contains("--help")) {
+			this.printHelp(commandLine, ctx);
+			return;
+		}
+
 		String[] commands = commandLine.split(" ");
 
 		if (commands.length == 1) {
 			this.printHistory(ctx);
 		} else if (commands.length == 2) {
-			if (commandLine.contains("--help")) {
-				this.printHelp("help/history.txt", ctx);
-				return;
-			}
-
 			String argument = commands[1];
 			if ("clear".equals(argument)) {
 				ctx.getHistory().clear();
@@ -126,6 +89,8 @@ public class HistoryHandler extends CommandHandlerWithHelp {
 			} else {
 				ctx.printLine("Invalid command.");
 			}
+		} else {
+			ctx.printLine("Invalid command.");
 		}
 	}
 

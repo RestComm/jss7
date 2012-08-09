@@ -1,3 +1,24 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package org.mobicents.ss7.management.console.impl;
 
 import java.util.ArrayList;
@@ -6,6 +27,8 @@ import java.util.List;
 import org.mobicents.ss7.management.console.CommandContext;
 import org.mobicents.ss7.management.console.CommandHandlerWithHelp;
 import org.mobicents.ss7.management.console.CommandLineCompleter;
+import org.mobicents.ss7.management.console.Tree;
+import org.mobicents.ss7.management.console.Tree.Node;
 
 /**
  * @author amit bhayani
@@ -13,74 +36,32 @@ import org.mobicents.ss7.management.console.CommandLineCompleter;
  */
 public class M3UACommandHandler extends CommandHandlerWithHelp {
 
-	private final List<CommandLineCompleter> completion;
+	static final Tree commandTree = new Tree("m3ua");
+	static {
+		Node parent = commandTree.getTopNode();
+		Node as = parent.addChild("as");
+		as.addChild("create");
+		as.addChild("destroy");
+		as.addChild("add");
+		as.addChild("remove");
+		as.addChild("show");
+
+		Node asp = parent.addChild("asp");
+		asp.addChild("create");
+		asp.addChild("destroy");
+		asp.addChild("start");
+		asp.addChild("stop");
+		asp.addChild("show");
+
+		Node route = parent.addChild("route");
+		route.addChild("add");
+		route.addChild("remove");
+		route.addChild("show");
+
+	};
 
 	public M3UACommandHandler() {
-		this.completion = new ArrayList<CommandLineCompleter>();
-
-		CommandLineCompleter commandLineCompleter = new CommandLineCompleter() {
-			@Override
-			public int complete(CommandContext ctx, String buffer, int cursor, List<String> candidates) {
-
-				if (!ctx.isControllerConnected()) {
-					return 0;
-				}
-				// very simple completor
-				if (buffer.equals("") || buffer.equals("m") || buffer.equals("m3") || buffer.equals("m3u")) {
-					candidates.add("m3ua");
-				} else if (buffer.equals("m3ua") || buffer.equals("m3ua ")) {
-					candidates.add("as");
-					candidates.add("asp");
-					candidates.add("route");
-				} else if (buffer.equals("m3ua as") || buffer.equals("m3ua as ")) {
-					candidates.add("create");
-					candidates.add("destroy");
-					candidates.add("show");
-					candidates.add("add");
-					candidates.add("remove");
-				} else if (buffer.equals("m3ua asp") || buffer.equals("m3ua asp ")) {
-					candidates.add("create");
-					candidates.add("destroy");
-					candidates.add("show");
-					candidates.add("start");
-					candidates.add("stop");
-				} else if (buffer.equals("m3ua route") || buffer.equals("m3ua route ")) {
-					candidates.add("add");
-					candidates.add("remove");
-					candidates.add("show");
-				}
-
-				return 0;
-			}
-		};
-
-		this.completion.add(commandLineCompleter);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.ss7.management.console.CommandHandler#getCompletionList()
-	 */
-	@Override
-	public List<CommandLineCompleter> getCommandLineCompleterList() {
-		return this.completion;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.ss7.management.console.CommandHandler#handles(java.lang
-	 * .String)
-	 */
-	@Override
-	public boolean handles(String command) {
-		if (command.startsWith("m3ua")) {
-			return true;
-		}
-		return false;
+		super(commandTree, CONNECT_MANDATORY_FLAG);
 	}
 
 	/*
@@ -93,7 +74,12 @@ public class M3UACommandHandler extends CommandHandlerWithHelp {
 	@Override
 	public void handle(CommandContext ctx, String commandLine) {
 		// TODO Validate command
-		String[] commands = commandLine.split(" ");
+
+		if (commandLine.contains("--help")) {
+			this.printHelp(commandLine, ctx);
+			return;
+		}
+
 		ctx.sendMessage(commandLine);
 	}
 

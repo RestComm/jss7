@@ -34,6 +34,10 @@
 				<directory>src/main/resources/archive-files</directory>
 				<targetPath>META-INF/services</targetPath>
 			</resource>
+			<resource>
+				<directory>src/main/resources/help</directory>
+				<targetPath>help</targetPath>
+			</resource>
 		</resources>
 	</build>
 	<profiles>
@@ -76,5 +80,5 @@
 				</plugins>
 			</build>
 		</profile>
-	</profiles>	
+	</profiles>
 </project>
