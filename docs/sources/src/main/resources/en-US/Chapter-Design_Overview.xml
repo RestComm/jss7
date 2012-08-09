@@ -130,7 +130,7 @@
 			<varlistentry>
 				<term>Expose protocol access points:</term>
 				<listitem>
-					<para>Access points allow users to access lower layer protocols like <literal>MAP</literal> and interact with the <literal>SS7</literal> network through such protocols.</para>
+					<para>Access points allow users to access lower layer protocols like <literal>MAP</literal> and interact with the SS7 network through such protocols.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>

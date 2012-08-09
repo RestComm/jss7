@@ -58,16 +58,16 @@
                 </listitem>
 				<listitem>
 					<para>
-						<literal>ss7</literal> 
+						<filename>ss7</filename> 
 						: ss7 contains the core protocol libraries to be used by end application as well as 
                         service that is deployed in JBoss AS. The sub-modules included in ss7 are 
 					</para>
 					<itemizedlist>
 						<listitem>
-							<para><literal>docs</literal> : User guide for &THIS.PLATFORM; &THIS.APPLICATION; </para>
+							<para><filename>docs</filename> : User guide for &THIS.PLATFORM; &THIS.APPLICATION; </para>
 						</listitem>
 						<listitem>
-							<para><literal>mobicents-sgw</literal> : Standalone Signaling Gateway as explained in section 
+							<para><filename>mobicents-sgw</filename> : Standalone Signaling Gateway as explained in section 
 							<xref linkend="mobicents_signaling_gateway" /> </para>
 							<para>mobicents-sgw binary has following layout:</para>
 							<mediaobject id="binary_sgw">
@@ -78,7 +78,7 @@
 														
 						</listitem>							
 						<listitem>
-							<para><literal>mobicents-ss7-service</literal> : SS7 service is the core engine as explained in section 
+							<para><filename>mobicents-ss7-service</filename> : SS7 service is the core engine as explained in section 
 							<xref linkend="design_overview_ss7_service" /> </para>
 							
 							<para>mobicents-ss7-service binary has following layout:</para>
@@ -89,7 +89,7 @@
 							</mediaobject>							
 						</listitem>	
 						<listitem>
-							<para><literal>mobicents-ss7-simulator</literal> : SS7 Simulator is an application for testing SS7 stack and displaying its functionality. 
+							<para><filename>mobicents-ss7-simulator</filename> : SS7 Simulator is an application for testing SS7 stack and displaying its functionality. 
 							It is also a good example of how to use this stack.</para>
 							
 							<para>mobicents-ss7-simulator binary has following layout:</para>
@@ -100,17 +100,17 @@
 							</mediaobject>							
 						</listitem>									
 						<listitem>
-							<para><literal>native</literal> : native libraries component to interact with SS7 Card installed on server, runtime component. 
+							<para><filename>native</filename> : native libraries component to interact with SS7 Card installed on server, runtime component. 
 							As of now native libraries are compiled only for linux OS. However if you plan to use <literal>M3UA</literal> there is 
 							no dependency on OS as everything is 100% java.</para>
 						</listitem>	
 						<listitem>
-							<para><literal>protocols</literal> : The &THIS.PLATFORM; &THIS.APPLICATION; User Protocols libraries. Your application would directly 
+							<para><filename>protocols</filename> : The &THIS.PLATFORM; &THIS.APPLICATION; User Protocols libraries. Your application would directly 
 							call the API's exposed by these libraries. Depending on application you may be either interested in <literal>TCAP</literal>, 
 							<literal>MAP</literal> or both or <literal>ISUP</literal> libraries</para>
 						</listitem>	
 						<listitem>
-							<para><literal>shell</literal> : the Command Line Interface (CLI) module to manage the &THIS.PLATFORM; &THIS.APPLICATION;.
+							<para><filename>shell</filename> : the Command Line Interface (CLI) module to manage the &THIS.PLATFORM; &THIS.APPLICATION;.
 							Refer <xref linkend="shell"/> to understand how to use shell</para>
 						</listitem>	
 					</itemizedlist>
@@ -189,12 +189,12 @@
 ]]>
 				</screen>	
 				
-				<para>If you have started &THIS.APPLICATION.DIRNAME;-&THIS.VERSION; for the first time, <literal>SS7</literal> is not configured. 
+				<para>If you have started &THIS.APPLICATION.DIRNAME;-&THIS.VERSION; for the first time, SS7 is not configured. 
 				You need to use Shell Client to connect to &THIS.APPLICATION.DIRNAME;-&THIS.VERSION; as defined in 
 				<xref linkend="shell" /> . With <literal>CLI</literal> you can configure how service interacts with SS7 network, that is you configure either installed SS7 card and its native library
 				, or <literal>M3UA</literal> layer.</para>
 				
-				<para>Once the configured, the state and configuration of <literal>SS7</literal> is persisted which stands server re-start.</para> 
+				<para>Once the configured, the state and configuration of SS7 is persisted which stands server re-start.</para> 
 							
 			</section>		
 			<section
@@ -579,7 +579,7 @@ Halting VM]]></screen>
                 <section id="configuring_SS7Service">
                         <title>Configuring SS7Service</title>
                         <para> 
-                                <literal>SS7Service</literal> acts as core engine binding all the components together. 
+                                SS7Service acts as core engine binding all the components together. 
                         </para>
                         <programlisting language="XML" role="XML"><![CDATA[     	<!-- ==================================================================== -->
 	<!-- Mobicents SS7 Service -->
