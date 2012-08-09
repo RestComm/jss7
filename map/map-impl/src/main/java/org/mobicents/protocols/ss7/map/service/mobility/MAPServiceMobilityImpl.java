@@ -46,6 +46,8 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobilityLi
 import org.mobicents.protocols.ss7.map.dialog.ServingCheckDataImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.SendAuthenticationInfoRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.SendAuthenticationInfoResponseImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.imei.CheckImeiRequestImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.imei.CheckImeiResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateLocationRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateLocationResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.AnyTimeInterrogationRequestImpl;
@@ -183,7 +185,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 		case MAPOperationCode.sendParameters:
 			return MAPApplicationContext.getInstance(MAPApplicationContextName.infoRetrievalContext, MAPApplicationContextVersion.version1);
 		
-		// -- International mobile equipment identities management services
+		// -- IMEI services
 		case MAPOperationCode.checkIMEI:
 			return MAPApplicationContext.getInstance(MAPApplicationContextName.equipmentMngtContext, MAPApplicationContextVersion.version1);
 		}
@@ -245,6 +247,15 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 			}
 			break;
 
+		// -- IMEI services
+		case MAPOperationCode.checkIMEI:
+			if (acn == MAPApplicationContextName.equipmentMngtContext) {
+				if (compType == ComponentType.Invoke)
+					this.processCheckImeiRequest(parameter, mapDialogMobilityImpl, invokeId);
+				else
+					this.processCheckImeiResponse(parameter, mapDialogMobilityImpl, invokeId);
+			}
+			break;
 		default:
 			new MAPParsingComponentException("", MAPParsingComponentExceptionReason.UnrecognizedOperation);
 		}
@@ -460,7 +471,67 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 				loger.error("Error processing ProcessUnstructuredSSRequestIndication: " + e.getMessage(), e);
 			}
 		}
+		
+	}
+	
+	// - IMEI services
+	private void processCheckImeiRequest(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId) 
+			throws MAPParsingComponentException {
+		
+		/*if (parameter == null)
+			throw new MAPParsingComponentException("Error while decoding CheckImeiRequest: Parameter is mandatory but not found",
+					MAPParsingComponentExceptionReason.MistypedParameter);
 
+		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+			throw new MAPParsingComponentException(
+					"Error while decoding AnyTimeInterrogationRequestIndication: Bad tag or tagClass or parameter is primitive, received tag="
+							+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);*/
+
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+
+		long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
+		CheckImeiRequestImpl ind = new CheckImeiRequestImpl(version);
+		ind.decodeData(ais, buf.length);
+		ind.setInvokeId(invokeId);
+		ind.setMAPDialog(mapDialogImpl);
+
+		for (MAPServiceListener serLis : this.serviceListeners) {
+			try {
+				((MAPServiceMobilityListener) serLis).onCheckImeiRequest(ind);
+			} catch (Exception e) {
+				loger.error("Error processing ProcessUnstructuredSSRequestIndication: " + e.getMessage(), e);
+			}
+		}
+	}
+	
+	private void processCheckImeiResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId) 
+			throws MAPParsingComponentException {
+		/*if (parameter == null)
+			throw new MAPParsingComponentException("Error while decoding AnyTimeInterrogationResponseIndication: Parameter is mandatory but not found",
+					MAPParsingComponentExceptionReason.MistypedParameter);
+
+		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+			throw new MAPParsingComponentException(
+					"Error while decoding AnyTimeInterrogationResponseIndication: Bad tag or tagClass or parameter is primitive, received tag="
+							+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);*/
+
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+
+		long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
+		CheckImeiResponseImpl ind = new CheckImeiResponseImpl(version);
+		ind.decodeData(ais, buf.length);
+		ind.setInvokeId(invokeId);
+		ind.setMAPDialog(mapDialogImpl);
+
+		for (MAPServiceListener serLis : this.serviceListeners) {
+			try {
+				((MAPServiceMobilityListener) serLis).onCheckImeiResponse(ind);
+			} catch (Exception e) {
+				loger.error("Error processing ProcessUnstructuredSSRequestIndication: " + e.getMessage(), e);
+			}
+		}
 	}
 }
 

@@ -45,7 +45,9 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.Authe
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.EpsAuthenticationSetList;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.ReSynchronisationInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.RequestingNodeType;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.EquipmentStatus;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.RequestedEquipmentInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIu;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PagingArea;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VLRCapability;
@@ -53,6 +55,8 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberInfo;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.SendAuthenticationInfoRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.SendAuthenticationInfoResponseImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.imei.CheckImeiRequestImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.imei.CheckImeiResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateLocationRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateLocationResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.AnyTimeInterrogationRequestImpl;
@@ -365,18 +369,91 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 		this.sendReturnResultLastComponent(resultLast);
 	}
 
-
 	@Override
-	public Long addCheckImeiRequest(IMEI imei, RequestedEquipmentInfo requestedEquipmentInfo,
+	public Long addCheckImeiRequest(IMEI imei, RequestedEquipmentInfo requestedEquipmentInfo, 
 			MAPExtensionContainer extensionContainer) throws MAPException {
 		
+		return this.addCheckImeiRequest(_Timer_Default, imei, requestedEquipmentInfo, extensionContainer);
+	}
+	
+	@Override
+	public Long addCheckImeiRequest(long customInvokeTimeout, IMEI imei, RequestedEquipmentInfo requestedEquipmentInfo,
+			MAPExtensionContainer extensionContainer) throws MAPException {
+
 		if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.equipmentMngtContext)
 				|| (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2
 						&& this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)) {
 			throw new MAPException("Bad application context name for CheckImeiRequest: must be equipmentMngtContext_V2 or V3");
 		}
 		
-		return null;
+		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		if (customInvokeTimeout == _Timer_Default) {
+			invoke.setTimeout(_Timer_m);
+		}
+		else {
+			invoke.setTimeout(customInvokeTimeout);
+		}
+
+		// Operation Code
+		OperationCode oc = TcapFactory.createOperationCode();
+		oc.setLocalOperationCode((long) MAPOperationCode.checkIMEI);
+		invoke.setOperationCode(oc);
+		
+		CheckImeiRequestImpl req = new CheckImeiRequestImpl(this.appCntx.getApplicationContextVersion().getVersion()
+				, imei, requestedEquipmentInfo,	extensionContainer);
+
+		AsnOutputStream aos = new AsnOutputStream();
+		req.encodeData(aos);
+
+		Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+		p.setTagClass(req.getTagClass());
+		p.setPrimitive(req.getIsPrimitive());
+		p.setTag(req.getTag());
+		p.setData(aos.toByteArray());
+		invoke.setParameter(p);
+		
+		Long invokeId;
+		try {
+			invokeId = this.tcapDialog.getNewInvokeId();
+			invoke.setInvokeId(invokeId);
+		} catch (TCAPException e) {
+			throw new MAPException(e.getMessage(), e);
+		}
+
+		this.sendInvokeComponent(invoke);
+
+		return invokeId;
+
+	}
+	
+	@Override
+	public void addCheckImeiResponse(long invokeId, EquipmentStatus equipmentStatus, UESBIIu bmuef, MAPExtensionContainer extensionContainer) throws MAPException {
+		if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.equipmentMngtContext)
+				|| (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2
+						&& this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)) {
+			throw new MAPException("Bad application context name for CheckImeiResponse: must be equipmentMngtContext_V2 or V3");
+		}
+		
+		ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
+		resultLast.setInvokeId(invokeId);
+		
+		// Operation Code
+		OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+		oc.setLocalOperationCode((long) MAPOperationCode.checkIMEI);
+		resultLast.setOperationCode(oc);
+		
+		CheckImeiResponseImpl resp = new CheckImeiResponseImpl(equipmentStatus);
+		AsnOutputStream aos = new AsnOutputStream();
+		resp.encodeData(aos);
+		
+		Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+		p.setTagClass(resp.getTagClass());
+		p.setPrimitive(resp.getIsPrimitive());
+		p.setTag(resp.getTag());
+		p.setData(aos.toByteArray());
+		resultLast.setParameter(p);
+
+		this.sendReturnResultLastComponent(resultLast);
 	}
 
 }
