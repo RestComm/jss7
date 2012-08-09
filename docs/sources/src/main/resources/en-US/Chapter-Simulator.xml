@@ -1,110 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">
+%BOOK_ENTITIES;
+]>
 
 <chapter id="simulator">
 
 	<title>SS7 Simulator</title>
 
 	<para>
-		SS7 Simulator is an application for testing SS7 stack and displaying its functionality.
-		It is also a good example of how to use this stack. 
+		SS7 Simulator is an application for testing the &THIS.PLATFORM; &THIS.APPLICATION; and understanding its functionality. The test cases will allow you to conduct various test scenarios and explore the Stack. The Simulator is also a good example of how to use this Stack.  
 	</para>
 
-	<para>
-		SS7 Simulator contains three layers of SS7 stack components and one testing task layer which presents the concrete testing task. 
-	</para>
 
-	<para>
-		Layer 1 presents MTP-3 corresponded stack. It can be one of:
-			<itemizedlist> 
-				<listitem>
-					<para>
-						M3UA
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						DialogicCard
-					</para>
-				</listitem>
-					<listitem>
-					<para>
-						DahdiCard (not yet implemented)
-					</para>
-				</listitem>				
-			</itemizedlist>
-	</para>
-
-	<para>
-		Layer 2 presents :
-			<itemizedlist> 
-				<listitem>
-					<para>
-						SCCP
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						ISUP (not yet implemented)
-					</para>
-				</listitem>
-			</itemizedlist>
-	</para>
-
-	<para>
-		Layer 3 presents :
-			<itemizedlist> 
-				<listitem>
-					<para>
-						TCAP+MAP
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						TCAP+CAP (not yet implemented)
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						TCAP+INAP (not yet implemented)
-					</para>
-				</listitem>
-			</itemizedlist>
-	</para>
-
-	<para>
-		Testing task layer can present one of the following testing task:
-			<itemizedlist> 
-				<listitem>
-					<para>
-						USSD client test
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						USSD server test
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						SMS server test
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						SMS client test
-					</para>
-				</listitem>
-			</itemizedlist>
-	</para>
-
-	<para>
-		A user can select for testing layers that he needs.
-		Some layers demand correct low layers. For example TCAP+MAP layer demands SCCP as layer 2.
-		Each layer can be separately configured depending on user testing tasks.
-		Configuring of layers covers only major options (does not cover all possible SS7 stack options). 
-	</para>
 	
 	<section id="simulator_configuring">
 		<title>SS7 Simulator configuring 

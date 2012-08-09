@@ -68,6 +68,7 @@
 			<listitem><para>Shell Management Client</para></listitem>
 			<listitem><para>SS7 Service Elements</para></listitem>
 			<listitem><para>Signaling Gateway</para></listitem>
+			<listitem><para>SS7 Simulator</para></listitem>
 		</itemizedlist>
 	</para>
 		
@@ -244,7 +245,57 @@
 			</section>	
 		</section>
 		</section>
-		
+		<section id="design_ss7_simulator">
+			<title>SS7 Simulator</title>
+
+			<para>&THIS.PLATFORM; &THIS.APPLICATION; comes with a Simulator that will help you to understand the functionality of the Stack. The Simulator may be used as an application for testing the SS7 Stack or as an example of how to use this Stack. You can run several instances of the Simulator in a single machine and each instance can have its own configuration. In addition, the Simulator offers you the flexibility to run it locally or remotely. You must remember to configure all layers before running tests with the Simulator.</para>
+<para>
+The Simulator contains three layers of SS7 stack components and one testing task layer which presents the concrete testing task. You can select from these layers as required, however some layers demand corresponding lower layers. For example, the <literal>TCAP+MAP</literal> layer demands <literal>SCCP</literal> as layer 2. Depending on your testing goals, you can configure each of these layers separately but the configuration options are limited and do not cover all possible SS7 Stack options. 
+	</para>	
+<section id="simulator_layers">
+		<title>Simulator Layers</title>
+	<para>
+	<variablelist>
+				<varlistentry>
+					<term>Layer 1 [MTP3]</term>
+					<listitem><para>M3UA
+					</para></listitem>
+					<listitem><para>DialogicCard
+					</para></listitem>
+					<listitem><para>DahdiCard [yet to be implemented]
+					</para></listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Layer 2</term>
+					<listitem><para>SCCP
+					</para></listitem>
+					<listitem><para>ISUP [yet to be implemented]
+					</para></listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Layer 3</term>
+					<listitem><para>TCAP + MAP
+					</para></listitem>
+					<listitem><para>TCAP + CAP [yet to be implemented]
+					</para></listitem>
+					<listitem><para>TCAP + INAP [yet to be implemented]
+					</para></listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Testing Task Layer</term>
+					<listitem><para>USSD client test
+					</para></listitem>
+					<listitem><para>USSD server test
+					</para></listitem>
+					<listitem><para>SMS server test
+					</para></listitem>
+				        <listitem><para>SMS client test
+					</para></listitem>
+				</varlistentry>
+	</variablelist>
+</para>
+</section>
+		</section>	
 		
 	 </section>	 
 	 
