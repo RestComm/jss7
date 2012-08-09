@@ -26,6 +26,7 @@ import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.primitives.IMEIImpl;
 
 import org.testng.annotations.Test;
@@ -50,10 +51,11 @@ public class CheckImeiRequestTest {
 		AsnInputStream asnIS = new AsnInputStream(rawData);
 		
 		int tag = asnIS.readTag();
+		assertEquals(tag, Tag.STRING_OCTET);
 		CheckImeiRequestImpl checkImeiImpl = new CheckImeiRequestImpl(2);
 		checkImeiImpl.decodeAll(asnIS);
 		
-		assertEquals(checkImeiImpl.getIMEI().getIMEI(), "358091016853550");
+		assertTrue(checkImeiImpl.getIMEI().getIMEI().equals("358091016853550"));
 	}
 	
 	@Test(groups = { "functional.encode", "imei" })

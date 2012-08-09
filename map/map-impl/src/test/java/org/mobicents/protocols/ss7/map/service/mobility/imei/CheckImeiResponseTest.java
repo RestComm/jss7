@@ -29,6 +29,7 @@ import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.EquipmentStatus;
 import org.testng.annotations.Test;
 
@@ -48,8 +49,9 @@ public class CheckImeiResponseTest {
 	public void testDecode() throws Exception {
 		byte[] rawData = getEncodedDataV2();
 		AsnInputStream asnIS = new AsnInputStream(rawData);
-		
+
 		int tag = asnIS.readTag();
+		assertEquals(tag, Tag.ENUMERATED);
 		CheckImeiResponseImpl checkImeiImpl = new CheckImeiResponseImpl(2);
 		checkImeiImpl.decodeAll(asnIS);
 		

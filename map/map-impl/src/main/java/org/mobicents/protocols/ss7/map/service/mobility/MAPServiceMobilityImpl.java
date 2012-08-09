@@ -185,7 +185,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 		case MAPOperationCode.sendParameters:
 			return MAPApplicationContext.getInstance(MAPApplicationContextName.infoRetrievalContext, MAPApplicationContextVersion.version1);
 		
-		// -- International mobile equipment identities management services
+		// -- IMEI services
 		case MAPOperationCode.checkIMEI:
 			return MAPApplicationContext.getInstance(MAPApplicationContextName.equipmentMngtContext, MAPApplicationContextVersion.version1);
 		}
@@ -247,8 +247,9 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 			}
 			break;
 
+		// -- IMEI services
 		case MAPOperationCode.checkIMEI:
-			if (acn == MAPApplicationContextName.equipmentMngtContext && vers >= 2) {
+			if (acn == MAPApplicationContextName.equipmentMngtContext) {
 				if (compType == ComponentType.Invoke)
 					this.processCheckImeiRequest(parameter, mapDialogMobilityImpl, invokeId);
 				else
@@ -473,7 +474,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 		
 	}
 	
-	// - International mobile equipment identities management services
+	// - IMEI services
 	private void processCheckImeiRequest(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId) 
 			throws MAPParsingComponentException {
 		

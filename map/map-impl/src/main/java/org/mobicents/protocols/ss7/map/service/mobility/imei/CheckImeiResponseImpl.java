@@ -37,10 +37,17 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.EquipmentStatus;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIu;
-import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
+import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.MobilityMessageImpl;
 
-public class CheckImeiResponseImpl extends MobilityMessageImpl implements CheckImeiResponse, MAPAsnPrimitive {
+/**
+ * 
+ * @author normandes
+ * 
+ */
+public class CheckImeiResponseImpl extends MobilityMessageImpl implements CheckImeiResponse {
+
+	public static final int _ID_extensionContainer = 0;
 
 	public static final String _PrimitiveName = "CheckImeiResponse";
 	
@@ -109,6 +116,18 @@ public class CheckImeiResponseImpl extends MobilityMessageImpl implements CheckI
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
+
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
 	
 	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 		
@@ -122,48 +141,49 @@ public class CheckImeiResponseImpl extends MobilityMessageImpl implements CheckI
 				
 				int tag = ais.readTag(); 
 				
-				// TODO: Implement as callhandling.SendRoutingInformationResponse, do not use "case 0:", "case 1:" because all parameters are optional
-				switch(num) {
-				case 0:
-					// equipmentStatus 
-					if (tag != Tag.ENUMERATED || ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive()) {
-						throw new MAPParsingComponentException(
-							"Error while decoding CheckImeiResponse.requestedEquipmentInfo: bad tag or tag class or is not primitive: TagClass=" + ais.getTagClass()
-									+ ", tag=" + tag, MAPParsingComponentExceptionReason.MistypedParameter);
+				if(ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
+					switch (tag) {
+					case Tag.ENUMERATED:
+						// equipmentStatus
+						if (!ais.isTagPrimitive()) {
+							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".requestedEquipmentInfo: is not primitive",
+									MAPParsingComponentExceptionReason.MistypedParameter);
+						}
+						int i1 = (int) ansIS.readInteger();
+						this.equipmentStatus = EquipmentStatus.getInstance(i1);
+						break;
+					case Tag.SEQUENCE:
+						// bmuef
+						// TODO: Implement
+						ais.advanceElement();
+						break;
+					default:
+						ais.advanceElement();
+						break;
 					}
-					int i1 = (int)ansIS.readInteger();
-					this.equipmentStatus = EquipmentStatus.getInstance(i1);
-					break;
-				case 1:
-					// bmuef
-					//TODO: Implement
-					break;
-				case 2:
-					// extensionContainer 
-					//TODO: Implement
-					break;
-				default:
+				} else if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+					switch (tag) {
+					case _ID_extensionContainer:
+						if (ais.isTagPrimitive()) {
+							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive",
+									MAPParsingComponentExceptionReason.MistypedParameter);
+						}
+						this.extensionContainer = new MAPExtensionContainerImpl();
+						((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
+						break;
+					default:
+						ais.advanceElement();
+						break;
+					}
+				} else {
 					ais.advanceElement();
-					break;
 				}
 				
 				num++;
 			}
 		} else {
-			int i1 = ansIS.read();
+			int i1 = (int)ansIS.readIntegerData(length);
 			this.equipmentStatus = EquipmentStatus.getInstance(i1);
-		}
-	}
-
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -229,7 +249,8 @@ public class CheckImeiResponseImpl extends MobilityMessageImpl implements CheckI
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("CheckImeiResponse [");
+		sb.append(_PrimitiveName);
+		sb.append(" [");
 
 		if (this.equipmentStatus != null) {
 			sb.append("equipmentStatus=");

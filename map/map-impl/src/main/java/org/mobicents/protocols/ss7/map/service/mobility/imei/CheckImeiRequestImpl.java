@@ -38,7 +38,6 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.RequestedEquipmentInfo;
 import org.mobicents.protocols.ss7.map.primitives.IMEIImpl;
-import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.MobilityMessageImpl;
 
@@ -46,7 +45,7 @@ import org.mobicents.protocols.ss7.map.service.mobility.MobilityMessageImpl;
  * @author normandes
  * 
  */
-public class CheckImeiRequestImpl extends MobilityMessageImpl implements CheckImeiRequest, MAPAsnPrimitive {
+public class CheckImeiRequestImpl extends MobilityMessageImpl implements CheckImeiRequest {
 
 	public static final String _PrimitiveName = "CheckImeiRequest";
 	
@@ -245,11 +244,14 @@ public class CheckImeiRequestImpl extends MobilityMessageImpl implements CheckIm
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("CheckImeiRequest [");
+		sb.append(_PrimitiveName);
+		sb.append(" [");
 
-		sb.append("imei=");
-		sb.append(imei.toString());
-		sb.append(", ");
+		if (this.imei != null) {
+			sb.append("imei=");
+			sb.append(imei.toString());
+			sb.append(", ");
+		}
 		
 		if (this.requestedEquipmentInfo != null) {
 			sb.append("requestedEquipmentInfo=");
