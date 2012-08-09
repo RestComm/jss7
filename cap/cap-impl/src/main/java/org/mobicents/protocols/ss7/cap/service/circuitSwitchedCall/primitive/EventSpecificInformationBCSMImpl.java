@@ -28,6 +28,7 @@ import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.cap.EsiBcsm.OAbandonSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.OAnswerSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.OCalledPartyBusySpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.ODisconnectSpecificInfoImpl;
@@ -413,8 +414,8 @@ public class EventSpecificInformationBCSMImpl implements EventSpecificInformatio
 				ais.advanceElementData(length);
 				break;
 			case _ID_oAbandonSpecificInfo:
-				// TODO: implement it
-				ais.advanceElementData(length);
+				this.oAbandonSpecificInfo=new OAbandonSpecificInfoImpl();
+				((OAbandonSpecificInfoImpl) this.oAbandonSpecificInfo).decodeData(ais, length);
 				break;
 			case _ID_oChangeOfPositionSpecificInfo:
 				// TODO: implement it
@@ -492,7 +493,8 @@ public class EventSpecificInformationBCSMImpl implements EventSpecificInformatio
 		} else if (callAcceptedSpecificInfo != null) {
 			// TODO: implement it
 		} else if (oAbandonSpecificInfo != null) {
-			// TODO: implement it
+			((OAbandonSpecificInfoImpl) oAbandonSpecificInfo).encodeData(asnOs);
+			return;
 		} else if (oChangeOfPositionSpecificInfo != null) {
 			// TODO: implement it
 		} else if (tChangeOfPositionSpecificInfo != null) {

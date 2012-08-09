@@ -22,18 +22,19 @@
 
 package org.mobicents.protocols.ss7.cap.api;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageFactory;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPServiceCircuitSwitchedCall;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.CAPServiceGprs;
 import org.mobicents.protocols.ss7.cap.api.service.sms.CAPServiceSms;
-import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface CAPProvider {
+public interface CAPProvider extends Serializable {
 
 	/**
 	 * Add CAP Dialog listener to the Stack

@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.cap;
 
 import java.util.ArrayList;
 
+import org.mobicents.protocols.ss7.cap.EsiBcsm.OAbandonSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.OAnswerSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.OCalledPartyBusySpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.ODisconnectSpecificInfoImpl;
@@ -186,9 +187,11 @@ import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectingNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformation;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.UUData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.MSClassmark2;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
@@ -248,6 +251,12 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
 		return new CalledPartyBCDNumberImpl(data);
 	}
 
+	@Override
+	public CalledPartyBCDNumber createCalledPartyBCDNumber(AddressNature addressNature, NumberingPlan numberingPlan, String address, boolean isExtension) throws CAPException {
+		return new CalledPartyBCDNumberImpl(addressNature, numberingPlan, address, isExtension);
+	}
+
+	
 	@Override
 	public ExtensionField createExtensionField(Integer localCode, CriticalityType criticalityType, byte[] data) {
 		return new ExtensionFieldImpl(localCode, criticalityType, data);
@@ -391,10 +400,17 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
 	}
 
 	@Override
+	public OAbandonSpecificInfo createOAbandonSpecificInfo(boolean routeNotPermitted) {
+		return new OAbandonSpecificInfoImpl(routeNotPermitted);
+	}
+	
+	@Override
 	public ONoAnswerSpecificInfo createONoAnswerSpecificInfo() {
 		return new ONoAnswerSpecificInfoImpl();
 	}
 
+	
+	
 	@Override
 	public OAnswerSpecificInfo createOAnswerSpecificInfo(CalledPartyNumberCap destinationAddress, boolean orCall, boolean forwardedCall,
 			ChargeIndicator chargeIndicator, ExtBasicServiceCode extBasicServiceCode, ExtBasicServiceCode extBasicServiceCode2) {

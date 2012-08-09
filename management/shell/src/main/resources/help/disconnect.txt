@@ -1,0 +1,12 @@
+Name
+	disconnect
+
+SYNOPSIS
+	disconnect 
+
+DESCRIPTION
+	This command is used to disconnect the Shell from a managed instance. 
+
+SEE ALSO
+	connect
+
