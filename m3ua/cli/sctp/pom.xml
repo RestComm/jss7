@@ -28,7 +28,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>${pom.artifactId}-${pom.version}</finalName>
+		<finalName>${pom.artifactId}</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources/archive-files</directory>
