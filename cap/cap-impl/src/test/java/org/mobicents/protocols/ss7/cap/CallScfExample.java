@@ -15,9 +15,11 @@ import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPNoticeProblemDiagnostic;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
+import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.primitives.BCSMEvent;
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
+import org.mobicents.protocols.ss7.cap.api.primitives.MonitorMode;
 import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestResponse;
@@ -45,8 +47,14 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestRe
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ResetTimerRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SendChargingInformationRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DestinationRoutingAddress;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSM;
+import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
+import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
+import org.mobicents.protocols.ss7.inap.primitives.LegIDImpl;
+import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
@@ -94,9 +102,41 @@ public class CallScfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	@Override
 	public void onDialogDelimiter(CAPDialog capDialog) {
 		try {
+			// informing SSF of BCSM events processing
 			ArrayList<BCSMEvent> bcsmEventList = new ArrayList<BCSMEvent>();
-			// ...............................
+			BCSMEvent ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.routeSelectFailure, MonitorMode.notifyAndContinue, null, null, false);
+			bcsmEventList.add(ev);
+			ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oCalledPartyBusy, MonitorMode.interrupted, null, null, false);
+			bcsmEventList.add(ev);
+			ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oNoAnswer, MonitorMode.interrupted, null, null, false);
+			bcsmEventList.add(ev);
+			ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oAnswer, MonitorMode.notifyAndContinue, null, null, false);
+			bcsmEventList.add(ev);
+			ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oDisconnect, MonitorMode.notifyAndContinue, new LegIDImpl(true, LegType.leg1), null, false);
+			bcsmEventList.add(ev);
+			ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oDisconnect, MonitorMode.interrupted, new LegIDImpl(true, LegType.leg2), null, false);
+			bcsmEventList.add(ev);
+			ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oAbandon, MonitorMode.notifyAndContinue, null, null, false);
+			bcsmEventList.add(ev);
 			currentCapDialog.addRequestReportBCSMEventRequest(bcsmEventList, null);
+
+			String newNumber = "22123124"; // calculating here a new called party number if it is needed
+			if (newNumber != null) {
+				ArrayList<CalledPartyNumberCap> calledPartyNumber = new ArrayList<CalledPartyNumberCap>();
+				CalledPartyNumber cpn = this.capProvider.getISUPParameterFactory().createCalledPartyNumber();
+				cpn.setAddress("5599999988");
+				cpn.setNatureOfAddresIndicator(NAINumber._NAI_INTERNATIONAL_NUMBER);
+				cpn.setNumberingPlanIndicator(CalledPartyNumber._NPI_ISDN);
+				cpn.setInternalNetworkNumberIndicator(CalledPartyNumber._INN_ROUTING_ALLOWED);
+				CalledPartyNumberCap cpnc = this.capProvider.getCAPParameterFactory().createCalledPartyNumberCap(cpn);
+				calledPartyNumber.add(cpnc);
+				DestinationRoutingAddress destinationRoutingAddress = this.capProvider.getCAPParameterFactory().createDestinationRoutingAddress(calledPartyNumber);
+				currentCapDialog.addConnectRequest(destinationRoutingAddress, null, null, null, null, null, null, null, null, null, null, null, null, false,
+						false, false, null, false);
+			} else {
+				currentCapDialog.addContinueRequest();
+			}
+
 			currentCapDialog.send();
 		} catch (CAPException e) {
 			// TODO Auto-generated catch block
