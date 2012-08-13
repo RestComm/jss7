@@ -1,0 +1,327 @@
+package org.mobicents.protocols.ss7.cap;
+
+import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
+import org.mobicents.protocols.ss7.cap.api.CAPDialog;
+import org.mobicents.protocols.ss7.cap.api.CAPDialogListener;
+import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.cap.api.CAPMessage;
+import org.mobicents.protocols.ss7.cap.api.CAPParameterFactory;
+import org.mobicents.protocols.ss7.cap.api.CAPProvider;
+import org.mobicents.protocols.ss7.cap.api.CAPStack;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPComponentErrorReason;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPNoticeProblemDiagnostic;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
+import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
+import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.CallingPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.LocationNumberCap;
+import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestResponse;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingReportRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.AssistRequestInstructionsRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCall;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPServiceCircuitSwitchedCallListener;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationReportRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationRequestRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CancelRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectToResourceRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ContinueRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectForwardConnectionRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EstablishTemporaryConnectionRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EventReportBCSMRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.FurnishChargingInformationRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PlayAnnouncementRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationResponse;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ReleaseCallRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestReportBCSMEventRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ResetTimerRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SendChargingInformationRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformation;
+import org.mobicents.protocols.ss7.sccp.SccpProvider;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+
+public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitchedCallListener {
+
+	private CAPStack capStack;
+	private CAPProvider capProvider;
+	private CAPParameterFactory paramFact;
+	private CAPDialogCircuitSwitchedCall currentCapDialog;
+
+	public CallSsfExample(SccpProvider sccpPprovider, int ssn) {
+		capStack = new CAPStackImpl(sccpPprovider, ssn);
+		capProvider = capStack.getCAPProvider();
+		paramFact = capProvider.getCAPParameterFactory();
+
+		capProvider.addCAPDialogListener(this);
+		capProvider.getCAPServiceCircuitSwitchedCall().addCAPServiceListener(this);
+	}
+
+	public CAPProvider getCAPProvider() {
+		return capProvider;
+	}
+
+	public void start() {
+		capStack.start();
+
+		// Make the supplementary service activated
+        capProvider.getCAPServiceCircuitSwitchedCall().acivate();
+
+        currentCapDialog = null;
+	}
+
+	public void stop() {
+		capStack.stop();
+	}
+
+	public void sendInitialDP(SccpAddress origAddress, SccpAddress remoteAddress, int serviceKey, CalledPartyNumberCap calledPartyNumber,
+			CallingPartyNumberCap callingPartyNumber, LocationNumberCap locationNumber, EventTypeBCSM eventTypeBCSM, LocationInformation locationInformation)
+			throws CAPException {
+		// First create Dialog
+		CAPApplicationContext acn = CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF; 
+		currentCapDialog = capProvider.getCAPServiceCircuitSwitchedCall().createNewDialog(acn, origAddress, remoteAddress);
+
+		currentCapDialog.addInitialDPRequest(serviceKey, calledPartyNumber, callingPartyNumber, null, null, null, locationNumber, null, null, null, null, null,
+				eventTypeBCSM, null, null, null, null, null, null, null, false, null, null, locationInformation, null, null, null, null, null, false, null);
+		// This will initiate the TC-BEGIN with INVOKE component
+		currentCapDialog.send();
+	}
+
+	@Override
+	public void onErrorComponent(CAPDialog capDialog, Long invokeId, CAPErrorMessage capErrorMessage) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onInvokeTimeout(CAPDialog capDialog, Long invokeId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProviderErrorComponent(CAPDialog mapDialog, Long invokeId, CAPComponentErrorReason providerError) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCAPMessage(CAPMessage capMessage) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onInitialDPRequest(InitialDPRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onRequestReportBCSMEventRequest(RequestReportBCSMEventRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onApplyChargingRequest(ApplyChargingRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onEventReportBCSMRequest(EventReportBCSMRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onContinueRequest(ContinueRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onApplyChargingReportRequest(ApplyChargingReportRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onReleaseCallRequest(ReleaseCallRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onConnectRequest(ConnectRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCallInformationRequestRequest(CallInformationRequestRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCallInformationReportRequest(CallInformationReportRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onActivityTestRequest(ActivityTestRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onActivityTestResponse(ActivityTestResponse ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAssistRequestInstructionsRequest(AssistRequestInstructionsRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onEstablishTemporaryConnectionRequest(EstablishTemporaryConnectionRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDisconnectForwardConnectionRequest(DisconnectForwardConnectionRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onConnectToResourceRequest(ConnectToResourceRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onResetTimerRequest(ResetTimerRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onFurnishChargingInformationRequest(FurnishChargingInformationRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSendChargingInformationRequest(SendChargingInformationRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSpecializedResourceReportRequest(SpecializedResourceReportRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPlayAnnouncementRequest(PlayAnnouncementRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPromptAndCollectUserInformationRequest(PromptAndCollectUserInformationRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPromptAndCollectUserInformationResponse(PromptAndCollectUserInformationResponse ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCancelRequest(CancelRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogDelimiter(CAPDialog capDialog) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogRequest(CAPDialog capDialog, CAPGprsReferenceNumber capGprsReferenceNumber) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogAccept(CAPDialog capDialog, CAPGprsReferenceNumber capGprsReferenceNumber) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogUserAbort(CAPDialog capDialog, CAPGeneralAbortReason generalReason, CAPUserAbortReason userReason) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogProviderAbort(CAPDialog capDialog, PAbortCauseType abortCause) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogClose(CAPDialog capDialog) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogRelease(CAPDialog capDialog) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogTimeout(CAPDialog capDialog) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogNotice(CAPDialog capDialog, CAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
+		// TODO Auto-generated method stub
+		
+	}	
+
+}
