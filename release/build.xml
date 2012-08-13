@@ -175,13 +175,6 @@
 			</fileset>
 		</copy>
 
-		<echo>Copy Shell</echo>
-		<copy todir="${zip.dir}/ss7/shell" failonerror="${failoncopy}">
-			<fileset dir="${checkout.basedir}/ss7/management/shell/target/release">
-				<include name="**" />
-			</fileset>
-		</copy>
-
 		<echo>Copy Protocols</echo>
 		<copy todir="${zip.dir}/ss7/protocols" failonerror="${failoncopy}">
 			<fileset dir="${checkout.basedir}/ss7/tcap/release/${release.name}">
@@ -200,6 +193,24 @@
 				<include name="**" />
 			</fileset>
 		</copy>
+
+		<echo>Copy Shell</echo>
+		<copy todir="${zip.dir}/ss7/shell/lib" failonerror="${failoncopy}">
+			<fileset dir="${checkout.basedir}/ss7/management/shell/target/mobicents-cli/lib">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<copy todir="${zip.dir}/ss7/shell/bin" failonerror="${failoncopy}">
+			<fileset dir="${checkout.basedir}/ss7/management/shell/target/mobicents-cli/bin">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<copy file="${checkout.basedir}/ss7/hardware/cli/target/linkset-cli.jar" todir="${zip.dir}/ss7/shell/lib" failonerror="${failoncopy}" />
+		<copy file="${checkout.basedir}/ss7/m3ua/cli/m3ua/target/m3ua-cli-m3ua.jar" todir="${zip.dir}/ss7/shell/lib" failonerror="${failoncopy}" />
+		<copy file="${checkout.basedir}/ss7/m3ua/cli/sctp/target/m3ua-cli-sctp.jar" todir="${zip.dir}/ss7/shell/lib" failonerror="${failoncopy}" />
+		<copy file="${checkout.basedir}/ss7/sccp/sccp-cli/target/sccp-cli.jar" todir="${zip.dir}/ss7/shell/lib" failonerror="${failoncopy}" />
+
+
 
 		<echo>Copy Native</echo>
 		<copy todir="${zip.dir}/ss7/native" failonerror="false">

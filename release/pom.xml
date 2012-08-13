@@ -29,7 +29,7 @@
 		<ss7.scmVersionType>tag</ss7.scmVersionType>
     -->
     
-  	<asn.scmVersion>HEAD</asn.scmVersion>
+  		<asn.scmVersion>HEAD</asn.scmVersion>
 		<asn.scmVersionType>revision</asn.scmVersionType>
 
 		<sctp.scmVersion>HEAD</sctp.scmVersion>
