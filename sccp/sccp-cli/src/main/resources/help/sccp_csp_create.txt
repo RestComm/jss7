@@ -5,15 +5,19 @@ SYNOPSIS
 	sccp csp create <id> <spc>
 
 DESCRIPTION
-	This command is used to define a new Concerned Signaling Point Code. Concerned signaling point codes define a DPC list that will be notified when local SSN is registered (SSA messages) or unregistered (SSP messages).
+	This command is used to define a new Concerned Signaling Point Code. Concerned 
+	signaling point codes define a DPC list that will be notified when local SSN is 
+	registered (SSA messages) or unregistered (SSP messages).
 
 PARAMETERS
 
 	Standard Parameters
                                               
-	<id>			-	A unique number to identify this Concerned Signaling Point Code.
+	<id>			-	A unique number to identify this
+					Concerned Signaling Point Code.
 	
-	<spc>			-	The Remote Signaling Point Code, which will be notified.
+	<spc>			-	The Remote Signaling Point Code, 
+					which will be notified.
 
 	
 EXAMPLES
@@ -22,4 +26,12 @@ EXAMPLES
 	sccp csp create 2 202
 
 SEE ALSO
-	sccp sap create, sccp sap modify, sccp sap delete, sccp sap show, sccp dest create, sccp dest modify, sccp dest delete, sccp dest show, sccp rule create, sccp rule modify, sccp rule delete, sccp rule show, sccp primary_add create, sccp primary_add modify, sccp primary_add delete, sccp primary_add show, sccp backup_add create,  sccp backup_add modify, sccp backup_add delete, sccp backup_add show, sccp rsp create, sccp rsp modify, sccp rsp delete, sccp rsp show, sccp rss create, sccp rss modify, sccp rss delete, sccp rss show, sccp lmr create, sccp lmr modify, sccp lmr delete, sccp lmr show, sccp csp modify, sccp csp delete, sccp csp show, sccp get, sccp set
+	sccp sap create, sccp sap modify, sccp sap delete, sccp sap show, 
+	sccp dest create, sccp dest modify, sccp dest delete, sccp dest show, 
+	sccp rule create, sccp rule modify, sccp rule delete, sccp rule show, 
+	sccp primary_add create, sccp primary_add modify, sccp primary_add delete, 
+	sccp primary_add show, sccp backup_add create,  sccp backup_add modify, 
+	sccp backup_add delete, sccp backup_add show, sccp rsp create, sccp rsp modify, 
+	sccp rsp delete, sccp rsp show, sccp rss create, sccp rss modify, sccp rss delete, 
+	sccp rss show, sccp lmr create, sccp lmr modify, sccp lmr delete, sccp lmr show, 
+	sccp csp modify, sccp csp delete, sccp csp show, sccp get, sccp set

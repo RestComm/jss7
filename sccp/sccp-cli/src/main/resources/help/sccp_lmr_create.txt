@@ -5,21 +5,29 @@ SYNOPSIS
 	sccp lmr create <id> <first-spc> <last-spc> <long-message-rule-type>
 
 DESCRIPTION
-	This command is used to define a new Long Message Rule. Long message rules specify which message types (UDT/XUDT/LUDT) will be used for outgoing message encoding depends on dpc. If long message rules are not configured only UDT messages will be used.
+	This command is used to define a new Long Message Rule. Long message rules specify
+	which message types (UDT/XUDT/LUDT) will be used for outgoing message encoding 
+	depends on dpc. If long message rules are not configured only UDT messages
+	will be used.
 
 PARAMETERS
 
 	Standard Parameters
                                               
-	<id>			-	A unique number to identify this Long Message Rule.
+	<id>			-	A unique number to identify this 
+					Long Message Rule.
 
-	<first-spc>		-	The first value of the remote signaling point code range,
-					for which this Long message Rule will apply.
+	<first-spc>		-	The first value of the remote signaling 
+					point code range, for which this Long message Rule
+					will apply.
 
-	<last-spc>		-	The last value of the remote signaling point code range. 
-					If Long message rule specifies a single signaling point code, this value must be equal to first-spc.
+	<last-spc>		-	The last value of the remote signaling point code
+					range. If Long message rule specifies a single 
+					signaling point code, this value must be equal to
+					first-spc.
 
-	<long-message-rule-type>-	Message types used for the remote signaling point codes range.
+	<long-message-rule-type>-	Message types used for the remote signaling
+					point codes range.
 					Possible values : udt, xudt and ludt.
 	
 EXAMPLES
@@ -28,4 +36,12 @@ EXAMPLES
 	sccp lmr create 2 230 239 udt
 
 SEE ALSO
-	sccp sap create, sccp sap modify, sccp sap delete, sccp sap show, sccp dest create, sccp dest modify, sccp dest delete, sccp dest show, sccp rule create, sccp rule modify, sccp rule delete, sccp rule show, sccp primary_add create, sccp primary_add modify, sccp primary_add delete, sccp primary_add show, sccp backup_add create,  sccp backup_add modify, sccp backup_add delete, sccp backup_add show, sccp rsp create, sccp rsp modify, sccp rsp delete, sccp rsp show, sccp rss create, sccp rss modify, sccp rss delete, sccp rss show, sccp lmr modify, sccp lmr delete, sccp lmr show, sccp csp create, sccp csp modify, sccp csp delete, sccp csp show, sccp get, sccp set
+	sccp sap create, sccp sap modify, sccp sap delete, sccp sap show,
+	sccp dest create, sccp dest modify, sccp dest delete, sccp dest show,
+	sccp rule create, sccp rule modify, sccp rule delete, sccp rule show,
+	sccp primary_add create, sccp primary_add modify, sccp primary_add delete, 
+	sccp primary_add show, sccp backup_add create,  sccp backup_add modify, 
+	sccp backup_add delete, sccp backup_add show, sccp rsp create, sccp rsp modify, 
+	sccp rsp delete, sccp rsp show, sccp rss create, sccp rss modify, sccp rss delete,
+	sccp rss show, sccp lmr modify, sccp lmr delete, sccp lmr show, sccp csp create,
+	sccp csp modify, sccp csp delete, sccp csp show, sccp get, sccp set

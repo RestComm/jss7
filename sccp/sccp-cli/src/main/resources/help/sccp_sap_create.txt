@@ -11,19 +11,33 @@ PARAMETERS
 
 	Standard Parameters
 
-	<id>		-	The newly defined SAP will be identified using this 'id'. This must be a unique number.
+	<id>		-	The newly defined SAP will be identified using this 'id'. 
+				This must be a unique number.
 
-	<mtp3-id>	-	Mtp3UserPart index - used as an index of 'mtp3UserPart' property of the SccpStack Bean. For each Mtp3UserPart, a sap must
-be configured.
+	<mtp3-id>	-	Mtp3UserPart index - used as an index of 'mtp3UserPart'
+				property of the SccpStack Bean. For each Mtp3UserPart, 
+				a sap must be configured.
 
-	<opc>		-	MTP Point code of the local signaling point. Takes an Integer Value.
+	<opc>		-	MTP Point code of the local signaling point. Takes an 
+				Integer Value.
 
-	<ni>		-	Network indicator that forms part of the Service Information Octet (SIO).
+	<ni>		-	Network indicator that forms part of the 
+				Service Information Octet (SIO).
 
 
 EXAMPLES
 	sccp sap create 1 1 101 2
-	- The above command will create a new Service Access Point identified by the number '1'. The values for 'mtp3-id', 'opc' and 'ni' are 1, 101 and 2 respectively.
+
+	The above command will create a new Service Access Point identified by the 
+	number '1'. The values for 'mtp3-id', 'opc' and 'ni' are 1, 101 and 2 respectively.
 
 SEE ALSO
-	sccp sap modify, sccp sap delete, sccp sap show, sccp dest create, sccp dest modify, sccp dest delete, sccp dest show, sccp rule create, sccp rule modify, sccp rule delete, sccp rule show, sccp primary_add create, sccp primary_add modify, sccp primary_add delete, sccp primary_add show, sccp backup_add create, sccp backup_add modify, sccp backup_add delete, sccp backup_add show, sccp rsp create, sccp rsp modify, sccp rsp delete, sccp rsp show, sccp rss create, sccp rss modify, sccp rss delete, sccp rss show, sccp lmr create, sccp lmr modify, sccp lmr delete, sccp lmr show, sccp csp create, sccp csp modify, sccp csp delete, sccp csp show, sccp get, sccp set
+	sccp sap modify, sccp sap delete, sccp sap show, sccp dest create, 
+	sccp dest modify, sccp dest delete, sccp dest show, sccp rule create,
+	sccp rule modify, sccp rule delete, sccp rule show, sccp primary_add create, 
+	sccp primary_add modify, sccp primary_add delete, sccp primary_add show,
+	sccp backup_add create, sccp backup_add modify, sccp backup_add delete,
+	sccp backup_add show, sccp rsp create, sccp rsp modify, sccp rsp delete, 
+	sccp rsp show, sccp rss create, sccp rss modify, sccp rss delete, sccp rss show, 
+	sccp lmr create, sccp lmr modify, sccp lmr delete, sccp lmr show, sccp csp create, 
+	sccp csp modify, sccp csp delete, sccp csp show, sccp get, sccp set
