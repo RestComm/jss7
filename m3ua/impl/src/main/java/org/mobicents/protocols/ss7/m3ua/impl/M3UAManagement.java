@@ -106,7 +106,7 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 	protected int maxAsForRoute = 4;
 
 	private M3UARouteManagement routeManagement = null;
-	
+
 	/**
 	 * Maximum sequence number received from SCCTP user. If SCCTP users sends
 	 * seq number greater than max, packet will be dropped and error message
@@ -337,13 +337,57 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 	}
 
 	/**
-	 * Create new {@link AspFactory}
+	 * Create new {@link AspFactory} without passing optional aspid
 	 * 
-	 * @param args
+	 * @param aspName
+	 * @param associationName
 	 * @return
 	 * @throws Exception
 	 */
 	public AspFactory createAspFactory(String aspName, String associationName) throws Exception {
+		long aspid = 0l;
+		boolean regenerateFlag = true;
+
+		while (regenerateFlag) {
+			aspid = AspFactory.generateId();
+			if (aspfactories.size() == 0) {
+				// Special case where this is first Asp added
+				break;
+			}
+
+			for (FastList.Node<AspFactory> n = aspfactories.head(), end = aspfactories.tail(); (n = n.getNext()) != end;) {
+				AspFactory aspFactory = n.getValue();
+				if (aspid == aspFactory.getAspid().getAspId()) {
+					regenerateFlag = true;
+					break;
+				} else {
+					regenerateFlag = false;
+				}
+			}// for
+		}// while
+
+		return this.createAspFactory(aspName, associationName, aspid);
+	}
+
+	/**
+	 * <p>
+	 * Create new {@link AspFactory}
+	 * </p>
+	 * <p>
+	 * Command is m3ua asp create <asp-name> <sctp-association> aspid <aspid>
+	 * </p>
+	 * <p>
+	 * asp-name and sctp-association is mandatory where as aspid is optional. If
+	 * aspid is not passed, next available aspid wil be used
+	 * </p>
+	 * 
+	 * @param aspName
+	 * @param associationName
+	 * @param aspid
+	 * @return
+	 * @throws Exception
+	 */
+	public AspFactory createAspFactory(String aspName, String associationName, long aspid) throws Exception {
 		AspFactory factory = this.getAspFactory(aspName);
 
 		if (factory != null) {
@@ -352,18 +396,25 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 
 		Association association = this.transportManagement.getAssociation(associationName);
 		if (association == null) {
-			throw new Exception(String.format("No Association found for name=%s", associationName));
+			throw new Exception(String.format(M3UAOAMMessages.NO_ASSOCIATION_FOUND, associationName));
 		}
 
 		if (association.isStarted()) {
-			throw new Exception(String.format("Association=%s is started", associationName));
+			throw new Exception(String.format(M3UAOAMMessages.ASSOCIATION_IS_STARTED, associationName));
 		}
 
 		if (association.getAssociationListener() != null) {
-			throw new Exception(String.format("Association=%s is already associated", associationName));
+			throw new Exception(String.format(M3UAOAMMessages.ASSOCIATION_IS_ASSOCIATED, associationName));
 		}
 
-		factory = new AspFactory(aspName, this.getMaxSequenceNumber());
+		for (FastList.Node<AspFactory> n = aspfactories.head(), end = aspfactories.tail(); (n = n.getNext()) != end;) {
+			AspFactory aspFactory = n.getValue();
+			if (aspid == aspFactory.getAspid().getAspId()) {
+				throw new Exception(String.format(M3UAOAMMessages.ASP_ID_TAKEN, aspid));
+			}
+		}
+
+		factory = new AspFactory(aspName, this.getMaxSequenceNumber(), aspid);
 		factory.setM3UAManagement(this);
 		factory.setAssociation(association);
 		factory.setTransportManagement(this.transportManagement);
@@ -436,8 +487,7 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 			// assigned to AS with null RC
 			Asp asp = asps.get(0);
 			if (asp != null && asp.getAs().getRoutingContext() == null) {
-				throw new Exception(String.format(M3UAOAMMessages.ADD_ASP_TO_AS_FAIL_ALREADY_ASSIGNED_TO_OTHER_AS_WITH_NULL_RC,
-						aspName, asName));
+				throw new Exception(String.format(M3UAOAMMessages.ADD_ASP_TO_AS_FAIL_ALREADY_ASSIGNED_TO_OTHER_AS_WITH_NULL_RC, aspName, asName));
 			}
 		}
 
@@ -452,8 +502,8 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 		}
 
 		if (aspFactroy.getIpspType() != null && aspFactroy.getIpspType() != as.getIpspType()) {
-			throw new Exception(String.format(M3UAOAMMessages.ADD_ASP_TO_AS_FAIL_ALREADY_ASSIGNED_TO_OTHER_IPSP_TYPE, aspName,
-					asName, aspFactroy.getIpspType()));
+			throw new Exception(
+					String.format(M3UAOAMMessages.ADD_ASP_TO_AS_FAIL_ALREADY_ASSIGNED_TO_OTHER_IPSP_TYPE, aspName, asName, aspFactroy.getIpspType()));
 		}
 
 		aspFactroy.setExchangeType(as.getExchangeType());
@@ -537,7 +587,7 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 		}
 
 		aspFactory.stop();
-	
+
 		if (needStore)
 			this.store();
 	}
@@ -561,8 +611,7 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 			return;
 
 		if (logger.isInfoEnabled()) {
-			logger.info(String.format("Removing allocated resources: AppServers=%d, AspFactories=%d", this.appServers.size(),
-					this.aspfactories.size()));
+			logger.info(String.format("Removing allocated resources: AppServers=%d, AspFactories=%d", this.appServers.size(), this.aspfactories.size()));
 		}
 
 		this.stopFactories();
@@ -601,7 +650,7 @@ public class M3UAManagement extends Mtp3UserPartBaseImpl {
 		for (String n : lst) {
 			this.destroyAs(n);
 		}
-		
+
 		// We store the cleared state
 		this.store();
 	}

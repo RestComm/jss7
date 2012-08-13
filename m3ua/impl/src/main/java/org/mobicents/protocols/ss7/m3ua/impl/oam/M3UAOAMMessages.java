@@ -102,6 +102,14 @@ public interface M3UAOAMMessages {
 	
 	public static final String AS_USED_IN_ROUTE_ERROR = "As=%s used in route=%s. Remove from route";
 	
+	public static final String NO_ASSOCIATION_FOUND = "No Association found for name=%s";
+	
+	public static final String ASSOCIATION_IS_STARTED = "Association=%s is started";
+	
+	public static final String ASSOCIATION_IS_ASSOCIATED = "Association=%s is already associated";
+	
+	public static final String ASP_ID_TAKEN = "ASP Identifier=%d is already taken";
+	
 	/**
 	 * Generic constants
 	 */
@@ -121,6 +129,8 @@ public interface M3UAOAMMessages {
 	public static final String SHOW_AS_NAME = "AS name=";
 	
 	public static final String SHOW_SCTP_ASSOC = " sctpAssoc=";
+	
+	public static final String SHOW_ASPID = " aspid=";
 	
 	public static final String SHOW_STARTED = " started=";
 	
