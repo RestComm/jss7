@@ -296,7 +296,7 @@ public class M3UAShellExecutor implements ShellExecutor {
 				return M3UAOAMMessages.INVALID_COMMAND;
 			} else if (args[1].equals("asp")) {
 
-				if (args.length > 5) {
+				if (args.length < 3 || args.length > 7) {
 					return M3UAOAMMessages.INVALID_COMMAND;
 				}
 
@@ -318,7 +318,26 @@ public class M3UAShellExecutor implements ShellExecutor {
 						return M3UAOAMMessages.INVALID_COMMAND;
 					}
 
-					AspFactory factory = this.m3uaManagement.createAspFactory(aspname, assocName);
+					AspFactory factory = null;
+					if (args.length == 5) {
+						factory = this.m3uaManagement.createAspFactory(aspname, assocName);
+					} else {
+						int count = 5;
+						while (count < args.length) {
+							String key = args[count++];
+							if (key == null) {
+								return M3UAOAMMessages.INVALID_COMMAND;
+							}
+
+							if (key.equals("aspid")) {
+								long aspid = Long.parseLong(args[count++]);
+								factory = this.m3uaManagement.createAspFactory(aspname, assocName, aspid);
+							} else {
+								return M3UAOAMMessages.INVALID_COMMAND;
+							}
+						}
+
+					}
 					return String.format(M3UAOAMMessages.CREATE_ASP_SUCESSFULL, factory.getName());
 				} else if (raspCmd.equals("destroy")) {
 					if (args.length < 4) {

@@ -86,6 +86,8 @@ public class M3UAShellExecutorTest {
 		m3uaExec.setM3uaManagement(clientM3UAMgmt);
 
 		Association sctpAssociation = this.transportManagement.addAssociation(null, 0, null, 0, "testAssoc1");
+		
+		Association sctpAssociation2 = this.transportManagement.addAssociation(null, 0, null, 0, "testAssoc2");
 
 		// Test creating new AS testas
 		String result = m3uaExec.execute("m3ua as create testas AS mode SE rc 100 traffic-mode loadshare".split(" "));
@@ -107,9 +109,17 @@ public class M3UAShellExecutorTest {
 		result = m3uaExec.execute("m3ua as create MTUAS IPSP mode DE ipspType server rc 1 traffic-mode loadshare".split(" "));
 		assertEquals(String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, "MTUAS"), result);
 
-		// create ASP
+		// create ASP with only mandatory params
 		result = m3uaExec.execute("m3ua asp create testasp1 testAssoc1".split(" "));
 		assertEquals(String.format(M3UAOAMMessages.CREATE_ASP_SUCESSFULL, "testasp1"), result);
+		
+		// create ASP with all params but with same aspid
+		result = m3uaExec.execute("m3ua asp create testasp2 testAssoc2 aspid 2".split(" "));
+		assertEquals(result, String.format(M3UAOAMMessages.ASP_ID_TAKEN, 2));
+		
+		// create ASP with all params but with unique aspid
+		result = m3uaExec.execute("m3ua asp create testasp2 testAssoc2 aspid 3".split(" "));
+		assertEquals(result, String.format(M3UAOAMMessages.CREATE_ASP_SUCESSFULL, "testasp2"));
 
 		// Error for same name
 		result = m3uaExec.execute("m3ua asp create testasp1 testAssoc1".split(" "));
