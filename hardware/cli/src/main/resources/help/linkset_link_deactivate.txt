@@ -4,19 +4,20 @@ Name
 SYNOPSIS
 	linkset link deactivate <linkset-name> <link-name>
 
-         <link-name>
- 		is the name of the Link to be deactivated.
-
-	<linkset-name>
-		is the name of the Linkset in which the Link resides.
-
 DESCRIPTION
 	This command is used to deactivate an existing Link within a Linkset.
 
-EXAMPLE
+PARAMETERS
+	<link-name>		- 	Name of the Link to be deactivated. 
 
+	<linkset-name>		-	Name of the Linkset within which the Link resides. 
+
+EXAMPLE
 	linkset link deactivate linkset1 link1
-	- The above command will deactivate the Link identified by the name Link1 within the Linkset linkset1..
+	
+	The above command will deactivate the Link identified by the name Link1 within the
+	Linkset linkset1.
 
 SEE ALSO
-	linkset, linkset create, linkset delete, linkset activate, linkset deactivate, linkset show, linkset link create, linkset link delete, linkset link activate.
+	linkset, linkset create, linkset delete, linkset activate, linkset deactivate, 
+	linkset show, linkset link create, linkset link delete, linkset link activate.

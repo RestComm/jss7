@@ -1,0 +1,42 @@
+Name
+	linkset show
+
+SYNOPSIS
+	linkset show
+
+DESCRIPTION
+	This command is used to view all Links and Linksets and their states. 
+
+	The possible states of a Linkset are:
+
+	- UNAVAILABLE	:	Indicates that the Linkset does not have any 'available' 
+				links and cannot transport traffic.
+
+	- SHUTDOWN	:	Indicates that Linkset has been shutdown.
+
+	- AVAILABLE	:	Indicates that the Linkset has atleast one 'available' 
+				link and can transport traffic.
+
+	The possible states of a Link are:
+
+	- UNAVAILABLE	:	Indicates that the Link is not 'available' to transport
+				traffic. A Link is 'unavailable' if the Link is remotely 
+				or locally inhibited by a user. It can also be 
+				'unavailable' if MTP2 has not been able to successfully 
+				activate the link connection.
+
+	- SHUTDOWN	:	Indicates the Link has been shutdown in the configuration. 
+
+	- AVAILABLE	:	Indicates the Link is active and 'available' to transport 
+				traffic.
+
+	- FAILED	:	Indicates that the Link is not 'shutdown' but is 
+				'unavailable' at Layer 2 for some reason. For example, the
+				Initial Alignment may fail, or the link test messages sent
+				by MTP 3 are not being acknowledged.
+
+SEE ALSO
+	linkset, linkset create, linkset delete, linkset activate, linkset deactivate, 
+	linkset link create, linkset link delete, linkset link activate, 
+	linkset link deactivate.
+
