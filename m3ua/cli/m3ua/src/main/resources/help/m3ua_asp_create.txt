@@ -2,7 +2,7 @@ Name
 	m3ua asp create
 
 SYNOPSIS
-	m3ua asp create <asp-name> <sctp-association>
+	m3ua asp create <asp-name> <sctp-association> aspid <aspid>
 
 DESCRIPTION
 	This command is used to create a new Application Server Process. 
@@ -17,11 +17,17 @@ PARAMETERS
 
 	<sctp-association>		-	Name of the SCTP Association
 	
+	Optional Parameters
+
+	<aspid>				-	Identifier for this newly created
+						Application Server Process. If this is 
+						not passed, next available aspid will be
+						used.
 EXAMPLES
-	m3ua asp create ASP1 Assoc1
+	m3ua asp create ASP1 Assoc1 12
 	
-	The above command will create a new M3UA Application Server Process identified 
-	as ASP1.
+	The above command will create a new M3UA Application Server Process with name ASP1
+	and id 12.
 
 SEE ALSO
 	m3ua, m3ua as create, m3ua as destroy, m3ua as show, m3ua asp destroy, 
