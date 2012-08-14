@@ -8,6 +8,8 @@ import org.mobicents.protocols.ss7.cap.api.CAPMessage;
 import org.mobicents.protocols.ss7.cap.api.CAPParameterFactory;
 import org.mobicents.protocols.ss7.cap.api.CAPProvider;
 import org.mobicents.protocols.ss7.cap.api.CAPStack;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAnswerSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.ODisconnectSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPComponentErrorReason;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
@@ -18,6 +20,7 @@ import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CallingPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.LocationNumberCap;
 import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
+import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestResponse;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingReportRequest;
@@ -44,6 +47,9 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestRe
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ResetTimerRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SendChargingInformationRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DestinationRoutingAddress;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSM;
+import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformation;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -56,6 +62,7 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	private CAPProvider capProvider;
 	private CAPParameterFactory paramFact;
 	private CAPDialogCircuitSwitchedCall currentCapDialog;
+	private CallContent cc;
 
 	public CallSsfExample(SccpProvider sccpPprovider, int ssn) {
 		capStack = new CAPStackImpl(sccpPprovider, ssn);
@@ -94,6 +101,88 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 				eventTypeBCSM, null, null, null, null, null, null, null, false, null, null, locationInformation, null, null, null, null, null, false, null);
 		// This will initiate the TC-BEGIN with INVOKE component
 		currentCapDialog.send();
+
+		this.cc.step = Step.initialDPSent;
+		this.cc.calledPartyNumber = calledPartyNumber;
+		this.cc.callingPartyNumber = callingPartyNumber;		
+	
+	}
+
+	public void sendEventReportBCSM_OAnswer(OAnswerSpecificInfo oAnswerSpecificInfo, ReceivingSideID legID, MiscCallInfo miscCallInfo) throws CAPException {
+		if (currentCapDialog != null && this.cc != null) {
+			EventSpecificInformationBCSM eventSpecificInformationBCSM = this.capProvider.getCAPParameterFactory().createEventSpecificInformationBCSM(oAnswerSpecificInfo);
+			currentCapDialog.addEventReportBCSMRequest(EventTypeBCSM.oAnswer, eventSpecificInformationBCSM, legID, miscCallInfo, null);
+			currentCapDialog.send();
+			this.cc.step = Step.answered;
+		}
+	}
+
+	public void sendEventReportBCSM_ODisconnect(ODisconnectSpecificInfo oDisconnectSpecificInfo, ReceivingSideID legID, MiscCallInfo miscCallInfo) throws CAPException {
+		if (currentCapDialog != null && this.cc != null) {
+			EventSpecificInformationBCSM eventSpecificInformationBCSM = this.capProvider.getCAPParameterFactory().createEventSpecificInformationBCSM(oDisconnectSpecificInfo);
+			currentCapDialog.addEventReportBCSMRequest(EventTypeBCSM.oDisconnect, eventSpecificInformationBCSM, legID, miscCallInfo, null);
+			currentCapDialog.send();
+			this.cc.step = Step.disconnected;
+		}
+	}
+
+	@Override
+	public void onRequestReportBCSMEventRequest(RequestReportBCSMEventRequest ind) {
+		if (currentCapDialog != null && this.cc != null && this.cc.step != Step.disconnected) {
+			this.cc.requestReportBCSMEventRequest = ind;
+
+			// initiating BCSM events processing
+		}
+	}
+
+	@Override
+	public void onActivityTestRequest(ActivityTestRequest ind) {
+		if (currentCapDialog != null && this.cc != null && this.cc.step != Step.disconnected) {
+			this.cc.activityTestInvokeId = ind.getInvokeId();
+		}
+	}
+
+	@Override
+	public void onActivityTestResponse(ActivityTestResponse ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onContinueRequest(ContinueRequest ind) {
+		this.cc.step = Step.callAllowed;
+		// sending Continue to use the original calledPartyAddress
+	}
+
+	@Override
+	public void onConnectRequest(ConnectRequest ind) {
+		this.cc.step = Step.callAllowed;
+		this.cc.destinationRoutingAddress = ind.getDestinationRoutingAddress();
+		// sending Connect to force routing the call to a new  number
+	}
+
+	@Override
+	public void onDialogTimeout(CAPDialog capDialog) {
+		if (currentCapDialog != null && this.cc != null && this.cc.step != Step.disconnected) {
+			// if the call is still up - keep the sialog alive
+			currentCapDialog.keepAlive();
+		}
+	}
+
+	@Override
+	public void onDialogDelimiter(CAPDialog capDialog) {
+		if (currentCapDialog != null && this.cc != null && this.cc.step != Step.disconnected) {
+			if (this.cc.activityTestInvokeId != null) {
+				try {
+					currentCapDialog.addActivityTestResponse(this.cc.activityTestInvokeId);
+					this.cc.activityTestInvokeId = null;
+					currentCapDialog.send();
+				} catch (CAPException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	@Override
@@ -133,12 +222,6 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	}
 
 	@Override
-	public void onRequestReportBCSMEventRequest(RequestReportBCSMEventRequest ind) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void onApplyChargingRequest(ApplyChargingRequest ind) {
 		// TODO Auto-generated method stub
 		
@@ -146,12 +229,6 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 
 	@Override
 	public void onEventReportBCSMRequest(EventReportBCSMRequest ind) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onContinueRequest(ContinueRequest ind) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -169,12 +246,6 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	}
 
 	@Override
-	public void onConnectRequest(ConnectRequest ind) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void onCallInformationRequestRequest(CallInformationRequestRequest ind) {
 		// TODO Auto-generated method stub
 		
@@ -182,18 +253,6 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 
 	@Override
 	public void onCallInformationReportRequest(CallInformationReportRequest ind) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onActivityTestRequest(ActivityTestRequest ind) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onActivityTestResponse(ActivityTestResponse ind) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -271,12 +330,6 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	}
 
 	@Override
-	public void onDialogDelimiter(CAPDialog capDialog) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void onDialogRequest(CAPDialog capDialog, CAPGprsReferenceNumber capGprsReferenceNumber) {
 		// TODO Auto-generated method stub
 		
@@ -308,14 +361,8 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 
 	@Override
 	public void onDialogRelease(CAPDialog capDialog) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onDialogTimeout(CAPDialog capDialog) {
-		// TODO Auto-generated method stub
-		
+		this.currentCapDialog = null;
+		this.cc = null;
 	}
 
 	@Override
@@ -323,5 +370,22 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 		// TODO Auto-generated method stub
 		
 	}	
+
+	private enum Step {
+		initialDPSent,
+		callAllowed,
+		answered,
+		disconnected;
+	}
+	
+	private class CallContent {
+		public Step step;
+		public Long activityTestInvokeId;
+
+		public CalledPartyNumberCap calledPartyNumber;
+		public CallingPartyNumberCap callingPartyNumber;
+		public RequestReportBCSMEventRequest requestReportBCSMEventRequest;
+		public DestinationRoutingAddress destinationRoutingAddress;
+	}
 
 }

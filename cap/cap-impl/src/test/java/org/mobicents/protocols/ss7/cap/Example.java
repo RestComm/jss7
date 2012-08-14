@@ -2,13 +2,22 @@ package org.mobicents.protocols.ss7.cap;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAnswerSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.ODisconnectSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CallingPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
 import org.mobicents.protocols.ss7.cap.api.isup.LocationNumberCap;
 import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
+import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
+import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
+import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
+import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfoMessageType;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
@@ -48,6 +57,7 @@ public class Example {
 
 		client.start();
 
+		// starting a call
 		SccpAddress origAddress = createLocalAddress();
 		SccpAddress destAddress = createRemoteAddress();
 
@@ -84,6 +94,26 @@ public class Example {
 
 		client.sendInitialDP(origAddress, destAddress, serviceKey, calledPartyNumberCap, callingPartyNumberCap, locationNumberCap, EventTypeBCSM.collectedInfo,
 				locationInformation);
+		
+		// sending oAnswer in 5 sec
+		Thread.sleep(5000);
+		OAnswerSpecificInfo oAnswerSpecificInfo = client.getCAPProvider().getCAPParameterFactory()
+				.createOAnswerSpecificInfo(null, false, false, null, null, null);
+		ReceivingSideID legID = client.getCAPProvider().getCAPParameterFactory().createReceivingSideID(LegType.leg2);
+		MiscCallInfo miscCallInfo = client.getCAPProvider().getINAPParameterFactory().createMiscCallInfo(MiscCallInfoMessageType.notification, null);
+		client.sendEventReportBCSM_OAnswer(oAnswerSpecificInfo, legID, miscCallInfo);
+		
+		// sending oDisconnect in 20 sec
+		Thread.sleep(20000);
+		CauseIndicators causeIndicators = client.getCAPProvider().getISUPParameterFactory().createCauseIndicators();
+		causeIndicators.setLocation(CauseIndicators._LOCATION_USER);
+		causeIndicators.setCodingStandard(CauseIndicators._CODING_STANDARD_ITUT);
+		causeIndicators.setCauseValue(CauseIndicators._CV_ALL_CLEAR);
+		CauseCap releaseCause = client.getCAPProvider().getCAPParameterFactory().createCauseCap(causeIndicators);
+		ODisconnectSpecificInfo oDisconnectSpecificInfo = client.getCAPProvider().getCAPParameterFactory().createODisconnectSpecificInfo(releaseCause);
+		legID = client.getCAPProvider().getCAPParameterFactory().createReceivingSideID(LegType.leg1);
+		miscCallInfo = client.getCAPProvider().getINAPParameterFactory().createMiscCallInfo(MiscCallInfoMessageType.notification, null);
+		client.sendEventReportBCSM_ODisconnect(oDisconnectSpecificInfo, legID, miscCallInfo);
 		
 		// wait for answer
 		Thread.sleep(600000);

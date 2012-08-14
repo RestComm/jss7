@@ -17,10 +17,8 @@ import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.primitives.BCSMEvent;
-import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
 import org.mobicents.protocols.ss7.cap.api.primitives.MonitorMode;
-import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestResponse;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingReportRequest;
@@ -48,11 +46,8 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ResetTime
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SendChargingInformationRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DestinationRoutingAddress;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSM;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
-import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
-import org.mobicents.protocols.ss7.inap.primitives.LegIDImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
@@ -97,50 +92,121 @@ public class CallScfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	public void onInitialDPRequest(InitialDPRequest ind) {
 		this.cc = new CallContent();
 		this.cc.idp = ind;
+		this.cc.step = Step.initialDPRecieved;
+	}
+
+	@Override
+	public void onEventReportBCSMRequest(EventReportBCSMRequest ind) {
+		if (this.cc != null) {
+			this.cc.eventList.add(ind);
+
+			switch (ind.getEventTypeBCSM()) {
+			case oAnswer:
+				this.cc.step = Step.answered;
+				break;
+			case oDisconnect:
+				this.cc.step = Step.disconnected;
+				break;
+			}
+		}
 	}
 
 	@Override
 	public void onDialogDelimiter(CAPDialog capDialog) {
 		try {
-			// informing SSF of BCSM events processing
-			ArrayList<BCSMEvent> bcsmEventList = new ArrayList<BCSMEvent>();
-			BCSMEvent ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.routeSelectFailure, MonitorMode.notifyAndContinue, null, null, false);
-			bcsmEventList.add(ev);
-			ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oCalledPartyBusy, MonitorMode.interrupted, null, null, false);
-			bcsmEventList.add(ev);
-			ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oNoAnswer, MonitorMode.interrupted, null, null, false);
-			bcsmEventList.add(ev);
-			ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oAnswer, MonitorMode.notifyAndContinue, null, null, false);
-			bcsmEventList.add(ev);
-			ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oDisconnect, MonitorMode.notifyAndContinue, new LegIDImpl(true, LegType.leg1), null, false);
-			bcsmEventList.add(ev);
-			ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oDisconnect, MonitorMode.interrupted, new LegIDImpl(true, LegType.leg2), null, false);
-			bcsmEventList.add(ev);
-			ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oAbandon, MonitorMode.notifyAndContinue, null, null, false);
-			bcsmEventList.add(ev);
-			currentCapDialog.addRequestReportBCSMEventRequest(bcsmEventList, null);
+			if (this.cc != null) {
+				switch (this.cc.step) {
+				case initialDPRecieved:
+					// informing SSF of BCSM events processing
+					ArrayList<BCSMEvent> bcsmEventList = new ArrayList<BCSMEvent>();
+					BCSMEvent ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.routeSelectFailure, MonitorMode.notifyAndContinue,
+							null, null, false);
+					bcsmEventList.add(ev);
+					ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oCalledPartyBusy, MonitorMode.interrupted, null, null, false);
+					bcsmEventList.add(ev);
+					ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oNoAnswer, MonitorMode.interrupted, null, null, false);
+					bcsmEventList.add(ev);
+					ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oAnswer, MonitorMode.notifyAndContinue, null, null, false);
+					bcsmEventList.add(ev);
+					LegID legId = this.capProvider.getINAPParameterFactory().createLegID(true, LegType.leg1);
+					ev = this.capProvider.getCAPParameterFactory()
+							.createBCSMEvent(EventTypeBCSM.oDisconnect, MonitorMode.notifyAndContinue, legId, null, false);
+					bcsmEventList.add(ev);
+					legId = this.capProvider.getINAPParameterFactory().createLegID(true, LegType.leg2);
+					ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oDisconnect, MonitorMode.interrupted, legId, null, false);
+					bcsmEventList.add(ev);
+					ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oAbandon, MonitorMode.notifyAndContinue, null, null, false);
+					bcsmEventList.add(ev);
+					currentCapDialog.addRequestReportBCSMEventRequest(bcsmEventList, null);
 
-			String newNumber = "22123124"; // calculating here a new called party number if it is needed
-			if (newNumber != null) {
-				ArrayList<CalledPartyNumberCap> calledPartyNumber = new ArrayList<CalledPartyNumberCap>();
-				CalledPartyNumber cpn = this.capProvider.getISUPParameterFactory().createCalledPartyNumber();
-				cpn.setAddress("5599999988");
-				cpn.setNatureOfAddresIndicator(NAINumber._NAI_INTERNATIONAL_NUMBER);
-				cpn.setNumberingPlanIndicator(CalledPartyNumber._NPI_ISDN);
-				cpn.setInternalNetworkNumberIndicator(CalledPartyNumber._INN_ROUTING_ALLOWED);
-				CalledPartyNumberCap cpnc = this.capProvider.getCAPParameterFactory().createCalledPartyNumberCap(cpn);
-				calledPartyNumber.add(cpnc);
-				DestinationRoutingAddress destinationRoutingAddress = this.capProvider.getCAPParameterFactory().createDestinationRoutingAddress(calledPartyNumber);
-				currentCapDialog.addConnectRequest(destinationRoutingAddress, null, null, null, null, null, null, null, null, null, null, null, null, false,
-						false, false, null, false);
-			} else {
-				currentCapDialog.addContinueRequest();
+					String newNumber = "22123124"; // calculating here a new called party number if it is needed
+					if (newNumber != null) {
+						// sending Connect to force routing the call to a new  number
+						ArrayList<CalledPartyNumberCap> calledPartyNumber = new ArrayList<CalledPartyNumberCap>();
+						CalledPartyNumber cpn = this.capProvider.getISUPParameterFactory().createCalledPartyNumber();
+						cpn.setAddress("5599999988");
+						cpn.setNatureOfAddresIndicator(NAINumber._NAI_INTERNATIONAL_NUMBER);
+						cpn.setNumberingPlanIndicator(CalledPartyNumber._NPI_ISDN);
+						cpn.setInternalNetworkNumberIndicator(CalledPartyNumber._INN_ROUTING_ALLOWED);
+						CalledPartyNumberCap cpnc = this.capProvider.getCAPParameterFactory().createCalledPartyNumberCap(cpn);
+						calledPartyNumber.add(cpnc);
+						DestinationRoutingAddress destinationRoutingAddress = this.capProvider.getCAPParameterFactory().createDestinationRoutingAddress(
+								calledPartyNumber);
+						currentCapDialog.addConnectRequest(destinationRoutingAddress, null, null, null, null, null, null, null, null, null, null, null, null,
+								false, false, false, null, false);
+					} else {
+						// sending Continue to use the original calledPartyAddress
+						currentCapDialog.addContinueRequest();
+					}
+
+					currentCapDialog.send();
+					break;
+
+				case disconnected:
+					// the call is terminated - close dialog
+					currentCapDialog.close(false);
+					break;
+				}
 			}
-
-			currentCapDialog.send();
 		} catch (CAPException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void onDialogTimeout(CAPDialog capDialog) {
+		if (currentCapDialog != null && this.cc != null && this.cc.step != Step.disconnected && this.cc.activityTestInvokeId == null) {
+			// check the SSF if the call is still alive
+			currentCapDialog.keepAlive();
+			try {
+				this.cc.activityTestInvokeId = currentCapDialog.addActivityTestRequest();
+				currentCapDialog.send();
+			} catch (CAPException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	public void onActivityTestResponse(ActivityTestResponse ind) {
+		if (currentCapDialog != null && this.cc != null) {
+			this.cc.activityTestInvokeId = null;
+		}
+	}
+
+	@Override
+	public void onInvokeTimeout(CAPDialog capDialog, Long invokeId) {
+		if (currentCapDialog != null && this.cc != null) {
+			if (this.cc.activityTestInvokeId == invokeId) { // activityTest failure
+				try {
+					currentCapDialog.close(true);
+				} catch (CAPException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
@@ -152,12 +218,6 @@ public class CallScfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 
 	@Override
 	public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onInvokeTimeout(CAPDialog capDialog, Long invokeId) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -182,12 +242,6 @@ public class CallScfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 
 	@Override
 	public void onApplyChargingRequest(ApplyChargingRequest ind) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onEventReportBCSMRequest(EventReportBCSMRequest ind) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -230,12 +284,6 @@ public class CallScfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 
 	@Override
 	public void onActivityTestRequest(ActivityTestRequest ind) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onActivityTestResponse(ActivityTestResponse ind) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -349,19 +397,22 @@ public class CallScfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	}
 
 	@Override
-	public void onDialogTimeout(CAPDialog capDialog) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void onDialogNotice(CAPDialog capDialog, CAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
 		// TODO Auto-generated method stub
 		
 	}
-	
+
+	private enum Step {
+		initialDPRecieved,
+		answered,
+		disconnected;
+	}
+
 	private class CallContent {
-		public InitialDPRequest idp; 
+		public Step step;
+		public InitialDPRequest idp;
+		public ArrayList<EventReportBCSMRequest> eventList = new ArrayList<EventReportBCSMRequest>();
+		public Long activityTestInvokeId;
 	}
 }
 
