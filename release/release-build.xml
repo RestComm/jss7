@@ -28,14 +28,14 @@
 		</copy>
 
 		<copy overwrite="true" todir="${jboss.home}/bin">
-			<fileset dir="./shell">
+			<fileset dir="./shell/bin">
 				<include name="**" />
 			</fileset>			
 		</copy>
 
-		<copy overwrite="true" todir="${jboss.home}/bin/lib">
-			<fileset dir="./mobicents-ss7-service/lib">
-				<include name="javolution-5.5.1.jar" />
+		<copy overwrite="true" todir="${jboss.home}/lib">
+			<fileset dir="./shell/lib">
+				<include name="**" />
 			</fileset>			
 		</copy>
 

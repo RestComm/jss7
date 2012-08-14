@@ -70,7 +70,6 @@ import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.lsm.ExtGeographicalInformation;
-import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientID;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientType;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSEvent;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSLocationInfo;
@@ -161,7 +160,7 @@ public class MAPFunctionalTest extends SccpHarness {
 	protected static final String USSD_FINAL_RESPONSE = "Thank you";
 
 	private static final int _TCAP_DIALOG_RELEASE_TIMEOUT = 0;
-	private static final int _WAIT_TIMEOUT = _TCAP_DIALOG_RELEASE_TIMEOUT + 200;
+	private static final int _WAIT_TIMEOUT = _TCAP_DIALOG_RELEASE_TIMEOUT + 500;
 
 	private MAPStackImpl stack1;
 	private MAPStackImpl stack2;

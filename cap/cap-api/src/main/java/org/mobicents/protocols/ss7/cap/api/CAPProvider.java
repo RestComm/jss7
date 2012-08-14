@@ -28,6 +28,9 @@ import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageFactory;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPServiceCircuitSwitchedCall;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.CAPServiceGprs;
 import org.mobicents.protocols.ss7.cap.api.service.sms.CAPServiceSms;
+import org.mobicents.protocols.ss7.inap.api.INAPParameterFactory;
+import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
+import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 
 /**
  * 
@@ -56,6 +59,27 @@ public interface CAPProvider extends Serializable {
 	 * @return
 	 */
 	public CAPParameterFactory getCAPParameterFactory();
+
+	/**
+	 * Get the {@link MAPParameterFactory}
+	 * 
+	 * @return
+	 */
+	public MAPParameterFactory getMAPParameterFactory();
+
+	/**
+	 * Get the {@link ISUPParameterFactory}
+	 * 
+	 * @return
+	 */
+	public ISUPParameterFactory getISUPParameterFactory();
+
+	/**
+	 * Get the {@link INAPParameterFactory}
+	 * 
+	 * @return
+	 */
+	public INAPParameterFactory getINAPParameterFactory();
 
 	/**
 	 * Get the {@link CAPErrorMessageFactory}

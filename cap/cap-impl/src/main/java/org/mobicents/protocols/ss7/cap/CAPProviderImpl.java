@@ -63,6 +63,12 @@ import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.CAPServiceCir
 import org.mobicents.protocols.ss7.cap.service.gprs.CAPServiceGprsImpl;
 import org.mobicents.protocols.ss7.cap.service.sms.CAPServiceSmsImpl;
 import org.mobicents.protocols.ss7.cap.api.dialog.ServingCheckData;
+import org.mobicents.protocols.ss7.inap.api.INAPParameterFactory;
+import org.mobicents.protocols.ss7.inap.isup.INAPParameterFactoryImpl;
+import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.ISUPParameterFactoryImpl;
+import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
+import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.TCListener;
@@ -118,6 +124,9 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 	transient private TCAPProvider tcapProvider = null;
 
 	transient private final CAPParameterFactory capParameterFactory = new CAPParameterFactoryImpl();
+	transient private final MAPParameterFactory mapParameterFactory = new MAPParameterFactoryImpl();
+	transient private final ISUPParameterFactory isupParameterFactory = new ISUPParameterFactoryImpl();
+	transient private final INAPParameterFactory inapParameterFactory = new INAPParameterFactoryImpl();
 	transient private final CAPErrorMessageFactory capErrorMessageFactory = new CAPErrorMessageFactoryImpl();
 
 	transient protected Set<CAPServiceBase> capServices = new HashSet<CAPServiceBase>();
@@ -163,7 +172,22 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 	public CAPParameterFactory getCAPParameterFactory() {
 		return capParameterFactory;
 	}
-	
+
+	@Override
+	public MAPParameterFactory getMAPParameterFactory() {
+		return mapParameterFactory;
+	}
+
+	@Override
+	public ISUPParameterFactory getISUPParameterFactory() {
+		return isupParameterFactory;
+	}
+
+	@Override
+	public INAPParameterFactory getINAPParameterFactory() {
+		return inapParameterFactory;
+	}
+
 	@Override
 	public CAPErrorMessageFactory getCAPErrorMessageFactory() {
 		return this.capErrorMessageFactory;
