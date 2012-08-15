@@ -55,10 +55,12 @@ public class CheckImeiRequestImpl extends MobilityMessageImpl implements CheckIm
 	
 	private long mapProtocolVersion;
 	
+	// For incoming messages
 	public CheckImeiRequestImpl(long mapProtocolVersion) {
 		this.mapProtocolVersion = mapProtocolVersion;
 	}
 	
+	// For outgoing messages
 	public CheckImeiRequestImpl(long mapProtocolVersion, IMEI imei, RequestedEquipmentInfo requestedEquipmentInfo,
 			MAPExtensionContainer extensionContainer) {
 		this.mapProtocolVersion = mapProtocolVersion;
@@ -121,6 +123,9 @@ public class CheckImeiRequestImpl extends MobilityMessageImpl implements CheckIm
 	}
 
 	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+		this.imei = null;
+		this.requestedEquipmentInfo = null;
+		this.extensionContainer = null;
 		
 		if (mapProtocolVersion >= 3) {
 			AsnInputStream ais = ansIS.readSequenceStreamData(length);

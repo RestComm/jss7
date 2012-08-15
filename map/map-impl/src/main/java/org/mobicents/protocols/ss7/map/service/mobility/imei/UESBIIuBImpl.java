@@ -23,53 +23,38 @@
 package org.mobicents.protocols.ss7.map.service.mobility.imei;
 
 import org.mobicents.protocols.asn.BitSetStrictLength;
-import org.mobicents.protocols.ss7.map.api.service.mobility.imei.RequestedEquipmentInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIuB;
 import org.mobicents.protocols.ss7.map.primitives.BitStringBase;
 
 /**
- * @author normandes
  * 
+ * @author normandes
+ *
  */
-public class RequestedEquipmentInfoImpl extends BitStringBase implements RequestedEquipmentInfo {
+public class UESBIIuBImpl extends BitStringBase implements UESBIIuB {
 
-	public static final String _PrimitiveName = "RequestedEquipmentInfo";
+	public static final String _PrimitiveName = "UESBIIuB";
 	
-	private boolean equipmentStatus;
-	private boolean bmuef;
-	
-	public RequestedEquipmentInfoImpl() {
-		super(2, 8, 2, _PrimitiveName);
+	public UESBIIuBImpl() {
+		super(1, 128, 1, _PrimitiveName);
 	}
 
-	public RequestedEquipmentInfoImpl(boolean equipmentStatus, boolean bmuef) {
-		super(2, 8, 2, _PrimitiveName);
-
-		// TODO: implement adding equipmentStatus and bmuef into this.bitString 
-	}
-
+	@Override
 	public BitSetStrictLength getData() {
 		return bitString;
-	}	
-
-	@Override
-	public boolean getEquipmentStatus() {
-		return equipmentStatus;
-	}
-
-	@Override
-	public boolean getBmuef() {
-		return bmuef;
 	}
 	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(_PrimitiveName);
-		sb.append(" [equipmentStatus=");
-		sb.append(equipmentStatus);
-		sb.append(", bmuef=");
-		sb.append(bmuef);
+		sb.append(" [");
+		if (this.bitString != null) {
+			sb.append(this.bitString);
+		}
 		sb.append("]");
+
 		return sb.toString();
 	}
+
 }
