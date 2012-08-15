@@ -57,23 +57,17 @@ public class CheckImeiResponseImpl extends MobilityMessageImpl implements CheckI
 	
 	private long mapProtocolVersion;
 	
-	public CheckImeiResponseImpl(EquipmentStatus equipmentStatus) {
-		this.equipmentStatus = equipmentStatus;
-	}
-	
+	// For incoming messages
 	public CheckImeiResponseImpl(long mapProtocolVersion) {
 		this.mapProtocolVersion = mapProtocolVersion;
 	}
 	
-	public CheckImeiResponseImpl(long mapProtocolVersion, EquipmentStatus equipmentStatus) {
+	// for outgoing messages
+	public CheckImeiResponseImpl(long mapProtocolVersion, EquipmentStatus equipmentStatus, UESBIIu bmuef, MAPExtensionContainer extensionContainer) {
 		this.mapProtocolVersion = mapProtocolVersion;
 		this.equipmentStatus = equipmentStatus;
-	}
-	
-	public CheckImeiResponseImpl(long mapProtocolVersion, UESBIIu bmuef, EquipmentStatus equipmentStatus) {
-		this.mapProtocolVersion = mapProtocolVersion;
 		this.bmuef = bmuef;
-		this.equipmentStatus = equipmentStatus;
+		this.extensionContainer = extensionContainer;
 	}
 	
 	public long getMapProtocolVersion() {
@@ -131,6 +125,10 @@ public class CheckImeiResponseImpl extends MobilityMessageImpl implements CheckI
 	
 	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 		
+		this.equipmentStatus = null;
+		this.bmuef = null;
+		this.extensionContainer = null;
+		
 		if (mapProtocolVersion >= 3) {
 			AsnInputStream ais = ansIS.readSequenceStreamData(length);
 			int num = 0;
@@ -154,8 +152,12 @@ public class CheckImeiResponseImpl extends MobilityMessageImpl implements CheckI
 						break;
 					case Tag.SEQUENCE:
 						// bmuef
-						// TODO: Implement
-						ais.advanceElement();
+						if (ais.isTagPrimitive()) {
+							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".bmuef: is primitive",
+									MAPParsingComponentExceptionReason.MistypedParameter);
+						}
+						this.bmuef = new UESBIIuImpl();
+						((UESBIIuImpl) this.bmuef).decodeAll(ais);
 						break;
 					default:
 						ais.advanceElement();
@@ -208,7 +210,15 @@ public class CheckImeiResponseImpl extends MobilityMessageImpl implements CheckI
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		try {
 			if (mapProtocolVersion >= 3) {
-				
+				if (this.equipmentStatus != null) {
+					asnOs.writeIntegerData(this.equipmentStatus.getCode());
+				}
+				if (this.bmuef != null) {
+					((UESBIIuImpl) this.bmuef).encodeAll(asnOs);
+				}
+				if (this.extensionContainer != null) {
+					((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
+				}
 			} else {
 				if (this.equipmentStatus == null) {
 					throw new MAPException("equipmentStatus parameter must not be null at version 2");

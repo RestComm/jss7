@@ -60,7 +60,7 @@ public class CheckImeiResponseTest {
 	
 	@Test(groups = { "functional.encode", "imei" })
 	public void testEncode() throws Exception {
-		CheckImeiResponseImpl checkImei = new CheckImeiResponseImpl(2, EquipmentStatus.whiteListed);
+		CheckImeiResponseImpl checkImei = new CheckImeiResponseImpl(2, EquipmentStatus.whiteListed, null, null);
 		
 		AsnOutputStream asnOS = new AsnOutputStream();
 		checkImei.encodeAll(asnOS);

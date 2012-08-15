@@ -370,6 +370,16 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 	}
 
 	@Override
+	public Long addCheckImeiRequest(IMEI imei) throws MAPException {
+		return this.addCheckImeiRequest(_Timer_Default, imei, null, null);
+	}
+	
+	@Override
+	public Long addCheckImeiRequest(long customInvokeTimeout, IMEI imei) throws MAPException {
+		return this.addCheckImeiRequest(customInvokeTimeout, imei, null, null);
+	}
+	
+	@Override
 	public Long addCheckImeiRequest(IMEI imei, RequestedEquipmentInfo requestedEquipmentInfo, 
 			MAPExtensionContainer extensionContainer) throws MAPException {
 		
@@ -381,9 +391,10 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 			MAPExtensionContainer extensionContainer) throws MAPException {
 
 		if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.equipmentMngtContext)
-				|| (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2
+				|| (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version1
+						&& this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2
 						&& this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)) {
-			throw new MAPException("Bad application context name for CheckImeiRequest: must be equipmentMngtContext_V2 or V3");
+			throw new MAPException("Bad application context name for CheckImeiRequest: must be equipmentMngtContext_V1, V2 or V3");
 		}
 		
 		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
@@ -423,15 +434,20 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 		this.sendInvokeComponent(invoke);
 
 		return invokeId;
-
+	}
+	
+	@Override
+	public void addCheckImeiResponse(long invokeId, EquipmentStatus equipmentStatus) throws MAPException {
+		this.addCheckImeiResponse(invokeId, equipmentStatus, null, null);
 	}
 	
 	@Override
 	public void addCheckImeiResponse(long invokeId, EquipmentStatus equipmentStatus, UESBIIu bmuef, MAPExtensionContainer extensionContainer) throws MAPException {
 		if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.equipmentMngtContext)
-				|| (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2
+				|| (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version1
+						&& this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2
 						&& this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)) {
-			throw new MAPException("Bad application context name for CheckImeiResponse: must be equipmentMngtContext_V2 or V3");
+			throw new MAPException("Bad application context name for CheckImeiResponse: must be equipmentMngtContext_V1, V2 or V3");
 		}
 		
 		ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
@@ -442,7 +458,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 		oc.setLocalOperationCode((long) MAPOperationCode.checkIMEI);
 		resultLast.setOperationCode(oc);
 		
-		CheckImeiResponseImpl resp = new CheckImeiResponseImpl(equipmentStatus);
+		CheckImeiResponseImpl resp = new CheckImeiResponseImpl(this.appCntx.getApplicationContextVersion().getVersion(), equipmentStatus, bmuef, extensionContainer);
 		AsnOutputStream aos = new AsnOutputStream();
 		resp.encodeData(aos);
 		

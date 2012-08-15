@@ -478,21 +478,30 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 	private void processCheckImeiRequest(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId) 
 			throws MAPParsingComponentException {
 		
-		/*if (parameter == null)
+		if (parameter == null)
 			throw new MAPParsingComponentException("Error while decoding CheckImeiRequest: Parameter is mandatory but not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
-
-		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
-			throw new MAPParsingComponentException(
-					"Error while decoding AnyTimeInterrogationRequestIndication: Bad tag or tagClass or parameter is primitive, received tag="
-							+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);*/
-
+		
+		long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
+		
+		if (version >= 3) {
+			if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+				throw new MAPParsingComponentException(
+						"Error while decoding CheckImeiRequest: Bad tag or tagClass or parameter is primitive, received tag="
+								+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+		} else {
+			if (parameter.getTag() != Tag.STRING_OCTET || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || !parameter.isPrimitive())
+				throw new MAPParsingComponentException(
+						"Error while decoding CheckImeiRequest V1 or V2: Bad tag or tagClass or parameter is not primitive, received tag=" 
+								+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+		
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-
-		long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
+		
 		CheckImeiRequestImpl ind = new CheckImeiRequestImpl(version);
 		ind.decodeData(ais, buf.length);
+		
 		ind.setInvokeId(invokeId);
 		ind.setMAPDialog(mapDialogImpl);
 
@@ -500,26 +509,35 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 			try {
 				((MAPServiceMobilityListener) serLis).onCheckImeiRequest(ind);
 			} catch (Exception e) {
-				loger.error("Error processing ProcessUnstructuredSSRequestIndication: " + e.getMessage(), e);
+				loger.error("Error processing processCheckImeiRequest: " + e.getMessage(), e);
 			}
 		}
 	}
 	
 	private void processCheckImeiResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId) 
 			throws MAPParsingComponentException {
-		/*if (parameter == null)
-			throw new MAPParsingComponentException("Error while decoding AnyTimeInterrogationResponseIndication: Parameter is mandatory but not found",
+		
+		if (parameter == null)
+			throw new MAPParsingComponentException("Error while decoding CheckImeiResponse: Parameter is mandatory but not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
-		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
-			throw new MAPParsingComponentException(
-					"Error while decoding AnyTimeInterrogationResponseIndication: Bad tag or tagClass or parameter is primitive, received tag="
-							+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);*/
+		long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
+		
+		if (version >= 3) {
+			if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+				throw new MAPParsingComponentException(
+						"Error while decoding CheckImeiResponse: Bad tag or tagClass or parameter is primitive, received tag="
+								+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+		} else {
+			if (parameter.getTag() != Tag.ENUMERATED || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || !parameter.isPrimitive())
+				throw new MAPParsingComponentException(
+						"Error while decoding CheckImeiResponse: Bad tag or tagClass or parameter is not primitive, received tag="
+								+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+		}
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-
-		long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
+		
 		CheckImeiResponseImpl ind = new CheckImeiResponseImpl(version);
 		ind.decodeData(ais, buf.length);
 		ind.setInvokeId(invokeId);
@@ -529,7 +547,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 			try {
 				((MAPServiceMobilityListener) serLis).onCheckImeiResponse(ind);
 			} catch (Exception e) {
-				loger.error("Error processing ProcessUnstructuredSSRequestIndication: " + e.getMessage(), e);
+				loger.error("Error processing processCheckImeiResponse: " + e.getMessage(), e);
 			}
 		}
 	}
