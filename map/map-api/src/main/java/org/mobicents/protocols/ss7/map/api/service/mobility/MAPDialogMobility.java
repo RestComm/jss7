@@ -93,14 +93,11 @@ public interface MAPDialogMobility extends MAPDialog {
 	// TODO: add service component adders
 	
 	// -- International mobile equipment identities management services
-	public Long addCheckImeiRequest(IMEI imei) throws MAPException; // Version 1 and 2
-	public Long addCheckImeiRequest(long customInvokeTimeout, IMEI imei) throws MAPException; // Version 1 and 2
 	public Long addCheckImeiRequest(IMEI imei, RequestedEquipmentInfo requestedEquipmentInfo, MAPExtensionContainer extensionContainer) 
-			throws MAPException; // Version 3
+			throws MAPException;
 	public Long addCheckImeiRequest(long customInvokeTimeout, IMEI imei, RequestedEquipmentInfo requestedEquipmentInfo, MAPExtensionContainer extensionContainer) 
-			throws MAPException; // Version 3
+			throws MAPException;
 	
-	public void addCheckImeiResponse(long invokeId, EquipmentStatus equipmentStatus) throws MAPException; // Version 1 and 2
 	public void addCheckImeiResponse(long invokeId, EquipmentStatus equipmentStatus, UESBIIu bmuef, MAPExtensionContainer extensionContainer) throws MAPException;
 
 }

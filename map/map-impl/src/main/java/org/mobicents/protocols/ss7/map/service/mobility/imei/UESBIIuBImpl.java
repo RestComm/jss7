@@ -44,17 +44,4 @@ public class UESBIIuBImpl extends BitStringBase implements UESBIIuB {
 		return bitString;
 	}
 	
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
-		if (this.bitString != null) {
-			sb.append(this.bitString);
-		}
-		sb.append("]");
-
-		return sb.toString();
-	}
-
 }

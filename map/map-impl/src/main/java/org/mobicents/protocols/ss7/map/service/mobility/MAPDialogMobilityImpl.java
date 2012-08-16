@@ -370,16 +370,6 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 	}
 
 	@Override
-	public Long addCheckImeiRequest(IMEI imei) throws MAPException {
-		return this.addCheckImeiRequest(_Timer_Default, imei, null, null);
-	}
-	
-	@Override
-	public Long addCheckImeiRequest(long customInvokeTimeout, IMEI imei) throws MAPException {
-		return this.addCheckImeiRequest(customInvokeTimeout, imei, null, null);
-	}
-	
-	@Override
 	public Long addCheckImeiRequest(IMEI imei, RequestedEquipmentInfo requestedEquipmentInfo, 
 			MAPExtensionContainer extensionContainer) throws MAPException {
 		
@@ -434,11 +424,6 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 		this.sendInvokeComponent(invoke);
 
 		return invokeId;
-	}
-	
-	@Override
-	public void addCheckImeiResponse(long invokeId, EquipmentStatus equipmentStatus) throws MAPException {
-		this.addCheckImeiResponse(invokeId, equipmentStatus, null, null);
 	}
 	
 	@Override

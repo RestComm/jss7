@@ -22,7 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.service.mobility.imei;
 
-import org.mobicents.protocols.asn.BitSetStrictLength;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.RequestedEquipmentInfo;
 import org.mobicents.protocols.ss7.map.primitives.BitStringBase;
 
@@ -34,8 +33,8 @@ public class RequestedEquipmentInfoImpl extends BitStringBase implements Request
 
 	public static final String _PrimitiveName = "RequestedEquipmentInfo";
 	
-	private boolean equipmentStatus;
-	private boolean bmuef;
+	private static final int _INDEX_EQUIPMENT_STATUS = 0;
+	private static final int _INDEX_BMUEF = 1;
 	
 	public RequestedEquipmentInfoImpl() {
 		super(2, 8, 2, _PrimitiveName);
@@ -44,31 +43,34 @@ public class RequestedEquipmentInfoImpl extends BitStringBase implements Request
 	public RequestedEquipmentInfoImpl(boolean equipmentStatus, boolean bmuef) {
 		super(2, 8, 2, _PrimitiveName);
 
-		// TODO: implement adding equipmentStatus and bmuef into this.bitString 
+		if (equipmentStatus)
+			this.bitString.set(_INDEX_EQUIPMENT_STATUS);
+		
+		if (bmuef)
+			this.bitString.set(_INDEX_BMUEF);
 	}
-
-	public BitSetStrictLength getData() {
-		return bitString;
-	}	
 
 	@Override
 	public boolean getEquipmentStatus() {
-		return equipmentStatus;
+		return this.bitString.get(_INDEX_EQUIPMENT_STATUS);
 	}
 
 	@Override
 	public boolean getBmuef() {
-		return bmuef;
+		return this.bitString.get(_INDEX_BMUEF);
 	}
 	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(_PrimitiveName);
-		sb.append(" [equipmentStatus=");
-		sb.append(equipmentStatus);
-		sb.append(", bmuef=");
-		sb.append(bmuef);
+		sb.append(" [");
+		if (getEquipmentStatus()) {
+			sb.append("EquipmentStatus, ");
+		}
+		if (getBmuef()) {
+			sb.append("bmuef, ");
+		}
 		sb.append("]");
 		return sb.toString();
 	}

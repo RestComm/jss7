@@ -41,9 +41,8 @@ public enum MAPApplicationContextVersion {
 		return this.version;
 	}
 
-	public static MAPApplicationContextVersion getInstance(Long version) {
-		long vers = (long) version;
-		switch( (int)vers ) {
+	public static MAPApplicationContextVersion getInstance(long version) {
+		switch( (int)version ) {
 		case 1:
 			return MAPApplicationContextVersion.version1;
 		case 2:

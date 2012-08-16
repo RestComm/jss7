@@ -34,14 +34,14 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIu;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIuA;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIuB;
-import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
+import org.mobicents.protocols.ss7.map.primitives.SequenceBase;
 
 /**
  * 
  * @author normandes
  *
  */
-public class UESBIIuImpl implements UESBIIu, MAPAsnPrimitive {
+public class UESBIIuImpl extends SequenceBase implements UESBIIu {
 
 	public static final String _PrimitiveName = "UESBIIu";
 	
@@ -52,10 +52,11 @@ public class UESBIIuImpl implements UESBIIu, MAPAsnPrimitive {
 	private UESBIIuB uesbiIuB;
 	
 	public UESBIIuImpl() {
-		
+		super(_PrimitiveName);
 	}
 	
 	public UESBIIuImpl(UESBIIuA uesbiIuA, UESBIIuB uesbiIuB) {
+		super(_PrimitiveName);
 		this.uesbiIuA = uesbiIuA;
 		this.uesbiIuB = uesbiIuB;
 	}
@@ -70,50 +71,7 @@ public class UESBIIuImpl implements UESBIIu, MAPAsnPrimitive {
 		return this.uesbiIuB;
 	}
 	
-	@Override
-	public int getTag() throws MAPException {
-		return Tag.SEQUENCE;
-	}
-
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
-
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
-
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-		
-	}
-
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-	
-	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+	public void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 		this.uesbiIuA = null;
 		this.uesbiIuB = null;
 		
@@ -154,23 +112,6 @@ public class UESBIIuImpl implements UESBIIu, MAPAsnPrimitive {
 	}
 
 	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
-
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		try {
-			asnOs.writeTag(tagClass, false, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
-
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.uesbiIuA != null) {
 			((UESBIIuAImpl) this.uesbiIuA).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_UESBI_IuA);
@@ -199,7 +140,5 @@ public class UESBIIuImpl implements UESBIIu, MAPAsnPrimitive {
 
 		return sb.toString();
 	}
-
-	
 
 }
