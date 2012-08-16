@@ -38,18 +38,5 @@ public class UESBIIuAImpl extends BitStringBase implements UESBIIuA {
 	public BitSetStrictLength getData() {
 		return bitString;
 	}
-	
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
-		if (this.bitString != null) {
-			sb.append(this.bitString);
-		}
-		sb.append("]");
-
-		return sb.toString();
-	}
 
 }
