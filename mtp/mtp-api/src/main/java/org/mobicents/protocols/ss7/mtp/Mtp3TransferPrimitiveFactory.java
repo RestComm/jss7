@@ -32,7 +32,7 @@ public class Mtp3TransferPrimitiveFactory {
 
 	private final int slsLength;
 
-	protected Mtp3TransferPrimitiveFactory(int pcLength, int slsLength) {
+	public Mtp3TransferPrimitiveFactory(int pcLength, int slsLength) {
 		this.pcLength = pcLength;
 		this.slsLength = slsLength;
 	}
