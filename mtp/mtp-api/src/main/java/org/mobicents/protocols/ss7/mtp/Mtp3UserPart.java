@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -30,13 +30,64 @@ import java.io.IOException;
  * 
  */
 public interface Mtp3UserPart {
+	
+	/**
+	 * Point Code format for ITU-T 14 bits
+	 */
+	public static final int PC_FORMAT_14 = 14;
+	
+	/**
+	 * Point Code format for ITU-T 16 bits
+	 */	
+	public static final int PC_FORMAT_16 = 16;
+	
+	/**
+	 * Point Code format for ITU-T or ANSI 24 bits
+	 */	
+	public static final int PC_FORMAT_24 = 24;
 
 	public void addMtp3UserPartListener(Mtp3UserPartListener listener);
 
 	public void removeMtp3UserPartListener(Mtp3UserPartListener listener);
 
 	/**
-	 * Return the maximum data field length of the MTP-TRANSFER message to the DPC
+	 * Length of Point Code in number of bits
+	 * 
+	 * @return
+	 */
+	public int getPointCodeLength();
+
+	/**
+	 * Set length of Point Code in number of bits
+	 * 
+	 * @param length
+	 */
+	public void setPointCodeLength(int length);
+
+	/**
+	 * Length of SLS in number of bits
+	 * 
+	 * @return
+	 */
+	public int getSLSLength();
+
+	/**
+	 * Set length of SLS in number of bits
+	 * 
+	 * @param slsLength
+	 */
+	public void setSLSLength(int slsLength);
+
+	/**
+	 * Get the Mtp3TransferPrimitiveFactory
+	 * 
+	 * @return
+	 */
+	public Mtp3TransferPrimitiveFactory getMtp3TransferPrimitiveFactory();
+
+	/**
+	 * Return the maximum data field length of the MTP-TRANSFER message to the
+	 * DPC
 	 * 
 	 * @param dpc
 	 * @return

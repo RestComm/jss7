@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -29,25 +29,22 @@ import javolution.util.FastList;
 import javolution.util.FastMap;
 
 import org.apache.log4j.Logger;
-
-import org.mobicents.protocols.ss7.mtp.Mtp3UserPartListener;
-import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
-import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
-import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
-import org.mobicents.protocols.ss7.mtp.Mtp3StatusPrimitive;
-import org.mobicents.protocols.ss7.m3ua.message.transfer.PayloadData;
 import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement;
-
+import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3StatusPrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitiveFactory;
+import org.mobicents.protocols.ss7.mtp.Mtp3UserPartListener;
+import org.mobicents.protocols.ss7.scheduler.IntConcurrentHashMap;
+import org.mobicents.protocols.ss7.scheduler.Scheduler;
+import org.mobicents.protocols.ss7.scheduler.Task;
 import org.mobicents.protocols.stream.api.SelectorKey;
 import org.mobicents.ss7.linkset.oam.Layer4;
 import org.mobicents.ss7.linkset.oam.Linkset;
 import org.mobicents.ss7.linkset.oam.LinksetManager;
 import org.mobicents.ss7.linkset.oam.LinksetSelector;
 import org.mobicents.ss7.linkset.oam.LinksetStream;
-
-import org.mobicents.protocols.ss7.scheduler.Scheduler;
-import org.mobicents.protocols.ss7.scheduler.Task;
-import org.mobicents.protocols.ss7.scheduler.IntConcurrentHashMap;
 
 /** */
 public class NodalInterworkingFunction extends Task implements Layer4,Mtp3UserPartListener {
@@ -60,6 +57,7 @@ public class NodalInterworkingFunction extends Task implements Layer4,Mtp3UserPa
 	private LinksetManager linksetManager = null;
 
 	private M3UAManagement m3UAManagement = null;
+	private Mtp3TransferPrimitiveFactory mtp3TransferPrimitiveFactory = null;
 
 	private boolean started = false;
 
@@ -97,6 +95,7 @@ public class NodalInterworkingFunction extends Task implements Layer4,Mtp3UserPa
 	public void setM3UAManagement(M3UAManagement m3UAManagement) {
 		this.m3UAManagement = m3UAManagement;
 		this.m3UAManagement.addMtp3UserPartListener(this);
+		this.mtp3TransferPrimitiveFactory = this.m3UAManagement.getMtp3TransferPrimitiveFactory();
 	}
 
 	// Layer4 methods
@@ -156,8 +155,7 @@ public class NodalInterworkingFunction extends Task implements Layer4,Mtp3UserPa
 					tempBuffer=new byte[size];
 					System.arraycopy(rxBuffer, 0, tempBuffer, 0, size);
 					
-					currPrimitive=new Mtp3TransferPrimitive();
-					currPrimitive.decodeMtp3(tempBuffer);
+					currPrimitive=mtp3TransferPrimitiveFactory.createMtp3TransferPrimitive(tempBuffer);
 					this.m3UAManagement.sendMessage(currPrimitive);				
 				}
 			}

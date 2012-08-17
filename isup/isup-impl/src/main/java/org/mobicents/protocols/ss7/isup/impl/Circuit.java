@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,12 +24,7 @@ package org.mobicents.protocols.ss7.isup.impl;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
-import javolution.util.FastList;
 import javolution.util.ReentrantLock;
 
 import org.mobicents.protocols.ss7.isup.ISUPEvent;
@@ -60,14 +55,15 @@ import org.mobicents.protocols.ss7.isup.message.UnblockingMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
 import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
-
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitiveFactory;
+import org.mobicents.protocols.ss7.scheduler.ConcurrentLinkedList;
 import org.mobicents.protocols.ss7.scheduler.Scheduler;
 import org.mobicents.protocols.ss7.scheduler.Task;
-import org.mobicents.protocols.ss7.scheduler.ConcurrentLinkedList;
 
 /**
  *
  * @author baranowb
+ * @author amit bhayani
  * 
  */
 @SuppressWarnings("rawtypes")
@@ -213,8 +209,8 @@ class Circuit {
 //		bout.write(encoded);
 //		byte[] msg = bout.toByteArray();
 
-		
-		Mtp3TransferPrimitive msg = new Mtp3TransferPrimitive(si, ni, 0, opc, dpc, sls, encoded);
+		Mtp3TransferPrimitiveFactory factory = this.provider.stack.getMtp3UserPart().getMtp3TransferPrimitiveFactory();
+		Mtp3TransferPrimitive msg = factory.createMtp3TransferPrimitive(si, ni, 0, opc, dpc, sls, encoded);
 		return msg;
 	}	
 
