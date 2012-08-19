@@ -27,6 +27,9 @@ import org.mobicents.protocols.ss7.cap.api.CAPParameterFactory;
 import org.mobicents.protocols.ss7.cap.api.CAPProvider;
 import org.mobicents.protocols.ss7.cap.api.CAPStack;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageFactory;
+import org.mobicents.protocols.ss7.inap.api.INAPParameterFactory;
+import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
+import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
@@ -45,8 +48,11 @@ public class Server extends EventTestHarness  {
 	private CAPStack capStack;
 	private CAPProvider capProvider;
 
-	private CAPParameterFactory capParameterFactory;
+	protected CAPParameterFactory capParameterFactory;
 	protected CAPErrorMessageFactory capErrorMessageFactory;
+	protected MAPParameterFactory mapParameterFactory;
+	protected INAPParameterFactory inapParameterFactory;
+	protected ISUPParameterFactory isupParameterFactory;
 
 //	private boolean _S_recievedDialogRequest;
 //	private boolean _S_recievedInitialDp;
@@ -67,6 +73,9 @@ public class Server extends EventTestHarness  {
 
 		this.capParameterFactory = this.capProvider.getCAPParameterFactory();
 		this.capErrorMessageFactory = this.capProvider.getCAPErrorMessageFactory();
+		this.mapParameterFactory = this.capProvider.getMAPParameterFactory();
+		this.inapParameterFactory = this.capProvider.getINAPParameterFactory();
+		this.isupParameterFactory = this.capProvider.getISUPParameterFactory();
 
 		this.capProvider.addCAPDialogListener(this);
 		this.capProvider.getCAPServiceCircuitSwitchedCall().addCAPServiceListener(this);

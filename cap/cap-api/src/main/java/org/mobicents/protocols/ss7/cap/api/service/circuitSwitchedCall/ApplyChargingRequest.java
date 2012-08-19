@@ -51,8 +51,7 @@ ApplyChargingArg {PARAMETERS-BOUND : bound} ::= SEQUENCE {
 aChBillingChargingCharacteristics [0] AChBillingChargingCharacteristics {bound},
 partyToCharge [2] SendingSideID DEFAULT sendingSideID : leg1,
 extensions [3] Extensions {bound} OPTIONAL,
-aChChargingAddress [50] AChChargingAddress {bound}
-DEFAULT legID:sendingSideID:leg1,
+aChChargingAddress [50] AChChargingAddress {bound} DEFAULT legID:sendingSideID:leg1,
 ...
 }
 

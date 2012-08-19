@@ -39,8 +39,20 @@ import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageSystemFailure;
 import org.mobicents.protocols.ss7.cap.api.errors.UnavailableNetworkResource;
+import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.primitives.BCSMEvent;
+import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
+import org.mobicents.protocols.ss7.cap.api.primitives.MonitorMode;
+import org.mobicents.protocols.ss7.cap.api.primitives.SendingSideID;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCall;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristics;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DestinationRoutingAddress;
+import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
+import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.testng.annotations.AfterClass;
@@ -58,7 +70,7 @@ import org.testng.annotations.Test;
 public class CAPFunctionalTest extends SccpHarness {
 
 	private static Logger logger = Logger.getLogger(CAPFunctionalTest.class);
-	private static final int _WAIT_TIMEOUT = 200;
+	private static final int _WAIT_TIMEOUT = 500;
 	private static final int _TCAP_DIALOG_RELEASE_TIMEOUT = 0;
 
 	private CAPStackImpl stack1;
@@ -202,7 +214,7 @@ public class CAPFunctionalTest extends SccpHarness {
 		int count = 0;
 		// Client side events
 		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
-		TestEvent te = TestEvent.createSentEvent(EventType.InitialDpIndication, null, count++, stamp);
+		TestEvent te = TestEvent.createSentEvent(EventType.InitialDpRequest, null, count++, stamp);
 		clientExpectedEvents.add(te);
 
 		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
@@ -223,7 +235,7 @@ public class CAPFunctionalTest extends SccpHarness {
 		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
-		te = TestEvent.createReceivedEvent(EventType.InitialDpIndication, null, count++, stamp);
+		te = TestEvent.createReceivedEvent(EventType.InitialDpRequest, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
 		te = TestEvent.createSentEvent(EventType.ErrorComponent, null, count++, stamp);
@@ -234,6 +246,165 @@ public class CAPFunctionalTest extends SccpHarness {
 
 		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
 		serverExpectedEvents.add(te);
+
+		client.sendInitialDp();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	/**
+	 * Circuit switch call simple
+	 * 
+	 * TC-BEGIN + InitialDP
+	 *   TC-CONTINUE + RequestReportBCSMEvent
+	 *   TC-CONTINUE + ApplyCharging + Connect
+	 * TC-CONTINUE + EventReportBCSM (OAnswer)
+	 * TC-CONTINUE + ApplyChargingReport
+	 * <call... waiting till DialogTimeout>
+	 *   TC-CONTINUE + ActivityTestRequest
+	 * TC-CONTINUE + ActivityTestResponse
+	 * TC-CONTINUE + EventReportBCSM (ODisconnect)
+	 *   TC-END (empty)
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testCircuitCall1() throws Exception {
+		
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			private int dialogStep;
+
+			@Override
+			public void onErrorComponent(CAPDialog capDialog, Long invokeId, CAPErrorMessage capErrorMessage) {
+				super.onErrorComponent(capDialog, invokeId, capErrorMessage);
+
+				assertTrue(capErrorMessage.isEmSystemFailure());
+				CAPErrorMessageSystemFailure em = capErrorMessage.getEmSystemFailure();
+				assertEquals(em.getUnavailableNetworkResource(), UnavailableNetworkResource.endUserFailure);
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			private int dialogStep = 0;
+			private long processUnstructuredSSRequestInvokeId = 0l;
+
+			
+			
+			@Override
+			public void onInitialDPRequest(InitialDPRequest ind) {
+				super.onInitialDPRequest(ind);
+
+				assertTrue(Client.checkTestInitialDp(ind));
+
+				dialogStep = 1;
+
+//				this.observerdEvents.add(TestEvent.createSentEvent(EventType.ErrorComponent, null, sequence++));
+//				CAPErrorMessage capErrorMessage = this.capErrorMessageFactory.createCAPErrorMessageSystemFailure(UnavailableNetworkResource.endUserFailure);
+//				try {
+//					ind.getCAPDialog().sendErrorComponent(ind.getInvokeId(), capErrorMessage);
+//				} catch (CAPException e) {
+//					this.error("Error while trying to send Response SystemFailure", e);
+//				}
+			}
+
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall)capDialog;
+				
+				try {
+					switch (dialogStep) {
+					case 1: // after InitialDp
+						ArrayList<BCSMEvent> bcsmEventList = new ArrayList<BCSMEvent>();
+						BCSMEvent ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.routeSelectFailure, MonitorMode.notifyAndContinue,
+								null, null, false);
+						bcsmEventList.add(ev);
+						ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oCalledPartyBusy, MonitorMode.interrupted, null, null, false);
+						bcsmEventList.add(ev);
+						ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oNoAnswer, MonitorMode.interrupted, null, null, false);
+						bcsmEventList.add(ev);
+						ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oAnswer, MonitorMode.notifyAndContinue, null, null, false);
+						bcsmEventList.add(ev);
+						LegID legId = this.inapParameterFactory.createLegID(true, LegType.leg1);
+						ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oDisconnect, MonitorMode.notifyAndContinue, legId, null, false);
+						bcsmEventList.add(ev);
+						legId = this.inapParameterFactory.createLegID(true, LegType.leg2);
+						ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oDisconnect, MonitorMode.interrupted, legId, null, false);
+						bcsmEventList.add(ev);
+						ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oAbandon, MonitorMode.notifyAndContinue, null, null, false);
+						bcsmEventList.add(ev);
+						dlg.addRequestReportBCSMEventRequest(bcsmEventList, null);
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.RequestReportBCSMEventRequest, null, sequence++));
+						dlg.send();
+
+						CAMELAChBillingChargingCharacteristics aChBillingChargingCharacteristics = this.capParameterFactory
+								.createCAMELAChBillingChargingCharacteristics(1000, true, processUnstructuredSSRequestInvokeId, null, null, false);
+						SendingSideID partyToCharge = this.capParameterFactory.createSendingSideID(LegType.leg1);
+						dlg.addApplyChargingRequest(aChBillingChargingCharacteristics, partyToCharge, null, null);
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.ApplyChargingRequest, null, sequence++));
+
+						ArrayList<CalledPartyNumberCap> calledPartyNumber = new ArrayList<CalledPartyNumberCap>();
+						CalledPartyNumber cpn = this.isupParameterFactory.createCalledPartyNumber();
+						cpn.setAddress("5599999988");
+						cpn.setNatureOfAddresIndicator(NAINumber._NAI_INTERNATIONAL_NUMBER);
+						cpn.setNumberingPlanIndicator(CalledPartyNumber._NPI_ISDN);
+						cpn.setInternalNetworkNumberIndicator(CalledPartyNumber._INN_ROUTING_ALLOWED);
+						CalledPartyNumberCap cpnc = this.capParameterFactory.createCalledPartyNumberCap(cpn);
+						calledPartyNumber.add(cpnc);
+						DestinationRoutingAddress destinationRoutingAddress = this.capParameterFactory.createDestinationRoutingAddress(calledPartyNumber);
+						dlg.addConnectRequest(destinationRoutingAddress, null, null, null, null, null, null, null, null, null, null, null, null,
+								false, false, false, null, false);
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.ConnectRequest, null, sequence++));
+						dlg.send();
+
+						break;
+					}
+					
+					
+					capDialog.close(false);
+				} catch (CAPException e) {
+					this.error("Error while trying to close() Dialog", e);
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.InitialDpRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+//		te = TestEvent.createReceivedEvent(EventType.ErrorComponent, null, count++, stamp);
+//		clientExpectedEvents.add(te);
+//
+//		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp);
+//		clientExpectedEvents.add(te);
+//
+//		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+//		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.InitialDpRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+//		te = TestEvent.createSentEvent(EventType.ErrorComponent, null, count++, stamp);
+//		serverExpectedEvents.add(te);
+//
+//		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+//		serverExpectedEvents.add(te);
+//
+//		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+//		serverExpectedEvents.add(te);
 
 		client.sendInitialDp();
 		waitForEnd();

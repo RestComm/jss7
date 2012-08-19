@@ -28,11 +28,17 @@ import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParameterFactory;
 import org.mobicents.protocols.ss7.cap.api.CAPProvider;
 import org.mobicents.protocols.ss7.cap.api.CAPStack;
+import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCall;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequest;
 import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.InitialDPRequestImpl;
+import org.mobicents.protocols.ss7.inap.api.INAPParameterFactory;
+import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.CalledPartyNumberImpl;
+import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
+import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
@@ -52,6 +58,9 @@ public class Client extends EventTestHarness  {
 	private CAPProvider capProvider;
 
 	private CAPParameterFactory capParameterFactory;
+	private MAPParameterFactory mapParameterFactory;
+	private INAPParameterFactory inapParameterFactory;
+	private ISUPParameterFactory isupParameterFactory;
 
 //	private boolean _S_receivedUnstructuredSSIndication, _S_sentEnd;
 	
@@ -74,6 +83,9 @@ public class Client extends EventTestHarness  {
 		this.capProvider = this.capStack.getCAPProvider();
 
 		this.capParameterFactory = this.capProvider.getCAPParameterFactory();
+		this.mapParameterFactory = this.capProvider.getMAPParameterFactory();
+		this.inapParameterFactory = this.capProvider.getINAPParameterFactory();
+		this.isupParameterFactory = this.capProvider.getISUPParameterFactory();
 
 		this.capProvider.addCAPDialogListener(this);
 
@@ -100,7 +112,7 @@ public class Client extends EventTestHarness  {
 				initialDp.getCalledPartyBCDNumber(), initialDp.getTimeAndTimezone(), initialDp.getCallForwardingSSPending(),
 				initialDp.getInitialDPArgExtension());
 
-		this.observerdEvents.add(TestEvent.createSentEvent(EventType.InitialDpIndication, null, sequence++));
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.InitialDpRequest, null, sequence++));
 		clientCscDialog.send();
 	}
 
@@ -149,13 +161,13 @@ public class Client extends EventTestHarness  {
 				return false;
 			if (ind.getCalledPartyNumber().getCalledPartyNumber() == null)
 				return false;
-			if (ind.getCalledPartyNumber().getCalledPartyNumber().getNatureOfAddressIndicator() != 1)
+			if (ind.getCalledPartyNumber().getCalledPartyNumber().getNatureOfAddressIndicator() != NAINumber._NAI_INTERNATIONAL_NUMBER)
 				return false;
 			if (!ind.getCalledPartyNumber().getCalledPartyNumber().getAddress().equals("11223344"))
 				return false;
-			if (ind.getCalledPartyNumber().getCalledPartyNumber().getNumberingPlanIndicator() != 2)
+			if (ind.getCalledPartyNumber().getCalledPartyNumber().getNumberingPlanIndicator() != CalledPartyNumber._NPI_ISDN)
 				return false;
-			if (ind.getCalledPartyNumber().getCalledPartyNumber().getInternalNetworkNumberIndicator() != 1)
+			if (ind.getCalledPartyNumber().getCalledPartyNumber().getInternalNetworkNumberIndicator() != CalledPartyNumber._INN_ROUTING_NOT_ALLOWED)
 				return false;
 
 			return true;
@@ -167,13 +179,15 @@ public class Client extends EventTestHarness  {
 		}
 	}	
 
-	public static InitialDPRequest getTestInitialDp() {
+	public InitialDPRequest getTestInitialDp() {
 		
 		try {
-			CalledPartyNumberImpl calledPartyNumber = new CalledPartyNumberImpl(1, "11223344", 2, 1);
-			// int natureOfAddresIndicator, String address, int
-			// numberingPlanIndicator, int internalNetworkNumberIndicator
-			CalledPartyNumberCapImpl calledPartyNumberCap;
+			CalledPartyNumber calledPartyNumber = this.isupParameterFactory.createCalledPartyNumber(); 
+			calledPartyNumber.setNatureOfAddresIndicator(NAINumber._NAI_INTERNATIONAL_NUMBER);
+			calledPartyNumber.setAddress("11223344");
+			calledPartyNumber.setNumberingPlanIndicator(CalledPartyNumber._NPI_ISDN);
+			calledPartyNumber.setInternalNetworkNumberIndicator(CalledPartyNumber._INN_ROUTING_NOT_ALLOWED);
+			CalledPartyNumberCap calledPartyNumberCap = this.capParameterFactory.createCalledPartyNumberCap(calledPartyNumber);
 			calledPartyNumberCap = new CalledPartyNumberCapImpl(calledPartyNumber);
 
 			InitialDPRequestImpl res = new InitialDPRequestImpl(321, calledPartyNumberCap, null, null, null, null, null, null, null, null,
