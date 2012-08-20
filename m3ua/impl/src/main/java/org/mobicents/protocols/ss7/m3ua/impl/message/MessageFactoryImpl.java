@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -152,16 +152,16 @@ public class MessageFactoryImpl implements MessageFactory {
 		if (!isHeaderReady) {
 			// the amount of data possible to read is determined as
 			// minimal remainder either of header buffer or of the input buffer
-			int len = Math.min(header.length - pos, buffer.remaining());
+			int len = Math.min(header.length - this.pos, buffer.remaining());
 
-			System.out.println(String.format("len=%d, pos=%d, buffer.remaining=%d", len, pos, buffer.remaining()));
-			buffer.get(header, pos, len);
+			System.out.println(String.format("len=%d, pos=%d, buffer.remaining=%d", len, this.pos, buffer.remaining()));
+			buffer.get(header, this.pos, len);
 
 			// update cursor postion in the header's buffer
-			pos += len;
+			this.pos += len;
 
 			// header completed?
-			isHeaderReady = pos == header.length;
+			isHeaderReady = this.pos == header.length;
 
 			if (!isHeaderReady) {
 				// no more data available
@@ -187,7 +187,7 @@ public class MessageFactoryImpl implements MessageFactory {
 			params = new byte[length];
 
 			// finally switch cursor position
-			pos = 0;
+			this.pos = 0;
 		}
 
 		// at this point we must recheck remainder of the input buffer
@@ -199,14 +199,14 @@ public class MessageFactoryImpl implements MessageFactory {
 		// again, reading all parameters before parsing
 
 		// compute available or required data
-		int len = Math.min(params.length, buffer.remaining());
-		buffer.get(params, pos, len);
+		int len = Math.min(params.length - this.pos, buffer.remaining());
+		buffer.get(params, this.pos, len);
 
 		// update cursor position
-		pos += len;
+		this.pos += len;
 
 		// end of message not reached
-		if (pos < params.length) {
+		if (this.pos < params.length) {
 			return null;
 		}
 

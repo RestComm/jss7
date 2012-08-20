@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -25,12 +25,9 @@ package org.mobicents.protocols.ss7.isup.impl.stack.timers;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.mobicents.protocols.ss7.isup.ISUPEvent;
 import org.mobicents.protocols.ss7.isup.ISUPListener;
@@ -44,12 +41,11 @@ import org.mobicents.protocols.ss7.isup.impl.message.AbstractISUPMessage;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
 import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
-import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitiveFactory;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPartBaseImpl;
-
 import org.mobicents.protocols.ss7.scheduler.Clock;
-import org.mobicents.protocols.ss7.scheduler.Scheduler;
 import org.mobicents.protocols.ss7.scheduler.DefaultClock;
+import org.mobicents.protocols.ss7.scheduler.Scheduler;
 /**
  * @author baranowb
  * 
@@ -176,7 +172,8 @@ public abstract class EventTestHarness /*extends TestCase*/ implements ISUPListe
 //			byte[] msg = bout.toByteArray();
 
 //			this.userPart.toRead.add(msg);
-			Mtp3TransferPrimitive mtpMsg = new Mtp3TransferPrimitive(si, ni, 0, opc, dpc, sls, message);
+			Mtp3TransferPrimitiveFactory factory = stack.getMtp3UserPart().getMtp3TransferPrimitiveFactory();
+			Mtp3TransferPrimitive mtpMsg = factory.createMtp3TransferPrimitive(si, ni, 0, opc, dpc, sls, message);
 			this.userPart.sendTransferMessageToLocalUser(mtpMsg, mtpMsg.getSls());
 			
 		} catch (Exception e) {

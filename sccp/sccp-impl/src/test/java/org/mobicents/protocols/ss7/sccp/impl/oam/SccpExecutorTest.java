@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -29,6 +29,7 @@ import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitiveFactory;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPartListener;
 import org.mobicents.protocols.ss7.sccp.impl.ConcernedSignalingPointCode;
@@ -854,6 +855,51 @@ public class SccpExecutorTest {
 		}
 
 		public void sendMessage(Mtp3TransferPrimitive arg0) throws IOException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/* (non-Javadoc)
+		 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#getMtp3TransferPrimitiveFactory()
+		 */
+		@Override
+		public Mtp3TransferPrimitiveFactory getMtp3TransferPrimitiveFactory() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#getPointCodeLength()
+		 */
+		@Override
+		public int getPointCodeLength() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#getSLSLength()
+		 */
+		@Override
+		public int getSLSLength() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#setPointCodeLength(int)
+		 */
+		@Override
+		public void setPointCodeLength(int arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/* (non-Javadoc)
+		 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#setSLSLength(int)
+		 */
+		@Override
+		public void setSLSLength(int arg0) {
 			// TODO Auto-generated method stub
 			
 		}

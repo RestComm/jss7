@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -23,11 +23,13 @@
 package org.mobicents.protocols.ss7.sccp.impl;
 
 import java.io.IOException;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
 import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitiveFactory;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.impl.message.EncodingResultData;
@@ -183,14 +185,15 @@ public class SccpRoutingControl {
 		EncodingResultData erd = message.encode(lmrt, mup.getMaxUserDataLength(dpc), logger);
 		switch (erd.getEncodingResult()) {
 		case Success:
+			Mtp3TransferPrimitiveFactory factory = mup.getMtp3TransferPrimitiveFactory();
 			if (erd.getSolidData() != null) {
 				// nonsegmented data
-				Mtp3TransferPrimitive msg = new Mtp3TransferPrimitive(Mtp3._SI_SERVICE_SCCP, sap.getNi(), 0, sap.getOpc(), dpc, sls, erd.getSolidData());
+				Mtp3TransferPrimitive msg = factory.createMtp3TransferPrimitive(Mtp3._SI_SERVICE_SCCP, sap.getNi(), 0, sap.getOpc(), dpc, sls, erd.getSolidData());
 				mup.sendMessage(msg);
 			} else {
 				// segmented data
 				for (byte[] bf : erd.getSegementedData()) {
-					Mtp3TransferPrimitive msg = new Mtp3TransferPrimitive(Mtp3._SI_SERVICE_SCCP, sap.getNi(), 0, sap.getOpc(), dpc, sls, bf);
+					Mtp3TransferPrimitive msg = factory.createMtp3TransferPrimitive(Mtp3._SI_SERVICE_SCCP, sap.getNi(), 0, sap.getOpc(), dpc, sls, bf);
 					mup.sendMessage(msg);
 				}
 			}

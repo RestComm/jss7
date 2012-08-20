@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -136,8 +136,7 @@ public class DialogicMtp3UserPart extends Mtp3UserPartBaseImpl {
 							if (buf[0] == 0) {
 								this.parseMtp3Msg(buf);
 							} else {
-								Mtp3TransferPrimitive msg = new Mtp3TransferPrimitive();
-								msg.decodeMtp3(buf);
+								Mtp3TransferPrimitive msg = getMtp3TransferPrimitiveFactory().createMtp3TransferPrimitive(buf);
 								sendTransferMessageToLocalUser(msg, msg.getSls());
 							}
 						} else {

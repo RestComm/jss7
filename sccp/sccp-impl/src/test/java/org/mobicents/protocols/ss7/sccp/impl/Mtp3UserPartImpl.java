@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -33,6 +33,7 @@ import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3StatusCause;
 import org.mobicents.protocols.ss7.mtp.Mtp3StatusPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitiveFactory;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPartBaseImpl;
 
 /**
@@ -90,7 +91,8 @@ public class Mtp3UserPartImpl extends Mtp3UserPartBaseImpl {
 		int ni = 2;
 		int mp = 0;
 		int sls = 0;
-		Mtp3TransferPrimitive msg = new Mtp3TransferPrimitive(si, ni, mp, opc, dpc, sls, data);
+		Mtp3TransferPrimitiveFactory factory = this.getMtp3TransferPrimitiveFactory();
+		Mtp3TransferPrimitive msg = factory.createMtp3TransferPrimitive(si, ni, mp, opc, dpc, sls, data);
 		int seqControl = 0;
 		this.sendTransferMessageToLocalUser(msg, seqControl);
 	}	

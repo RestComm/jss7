@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -37,14 +37,15 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 
 	private static final Logger logger = Logger.getLogger(Mtp3UserPartBaseImpl.class);
 
-	private static final int MAX_SLS = 32;
-	private static final int SLS_FILTER = 0x1F;
+	private int maxSls = 32;
+	private int slsFilter = 0x1F;
 
-	// The count of threads that will be used for message delivering to Mtp3UserPartListener's
+	// The count of threads that will be used for message delivering to
+	// Mtp3UserPartListener's
 	// For single thread model this value should be equal 1
 	// TODO: make it configurable
 	protected int deliveryTransferMessageThreadCount = 1;
-	
+
 	protected boolean isStarted = false;
 
 	private CopyOnWriteArrayList<Mtp3UserPartListener> userListeners = new CopyOnWriteArrayList<Mtp3UserPartListener>();
@@ -52,13 +53,15 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 	private ExecutorService[] msgDeliveryExecutors;
 	// a thread for delivering PAUSE, RESUME and STATUS messages
 	private ExecutorService msgDeliveryExecutorSystem;
-	private int slsTable[] = new int[MAX_SLS];
+	private int slsTable[] = new int[maxSls];
 
-	
+	private int pcLength = PC_FORMAT_14;
+	private int slsLength = 5;
+	private Mtp3TransferPrimitiveFactory mtp3TransferPrimitiveFactory = null;
+
 	public Mtp3UserPartBaseImpl() {
-	}	
+	}
 
-	
 	public int getDeliveryMessageThreadCount() {
 		return this.deliveryTransferMessageThreadCount;
 	}
@@ -67,7 +70,7 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 		if (deliveryMessageThreadCount > 0)
 			this.deliveryTransferMessageThreadCount = deliveryMessageThreadCount;
 	}
-	
+
 	@Override
 	public void addMtp3UserPartListener(Mtp3UserPartListener listener) {
 		this.userListeners.add(listener);
@@ -77,22 +80,78 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 	public void removeMtp3UserPartListener(Mtp3UserPartListener listener) {
 		this.userListeners.remove(listener);
 	}
-	
+
 	/*
-	 * For classic MTP3 this value is maximum SIF length minus routing label length.
-	 * This method should be overloaded if different message length is supported.
+	 * For classic MTP3 this value is maximum SIF length minus routing label
+	 * length. This method should be overloaded if different message length is
+	 * supported.
 	 */
 	@Override
 	public int getMaxUserDataLength(int dpc) {
-		return 272 - 4;
+		if (this.pcLength == PC_FORMAT_14) {
+			// For PC_FORMAT_14, the MTP3 Routing Label takes 4 bytes - OPC/DPC
+			// = 16 bits each and SLS = 4 bits
+			return 272 - 4;
+		} else if (this.pcLength == PC_FORMAT_24) {
+			// For PC_FORMAT_24, the MTP3 Routing Label takes 6 bytes - OPC/DPC
+			// = 24 bits each and SLS = 8 bits
+			return 272 - 7;
+		} else if (this.pcLength == PC_FORMAT_16) {
+			// TODO we don't support this yet
+			return -1;
+		}
+
+		return -1;
 	}
-	
-	
+
+	public int getPointCodeLength() {
+		return this.pcLength;
+	}
+
+	public void setPointCodeLength(int length) {
+		this.pcLength = length;
+	}
+
+	public int getSLSLength() {
+		return this.slsLength;
+	}
+
+	public void setSLSLength(int slsLength) {
+		this.slsLength = slsLength;
+	}
+
+	public Mtp3TransferPrimitiveFactory getMtp3TransferPrimitiveFactory() {
+		return this.mtp3TransferPrimitiveFactory;
+	}
+
 	public void start() throws Exception {
 
 		if (this.isStarted)
 			return;
+
+		if (!(this.pcLength == PC_FORMAT_14 || this.pcLength == PC_FORMAT_16 || this.pcLength == PC_FORMAT_24)) {
+			throw new Exception("Invalid point code length set. Set 14 for ITU-T 14 bits or 16 for ITU-T 16 bits or 24 for ITU-T/ANSI 24 bits");
+		}
 		
+		switch (this.slsLength) {
+		case 4:
+			this.maxSls = 16;
+			this.slsFilter = 0x0f;
+			break;
+		case 5:
+			this.maxSls = 32;
+			this.slsFilter = 0x1f;
+			break;
+		case 8:
+			this.maxSls = 256;
+			this.slsFilter = 0xff;
+			break;
+		default:
+			throw new Exception("Invalid SLS length set. Set 4 for max SLS to be 16 or 5 for max SLS to be 32 or 8 for max SLS to be 256");
+		}
+
+		this.mtp3TransferPrimitiveFactory = new Mtp3TransferPrimitiveFactory(this.pcLength, this.slsLength);
+
 		this.createSLSTable(this.deliveryTransferMessageThreadCount);
 
 		this.msgDeliveryExecutors = new ExecutorService[this.deliveryTransferMessageThreadCount];
@@ -110,14 +169,13 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 			return;
 
 		this.isStarted = false;
-		
+
 		for (ExecutorService es : this.msgDeliveryExecutors) {
 			es.shutdown();
 		}
 		this.msgDeliveryExecutorSystem.shutdown();
 	}
 
-	
 	/**
 	 * Deliver an incoming message to the local user
 	 * 
@@ -129,7 +187,7 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 		if (this.isStarted) {
 			MsgTransferDeliveryHandler hdl = new MsgTransferDeliveryHandler(msg);
 
-			seqControl = seqControl & SLS_FILTER;
+			seqControl = seqControl & slsFilter;
 			this.msgDeliveryExecutors[this.slsTable[seqControl]].execute(hdl);
 		}
 	}
@@ -154,10 +212,10 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 			this.msgDeliveryExecutorSystem.execute(hdl);
 		}
 	}
-	
+
 	private void createSLSTable(int minimumBoundThread) {
 		int stream = 0;
-		for (int i = 0; i < MAX_SLS; i++) {
+		for (int i = 0; i < maxSls; i++) {
 			if (stream >= minimumBoundThread) {
 				stream = 0;
 			}
@@ -166,13 +224,13 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 	}
 
 	private class MsgTransferDeliveryHandler implements Runnable {
-		
+
 		private Mtp3TransferPrimitive msg;
-		
+
 		public MsgTransferDeliveryHandler(Mtp3TransferPrimitive msg) {
 			this.msg = msg;
 		}
-		
+
 		@Override
 		public void run() {
 			if (isStarted) {
@@ -188,17 +246,17 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 	}
 
 	private class MsgSystemDeliveryHandler implements Runnable {
-		
+
 		private Mtp3PausePrimitive pauseMsg;
 		private Mtp3ResumePrimitive resumeMsg;
 		private Mtp3StatusPrimitive statusMsg;
-		
+
 		public MsgSystemDeliveryHandler(Mtp3PausePrimitive pauseMsg, Mtp3ResumePrimitive resumeMsg, Mtp3StatusPrimitive statusMsg) {
 			this.pauseMsg = pauseMsg;
 			this.resumeMsg = resumeMsg;
 			this.statusMsg = statusMsg;
 		}
-		
+
 		@Override
 		public void run() {
 			if (isStarted) {
@@ -218,4 +276,3 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 		}
 	}
 }
- 
