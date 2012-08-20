@@ -34,6 +34,10 @@ public class UESBIIuAImpl extends BitStringBase implements UESBIIuA {
 		super(1, 128, 1, _PrimitiveName);
 	}
 	
+	public UESBIIuAImpl(BitSetStrictLength data) {
+		super(1, 128, 1, _PrimitiveName, data);
+	}
+	
 	@Override
 	public BitSetStrictLength getData() {
 		return bitString;

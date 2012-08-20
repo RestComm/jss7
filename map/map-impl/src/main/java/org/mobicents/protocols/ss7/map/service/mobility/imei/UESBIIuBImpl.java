@@ -38,6 +38,10 @@ public class UESBIIuBImpl extends BitStringBase implements UESBIIuB {
 	public UESBIIuBImpl() {
 		super(1, 128, 1, _PrimitiveName);
 	}
+	
+	public UESBIIuBImpl(BitSetStrictLength data) {
+		super(1, 128, 1, _PrimitiveName, data);
+	}
 
 	@Override
 	public BitSetStrictLength getData() {

@@ -147,7 +147,7 @@ public class CheckImeiResponseImpl extends MobilityMessageImpl implements CheckI
 							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".requestedEquipmentInfo: is not primitive",
 									MAPParsingComponentExceptionReason.MistypedParameter);
 						}
-						int i1 = (int) ansIS.readInteger();
+						int i1 = (int) ais.readInteger();
 						this.equipmentStatus = EquipmentStatus.getInstance(i1);
 						break;
 					case Tag.SEQUENCE:
@@ -211,7 +211,7 @@ public class CheckImeiResponseImpl extends MobilityMessageImpl implements CheckI
 		try {
 			if (mapProtocolVersion >= 3) {
 				if (this.equipmentStatus != null) {
-					asnOs.writeIntegerData(this.equipmentStatus.getCode());
+					asnOs.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, this.equipmentStatus.getCode());
 				}
 				if (this.bmuef != null) {
 					((UESBIIuImpl) this.bmuef).encodeAll(asnOs);
@@ -228,7 +228,9 @@ public class CheckImeiResponseImpl extends MobilityMessageImpl implements CheckI
 			}
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} 
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	@Override
