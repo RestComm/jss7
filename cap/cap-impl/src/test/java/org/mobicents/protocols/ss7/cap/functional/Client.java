@@ -57,10 +57,10 @@ public class Client extends EventTestHarness  {
 	private CAPStack capStack;
 	private CAPProvider capProvider;
 
-	private CAPParameterFactory capParameterFactory;
-	private MAPParameterFactory mapParameterFactory;
-	private INAPParameterFactory inapParameterFactory;
-	private ISUPParameterFactory isupParameterFactory;
+	protected CAPParameterFactory capParameterFactory;
+	protected MAPParameterFactory mapParameterFactory;
+	protected INAPParameterFactory inapParameterFactory;
+	protected ISUPParameterFactory isupParameterFactory;
 
 //	private boolean _S_receivedUnstructuredSSIndication, _S_sentEnd;
 	
@@ -210,6 +210,14 @@ public class Client extends EventTestHarness  {
 //		ExtBasicServiceCode extBasicServiceCode, CallReferenceNumber callReferenceNumber, ISDNAddressString mscAddress,
 //		CalledPartyBCDNumber calledPartyBCDNumber, TimeAndTimezone timeAndTimezone, boolean callForwardingSSPending,
 //		InitialDPArgExtension initialDPArgExtension, boolean isCAPVersion3orLater
+	}
+
+	public void debug(String message) {
+		this.logger.debug(message);
+	}
+	
+	public void error(String message, Exception e){
+		this.logger.error(message, e);
 	}
 }
 

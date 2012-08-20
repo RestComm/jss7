@@ -22,9 +22,7 @@
 
 package org.mobicents.protocols.ss7.cap.functional;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
+import static org.testng.Assert.*;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,20 +34,29 @@ import org.apache.log4j.PropertyConfigurator;
 import org.mobicents.protocols.ss7.cap.CAPStackImpl;
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAnswerSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageSystemFailure;
 import org.mobicents.protocols.ss7.cap.api.errors.UnavailableNetworkResource;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.primitives.BCSMEvent;
+import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
 import org.mobicents.protocols.ss7.cap.api.primitives.MonitorMode;
+import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
 import org.mobicents.protocols.ss7.cap.api.primitives.SendingSideID;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCall;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestReportBCSMEventRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AudibleIndicator;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristics;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DestinationRoutingAddress;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSM;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
+import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
@@ -270,26 +277,160 @@ public class CAPFunctionalTest extends SccpHarness {
 	 */
 	@Test(groups = { "functional.flow", "dialog" })
 	public void testCircuitCall1() throws Exception {
-		
+
 		Client client = new Client(stack1, this, peer1Address, peer2Address) {
 			private int dialogStep;
 
 			@Override
-			public void onErrorComponent(CAPDialog capDialog, Long invokeId, CAPErrorMessage capErrorMessage) {
-				super.onErrorComponent(capDialog, invokeId, capErrorMessage);
+			public void onRequestReportBCSMEventRequest(RequestReportBCSMEventRequest ind) {
+				super.onRequestReportBCSMEventRequest(ind);
 
-				assertTrue(capErrorMessage.isEmSystemFailure());
-				CAPErrorMessageSystemFailure em = capErrorMessage.getEmSystemFailure();
-				assertEquals(em.getUnavailableNetworkResource(), UnavailableNetworkResource.endUserFailure);
+				assertEquals(ind.getBCSMEventList().size(), 7);
+
+				BCSMEvent ev = ind.getBCSMEventList().get(0);
+				assertEquals(ev.getEventTypeBCSM(), EventTypeBCSM.routeSelectFailure);
+				assertEquals(ev.getMonitorMode(), MonitorMode.notifyAndContinue);
+				assertNull(ev.getLegID());
+				ev = ind.getBCSMEventList().get(1);
+				assertEquals(ev.getEventTypeBCSM(), EventTypeBCSM.oCalledPartyBusy);
+				assertEquals(ev.getMonitorMode(), MonitorMode.interrupted);
+				assertNull(ev.getLegID());
+				ev = ind.getBCSMEventList().get(2);
+				assertEquals(ev.getEventTypeBCSM(), EventTypeBCSM.oNoAnswer);
+				assertEquals(ev.getMonitorMode(), MonitorMode.interrupted);
+				assertNull(ev.getLegID());
+				ev = ind.getBCSMEventList().get(3);
+				assertEquals(ev.getEventTypeBCSM(), EventTypeBCSM.oAnswer);
+				assertEquals(ev.getMonitorMode(), MonitorMode.notifyAndContinue);
+				assertNull(ev.getLegID());
+				ev = ind.getBCSMEventList().get(4);
+				assertEquals(ev.getEventTypeBCSM(), EventTypeBCSM.oDisconnect);
+				assertEquals(ev.getMonitorMode(), MonitorMode.notifyAndContinue);
+				assertEquals(ev.getLegID().getSendingSideID(), LegType.leg1);
+				ev = ind.getBCSMEventList().get(5);
+				assertEquals(ev.getEventTypeBCSM(), EventTypeBCSM.oDisconnect);
+				assertEquals(ev.getMonitorMode(), MonitorMode.interrupted);
+				assertEquals(ev.getLegID().getSendingSideID(), LegType.leg2);
+				ev = ind.getBCSMEventList().get(6);
+				assertEquals(ev.getEventTypeBCSM(), EventTypeBCSM.oAbandon);
+				assertEquals(ev.getMonitorMode(), MonitorMode.notifyAndContinue);
+				assertNull(ev.getLegID());
+
+			}
+
+			@Override
+			public void onApplyChargingRequest(ApplyChargingRequest ind) {
+				super.onApplyChargingRequest(ind);
+
+				assertEquals(ind.getAChBillingChargingCharacteristics().getMaxCallPeriodDuration(), 1000);
+				assertTrue(ind.getAChBillingChargingCharacteristics().getReleaseIfdurationExceeded());
+				assertNull(ind.getAChBillingChargingCharacteristics().getTariffSwitchInterval());
+				assertEquals(ind.getPartyToCharge().getSendingSideID(), LegType.leg1);
+				assertNull(ind.getExtensions());
+				assertNull(ind.getAChChargingAddress());
+			}
+
+			@Override
+			public void onConnectRequest(ConnectRequest ind) {
+				super.onConnectRequest(ind);
+
+				try {
+					assertEquals(ind.getDestinationRoutingAddress().getCalledPartyNumber().size(), 1);
+					CalledPartyNumber calledPartyNumber = ind.getDestinationRoutingAddress().getCalledPartyNumber().get(0).getCalledPartyNumber();
+					assertTrue(calledPartyNumber.getAddress().equals("5599999988"));
+					assertEquals(calledPartyNumber.getNatureOfAddressIndicator(), NAINumber._NAI_INTERNATIONAL_NUMBER);
+					assertEquals(calledPartyNumber.getNumberingPlanIndicator(), CalledPartyNumber._NPI_ISDN);
+					assertEquals(calledPartyNumber.getInternalNetworkNumberIndicator(), CalledPartyNumber._INN_ROUTING_ALLOWED);
+				} catch (CAPException e) {
+					e.printStackTrace();
+					fail("Exception while checking ConnectRequest imdication", e);
+				}
+				assertNull(ind.getAlertingPattern());
+				assertNull(ind.getCallingPartysCategory());
+				assertNull(ind.getChargeNumber());
+				assertNull(ind.getGenericNumbers());
+				assertNull(ind.getLegToBeConnected());
+				assertNull(ind.getOriginalCalledPartyID());
+
+				dialogStep = 1;
+			}
+
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall)capDialog;
+
+				try {
+					switch (dialogStep) {
+					case 1: // after ConnectRequest
+						OAnswerSpecificInfo oAnswerSpecificInfo;
+						ReceivingSideID legID;
+						MiscCallInfo miscCallInfo;
+						EventSpecificInformationBCSM eventSpecificInformationBCSM = this.capParameterFactory.createEventSpecificInformationBCSM(oAnswerSpecificInfo);
+						dlg.addEventReportBCSMRequest(EventTypeBCSM.oAnswer, eventSpecificInformationBCSM, legID, miscCallInfo, null);
+						dlg.send();
+
+						
+						
+						
+						
+//						ArrayList<BCSMEvent> bcsmEventList = new ArrayList<BCSMEvent>();
+//						BCSMEvent ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.routeSelectFailure, MonitorMode.notifyAndContinue,
+//								null, null, false);
+//						bcsmEventList.add(ev);
+//						ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oCalledPartyBusy, MonitorMode.interrupted, null, null, false);
+//						bcsmEventList.add(ev);
+//						ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oNoAnswer, MonitorMode.interrupted, null, null, false);
+//						bcsmEventList.add(ev);
+//						ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oAnswer, MonitorMode.notifyAndContinue, null, null, false);
+//						bcsmEventList.add(ev);
+//						LegID legId = this.inapParameterFactory.createLegID(true, LegType.leg1);
+//						ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oDisconnect, MonitorMode.notifyAndContinue, legId, null, false);
+//						bcsmEventList.add(ev);
+//						legId = this.inapParameterFactory.createLegID(true, LegType.leg2);
+//						ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oDisconnect, MonitorMode.interrupted, legId, null, false);
+//						bcsmEventList.add(ev);
+//						ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oAbandon, MonitorMode.notifyAndContinue, null, null, false);
+//						bcsmEventList.add(ev);
+//						dlg.addRequestReportBCSMEventRequest(bcsmEventList, null);
+//						this.observerdEvents.add(TestEvent.createSentEvent(EventType.RequestReportBCSMEventRequest, null, sequence++));
+//						dlg.send();
+//
+//						CAMELAChBillingChargingCharacteristics aChBillingChargingCharacteristics = this.capParameterFactory
+//								.createCAMELAChBillingChargingCharacteristics(1000, true, null, null, null, false);
+//						SendingSideID partyToCharge = this.capParameterFactory.createSendingSideID(LegType.leg1);
+//						dlg.addApplyChargingRequest(aChBillingChargingCharacteristics, partyToCharge, null, null);
+//						this.observerdEvents.add(TestEvent.createSentEvent(EventType.ApplyChargingRequest, null, sequence++));
+//
+//						ArrayList<CalledPartyNumberCap> calledPartyNumber = new ArrayList<CalledPartyNumberCap>();
+//						CalledPartyNumber cpn = this.isupParameterFactory.createCalledPartyNumber();
+//						cpn.setAddress("5599999988");
+//						cpn.setNatureOfAddresIndicator(NAINumber._NAI_INTERNATIONAL_NUMBER);
+//						cpn.setNumberingPlanIndicator(CalledPartyNumber._NPI_ISDN);
+//						cpn.setInternalNetworkNumberIndicator(CalledPartyNumber._INN_ROUTING_ALLOWED);
+//						CalledPartyNumberCap cpnc = this.capParameterFactory.createCalledPartyNumberCap(cpn);
+//						calledPartyNumber.add(cpnc);
+//						DestinationRoutingAddress destinationRoutingAddress = this.capParameterFactory.createDestinationRoutingAddress(calledPartyNumber);
+//						dlg.addConnectRequest(destinationRoutingAddress, null, null, null, null, null, null, null, null, null, null, null, null,
+//								false, false, false, null, false);
+//						this.observerdEvents.add(TestEvent.createSentEvent(EventType.ConnectRequest, null, sequence++));
+//						dlg.send();
+
+						break;
+					}
+					
+					
+					capDialog.close(false);
+				} catch (CAPException e) {
+					this.error("Error while trying to close() Dialog", e);
+				}
 			}
 		};
 
 		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
 			private int dialogStep = 0;
-			private long processUnstructuredSSRequestInvokeId = 0l;
 
-			
-			
 			@Override
 			public void onInitialDPRequest(InitialDPRequest ind) {
 				super.onInitialDPRequest(ind);
@@ -297,14 +438,6 @@ public class CAPFunctionalTest extends SccpHarness {
 				assertTrue(Client.checkTestInitialDp(ind));
 
 				dialogStep = 1;
-
-//				this.observerdEvents.add(TestEvent.createSentEvent(EventType.ErrorComponent, null, sequence++));
-//				CAPErrorMessage capErrorMessage = this.capErrorMessageFactory.createCAPErrorMessageSystemFailure(UnavailableNetworkResource.endUserFailure);
-//				try {
-//					ind.getCAPDialog().sendErrorComponent(ind.getInvokeId(), capErrorMessage);
-//				} catch (CAPException e) {
-//					this.error("Error while trying to send Response SystemFailure", e);
-//				}
 			}
 
 			@Override
@@ -339,7 +472,7 @@ public class CAPFunctionalTest extends SccpHarness {
 						dlg.send();
 
 						CAMELAChBillingChargingCharacteristics aChBillingChargingCharacteristics = this.capParameterFactory
-								.createCAMELAChBillingChargingCharacteristics(1000, true, processUnstructuredSSRequestInvokeId, null, null, false);
+								.createCAMELAChBillingChargingCharacteristics(1000, true, null, null, null, false);
 						SendingSideID partyToCharge = this.capParameterFactory.createSendingSideID(LegType.leg1);
 						dlg.addApplyChargingRequest(aChBillingChargingCharacteristics, partyToCharge, null, null);
 						this.observerdEvents.add(TestEvent.createSentEvent(EventType.ApplyChargingRequest, null, sequence++));
