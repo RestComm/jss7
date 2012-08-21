@@ -29,7 +29,9 @@ import java.util.Arrays;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.primitives.IMEIImpl;
+import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.testng.annotations.Test;
 
 /**
@@ -49,6 +51,12 @@ public class CheckImeiRequestTest {
 		return new byte[] { 48, 14, 4, 8, 83, 8, 25, 16, -122, 53, 85, -16, 3, 2, 6, -128 };
 	}
 	
+	private byte[] getEncodedDataV3Full() {
+		// TODO this is self generated trace. We need trace from operator
+		return new byte[] { 48, 55, 4, 8, 83, 8, 25, 16, -122, 53, 85, -16, 3, 2, 6, -128, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5,
+				6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
+	}
+	
 	@Test(groups = { "functional.decode", "imei" })
 	public void testDecode() throws Exception {
 		// Testing version 3
@@ -64,6 +72,21 @@ public class CheckImeiRequestTest {
 		assertTrue(checkImeiImpl.getIMEI().getIMEI().equals("358091016853550"));
 		assertTrue(checkImeiImpl.getRequestedEquipmentInfo().getEquipmentStatus());
 		assertFalse(checkImeiImpl.getRequestedEquipmentInfo().getBmuef());
+		
+		// Testing version 3 Full
+		rawData = getEncodedDataV3Full();
+		asnIS = new AsnInputStream(rawData);
+		
+		tag = asnIS.readTag();
+		assertEquals(tag, Tag.SEQUENCE);
+		
+		checkImeiImpl = new CheckImeiRequestImpl(3);
+		checkImeiImpl.decodeAll(asnIS);
+		
+		assertTrue(checkImeiImpl.getIMEI().getIMEI().equals("358091016853550"));
+		assertTrue(checkImeiImpl.getRequestedEquipmentInfo().getEquipmentStatus());
+		assertFalse(checkImeiImpl.getRequestedEquipmentInfo().getBmuef());
+		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(checkImeiImpl.getExtensionContainer()));
 		
 		// Testing version 1 and 2
 		rawData = getEncodedDataV2();
@@ -89,6 +112,19 @@ public class CheckImeiRequestTest {
 		
 		byte[] encodedData = asnOS.toByteArray();
 		byte[] rawData = getEncodedDataV3();
+		assertTrue(Arrays.equals(rawData, encodedData));
+		
+		// Testing version 3 Full
+		imei = new IMEIImpl("358091016853550");
+		requestedEquipmentInfo = new RequestedEquipmentInfoImpl(true, false);
+		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
+		
+		checkImei = new CheckImeiRequestImpl(3, imei, requestedEquipmentInfo, extensionContainer);
+		asnOS = new AsnOutputStream();
+		checkImei.encodeAll(asnOS);
+		
+		encodedData = asnOS.toByteArray();
+		rawData = getEncodedDataV3Full();
 		assertTrue(Arrays.equals(rawData, encodedData));
 		
 		// Testing version 1 and 2

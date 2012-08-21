@@ -100,6 +100,10 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.EpsAu
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.QuintupletList;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.ReSynchronisationInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.TripletList;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.RequestedEquipmentInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIu;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIuA;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIuB;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ISTSupportIndicator;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LAC;
@@ -226,6 +230,10 @@ import org.mobicents.protocols.ss7.map.service.mobility.authentication.EpsAuthen
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.QuintupletListImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.ReSynchronisationInfoImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.TripletListImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.imei.RequestedEquipmentInfoImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.imei.UESBIIuAImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.imei.UESBIIuBImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.imei.UESBIIuImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.ADDInfoImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.LACImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.LocationAreaImpl;
@@ -965,6 +973,26 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 
 	public VelocityEstimate createVelocityEstimate(byte[] data) {
 		return new VelocityEstimateImpl(data);
+	}
+
+	@Override
+	public RequestedEquipmentInfo createRequestedEquipmentInfo(boolean equipmentStatus, boolean bmuef) {
+		return new RequestedEquipmentInfoImpl(equipmentStatus, bmuef);
+	}
+
+	@Override
+	public UESBIIuA createUESBIIuA(BitSetStrictLength data) {
+		return new UESBIIuAImpl(data);
+	}
+
+	@Override
+	public UESBIIuB createUESBIIuB(BitSetStrictLength data) {
+		return new UESBIIuBImpl(data);
+	}
+
+	@Override
+	public UESBIIu createUESBIIu(UESBIIuA uesbiIuA, UESBIIuB uesbiIuB) {
+		return new UESBIIuImpl(uesbiIuA, uesbiIuB);
 	}
 }
 
