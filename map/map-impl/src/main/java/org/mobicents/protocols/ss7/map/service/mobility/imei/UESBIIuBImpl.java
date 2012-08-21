@@ -40,7 +40,7 @@ public class UESBIIuBImpl extends BitStringBase implements UESBIIuB {
 	}
 	
 	public UESBIIuBImpl(BitSetStrictLength data) {
-		super(1, 128, 1, _PrimitiveName, data);
+		super(1, 128, data.getStrictLength(), _PrimitiveName, data);
 	}
 
 	@Override

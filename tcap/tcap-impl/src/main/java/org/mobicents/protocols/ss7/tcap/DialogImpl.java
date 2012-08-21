@@ -402,7 +402,7 @@ public class DialogImpl implements Dialog {
 				this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress, this.localAddress, this.seqControl);
 				this.setState(TRPseudoState.InitialSent);
 				this.scheduledComponentList.clear();
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				// FIXME: remove freshly added invokes to free invoke ID??
 				if (logger.isEnabledFor(Level.ERROR)) {
 					logger.error("Failed to send message: ", e);

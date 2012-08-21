@@ -43,7 +43,7 @@ public class UESBIIuTest {
 		// TODO this is self generated trace. We need trace from operator
 		return new byte[] { 48, 8, -128, 2, 7, -128, -127, 2, 7, 0 };
 	}
-	
+
 	@Test(groups = { "functional.decode", "imei" })
 	public void testDecode() throws Exception {
 		byte[] data = getEncodedData();
@@ -61,7 +61,7 @@ public class UESBIIuTest {
 		assertTrue(bsUESBIIuA.get(0));
 		assertFalse(bsUESBIIuB.get(0));
 	}
-	
+
 	@Test(groups = { "functional.encode", "imei" })
 	public void testEncode() throws Exception {
 		BitSetStrictLength bsUESBIIuA = new BitSetStrictLength(1);

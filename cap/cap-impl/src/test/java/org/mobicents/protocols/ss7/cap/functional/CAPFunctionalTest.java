@@ -58,7 +58,7 @@ import org.testng.annotations.Test;
 public class CAPFunctionalTest extends SccpHarness {
 
 	private static Logger logger = Logger.getLogger(CAPFunctionalTest.class);
-	private static final int _WAIT_TIMEOUT = 200;
+	private static final int _WAIT_TIMEOUT = 500;
 	private static final int _TCAP_DIALOG_RELEASE_TIMEOUT = 0;
 
 	private CAPStackImpl stack1;

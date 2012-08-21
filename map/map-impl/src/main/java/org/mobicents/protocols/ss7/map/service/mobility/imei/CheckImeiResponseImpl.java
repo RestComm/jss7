@@ -50,18 +50,18 @@ public class CheckImeiResponseImpl extends MobilityMessageImpl implements CheckI
 	public static final int _ID_extensionContainer = 0;
 
 	public static final String _PrimitiveName = "CheckImeiResponse";
-	
+
 	private EquipmentStatus equipmentStatus;
 	private UESBIIu bmuef;
 	private MAPExtensionContainer extensionContainer;
-	
+
 	private long mapProtocolVersion;
-	
+
 	// For incoming messages
 	public CheckImeiResponseImpl(long mapProtocolVersion) {
 		this.mapProtocolVersion = mapProtocolVersion;
 	}
-	
+
 	// for outgoing messages
 	public CheckImeiResponseImpl(long mapProtocolVersion, EquipmentStatus equipmentStatus, UESBIIu bmuef, MAPExtensionContainer extensionContainer) {
 		this.mapProtocolVersion = mapProtocolVersion;
@@ -69,7 +69,7 @@ public class CheckImeiResponseImpl extends MobilityMessageImpl implements CheckI
 		this.bmuef = bmuef;
 		this.extensionContainer = extensionContainer;
 	}
-	
+
 	public long getMapProtocolVersion() {
 		return this.mapProtocolVersion;
 	}
@@ -136,9 +136,9 @@ public class CheckImeiResponseImpl extends MobilityMessageImpl implements CheckI
 				if (ais.available() == 0) {
 					break;
 				}
-				
+
 				int tag = ais.readTag(); 
-				
+
 				if(ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
 					switch (tag) {
 					case Tag.ENUMERATED:
