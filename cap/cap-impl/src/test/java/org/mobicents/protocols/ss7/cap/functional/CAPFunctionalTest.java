@@ -39,24 +39,30 @@ import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageSystemFailure;
 import org.mobicents.protocols.ss7.cap.api.errors.UnavailableNetworkResource;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.primitives.AChChargingAddress;
 import org.mobicents.protocols.ss7.cap.api.primitives.BCSMEvent;
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
 import org.mobicents.protocols.ss7.cap.api.primitives.MonitorMode;
 import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
 import org.mobicents.protocols.ss7.cap.api.primitives.SendingSideID;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingReportRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCall;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EventReportBCSMRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestReportBCSMEventRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AudibleIndicator;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristics;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DestinationRoutingAddress;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSM;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeDurationChargingResult;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeIfTariffSwitch;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeInformation;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
+import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfoMessageType;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
@@ -364,64 +370,26 @@ public class CAPFunctionalTest extends SccpHarness {
 				try {
 					switch (dialogStep) {
 					case 1: // after ConnectRequest
-						OAnswerSpecificInfo oAnswerSpecificInfo;
-						ReceivingSideID legID;
-						MiscCallInfo miscCallInfo;
+						OAnswerSpecificInfo oAnswerSpecificInfo = this.capParameterFactory.createOAnswerSpecificInfo(null, false, false, null, null, null);
+						ReceivingSideID legID = this.capParameterFactory.createReceivingSideID(LegType.leg2);
+						MiscCallInfo miscCallInfo = this.inapParameterFactory.createMiscCallInfo(MiscCallInfoMessageType.notification, null);
 						EventSpecificInformationBCSM eventSpecificInformationBCSM = this.capParameterFactory.createEventSpecificInformationBCSM(oAnswerSpecificInfo);
 						dlg.addEventReportBCSMRequest(EventTypeBCSM.oAnswer, eventSpecificInformationBCSM, legID, miscCallInfo, null);
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.EventReportBCSMRequest, null, sequence++));
 						dlg.send();
 
-						
-						
-						
-						
-//						ArrayList<BCSMEvent> bcsmEventList = new ArrayList<BCSMEvent>();
-//						BCSMEvent ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.routeSelectFailure, MonitorMode.notifyAndContinue,
-//								null, null, false);
-//						bcsmEventList.add(ev);
-//						ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oCalledPartyBusy, MonitorMode.interrupted, null, null, false);
-//						bcsmEventList.add(ev);
-//						ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oNoAnswer, MonitorMode.interrupted, null, null, false);
-//						bcsmEventList.add(ev);
-//						ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oAnswer, MonitorMode.notifyAndContinue, null, null, false);
-//						bcsmEventList.add(ev);
-//						LegID legId = this.inapParameterFactory.createLegID(true, LegType.leg1);
-//						ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oDisconnect, MonitorMode.notifyAndContinue, legId, null, false);
-//						bcsmEventList.add(ev);
-//						legId = this.inapParameterFactory.createLegID(true, LegType.leg2);
-//						ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oDisconnect, MonitorMode.interrupted, legId, null, false);
-//						bcsmEventList.add(ev);
-//						ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oAbandon, MonitorMode.notifyAndContinue, null, null, false);
-//						bcsmEventList.add(ev);
-//						dlg.addRequestReportBCSMEventRequest(bcsmEventList, null);
-//						this.observerdEvents.add(TestEvent.createSentEvent(EventType.RequestReportBCSMEventRequest, null, sequence++));
-//						dlg.send();
-//
-//						CAMELAChBillingChargingCharacteristics aChBillingChargingCharacteristics = this.capParameterFactory
-//								.createCAMELAChBillingChargingCharacteristics(1000, true, null, null, null, false);
-//						SendingSideID partyToCharge = this.capParameterFactory.createSendingSideID(LegType.leg1);
-//						dlg.addApplyChargingRequest(aChBillingChargingCharacteristics, partyToCharge, null, null);
-//						this.observerdEvents.add(TestEvent.createSentEvent(EventType.ApplyChargingRequest, null, sequence++));
-//
-//						ArrayList<CalledPartyNumberCap> calledPartyNumber = new ArrayList<CalledPartyNumberCap>();
-//						CalledPartyNumber cpn = this.isupParameterFactory.createCalledPartyNumber();
-//						cpn.setAddress("5599999988");
-//						cpn.setNatureOfAddresIndicator(NAINumber._NAI_INTERNATIONAL_NUMBER);
-//						cpn.setNumberingPlanIndicator(CalledPartyNumber._NPI_ISDN);
-//						cpn.setInternalNetworkNumberIndicator(CalledPartyNumber._INN_ROUTING_ALLOWED);
-//						CalledPartyNumberCap cpnc = this.capParameterFactory.createCalledPartyNumberCap(cpn);
-//						calledPartyNumber.add(cpnc);
-//						DestinationRoutingAddress destinationRoutingAddress = this.capParameterFactory.createDestinationRoutingAddress(calledPartyNumber);
-//						dlg.addConnectRequest(destinationRoutingAddress, null, null, null, null, null, null, null, null, null, null, null, null,
-//								false, false, false, null, false);
-//						this.observerdEvents.add(TestEvent.createSentEvent(EventType.ConnectRequest, null, sequence++));
-//						dlg.send();
+						ReceivingSideID partyToCharge = this.capParameterFactory.createReceivingSideID(LegType.leg1);
+						TimeInformation timeInformation = this.capParameterFactory.createTimeInformation(2000);
+						TimeDurationChargingResult timeDurationChargingResult = this.capParameterFactory.createTimeDurationChargingResult(partyToCharge,
+								timeInformation, true, false, null, null);
+						dlg.addApplyChargingReportRequest(timeDurationChargingResult);
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.ApplyChargingReportRequest, null, sequence++));
+						dlg.send();
 
+						dialogStep = 0;
+						
 						break;
 					}
-					
-					
-					capDialog.close(false);
 				} catch (CAPException e) {
 					this.error("Error while trying to close() Dialog", e);
 				}
@@ -438,6 +406,33 @@ public class CAPFunctionalTest extends SccpHarness {
 				assertTrue(Client.checkTestInitialDp(ind));
 
 				dialogStep = 1;
+			}
+
+			public void onEventReportBCSMRequest(EventReportBCSMRequest ind) {
+				super.onEventReportBCSMRequest(ind);
+
+				assertEquals(ind.getEventTypeBCSM(), EventTypeBCSM.oAnswer);
+				assertNotNull(ind.getEventSpecificInformationBCSM().getOAnswerSpecificInfo());
+				assertNull(ind.getEventSpecificInformationBCSM().getOAnswerSpecificInfo().getDestinationAddress());
+				assertNull(ind.getEventSpecificInformationBCSM().getOAnswerSpecificInfo().getChargeIndicator());
+				assertNull(ind.getEventSpecificInformationBCSM().getOAnswerSpecificInfo().getExtBasicServiceCode());
+				assertNull(ind.getEventSpecificInformationBCSM().getOAnswerSpecificInfo().getExtBasicServiceCode2());
+				assertFalse(ind.getEventSpecificInformationBCSM().getOAnswerSpecificInfo().getForwardedCall());
+				assertFalse(ind.getEventSpecificInformationBCSM().getOAnswerSpecificInfo().getOrCall());
+				assertEquals(ind.getLegID().getReceivingSideID(), LegType.leg2);
+				assertNull(ind.getExtensions());
+			}
+
+			public void onApplyChargingReportRequest(ApplyChargingReportRequest ind) {
+				super.onApplyChargingReportRequest(ind);
+
+				TimeDurationChargingResult tdr = ind.getTimeDurationChargingResult(); 
+				assertEquals(tdr.getPartyToCharge().getReceivingSideID(), LegType.leg1);
+				assertEquals((int) tdr.getTimeInformation().getTimeIfNoTariffSwitch(), 2000);
+				assertNull(tdr.getAChChargingAddress());
+				assertFalse(tdr.getCallLegReleasedAtTcpExpiry());
+				assertNull(tdr.getExtensions());
+				assertTrue(tdr.getLegActive());
 			}
 
 			@Override
@@ -491,11 +486,10 @@ public class CAPFunctionalTest extends SccpHarness {
 						this.observerdEvents.add(TestEvent.createSentEvent(EventType.ConnectRequest, null, sequence++));
 						dlg.send();
 
+						dialogStep = 0;
+
 						break;
 					}
-					
-					
-					capDialog.close(false);
 				} catch (CAPException e) {
 					this.error("Error while trying to close() Dialog", e);
 				}
@@ -512,9 +506,27 @@ public class CAPFunctionalTest extends SccpHarness {
 		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
 		clientExpectedEvents.add(te);
 
-//		te = TestEvent.createReceivedEvent(EventType.ErrorComponent, null, count++, stamp);
-//		clientExpectedEvents.add(te);
-//
+		te = TestEvent.createReceivedEvent(EventType.RequestReportBCSMEventRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ApplyChargingRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ConnectRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.EventReportBCSMRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ApplyChargingReportRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
 //		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp);
 //		clientExpectedEvents.add(te);
 //
@@ -530,17 +542,35 @@ public class CAPFunctionalTest extends SccpHarness {
 		te = TestEvent.createReceivedEvent(EventType.InitialDpRequest, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
-//		te = TestEvent.createSentEvent(EventType.ErrorComponent, null, count++, stamp);
-//		serverExpectedEvents.add(te);
-//
-//		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
-//		serverExpectedEvents.add(te);
-//
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.RequestReportBCSMEventRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ApplyChargingRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ConnectRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.EventReportBCSMRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ApplyChargingReportRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
 //		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
 //		serverExpectedEvents.add(te);
 
 		client.sendInitialDp();
 		waitForEnd();
+
+//		Thread.currentThread().sleep(1000000);
+		
 		client.compareEvents(clientExpectedEvents);
 		server.compareEvents(serverExpectedEvents);
 
