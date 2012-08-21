@@ -41,8 +41,10 @@ import org.mobicents.protocols.api.AssociationListener;
 import org.mobicents.protocols.api.AssociationType;
 import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.api.Management;
+import org.mobicents.protocols.api.ManagementEventListener;
 import org.mobicents.protocols.api.PayloadData;
 import org.mobicents.protocols.api.Server;
+import org.mobicents.protocols.api.ServerListener;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
@@ -973,6 +975,24 @@ public class RemSgFSMTest {
 			return this.started && this.up;
 		}
 
+		@Override
+		public void acceptAnonymousAssociation(AssociationListener arg0) throws Exception {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void rejectAnonymousAssociation() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void stopAnonymousAssociation() throws Exception {
+			// TODO Auto-generated method stub
+			
+		}
+
 	}
 
 	class TransportManagement implements Management {
@@ -1132,6 +1152,36 @@ public class RemSgFSMTest {
 
 		@Override
 		public void removeAllResourses() throws Exception {
+			
+		}
+
+		@Override
+		public void addManagementEventListener(ManagementEventListener arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public Server addServer(String arg0, String arg1, int arg2, IpChannelType arg3, boolean arg4, int arg5, String[] arg6) throws Exception {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public ServerListener getServerListener() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void removeManagementEventListener(ManagementEventListener arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void setServerListener(ServerListener arg0) {
+			// TODO Auto-generated method stub
 			
 		}
 	}
