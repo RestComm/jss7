@@ -45,8 +45,8 @@ public class Server extends EventTestHarness  {
 	private SccpAddress thisAddress;
 	private SccpAddress remoteAddress;
 
-	private CAPStack capStack;
-	private CAPProvider capProvider;
+	protected CAPStack capStack;
+	protected CAPProvider capProvider;
 
 	protected CAPParameterFactory capParameterFactory;
 	protected CAPErrorMessageFactory capErrorMessageFactory;

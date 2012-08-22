@@ -28,15 +28,24 @@ import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParameterFactory;
 import org.mobicents.protocols.ss7.cap.api.CAPProvider;
 import org.mobicents.protocols.ss7.cap.api.CAPStack;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAnswerSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.ODisconnectSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
+import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
+import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCall;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSM;
 import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.InitialDPRequestImpl;
 import org.mobicents.protocols.ss7.inap.api.INAPParameterFactory;
+import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
+import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
+import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfoMessageType;
 import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CalledPartyNumberImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -54,8 +63,8 @@ public class Client extends EventTestHarness  {
 	private SccpAddress thisAddress;
 	private SccpAddress remoteAddress;
 
-	private CAPStack capStack;
-	private CAPProvider capProvider;
+	protected CAPStack capStack;
+	protected CAPProvider capProvider;
 
 	protected CAPParameterFactory capParameterFactory;
 	protected MAPParameterFactory mapParameterFactory;
@@ -64,7 +73,7 @@ public class Client extends EventTestHarness  {
 
 //	private boolean _S_receivedUnstructuredSSIndication, _S_sentEnd;
 	
-	private CAPDialogCircuitSwitchedCall clientCscDialog;
+	protected CAPDialogCircuitSwitchedCall clientCscDialog;
 
 //	private FunctionalTestScenario step;
 	
@@ -116,40 +125,22 @@ public class Client extends EventTestHarness  {
 		clientCscDialog.send();
 	}
 
-//	public void actionA() throws CAPException {
-//
-//		this.capProvider.getCAPServiceCircuitSwitchedCall().acivate();
-//		this.capProvider.getCAPServiceSms().acivate();
-//		this.capProvider.getCAPServiceSms().acivate();
-//
-//		CAPApplicationContext appCnt = null;
-//		switch (this.step) {
-//		case Action_InitilDp:
-//			appCnt = CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF;
-//			break;
-//		}
-//
-//		clientCscDialog = this.capProvider.getCAPServiceCircuitSwitchedCall().createNewDialog(appCnt, this.thisAddress, this.remoteAddress);
-//
-//		switch (this.step) {
-//		case Action_InitilDp: {
-//			InitialDPRequest initialDp = getTestInitialDp();
-//			clientCscDialog.addInitialDPRequest(initialDp.getServiceKey(), initialDp.getCalledPartyNumber(), initialDp.getCallingPartyNumber(),
-//					initialDp.getCallingPartysCategory(), initialDp.getCGEncountered(), initialDp.getIPSSPCapabilities(), initialDp.getLocationNumber(),
-//					initialDp.getOriginalCalledPartyID(), initialDp.getExtensions(), initialDp.getHighLayerCompatibility(),
-//					initialDp.getAdditionalCallingPartyNumber(), initialDp.getBearerCapability(), initialDp.getEventTypeBCSM(),
-//					initialDp.getRedirectingPartyID(), initialDp.getRedirectionInformation(), initialDp.getCause(),
-//					initialDp.getServiceInteractionIndicatorsTwo(), initialDp.getCarrier(), initialDp.getCugIndex(), initialDp.getCugInterlock(),
-//					initialDp.getCugOutgoingAccess(), initialDp.getIMSI(), initialDp.getSubscriberState(), initialDp.getLocationInformation(),
-//					initialDp.getExtBasicServiceCode(), initialDp.getCallReferenceNumber(), initialDp.getMscAddress(), initialDp.getCalledPartyBCDNumber(),
-//					initialDp.getTimeAndTimezone(), initialDp.getCallForwardingSSPending(), initialDp.getInitialDPArgExtension());
-//		}
-//			break;
-//		}
-//
-//		clientCscDialog.send();
-//	}
+	public void sendEventReportBCSMRequest_1() throws CAPException {
 
+		CauseIndicators causeIndicators = this.isupParameterFactory.createCauseIndicators();
+		causeIndicators.setLocation(CauseIndicators._LOCATION_USER);
+		causeIndicators.setCodingStandard(CauseIndicators._CODING_STANDARD_ITUT);
+		causeIndicators.setCauseValue(CauseIndicators._CV_ALL_CLEAR);
+		CauseCap releaseCause = this.capParameterFactory.createCauseCap(causeIndicators);
+		ODisconnectSpecificInfo oDisconnectSpecificInfo = this.capParameterFactory.createODisconnectSpecificInfo(releaseCause);
+		ReceivingSideID legID = this.capParameterFactory.createReceivingSideID(LegType.leg1);
+		MiscCallInfo miscCallInfo = this.inapParameterFactory.createMiscCallInfo(MiscCallInfoMessageType.notification, null);
+		EventSpecificInformationBCSM eventSpecificInformationBCSM = this.capParameterFactory.createEventSpecificInformationBCSM(oDisconnectSpecificInfo);
+		clientCscDialog.addEventReportBCSMRequest(EventTypeBCSM.oDisconnect, eventSpecificInformationBCSM, legID, miscCallInfo, null);
+
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.EventReportBCSMRequest, null, sequence++));
+		clientCscDialog.send();
+	}
 
 	public static boolean checkTestInitialDp(InitialDPRequest ind) {
 		

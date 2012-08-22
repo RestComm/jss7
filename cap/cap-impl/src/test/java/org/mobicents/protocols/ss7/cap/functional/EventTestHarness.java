@@ -71,15 +71,21 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
  *
  */
 public class EventTestHarness implements CAPDialogListener, CAPServiceCircuitSwitchedCallListener {
-	
+
 	private Logger logger = null;
 
 	protected List<TestEvent> observerdEvents = new ArrayList<TestEvent>();
 	protected int sequence = 0;
+	protected boolean invokeTimeoutSuppressed = false;
 
 	EventTestHarness(Logger logger){
 		this.logger = logger;
 	}
+
+	public void suppressInvokeTimeout() {
+		invokeTimeoutSuppressed = true;
+	}
+
 	public void compareEvents(List<TestEvent> expectedEvents) {
 
 		if (expectedEvents.size() != this.observerdEvents.size()) {
@@ -189,8 +195,10 @@ public class EventTestHarness implements CAPDialogListener, CAPServiceCircuitSwi
 	@Override
 	public void onInvokeTimeout(CAPDialog capDialog, Long invokeId) {
 		this.logger.debug("onInvokeTimeout");
-		TestEvent te = TestEvent.createReceivedEvent(EventType.InvokeTimeout, capDialog, sequence++);
-		this.observerdEvents.add(te);
+		if (!invokeTimeoutSuppressed) {
+			TestEvent te = TestEvent.createReceivedEvent(EventType.InvokeTimeout, capDialog, sequence++);
+			this.observerdEvents.add(te);
+		}
 	}
 
 	@Override

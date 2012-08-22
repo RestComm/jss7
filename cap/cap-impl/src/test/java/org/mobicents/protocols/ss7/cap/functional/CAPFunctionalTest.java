@@ -35,10 +35,12 @@ import org.mobicents.protocols.ss7.cap.CAPStackImpl;
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAnswerSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.ODisconnectSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageSystemFailure;
 import org.mobicents.protocols.ss7.cap.api.errors.UnavailableNetworkResource;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
 import org.mobicents.protocols.ss7.cap.api.primitives.AChChargingAddress;
 import org.mobicents.protocols.ss7.cap.api.primitives.BCSMEvent;
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
@@ -46,6 +48,7 @@ import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
 import org.mobicents.protocols.ss7.cap.api.primitives.MonitorMode;
 import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
 import org.mobicents.protocols.ss7.cap.api.primitives.SendingSideID;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingReportRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCall;
@@ -65,6 +68,7 @@ import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfoMessageType;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -268,7 +272,7 @@ public class CAPFunctionalTest extends SccpHarness {
 	}
 
 	/**
-	 * Circuit switch call simple
+	 * Circuit switch call simple messageflow
 	 * 
 	 * TC-BEGIN + InitialDP
 	 *   TC-CONTINUE + RequestReportBCSMEvent
@@ -286,6 +290,7 @@ public class CAPFunctionalTest extends SccpHarness {
 
 		Client client = new Client(stack1, this, peer1Address, peer2Address) {
 			private int dialogStep;
+			private long activityTestInvokeId;
 
 			@Override
 			public void onRequestReportBCSMEventRequest(RequestReportBCSMEventRequest ind) {
@@ -361,6 +366,13 @@ public class CAPFunctionalTest extends SccpHarness {
 				dialogStep = 1;
 			}
 
+			public void onActivityTestRequest(ActivityTestRequest ind) {
+				super.onActivityTestRequest(ind);
+
+				activityTestInvokeId = ind.getInvokeId();
+				dialogStep = 2;
+			}
+
 			@Override
 			public void onDialogDelimiter(CAPDialog capDialog) {
 				super.onDialogDelimiter(capDialog);
@@ -389,6 +401,15 @@ public class CAPFunctionalTest extends SccpHarness {
 						dialogStep = 0;
 						
 						break;
+
+					case 2: // after ActivityTestRequest
+						dlg.addActivityTestResponse(activityTestInvokeId);
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.ActivityTestResponse, null, sequence++));
+						dlg.send();
+
+						dialogStep = 0;
+						
+						break;
 					}
 				} catch (CAPException e) {
 					this.error("Error while trying to close() Dialog", e);
@@ -398,6 +419,7 @@ public class CAPFunctionalTest extends SccpHarness {
 
 		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
 			private int dialogStep = 0;
+			private boolean firstEventReportBCSMRequest = true;
 
 			@Override
 			public void onInitialDPRequest(InitialDPRequest ind) {
@@ -411,16 +433,37 @@ public class CAPFunctionalTest extends SccpHarness {
 			public void onEventReportBCSMRequest(EventReportBCSMRequest ind) {
 				super.onEventReportBCSMRequest(ind);
 
-				assertEquals(ind.getEventTypeBCSM(), EventTypeBCSM.oAnswer);
-				assertNotNull(ind.getEventSpecificInformationBCSM().getOAnswerSpecificInfo());
-				assertNull(ind.getEventSpecificInformationBCSM().getOAnswerSpecificInfo().getDestinationAddress());
-				assertNull(ind.getEventSpecificInformationBCSM().getOAnswerSpecificInfo().getChargeIndicator());
-				assertNull(ind.getEventSpecificInformationBCSM().getOAnswerSpecificInfo().getExtBasicServiceCode());
-				assertNull(ind.getEventSpecificInformationBCSM().getOAnswerSpecificInfo().getExtBasicServiceCode2());
-				assertFalse(ind.getEventSpecificInformationBCSM().getOAnswerSpecificInfo().getForwardedCall());
-				assertFalse(ind.getEventSpecificInformationBCSM().getOAnswerSpecificInfo().getOrCall());
-				assertEquals(ind.getLegID().getReceivingSideID(), LegType.leg2);
-				assertNull(ind.getExtensions());
+				if (firstEventReportBCSMRequest) {
+					firstEventReportBCSMRequest = false;
+
+					assertEquals(ind.getEventTypeBCSM(), EventTypeBCSM.oAnswer);
+					assertNotNull(ind.getEventSpecificInformationBCSM().getOAnswerSpecificInfo());
+					assertNull(ind.getEventSpecificInformationBCSM().getOAnswerSpecificInfo().getDestinationAddress());
+					assertNull(ind.getEventSpecificInformationBCSM().getOAnswerSpecificInfo().getChargeIndicator());
+					assertNull(ind.getEventSpecificInformationBCSM().getOAnswerSpecificInfo().getExtBasicServiceCode());
+					assertNull(ind.getEventSpecificInformationBCSM().getOAnswerSpecificInfo().getExtBasicServiceCode2());
+					assertFalse(ind.getEventSpecificInformationBCSM().getOAnswerSpecificInfo().getForwardedCall());
+					assertFalse(ind.getEventSpecificInformationBCSM().getOAnswerSpecificInfo().getOrCall());
+					assertEquals(ind.getLegID().getReceivingSideID(), LegType.leg2);
+					assertNull(ind.getExtensions());
+				} else {
+					try {
+						assertEquals(ind.getEventTypeBCSM(), EventTypeBCSM.oDisconnect);
+						assertNotNull(ind.getEventSpecificInformationBCSM().getODisconnectSpecificInfo());
+						CauseIndicators ci = ind.getEventSpecificInformationBCSM().getODisconnectSpecificInfo().getReleaseCause().getCauseIndicators();
+						assertEquals(ci.getCauseValue(), CauseIndicators._CV_ALL_CLEAR);
+						assertEquals(ci.getCodingStandard(), CauseIndicators._CODING_STANDARD_ITUT);
+						assertEquals(ci.getLocation(), CauseIndicators._LOCATION_USER);
+						assertEquals(ind.getLegID().getReceivingSideID(), LegType.leg1);
+						assertEquals(ind.getMiscCallInfo().getMessageType(), MiscCallInfoMessageType.notification);
+						assertNull(ind.getMiscCallInfo().getDpAssignment());
+						assertNull(ind.getExtensions());
+					} catch (CAPException e) {
+						this.error("Exception while checking EventReportBCSMRequest - the second message", e);
+					}
+
+					dialogStep = 2;
+				}
 			}
 
 			public void onApplyChargingReportRequest(ApplyChargingReportRequest ind) {
@@ -489,13 +532,37 @@ public class CAPFunctionalTest extends SccpHarness {
 						dialogStep = 0;
 
 						break;
+
+					case 2: // after oDisconnect
+						dlg.close(false);
+
+						dialogStep = 0;
+
+						break;
 					}
 				} catch (CAPException e) {
 					this.error("Error while trying to close() Dialog", e);
 				}
 			}
+
+			public void onDialogTimeout(CAPDialog capDialog) {
+				super.onDialogTimeout(capDialog);
+				
+				capDialog.keepAlive();
+
+				CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall)capDialog;
+				try {
+					dlg.addActivityTestRequest(500);
+					dlg.send();
+				} catch (CAPException e) {
+					this.error("Error while trying to send ActivityTestRequest", e);
+				}
+				this.observerdEvents.add(TestEvent.createSentEvent(EventType.ActivityTestRequest, null, sequence++));
+			}
 		};
 
+		long _DIALOG_TIMEOUT = 2000;
+		long _SLEEP_BEFORE_ODISCONNECT = 3000;
 		long stamp = System.currentTimeMillis();
 		int count = 0;
 		// Client side events
@@ -527,11 +594,23 @@ public class CAPFunctionalTest extends SccpHarness {
 		te = TestEvent.createSentEvent(EventType.ApplyChargingReportRequest, null, count++, stamp);
 		clientExpectedEvents.add(te);
 
-//		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp);
-//		clientExpectedEvents.add(te);
-//
-//		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
-//		clientExpectedEvents.add(te);
+		te = TestEvent.createReceivedEvent(EventType.ActivityTestRequest, null, count++, stamp + _DIALOG_TIMEOUT);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp + _DIALOG_TIMEOUT);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ActivityTestResponse, null, count++, stamp + _DIALOG_TIMEOUT);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.EventReportBCSMRequest, null, count++, stamp + _SLEEP_BEFORE_ODISCONNECT);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp + _SLEEP_BEFORE_ODISCONNECT);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _SLEEP_BEFORE_ODISCONNECT + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
 
 		count = 0;
 		// Server side events
@@ -557,38 +636,196 @@ public class CAPFunctionalTest extends SccpHarness {
 		te = TestEvent.createReceivedEvent(EventType.EventReportBCSMRequest, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
 		te = TestEvent.createReceivedEvent(EventType.ApplyChargingReportRequest, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
 		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
-//		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
-//		serverExpectedEvents.add(te);
+		te = TestEvent.createReceivedEvent(EventType.DialogTimeout, null, count++, stamp + _DIALOG_TIMEOUT);
+		serverExpectedEvents.add(te);
 
+		te = TestEvent.createSentEvent(EventType.ActivityTestRequest, null, count++, stamp + _DIALOG_TIMEOUT);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ActivityTestResponse, null, count++, stamp + _DIALOG_TIMEOUT);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp + _DIALOG_TIMEOUT);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.EventReportBCSMRequest, null, count++, stamp + _SLEEP_BEFORE_ODISCONNECT);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp + _SLEEP_BEFORE_ODISCONNECT);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _SLEEP_BEFORE_ODISCONNECT + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		// setting dialog timeout little interval to invoke onDialogTimeout on SCF side
+		server.capStack.getTCAPStack().setInvokeTimeout(_DIALOG_TIMEOUT - 100);
+		server.capStack.getTCAPStack().setDialogIdleTimeout(_DIALOG_TIMEOUT);
+		client.suppressInvokeTimeout();
 		client.sendInitialDp();
-		waitForEnd();
 
-//		Thread.currentThread().sleep(1000000);
+		// waiting here for DialogTimeOut -> ActivityTest
+		Thread.currentThread().sleep(_SLEEP_BEFORE_ODISCONNECT);
 		
+		// sending an event of call finishing
+		client.sendEventReportBCSMRequest_1();
+
+		waitForEnd();
+//		Thread.currentThread().sleep(1000000);
+	
 		client.compareEvents(clientExpectedEvents);
 		server.compareEvents(serverExpectedEvents);
 
 	}
 
+	/**
+	 * Activity test success + failure
+	 * 
+	 * TC-BEGIN + InitialDP
+	 *   TC-CONTINUE Continue
+	 * <waiting till DialogTimeout 1>
+	 *   TC-CONTINUE + ActivityTestRequest
+	 * TC-CONTINUE + ActivityTestResponse
+	 * release SSF Dialog
+	 * <waiting till DialogTimeout 2>
+	 *   TC-CONTINUE + ActivityTestRequest
+	 *   .............
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testActivityTest() throws Exception {
 
-//	@Test(groups = { "functional.flow","functional"})
-//	public void testSimple() throws Exception {
-//		server.reset();
-//		client.reset();
-//		server.setStep(FunctionalTestScenario.Action_InitilDp);
-//		client.setStep(FunctionalTestScenario.Action_InitilDp);
-//		client.actionA();
-//		waitForEnd();
-//		assertTrue(client.isFinished(),"Client side did not finish: " + client.getStatus());
-//		assertTrue(server.isFinished(),"Server side did not finish: " + server.getStatus());
-//	}
+		long _DIALOG_TIMEOUT = 2000;
+		long _SLEEP_BEFORE_ODISCONNECT = 3000;
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.InitialDpRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
 
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.RequestReportBCSMEventRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ApplyChargingRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ConnectRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.EventReportBCSMRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ApplyChargingReportRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ActivityTestRequest, null, count++, stamp + _DIALOG_TIMEOUT);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp + _DIALOG_TIMEOUT);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ActivityTestResponse, null, count++, stamp + _DIALOG_TIMEOUT);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.EventReportBCSMRequest, null, count++, stamp + _SLEEP_BEFORE_ODISCONNECT);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp + _SLEEP_BEFORE_ODISCONNECT);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _SLEEP_BEFORE_ODISCONNECT + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.InitialDpRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.RequestReportBCSMEventRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ApplyChargingRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ConnectRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.EventReportBCSMRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ApplyChargingReportRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogTimeout, null, count++, stamp + _DIALOG_TIMEOUT);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ActivityTestRequest, null, count++, stamp + _DIALOG_TIMEOUT);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ActivityTestResponse, null, count++, stamp + _DIALOG_TIMEOUT);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp + _DIALOG_TIMEOUT);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.EventReportBCSMRequest, null, count++, stamp + _SLEEP_BEFORE_ODISCONNECT);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp + _SLEEP_BEFORE_ODISCONNECT);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _SLEEP_BEFORE_ODISCONNECT + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		// setting dialog timeout little interval to invoke onDialogTimeout on SCF side
+		server.capStack.getTCAPStack().setInvokeTimeout(_DIALOG_TIMEOUT - 100);
+		server.capStack.getTCAPStack().setDialogIdleTimeout(_DIALOG_TIMEOUT);
+		client.suppressInvokeTimeout();
+		client.sendInitialDp();
+
+		// waiting here for DialogTimeOut -> ActivityTest
+		Thread.currentThread().sleep(_SLEEP_BEFORE_ODISCONNECT);
+		
+		// sending an event of call finishing
+		client.sendEventReportBCSMRequest_1();
+
+		waitForEnd();
+//		Thread.currentThread().sleep(1000000);
+	
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+	}
+	
 	private void waitForEnd() {
 		try {
 			Date startTime = new Date();
