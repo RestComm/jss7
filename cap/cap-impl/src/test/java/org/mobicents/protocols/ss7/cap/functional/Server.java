@@ -22,13 +22,29 @@
 
 package org.mobicents.protocols.ss7.cap.functional;
 
+import java.util.ArrayList;
+
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParameterFactory;
 import org.mobicents.protocols.ss7.cap.api.CAPProvider;
 import org.mobicents.protocols.ss7.cap.api.CAPStack;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageFactory;
+import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.primitives.BCSMEvent;
+import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
+import org.mobicents.protocols.ss7.cap.api.primitives.MonitorMode;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestReportBCSMEventRequest;
+import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.InitialDPRequestImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.RequestReportBCSMEventRequestImpl;
 import org.mobicents.protocols.ss7.inap.api.INAPParameterFactory;
+import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
+import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
+import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
@@ -83,6 +99,31 @@ public class Server extends EventTestHarness  {
 		this.capProvider.getCAPServiceCircuitSwitchedCall().acivate();
 		this.capProvider.getCAPServiceSms().acivate();
 		this.capProvider.getCAPServiceSms().acivate();
+	}
+
+	public RequestReportBCSMEventRequest getRequestReportBCSMEventRequest() {
+
+		ArrayList<BCSMEvent> bcsmEventList = new ArrayList<BCSMEvent>();
+		BCSMEvent ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.routeSelectFailure, MonitorMode.notifyAndContinue, null, null, false);
+		bcsmEventList.add(ev);
+		ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oCalledPartyBusy, MonitorMode.interrupted, null, null, false);
+		bcsmEventList.add(ev);
+		ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oNoAnswer, MonitorMode.interrupted, null, null, false);
+		bcsmEventList.add(ev);
+		ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oAnswer, MonitorMode.notifyAndContinue, null, null, false);
+		bcsmEventList.add(ev);
+		LegID legId = this.inapParameterFactory.createLegID(true, LegType.leg1);
+		ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oDisconnect, MonitorMode.notifyAndContinue, legId, null, false);
+		bcsmEventList.add(ev);
+		legId = this.inapParameterFactory.createLegID(true, LegType.leg2);
+		ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oDisconnect, MonitorMode.interrupted, legId, null, false);
+		bcsmEventList.add(ev);
+		ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oAbandon, MonitorMode.notifyAndContinue, null, null, false);
+		bcsmEventList.add(ev);
+
+		RequestReportBCSMEventRequestImpl res = new RequestReportBCSMEventRequestImpl(bcsmEventList, null);
+
+		return res;
 	}
 
 	public void debug(String message) {

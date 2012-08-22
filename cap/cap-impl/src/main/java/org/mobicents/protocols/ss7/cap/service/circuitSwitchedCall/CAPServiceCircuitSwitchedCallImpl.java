@@ -889,7 +889,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
 		SpecializedResourceReportRequestImpl ind = new SpecializedResourceReportRequestImpl(capDialogImpl.getApplicationContext()
-				.getVersion().getVersion() < 4);
+				.getVersion().getVersion() >= 4);
 		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);
@@ -911,7 +911,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 			throw new CAPParsingComponentException("Error while decoding playAnnouncementRequest: Parameter is mandatory but not found",
 					CAPParsingComponentExceptionReason.MistypedParameter);
 
-		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || !parameter.isPrimitive())
+		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
 			throw new CAPParsingComponentException(
 					"Error while decoding playAnnouncementRequest: Bad tag or tagClass or parameter is not primitive, received tag=" + parameter.getTag(),
 					CAPParsingComponentExceptionReason.MistypedParameter);

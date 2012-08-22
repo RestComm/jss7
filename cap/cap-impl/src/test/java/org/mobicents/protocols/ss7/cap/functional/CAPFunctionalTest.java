@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.cap.functional;
 import static org.testng.Assert.*;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -32,6 +33,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.mobicents.protocols.ss7.cap.CAPStackImpl;
+import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAnswerSpecificInfo;
@@ -42,6 +44,7 @@ import org.mobicents.protocols.ss7.cap.api.errors.UnavailableNetworkResource;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
 import org.mobicents.protocols.ss7.cap.api.primitives.AChChargingAddress;
+import org.mobicents.protocols.ss7.cap.api.primitives.AppendFreeFormatData;
 import org.mobicents.protocols.ss7.cap.api.primitives.BCSMEvent;
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
@@ -53,15 +56,25 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChar
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCall;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectToResourceRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectForwardConnectionRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EventReportBCSMRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.FurnishChargingInformationRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PlayAnnouncementRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ReleaseCallRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestReportBCSMEventRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristics;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DestinationRoutingAddress;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSM;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.FCIBCCCAMELsequence1;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.InformationToSend;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ServiceInteractionIndicatorsTwo;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeDurationChargingResult;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeIfTariffSwitch;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeInformation;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.Tone;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
@@ -264,7 +277,7 @@ public class CAPFunctionalTest extends SccpHarness {
 		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
 		serverExpectedEvents.add(te);
 
-		client.sendInitialDp();
+		client.sendInitialDp(CAPApplicationContext.CapV1_gsmSSF_to_gsmSCF);
 		waitForEnd();
 		client.compareEvents(clientExpectedEvents);
 		server.compareEvents(serverExpectedEvents);
@@ -272,10 +285,11 @@ public class CAPFunctionalTest extends SccpHarness {
 	}
 
 	/**
-	 * Circuit switch call simple messageflow
+	 * Circuit switch call simple messageflow 1
 	 * 
 	 * TC-BEGIN + InitialDP
 	 *   TC-CONTINUE + RequestReportBCSMEvent
+	 *   TC-CONTINUE + FurnishChargingInformation
 	 *   TC-CONTINUE + ApplyCharging + Connect
 	 * TC-CONTINUE + EventReportBCSM (OAnswer)
 	 * TC-CONTINUE + ApplyChargingReport
@@ -296,37 +310,16 @@ public class CAPFunctionalTest extends SccpHarness {
 			public void onRequestReportBCSMEventRequest(RequestReportBCSMEventRequest ind) {
 				super.onRequestReportBCSMEventRequest(ind);
 
-				assertEquals(ind.getBCSMEventList().size(), 7);
+				this.checkRequestReportBCSMEventRequest(ind);
+			}
 
-				BCSMEvent ev = ind.getBCSMEventList().get(0);
-				assertEquals(ev.getEventTypeBCSM(), EventTypeBCSM.routeSelectFailure);
-				assertEquals(ev.getMonitorMode(), MonitorMode.notifyAndContinue);
-				assertNull(ev.getLegID());
-				ev = ind.getBCSMEventList().get(1);
-				assertEquals(ev.getEventTypeBCSM(), EventTypeBCSM.oCalledPartyBusy);
-				assertEquals(ev.getMonitorMode(), MonitorMode.interrupted);
-				assertNull(ev.getLegID());
-				ev = ind.getBCSMEventList().get(2);
-				assertEquals(ev.getEventTypeBCSM(), EventTypeBCSM.oNoAnswer);
-				assertEquals(ev.getMonitorMode(), MonitorMode.interrupted);
-				assertNull(ev.getLegID());
-				ev = ind.getBCSMEventList().get(3);
-				assertEquals(ev.getEventTypeBCSM(), EventTypeBCSM.oAnswer);
-				assertEquals(ev.getMonitorMode(), MonitorMode.notifyAndContinue);
-				assertNull(ev.getLegID());
-				ev = ind.getBCSMEventList().get(4);
-				assertEquals(ev.getEventTypeBCSM(), EventTypeBCSM.oDisconnect);
-				assertEquals(ev.getMonitorMode(), MonitorMode.notifyAndContinue);
-				assertEquals(ev.getLegID().getSendingSideID(), LegType.leg1);
-				ev = ind.getBCSMEventList().get(5);
-				assertEquals(ev.getEventTypeBCSM(), EventTypeBCSM.oDisconnect);
-				assertEquals(ev.getMonitorMode(), MonitorMode.interrupted);
-				assertEquals(ev.getLegID().getSendingSideID(), LegType.leg2);
-				ev = ind.getBCSMEventList().get(6);
-				assertEquals(ev.getEventTypeBCSM(), EventTypeBCSM.oAbandon);
-				assertEquals(ev.getMonitorMode(), MonitorMode.notifyAndContinue);
-				assertNull(ev.getLegID());
+			public void onFurnishChargingInformationRequest(FurnishChargingInformationRequest ind) {
+				super.onFurnishChargingInformationRequest(ind);
 
+				byte[] freeFormatData = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
+				assertTrue(Arrays.equals(ind.getFCIBCCCAMELsequence1().getFreeFormatData(), freeFormatData));
+				assertEquals(ind.getFCIBCCCAMELsequence1().getPartyToCharge().getSendingSideID(), LegType.leg1);
+				assertEquals(ind.getFCIBCCCAMELsequence1().getAppendFreeFormatData(), AppendFreeFormatData.append);
 			}
 
 			@Override
@@ -483,32 +476,24 @@ public class CAPFunctionalTest extends SccpHarness {
 				super.onDialogDelimiter(capDialog);
 
 				CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall)capDialog;
-				
+
 				try {
 					switch (dialogStep) {
 					case 1: // after InitialDp
-						ArrayList<BCSMEvent> bcsmEventList = new ArrayList<BCSMEvent>();
-						BCSMEvent ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.routeSelectFailure, MonitorMode.notifyAndContinue,
-								null, null, false);
-						bcsmEventList.add(ev);
-						ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oCalledPartyBusy, MonitorMode.interrupted, null, null, false);
-						bcsmEventList.add(ev);
-						ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oNoAnswer, MonitorMode.interrupted, null, null, false);
-						bcsmEventList.add(ev);
-						ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oAnswer, MonitorMode.notifyAndContinue, null, null, false);
-						bcsmEventList.add(ev);
-						LegID legId = this.inapParameterFactory.createLegID(true, LegType.leg1);
-						ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oDisconnect, MonitorMode.notifyAndContinue, legId, null, false);
-						bcsmEventList.add(ev);
-						legId = this.inapParameterFactory.createLegID(true, LegType.leg2);
-						ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oDisconnect, MonitorMode.interrupted, legId, null, false);
-						bcsmEventList.add(ev);
-						ev = this.capParameterFactory.createBCSMEvent(EventTypeBCSM.oAbandon, MonitorMode.notifyAndContinue, null, null, false);
-						bcsmEventList.add(ev);
-						dlg.addRequestReportBCSMEventRequest(bcsmEventList, null);
+
+						RequestReportBCSMEventRequest rrc = this.getRequestReportBCSMEventRequest();
+						dlg.addRequestReportBCSMEventRequest(rrc.getBCSMEventList(), rrc.getExtensions());
 						this.observerdEvents.add(TestEvent.createSentEvent(EventType.RequestReportBCSMEventRequest, null, sequence++));
 						dlg.send();
 
+						byte[] freeFormatData = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
+						SendingSideID partyToCharge1 = this.capParameterFactory.createSendingSideID(LegType.leg1);
+						FCIBCCCAMELsequence1 FCIBCCCAMELsequence1 = this.capParameterFactory.createFCIBCCCAMELsequence1(freeFormatData, partyToCharge1,
+								AppendFreeFormatData.append);
+						dlg.addFurnishChargingInformationRequest(FCIBCCCAMELsequence1);
+						dlg.send();
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.FurnishChargingInformationRequest, null, sequence++));
+						
 						CAMELAChBillingChargingCharacteristics aChBillingChargingCharacteristics = this.capParameterFactory
 								.createCAMELAChBillingChargingCharacteristics(1000, true, null, null, null, false);
 						SendingSideID partyToCharge = this.capParameterFactory.createSendingSideID(LegType.leg1);
@@ -579,6 +564,12 @@ public class CAPFunctionalTest extends SccpHarness {
 		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
 		clientExpectedEvents.add(te);
 
+		te = TestEvent.createReceivedEvent(EventType.FurnishChargingInformationRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
 		te = TestEvent.createReceivedEvent(EventType.ApplyChargingRequest, null, count++, stamp);
 		clientExpectedEvents.add(te);
 
@@ -627,6 +618,9 @@ public class CAPFunctionalTest extends SccpHarness {
 		te = TestEvent.createSentEvent(EventType.RequestReportBCSMEventRequest, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
+		te = TestEvent.createSentEvent(EventType.FurnishChargingInformationRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
 		te = TestEvent.createSentEvent(EventType.ApplyChargingRequest, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
@@ -670,7 +664,7 @@ public class CAPFunctionalTest extends SccpHarness {
 		server.capStack.getTCAPStack().setInvokeTimeout(_DIALOG_TIMEOUT - 100);
 		server.capStack.getTCAPStack().setDialogIdleTimeout(_DIALOG_TIMEOUT);
 		client.suppressInvokeTimeout();
-		client.sendInitialDp();
+		client.sendInitialDp(CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF);
 
 		// waiting here for DialogTimeOut -> ActivityTest
 		Thread.currentThread().sleep(_SLEEP_BEFORE_ODISCONNECT);
@@ -687,23 +681,182 @@ public class CAPFunctionalTest extends SccpHarness {
 	}
 
 	/**
-	 * Activity test success + failure
+	 * Circuit switch call play announcement and disconnect
 	 * 
 	 * TC-BEGIN + InitialDP
-	 *   TC-CONTINUE Continue
-	 * <waiting till DialogTimeout 1>
-	 *   TC-CONTINUE + ActivityTestRequest
-	 * TC-CONTINUE + ActivityTestResponse
-	 * release SSF Dialog
-	 * <waiting till DialogTimeout 2>
-	 *   TC-CONTINUE + ActivityTestRequest
-	 *   .............
+	 *   TC-CONTINUE + RequestReportBCSMEvent
+	 *   TC-CONTINUE + ConnectToResource
+	 *   TC-CONTINUE + PlayAnnouncement
+	 * TC-CONTINUE + SpecializedResourceReport
+	 *   TC-CONTINUE + DisconnectForwardConnection
+	 *   TC-END + ReleaseCall
 	 */
 	@Test(groups = { "functional.flow", "dialog" })
-	public void testActivityTest() throws Exception {
+	public void testPlayAnnouncment() throws Exception {
 
-		long _DIALOG_TIMEOUT = 2000;
-		long _SLEEP_BEFORE_ODISCONNECT = 3000;
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			private int dialogStep;
+
+			@Override
+			public void onRequestReportBCSMEventRequest(RequestReportBCSMEventRequest ind) {
+				super.onRequestReportBCSMEventRequest(ind);
+
+				this.checkRequestReportBCSMEventRequest(ind);
+			}
+
+			public void onConnectToResourceRequest(ConnectToResourceRequest ind) {
+				super.onConnectToResourceRequest(ind);
+
+				try {
+					CalledPartyNumber cpn = ind.getResourceAddress_IPRoutingAddress().getCalledPartyNumber();
+					assertTrue(cpn.getAddress().equals("111222333"));
+					assertEquals(cpn.getInternalNetworkNumberIndicator(), CalledPartyNumber._INN_ROUTING_NOT_ALLOWED);
+					assertEquals(cpn.getNatureOfAddressIndicator(), NAINumber._NAI_INTERNATIONAL_NUMBER);
+					assertEquals(cpn.getNumberingPlanIndicator(), CalledPartyNumber._NPI_ISDN);
+				} catch (CAPException e) {
+					this.error("Error while checking ConnectToResourceRequest", e);
+				}
+				assertFalse(ind.getResourceAddress_Null());
+				assertNull(ind.getCallSegmentID());
+				assertNull(ind.getExtensions());
+				assertNull(ind.getServiceInteractionIndicatorsTwo());
+			}
+
+			public void onPlayAnnouncementRequest(PlayAnnouncementRequest ind) {
+				super.onPlayAnnouncementRequest(ind);
+
+				assertEquals(ind.getInformationToSend().getTone().getToneID(), 10);
+				assertEquals((int)ind.getInformationToSend().getTone().getDuration(), 100);
+				assertTrue(ind.getDisconnectFromIPForbidden());
+				assertTrue(ind.getRequestAnnouncementCompleteNotification());
+				assertFalse(ind.getRequestAnnouncementStartedNotification());
+				assertNull(ind.getCallSegmentID());
+				assertNull(ind.getExtensions());
+
+				dialogStep = 1;
+			}
+
+			public void onDisconnectForwardConnectionRequest(DisconnectForwardConnectionRequest ind) {
+				super.onDisconnectForwardConnectionRequest(ind);
+			}
+
+			public void onReleaseCallRequest(ReleaseCallRequest ind) {
+				super.onReleaseCallRequest(ind);
+
+				CauseIndicators ci;
+				try {
+					ci = ind.getCause().getCauseIndicators();
+					assertEquals(ci.getCauseValue(), CauseIndicators._CV_SEND_SPECIAL_TONE);
+					assertEquals(ci.getCodingStandard(), CauseIndicators._CODING_STANDARD_ITUT);
+					assertNull(ci.getDiagnostics());
+					assertEquals(ci.getLocation(), CauseIndicators._LOCATION_INTERNATIONAL_NETWORK);
+				} catch (CAPException e) {
+					this.error("Error while checking ReleaseCallRequest", e);
+				}
+			}
+
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall)capDialog;
+
+				try {
+					switch (dialogStep) {
+					case 1: // after PlayAnnouncementRequest
+						dlg.addSpecializedResourceReportRequest_CapV23();
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.SpecializedResourceReportRequest, null, sequence++));
+						dlg.send();
+
+						dialogStep = 0;
+						
+						break;
+					}
+				} catch (CAPException e) {
+					this.error("Error while trying to close() Dialog", e);
+				}
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			private int dialogStep = 0;
+
+			@Override
+			public void onInitialDPRequest(InitialDPRequest ind) {
+				super.onInitialDPRequest(ind);
+
+				assertTrue(Client.checkTestInitialDp(ind));
+
+				dialogStep = 1;
+			}
+
+			public void onSpecializedResourceReportRequest(SpecializedResourceReportRequest ind) {
+				super.onSpecializedResourceReportRequest(ind);
+
+				assertFalse(ind.IsFirstAnnouncementStarted());
+				assertFalse(ind.IsAllAnnouncementsComplete());
+
+				dialogStep = 2;
+			}
+
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall)capDialog;
+
+				try {
+					switch (dialogStep) {
+					case 1: // after InitialDp
+						RequestReportBCSMEventRequest rrc = this.getRequestReportBCSMEventRequest();
+						dlg.addRequestReportBCSMEventRequest(rrc.getBCSMEventList(), rrc.getExtensions());
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.RequestReportBCSMEventRequest, null, sequence++));
+						dlg.send();
+
+						CalledPartyNumber calledPartyNumber = this.isupParameterFactory.createCalledPartyNumber();
+						calledPartyNumber.setAddress("111222333");
+						calledPartyNumber.setInternalNetworkNumberIndicator(CalledPartyNumber._INN_ROUTING_NOT_ALLOWED);
+						calledPartyNumber.setNatureOfAddresIndicator(NAINumber._NAI_INTERNATIONAL_NUMBER);
+						calledPartyNumber.setNumberingPlanIndicator(CalledPartyNumber._NPI_ISDN);
+						CalledPartyNumberCap resourceAddress_IPRoutingAddress = this.capParameterFactory.createCalledPartyNumberCap(calledPartyNumber);
+						dlg.addConnectToResourceRequest(resourceAddress_IPRoutingAddress, false, null, null, null);
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.ConnectToResourceRequest, null, sequence++));
+						dlg.send();
+
+						Tone tone = this.capParameterFactory.createTone(10, 100);
+						InformationToSend informationToSend = this.capParameterFactory.createInformationToSend(tone);
+						dlg.addPlayAnnouncementRequest(informationToSend, true, true, null, null, invokeTimeoutSuppressed);
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.PlayAnnouncementRequest, null, sequence++));
+						dlg.send();
+
+						dialogStep = 0;
+
+						break;
+
+					case 2: // after SpecializedResourceReportRequest
+						dlg.addDisconnectForwardConnectionRequest();
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.DisconnectForwardConnectionRequest, null, sequence++));
+						dlg.send();
+
+						CauseIndicators causeIndicators = this.isupParameterFactory.createCauseIndicators();
+						causeIndicators.setCauseValue(CauseIndicators._CV_SEND_SPECIAL_TONE);
+						causeIndicators.setCodingStandard(CauseIndicators._CODING_STANDARD_ITUT);
+						causeIndicators.setDiagnostics(null);
+						causeIndicators.setLocation(CauseIndicators._LOCATION_INTERNATIONAL_NETWORK);
+						CauseCap cause = this.capParameterFactory.createCauseCap(causeIndicators);
+						dlg.addReleaseCallRequest(cause);
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.ReleaseCallRequest, null, sequence++));
+						dlg.close(false);
+
+						dialogStep = 0;
+
+						break;
+					}
+				} catch (CAPException e) {
+					this.error("Error while trying to close() Dialog", e);
+				}
+			}
+		};
+
 		long stamp = System.currentTimeMillis();
 		int count = 0;
 		// Client side events
@@ -720,37 +873,34 @@ public class CAPFunctionalTest extends SccpHarness {
 		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
 		clientExpectedEvents.add(te);
 
-		te = TestEvent.createReceivedEvent(EventType.ApplyChargingRequest, null, count++, stamp);
-		clientExpectedEvents.add(te);
-
-		te = TestEvent.createReceivedEvent(EventType.ConnectRequest, null, count++, stamp);
+		te = TestEvent.createReceivedEvent(EventType.ConnectToResourceRequest, null, count++, stamp);
 		clientExpectedEvents.add(te);
 
 		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
 		clientExpectedEvents.add(te);
 
-		te = TestEvent.createSentEvent(EventType.EventReportBCSMRequest, null, count++, stamp);
+		te = TestEvent.createReceivedEvent(EventType.PlayAnnouncementRequest, null, count++, stamp);
 		clientExpectedEvents.add(te);
 
-		te = TestEvent.createSentEvent(EventType.ApplyChargingReportRequest, null, count++, stamp);
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
 		clientExpectedEvents.add(te);
 
-		te = TestEvent.createReceivedEvent(EventType.ActivityTestRequest, null, count++, stamp + _DIALOG_TIMEOUT);
+		te = TestEvent.createSentEvent(EventType.SpecializedResourceReportRequest, null, count++, stamp);
 		clientExpectedEvents.add(te);
 
-		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp + _DIALOG_TIMEOUT);
+		te = TestEvent.createReceivedEvent(EventType.DisconnectForwardConnectionRequest, null, count++, stamp);
 		clientExpectedEvents.add(te);
 
-		te = TestEvent.createSentEvent(EventType.ActivityTestResponse, null, count++, stamp + _DIALOG_TIMEOUT);
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
 		clientExpectedEvents.add(te);
 
-		te = TestEvent.createSentEvent(EventType.EventReportBCSMRequest, null, count++, stamp + _SLEEP_BEFORE_ODISCONNECT);
+		te = TestEvent.createReceivedEvent(EventType.ReleaseCallRequest, null, count++, stamp);
 		clientExpectedEvents.add(te);
 
-		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp + _SLEEP_BEFORE_ODISCONNECT);
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp);
 		clientExpectedEvents.add(te);
 
-		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _SLEEP_BEFORE_ODISCONNECT + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
 		clientExpectedEvents.add(te);
 
 		count = 0;
@@ -768,59 +918,30 @@ public class CAPFunctionalTest extends SccpHarness {
 		te = TestEvent.createSentEvent(EventType.RequestReportBCSMEventRequest, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
-		te = TestEvent.createSentEvent(EventType.ApplyChargingRequest, null, count++, stamp);
+		te = TestEvent.createSentEvent(EventType.ConnectToResourceRequest, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
-		te = TestEvent.createSentEvent(EventType.ConnectRequest, null, count++, stamp);
+		te = TestEvent.createSentEvent(EventType.PlayAnnouncementRequest, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
-		te = TestEvent.createReceivedEvent(EventType.EventReportBCSMRequest, null, count++, stamp);
-		serverExpectedEvents.add(te);
-
-		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
-		serverExpectedEvents.add(te);
-
-		te = TestEvent.createReceivedEvent(EventType.ApplyChargingReportRequest, null, count++, stamp);
+		te = TestEvent.createReceivedEvent(EventType.SpecializedResourceReportRequest, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
 		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
-		te = TestEvent.createReceivedEvent(EventType.DialogTimeout, null, count++, stamp + _DIALOG_TIMEOUT);
+		te = TestEvent.createSentEvent(EventType.DisconnectForwardConnectionRequest, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
-		te = TestEvent.createSentEvent(EventType.ActivityTestRequest, null, count++, stamp + _DIALOG_TIMEOUT);
+		te = TestEvent.createSentEvent(EventType.ReleaseCallRequest, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
-		te = TestEvent.createReceivedEvent(EventType.ActivityTestResponse, null, count++, stamp + _DIALOG_TIMEOUT);
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
 		serverExpectedEvents.add(te);
 
-		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp + _DIALOG_TIMEOUT);
-		serverExpectedEvents.add(te);
-
-		te = TestEvent.createReceivedEvent(EventType.EventReportBCSMRequest, null, count++, stamp + _SLEEP_BEFORE_ODISCONNECT);
-		serverExpectedEvents.add(te);
-
-		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp + _SLEEP_BEFORE_ODISCONNECT);
-		serverExpectedEvents.add(te);
-
-		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _SLEEP_BEFORE_ODISCONNECT + _TCAP_DIALOG_RELEASE_TIMEOUT));
-		serverExpectedEvents.add(te);
-
-		// setting dialog timeout little interval to invoke onDialogTimeout on SCF side
-		server.capStack.getTCAPStack().setInvokeTimeout(_DIALOG_TIMEOUT - 100);
-		server.capStack.getTCAPStack().setDialogIdleTimeout(_DIALOG_TIMEOUT);
-		client.suppressInvokeTimeout();
-		client.sendInitialDp();
-
-		// waiting here for DialogTimeOut -> ActivityTest
-		Thread.currentThread().sleep(_SLEEP_BEFORE_ODISCONNECT);
-		
-		// sending an event of call finishing
-		client.sendEventReportBCSMRequest_1();
+		client.sendInitialDp(CAPApplicationContext.CapV3_gsmSSF_scfGeneric);
 
 		waitForEnd();
-//		Thread.currentThread().sleep(1000000);
 	
 		client.compareEvents(clientExpectedEvents);
 		server.compareEvents(serverExpectedEvents);

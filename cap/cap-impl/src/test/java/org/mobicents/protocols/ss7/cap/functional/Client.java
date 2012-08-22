@@ -23,19 +23,22 @@
 package org.mobicents.protocols.ss7.cap.functional;
 
 import org.apache.log4j.Logger;
+import static org.testng.Assert.*;
 import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParameterFactory;
 import org.mobicents.protocols.ss7.cap.api.CAPProvider;
 import org.mobicents.protocols.ss7.cap.api.CAPStack;
-import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAnswerSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.ODisconnectSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
+import org.mobicents.protocols.ss7.cap.api.primitives.BCSMEvent;
 import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
+import org.mobicents.protocols.ss7.cap.api.primitives.MonitorMode;
 import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCall;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestReportBCSMEventRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSM;
 import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.InitialDPRequestImpl;
@@ -104,9 +107,7 @@ public class Client extends EventTestHarness  {
 	}
 
 
-	public void sendInitialDp() throws CAPException {
-
-		CAPApplicationContext appCnt = CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF;
+	public void sendInitialDp(CAPApplicationContext appCnt) throws CAPException {
 
 		clientCscDialog = this.capProvider.getCAPServiceCircuitSwitchedCall().createNewDialog(appCnt, this.thisAddress, this.remoteAddress);
 
@@ -201,6 +202,39 @@ public class Client extends EventTestHarness  {
 //		ExtBasicServiceCode extBasicServiceCode, CallReferenceNumber callReferenceNumber, ISDNAddressString mscAddress,
 //		CalledPartyBCDNumber calledPartyBCDNumber, TimeAndTimezone timeAndTimezone, boolean callForwardingSSPending,
 //		InitialDPArgExtension initialDPArgExtension, boolean isCAPVersion3orLater
+	}
+
+	public void checkRequestReportBCSMEventRequest(RequestReportBCSMEventRequest ind){
+		assertEquals(ind.getBCSMEventList().size(), 7);
+
+		BCSMEvent ev = ind.getBCSMEventList().get(0);
+		assertEquals(ev.getEventTypeBCSM(), EventTypeBCSM.routeSelectFailure);
+		assertEquals(ev.getMonitorMode(), MonitorMode.notifyAndContinue);
+		assertNull(ev.getLegID());
+		ev = ind.getBCSMEventList().get(1);
+		assertEquals(ev.getEventTypeBCSM(), EventTypeBCSM.oCalledPartyBusy);
+		assertEquals(ev.getMonitorMode(), MonitorMode.interrupted);
+		assertNull(ev.getLegID());
+		ev = ind.getBCSMEventList().get(2);
+		assertEquals(ev.getEventTypeBCSM(), EventTypeBCSM.oNoAnswer);
+		assertEquals(ev.getMonitorMode(), MonitorMode.interrupted);
+		assertNull(ev.getLegID());
+		ev = ind.getBCSMEventList().get(3);
+		assertEquals(ev.getEventTypeBCSM(), EventTypeBCSM.oAnswer);
+		assertEquals(ev.getMonitorMode(), MonitorMode.notifyAndContinue);
+		assertNull(ev.getLegID());
+		ev = ind.getBCSMEventList().get(4);
+		assertEquals(ev.getEventTypeBCSM(), EventTypeBCSM.oDisconnect);
+		assertEquals(ev.getMonitorMode(), MonitorMode.notifyAndContinue);
+		assertEquals(ev.getLegID().getSendingSideID(), LegType.leg1);
+		ev = ind.getBCSMEventList().get(5);
+		assertEquals(ev.getEventTypeBCSM(), EventTypeBCSM.oDisconnect);
+		assertEquals(ev.getMonitorMode(), MonitorMode.interrupted);
+		assertEquals(ev.getLegID().getSendingSideID(), LegType.leg2);
+		ev = ind.getBCSMEventList().get(6);
+		assertEquals(ev.getEventTypeBCSM(), EventTypeBCSM.oAbandon);
+		assertEquals(ev.getMonitorMode(), MonitorMode.notifyAndContinue);
+		assertNull(ev.getLegID());
 	}
 
 	public void debug(String message) {
