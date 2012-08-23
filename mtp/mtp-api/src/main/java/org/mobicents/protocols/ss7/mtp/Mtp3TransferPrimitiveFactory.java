@@ -28,19 +28,17 @@ package org.mobicents.protocols.ss7.mtp;
  */
 public class Mtp3TransferPrimitiveFactory {
 
-	private final int pcLength;
+	private final PointCodeFormat pointCodeFormat;
 
 	private final int slsLength;
 
-	public Mtp3TransferPrimitiveFactory(int pcLength, int slsLength) {
-		this.pcLength = pcLength;
+	public Mtp3TransferPrimitiveFactory(PointCodeFormat pointCodeFormat, int slsLength) {
+		this.pointCodeFormat = pointCodeFormat;
 		this.slsLength = slsLength;
 	}
 
-	public Mtp3TransferPrimitive createMtp3TransferPrimitive(int si, int ni, int mp, int opc, int dpc, int sls,
-			byte[] data) {
-		Mtp3TransferPrimitive mtp3TransferPrimitive = new Mtp3TransferPrimitive(si, ni, mp, opc, dpc, sls, data,
-				this.pcLength, this.slsLength);
+	public Mtp3TransferPrimitive createMtp3TransferPrimitive(int si, int ni, int mp, int opc, int dpc, int sls, byte[] data) {
+		Mtp3TransferPrimitive mtp3TransferPrimitive = new Mtp3TransferPrimitive(si, ni, mp, opc, dpc, sls, data, this.pointCodeFormat, this.slsLength);
 		return mtp3TransferPrimitive;
 	}
 
@@ -59,8 +57,8 @@ public class Mtp3TransferPrimitiveFactory {
 		int sls = 0;
 		byte[] data = null;
 
-		switch (this.pcLength) {
-		case Mtp3UserPart.PC_FORMAT_14:
+		switch (this.pointCodeFormat) {
+		case ITU:
 			// routing label
 			byte b1 = msg[1];
 			byte b2 = msg[2];
@@ -74,7 +72,7 @@ public class Mtp3TransferPrimitiveFactory {
 			data = new byte[msg.length - 5];
 			System.arraycopy(msg, 5, data, 0, data.length);
 			break;
-		case Mtp3UserPart.PC_FORMAT_24:
+		case ANSI:
 			dpc = ((msg[3] & 0xff) << 16) | ((msg[2] & 0xff) << 8) | (msg[1] & 0xff);
 			opc = ((msg[6] & 0xff) << 16) | ((msg[5] & 0xff) << 8) | (msg[4] & 0xff);
 			sls = (msg[7] & 0xff);
@@ -83,15 +81,12 @@ public class Mtp3TransferPrimitiveFactory {
 			data = new byte[msg.length - 8];
 			System.arraycopy(msg, 8, data, 0, data.length);
 			break;
-		case Mtp3UserPart.PC_FORMAT_16:
-			// not implemented yet!
-			break;
+
 		default:
-			// Error condition. Should never happen
+			// TODO : We don't support rest justyet
 			break;
 		}
-		mtp3TransferPrimitive = new Mtp3TransferPrimitive(si, ni, mp, opc, dpc, sls, data, this.pcLength,
-				this.slsLength);
+		mtp3TransferPrimitive = new Mtp3TransferPrimitive(si, ni, mp, opc, dpc, sls, data, this.pointCodeFormat, this.slsLength);
 		return mtp3TransferPrimitive;
 	}
 }

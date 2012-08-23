@@ -55,7 +55,8 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 	private ExecutorService msgDeliveryExecutorSystem;
 	private int slsTable[] = new int[maxSls];
 
-	private int pcLength = PC_FORMAT_14;
+	private PointCodeFormat pointCodeFormat = PointCodeFormat.ITU;
+
 	private int slsLength = 5;
 	private Mtp3TransferPrimitiveFactory mtp3TransferPrimitiveFactory = null;
 
@@ -88,35 +89,35 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 	 */
 	@Override
 	public int getMaxUserDataLength(int dpc) {
-		if (this.pcLength == PC_FORMAT_14) {
+		switch (this.pointCodeFormat) {
+		case ITU:
 			// For PC_FORMAT_14, the MTP3 Routing Label takes 4 bytes - OPC/DPC
 			// = 16 bits each and SLS = 4 bits
 			return 272 - 4;
-		} else if (this.pcLength == PC_FORMAT_24) {
+		case ANSI:
 			// For PC_FORMAT_24, the MTP3 Routing Label takes 6 bytes - OPC/DPC
 			// = 24 bits each and SLS = 8 bits
 			return 272 - 7;
-		} else if (this.pcLength == PC_FORMAT_16) {
-			// TODO we don't support this yet
+		default:
+			// TODO : We don't support rest just yet
 			return -1;
+
 		}
-
-		return -1;
 	}
 
-	public int getPointCodeLength() {
-		return this.pcLength;
+	public PointCodeFormat getPointCodeFormat() {
+		return this.pointCodeFormat;
 	}
 
-	public void setPointCodeLength(int length) {
-		this.pcLength = length;
+	public void setPointCodeFormat(PointCodeFormat pointCodeFormat) {
+		this.pointCodeFormat = pointCodeFormat;
 	}
 
-	public int getSLSLength() {
+	public int getSlsLength() {
 		return this.slsLength;
 	}
 
-	public void setSLSLength(int slsLength) {
+	public void setSlsLength(int slsLength) {
 		this.slsLength = slsLength;
 	}
 
@@ -129,10 +130,10 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 		if (this.isStarted)
 			return;
 
-		if (!(this.pcLength == PC_FORMAT_14 || this.pcLength == PC_FORMAT_16 || this.pcLength == PC_FORMAT_24)) {
-			throw new Exception("Invalid point code length set. Set 14 for ITU-T 14 bits or 16 for ITU-T 16 bits or 24 for ITU-T/ANSI 24 bits");
+		if (!(this.pointCodeFormat == PointCodeFormat.ITU || this.pointCodeFormat == PointCodeFormat.ANSI)) {
+			throw new Exception("Invalid PointCodeFormat set. We support only ITU or ANSI now");
 		}
-		
+
 		switch (this.slsLength) {
 		case 4:
 			this.maxSls = 16;
@@ -150,7 +151,7 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 			throw new Exception("Invalid SLS length set. Set 4 for max SLS to be 16 or 5 for max SLS to be 32 or 8 for max SLS to be 256");
 		}
 
-		this.mtp3TransferPrimitiveFactory = new Mtp3TransferPrimitiveFactory(this.pcLength, this.slsLength);
+		this.mtp3TransferPrimitiveFactory = new Mtp3TransferPrimitiveFactory(this.pointCodeFormat, this.slsLength);
 
 		this.createSLSTable(this.deliveryTransferMessageThreadCount);
 

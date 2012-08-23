@@ -37,11 +37,10 @@ public class Mtp3TransferPrimitive {
 	protected final int sls;
 	protected final byte[] data;
 
-	private final int pcLength;
+	private final PointCodeFormat pointCodeFormat;
 	private final int slsLength;
 
-	protected Mtp3TransferPrimitive(int si, int ni, int mp, int opc, int dpc, int sls, byte[] data, int pcLength,
-			int slsLength) {
+	protected Mtp3TransferPrimitive(int si, int ni, int mp, int opc, int dpc, int sls, byte[] data, PointCodeFormat pointCodeFormat, int slsLength) {
 		this.si = si;
 		this.ni = ni;
 		this.mp = mp;
@@ -50,7 +49,7 @@ public class Mtp3TransferPrimitive {
 		this.sls = sls;
 		this.data = data;
 
-		this.pcLength = pcLength;
+		this.pointCodeFormat = pointCodeFormat;
 		this.slsLength = slsLength;
 	}
 
@@ -87,8 +86,8 @@ public class Mtp3TransferPrimitive {
 		byte[] res = null;
 		int ssi = 0;
 
-		switch (this.pcLength) {
-		case Mtp3UserPart.PC_FORMAT_14:
+		switch (this.pointCodeFormat) {
+		case ITU:
 
 			res = new byte[this.data.length + 5];
 
@@ -106,10 +105,8 @@ public class Mtp3TransferPrimitive {
 			System.arraycopy(this.data, 0, res, 5, this.data.length);
 
 			break;
-		case Mtp3UserPart.PC_FORMAT_16:
-			// Not supported yet
-			break;
-		case Mtp3UserPart.PC_FORMAT_24:
+
+		case ANSI:
 			res = new byte[this.data.length + 8];
 
 			// sio
@@ -131,7 +128,7 @@ public class Mtp3TransferPrimitive {
 
 			break;
 		default:
-			// This should never happen
+			// We don't support rest
 			break;
 		}
 

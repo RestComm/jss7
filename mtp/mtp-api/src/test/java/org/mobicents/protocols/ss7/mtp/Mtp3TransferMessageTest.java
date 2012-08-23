@@ -53,7 +53,7 @@ public class Mtp3TransferMessageTest {
 
 	@Test(groups = { "Mtp3TransferMessageTest", "decode" })
 	public void testDecode() throws Exception {
-		Mtp3TransferPrimitiveFactory factory = new Mtp3TransferPrimitiveFactory(Mtp3UserPart.PC_FORMAT_14, 4);
+		Mtp3TransferPrimitiveFactory factory = new Mtp3TransferPrimitiveFactory(PointCodeFormat.ITU, 4);
 		Mtp3TransferPrimitive msg = factory.createMtp3TransferPrimitive(getMsg());
 
 		assertEquals(msg.getSi(), 3);
@@ -68,7 +68,7 @@ public class Mtp3TransferMessageTest {
 
 	@Test(groups = { "Mtp3TransferMessageTest", "encode" })
 	public void testEncode() throws Exception {
-		Mtp3TransferPrimitiveFactory factory = new Mtp3TransferPrimitiveFactory(Mtp3UserPart.PC_FORMAT_14, 4);
+		Mtp3TransferPrimitiveFactory factory = new Mtp3TransferPrimitiveFactory(PointCodeFormat.ITU, 4);
 		Mtp3TransferPrimitive msg = factory.createMtp3TransferPrimitive(3, 2, 0, 2000, 1000, 10, this.getData());
 
 		byte[] res = msg.encodeMtp3();
