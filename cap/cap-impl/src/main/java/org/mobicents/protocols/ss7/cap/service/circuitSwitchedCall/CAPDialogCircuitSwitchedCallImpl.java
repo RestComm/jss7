@@ -184,7 +184,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 	public Long addApplyChargingReportRequest(int customInvokeTimeout, TimeDurationChargingResult timeDurationChargingResult) throws CAPException {
 
 		if (this.appCntx != CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF && this.appCntx != CAPApplicationContext.CapV3_gsmSSF_scfGeneric
-				&& this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric && this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric)
+				&& this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric && this.appCntx != CAPApplicationContext.CapV4_scf_gsmSSFGeneric)
 			throw new CAPException(
 					"Bad application context name for addApplyChargingReportRequest: must be CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric, CapV4_gsmSSF_scfGeneric or CapV4_gsmSSF_scfGeneric");
 
@@ -234,7 +234,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 			SendingSideID partyToCharge, CAPExtensions extensions, AChChargingAddress aChChargingAddress) throws CAPException {
 
 		if (this.appCntx != CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF && this.appCntx != CAPApplicationContext.CapV3_gsmSSF_scfGeneric
-				&& this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric && this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric)
+				&& this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric && this.appCntx != CAPApplicationContext.CapV4_scf_gsmSSFGeneric)
 			throw new CAPException(
 					"Bad application context name for addApplyChargingRequest: must be CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric, CapV4_gsmSSF_scfGeneric or CapV4_gsmSSF_scfGeneric");
 
@@ -285,7 +285,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 			ReceivingSideID legID) throws CAPException {
 
 		if (this.appCntx != CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF && this.appCntx != CAPApplicationContext.CapV3_gsmSSF_scfGeneric
-				&& this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric && this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric)
+				&& this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric && this.appCntx != CAPApplicationContext.CapV4_scf_gsmSSFGeneric)
 			throw new CAPException(
 					"Bad application context name for addCallInformationReportRequest: must be CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric, CapV4_gsmSSF_scfGeneric or CapV4_gsmSSF_scfGeneric");
 
@@ -335,7 +335,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 			CAPExtensions extensions, SendingSideID legID) throws CAPException {
 
 		if (this.appCntx != CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF && this.appCntx != CAPApplicationContext.CapV3_gsmSSF_scfGeneric
-				&& this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric && this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric)
+				&& this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric && this.appCntx != CAPApplicationContext.CapV4_scf_gsmSSFGeneric)
 			throw new CAPException(
 					"Bad application context name for addCallInformationRequestRequest: must be CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric, CapV4_gsmSSF_scfGeneric or CapV4_gsmSSF_scfGeneric");
 
@@ -1120,8 +1120,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 		oc.setLocalOperationCode((long)CAPOperationCode.specializedResourceReport);
 		invoke.setOperationCode(oc);
 
-		SpecializedResourceReportRequestImpl req = new SpecializedResourceReportRequestImpl(true, isAllAnnouncementsComplete,
-				isFirstAnnouncementStarted);
+		SpecializedResourceReportRequestImpl req = new SpecializedResourceReportRequestImpl(isAllAnnouncementsComplete, isFirstAnnouncementStarted, true);
 		AsnOutputStream aos = new AsnOutputStream();
 		req.encodeData(aos);
 
@@ -1356,7 +1355,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 			invoke.setTimeout(customInvokeTimeout);
 
 		OperationCode oc = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
-		oc.setLocalOperationCode((long) CAPOperationCode.promptAndCollectUserInformation);
+		oc.setLocalOperationCode((long) CAPOperationCode.cancelCode);
 		invoke.setOperationCode(oc);
 
 		AsnOutputStream aos = new AsnOutputStream();

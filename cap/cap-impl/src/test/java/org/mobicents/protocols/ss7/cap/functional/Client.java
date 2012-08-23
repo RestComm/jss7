@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.functional;
 
+import java.util.ArrayList;
+
 import org.apache.log4j.Logger;
 import static org.testng.Assert.*;
 import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
@@ -31,15 +33,26 @@ import org.mobicents.protocols.ss7.cap.api.CAPProvider;
 import org.mobicents.protocols.ss7.cap.api.CAPStack;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.ODisconnectSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.CallingPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
+import org.mobicents.protocols.ss7.cap.api.isup.Digits;
+import org.mobicents.protocols.ss7.cap.api.isup.LocationNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.OriginalCalledNumberCap;
 import org.mobicents.protocols.ss7.cap.api.primitives.BCSMEvent;
+import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
 import org.mobicents.protocols.ss7.cap.api.primitives.MonitorMode;
 import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
+import org.mobicents.protocols.ss7.cap.api.primitives.ScfID;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCall;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestReportBCSMEventRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.Carrier;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSM;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.IPSSPCapabilities;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.NAOliInfo;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.RequestedInformationType;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ServiceInteractionIndicatorsTwo;
 import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.InitialDPRequestImpl;
 import org.mobicents.protocols.ss7.inap.api.INAPParameterFactory;
@@ -49,6 +62,7 @@ import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfoMessageType;
 import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -123,6 +137,49 @@ public class Client extends EventTestHarness  {
 				initialDp.getInitialDPArgExtension());
 
 		this.observerdEvents.add(TestEvent.createSentEvent(EventType.InitialDpRequest, null, sequence++));
+		clientCscDialog.send();
+	}
+
+	public void sendAssistRequestInstructionsRequest() throws CAPException {
+
+		clientCscDialog = this.capProvider.getCAPServiceCircuitSwitchedCall().createNewDialog(CAPApplicationContext.CapV4_gsmSSF_scfAssistHandoff, this.thisAddress, this.remoteAddress);
+
+		GenericNumber genericNumber = this.isupParameterFactory.createGenericNumber();
+		genericNumber.setAddress("333111222");
+		genericNumber.setAddressRepresentationRestrictedIndicator(GenericNumber._APRI_ALLOWED);
+		genericNumber.setNatureOfAddresIndicator(NAINumber._NAI_INTERNATIONAL_NUMBER);
+//		genericNumber.setNumberIncompleter(GenericNumber._NI_COMPLETE);
+		genericNumber.setNumberingPlanIndicator(GenericNumber._NPI_ISDN);
+		genericNumber.setNumberQualifierIndicator(GenericNumber._NQIA_CALLED_NUMBER);
+		genericNumber.setScreeningIndicator(GenericNumber._SI_NETWORK_PROVIDED);
+		Digits correlationID = this.capParameterFactory.createDigits(genericNumber);
+		IPSSPCapabilities ipSSPCapabilities = this.capParameterFactory.createIPSSPCapabilities(true, false, true, false, false, null);
+		clientCscDialog.addAssistRequestInstructionsRequest(correlationID, ipSSPCapabilities, null);
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.AssistRequestInstructionsRequest, null, sequence++));
+		clientCscDialog.send();
+	}
+
+	public void sendEstablishTemporaryConnectionRequest_CallInformationRequest() throws CAPException {
+
+		clientCscDialog = this.capProvider.getCAPServiceCircuitSwitchedCall().createNewDialog(CAPApplicationContext.CapV4_scf_gsmSSFGeneric, this.thisAddress,
+				this.remoteAddress);
+
+		GenericNumber genericNumber = this.isupParameterFactory.createGenericNumber();
+		genericNumber.setAddress("333111222");
+		genericNumber.setAddressRepresentationRestrictedIndicator(GenericNumber._APRI_ALLOWED);
+		genericNumber.setNatureOfAddresIndicator(NAINumber._NAI_INTERNATIONAL_NUMBER);
+//		genericNumber.setNumberIncompleter(GenericNumber._NI_COMPLETE);
+		genericNumber.setNumberingPlanIndicator(GenericNumber._NPI_ISDN);
+		genericNumber.setNumberQualifierIndicator(GenericNumber._NQIA_CALLED_NUMBER);
+		genericNumber.setScreeningIndicator(GenericNumber._SI_NETWORK_PROVIDED);
+		Digits assistingSSPIPRoutingAddress = this.capParameterFactory.createDigits(genericNumber);
+		clientCscDialog.addEstablishTemporaryConnectionRequest(assistingSSPIPRoutingAddress, null, null, null, null, null, null, null, null, null, null);
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.EstablishTemporaryConnectionRequest, null, sequence++));
+
+		ArrayList<RequestedInformationType> requestedInformationTypeList = new ArrayList<RequestedInformationType>();
+		requestedInformationTypeList.add(RequestedInformationType.callStopTime);
+		clientCscDialog.addCallInformationRequestRequest(requestedInformationTypeList, null, null);
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.CallInformationRequestRequest, null, sequence++));
 		clientCscDialog.send();
 	}
 

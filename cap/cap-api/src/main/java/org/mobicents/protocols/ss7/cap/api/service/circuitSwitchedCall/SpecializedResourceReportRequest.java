@@ -49,9 +49,9 @@ SpecializedResourceReportArg ::= CHOICE {
 */
 public interface SpecializedResourceReportRequest extends CircuitSwitchedCallMessage {
 
-	public boolean IsAllAnnouncementsComplete();
+	public boolean getAllAnnouncementsComplete();
 
-	public boolean IsFirstAnnouncementStarted();
+	public boolean getFirstAnnouncementStarted();
 
 }
 

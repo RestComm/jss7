@@ -845,9 +845,9 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 			throw new CAPParsingComponentException("Error while decoding sendChargingInformationRequest: Parameter is mandatory but not found",
 					CAPParsingComponentExceptionReason.MistypedParameter);
 
-		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || !parameter.isPrimitive())
+		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
 			throw new CAPParsingComponentException(
-					"Error while decoding sendChargingInformationRequest: Bad tag or tagClass or parameter is not primitive, received tag=" + parameter.getTag(),
+					"Error while decoding sendChargingInformationRequest: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
 					CAPParsingComponentExceptionReason.MistypedParameter);
 
 		byte[] buf = parameter.getData();
@@ -880,16 +880,16 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 						"Error while decoding specializedResourceReportRequest: Bad tag or tagClass or parameter is not primitive, received tag="
 								+ parameter.getTag(), CAPParsingComponentExceptionReason.MistypedParameter);
 		} else {
-			if (parameter.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || parameter.isPrimitive())
+			if (parameter.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !parameter.isPrimitive())
 				throw new CAPParsingComponentException(
-						"Error while decoding specializedResourceReportRequest: Bad tagClass or parameter is primitive, received tag="
+						"Error while decoding specializedResourceReportRequest: Bad tagClass or parameter is not primitive, received tag="
 								+ parameter.getTag(), CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 
 		byte[] buf = parameter.getData();
-		AsnInputStream ais = new AsnInputStream(buf);
-		SpecializedResourceReportRequestImpl ind = new SpecializedResourceReportRequestImpl(capDialogImpl.getApplicationContext()
-				.getVersion().getVersion() >= 4);
+		AsnInputStream ais = new AsnInputStream(buf, parameter.getTagClass(), parameter.isPrimitive(), parameter.getTag());
+		SpecializedResourceReportRequestImpl ind = new SpecializedResourceReportRequestImpl(
+				capDialogImpl.getApplicationContext().getVersion().getVersion() >= 4);
 		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);
@@ -941,9 +941,9 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 			throw new CAPParsingComponentException("Error while decoding promptAndCollectUserInformationRequest: Parameter is mandatory but not found",
 					CAPParsingComponentExceptionReason.MistypedParameter);
 
-		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || !parameter.isPrimitive())
+		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
 			throw new CAPParsingComponentException(
-					"Error while decoding playAnnouncementRequest: Bad tag or tagClass or parameter is not primitive, received tag=" + parameter.getTag(),
+					"Error while decoding playAnnouncementRequest: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
 					CAPParsingComponentExceptionReason.MistypedParameter);
 
 		byte[] buf = parameter.getData();
@@ -976,7 +976,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 					CAPParsingComponentExceptionReason.MistypedParameter);
 
 		byte[] buf = parameter.getData();
-		AsnInputStream ais = new AsnInputStream(buf);
+		AsnInputStream ais = new AsnInputStream(buf, parameter.getTagClass(), parameter.isPrimitive(), parameter.getTag());
 		PromptAndCollectUserInformationResponseImpl ind = new PromptAndCollectUserInformationResponseImpl();
 		ind.decodeData(ais, buf.length);
 
@@ -1004,7 +1004,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 					CAPParsingComponentExceptionReason.MistypedParameter);
 
 		byte[] buf = parameter.getData();
-		AsnInputStream ais = new AsnInputStream(buf);
+		AsnInputStream ais = new AsnInputStream(buf, parameter.getTagClass(), parameter.isPrimitive(), parameter.getTag());
 		CancelRequestImpl ind = new CancelRequestImpl();
 		ind.decodeData(ais, buf.length);
 

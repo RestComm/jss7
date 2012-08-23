@@ -74,12 +74,12 @@ public class SpecializedResourceReportRequestImpl extends CircuitSwitchedCallMes
 	}
 
 	@Override
-	public boolean IsAllAnnouncementsComplete() {
+	public boolean getAllAnnouncementsComplete() {
 		return isAllAnnouncementsComplete;
 	}
 
 	@Override
-	public boolean IsFirstAnnouncementStarted() {
+	public boolean getFirstAnnouncementStarted() {
 		return isFirstAnnouncementStarted;
 	}
 
@@ -144,10 +144,6 @@ public class SpecializedResourceReportRequestImpl extends CircuitSwitchedCallMes
 		this.isFirstAnnouncementStarted = false;
 		
 		if (this.isCAPVersion4orLater) {
-			if (ansIS.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
-				throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag class for CAP V4 or later. It must must be CONTEXT_SPECIFIC",
-						CAPParsingComponentExceptionReason.MistypedParameter);
-			
 			switch (ansIS.getTag()) {
 			case _ID_allAnnouncementsComplete:
 				this.isAllAnnouncementsComplete = true;
