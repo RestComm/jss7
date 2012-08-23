@@ -11,7 +11,7 @@
 	<name>Mobicents SS7 :: Service</name>
 
 	<properties>
-		<ss7.name>Mobicents SS7</ss7.name>
+		<ss7.name>Mobicents jSS7</ss7.name>
 		<ss7.vendor>TeleStax</ss7.vendor>
 		<ss7.version>${pom.version}</ss7.version>
 	</properties>

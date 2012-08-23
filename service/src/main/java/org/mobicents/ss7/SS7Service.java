@@ -35,6 +35,7 @@ import org.jboss.system.ServiceMBeanSupport;
  */
 public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
 
+	private final String serviceName;
 	private Object stack;
 
 	private String jndiName;
@@ -43,6 +44,10 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
 
 	private static final String rLogo = " ]]]]]]]]] ";
 	private static final String lLogo = " [[[[[[[[[ ";
+	
+	public SS7Service(String serviceName){
+		this.serviceName = serviceName;
+	}
 
 	@Override
 	public void startService() throws Exception {
@@ -52,7 +57,7 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
 	}
 
 	private String generateMessageWithLogo(String message) {
-		return lLogo + getSS7Name() + " " + getSS7Version() + " " + message + rLogo;
+		return lLogo + getSS7Name() + " " + getSS7Version() + " " + this.serviceName+" "+ message + rLogo;
 	}
 
 	public String getSS7Name() {
