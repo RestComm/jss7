@@ -40,6 +40,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
@@ -52,6 +53,7 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.LocationType;
 import org.mobicents.protocols.ss7.map.api.service.lsm.MAPDialogLsm;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPDialogMobility;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.RequestingNodeType;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.RequestedEquipmentInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPDialogSms;
@@ -655,6 +657,44 @@ public class Client extends EventTestHarness {
 
 		this.observerdEvents.add(TestEvent.createSentEvent(EventType.SendRoutingInfoForLCS, null, sequence++));
 		clientDialogLsm.send();
+	}
+	
+	public void sendCheckImei() throws Exception {
+		
+		this.mapProvider.getMAPServiceMobility().acivate();
+		
+		MAPApplicationContext appCnt = null;
+		
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.equipmentMngtContext, MAPApplicationContextVersion.version3);
+		
+		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+		
+		IMEI imei = this.mapParameterFactory.createIMEI("111111112222222");
+		RequestedEquipmentInfo requestedEquipmentInfo = this.mapParameterFactory.createRequestedEquipmentInfo(true, false);
+		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
+		
+		clientDialogMobility.addCheckImeiRequest(imei, requestedEquipmentInfo, extensionContainer);
+		
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.CheckImei, null, sequence++));
+		clientDialogMobility.send();
+	}
+	
+	public void sendCheckImei_V2() throws Exception {
+		
+		this.mapProvider.getMAPServiceMobility().acivate();
+		
+		MAPApplicationContext appCnt = null;
+		
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.equipmentMngtContext, MAPApplicationContextVersion.version2);
+		
+		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+		
+		IMEI imei = this.mapParameterFactory.createIMEI("333333334444444");
+		
+		clientDialogMobility.addCheckImeiRequest(imei, null, null);
+		
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.CheckImei, null, sequence++));
+		clientDialogMobility.send();
 	}
 
 	public MAPDialog getMapDialog() {

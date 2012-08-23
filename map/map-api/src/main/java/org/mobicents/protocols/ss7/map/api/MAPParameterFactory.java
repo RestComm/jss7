@@ -98,6 +98,10 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.EpsAu
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.QuintupletList;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.ReSynchronisationInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.TripletList;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.RequestedEquipmentInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIu;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIuA;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIuB;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ISTSupportIndicator;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LAC;
@@ -538,4 +542,9 @@ public interface MAPParameterFactory {
 	public Problem createProblemInvoke(InvokeProblemType prob);
 	public Problem createProblemResult(ReturnResultProblemType prob);
 	public Problem createProblemError(ReturnErrorProblemType prob);
+	
+	public RequestedEquipmentInfo createRequestedEquipmentInfo(boolean equipmentStatus, boolean bmuef);
+	public UESBIIuA createUESBIIuA(BitSetStrictLength data);
+	public UESBIIuB createUESBIIuB(BitSetStrictLength data);
+	public UESBIIu createUESBIIu(UESBIIuA uesbiIuA, UESBIIuB uesbiIuB);
 }

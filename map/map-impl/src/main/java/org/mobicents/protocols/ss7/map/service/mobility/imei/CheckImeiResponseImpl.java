@@ -217,7 +217,7 @@ public class CheckImeiResponseImpl extends MobilityMessageImpl implements CheckI
 					((UESBIIuImpl) this.bmuef).encodeAll(asnOs);
 				}
 				if (this.extensionContainer != null) {
-					((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
+					((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensionContainer);
 				}
 			} else {
 				if (this.equipmentStatus == null) {
