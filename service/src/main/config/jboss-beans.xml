@@ -11,13 +11,23 @@
 		<property name="singleThread">true</property>
 		<property name="connectDelay">5000</property>
 	</bean>
-	
+
 	<bean name="SCTPShellExecutor"
 		class="org.mobicents.protocols.ss7.m3ua.impl.oam.SCTPShellExecutor">
 		<property name="sctpManagement">
 			<inject bean="SCTPManagement" />
 		</property>
-	</bean>	
+	</bean>
+
+	<!-- ==================================================================== -->
+	<!-- MTP3 Properties -->
+	<!-- Define MTP3 PointCode Format -->
+	<!-- ==================================================================== -->
+	<bean name="PointCodeFormat" class="org.mobicents.protocols.ss7.mtp.PointCodeFormat">
+		<constructor factoryClass="org.mobicents.protocols.ss7.mtp.PointCodeFormat" factoryMethod="getInstance">
+			<parameter>ITU</parameter>
+		</constructor>
+	</bean>
 
 	<!-- ==================================================================== -->
 	<!-- M3UA -->
@@ -29,9 +39,9 @@
 			<parameter>Mtp3UserPart</parameter>
 		</constructor>
 		<property name="persistDir">${jboss.server.data.dir}</property>
-		<property name="transportManagement">
-			<inject bean="SCTPManagement" />
-		</property>
+		<property name="transportManagement"><inject bean="SCTPManagement" /></property>
+		<property name="pointCodeFormat"><inject bean="PointCodeFormat" /></property>	
+		<property name="slsLength">4</property>	
 	</bean>
 
 	<bean name="M3UAShellExecutor"
@@ -100,7 +110,8 @@
 				<inject bean="SS7Scheduler" />
 			</parameter>
 			<parameter>
-				<list class="javolution.util.FastList" elementClass="org.mobicents.ss7.management.console.ShellExecutor">
+				<list class="javolution.util.FastList"
+					elementClass="org.mobicents.ss7.management.console.ShellExecutor">
 					<inject bean="SccpExecutor" />
 					<inject bean="M3UAShellExecutor" />
 					<inject bean="SCTPShellExecutor" />
@@ -114,7 +125,7 @@
 
 	<!-- ==================================================================== -->
 	<!-- TCAP Service -->
-	<!-- ==================================================================== -->	
+	<!-- ==================================================================== -->
 	<bean name="TcapStackMap" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
 		<constructor>
 			<parameter>
@@ -126,23 +137,27 @@
 		<property name="invokeTimeout">30000</property>
 		<property name="maxDialogs">25000</property>
 	</bean>
-	
+
 	<bean name="TcapStackCap" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
 		<constructor>
-			<parameter><inject bean="SccpStack" property="sccpProvider" /></parameter>
+			<parameter>
+				<inject bean="SccpStack" property="sccpProvider" />
+			</parameter>
 			<parameter>146</parameter>
 		</constructor>
 		<property name="dialogIdleTimeout">60000</property>
 		<property name="invokeTimeout">30000</property>
 		<property name="maxDialogs">25000</property>
 	</bean>
-	
+
 	<!-- ==================================================================== -->
 	<!-- CAP Service -->
-	<!-- ==================================================================== -->	
+	<!-- ==================================================================== -->
 	<bean name="CapStack" class="org.mobicents.protocols.ss7.cap.CAPStackImpl">
 		<constructor>
-			<parameter><inject bean="TcapStackCap" property="provider" /></parameter>
+			<parameter>
+				<inject bean="TcapStackCap" property="provider" />
+			</parameter>
 		</constructor>
 	</bean>
 
@@ -184,7 +199,8 @@
 	<!-- Mobicents SS7 Service -->
 	<!-- ==================================================================== -->
 	<bean name="MAPSS7Service" class="org.mobicents.ss7.SS7Service">
-		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=MAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)</annotation>
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=MAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
+		</annotation>
 		<property name="jndiName">java:/mobicents/ss7/map</property>
 		<property name="stack">
 			<inject bean="MapStack" property="MAPProvider" />
@@ -199,7 +215,8 @@
 		</property>
 	</bean>
 	<bean name="ISUPSS7Service" class="org.mobicents.ss7.SS7Service">
-		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=ISUPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)</annotation>
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=ISUPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
+		</annotation>
 		<property name="jndiName">java:/mobicents/ss7/isup</property>
 		<property name="stack">
 			<inject bean="IsupStack" property="isupProvider" />
