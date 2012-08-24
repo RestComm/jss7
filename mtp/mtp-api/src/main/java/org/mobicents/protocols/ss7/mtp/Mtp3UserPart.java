@@ -30,7 +30,7 @@ import java.io.IOException;
  * 
  */
 public interface Mtp3UserPart {
-	
+
 	public void addMtp3UserPartListener(Mtp3UserPartListener listener);
 
 	public void removeMtp3UserPartListener(Mtp3UserPartListener listener);
@@ -40,28 +40,14 @@ public interface Mtp3UserPart {
 	 * 
 	 * @return
 	 */
-	public PointCodeFormat getPointCodeFormat();
+	public RoutingLabelFormat getRoutingLabelFormat();
 
 	/**
 	 * Set PointCodeFormat
 	 * 
 	 * @param length
 	 */
-	public void setPointCodeFormat(PointCodeFormat pointCodeFormat);
-
-	/**
-	 * Length of SLS in number of bits
-	 * 
-	 * @return
-	 */
-	public int getSlsLength();
-
-	/**
-	 * Set length of SLS in number of bits
-	 * 
-	 * @param slsLength
-	 */
-	public void setSlsLength(int slsLength);
+	public void setRoutingLabelFormat(RoutingLabelFormat routingLabelFormat);
 
 	/**
 	 * Get the Mtp3TransferPrimitiveFactory

@@ -23,8 +23,8 @@
 	<!-- MTP3 Properties -->
 	<!-- Define MTP3 PointCode Format -->
 	<!-- ==================================================================== -->
-	<bean name="PointCodeFormat" class="org.mobicents.protocols.ss7.mtp.PointCodeFormat">
-		<constructor factoryClass="org.mobicents.protocols.ss7.mtp.PointCodeFormat" factoryMethod="getInstance">
+	<bean name="RoutingLabelFormat" class="org.mobicents.protocols.ss7.mtp.RoutingLabelFormat">
+		<constructor factoryClass="org.mobicents.protocols.ss7.mtp.RoutingLabelFormat" factoryMethod="getInstance">
 			<parameter>ITU</parameter>
 		</constructor>
 	</bean>
@@ -40,8 +40,7 @@
 		</constructor>
 		<property name="persistDir">${jboss.server.data.dir}</property>
 		<property name="transportManagement"><inject bean="SCTPManagement" /></property>
-		<property name="pointCodeFormat"><inject bean="PointCodeFormat" /></property>	
-		<property name="slsLength">4</property>	
+		<property name="routingLabelFormat"><inject bean="RoutingLabelFormat" /></property>	
 	</bean>
 
 	<bean name="M3UAShellExecutor"

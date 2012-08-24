@@ -53,11 +53,10 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 	private ExecutorService[] msgDeliveryExecutors;
 	// a thread for delivering PAUSE, RESUME and STATUS messages
 	private ExecutorService msgDeliveryExecutorSystem;
-	private int slsTable[] = new int[maxSls];
+	private int slsTable[] = null;
 
-	private PointCodeFormat pointCodeFormat = PointCodeFormat.ITU;
+	private RoutingLabelFormat routingLabelFormat = RoutingLabelFormat.ITU;
 
-	private int slsLength = 5;
 	private Mtp3TransferPrimitiveFactory mtp3TransferPrimitiveFactory = null;
 
 	public Mtp3UserPartBaseImpl() {
@@ -89,12 +88,12 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 	 */
 	@Override
 	public int getMaxUserDataLength(int dpc) {
-		switch (this.pointCodeFormat) {
+		switch (this.routingLabelFormat) {
 		case ITU:
 			// For PC_FORMAT_14, the MTP3 Routing Label takes 4 bytes - OPC/DPC
 			// = 16 bits each and SLS = 4 bits
 			return 272 - 4;
-		case ANSI:
+		case ANSI_Sls8Bit:
 			// For PC_FORMAT_24, the MTP3 Routing Label takes 6 bytes - OPC/DPC
 			// = 24 bits each and SLS = 8 bits
 			return 272 - 7;
@@ -105,20 +104,12 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 		}
 	}
 
-	public PointCodeFormat getPointCodeFormat() {
-		return this.pointCodeFormat;
+	public RoutingLabelFormat getRoutingLabelFormat() {
+		return this.routingLabelFormat;
 	}
 
-	public void setPointCodeFormat(PointCodeFormat pointCodeFormat) {
-		this.pointCodeFormat = pointCodeFormat;
-	}
-
-	public int getSlsLength() {
-		return this.slsLength;
-	}
-
-	public void setSlsLength(int slsLength) {
-		this.slsLength = slsLength;
+	public void setRoutingLabelFormat(RoutingLabelFormat routingLabelFormat) {
+		this.routingLabelFormat = routingLabelFormat;
 	}
 
 	public Mtp3TransferPrimitiveFactory getMtp3TransferPrimitiveFactory() {
@@ -130,28 +121,30 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 		if (this.isStarted)
 			return;
 
-		if (!(this.pointCodeFormat == PointCodeFormat.ITU || this.pointCodeFormat == PointCodeFormat.ANSI)) {
+		if (!(this.routingLabelFormat == RoutingLabelFormat.ITU || this.routingLabelFormat == RoutingLabelFormat.ANSI_Sls8Bit)) {
 			throw new Exception("Invalid PointCodeFormat set. We support only ITU or ANSI now");
 		}
 
-		switch (this.slsLength) {
-		case 4:
+		switch (this.routingLabelFormat) {
+		case ITU:
 			this.maxSls = 16;
 			this.slsFilter = 0x0f;
 			break;
-		case 5:
+		case ANSI_Sls5Bit:
 			this.maxSls = 32;
 			this.slsFilter = 0x1f;
 			break;
-		case 8:
+		case ANSI_Sls8Bit:
 			this.maxSls = 256;
 			this.slsFilter = 0xff;
 			break;
 		default:
-			throw new Exception("Invalid SLS length set. Set 4 for max SLS to be 16 or 5 for max SLS to be 32 or 8 for max SLS to be 256");
+			throw new Exception("Invalid SLS length");
 		}
 
-		this.mtp3TransferPrimitiveFactory = new Mtp3TransferPrimitiveFactory(this.pointCodeFormat, this.slsLength);
+		this.slsTable = new int[maxSls];
+
+		this.mtp3TransferPrimitiveFactory = new Mtp3TransferPrimitiveFactory(this.routingLabelFormat);
 
 		this.createSLSTable(this.deliveryTransferMessageThreadCount);
 

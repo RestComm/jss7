@@ -37,10 +37,9 @@ public class Mtp3TransferPrimitive {
 	protected final int sls;
 	protected final byte[] data;
 
-	private final PointCodeFormat pointCodeFormat;
-	private final int slsLength;
+	private final RoutingLabelFormat pointCodeFormat;
 
-	protected Mtp3TransferPrimitive(int si, int ni, int mp, int opc, int dpc, int sls, byte[] data, PointCodeFormat pointCodeFormat, int slsLength) {
+	protected Mtp3TransferPrimitive(int si, int ni, int mp, int opc, int dpc, int sls, byte[] data, RoutingLabelFormat pointCodeFormat) {
 		this.si = si;
 		this.ni = ni;
 		this.mp = mp;
@@ -50,7 +49,6 @@ public class Mtp3TransferPrimitive {
 		this.data = data;
 
 		this.pointCodeFormat = pointCodeFormat;
-		this.slsLength = slsLength;
 	}
 
 	public int getSi() {
@@ -106,7 +104,7 @@ public class Mtp3TransferPrimitive {
 
 			break;
 
-		case ANSI:
+		case ANSI_Sls8Bit:
 			res = new byte[this.data.length + 8];
 
 			// sio

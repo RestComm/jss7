@@ -22,8 +22,13 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.oam;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
 import java.io.IOException;
+
 import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
@@ -32,7 +37,7 @@ import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitiveFactory;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPartListener;
-import org.mobicents.protocols.ss7.mtp.PointCodeFormat;
+import org.mobicents.protocols.ss7.mtp.RoutingLabelFormat;
 import org.mobicents.protocols.ss7.sccp.impl.ConcernedSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystem;
@@ -870,37 +875,19 @@ public class SccpExecutorTest {
 		}
 
 		/* (non-Javadoc)
-		 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#getSLSLength()
+		 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#getRoutingLabelFormat()
 		 */
 		@Override
-		public int getSlsLength() {
-			// TODO Auto-generated method stub
-			return 0;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#setSLSLength(int)
-		 */
-		@Override
-		public void setSlsLength(int arg0) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		/* (non-Javadoc)
-		 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#getPointCodeFormat()
-		 */
-		@Override
-		public PointCodeFormat getPointCodeFormat() {
+		public RoutingLabelFormat getRoutingLabelFormat() {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
 		/* (non-Javadoc)
-		 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#setPointCodeFormat(org.mobicents.protocols.ss7.mtp.PointCodeFormat)
+		 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#setRoutingLabelFormat(org.mobicents.protocols.ss7.mtp.RoutingLabelFormat)
 		 */
 		@Override
-		public void setPointCodeFormat(PointCodeFormat arg0) {
+		public void setRoutingLabelFormat(RoutingLabelFormat arg0) {
 			// TODO Auto-generated method stub
 			
 		}

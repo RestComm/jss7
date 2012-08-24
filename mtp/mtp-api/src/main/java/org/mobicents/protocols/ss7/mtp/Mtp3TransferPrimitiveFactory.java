@@ -28,17 +28,14 @@ package org.mobicents.protocols.ss7.mtp;
  */
 public class Mtp3TransferPrimitiveFactory {
 
-	private final PointCodeFormat pointCodeFormat;
+	private final RoutingLabelFormat pointCodeFormat;
 
-	private final int slsLength;
-
-	public Mtp3TransferPrimitiveFactory(PointCodeFormat pointCodeFormat, int slsLength) {
+	public Mtp3TransferPrimitiveFactory(RoutingLabelFormat pointCodeFormat) {
 		this.pointCodeFormat = pointCodeFormat;
-		this.slsLength = slsLength;
 	}
 
 	public Mtp3TransferPrimitive createMtp3TransferPrimitive(int si, int ni, int mp, int opc, int dpc, int sls, byte[] data) {
-		Mtp3TransferPrimitive mtp3TransferPrimitive = new Mtp3TransferPrimitive(si, ni, mp, opc, dpc, sls, data, this.pointCodeFormat, this.slsLength);
+		Mtp3TransferPrimitive mtp3TransferPrimitive = new Mtp3TransferPrimitive(si, ni, mp, opc, dpc, sls, data, this.pointCodeFormat);
 		return mtp3TransferPrimitive;
 	}
 
@@ -72,7 +69,7 @@ public class Mtp3TransferPrimitiveFactory {
 			data = new byte[msg.length - 5];
 			System.arraycopy(msg, 5, data, 0, data.length);
 			break;
-		case ANSI:
+		case ANSI_Sls8Bit:
 			dpc = ((msg[3] & 0xff) << 16) | ((msg[2] & 0xff) << 8) | (msg[1] & 0xff);
 			opc = ((msg[6] & 0xff) << 16) | ((msg[5] & 0xff) << 8) | (msg[4] & 0xff);
 			sls = (msg[7] & 0xff);
@@ -86,7 +83,7 @@ public class Mtp3TransferPrimitiveFactory {
 			// TODO : We don't support rest justyet
 			break;
 		}
-		mtp3TransferPrimitive = new Mtp3TransferPrimitive(si, ni, mp, opc, dpc, sls, data, this.pointCodeFormat, this.slsLength);
+		mtp3TransferPrimitive = new Mtp3TransferPrimitive(si, ni, mp, opc, dpc, sls, data, this.pointCodeFormat);
 		return mtp3TransferPrimitive;
 	}
 }

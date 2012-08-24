@@ -25,10 +25,11 @@ package org.mobicents.protocols.ss7.mtp;
  * @author amit bhayani
  * 
  */
-public enum PointCodeFormat {
-	ANSI("ANSI"), ITU("ITU"), Japan_TTC_DDI("Japan_TTC_DDI"), China("China"), Japan_NTT("Japan_NTT");
+public enum RoutingLabelFormat {
+	ANSI_Sls8Bit("ANSI", 8), ANSI_Sls5Bit("ANSI", 5), ITU("ITU", 4), Japan_TTC_DDI("Japan_TTC_DDI", 8), China("China", 8), Japan_NTT("Japan_NTT", 8);
 
 	private final String format;
+	private final int slsLengthInBits;
 
 	private static final String FORMAT_ITU = "ITU";
 	private static final String FORMAT_ANSI = "ANSI";
@@ -36,19 +37,27 @@ public enum PointCodeFormat {
 	private static final String FROMAT_China = "China";
 	private static final String FORMAT_Japan_NTT = "Japan_NTT";
 
-	private PointCodeFormat(String format) {
+	private RoutingLabelFormat(String format, int slsLengthInBits) {
 		this.format = format;
+		this.slsLengthInBits = slsLengthInBits;
 	}
 
 	public String getFormat() {
 		return this.format;
 	}
 
-	public static PointCodeFormat getInstance(String format) {
+	/**
+	 * @return the sls
+	 */
+	protected int getSlsLengthInBits() {
+		return this.slsLengthInBits;
+	}
+
+	public static RoutingLabelFormat getInstance(String format) {
 		if (FORMAT_ITU.equals(format)) {
 			return ITU;
 		} else if (FORMAT_ANSI.equals(format)) {
-			return ANSI;
+			return ANSI_Sls8Bit;
 		} else if (FORMAT_Japan_TTC_DDI.equals(format)) {
 			return Japan_TTC_DDI;
 		} else if (FROMAT_China.equals(format)) {

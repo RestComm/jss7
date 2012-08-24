@@ -28,7 +28,7 @@ import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitiveFactory;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPartListener;
-import org.mobicents.protocols.ss7.mtp.PointCodeFormat;
+import org.mobicents.protocols.ss7.mtp.RoutingLabelFormat;
 
 /**
  *
@@ -71,40 +71,23 @@ public class DahdiMtp3UserPart implements Mtp3UserPart {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#getSLSLength()
+	 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#getRoutingLabelFormat()
 	 */
 	@Override
-	public int getSlsLength() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#setSLSLength(int)
-	 */
-	@Override
-	public void setSlsLength(int arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#getPointCodeFormat()
-	 */
-	@Override
-	public PointCodeFormat getPointCodeFormat() {
+	public RoutingLabelFormat getRoutingLabelFormat() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#setPointCodeFormat(org.mobicents.protocols.ss7.mtp.PointCodeFormat)
+	 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#setRoutingLabelFormat(org.mobicents.protocols.ss7.mtp.RoutingLabelFormat)
 	 */
 	@Override
-	public void setPointCodeFormat(PointCodeFormat arg0) {
+	public void setRoutingLabelFormat(RoutingLabelFormat arg0) {
 		// TODO Auto-generated method stub
 		
 	}
+
+
 
 }
