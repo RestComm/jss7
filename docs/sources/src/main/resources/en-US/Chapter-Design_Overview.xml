@@ -106,10 +106,46 @@
 	<section
 		id="design_overview_ss7_service">
 		<title>SS7 Service Elements</title>
-				<para>SS7 Service creates an instance of &THIS.PLATFORM; MAP Stack and binds the instance to JNDI name <literal>java:/mobicents/ss7/map</literal>. SS7 Service is a JMX based service deployed in JBoss Application Server. It hides the underlying details like whether Level 4 and above are connected to the &THIS.PLATFORM; Signaling Gateway via <literal>M3UA</literal> or if connected to the SS7 Hardware installed in the same machine as Level 4.</para>
+				<para>SS7 Service creates an instance of higher layer of &THIS.PLATFORM; Stack and binds the instance to JNDI. SS7 Service is a JMX based service deployed in JBoss Application Server. 
+				It hides the underlying details like whether Level 4 and above are connected to peer via <literal>M3UA</literal> or if connected to the SS7 Hardware installed in 
+				the same machine as Level 4.
+				</para>
+				<para>Following services are bound</para>
+				<table frame="all" pgwide="1">
+					<title>SS7 Services</title>
+					<tgroup colsep="1" cols="3">
+						<colspec colnum="1" colname="c0" colwidth="3*" />
+						<colspec colnum="2" colname="c3" colwidth="3*" />
+						<colspec colnum="3" colname="c6" colwidth="3*" />
+						<thead>
+							<row>
+								<entry>Stack Name</entry>
+								<entry>JNDI Name</entry>
+								<entry>Comments</entry>
+							</row>
+						</thead>
+						<tbody>
+							<row>
+								<entry>MAP</entry>
+								<entry>java:/mobicents/ss7/map</entry>
+								<entry>Exposes MAP Stack via JNDI</entry>
+							</row>
+							<row>
+								<entry>CAP</entry>
+								<entry>java:/mobicents/ss7/cap</entry>
+								<entry>Exposes CAP Stack via JNDI</entry>
+							</row>
+							<row>
+								<entry>ISUP</entry>
+								<entry>java:/mobicents/ss7/isup</entry>
+								<entry>Exposes ISUP stack via JNDI</entry>
+							</row>
+						</tbody>						
+					</tgroup>
+				</table>
 
 		<para>
-			The figure below depicts the elements that are deployed as part of SS7 Service.
+			The figure below depicts the elements that are deployed as part of SS7 MAP Service.
 		</para>
 
 		<mediaobject
@@ -182,11 +218,14 @@
 				by the IETF SIGTRAN working group in RFC 4666. 
 				&THIS.PLATFORM; M3UA Stack can be used on the Application Server side or on the Signaling Gateway side or can also be used in peer-to-peer mode IPSP. 
 			</para>
+			<para>
+				<literal>M3UA</literal> uses the  &THIS.PLATFORM; SCTP (Stream Control Transmission Protocol)
+			</para>
 		
 			<note>
 				<title>Note</title>
 				<para>
-					&THIS.PLATFORM; M3UA Stack uses Java SCTP layer which is only available from JDK 7 onwards.
+					&THIS.PLATFORM; SCTP Stack uses Java SCTP layer which is only available from JDK 7 onwards.
 				</para>
 			</note>
 					
@@ -243,6 +282,12 @@
 					You can configure the M3UA stack on SG side in one of the two traffic modes: Loadbalance or Override. Broadcast traffic mode is not supported. Refer to <xref linkend="configuring_sgw"/> for instructions on configuring M3UA Stack as SG. &THIS.PLATFORM; M3UA Stack used on SG side doesn't support routing key management messages. The Routing Key should be provisioned statically using the management console.
 				</para>	
 			</section>	
+			<section id="mobicents_ipsp_m3ua">
+				<title>&THIS.PLATFORM; M3UA Stack as IPSP</title>			
+				<para>
+					An IPSP is essentially the same as an ASP, except that it uses M3UA in a point-to-point fashion.  Conceptually, an IPSP does not use the services of a Signalling Gateway node.
+				</para>
+			</section>
 		</section>
 		</section>
 		<section id="design_ss7_simulator">

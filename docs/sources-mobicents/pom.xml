@@ -20,7 +20,7 @@
 		<THIS.RELEASE_BINARY_URL>http://sourceforge.net/projects/mobicents/files</THIS.RELEASE_BINARY_URL>
 		<author.email.amit>amit.bhayani (at) gmail.com</author.email.amit>
 		<author.email.bartosz>baranowb (at) gmail.com</author.email.bartosz>
-		<author.email.oleg>oleg.kulikoff (at) gmail.com</author.email.oleg>	
+		<author.email.vinu>vinu.saseedaran (at) gmail.com</author.email.vinu>
 	</properties>
 
 	<build>
