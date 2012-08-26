@@ -37,6 +37,8 @@ import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAnswerSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageSystemFailure;
 import org.mobicents.protocols.ss7.cap.api.errors.UnavailableNetworkResource;
@@ -99,6 +101,10 @@ import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.asn.comp.InvokeProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ProblemType;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -1469,7 +1475,7 @@ public class CAPFunctionalTest extends SccpHarness {
 	 * ACN = CAP-v2-assist-gsmSSF-to-gsmSCF
 	 * 
 	 * TC-BEGIN + ActivityTestRequest
-	 *   <no ActivityTestResponse>
+	 *   TC-CONTINUE <no ActivityTestResponse>
 	 * resetInvokeTimer() before InvokeTimeout
 	 * InvokeTimeout
 	 * TC-CONTINUE + CancelRequest + cancelInvocation() -> CancelRequest will not go to Server
@@ -1479,7 +1485,461 @@ public class CAPFunctionalTest extends SccpHarness {
 	 */
 	@Test(groups = { "functional.flow", "dialog" })
 	public void testAbnormal() throws Exception {
-		// ...................................
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			private int dialogStep;
+			private long resetTimerRequestInvokeId;
+
+			public void onInvokeTimeout(CAPDialog capDialog, Long invokeId) {
+				super.onInvokeTimeout(capDialog, invokeId);
+
+				CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall)capDialog;
+
+				try {
+					long invId = dlg.addCancelRequest_AllRequests();
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.CancelRequest, null, sequence++));
+					dlg.cancelInvocation(invId);
+					dlg.send();
+
+					resetTimerRequestInvokeId = dlg.addResetTimerRequest(TimerID.tssf, 2222, null, null);
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.ResetTimerRequest, null, sequence++));
+					dlg.send();
+				} catch (CAPException e) {
+					this.error("Error while checking CancelRequest or ResetTimerRequest", e);
+				}
+			}
+
+			public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem) {
+				super.onRejectComponent(capDialog, invokeId, problem);
+
+				assertEquals(resetTimerRequestInvokeId, (long) invokeId);
+				assertEquals(problem.getInvokeProblemType(), InvokeProblemType.MistypedParameter);
+
+				dialogStep = 1;
+			}
+
+			public void onDialogRelease(CAPDialog capDialog) {
+				super.onDialogRelease(capDialog);
+			}
+
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall)capDialog;
+				try {
+					switch (dialogStep) {
+					case 1: // after RejectComponent
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.DialogUserAbort, null, sequence++));
+						dlg.abort(CAPUserAbortReason.missing_reference);
+
+						dialogStep = 0;
+
+						break;
+					}
+				} catch (CAPException e) {
+					this.error("Error while trying to send/close() Dialog", e);
+				}
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			private int dialogStep = 0;
+
+			public void onActivityTestRequest(ActivityTestRequest ind) {
+				super.onActivityTestRequest(ind);
+
+				dialogStep = 1;
+			}
+
+			public void onDialogUserAbort(CAPDialog capDialog, CAPGeneralAbortReason generalReason, CAPUserAbortReason userReason) {
+				super.onDialogUserAbort(capDialog, generalReason, userReason);
+
+				assertEquals(generalReason, CAPGeneralAbortReason.UserSpecific);
+				assertEquals(userReason, CAPUserAbortReason.missing_reference);
+			}
+
+			public void onDialogRelease(CAPDialog capDialog) {
+				super.onDialogRelease(capDialog);
+			}
+			
+			long resetTimerRequestInvokeId;
+
+			public void onResetTimerRequest(ResetTimerRequest ind) {
+				super.onResetTimerRequest(ind);
+
+				resetTimerRequestInvokeId = ind.getInvokeId();
+
+				dialogStep = 2;
+			}
+
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall)capDialog;
+
+				try {
+					switch (dialogStep) {
+					case 1: // after ActivityTestRequest
+						dlg.send();
+
+						dialogStep = 0;
+
+						break;
+
+					case 2: // after ResetTimerRequest
+						Problem problem = this.capParameterFactory.createProblemInvoke(InvokeProblemType.MistypedParameter);
+						try {
+							dlg.sendRejectComponent(resetTimerRequestInvokeId, problem);
+							this.observerdEvents.add(TestEvent.createSentEvent(EventType.RejectComponent, null, sequence++));
+						} catch (CAPException e) {
+							this.error("Error while sending reject", e);
+						}
+
+						dlg.send();
+
+						dialogStep = 0;
+
+						break;
+					}
+				} catch (CAPException e) {
+					this.error("Error while trying to send/close() Dialog", e);
+				}
+			}
+		};
+
+		int _ACTIVITY_TEST_INVOKE_TIMEOUT = 1000;
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.ActivityTestRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.InvokeTimeout, null, count++, stamp + _ACTIVITY_TEST_INVOKE_TIMEOUT);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.CancelRequest, null, count++, stamp + _ACTIVITY_TEST_INVOKE_TIMEOUT);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ResetTimerRequest, null, count++, stamp + _ACTIVITY_TEST_INVOKE_TIMEOUT);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.RejectComponent, null, count++, stamp + _ACTIVITY_TEST_INVOKE_TIMEOUT);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp + _ACTIVITY_TEST_INVOKE_TIMEOUT);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.DialogUserAbort, null, count++, stamp + _ACTIVITY_TEST_INVOKE_TIMEOUT);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _ACTIVITY_TEST_INVOKE_TIMEOUT + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ActivityTestRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp + _ACTIVITY_TEST_INVOKE_TIMEOUT);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ResetTimerRequest, null, count++, stamp + _ACTIVITY_TEST_INVOKE_TIMEOUT);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp + _ACTIVITY_TEST_INVOKE_TIMEOUT);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.RejectComponent, null, count++, stamp + _ACTIVITY_TEST_INVOKE_TIMEOUT);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogUserAbort, null, count++, stamp + _ACTIVITY_TEST_INVOKE_TIMEOUT);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _ACTIVITY_TEST_INVOKE_TIMEOUT + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendActivityTestRequest(_ACTIVITY_TEST_INVOKE_TIMEOUT);
+
+		Thread.sleep(_ACTIVITY_TEST_INVOKE_TIMEOUT);
+		waitForEnd();
+
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+	}
+
+	/**
+	 * DialogTimeout test
+	 * ACN=CAP-v3-gsmSSF-to-gsmSCF
+	 * 
+	 * TC-BEGIN + InitialDPRequest
+	 *   TC-CONTINUE empty
+	 * (no answer - DialogTimeout at both sides)
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testDialogTimeout() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+
+			public void onDialogTimeout(CAPDialog capDialog) {
+				super.onDialogTimeout(capDialog);
+			}
+
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall) capDialog;
+
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+
+			private int dialogStep;
+			
+			@Override
+			public void onInitialDPRequest(InitialDPRequest ind) {
+				super.onInitialDPRequest(ind);
+
+				assertTrue(Client.checkTestInitialDp(ind));
+				
+				dialogStep = 1;
+			}
+
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall)capDialog;
+
+				try {
+					switch (dialogStep) {
+					case 1: // after InitialDpRequest
+						dlg.send();
+
+						dialogStep = 0;
+
+						break;
+					}
+				} catch (CAPException e) {
+					this.error("Error while trying to send/close() Dialog", e);
+				}
+			}
+
+			public void onDialogTimeout(CAPDialog capDialog) {
+				super.onDialogTimeout(capDialog);
+			}
+		};
+
+		long _DIALOG_TIMEOUT = 2000;
+		long _SLEEP_BEFORE_ODISCONNECT = 3000;
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.InitialDpRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogTimeout, null, count++, stamp + _DIALOG_TIMEOUT);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _DIALOG_TIMEOUT + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.InitialDpRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogTimeout, null, count++, stamp + _DIALOG_TIMEOUT);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _DIALOG_TIMEOUT + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		// setting dialog timeout little interval to invoke onDialogTimeout on SCF side
+		server.capStack.getTCAPStack().setInvokeTimeout(_DIALOG_TIMEOUT - 100);
+		server.capStack.getTCAPStack().setDialogIdleTimeout(_DIALOG_TIMEOUT);
+		server.suppressInvokeTimeout();
+		client.capStack.getTCAPStack().setInvokeTimeout(_DIALOG_TIMEOUT - 100);
+		client.capStack.getTCAPStack().setDialogIdleTimeout(_DIALOG_TIMEOUT);
+		client.suppressInvokeTimeout();
+		client.sendInitialDp(CAPApplicationContext.CapV3_gsmSSF_scfGeneric);
+
+		// waiting here for DialogTimeOut -> ActivityTest
+		Thread.currentThread().sleep(_SLEEP_BEFORE_ODISCONNECT);
+
+		waitForEnd();
+//		Thread.currentThread().sleep(1000000);
+	
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	/**
+	 * ACNNotSuported test
+	 * ACN=CAP-v3-gsmSSF-to-gsmSCF
+	 * 
+	 * TC-BEGIN + InitialDPRequest (Server service is down -> ACN not supported)
+	 *   TC-ABORT + ACNNotSuported
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testACNNotSuported() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+
+			public void onDialogUserAbort(CAPDialog capDialog, CAPGeneralAbortReason generalReason, CAPUserAbortReason userReason) {
+				super.onDialogUserAbort(capDialog, generalReason, userReason);
+
+				assertEquals(generalReason, CAPGeneralAbortReason.ACNNotSupported);
+				assertNull(userReason);
+			}
+			
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall) capDialog;
+
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall)capDialog;
+			}
+
+			public void onDialogTimeout(CAPDialog capDialog) {
+				super.onDialogTimeout(capDialog);
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.InitialDpRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogUserAbort, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+
+		server.capProvider.getCAPServiceCircuitSwitchedCall().deactivate();
+		
+		client.sendInitialDp(CAPApplicationContext.CapV3_gsmSSF_scfGeneric);
+
+		waitForEnd();
+	
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	/**
+	 * Bad data sending at TC-BEGIN test
+	 * 
+	 * 
+	 * TC-BEGIN + no ACN
+	 *   TC-ABORT + BadReceivedData
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testBadDataSending() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+
+			public void onDialogUserAbort(CAPDialog capDialog, CAPGeneralAbortReason generalReason, CAPUserAbortReason userReason) {
+				super.onDialogUserAbort(capDialog, generalReason, userReason);
+
+				assertEquals(generalReason, CAPGeneralAbortReason.ACNNotSupported);
+				assertNull(userReason);
+			}
+			
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall) capDialog;
+
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall)capDialog;
+			}
+
+			public void onDialogTimeout(CAPDialog capDialog) {
+				super.onDialogTimeout(capDialog);
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createReceivedEvent(EventType.DialogUserAbort, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+
+		server.capProvider.getCAPServiceCircuitSwitchedCall().deactivate();
+		
+		client.sendBadData();
+
+		waitForEnd();
+	
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
 	}
 
 	private void waitForEnd() {

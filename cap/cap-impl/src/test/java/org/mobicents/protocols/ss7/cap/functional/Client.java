@@ -26,6 +26,9 @@ import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 import static org.testng.Assert.*;
+
+import org.mobicents.protocols.ss7.cap.CAPDialogImpl;
+import org.mobicents.protocols.ss7.cap.CAPProviderImpl;
 import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParameterFactory;
@@ -66,6 +69,9 @@ import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
 
 /**
  * 
@@ -183,6 +189,16 @@ public class Client extends EventTestHarness  {
 		clientCscDialog.send();
 	}
 
+	public void sendActivityTestRequest(int invokeTimeout) throws CAPException {
+
+		clientCscDialog = this.capProvider.getCAPServiceCircuitSwitchedCall().createNewDialog(CAPApplicationContext.CapV2_assistGsmSSF_to_gsmSCF,
+				this.thisAddress, this.remoteAddress);
+
+		clientCscDialog.addActivityTestRequest(invokeTimeout);
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.ActivityTestRequest, null, sequence++));
+		clientCscDialog.send();
+	}
+
 	public void sendEventReportBCSMRequest_1() throws CAPException {
 
 		CauseIndicators causeIndicators = this.isupParameterFactory.createCauseIndicators();
@@ -198,6 +214,20 @@ public class Client extends EventTestHarness  {
 
 		this.observerdEvents.add(TestEvent.createSentEvent(EventType.EventReportBCSMRequest, null, sequence++));
 		clientCscDialog.send();
+	}
+
+	public void sendBadData() throws CAPException {
+
+		clientCscDialog = this.capProvider.getCAPServiceCircuitSwitchedCall().createNewDialog(null, this.thisAddress, this.remoteAddress);
+
+		try {
+			Dialog tcapDialog = ((CAPDialogImpl)clientCscDialog).getTcapDialog();
+			TCBeginRequest tcBeginReq = ((CAPProviderImpl)this.capProvider).getTCAPProvider().getDialogPrimitiveFactory().createBegin(tcapDialog);
+			tcapDialog.send(tcBeginReq);
+		} catch (TCAPSendException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public static boolean checkTestInitialDp(InitialDPRequest ind) {

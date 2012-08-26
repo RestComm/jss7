@@ -701,7 +701,8 @@ public class DialogImpl implements Dialog {
 			if (this.state == TRPseudoState.InitialReceived || this.state == TRPseudoState.InitialSent || this.state == TRPseudoState.Active) {
 				// allowed
 				DialogPortion dp = null;
-				if (event.getUserInformation() != null) { // User information can be absent in TCAP V1
+				if (event.getUserInformation() != null || event.getDialogServiceUserType() != null) { 
+					// User information can be absent in TCAP V1
 
 					dp = TcapFactory.createDialogPortion();
 					dp.setUnidirectional(false);

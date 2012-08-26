@@ -41,6 +41,9 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndRequest;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCode;
@@ -72,7 +75,7 @@ public abstract class CAPDialogImpl implements CAPDialog {
 
 	protected CAPDialogState state = CAPDialogState.Idle;
 	
-	protected boolean normalDialogShutDown = false;
+//	protected boolean normalDialogShutDown = false;
 	
 	private Set<Long> incomingInvokeList = new HashSet<Long>();
 
@@ -122,7 +125,7 @@ public abstract class CAPDialogImpl implements CAPDialog {
 	}
 
 	public void release() {
-		this.setNormalDialogShutDown();
+//		this.setNormalDialogShutDown();
 		this.setState(CAPDialogState.Expunged);
 		
 		if (this.tcapDialog != null)
@@ -133,13 +136,13 @@ public abstract class CAPDialogImpl implements CAPDialog {
 	 * Setting that the CAP Dialog is normally shutting down - 
 	 * to prevent performing onDialogReleased()  
 	 */
-	protected void setNormalDialogShutDown() {
-		this.normalDialogShutDown = true;
-	}
-	
-	protected Boolean getNormalDialogShutDown() {
-		return this.normalDialogShutDown;
-	}
+//	protected void setNormalDialogShutDown() {
+//		this.normalDialogShutDown = true;
+//	}
+//	
+//	protected Boolean getNormalDialogShutDown() {
+//		return this.normalDialogShutDown;
+//	}
 	
 	/**
 	 * Adding the new incoming invokeId into incomingInvokeList list
@@ -178,12 +181,12 @@ public abstract class CAPDialogImpl implements CAPDialog {
 		if (this.state == CAPDialogState.Expunged) {
 			return;
 		}
-		
+
 		this.state = newState;
-		if (newState == CAPDialogState.Expunged) {
-			this.capProviderImpl.removeDialog(tcapDialog.getDialogId());
-			this.capProviderImpl.deliverDialogResease(this);
-		}
+//		if (newState == CAPDialogState.Expunged) {
+//			this.capProviderImpl.removeDialog(tcapDialog.getDialogId());
+//			this.capProviderImpl.deliverDialogRelease(this);
+//		}
 	}
 
 	@Override
@@ -243,7 +246,7 @@ public abstract class CAPDialogImpl implements CAPDialog {
 				ApplicationContextName acn = this.capProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
 						.createApplicationContextName(this.appCntx.getOID());
 
-				this.setNormalDialogShutDown();
+//				this.setNormalDialogShutDown();
 				this.capProviderImpl.fireTCEnd(this.getTcapDialog(), prearrangedEnd, acn, this.gprsReferenceNumber, this.getReturnMessageOnError());
 				this.gprsReferenceNumber = null;
 
@@ -251,7 +254,7 @@ public abstract class CAPDialogImpl implements CAPDialog {
 				break;
 
 			case Active:
-				this.setNormalDialogShutDown();
+//				this.setNormalDialogShutDown();
 				this.capProviderImpl.fireTCEnd(this.getTcapDialog(), prearrangedEnd, null, null, this.getReturnMessageOnError());
 
 				this.setState(CAPDialogState.Expunged);
@@ -278,7 +281,7 @@ public abstract class CAPDialogImpl implements CAPDialog {
 				return;
 			}
 
-			this.setNormalDialogShutDown();
+//			this.setNormalDialogShutDown();
 			this.capProviderImpl.fireTCAbort(this.getTcapDialog(), CAPGeneralAbortReason.UserSpecific, abortReason, this.getReturnMessageOnError());
 
 			this.setState(CAPDialogState.Expunged);
@@ -406,34 +409,33 @@ public abstract class CAPDialogImpl implements CAPDialog {
 	public int getMessageUserDataLengthOnSend() throws CAPException {
 
 		// ....................................
-//		try {
-//			switch (this.tcapDialog.getState()) {
-//			case Idle:
-//				ApplicationContextName acn = this.capProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
-//						.createApplicationContextName(this.appCntx.getOID());
-//
-//				TCBeginRequest tb = this.capProviderImpl.encodeTCBegin(this.getTcapDialog(), acn, destReference, origReference, this.extContainer);
-//				return tcapDialog.getDataLength(tb);
-//
-//			case Active:
-//				// Its Active send TC-CONTINUE
-//
-//				TCContinueRequest tc = this.capProviderImpl.encodeTCContinue(this.getTcapDialog(), false, null, null);
-//				return tcapDialog.getDataLength(tc);
-//
-//			case InitialReceived:
-//				// Its first Reply to TC-Begin
-//
-//				ApplicationContextName acn1 = this.capProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
-//						.createApplicationContextName(this.appCntx.getOID());
-//
-//				tc = this.capProviderImpl.encodeTCContinue(this.getTcapDialog(), true, acn1, this.extContainer);
-//				return tcapDialog.getDataLength(tc);
-//			}
-//		} catch (TCAPSendException e) {
-//			throw new CAPException("TCAPSendException when getMessageUserDataLengthOnSend", e);
-//		}
-		// ....................................
+	try {
+			switch (this.tcapDialog.getState()) {
+			case Idle:
+				ApplicationContextName acn = this.capProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
+						.createApplicationContextName(this.appCntx.getOID());
+
+				TCBeginRequest tb = this.capProviderImpl.encodeTCBegin(this.getTcapDialog(), acn, this.gprsReferenceNumber);
+				return tcapDialog.getDataLength(tb);
+
+			case Active:
+				// Its Active send TC-CONTINUE
+
+				TCContinueRequest tc = this.capProviderImpl.encodeTCContinue(this.getTcapDialog(), null, null);
+				return tcapDialog.getDataLength(tc);
+
+			case InitialReceived:
+				// Its first Reply to TC-Begin
+
+				ApplicationContextName acn1 = this.capProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
+						.createApplicationContextName(this.appCntx.getOID());
+
+				tc = this.capProviderImpl.encodeTCContinue(this.getTcapDialog(), acn1, this.gprsReferenceNumber);
+				return tcapDialog.getDataLength(tc);
+			}
+		} catch (TCAPSendException e) {
+			throw new CAPException("TCAPSendException when getMessageUserDataLengthOnSend", e);
+		}
 
 		throw new CAPException("Bad TCAP Dialog state: " + this.tcapDialog.getState());
 	}
@@ -441,24 +443,22 @@ public abstract class CAPDialogImpl implements CAPDialog {
 	@Override
 	public int getMessageUserDataLengthOnClose(boolean prearrangedEnd) throws CAPException {
 
-		// ....................................
-//		try {
-//			switch (this.tcapDialog.getState()) {
-//			case InitialReceived:
-//				ApplicationContextName acn = this.capProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
-//						.createApplicationContextName(this.appCntx.getOID());
-//
-//				TCEndRequest te = this.capProviderImpl.encodeTCEnd(this.getTcapDialog(), true, prearrangedEnd, acn, this.extContainer);
-//				return tcapDialog.getDataLength(te);
-//
-//			case Active:
-//				te = this.capProviderImpl.encodeTCEnd(this.getTcapDialog(), false, prearrangedEnd, null, null);
-//				return tcapDialog.getDataLength(te);
-//			}
-//		} catch (TCAPSendException e) {
-//			throw new CAPException("TCAPSendException when getMessageUserDataLengthOnSend", e);
-//		}
-		// ....................................
+		try {
+			switch (this.tcapDialog.getState()) {
+			case InitialReceived:
+				ApplicationContextName acn = this.capProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
+						.createApplicationContextName(this.appCntx.getOID());
+
+				TCEndRequest te = this.capProviderImpl.encodeTCEnd(this.getTcapDialog(), prearrangedEnd, acn, this.gprsReferenceNumber);
+				return tcapDialog.getDataLength(te);
+
+			case Active:
+				te = this.capProviderImpl.encodeTCEnd(this.getTcapDialog(), prearrangedEnd, null, null);
+				return tcapDialog.getDataLength(te);
+			}
+		} catch (TCAPSendException e) {
+			throw new CAPException("TCAPSendException when getMessageUserDataLengthOnSend", e);
+		}
 
 		throw new CAPException("Bad TCAP Dialog state: " + this.tcapDialog.getState());
 	}

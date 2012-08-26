@@ -221,9 +221,9 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		}
 	}
 
-	protected void removeDialog(Long dialogId) {
+	protected CAPDialogImpl removeDialog(Long dialogId) {
 		synchronized (this.dialogs) {
-			this.dialogs.remove(dialogId);
+			return this.dialogs.remove(dialogId);
 		}
 	}
 
@@ -290,7 +290,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			
 		return referenceNumber;
 	}	
-	
+
 	public void onTCBegin(TCBeginIndication tcBeginIndication) {
 		
 		ApplicationContextName acn = tcBeginIndication.getApplicationContextName();
@@ -411,7 +411,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 						loger.error("Error while firing TC-U-ABORT. ", e);
 					}
 
-					capDialogImpl.setNormalDialogShutDown();
+//					capDialogImpl.setNormalDialogShutDown();
 					this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
 					capDialogImpl.setState(CAPDialogState.Expunged);
 
@@ -428,7 +428,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 						loger.error("Error while firing TC-U-ABORT. ", e);
 					}
 
-					capDialogImpl.setNormalDialogShutDown();
+//					capDialogImpl.setNormalDialogShutDown();
 					this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
 					capDialogImpl.setState(CAPDialogState.Expunged);
 
@@ -494,7 +494,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 						loger.error("Error while firing TC-U-ABORT. ", e);
 					}
 
-					capDialogImpl.setNormalDialogShutDown();
+//					capDialogImpl.setNormalDialogShutDown();
 					this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
 					capDialogImpl.setState(CAPDialogState.Expunged);
 
@@ -506,7 +506,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 				if (capAcn == null || !capAcn.equals(capDialogImpl.getApplicationContext())) {
 					loger.error(String.format("Received first TC-END. CAPDialog=%s. But CAPApplicationContext=%s", capDialogImpl, capAcn));
 
-					capDialogImpl.setNormalDialogShutDown();
+//					capDialogImpl.setNormalDialogShutDown();
 					this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
 					capDialogImpl.setState(CAPDialogState.Expunged);
 
@@ -535,7 +535,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 				processComponents(capDialogImpl, comps);
 			}
 
-			capDialogImpl.setNormalDialogShutDown();
+//			capDialogImpl.setNormalDialogShutDown();
 			this.deliverDialogClose(capDialogImpl);
 			capDialogImpl.setState(CAPDialogState.Expunged);
 		}
@@ -551,7 +551,8 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
 		if (capDialogImpl != null) {
 			synchronized (capDialogImpl) {
-				if (capDialogImpl.getState() != CAPDialogState.Expunged && !capDialogImpl.getNormalDialogShutDown()) {
+				if (capDialogImpl.getState() != CAPDialogState.Expunged) {
+//				if (capDialogImpl.getState() != CAPDialogState.Expunged && !capDialogImpl.getNormalDialogShutDown()) {
 
 					// Getting the CAP Service that serves the CAP Dialog
 					CAPServiceBaseImpl perfSer = (CAPServiceBaseImpl)capDialogImpl.getService();
@@ -572,7 +573,8 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
 		if (capDialogImpl != null) {
 			synchronized (capDialogImpl) {
-				if (capDialogImpl.getState() != CAPDialogState.Expunged && !capDialogImpl.getNormalDialogShutDown()) {
+				if (capDialogImpl.getState() != CAPDialogState.Expunged) {
+//				if (capDialogImpl.getState() != CAPDialogState.Expunged && !capDialogImpl.getNormalDialogShutDown()) {
 
 					this.deliverDialogTimeout(capDialogImpl);
 				}
@@ -587,16 +589,22 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
 		if (capDialogImpl != null) {
 			synchronized (capDialogImpl) {
-				if (capDialogImpl.getState() != CAPDialogState.Expunged && !capDialogImpl.getNormalDialogShutDown()) {
-
-					// TCAP Dialog is destroyed when CapDialog is alive and not shutting down
-					capDialogImpl.setNormalDialogShutDown();
-					this.deliverDialogUserAbort(capDialogImpl, CAPGeneralAbortReason.BadReceivedData, null);
-					
-					capDialogImpl.setState(CAPDialogState.Expunged);
-				}
+				this.deliverDialogRelease(capDialogImpl);
 			}
 		}
+
+//		if (capDialogImpl != null) {
+//			synchronized (capDialogImpl) {
+//				if (capDialogImpl.getState() != CAPDialogState.Expunged && !capDialogImpl.getNormalDialogShutDown()) {
+//
+//					// TCAP Dialog is destroyed when CapDialog is alive and not shutting down
+//					capDialogImpl.setNormalDialogShutDown();
+//					this.deliverDialogUserAbort(capDialogImpl, CAPGeneralAbortReason.BadReceivedData, null);
+//					
+//					capDialogImpl.setState(CAPDialogState.Expunged);
+//				}
+//			}
+//		}
 	}
 
 	public void onTCPAbort(TCPAbortIndication tcPAbortIndication) {
@@ -612,7 +620,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		synchronized (capDialogImpl) {
 			PAbortCauseType pAbortCause = tcPAbortIndication.getPAbortCause();
 
-			capDialogImpl.setNormalDialogShutDown();
+//			capDialogImpl.setNormalDialogShutDown();
 			this.deliverDialogProviderAbort(capDialogImpl, pAbortCause);
 
 			capDialogImpl.setState(CAPDialogState.Expunged);
@@ -654,7 +662,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 					if (!userInfo.isOid()) {
 						loger.warn("When parsing TCUserAbortIndication indication: userInfo.isOid() is null");
 					} else {
-						if (Arrays.equals(userInfo.getOidValue(), CAPUserAbortPrimitiveImpl.CAP_AbortReason_OId)) {
+						if (!Arrays.equals(userInfo.getOidValue(), CAPUserAbortPrimitiveImpl.CAP_AbortReason_OId)) {
 							loger.warn("When parsing TCUserAbortIndication indication: userInfo.getOidValue() must be CAPUserAbortPrimitiveImpl.CAP_AbortReason_OId");
 						} else if (!userInfo.isAsn()) {
 							loger.warn("When parsing TCUserAbortIndication indication: userInfo.isAsn() check failed");
@@ -685,7 +693,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 				}
 			}
 
-			capDialogImpl.setNormalDialogShutDown();
+//			capDialogImpl.setNormalDialogShutDown();
 			this.deliverDialogUserAbort(capDialogImpl, generalReason, userReason);
 
 			capDialogImpl.setState(CAPDialogState.Expunged);
@@ -708,7 +716,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.MessageCannotBeDeliveredToThePeer);
 
 			if (capDialogImpl.getState() == CAPDialogState.InitialReceived) {
-				capDialogImpl.setNormalDialogShutDown();
+//				capDialogImpl.setNormalDialogShutDown();
 				capDialogImpl.setState(CAPDialogState.Expunged);
 			}
 		}
@@ -945,7 +953,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		}
 	}
 
-	protected void deliverDialogResease(CAPDialog capDialog) {
+	protected void deliverDialogRelease(CAPDialog capDialog) {
 		for (CAPDialogListener listener : this.dialogListeners) {
 			listener.onDialogRelease(capDialog);
 		}
