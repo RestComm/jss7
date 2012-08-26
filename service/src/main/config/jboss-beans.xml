@@ -2,7 +2,21 @@
 <deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns="urn:jboss:bean-deployer:2.0">
 
+	<!-- ==================================================================== -->
+	<!-- MTP3 Properties -->
+	<!-- Define MTP3 routing label Format -->
+	<!-- ==================================================================== -->
+	<bean name="RoutingLabelFormat" class="org.mobicents.protocols.ss7.mtp.RoutingLabelFormat">
+		<constructor factoryClass="org.mobicents.protocols.ss7.mtp.RoutingLabelFormat"
+			factoryMethod="getInstance">
+			<parameter>ITU</parameter>
+		</constructor>
+	</bean>
 
+	<!-- ==================================================================== -->
+	<!-- SCTP Properties -->
+	<!-- Used by M3UA layer -->
+	<!-- ==================================================================== -->
 	<bean name="SCTPManagement" class="org.mobicents.protocols.sctp.ManagementImpl">
 		<constructor>
 			<parameter>SCTPManagement</parameter>
@@ -20,16 +34,6 @@
 	</bean>
 
 	<!-- ==================================================================== -->
-	<!-- MTP3 Properties -->
-	<!-- Define MTP3 PointCode Format -->
-	<!-- ==================================================================== -->
-	<bean name="RoutingLabelFormat" class="org.mobicents.protocols.ss7.mtp.RoutingLabelFormat">
-		<constructor factoryClass="org.mobicents.protocols.ss7.mtp.RoutingLabelFormat" factoryMethod="getInstance">
-			<parameter>ITU</parameter>
-		</constructor>
-	</bean>
-
-	<!-- ==================================================================== -->
 	<!-- M3UA -->
 	<!-- M3UAManagement is managing the m3ua side commands -->
 	<!-- ==================================================================== -->
@@ -39,8 +43,12 @@
 			<parameter>Mtp3UserPart</parameter>
 		</constructor>
 		<property name="persistDir">${jboss.server.data.dir}</property>
-		<property name="transportManagement"><inject bean="SCTPManagement" /></property>
-		<property name="routingLabelFormat"><inject bean="RoutingLabelFormat" /></property>	
+		<property name="transportManagement">
+			<inject bean="SCTPManagement" />
+		</property>
+		<property name="routingLabelFormat">
+			<inject bean="RoutingLabelFormat" />
+		</property>
 	</bean>
 
 	<bean name="M3UAShellExecutor"
@@ -67,10 +75,15 @@
 	<!-- ==================================================================== -->
 	<!-- Dialogic Mtp3UserPart -->
 	<!-- ==================================================================== -->
-	<!-- <bean name="Mtp3UserPart" class="org.mobicents.ss7.hardware.dialogic.DialogicMtp3UserPart"> 
-		<property name="sourceModuleId">61</property> <property name="destinationModuleId">34</property> 
-		</bean> -->
-
+	<!--
+	<bean name="Mtp3UserPart" class="org.mobicents.ss7.hardware.dialogic.DialogicMtp3UserPart">
+		<property name="sourceModuleId">61</property>
+		<property name="destinationModuleId">34</property>
+		<property name="routingLabelFormat">
+			<inject bean="RoutingLabelFormat" />
+		</property>		
+	</bean>
+	-->
 	<!-- ==================================================================== -->
 	<!-- SCCP Service -->
 	<!-- ==================================================================== -->
@@ -198,7 +211,9 @@
 	<!-- Mobicents SS7 Service -->
 	<!-- ==================================================================== -->
 	<bean name="MAPSS7Service" class="org.mobicents.ss7.SS7Service">
-		<constructor><parameter>MAP</parameter></constructor>
+		<constructor>
+			<parameter>MAP</parameter>
+		</constructor>
 		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=MAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
 		</annotation>
 		<property name="jndiName">java:/mobicents/ss7/map</property>
@@ -207,7 +222,9 @@
 		</property>
 	</bean>
 	<bean name="CAPSS7Service" class="org.mobicents.ss7.SS7Service">
-		<constructor><parameter>CAP</parameter></constructor>
+		<constructor>
+			<parameter>CAP</parameter>
+		</constructor>
 		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=CAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
 		</annotation>
 		<property name="jndiName">java:/mobicents/ss7/cap</property>
@@ -216,7 +233,9 @@
 		</property>
 	</bean>
 	<bean name="ISUPSS7Service" class="org.mobicents.ss7.SS7Service">
-		<constructor><parameter>ISUP</parameter></constructor>
+		<constructor>
+			<parameter>ISUP</parameter>
+		</constructor>
 		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=ISUPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
 		</annotation>
 		<property name="jndiName">java:/mobicents/ss7/isup</property>
