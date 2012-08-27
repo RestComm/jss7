@@ -197,6 +197,13 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OfferedCamel4Functionalities;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
+import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
+import org.mobicents.protocols.ss7.tcap.asn.comp.GeneralProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.InvokeProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnErrorProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
 
 /**
  * 
@@ -204,6 +211,30 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
  * 
  */
 public class CAPParameterFactoryImpl implements CAPParameterFactory {
+	
+	public Problem createProblemGeneral(GeneralProblemType prob) {
+		Problem pb = TcapFactory.createProblem(ProblemType.General);
+		pb.setGeneralProblemType(prob);
+		return pb;
+	}
+
+	public Problem createProblemInvoke(InvokeProblemType prob) {
+		Problem pb = TcapFactory.createProblem(ProblemType.Invoke);
+		pb.setInvokeProblemType(prob);
+		return pb;
+	}
+
+	public Problem createProblemResult(ReturnResultProblemType prob) {
+		Problem pb = TcapFactory.createProblem(ProblemType.ReturnResult);
+		pb.setReturnResultProblemType(prob);
+		return pb;
+	}
+
+	public Problem createProblemError(ReturnErrorProblemType prob) {
+		Problem pb = TcapFactory.createProblem(ProblemType.ReturnError);
+		pb.setReturnErrorProblemType(prob);
+		return pb;
+	}
 
 	@Override
 	public CAPGprsReferenceNumber createCAPGprsReferenceNumber(Integer destinationReference, Integer originationReference) {

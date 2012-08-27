@@ -90,6 +90,8 @@ public interface CAPDialog {
 	 */
 	public void setGprsReferenceNumber(CAPGprsReferenceNumber capGprsReferenceNumber);
 
+	public CAPGprsReferenceNumber getGprsReferenceNumber();
+
 	public void release();
 
 	/**

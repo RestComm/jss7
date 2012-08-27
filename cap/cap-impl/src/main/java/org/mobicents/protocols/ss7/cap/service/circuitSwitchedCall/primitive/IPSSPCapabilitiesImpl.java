@@ -83,7 +83,7 @@ public class IPSSPCapabilitiesImpl implements IPSSPCapabilities, CAPAsnPrimitive
 	}
 
 	@Override
-	public boolean IPRoutingAddressSupported() {
+	public boolean getIPRoutingAddressSupported() {
 
 		if (this.data == null || this.data.length == 0)
 			return false;
@@ -92,7 +92,7 @@ public class IPSSPCapabilitiesImpl implements IPSSPCapabilities, CAPAsnPrimitive
 	}
 
 	@Override
-	public boolean VoiceBackSupported() {
+	public boolean getVoiceBackSupported() {
 
 		if (this.data == null || this.data.length == 0)
 			return false;
@@ -101,7 +101,7 @@ public class IPSSPCapabilitiesImpl implements IPSSPCapabilities, CAPAsnPrimitive
 	}
 
 	@Override
-	public boolean VoiceInformationSupportedViaSpeechRecognition() {
+	public boolean getVoiceInformationSupportedViaSpeechRecognition() {
 
 		if (this.data == null || this.data.length == 0)
 			return false;
@@ -110,7 +110,7 @@ public class IPSSPCapabilitiesImpl implements IPSSPCapabilities, CAPAsnPrimitive
 	}
 
 	@Override
-	public boolean VoiceInformationSupportedViaVoiceRecognition() {
+	public boolean getVoiceInformationSupportedViaVoiceRecognition() {
 
 		if (this.data == null || this.data.length == 0)
 			return false;
@@ -119,7 +119,7 @@ public class IPSSPCapabilitiesImpl implements IPSSPCapabilities, CAPAsnPrimitive
 	}
 
 	@Override
-	public boolean GenerationOfVoiceAnnouncementsFromTextSupported() {
+	public boolean getGenerationOfVoiceAnnouncementsFromTextSupported() {
 
 		if (this.data == null || this.data.length == 0)
 			return false;
@@ -229,15 +229,15 @@ public class IPSSPCapabilitiesImpl implements IPSSPCapabilities, CAPAsnPrimitive
 		sb.append(_PrimitiveName);
 		sb.append(" [");
 		if (data != null) {
-			if (this.IPRoutingAddressSupported())
+			if (this.getIPRoutingAddressSupported())
 				sb.append("IPRoutingAddressSupported, ");
-			if (this.VoiceBackSupported())
+			if (this.getVoiceBackSupported())
 				sb.append("VoiceBackSupported, ");
-			if (this.VoiceInformationSupportedViaSpeechRecognition())
+			if (this.getVoiceInformationSupportedViaSpeechRecognition())
 				sb.append("VoiceInformationSupportedViaSpeechRecognition, ");
-			if (this.VoiceInformationSupportedViaVoiceRecognition())
+			if (this.getVoiceInformationSupportedViaVoiceRecognition())
 				sb.append("VoiceInformationSupportedViaVoiceRecognition, ");
-			if (this.GenerationOfVoiceAnnouncementsFromTextSupported())
+			if (this.getGenerationOfVoiceAnnouncementsFromTextSupported())
 				sb.append("GenerationOfVoiceAnnouncementsFromTextSupported, ");
 			byte[] eArr = this.getExtraData();
 			if (eArr != null) {
