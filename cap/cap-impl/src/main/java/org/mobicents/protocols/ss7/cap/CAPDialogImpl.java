@@ -189,13 +189,15 @@ public abstract class CAPDialogImpl implements CAPDialog {
 //		}
 	}
 
-	@Override
 	public void setGprsReferenceNumber(CAPGprsReferenceNumber gprsReferenceNumber) {
 		this.gprsReferenceNumber = gprsReferenceNumber;
 	}
 
+	public CAPGprsReferenceNumber getGprsReferenceNumber() {
+		return this.gprsReferenceNumber;
+	}
+
 	
-	@Override
 	public void send() throws CAPException {
 
 		synchronized (this) {
@@ -408,8 +410,7 @@ public abstract class CAPDialogImpl implements CAPDialog {
 	@Override
 	public int getMessageUserDataLengthOnSend() throws CAPException {
 
-		// ....................................
-	try {
+		try {
 			switch (this.tcapDialog.getState()) {
 			case Idle:
 				ApplicationContextName acn = this.capProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()

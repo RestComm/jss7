@@ -25,15 +25,18 @@ package org.mobicents.protocols.ss7.cap.functional;
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParameterFactory;
 import org.mobicents.protocols.ss7.cap.api.CAPProvider;
 import org.mobicents.protocols.ss7.cap.api.CAPStack;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageFactory;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.primitives.BCSMEvent;
 import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
 import org.mobicents.protocols.ss7.cap.api.primitives.MonitorMode;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCall;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestReportBCSMEventRequest;
 import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
@@ -70,6 +73,8 @@ public class Server extends EventTestHarness  {
 	protected INAPParameterFactory inapParameterFactory;
 	protected ISUPParameterFactory isupParameterFactory;
 
+	protected CAPDialog serverCscDialog;
+
 //	private boolean _S_recievedDialogRequest;
 //	private boolean _S_recievedInitialDp;
 //
@@ -97,7 +102,7 @@ public class Server extends EventTestHarness  {
 		this.capProvider.getCAPServiceCircuitSwitchedCall().addCAPServiceListener(this);
 
 		this.capProvider.getCAPServiceCircuitSwitchedCall().acivate();
-		this.capProvider.getCAPServiceSms().acivate();
+		this.capProvider.getCAPServiceGprs().acivate();
 		this.capProvider.getCAPServiceSms().acivate();
 	}
 
@@ -126,6 +131,19 @@ public class Server extends EventTestHarness  {
 		return res;
 	}
 
+	public void onDialogRequest(CAPDialog capDialog, CAPGprsReferenceNumber capGprsReferenceNumber) {
+		super.onDialogRequest(capDialog, capGprsReferenceNumber);
+		serverCscDialog = capDialog;
+	}
+
+	public void sendAccept() {
+		try {
+			serverCscDialog.send();
+		} catch (CAPException e) {
+			this.error("Error while trying to send/close() Dialog", e);
+		}
+	}
+	
 	public void debug(String message) {
 		this.logger.debug(message);
 	}

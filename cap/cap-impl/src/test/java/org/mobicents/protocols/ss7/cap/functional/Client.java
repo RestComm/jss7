@@ -35,6 +35,8 @@ import org.mobicents.protocols.ss7.cap.api.CAPParameterFactory;
 import org.mobicents.protocols.ss7.cap.api.CAPProvider;
 import org.mobicents.protocols.ss7.cap.api.CAPStack;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.ODisconnectSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPDialogState;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CallingPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
@@ -56,6 +58,8 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.NAOliInfo;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.RequestedInformationType;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ServiceInteractionIndicatorsTwo;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.CAPDialogGprs;
+import org.mobicents.protocols.ss7.cap.api.service.sms.CAPDialogSms;
 import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.InitialDPRequestImpl;
 import org.mobicents.protocols.ss7.inap.api.INAPParameterFactory;
@@ -72,6 +76,8 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextNameImpl;
 
 /**
  * 
@@ -95,8 +101,10 @@ public class Client extends EventTestHarness  {
 	protected ISUPParameterFactory isupParameterFactory;
 
 //	private boolean _S_receivedUnstructuredSSIndication, _S_sentEnd;
-	
+
 	protected CAPDialogCircuitSwitchedCall clientCscDialog;
+	protected CAPDialogGprs clientGprsDialog;
+	protected CAPDialogSms clientSmsDialog;
 
 //	private FunctionalTestScenario step;
 	
@@ -124,6 +132,8 @@ public class Client extends EventTestHarness  {
 		this.capProvider.getCAPServiceCircuitSwitchedCall().addCAPServiceListener(this);
 
 		this.capProvider.getCAPServiceCircuitSwitchedCall().acivate();
+		this.capProvider.getCAPServiceGprs().acivate();
+		this.capProvider.getCAPServiceSms().acivate();
 	}
 
 
@@ -216,7 +226,7 @@ public class Client extends EventTestHarness  {
 		clientCscDialog.send();
 	}
 
-	public void sendBadData() throws CAPException {
+	public void sendBadDataNoAcn() throws CAPException {
 
 		clientCscDialog = this.capProvider.getCAPServiceCircuitSwitchedCall().createNewDialog(null, this.thisAddress, this.remoteAddress);
 
@@ -230,6 +240,86 @@ public class Client extends EventTestHarness  {
 		}
 	}
 
+	public void sendReferensedNumber() throws CAPException {
+
+		clientGprsDialog = this.capProvider.getCAPServiceGprs().createNewDialog(CAPApplicationContext.CapV3_gsmSCF_gprsSSF, this.thisAddress,
+				this.remoteAddress);
+		CAPGprsReferenceNumber capGprsReferenceNumber = this.capParameterFactory.createCAPGprsReferenceNumber(1005, 1006);
+		clientGprsDialog.setGprsReferenceNumber(capGprsReferenceNumber);
+
+		clientGprsDialog.send();
+	}
+
+	public void testMessageUserDataLength() throws CAPException {
+
+		clientCscDialog = this.capProvider.getCAPServiceCircuitSwitchedCall().createNewDialog(CAPApplicationContext.CapV2_assistGsmSSF_to_gsmSCF, this.thisAddress, this.remoteAddress);
+
+		GenericNumber genericNumber = this.isupParameterFactory.createGenericNumber();
+		genericNumber.setAddress("333111222");
+		genericNumber.setAddressRepresentationRestrictedIndicator(GenericNumber._APRI_ALLOWED);
+		genericNumber.setNatureOfAddresIndicator(NAINumber._NAI_INTERNATIONAL_NUMBER);
+//		genericNumber.setNumberIncompleter(GenericNumber._NI_COMPLETE);
+		genericNumber.setNumberingPlanIndicator(GenericNumber._NPI_ISDN);
+		genericNumber.setNumberQualifierIndicator(GenericNumber._NQIA_CALLED_NUMBER);
+		genericNumber.setScreeningIndicator(GenericNumber._SI_NETWORK_PROVIDED);
+		Digits correlationID = this.capParameterFactory.createDigits(genericNumber);
+		IPSSPCapabilities ipSSPCapabilities = this.capParameterFactory.createIPSSPCapabilities(true, false, true, false, false, null);
+		clientCscDialog.addAssistRequestInstructionsRequest(correlationID, ipSSPCapabilities, null);
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.AssistRequestInstructionsRequest, null, sequence++));
+
+		int i1 = clientCscDialog.getMessageUserDataLengthOnSend();
+		assertEquals(i1, 65);
+		
+//		this.observerdEvents.add(TestEvent.createSentEvent(EventType.InitialDpRequest, null, sequence++));
+//		clientCscDialog.send();
+	}
+
+//	public void sendReferensedNumber2() throws CAPException {
+//
+//		clientGprsDialog = this.capProvider.getCAPServiceGprs().createNewDialog(CAPApplicationContext.CapV3_gsmSCF_gprsSSF, this.thisAddress,
+//				this.remoteAddress);
+//		CAPGprsReferenceNumber capGprsReferenceNumber = this.capParameterFactory.createCAPGprsReferenceNumber(1000000, 1006);
+//		clientGprsDialog.setGprsReferenceNumber(capGprsReferenceNumber);
+//
+//		ApplicationContextName acn = ((CAPProviderImpl) this.capProvider).getTCAPProvider().getDialogPrimitiveFactory()
+//				.createApplicationContextName(clientGprsDialog.getApplicationContext().getOID());
+//
+//		Dialog tcapDialog = ((CAPDialogImpl)clientGprsDialog).getTcapDialog();
+//		TCBeginRequest tcBeginReq = ((CAPProviderImplWrapper) this.capProvider).encodeTCBegin(tcapDialog, acn, clientGprsDialog.getGprsReferenceNumber());
+//
+//		try {
+//			tcapDialog.send(tcBeginReq);
+//		} catch (TCAPSendException e) {
+//			throw new CAPException(e.getMessage(), e);
+//		}
+//		clientGprsDialog.setGprsReferenceNumber(null);
+//
+////		((CAPDialogImpl)clientGprsDialog).setState(CAPDialogState.InitialSent);
+//
+//	}
+
+
+//	public void sendBadDataUnknownAcn() throws CAPException {
+//
+//		clientCscDialog = this.capProvider.getCAPServiceCircuitSwitchedCall().createNewDialog(CAPApplicationContext.CapV2_assistGsmSSF_to_gsmSCF, this.thisAddress, this.remoteAddress);
+//
+//		try {
+//			Dialog tcapDialog = ((CAPDialogImpl)clientCscDialog).getTcapDialog();
+//			TCBeginRequest tcBeginReq = ((CAPProviderImpl)this.capProvider).getTCAPProvider().getDialogPrimitiveFactory().createBegin(tcapDialog);
+//			ApplicationContextName acn = new ApplicationContextNameImpl();
+//			acn.setOid(new long[] { 0, 4, 0, 0, 1, 0, 11, 25 });
+//			tcBeginReq.setApplicationContextName(acn);
+//			tcapDialog.send(tcBeginReq);
+//		} catch (TCAPSendException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
+
+	public void releaseDialog() {
+		clientCscDialog.release();
+	}
+	
 	public static boolean checkTestInitialDp(InitialDPRequest ind) {
 		
 		try {

@@ -1117,11 +1117,15 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
 			tcUserAbort.setUserInformation(userInformation);
 			break;
-			
+
 		case DialogRefused:
+			if (tcapDialog.getApplicationContextName() != null) {
+				tcUserAbort.setDialogServiceUserType(DialogServiceUserType.NoReasonGive);
+				tcUserAbort.setApplicationContextName(tcapDialog.getApplicationContextName());
+			}
+			break;
+
 		default:
-			tcUserAbort.setDialogServiceUserType(DialogServiceUserType.NoReasonGive);
-			tcUserAbort.setApplicationContextName(tcapDialog.getApplicationContextName());
 			break;
 		}
 		if (returnMessageOnError)

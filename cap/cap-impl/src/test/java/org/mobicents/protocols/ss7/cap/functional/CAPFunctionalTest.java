@@ -38,6 +38,7 @@ import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAnswerSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageSystemFailure;
@@ -91,6 +92,7 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeDurationChargingResult;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeInformation;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.Tone;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.CAPDialogGprs;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfoMessageType;
@@ -1876,21 +1878,21 @@ public class CAPFunctionalTest extends SccpHarness {
 	}
 
 	/**
-	 * Bad data sending at TC-BEGIN test
+	 * Bad data sending at TC-BEGIN test - no ACN
 	 * 
 	 * 
 	 * TC-BEGIN + no ACN
 	 *   TC-ABORT + BadReceivedData
 	 */
 	@Test(groups = { "functional.flow", "dialog" })
-	public void testBadDataSending() throws Exception {
+	public void testBadDataSendingNoAcn() throws Exception {
 
 		Client client = new Client(stack1, this, peer1Address, peer2Address) {
 
 			public void onDialogUserAbort(CAPDialog capDialog, CAPGeneralAbortReason generalReason, CAPUserAbortReason userReason) {
 				super.onDialogUserAbort(capDialog, generalReason, userReason);
 
-				assertEquals(generalReason, CAPGeneralAbortReason.ACNNotSupported);
+				assertEquals(generalReason, CAPGeneralAbortReason.BadReceivedData);
 				assertNull(userReason);
 			}
 			
@@ -1930,15 +1932,318 @@ public class CAPFunctionalTest extends SccpHarness {
 		count = 0;
 		// Server side events
 		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
-
-		server.capProvider.getCAPServiceCircuitSwitchedCall().deactivate();
 		
-		client.sendBadData();
+		client.sendBadDataNoAcn();
 
 		waitForEnd();
 	
 		client.compareEvents(clientExpectedEvents);
 		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	/**
+	 * TC-CONTINUE from Server after dialogRelease at Client 
+	 * 
+	 * 
+	 * TC-BEGIN + InitialDP
+	 * relaseDialog
+	 *   TC-CONTINUE
+	 * ProviderAbort
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testProviderAbort() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall) capDialog;
+
+			}
+
+			public void onDialogRelease(CAPDialog capDialog) {
+				super.onDialogRelease(capDialog);
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+
+			public void onDialogUserAbort(CAPDialog capDialog, CAPGeneralAbortReason generalReason, CAPUserAbortReason userReason) {
+				super.onDialogUserAbort(capDialog, generalReason, userReason);
+			}
+
+			public void onDialogProviderAbort(CAPDialog capDialog, PAbortCauseType abortCause) {
+				super.onDialogProviderAbort(capDialog, abortCause);
+
+				assertEquals(abortCause, PAbortCauseType.UnrecognizedTxID);
+			}
+
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall)capDialog;
+			}
+		};
+
+		long _DIALOG_RELEASE_DELAY = 100;
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.InitialDpRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.InitialDpRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogProviderAbort, null, count++, stamp + _DIALOG_RELEASE_DELAY);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _DIALOG_RELEASE_DELAY + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendInitialDp(CAPApplicationContext.CapV1_gsmSSF_to_gsmSCF);
+		client.releaseDialog();
+		Thread.sleep(_DIALOG_RELEASE_DELAY);
+		server.sendAccept();
+
+		waitForEnd();
+		
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	/**
+	 * referensedNumber 
+	 * 
+	 * 
+	 * TC-BEGIN + referensedNumber
+	 *   TC-END + referensedNumber
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testReferensedNumber() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			private int dialogSteps = 0;
+
+			public void onDialogAccept(CAPDialog capDialog, CAPGprsReferenceNumber capGprsReferenceNumber) {
+				super.onDialogAccept(capDialog, capGprsReferenceNumber);
+
+				assertEquals((int)capGprsReferenceNumber.getDestinationReference(), 10005);
+				assertEquals((int)capGprsReferenceNumber.getOriginationReference(), 10006);
+			}
+
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				CAPDialogGprs dlg = (CAPDialogGprs)capDialog;
+			}
+
+			public void onDialogRelease(CAPDialog capDialog) {
+				super.onDialogRelease(capDialog);
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			private int dialogSteps = 0;
+
+			public void onDialogRequest(CAPDialog capDialog, CAPGprsReferenceNumber capGprsReferenceNumber) {
+				super.onDialogRequest(capDialog, capGprsReferenceNumber);
+
+				assertEquals((int)capGprsReferenceNumber.getDestinationReference(), 1005);
+				assertEquals((int)capGprsReferenceNumber.getOriginationReference(), 1006);
+
+				dialogSteps = 1;
+			}
+
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				CAPDialogGprs dlg = (CAPDialogGprs)capDialog;
+
+				if (dialogSteps == 1) {
+					dialogSteps = 0;
+
+					try {
+						CAPGprsReferenceNumber capGprsReferenceNumber = this.capParameterFactory.createCAPGprsReferenceNumber(10005, 10006);
+						dlg.setGprsReferenceNumber(capGprsReferenceNumber);
+						dlg.close(false);
+					} catch (CAPException e) {
+						this.error("Error while trying to send/close() Dialog", e);
+					}
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendReferensedNumber();
+
+		waitForEnd();
+		
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	/**
+	 * broken referensedNumber 
+	 * 
+	 * 
+	 * TC-BEGIN + broken referensedNumber
+	 *   TC-ABORT
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testReferensedNumber_BadVal() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			private int dialogSteps = 0;
+
+			public void onDialogUserAbort(CAPDialog capDialog, CAPGeneralAbortReason generalReason, CAPUserAbortReason userReason) {
+				super.onDialogUserAbort(capDialog, generalReason, userReason);
+				
+				assertEquals(generalReason, CAPGeneralAbortReason.BadReceivedData);
+				assertNull(userReason);
+			}
+
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				CAPDialogGprs dlg = (CAPDialogGprs)capDialog;
+			}
+
+			public void onDialogRelease(CAPDialog capDialog) {
+				super.onDialogRelease(capDialog);
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				CAPDialogGprs dlg = (CAPDialogGprs)capDialog;
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createReceivedEvent(EventType.DialogUserAbort, null, count++, (stamp));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+
+		((CAPProviderImplWrapper) server.capProvider).setTestMode(1);
+		client.sendReferensedNumber();
+
+		waitForEnd();
+		
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	/**
+	 * broken referensedNumber 
+	 * 
+	 * 
+	 * TC-BEGIN + broken referensedNumber
+	 *   TC-ABORT
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testMessageUserDataLength() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall) capDialog;
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall) capDialog;
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createReceivedEvent(EventType.DialogUserAbort, null, count++, (stamp));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+
+		client.testMessageUserDataLength();
+
+//		waitForEnd();
+//		
+//		client.compareEvents(clientExpectedEvents);
+//		server.compareEvents(serverExpectedEvents);
 
 	}
 
