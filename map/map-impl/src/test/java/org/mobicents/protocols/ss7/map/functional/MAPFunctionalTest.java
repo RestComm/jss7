@@ -133,6 +133,7 @@ import org.mobicents.protocols.ss7.map.api.smstpdu.SmsSubmitTpdu;
 import org.mobicents.protocols.ss7.map.api.smstpdu.TypeOfNumber;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.TripletListTest;
+import org.mobicents.protocols.ss7.map.service.mobility.imei.CheckImeiRequestImpl;
 import org.mobicents.protocols.ss7.map.service.sms.SmsSignalInfoImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.ProcessUnstructuredSSResponseImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
@@ -4035,6 +4036,100 @@ public class MAPFunctionalTest extends SccpHarness {
 		serverExpectedEvents.add(te);
 		
 		client.sendCheckImei_V2();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+	}
+	
+	/**
+	 * TC-BEGIN + checkImeiRequest_V2
+	 * TC-END + checkImeiResponse_V2
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testCheckImei_Huawei_V2() throws Exception {
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onCheckImeiResponse(CheckImeiResponse ind) {
+				super.onCheckImeiResponse(ind);
+				
+				Assert.assertTrue(ind.getEquipmentStatus().equals(EquipmentStatus.blackListed));
+				Assert.assertNull(ind.getBmuef());
+				Assert.assertNull(ind.getExtensionContainer());
+			};
+		};
+		
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onCheckImeiRequest(CheckImeiRequest ind) {
+				super.onCheckImeiRequest(ind);
+				
+				MAPDialogMobility d = ind.getMAPDialog();
+				
+				Assert.assertTrue(ind.getIMEI().getIMEI().equals("333333334444444"));
+				Assert.assertNull(ind.getRequestedEquipmentInfo());
+				Assert.assertNull(ind.getExtensionContainer());
+				CheckImeiRequestImpl impl = (CheckImeiRequestImpl) ind;
+				Assert.assertTrue(impl.getIMSI().getData().equals("999999998888888"));
+				
+				try {
+					d.addCheckImeiResponse(ind.getInvokeId(), EquipmentStatus.blackListed, null, null);
+				} catch (MAPException e) {
+					this.error("Error while adding CheckImeiResponse_V2", e);
+					fail("Error while adding CheckImeiResponse_V2");
+				}
+			}
+			
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.CheckImeiResp, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending close()", e);
+					fail("Error while sending close()");
+				}
+			}
+		};
+		
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.CheckImei, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.CheckImeiResp, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+		
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.CheckImei, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.CheckImeiResp, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+		
+		client.sendCheckImei_Huawei_V2();
 		waitForEnd();
 		client.compareEvents(clientExpectedEvents);
 		server.compareEvents(serverExpectedEvents);
