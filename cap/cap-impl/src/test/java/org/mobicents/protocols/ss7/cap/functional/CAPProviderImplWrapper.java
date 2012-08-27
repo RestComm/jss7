@@ -22,10 +22,17 @@
 
 package org.mobicents.protocols.ss7.cap.functional;
 
+import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.ss7.cap.CAPProviderImpl;
+import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPServiceBase;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementary;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 
 /**
  * 
@@ -60,21 +67,22 @@ public class CAPProviderImplWrapper extends CAPProviderImpl {
 		this.testMode = testMode;
 	}
 
-//	public void onTCBegin(TCBeginIndication tcBeginIndication) {
-//		ApplicationContextName acn = tcBeginIndication.getApplicationContextName();
-//		Component[] comps = tcBeginIndication.getComponents();
-//
-//		if (this.testMode == 1) {
-//			try {
-//				this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.invalidPDU,
-//						MAPExtensionContainerTest.GetTestExtensionContainer());
-//			} catch (MAPException e) {
-//				loger.error("Error while firing TC-U-ABORT. ", e);
-//			}
-//			return;
-//		}
-//
-//		super.onTCBegin(tcBeginIndication);
-//	}
+	public TCBeginRequest encodeTCBegin(Dialog tcapDialog, ApplicationContextName acn, CAPGprsReferenceNumber gprsReferenceNumber) throws CAPException {
+		return super.encodeTCBegin(tcapDialog, acn, gprsReferenceNumber);
+	}
+	
+	public void onTCBegin(TCBeginIndication tcBeginIndication) {
+		if (this.testMode == 1) {
+			try {
+				byte[] data = tcBeginIndication.getUserInformation().getEncodeType();
+				data[0] = 0;
+			} catch (AsnException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		super.onTCBegin(tcBeginIndication);
+	}
 }
 

@@ -58,11 +58,11 @@ public class IPSSPCapabilitiesTest {
 		IPSSPCapabilitiesImpl elem = new IPSSPCapabilitiesImpl();
 		int tag = ais.readTag();
 		elem.decodeAll(ais);
-		assertTrue(elem.IPRoutingAddressSupported());
-		assertFalse(elem.VoiceBackSupported());
-		assertTrue(elem.VoiceInformationSupportedViaSpeechRecognition());
-		assertFalse(elem.VoiceInformationSupportedViaVoiceRecognition());
-		assertFalse(elem.GenerationOfVoiceAnnouncementsFromTextSupported());
+		assertTrue(elem.getIPRoutingAddressSupported());
+		assertFalse(elem.getVoiceBackSupported());
+		assertTrue(elem.getVoiceInformationSupportedViaSpeechRecognition());
+		assertFalse(elem.getVoiceInformationSupportedViaVoiceRecognition());
+		assertFalse(elem.getGenerationOfVoiceAnnouncementsFromTextSupported());
 		assertNull(elem.getExtraData());
 
 		data = this.getData2();
@@ -70,11 +70,11 @@ public class IPSSPCapabilitiesTest {
 		elem = new IPSSPCapabilitiesImpl();
 		tag = ais.readTag();
 		elem.decodeAll(ais);
-		assertFalse(elem.IPRoutingAddressSupported());
-		assertTrue(elem.VoiceBackSupported());
-		assertFalse(elem.VoiceInformationSupportedViaSpeechRecognition());
-		assertTrue(elem.VoiceInformationSupportedViaVoiceRecognition());
-		assertTrue(elem.GenerationOfVoiceAnnouncementsFromTextSupported());
+		assertFalse(elem.getIPRoutingAddressSupported());
+		assertTrue(elem.getVoiceBackSupported());
+		assertFalse(elem.getVoiceInformationSupportedViaSpeechRecognition());
+		assertTrue(elem.getVoiceInformationSupportedViaVoiceRecognition());
+		assertTrue(elem.getGenerationOfVoiceAnnouncementsFromTextSupported());
 		assertTrue(Arrays.equals(elem.getExtraData(), this.getIntData1()));
 	}
 

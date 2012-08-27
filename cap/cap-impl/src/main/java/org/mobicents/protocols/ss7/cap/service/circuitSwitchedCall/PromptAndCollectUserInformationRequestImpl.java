@@ -254,10 +254,12 @@ public class PromptAndCollectUserInformationRequestImpl extends CircuitSwitchedC
 			if (this.disconnectFromIPForbidden != null)
 				aos.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC, _ID_disconnectFromIPForbidden, this.disconnectFromIPForbidden);
 
-			aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_informationToSend);
-			pos = aos.StartContentDefiniteLength();
-			((InformationToSendImpl) this.informationToSend).encodeAll(aos);
-			aos.FinalizeContent(pos);
+			if (this.informationToSend != null) {
+				aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_informationToSend);
+				pos = aos.StartContentDefiniteLength();
+				((InformationToSendImpl) this.informationToSend).encodeAll(aos);
+				aos.FinalizeContent(pos);
+			}
 
 			if (this.extensions != null)
 				((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);

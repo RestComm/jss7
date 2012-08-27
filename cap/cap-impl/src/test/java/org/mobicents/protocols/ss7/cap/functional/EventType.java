@@ -36,6 +36,9 @@ public enum EventType {
 	ErrorComponent, ProviderErrorComponent, RejectComponent, InvokeTimeout, 
 	
 	// CircuitSwitchedCall EventType
-	InitialDpIndication,
-
+	InitialDpRequest, ApplyChargingReportRequest, ApplyChargingRequest, CallInformationReportRequest, CallInformationRequestRequest, 
+	ConnectRequest, ContinueRequest, EventReportBCSMRequest, RequestReportBCSMEventRequest, ReleaseCallRequest, ActivityTestRequest, ActivityTestResponse,
+	AssistRequestInstructionsRequest, EstablishTemporaryConnectionRequest, DisconnectForwardConnectionRequest, ConnectToResourceRequest,
+	ResetTimerRequest, FurnishChargingInformationRequest, SendChargingInformationRequest, SpecializedResourceReportRequest, 
+	PlayAnnouncementRequest, PromptAndCollectUserInformationRequest, PromptAndCollectUserInformationResponse, CancelRequest
 }
