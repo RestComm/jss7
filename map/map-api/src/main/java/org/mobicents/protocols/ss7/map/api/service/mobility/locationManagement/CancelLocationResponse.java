@@ -41,5 +41,7 @@ CancelLocationRes ::= SEQUENCE {
 public interface CancelLocationResponse extends MobilityMessage {
 
 	public MAPExtensionContainer getExtensionContainer();
+	
+	public long getMapProtocolVersion();
 
 }

@@ -32,6 +32,8 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.SendA
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancelLocationRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancelLocationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationRequest;
@@ -450,6 +452,18 @@ public class EventTestHarness implements MAPDialogListener, MAPServiceSupplement
 		this.logger.debug("onSendRoutingInforForLCSResponse");
 		TestEvent te = TestEvent.createReceivedEvent(EventType.SendRoutingInfoForLCSResp, response, sequence++);
 		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onCancelLocationRequest(CancelLocationRequest request) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCancelLocationResponse(CancelLocationResponse response) {
+		// TODO Auto-generated method stub
+		
 	}
 }
 

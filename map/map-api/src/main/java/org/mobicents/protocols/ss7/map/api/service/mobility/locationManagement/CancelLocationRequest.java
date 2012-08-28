@@ -110,5 +110,7 @@ public interface CancelLocationRequest extends MobilityMessage {
 	public ISDNAddressString getNewVLRNumber();
 
 	public LMSI getNewLmsi();
+	
+	public long getMapProtocolVersion();
 
 }
