@@ -2,6 +2,7 @@
 <project name="ss7.release.sf" default="package" basedir=".">
 
 	<!-- Components Versions -->
+	<property name="JAVA_HOME" value="/home/lasith/dev/jdk1.7.0_05" />
 	<property name="release.version" value="2.0.0-SNAPSHOT" />
 
 	<property name="ss7.version" value="2.0.0-SNAPSHOT" />
@@ -26,7 +27,7 @@
 	<property name="release.name" value="SNAPSHOT" />
 
 	<property environment="sys" />
-	<condition property="mvn.executable" value="${sys.M2_HOME}\bin\mvn.bat" else="mvn">
+	<condition property="mvn.executable" value="${sys.M2_HOME}\bin\mvn.bat" else="/home/lasith/dev/apache-maven-2.2.1/bin/mvn">
 		<os family="windows" />
 	</condition>
 
@@ -37,6 +38,7 @@
 	</taskdef>
 
 	<target name="init" >
+		<echo message="Arptel build starts.."/> 
 	    <echo message="Java Version: ${java.version}"/> 
 	    <echo message="Java home: ${java.home}"/> 
 	    <fail message="Unsupported Java version: ${java.version}. Make sure that the version of the Java compiler is 1.7 (7.0) or greater."> 
@@ -56,44 +58,89 @@
 	<target name="package" description="Builds builds binary package." depends="init,clean,checkout,zip.src,build,notes,copy,zip.binary" />
 	<target name="clean">
 		<echo>Cleaning checkout directory</echo>
-		<delete dir="${ant.file.ss7.release.sf}/../${checkout.basedir}" verbose="false" />
+		<delete dir="${ant.file.ss7.release.sf}/../${checkout.basedir}/ss7" verbose="false" />
 		<echo>Cleaning work directory</echo>
 		<delete dir="${zip.dir}" verbose="false" />
 		<echo>Cleaning upload directory</echo>
 		<delete dir="${zip.file.destination.dir}" verbose="false" />
 	</target>
 
-
-
 	<target name="checkout-sources">
-		<echo>Checking out sources</echo>
-		 <mkdir dir="${checkout.basedir}"/>
+		<echo>Checking out sources - Arptel</echo>
+	<!--	<mkdir dir="${checkout.basedir}"/> -->
+		<mkdir dir="${checkout.basedir}/ss7"/>
+			<!--	<mkdir dir="${checkout.basedir}/asn"/>
+		<mkdir dir="${checkout.basedir}/commons"/>
+		<mkdir dir="${checkout.basedir}/stream"/>
+		<mkdir dir="${checkout.basedir}/sctp"/>
+				
+		<copy todir="${checkout.basedir}/sctp" failonerror="${failoncopy}">
+			<fileset dir="${basedir}/../../lasithwaruna-sctp">
+				<include name="**" />
+			</fileset>
+		</copy>
+		
+		<copy todir="${checkout.basedir}/asn" failonerror="${failoncopy}">
+			<fileset dir="${basedir}/../../lasithwaruna-jasn">
+				<include name="**" />
+			</fileset>
+		</copy>
+		
+		<copy todir="${checkout.basedir}/commons" failonerror="${failoncopy}">
+			<fileset dir="${basedir}/../../commons">
+				<include name="**" />
+			</fileset>
+		</copy>
+		
+		<copy todir="${checkout.basedir}/stream" failonerror="${failoncopy}">
+			<fileset dir="${basedir}/../../stream">
+				<include name="**" />
+			</fileset>
+		</copy>
+		-->
+		<copy todir="${checkout.basedir}/ss7" failonerror="${failoncopy}">
+			<fileset dir="${basedir}/../">
+				<include name="**" />
+			</fileset>
+		</copy>
+		
+	</target>
+
+	<target name="checkout-sources-old">
+		<echo>Checking out sources </echo>
+		<mkdir dir="${checkout.basedir}"/>
 		<exec executable="${mvn.executable}" dir="${ant.file.mobicents.release}/../">
 			<arg line="validate -P checkout -Dcheckout.dir=${checkout.basedir}" />
 		</exec>
 	</target>
-
+				
         <target name="build-sources-commons">
-                <exec executable="${mvn.executable}" dir="${checkout.basedir}/commons">
+        	<echo> build sources of commons is ignored by lasith </echo>
+        	
+             <!--   <exec executable="${mvn.executable}" dir="${checkout.basedir}/commons">
                         <arg line="install -P release,set-svn-revision -Dmaven.test.skip=${test.skip} -Drelease.name=${release.name}" />
-                </exec>
+                </exec>   -->
         </target>
         
         <target name="build-sources-sctp">
+        	<echo> build sources of sctp is ignored by lasith </echo>
                 <exec executable="${mvn.executable}" dir="${checkout.basedir}/sctp">
                         <arg line="install -P release,set-svn-revision -Dmaven.test.skip=${test.skip} -Drelease.name=${release.name}" />
-                </exec>
+                </exec>  
         </target>
 	<target name="build-sources-asn">
+		
+		<echo> build sources of build-sources-asn is ignored by lasith </echo>
 		<exec executable="${mvn.executable}" dir="${checkout.basedir}/asn">
 			<arg line="install -Prelease,set-svn-revision -Dmaven.test.skip=${test.skip} -Drelease.name=${release.name}" />
-		</exec>
+		</exec>  
 	</target>
 
 	<target name="build-sources-stream">
+	<echo> build sources of stream is ignored by lasith </echo>
 		<exec executable="${mvn.executable}" dir="${checkout.basedir}/stream">
 			<arg line="install -P release,set-svn-revision -Dmaven.test.skip=${test.skip} -Drelease.name=${release.name}" />
-		</exec>
+		</exec>  
 	</target>
 	<target name="build-sources-ss7">
 		<echo>Build SS7</echo>
