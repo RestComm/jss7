@@ -79,6 +79,7 @@ public class CheckImeiRequestTest {
 		assertTrue(checkImeiImpl.getIMEI().getIMEI().equals("358091016853550"));
 		assertTrue(checkImeiImpl.getRequestedEquipmentInfo().getEquipmentStatus());
 		assertFalse(checkImeiImpl.getRequestedEquipmentInfo().getBmuef());
+		assertNull(checkImeiImpl.getIMSI());
 		
 		// Testing version 3 Full
 		rawData = getEncodedDataV3Full();
@@ -94,6 +95,7 @@ public class CheckImeiRequestTest {
 		assertTrue(checkImeiImpl.getRequestedEquipmentInfo().getEquipmentStatus());
 		assertFalse(checkImeiImpl.getRequestedEquipmentInfo().getBmuef());
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(checkImeiImpl.getExtensionContainer()));
+		assertNull(checkImeiImpl.getIMSI());
 		
 		// Testing version 1 and 2
 		rawData = getEncodedDataV2();
@@ -105,6 +107,7 @@ public class CheckImeiRequestTest {
 		checkImeiImpl.decodeAll(asnIS);
 		
 		assertTrue(checkImeiImpl.getIMEI().getIMEI().equals("358091016853550"));
+		assertNull(checkImeiImpl.getIMSI());
 		
 		// Testing version 1 and 2 with Huawei trace
 		rawData = getEncodedDataV2_Huawei();

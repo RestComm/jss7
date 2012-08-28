@@ -137,6 +137,7 @@ public class CheckImeiRequestImpl extends MobilityMessageImpl implements CheckIm
 		this.imei = null;
 		this.requestedEquipmentInfo = null;
 		this.extensionContainer = null;
+		this.imsi = null;
 		
 		if (mapProtocolVersion >= 3) {
 			AsnInputStream ais = ansIS.readSequenceStreamData(length);
@@ -190,8 +191,7 @@ public class CheckImeiRequestImpl extends MobilityMessageImpl implements CheckIm
 						+ num, MAPParsingComponentExceptionReason.MistypedParameter);
 		} else {
 			this.imei = new IMEIImpl(); 
-			// Because Huawei package is not a SEQUENCE, imei should read just 8 pos.
-			((IMEIImpl)this.imei).decodeData(ansIS, 8);
+			((IMEIImpl)this.imei).decodeData(ansIS, length);
 			
 			// To decode IMSI in Huawei package
 			if (ansIS.available() != 0) {
@@ -212,7 +212,6 @@ public class CheckImeiRequestImpl extends MobilityMessageImpl implements CheckIm
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-
 	}
 
 	@Override

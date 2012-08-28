@@ -4042,7 +4042,7 @@ public class MAPFunctionalTest extends SccpHarness {
 	}
 	
 	/**
-	 * TC-BEGIN + checkImeiRequest_V2
+	 * TC-BEGIN + checkImeiRequest_V2_Huawei_extention_test
 	 * TC-END + checkImeiResponse_V2
 	 */
 	@Test(groups = { "functional.flow", "dialog" })
