@@ -914,6 +914,15 @@ public class IPSPClientFSMTest {
 			
 		}
 
+		/* (non-Javadoc)
+		 * @see org.mobicents.protocols.api.Management#isStarted()
+		 */
+		@Override
+		public boolean isStarted() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
 	}
 
 	class Mtp3UserPartListenerimpl implements Mtp3UserPartListener {

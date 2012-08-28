@@ -26,7 +26,7 @@ package org.mobicents.protocols.ss7.mtp;
  * 
  */
 public enum RoutingLabelFormat {
-	ANSI_Sls8Bit("ANSI", 8), ANSI_Sls5Bit("ANSI", 5), ITU("ITU", 4), Japan_TTC_DDI("Japan_TTC_DDI", 8), China("China", 8), Japan_NTT("Japan_NTT", 8);
+	ANSI_Sls8Bit("ANSI_Sls8Bit", 8), ANSI_Sls5Bit("ANSI_Sls5Bit", 5), ITU("ITU", 4), Japan_TTC_DDI("Japan_TTC_DDI", 8), China("China", 8), Japan_NTT("Japan_NTT", 8);
 
 	private final String format;
 	private final int slsLengthInBits;

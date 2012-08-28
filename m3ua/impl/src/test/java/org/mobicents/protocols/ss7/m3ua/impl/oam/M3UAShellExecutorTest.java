@@ -510,5 +510,14 @@ public class M3UAShellExecutorTest {
 			
 		}
 
+		/* (non-Javadoc)
+		 * @see org.mobicents.protocols.api.Management#isStarted()
+		 */
+		@Override
+		public boolean isStarted() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
 	}
 }
