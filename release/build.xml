@@ -38,7 +38,7 @@
 	</taskdef>
 
 	<target name="init" >
-		<echo message="Arptel build starts.."/> 
+		<echo message="Lasith build starts.."/> 
 	    <echo message="Java Version: ${java.version}"/> 
 	    <echo message="Java home: ${java.home}"/> 
 	    <fail message="Unsupported Java version: ${java.version}. Make sure that the version of the Java compiler is 1.7 (7.0) or greater."> 
@@ -66,7 +66,7 @@
 	</target>
 
 	<target name="checkout-sources">
-		<echo>Checking out sources - Arptel</echo>
+		<echo>Checking out sources - Lasith</echo>
 	<!--	<mkdir dir="${checkout.basedir}"/> -->
 		<mkdir dir="${checkout.basedir}/ss7"/>
 			<!--	<mkdir dir="${checkout.basedir}/asn"/>
@@ -124,23 +124,23 @@
         
         <target name="build-sources-sctp">
         	<echo> build sources of sctp is ignored by lasith </echo>
-                <exec executable="${mvn.executable}" dir="${checkout.basedir}/sctp">
+            <!--    <exec executable="${mvn.executable}" dir="${checkout.basedir}/sctp">
                         <arg line="install -P release,set-svn-revision -Dmaven.test.skip=${test.skip} -Drelease.name=${release.name}" />
-                </exec>  
+                </exec>   -->
         </target>
 	<target name="build-sources-asn">
 		
 		<echo> build sources of build-sources-asn is ignored by lasith </echo>
-		<exec executable="${mvn.executable}" dir="${checkout.basedir}/asn">
+		<!-- <exec executable="${mvn.executable}" dir="${checkout.basedir}/asn">
 			<arg line="install -Prelease,set-svn-revision -Dmaven.test.skip=${test.skip} -Drelease.name=${release.name}" />
-		</exec>  
+		</exec>  --> 
 	</target>
 
 	<target name="build-sources-stream">
 	<echo> build sources of stream is ignored by lasith </echo>
-		<exec executable="${mvn.executable}" dir="${checkout.basedir}/stream">
+		<!-- <exec executable="${mvn.executable}" dir="${checkout.basedir}/stream">
 			<arg line="install -P release,set-svn-revision -Dmaven.test.skip=${test.skip} -Drelease.name=${release.name}" />
-		</exec>  
+		</exec>   -->
 	</target>
 	<target name="build-sources-ss7">
 		<echo>Build SS7</echo>
