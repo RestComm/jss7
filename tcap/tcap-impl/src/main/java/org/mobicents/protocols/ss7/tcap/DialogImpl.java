@@ -103,6 +103,8 @@ public class DialogImpl implements Dialog {
 	
 	private static final Logger logger = Logger.getLogger(DialogImpl.class);
 	
+	private Object userObject;
+	
 	// lock... ech
 	protected ReentrantLock dialogLock = new ReentrantLock();
 	
@@ -1761,6 +1763,14 @@ public class DialogImpl implements Dialog {
 		return this.state;
 	}
 
+	public Object getUserObject() {
+		return this.userObject;
+	}
+
+	public void setUserObject(Object userObject) {
+		this.userObject = userObject;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
