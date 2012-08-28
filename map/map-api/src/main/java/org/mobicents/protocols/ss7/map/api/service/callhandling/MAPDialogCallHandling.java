@@ -32,9 +32,11 @@ import org.mobicents.protocols.ss7.map.api.primitives.ExtExternalSignalInfo;
 import org.mobicents.protocols.ss7.map.api.primitives.ExternalSignalInfo;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NAEAPreferredCI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ISTSupportIndicator;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PagingArea;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.NumberPortabilityStatus;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
@@ -98,4 +100,29 @@ public interface MAPDialogCallHandling extends MAPDialog {
 			ExtBasicServiceCode basicService2, AllowedServices allowedServices,
 			UnavailabilityCause unavailabilityCause, boolean releaseResourcesSupported,
 			ExternalSignalInfo gsmBearerCapability) throws MAPException;
+	
+	
+	public Long addProvideRoamingNumberRequest(int customInvokeTimeout,
+			long mapProtocolVersion, IMSI imsi, ISDNAddressString mscNumber,
+			ISDNAddressString msisdn, LMSI lmsi,
+			ExternalSignalInfo gsmBearerCapability,
+			ExternalSignalInfo networkSignalInfo,
+			boolean suppressionOfAnnouncement, ISDNAddressString gmscAddress,
+			CallReferenceNumber callReferenceNumber, boolean orInterrogation,
+			MAPExtensionContainer extensionContainer,
+			AlertingPattern alertingPattern, boolean ccbsCall,
+			SupportedCamelPhases supportedCamelPhasesInInterrogatingNode,
+			ExtExternalSignalInfo additionalSignalInfo,
+			boolean orNotSupportedInGMSC, boolean prePagingSupported,
+			boolean longFTNSupported, boolean suppressVtCsi,
+			OfferedCamel4CSIs offeredCamel4CSIsInInterrogatingNode,
+			boolean mtRoamingRetrySupported, PagingArea pagingArea,
+			EMLPPPriority callPriority, boolean mtrfIndicator,
+			ISDNAddressString oldMSCNumber) throws MAPException;
+
+	public void addProvideRoamingNumberResponse(long invokeId,
+			long mapProtocolVersion, ISDNAddressString roamingNumber,
+			MAPExtensionContainer extensionContainer,
+			boolean releaseResourcesSupported, ISDNAddressString vmscAddress)
+			throws MAPException;
 }
