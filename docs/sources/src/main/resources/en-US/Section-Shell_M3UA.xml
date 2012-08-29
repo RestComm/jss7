@@ -500,7 +500,7 @@ Assigned to :
                         id="shell_m3ua_asp_side_create">
                         <title>Create ASP</title>
                         <para>Application Server Process (ASP) can be created by issuing command with following structure:</para>
-                        <programlisting>m3ua asp create &lt;asp-name&gt; &lt;sctp-association&gt;</programlisting>
+                        <programlisting>m3ua asp create &lt;asp-name&gt; &lt;sctp-association&gt; aspid &lt;aspid&gt;</programlisting>
                         <para>Where:</para>
                         <variablelist>
                                 <varlistentry>
@@ -513,6 +513,13 @@ Assigned to :
                                         <term>sctp-association</term>
                                         <listitem>
                                                 <para>name of SCTP Association</para>
+                                        </listitem>
+                                </varlistentry>   
+ 				 <varlistentry>
+                                        <term>aspid</term>
+                                        <listitem>
+                                                <para>Identifier for this newly created Application Server Process. If this is not passed, next available aspid will be used.
+</para>
                                         </listitem>
                                 </varlistentry>                                                         
                         </variablelist>
