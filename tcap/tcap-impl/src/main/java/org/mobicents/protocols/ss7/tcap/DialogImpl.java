@@ -103,6 +103,8 @@ public class DialogImpl implements Dialog {
 	
 	private static final Logger logger = Logger.getLogger(DialogImpl.class);
 	
+	private Object userObject;
+	
 	// lock... ech
 	protected ReentrantLock dialogLock = new ReentrantLock();
 	
@@ -701,7 +703,8 @@ public class DialogImpl implements Dialog {
 			if (this.state == TRPseudoState.InitialReceived || this.state == TRPseudoState.InitialSent || this.state == TRPseudoState.Active) {
 				// allowed
 				DialogPortion dp = null;
-				if (event.getUserInformation() != null) { // User information can be absent in TCAP V1
+				if (event.getUserInformation() != null || event.getDialogServiceUserType() != null) { 
+					// User information can be absent in TCAP V1
 
 					dp = TcapFactory.createDialogPortion();
 					dp.setUnidirectional(false);
@@ -1760,6 +1763,14 @@ public class DialogImpl implements Dialog {
 		return this.state;
 	}
 
+	public Object getUserObject() {
+		return this.userObject;
+	}
+
+	public void setUserObject(Object userObject) {
+		this.userObject = userObject;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

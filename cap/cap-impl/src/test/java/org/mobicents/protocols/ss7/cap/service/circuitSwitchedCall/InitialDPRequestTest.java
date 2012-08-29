@@ -204,11 +204,11 @@ public class InitialDPRequestTest {
 		assertEquals(elem.getInitialDPArgExtension().getGmscAddress().getNumberingPlan(), NumberingPlan.ISDN);
 		assertTrue(elem.getInitialDPArgExtension().getGmscAddress().getAddress().equals("2207750007"));
 
-		assertTrue(elem.getIPSSPCapabilities().IPRoutingAddressSupported());
-		assertTrue(elem.getIPSSPCapabilities().VoiceBackSupported());
-		assertFalse(elem.getIPSSPCapabilities().VoiceInformationSupportedViaSpeechRecognition());
-		assertFalse(elem.getIPSSPCapabilities().VoiceInformationSupportedViaVoiceRecognition());
-		assertTrue(elem.getIPSSPCapabilities().GenerationOfVoiceAnnouncementsFromTextSupported());
+		assertTrue(elem.getIPSSPCapabilities().getIPRoutingAddressSupported());
+		assertTrue(elem.getIPSSPCapabilities().getVoiceBackSupported());
+		assertFalse(elem.getIPSSPCapabilities().getVoiceInformationSupportedViaSpeechRecognition());
+		assertFalse(elem.getIPSSPCapabilities().getVoiceInformationSupportedViaVoiceRecognition());
+		assertTrue(elem.getIPSSPCapabilities().getGenerationOfVoiceAnnouncementsFromTextSupported());
 		assertNull(elem.getIPSSPCapabilities().getExtraData());
 		assertTrue(Arrays.equals(elem.getLocationNumber().getData(), getLocationNumber()));
 		assertTrue(CAPExtensionsTest.checkTestCAPExtensions(elem.getExtensions()));

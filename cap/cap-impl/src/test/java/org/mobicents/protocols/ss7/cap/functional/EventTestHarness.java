@@ -71,15 +71,21 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
  *
  */
 public class EventTestHarness implements CAPDialogListener, CAPServiceCircuitSwitchedCallListener {
-	
+
 	private Logger logger = null;
 
 	protected List<TestEvent> observerdEvents = new ArrayList<TestEvent>();
 	protected int sequence = 0;
+	protected boolean invokeTimeoutSuppressed = false;
 
 	EventTestHarness(Logger logger){
 		this.logger = logger;
 	}
+
+	public void suppressInvokeTimeout() {
+		invokeTimeoutSuppressed = true;
+	}
+
 	public void compareEvents(List<TestEvent> expectedEvents) {
 
 		if (expectedEvents.size() != this.observerdEvents.size()) {
@@ -189,8 +195,10 @@ public class EventTestHarness implements CAPDialogListener, CAPServiceCircuitSwi
 	@Override
 	public void onInvokeTimeout(CAPDialog capDialog, Long invokeId) {
 		this.logger.debug("onInvokeTimeout");
-		TestEvent te = TestEvent.createReceivedEvent(EventType.InvokeTimeout, capDialog, sequence++);
-		this.observerdEvents.add(te);
+		if (!invokeTimeoutSuppressed) {
+			TestEvent te = TestEvent.createReceivedEvent(EventType.InvokeTimeout, capDialog, sequence++);
+			this.observerdEvents.add(te);
+		}
 	}
 
 	@Override
@@ -209,146 +217,169 @@ public class EventTestHarness implements CAPDialogListener, CAPServiceCircuitSwi
 	@Override
 	public void onInitialDPRequest(InitialDPRequest ind) {
 		this.logger.debug("onInitialDPRequestIndication");
-		TestEvent te = TestEvent.createReceivedEvent(EventType.InitialDpIndication, ind, sequence++);
+		TestEvent te = TestEvent.createReceivedEvent(EventType.InitialDpRequest, ind, sequence++);
 		this.observerdEvents.add(te);
 	}
 
 	@Override
 	public void onRequestReportBCSMEventRequest(RequestReportBCSMEventRequest ind) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("onRequestReportBCSMEventRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.RequestReportBCSMEventRequest, ind, sequence++);
+		this.observerdEvents.add(te);
 	}
 
 	@Override
 	public void onApplyChargingRequest(ApplyChargingRequest ind) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("ApplyChargingRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.ApplyChargingRequest, ind, sequence++);
+		this.observerdEvents.add(te);
 	}
 
 	@Override
 	public void onEventReportBCSMRequest(EventReportBCSMRequest ind) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("EventReportBCSMRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.EventReportBCSMRequest, ind, sequence++);
+		this.observerdEvents.add(te);
 	}
 
 	@Override
 	public void onContinueRequest(ContinueRequest ind) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("ContinueRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.ContinueRequest, ind, sequence++);
+		this.observerdEvents.add(te);
 	}
 
 	@Override
 	public void onApplyChargingReportRequest(ApplyChargingReportRequest ind) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("ApplyChargingReportRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.ApplyChargingReportRequest, ind, sequence++);
+		this.observerdEvents.add(te);
 	}
 
 	@Override
 	public void onReleaseCallRequest(ReleaseCallRequest ind) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("ReleaseCallRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.ReleaseCallRequest, ind, sequence++);
+		this.observerdEvents.add(te);
 	}
 
 	@Override
 	public void onConnectRequest(ConnectRequest ind) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("ConnectRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.ConnectRequest, ind, sequence++);
+		this.observerdEvents.add(te);
 	}
 
 	@Override
 	public void onCallInformationRequestRequest(CallInformationRequestRequest ind) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("CallInformationRequestRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.CallInformationRequestRequest, ind, sequence++);
+		this.observerdEvents.add(te);
 	}
 
 	@Override
 	public void onCallInformationReportRequest(CallInformationReportRequest ind) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("CallInformationReportRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.CallInformationReportRequest, ind, sequence++);
+		this.observerdEvents.add(te);
 	}
 
 	@Override
 	public void onActivityTestRequest(ActivityTestRequest ind) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("ActivityTestRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.ActivityTestRequest, ind, sequence++);
+		this.observerdEvents.add(te);
 	}
 
 	@Override
 	public void onActivityTestResponse(ActivityTestResponse ind) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("ActivityTestResponse");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.ActivityTestResponse, ind, sequence++);
+		this.observerdEvents.add(te);
 	}
 
 	@Override
 	public void onAssistRequestInstructionsRequest(AssistRequestInstructionsRequest ind) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("AssistRequestInstructionsRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.AssistRequestInstructionsRequest, ind, sequence++);
+		this.observerdEvents.add(te);
 	}
 
 	@Override
 	public void onEstablishTemporaryConnectionRequest(EstablishTemporaryConnectionRequest ind) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("EstablishTemporaryConnectionRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.EstablishTemporaryConnectionRequest, ind, sequence++);
+		this.observerdEvents.add(te);
 	}
 
 	@Override
 	public void onDisconnectForwardConnectionRequest(DisconnectForwardConnectionRequest ind) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("DisconnectForwardConnectionRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.DisconnectForwardConnectionRequest, ind, sequence++);
+		this.observerdEvents.add(te);
 	}
 
 	@Override
 	public void onConnectToResourceRequest(ConnectToResourceRequest ind) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("ConnectToResourceRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.ConnectToResourceRequest, ind, sequence++);
+		this.observerdEvents.add(te);
 	}
 
 	@Override
 	public void onResetTimerRequest(ResetTimerRequest ind) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("ResetTimerRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.ResetTimerRequest, ind, sequence++);
+		this.observerdEvents.add(te);
 	}
 
 	@Override
 	public void onFurnishChargingInformationRequest(FurnishChargingInformationRequest ind) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("FurnishChargingInformationRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.FurnishChargingInformationRequest, ind, sequence++);
+		this.observerdEvents.add(te);
 	}
 
 	@Override
 	public void onSendChargingInformationRequest(SendChargingInformationRequest ind) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("SendChargingInformationRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.SendChargingInformationRequest, ind, sequence++);
+		this.observerdEvents.add(te);
 	}
 
 	@Override
 	public void onSpecializedResourceReportRequest(SpecializedResourceReportRequest ind) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("SpecializedResourceReportRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.SpecializedResourceReportRequest, ind, sequence++);
+		this.observerdEvents.add(te);
 	}
 
 	@Override
 	public void onPlayAnnouncementRequest(PlayAnnouncementRequest ind) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("PlayAnnouncementRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.PlayAnnouncementRequest, ind, sequence++);
+		this.observerdEvents.add(te);
 	}
 
 	@Override
 	public void onPromptAndCollectUserInformationRequest(PromptAndCollectUserInformationRequest ind) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("PromptAndCollectUserInformationRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.PromptAndCollectUserInformationRequest, ind, sequence++);
+		this.observerdEvents.add(te);
 	}
 
 	@Override
 	public void onPromptAndCollectUserInformationResponse(PromptAndCollectUserInformationResponse ind) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("PromptAndCollectUserInformationResponse");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.PromptAndCollectUserInformationResponse, ind, sequence++);
+		this.observerdEvents.add(te);
 	}
 
 	@Override
 	public void onCancelRequest(CancelRequest ind) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("CancelRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.CancelRequest, ind, sequence++);
+		this.observerdEvents.add(te);
 	}
 
 }

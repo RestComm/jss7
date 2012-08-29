@@ -132,6 +132,11 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OfferedCamel4Functionalities;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
+import org.mobicents.protocols.ss7.tcap.asn.comp.GeneralProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.InvokeProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnErrorProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
 
 /**
  * 
@@ -293,6 +298,11 @@ public interface CAPParameterFactory {
 			Boolean voiceInformation, Boolean voiceBack);
 	public CollectedInfo createCollectedInfo(CollectedDigits collectedDigits);
 	public CallSegmentToCancel createCallSegmentToCancel(Integer invokeID, Integer callSegmentID);
+
+	public Problem createProblemGeneral(GeneralProblemType prob);
+	public Problem createProblemInvoke(InvokeProblemType prob);
+	public Problem createProblemResult(ReturnResultProblemType prob);
+	public Problem createProblemError(ReturnErrorProblemType prob);
 
 }
 

@@ -74,8 +74,6 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 public abstract class MAPDialogImpl implements MAPDialog {
 	private static final Logger logger = Logger.getLogger(MAPDialogImpl.class);
 
-	private Object userObject;
-
 	protected Dialog tcapDialog = null;
 	protected MAPProviderImpl mapProviderImpl = null;
 	protected MAPServiceBase mapService = null;
@@ -421,11 +419,11 @@ public abstract class MAPDialogImpl implements MAPDialog {
 	}
 
 	public Object getUserObject() {
-		return this.userObject;
+		return this.tcapDialog.getUserObject();
 	}
 
 	public void setUserObject(Object userObject) {
-		this.userObject = userObject;
+		this.tcapDialog.setUserObject(userObject);
 	}
 
 	public int getMaxUserDataLength() {
