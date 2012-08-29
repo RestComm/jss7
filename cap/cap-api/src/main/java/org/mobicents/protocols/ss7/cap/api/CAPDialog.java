@@ -26,7 +26,9 @@ import org.mobicents.protocols.ss7.cap.api.dialog.CAPDialogState;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
+import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.api.MessageType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
@@ -92,6 +94,15 @@ public interface CAPDialog {
 
 	public CAPGprsReferenceNumber getGprsReferenceNumber();
 
+	/**
+	 * In events for processing incoming messages this methods returns 
+	 * a message type of TCAP message that carries incoming messages
+	 * In other cases this method returns null
+	 * 
+	 * @return
+	 */
+	public MessageType getTCAPMessageType();
+
 	public void release();
 
 	/**
@@ -111,7 +122,36 @@ public interface CAPDialog {
 	 *            CAPDialog and not sent yet, will not be sent to peer.
 	 */
 	public void close(boolean prearrangedEnd) throws CAPException;
-	
+
+	/**
+	 * This method makes the same as send() method.
+	 * But when invoking it from events of parsing incoming components
+	 * real sending will occur only when all incoming components events 
+	 * and onDialogDelimiter() or onDialogClose() would be processed 
+	 * 
+	 * If you are receiving several primitives you can invoke sendDelayed()
+	 * in several processing components events - the result will be sent after
+	 * onDialogDelimiter() in a single TC-CONTINUE message
+	 */
+	public void sendDelayed() throws MAPException;
+
+	/**
+	 * This method makes the same as close() method.
+	 * But when invoking it from events of parsing incoming components
+	 * real sending and dialog closing will occur only when all incoming components events 
+	 * and onDialogDelimiter() or onDialogClose() would be processed 
+	 * 
+	 * If you are receiving several primitives you can invoke closeDelayed()
+	 * in several processing components events - the result will be sent 
+	 * and the dialog will be closed after onDialogDelimiter() in a single TC-END message
+	 * 
+	 * If both of sendDelayed() and closeDelayed() have been invoked
+	 * TC-END will be issued and the dialog will be closed
+	 * If sendDelayed() or closeDelayed() were invoked, TC-CONTINUE/TC-END were not sent
+	 * and abort() or release() are invoked - no TC-CONTINUE/TC-END messages will be sent
+	 */
+	public void closeDelayed(boolean prearrangedEnd) throws MAPException;
+
 	/**
 	 * Sends TC_U_ABORT Service Request with an abort reason.
 	 * 
