@@ -18,6 +18,11 @@ MTP2/3 support on-board and hence lower processing load on server hosting &THIS.
 		<para>
 Since &THIS.PLATFORM; jSS7 is Java based, it is cross-platform and can be installed and used on any Operating System that supports Java. The Open Source Software gives you the flexibility to understand the readily available source code and customise the product for your Enterprise needs. 
 		</para>
+
+
+	<important>
+       		<para>Spaces were introduced in some tables and code listings to ensure proper page render.</para>
+	</important>
     </section>
     
     
@@ -25,11 +30,6 @@ Since &THIS.PLATFORM; jSS7 is Java based, it is cross-platform and can be instal
 	<title>Introduction
 		to SS7
 	</title>
-	       		<!-- TODO this should be placed elsewhere -->
-
-	<important>
-       		<para>Spaces were introduced in some tables and code listings to ensure proper page render.</para>
-	</important>
 	
 	  <section id="ss7_overview">
 	  <title>SS7 Overview</title>
@@ -90,7 +90,7 @@ Since &THIS.PLATFORM; jSS7 is Java based, it is cross-platform and can be instal
 	</mediaobject>	
 
 	</section>
-	<section id="tdm">
+	<!--<section id="tdm">
 		<title>Time Division Multiplexing</title>
 		<para>
 			In circuit switched networks such as the Public Switched Telephone
@@ -116,7 +116,7 @@ Since &THIS.PLATFORM; jSS7 is Java based, it is cross-platform and can be instal
 			immediate lower order are combined, creating multiplexes with a
 			bandwidth of n x 64 kbit/s, where n = 120, 480, 1920, etc.
 		</para>
-	</section>
+	</section>-->
 	</section> <!-- End of Introduction to SS7 section -->
 
 </chapter>
