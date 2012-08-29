@@ -40,6 +40,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.errors.MAPErrorMessageImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.api.MessageType;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
@@ -93,7 +94,9 @@ public abstract class MAPDialogImpl implements MAPDialog {
 	protected IMSI eriImsi;
 	protected AddressString eriVlrNo;
 
-	boolean returnMessageOnError = false;
+	private boolean returnMessageOnError = false;
+	protected MessageType tcapMessageType;
+	protected DelayedAreaState delayedAreaState;
 
 	protected MAPDialogImpl(MAPApplicationContext appCntx, Dialog tcapDialog, MAPProviderImpl mapProviderImpl,
 			MAPServiceBase mapService, AddressString origReference, AddressString destReference) {
@@ -128,6 +131,10 @@ public abstract class MAPDialogImpl implements MAPDialog {
     public SccpAddress getRemoteAddress(){
     	return this.tcapDialog.getRemoteAddress();
     }
+
+	public MessageType getTCAPMessageType() {
+		return tcapMessageType;
+	}
 
 	public void keepAlive() {
 		this.tcapDialog.keepAlive();
@@ -251,6 +258,30 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		}
 	}
 
+	@Override
+	public void closeDelayed(boolean prearrangedEnd) throws MAPException {
+		if (this.delayedAreaState == null) {
+			this.close(prearrangedEnd);
+		} else {
+			if (prearrangedEnd) {
+				switch (this.delayedAreaState) {
+				case No:
+				case Continue:
+				case End:
+					this.delayedAreaState = MAPDialogImpl.DelayedAreaState.PrearrangedEnd;
+					break;
+				}
+			} else {
+				switch (this.delayedAreaState) {
+				case No:
+				case Continue:
+					this.delayedAreaState = MAPDialogImpl.DelayedAreaState.End;
+					break;
+				}
+			}
+		}
+	}
+
 	public void send() throws MAPException {
 
 		synchronized (this) {
@@ -293,6 +324,19 @@ public abstract class MAPDialogImpl implements MAPDialog {
 			case Expunged: // dialog has been terminated on TC level, cant send
 				throw new MAPException(
 						"Dialog has been terminated, can not send primitives!");
+			}
+		}
+	}
+
+	@Override
+	public void sendDelayed() throws MAPException {
+		if (this.delayedAreaState == null) {
+			this.send();
+		} else {
+			switch (this.delayedAreaState) {
+			case No:
+				this.delayedAreaState = MAPDialogImpl.DelayedAreaState.Continue;
+				break;
 			}
 		}
 	}
@@ -511,6 +555,10 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		this.eriStyle = true;
 		this.eriImsi = imsi;
 		this.eriVlrNo = vlrNo;
+	}
+
+	protected enum DelayedAreaState {
+		No, Continue, End, PrearrangedEnd;
 	}
 }
 

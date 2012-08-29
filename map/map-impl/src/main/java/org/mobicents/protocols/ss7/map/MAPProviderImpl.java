@@ -83,6 +83,7 @@ import org.mobicents.protocols.ss7.map.service.oam.MAPServiceOamImpl;
 import org.mobicents.protocols.ss7.map.service.pdpContextActivation.MAPServicePdpContextActivationImpl;
 import org.mobicents.protocols.ss7.map.service.sms.MAPServiceSmsImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.MAPServiceSupplementaryImpl;
+import org.mobicents.protocols.ss7.tcap.api.MessageType;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.TCListener;
@@ -594,6 +595,9 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 			mapDialogImpl.setState(MAPDialogState.INITIAL_RECEIVED);
 
+			mapDialogImpl.delayedAreaState = MAPDialogImpl.DelayedAreaState.No;
+			mapDialogImpl.tcapMessageType = MessageType.Begin;
+
 			if (eriStyle) {
 				this.deliverDialogRequestEri(mapDialogImpl, destReference, origReference, eriImsi, eriVlrNo);
 			} else {
@@ -609,7 +613,31 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			}
 
 			this.deliverDialogDelimiter(mapDialogImpl);
+
+			finishComponentProcessingState(mapDialogImpl);
 		}
+	}
+
+	private void finishComponentProcessingState(MAPDialogImpl mapDialogImpl) {
+
+		try {
+			switch (mapDialogImpl.delayedAreaState) {
+			case Continue:
+				mapDialogImpl.send();
+				break;
+			case End:
+				mapDialogImpl.close(false);
+				break;
+			case PrearrangedEnd:
+				mapDialogImpl.close(true);
+				break;
+			}
+		} catch (MAPException e) {
+			loger.error("Error while finishComponentProcessingState, delayedAreaState=" + mapDialogImpl.delayedAreaState, e);
+		}
+
+		mapDialogImpl.delayedAreaState = null;
+		mapDialogImpl.tcapMessageType = null;
 	}
 
 	public void onTCContinue(TCContinueIndication tcContinueIndication) {
