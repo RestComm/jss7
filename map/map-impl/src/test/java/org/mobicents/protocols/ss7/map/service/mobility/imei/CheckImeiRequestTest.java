@@ -31,6 +31,7 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.primitives.IMEIImpl;
+import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.testng.annotations.Test;
 
@@ -55,6 +56,12 @@ public class CheckImeiRequestTest {
 		// TODO this is self generated trace. We need trace from operator
 		return new byte[] { 48, 55, 4, 8, 83, 8, 25, 16, -122, 53, 85, -16, 3, 2, 6, -128, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5,
 				6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
+	}
+	
+	// Huawei trace with IMSI
+	private byte[] getEncodedDataV2_Huawei() {
+		return new byte[] { 0x04, 0x08, 0x53, 0x46, 0x76, 0x40, (byte)0x94, (byte)0x98, 0x19, (byte)0xf0, 
+				0x00, 0x08, 0x27, 0x34, 0x04, 0x03, 0x30, 0x58, 0x67, (byte)0xf3 };
 	}
 	
 	@Test(groups = { "functional.decode", "imei" })
@@ -98,6 +105,18 @@ public class CheckImeiRequestTest {
 		checkImeiImpl.decodeAll(asnIS);
 		
 		assertTrue(checkImeiImpl.getIMEI().getIMEI().equals("358091016853550"));
+		
+		// Testing version 1 and 2 with Huawei trace
+		rawData = getEncodedDataV2_Huawei();
+		asnIS = new AsnInputStream(rawData);
+		
+		tag = asnIS.readTag();
+		assertEquals(tag, Tag.STRING_OCTET);
+		checkImeiImpl = new CheckImeiRequestImpl(2);
+		checkImeiImpl.decodeAll(asnIS);
+		
+		assertTrue(checkImeiImpl.getIMEI().getIMEI().equals("356467044989910"));
+		assertTrue(checkImeiImpl.getIMSI().getData().equals("724340300385763"));
 	}
 	
 	@Test(groups = { "functional.encode", "imei" })
@@ -136,6 +155,19 @@ public class CheckImeiRequestTest {
 		
 		encodedData = asnOS.toByteArray();
 		rawData = getEncodedDataV2();
+		assertTrue(Arrays.equals(rawData, encodedData));
+		
+		// Testing version 1 and 2 with Huawei trace
+		imei = new IMEIImpl("356467044989910");
+		IMSIImpl imsi = new IMSIImpl("724340300385763");
+		checkImei = new CheckImeiRequestImpl(2, imei, null, null);
+		checkImei.setIMSI(imsi);
+		
+		asnOS = new AsnOutputStream();
+		checkImei.encodeAll(asnOS);
+		
+		encodedData = asnOS.toByteArray();
+		rawData = getEncodedDataV2_Huawei();
 		assertTrue(Arrays.equals(rawData, encodedData));
 	}
 	

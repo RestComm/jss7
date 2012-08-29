@@ -412,7 +412,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 		p.setTag(req.getTag());
 		p.setData(aos.toByteArray());
 		invoke.setParameter(p);
-		
+
 		Long invokeId;
 		try {
 			invokeId = this.tcapDialog.getNewInvokeId();
@@ -455,6 +455,68 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 		resultLast.setParameter(p);
 
 		this.sendReturnResultLastComponent(resultLast);
+	}
+
+
+	@Override
+	public Long addCheckImeiRequest_Huawei(IMEI imei, RequestedEquipmentInfo requestedEquipmentInfo,
+			MAPExtensionContainer extensionContainer, IMSI imsi) throws MAPException {
+		
+		return this.addCheckImeiRequest_Huawei(_Timer_Default, imei, requestedEquipmentInfo, extensionContainer, imsi);
+	}
+
+
+	@Override
+	public Long addCheckImeiRequest_Huawei(long customInvokeTimeout, IMEI imei,
+			RequestedEquipmentInfo requestedEquipmentInfo, MAPExtensionContainer extensionContainer, IMSI imsi)
+			throws MAPException {
+		
+		if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.equipmentMngtContext)
+				|| (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version1
+						&& this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2
+						&& this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)) {
+			throw new MAPException("Bad application context name for CheckImeiRequest: must be equipmentMngtContext_V1, V2 or V3");
+		}
+		
+		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		if (customInvokeTimeout == _Timer_Default) {
+			invoke.setTimeout(_Timer_m);
+		}
+		else {
+			invoke.setTimeout(customInvokeTimeout);
+		}
+
+		// Operation Code
+		OperationCode oc = TcapFactory.createOperationCode();
+		oc.setLocalOperationCode((long) MAPOperationCode.checkIMEI);
+		invoke.setOperationCode(oc);
+		
+		CheckImeiRequestImpl req = new CheckImeiRequestImpl(this.appCntx.getApplicationContextVersion().getVersion()
+				, imei, requestedEquipmentInfo,	extensionContainer);
+		req.setIMSI(imsi);
+
+		AsnOutputStream aos = new AsnOutputStream();
+		req.encodeData(aos);
+
+		Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+		p.setTagClass(req.getTagClass());
+		p.setPrimitive(req.getIsPrimitive());
+		p.setTag(req.getTag());
+		p.setData(aos.toByteArray());
+		p.setEncodingLength(req.getEncodedLength());
+		invoke.setParameter(p);
+		
+		Long invokeId;
+		try {
+			invokeId = this.tcapDialog.getNewInvokeId();
+			invoke.setInvokeId(invokeId);
+		} catch (TCAPException e) {
+			throw new MAPException(e.getMessage(), e);
+		}
+
+		this.sendInvokeComponent(invoke);
+
+		return invokeId;
 	}
 
 }
