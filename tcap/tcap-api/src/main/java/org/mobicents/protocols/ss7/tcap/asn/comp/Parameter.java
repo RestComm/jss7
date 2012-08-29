@@ -92,6 +92,25 @@ public interface Parameter extends Encodable {
 	public void setData(byte[] b);
 
 	/**
+	 * Return the length value that was encoded in ASN.1 stream
+	 * Usually this value ==getData().length and we can use "getData().length" as the length value
+	 * Checking this field makes sense when special cases when "encoded length value"!=getData().length
+	 * 
+	 * @return
+	 */
+	public int getEncodingLength();
+
+	/**
+	 * Set a length that will be encoded when ASN.1 parameter encoding
+	 * Usually this length is equal getData().length and we need not set this
+	 * You can use this only when "encoded length value"!=getData().length
+	 * If setEncodingLength() has not been invoked the value for length encoding will be ==getData().length 
+	 * 
+	 * @param val
+	 */
+	public void setEncodingLength(int val);
+
+	/**
 	 * Determine if this parameter is of primitive type - not constructed.
 	 * @return
 	 */

@@ -62,8 +62,6 @@ public abstract class CAPDialogImpl implements CAPDialog {
 
 	private static final Logger logger = Logger.getLogger(CAPDialogImpl.class);
 
-	private Object userObject;
-
 	protected Dialog tcapDialog = null;
 	protected CAPProviderImpl capProviderImpl = null;
 	protected CAPServiceBase capService = null;
@@ -387,14 +385,12 @@ public abstract class CAPDialogImpl implements CAPDialog {
 		}
 	}
 
-	@Override
 	public Object getUserObject() {
-		return this.userObject;
+		return this.tcapDialog.getUserObject();
 	}
 
-	@Override
 	public void setUserObject(Object userObject) {
-		this.userObject = userObject;
+		this.tcapDialog.setUserObject(userObject);
 	}
 
 	@Override

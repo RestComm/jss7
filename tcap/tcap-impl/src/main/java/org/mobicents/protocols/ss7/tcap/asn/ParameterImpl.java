@@ -47,6 +47,7 @@ public class ParameterImpl implements Parameter {
 	private boolean primitive = true;
 	private int tag;
 	private int tagClass;
+	private int encodingLength = -1;
 
 	/*
 	 * (non-Javadoc)
@@ -94,6 +95,20 @@ public class ParameterImpl implements Parameter {
 		this.primitive = b;
 	}
 
+	public int getEncodingLength() {
+		if (encodingLength >= 0) {
+			return encodingLength;
+		} else if (this.data != null) {
+			return this.data.length;
+		} else {
+			return 0;
+		}
+	}
+
+	public void setEncodingLength(int val) {
+		encodingLength = val;
+	}
+
 	/**
 	 * @return the tag
 	 */
@@ -127,7 +142,7 @@ public class ParameterImpl implements Parameter {
 	
 	public String toString() {
 		return "Parameter[data=" + Arrays.toString(data) + ", parameters=" + Arrays.toString(parameters) + ", primitive=" + primitive + ", tag=" + tag
-				+ ", tagClass=" + tagClass + "]";
+				+ ", tagClass=" + tagClass + ", encodingLength=" + this.getEncodingLength() + "]";
 	}
 
 	public Parameter[] getParameters() {
@@ -178,7 +193,14 @@ public class ParameterImpl implements Parameter {
 			primitive = ais.isTagPrimitive();
 			tagClass = ais.getTagClass();
 			data = ais.readSequence();
-			
+			this.encodingLength = data.length;
+			if (ais.available() > 0) { // extra data found after main array
+				byte[] buf = new byte[data.length + ais.available()];
+				System.arraycopy(data, 0, buf, 0, data.length);
+				ais.read(buf, data.length, ais.available());
+				data = buf;
+			}
+
 		} catch (IOException e) {
 			throw new ParseException("IOException while decoding the parameter: " + e.getMessage(), e);
 		} catch (AsnException e) {
@@ -209,7 +231,10 @@ public class ParameterImpl implements Parameter {
 				data = localAos.toByteArray();
 			}
 
-			aos.writeLength(data.length);
+			if (this.encodingLength >= 0)
+				aos.writeLength(this.encodingLength);
+			else
+				aos.writeLength(data.length);
 			aos.write(data);
 		} catch (IOException e) {
 			throw new ParseException(e);

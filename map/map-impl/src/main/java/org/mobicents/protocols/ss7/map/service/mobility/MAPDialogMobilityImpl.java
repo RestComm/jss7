@@ -412,7 +412,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 		p.setTag(req.getTag());
 		p.setData(aos.toByteArray());
 		invoke.setParameter(p);
-		
+
 		Long invokeId;
 		try {
 			invokeId = this.tcapDialog.getNewInvokeId();
@@ -503,6 +503,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 		p.setPrimitive(req.getIsPrimitive());
 		p.setTag(req.getTag());
 		p.setData(aos.toByteArray());
+		p.setEncodingLength(req.getEncodedLength());
 		invoke.setParameter(p);
 		
 		Long invokeId;
