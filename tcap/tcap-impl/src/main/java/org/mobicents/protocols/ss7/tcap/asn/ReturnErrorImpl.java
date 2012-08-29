@@ -171,7 +171,7 @@ public class ReturnErrorImpl implements ReturnError {
 			if (localAis.available() == 0)
 				return;// rest is optional
 			tag = localAis.readTag();
-			this.parameter = TcapFactory.createParameter(tag, localAis);
+			this.parameter = TcapFactory.createParameter(tag, localAis, true);
 		
 		} catch (IOException e) {
 			throw new ParseException("IOException while decoding ReturnError: " + e.getMessage(), e);

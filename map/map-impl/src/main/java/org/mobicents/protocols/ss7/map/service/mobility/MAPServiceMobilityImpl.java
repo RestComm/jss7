@@ -500,7 +500,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 		AsnInputStream ais = new AsnInputStream(buf);
 		
 		CheckImeiRequestImpl ind = new CheckImeiRequestImpl(version);
-		ind.decodeData(ais, buf.length);
+		ind.decodeData(ais, parameter.getEncodingLength());
 		
 		ind.setInvokeId(invokeId);
 		ind.setMAPDialog(mapDialogImpl);

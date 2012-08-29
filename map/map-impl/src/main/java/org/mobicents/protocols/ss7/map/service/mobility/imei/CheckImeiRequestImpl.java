@@ -58,6 +58,7 @@ public class CheckImeiRequestImpl extends MobilityMessageImpl implements CheckIm
 	private IMSI imsi = null;
 	
 	private long mapProtocolVersion;
+	private int encodedLength;
 	
 	// For incoming messages
 	public CheckImeiRequestImpl(long mapProtocolVersion) {
@@ -98,6 +99,10 @@ public class CheckImeiRequestImpl extends MobilityMessageImpl implements CheckIm
 		} else {
 			return true;
 		}
+	}
+
+	public int getEncodedLength() {
+		return encodedLength;
 	}
 
 	public IMSI getIMSI() {
@@ -242,6 +247,7 @@ public class CheckImeiRequestImpl extends MobilityMessageImpl implements CheckIm
 				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
 		} else {
 			((IMEIImpl)this.imei).encodeData(asnOs);
+			encodedLength = asnOs.size();
 			
 			if (imsi != null) { 
 				((IMSIImpl) this.imsi).encodeAll(asnOs, Tag.CLASS_UNIVERSAL, 0);

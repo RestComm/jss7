@@ -225,5 +225,21 @@ public interface Dialog {
 	 * @return
 	 */
 	public int getDataLength(TCUniRequest event) throws TCAPSendException;
+	
+	/**
+	 * Getting from the Dialog a user-defined object to save relating to the
+	 * Dialog information
+	 * 
+	 * @return
+	 */
+	public Object getUserObject();
+
+	/**
+	 * Store in the Dialog a user-defined object to save relating to the
+	 * Dialog information
+	 * 
+	 * @param userObject
+	 */
+	public void setUserObject(Object userObject);
 
 }
