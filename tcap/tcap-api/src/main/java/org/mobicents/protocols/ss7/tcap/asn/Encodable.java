@@ -32,9 +32,8 @@ import org.mobicents.protocols.asn.AsnOutputStream;
  */
 public interface Encodable {
 
-	
+
 	public void encode(AsnOutputStream aos) throws ParseException;
 	public void decode(AsnInputStream ais) throws ParseException;
-	
-	
+
 }

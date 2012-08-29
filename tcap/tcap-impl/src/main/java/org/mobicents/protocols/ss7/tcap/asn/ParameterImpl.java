@@ -158,7 +158,7 @@ public class ParameterImpl implements Parameter {
 				AsnInputStream ais = new AsnInputStream(this.data);
 				while (ais.available() > 0) {
 					int tag = ais.readTag();
-					Parameter _p = TcapFactory.createParameter(tag, ais);
+					Parameter _p = TcapFactory.createParameter(tag, ais, false);
 					paramsList.add(_p);
 
 				}
@@ -181,6 +181,12 @@ public class ParameterImpl implements Parameter {
 
 	}
 
+	private boolean singleParameterInAsn = false;
+
+	public void setSingleParameterInAsn() {
+		singleParameterInAsn = true;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -194,7 +200,7 @@ public class ParameterImpl implements Parameter {
 			tagClass = ais.getTagClass();
 			data = ais.readSequence();
 			this.encodingLength = data.length;
-			if (ais.available() > 0) { // extra data found after main array
+			if (singleParameterInAsn && ais.available() > 0) { // extra data found after main array
 				byte[] buf = new byte[data.length + ais.available()];
 				System.arraycopy(data, 0, buf, 0, data.length);
 				ais.read(buf, data.length, ais.available());

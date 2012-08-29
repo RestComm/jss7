@@ -224,7 +224,7 @@ public class InvokeImpl implements Invoke {
 			if (localAis.available() == 0)
 				return;
 			tag = localAis.readTag();
-			this.parameter = TcapFactory.createParameter(tag, localAis);
+			this.parameter = TcapFactory.createParameter(tag, localAis, true);
 
 		} catch (IOException e) {
 			throw new ParseException("IOException while decoding Invoke: " + e.getMessage(), e);

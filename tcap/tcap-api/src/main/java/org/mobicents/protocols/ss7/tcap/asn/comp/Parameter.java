@@ -150,4 +150,6 @@ public interface Parameter extends Encodable {
 	 */
 	public void setParameters(Parameter[] paramss);
 
+	public void setSingleParameterInAsn();
+
 }
