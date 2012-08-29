@@ -696,6 +696,25 @@ public class Client extends EventTestHarness {
 		this.observerdEvents.add(TestEvent.createSentEvent(EventType.CheckImei, null, sequence++));
 		clientDialogMobility.send();
 	}
+	
+	public void sendCheckImei_Huawei_V2() throws Exception {
+		
+		this.mapProvider.getMAPServiceMobility().acivate();
+		
+		MAPApplicationContext appCnt = null;
+		
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.equipmentMngtContext, MAPApplicationContextVersion.version2);
+		
+		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+		
+		IMEI imei = this.mapParameterFactory.createIMEI("333333334444444");
+		IMSI imsi = this.mapParameterFactory.createIMSI("999999998888888");
+		
+		clientDialogMobility.addCheckImeiRequest_Huawei(imei, null, null, imsi);
+		
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.CheckImei, null, sequence++));
+		clientDialogMobility.send();
+	}
 
 	public MAPDialog getMapDialog() {
 		return this.clientDialog;

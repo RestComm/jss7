@@ -34,10 +34,12 @@ import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.RequestedEquipmentInfo;
 import org.mobicents.protocols.ss7.map.primitives.IMEIImpl;
+import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.MobilityMessageImpl;
 
@@ -52,6 +54,8 @@ public class CheckImeiRequestImpl extends MobilityMessageImpl implements CheckIm
 	private IMEI imei = null;
 	private RequestedEquipmentInfo requestedEquipmentInfo = null;
 	private MAPExtensionContainer extensionContainer = null;
+	
+	private IMSI imsi = null;
 	
 	private long mapProtocolVersion;
 	
@@ -94,6 +98,13 @@ public class CheckImeiRequestImpl extends MobilityMessageImpl implements CheckIm
 		} else {
 			return true;
 		}
+	}
+
+	public IMSI getIMSI() {
+		return imsi;
+	}
+	public void setIMSI(IMSI imsi) {
+		this.imsi = imsi;
 	}
 
 	@Override
@@ -179,7 +190,22 @@ public class CheckImeiRequestImpl extends MobilityMessageImpl implements CheckIm
 						+ num, MAPParsingComponentExceptionReason.MistypedParameter);
 		} else {
 			this.imei = new IMEIImpl(); 
-			((IMEIImpl)this.imei).decodeData(ansIS, length);
+			// Because Huawei package is not a SEQUENCE, imei should read just 8 pos.
+			((IMEIImpl)this.imei).decodeData(ansIS, 8);
+			
+			// To decode IMSI in Huawei package
+			if (ansIS.available() != 0) {
+				int tag = ansIS.readTag();
+				length = ansIS.readLength();
+				if (tag != 0 && ansIS.getTagClass() != Tag.CLASS_UNIVERSAL && !ansIS.isTagPrimitive()) {
+					throw new MAPParsingComponentException(
+							"Error while decoding " + _PrimitiveName + ".imsi: bad tag or tag class or is not primitive: TagClass=" + ansIS.getTagClass()
+									+ ", tag=" + tag, MAPParsingComponentExceptionReason.MistypedParameter);
+				}
+				
+				this.imsi = new IMSIImpl();
+				((IMSIImpl) this.imsi).decodeData(ansIS, length);
+			}
 		}
 	}
 
@@ -199,7 +225,6 @@ public class CheckImeiRequestImpl extends MobilityMessageImpl implements CheckIm
 		} catch (AsnException e) {
 			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
-
 	}
 
 	@Override
@@ -218,9 +243,13 @@ public class CheckImeiRequestImpl extends MobilityMessageImpl implements CheckIm
 				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
 		} else {
 			((IMEIImpl)this.imei).encodeData(asnOs);
+			
+			if (imsi != null) { 
+				((IMSIImpl) this.imsi).encodeAll(asnOs, Tag.CLASS_UNIVERSAL, 0);
+			}
 		}
 	}
-
+	
 	@Override
 	public MAPMessageType getMessageType() {
 		return MAPMessageType.checkIMEI_Request;
@@ -267,6 +296,12 @@ public class CheckImeiRequestImpl extends MobilityMessageImpl implements CheckIm
 		if (this.extensionContainer != null) {
 			sb.append("extensionContainer=");
 			sb.append(extensionContainer.toString());
+			sb.append(", ");
+		}
+		
+		if (this.imsi != null) {
+			sb.append("imsi=");
+			sb.append(imsi.toString());
 			sb.append(", ");
 		}
 		
