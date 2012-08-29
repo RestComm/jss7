@@ -289,7 +289,7 @@ public class MAPServiceCallHandlingImpl extends MAPServiceBaseImpl implements MA
 			  "Error while decoding ProvideRoamingNumberResponseIndication: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
 			  MAPParsingComponentExceptionReason.MistypedParameter);
 		} else {
-			   if (parameter.getTag() != Tag.STRING_OCTET || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+			   if (parameter.getTag() != Tag.STRING_OCTET || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || !parameter.isPrimitive())
 			      throw new MAPParsingComponentException(
 				  "Error while decoding ProvideRoamingNumberResponseIndication: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
 				  MAPParsingComponentExceptionReason.MistypedParameter);

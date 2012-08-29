@@ -42,7 +42,7 @@ import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Sup
 
 /**
  * 
- * @author Lasith
+ * @author Lasith Waruna Perera
  * 
  */
 public class ProvideRoamingNumberRequestImpl extends CallHandlingMessageImpl
@@ -743,121 +743,121 @@ public class ProvideRoamingNumberRequestImpl extends CallHandlingMessageImpl
 					if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 
 						switch (tag) {
-						case TAG_imsi:// 1
-							this.imsi = new IMSIImpl();
-							((IMSIImpl) this.imsi).decodeAll(ais);
-							break;
-						case TAG_mscNumber:// 2
-							this.mscNumber = new ISDNAddressStringImpl();
-							((ISDNAddressStringImpl) this.mscNumber)
-									.decodeAll(ais);
-							break;
-						case TAG_msisdn:// 3
-							this.msisdn = new ISDNAddressStringImpl();
-							((ISDNAddressStringImpl) this.msisdn)
-									.decodeAll(ais);
-							break;
-						case TAG_lmsi:// 4
-							this.lmsi = new LMSIImpl();
-							((LMSIImpl) this.lmsi).decodeAll(ais);
-							break;
-						case TAG_gsmBearerCapability:// 5
-							this.gsmBearerCapability = new ExternalSignalInfoImpl();
-							((ExternalSignalInfoImpl) this.gsmBearerCapability)
-									.decodeAll(ais);
-							break;
-						case TAG_networkSignalInfo:// 6
-							this.networkSignalInfo = new ExternalSignalInfoImpl();
-							((ExternalSignalInfoImpl) this.networkSignalInfo)
-									.decodeAll(ais);
-							break;
-						case TAG_suppressionOfAnnouncement:// 7
-							ais.readNull();
-							this.suppressionOfAnnouncement = true;
-							break;
-						case TAG_gmscAddress:// 8
-							this.gmscAddress = new ISDNAddressStringImpl();
-							((ISDNAddressStringImpl) this.gmscAddress)
-									.decodeAll(ais);
-							break;
-						case TAG_callReferenceNumber:// 9
-							this.callReferenceNumber = new CallReferenceNumberImpl();
-							((CallReferenceNumberImpl) this.callReferenceNumber)
-									.decodeAll(ais);
-							break;
-						case TAG_orInterrogation:// 10
-							ais.readNull();
-							this.orInterrogation = true;
-							break;
-						case TAG_extensionContainer:// 11
-							this.extensionContainer = new MAPExtensionContainerImpl();
-							((MAPExtensionContainerImpl) this.extensionContainer)
-									.decodeAll(ais);
-							break;
-						case TAG_alertingPattern:// 12
-							this.alertingPattern = new AlertingPatternImpl();
-							((AlertingPatternImpl) this.alertingPattern)
-									.decodeAll(ais);
-							break;
-						case TAG_ccbsCall:// 13
-							ais.readNull();
-							this.ccbsCall = true;
-							break;
-						case TAG_supportedCamelPhasesInInterrogatingNode:// 14
-							this.supportedCamelPhasesInInterrogatingNode = new SupportedCamelPhasesImpl();
-							((SupportedCamelPhasesImpl) this.supportedCamelPhasesInInterrogatingNode)
-									.decodeAll(ais);
-							break;
-						case TAG_additionalSignalInfo:// 15
-							this.additionalSignalInfo = new ExtExternalSignalInfoImpl();
-							((ExtExternalSignalInfoImpl) this.additionalSignalInfo)
-									.decodeAll(ais);
-							break;
-						case TAG_orNotSupportedInGMSC:// 16
-							ais.readNull();
-							this.orNotSupportedInGMSC = true;
-							break;
-						case TAG_prePagingSupported:// 17
-							ais.readNull();
-							this.prePagingSupported = true;
-							break;
-						case TAG_longFTNSupported:// 18
-							ais.readNull();
-							this.longFTNSupported = true;
-							break;
-						case TAG_suppressVtCsi:// 19
-							ais.readNull();
-							this.suppressVtCsi = true;
-							break;
-						case TAG_offeredCamel4CSIsInInterrogatingNode:// 20
-							this.offeredCamel4CSIsInInterrogatingNode = new OfferedCamel4CSIsImpl();
-							((OfferedCamel4CSIsImpl) this.offeredCamel4CSIsInInterrogatingNode)
-									.decodeAll(ais);
-							break;
-						case TAG_mtRoamingRetrySupported:// 21
-							ais.readNull();
-							this.mtRoamingRetrySupported = true;
-							break;
-						case TAG_pagingArea:// 22
-							this.pagingArea = new PagingAreaImpl();
-							((PagingAreaImpl) this.pagingArea).decodeAll(ais);
-							break;
-						case TAG_callPriority:// 23
-							this.callPriority = EMLPPPriority
-									.getEMLPPPriority((int) ais.readInteger());
-							break;
-						case TAG_mtrfIndicator:// 24
-							ais.readNull();
-							this.mtrfIndicator = true;
-							break;
-						case TAG_oldMSCNumber:// 25
-							this.oldMSCNumber = new ISDNAddressStringImpl();
-							((ISDNAddressStringImpl) this.oldMSCNumber)
-									.decodeAll(ais);
-							break;
-						default:
-							ais.advanceElement();
-							break;
+							case TAG_imsi:// 1
+								this.imsi = new IMSIImpl();
+								((IMSIImpl) this.imsi).decodeAll(ais);
+								break;
+							case TAG_mscNumber:// 2
+								this.mscNumber = new ISDNAddressStringImpl();
+								((ISDNAddressStringImpl) this.mscNumber)
+										.decodeAll(ais);
+								break;
+							case TAG_msisdn:// 3
+								this.msisdn = new ISDNAddressStringImpl();
+								((ISDNAddressStringImpl) this.msisdn)
+										.decodeAll(ais);
+								break;
+							case TAG_lmsi:// 4
+								this.lmsi = new LMSIImpl();
+								((LMSIImpl) this.lmsi).decodeAll(ais);
+								break;
+							case TAG_gsmBearerCapability:// 5
+								this.gsmBearerCapability = new ExternalSignalInfoImpl();
+								((ExternalSignalInfoImpl) this.gsmBearerCapability)
+										.decodeAll(ais);
+								break;
+							case TAG_networkSignalInfo:// 6
+								this.networkSignalInfo = new ExternalSignalInfoImpl();
+								((ExternalSignalInfoImpl) this.networkSignalInfo)
+										.decodeAll(ais);
+								break;
+							case TAG_suppressionOfAnnouncement:// 7
+								ais.readNull();
+								this.suppressionOfAnnouncement = true;
+								break;
+							case TAG_gmscAddress:// 8
+								this.gmscAddress = new ISDNAddressStringImpl();
+								((ISDNAddressStringImpl) this.gmscAddress)
+										.decodeAll(ais);
+								break;
+							case TAG_callReferenceNumber:// 9
+								this.callReferenceNumber = new CallReferenceNumberImpl();
+								((CallReferenceNumberImpl) this.callReferenceNumber)
+										.decodeAll(ais);
+								break;
+							case TAG_orInterrogation:// 10
+								ais.readNull();
+								this.orInterrogation = true;
+								break;
+							case TAG_extensionContainer:// 11
+								this.extensionContainer = new MAPExtensionContainerImpl();
+								((MAPExtensionContainerImpl) this.extensionContainer)
+										.decodeAll(ais);
+								break;
+							case TAG_alertingPattern:// 12
+								this.alertingPattern = new AlertingPatternImpl();
+								((AlertingPatternImpl) this.alertingPattern)
+										.decodeAll(ais);
+								break;
+							case TAG_ccbsCall:// 13
+								ais.readNull();
+								this.ccbsCall = true;
+								break;
+							case TAG_supportedCamelPhasesInInterrogatingNode:// 14
+								this.supportedCamelPhasesInInterrogatingNode = new SupportedCamelPhasesImpl();
+								((SupportedCamelPhasesImpl) this.supportedCamelPhasesInInterrogatingNode)
+										.decodeAll(ais);
+								break;
+							case TAG_additionalSignalInfo:// 15
+								this.additionalSignalInfo = new ExtExternalSignalInfoImpl();
+								((ExtExternalSignalInfoImpl) this.additionalSignalInfo)
+										.decodeAll(ais);
+								break;
+							case TAG_orNotSupportedInGMSC:// 16
+								ais.readNull();
+								this.orNotSupportedInGMSC = true;
+								break;
+							case TAG_prePagingSupported:// 17
+								ais.readNull();
+								this.prePagingSupported = true;
+								break;
+							case TAG_longFTNSupported:// 18
+								ais.readNull();
+								this.longFTNSupported = true;
+								break;
+							case TAG_suppressVtCsi:// 19
+								ais.readNull();
+								this.suppressVtCsi = true;
+								break;
+							case TAG_offeredCamel4CSIsInInterrogatingNode:// 20
+								this.offeredCamel4CSIsInInterrogatingNode = new OfferedCamel4CSIsImpl();
+								((OfferedCamel4CSIsImpl) this.offeredCamel4CSIsInInterrogatingNode)
+										.decodeAll(ais);
+								break;
+							case TAG_mtRoamingRetrySupported:// 21
+								ais.readNull();
+								this.mtRoamingRetrySupported = true;
+								break;
+							case TAG_pagingArea:// 22
+								this.pagingArea = new PagingAreaImpl();
+								((PagingAreaImpl) this.pagingArea).decodeAll(ais);
+								break;
+							case TAG_callPriority:// 23
+								this.callPriority = EMLPPPriority
+										.getEMLPPPriority((int) ais.readInteger());
+								break;
+							case TAG_mtrfIndicator:// 24
+								ais.readNull();
+								this.mtrfIndicator = true;
+								break;
+							case TAG_oldMSCNumber:// 25
+								this.oldMSCNumber = new ISDNAddressStringImpl();
+								((ISDNAddressStringImpl) this.oldMSCNumber)
+										.decodeAll(ais);
+								break;
+							default:
+								ais.advanceElement();
+								break;
 						}
 					} else {
 						ais.advanceElement();

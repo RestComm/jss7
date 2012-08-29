@@ -20,7 +20,7 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
  * 
- * @author Lasith
+ * @author Lasith Waruna Perera
  * 
  */
 public class ProvideRoamingNumberResponseImpl extends CallHandlingMessageImpl implements ProvideRoamingNumberResponse{
@@ -74,7 +74,11 @@ public class ProvideRoamingNumberResponseImpl extends CallHandlingMessageImpl im
 
 	@Override
 	public boolean getIsPrimitive() {
-		return false;
+		if (this.mapProtocolVersion >= 3) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	@Override
@@ -128,13 +132,47 @@ public class ProvideRoamingNumberResponseImpl extends CallHandlingMessageImpl im
 		this.releaseResourcesSupported =  false;
 		this.vmscAddress = null;
 		
+		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 		if (this.mapProtocolVersion >= 3) {
-			this.roamingNumber = new ISDNAddressStringImpl();
-			((ISDNAddressStringImpl) this.roamingNumber).decodeData(ansIS, length);
 			
-			// extensionContainer,releaseResourcesSupported and vmscAddress need to be docoded.
-			// lasith
+			int num = 0;
 			
+			while (true) {
+				if (ais.available() == 0)
+					break;
+
+				int tag = ais.readTag();
+				
+				if(num ==0){
+					if(ais.getTagClass() != Tag.CLASS_UNIVERSAL && tag != Tag.STRING_OCTET && !ais.isTagPrimitive()){
+						throw new MAPParsingComponentException("Error while decoding  ProvideRoamingNumberResponse " +
+								".roamingNumber: Parameter 0 bad tag or tag class or not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					
+					this.roamingNumber = new ISDNAddressStringImpl();
+					((ISDNAddressStringImpl) this.roamingNumber).decodeAll(ais);
+					num++;
+				}else{
+					if (ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
+						if(tag== Tag.STRING_OCTET){
+							this.vmscAddress = new ISDNAddressStringImpl();
+							((ISDNAddressStringImpl) this.roamingNumber).decodeAll(ais);
+						}else if(tag == Tag.SEQUENCE){
+							this.extensionContainer = new MAPExtensionContainerImpl();
+							((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
+						}else if(tag == Tag.NULL){
+							ais.readNull();
+							this.releaseResourcesSupported = true;
+						}else{
+							ais.advanceElement();
+						}
+						
+					}else{
+						ais.advanceElement();
+					}					
+				}
+						
+			}
 		}else{
 			this.roamingNumber = new ISDNAddressStringImpl();
 			((ISDNAddressStringImpl) this.roamingNumber).decodeData(ansIS, length);

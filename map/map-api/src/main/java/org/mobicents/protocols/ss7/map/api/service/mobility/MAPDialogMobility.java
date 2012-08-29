@@ -40,7 +40,10 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.imei.EquipmentStatus
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.RequestedEquipmentInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIu;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancellationType;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.IMSIWithLMSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PagingArea;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.TypeOfUpdate;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VLRCapability;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberInfo;
@@ -99,6 +102,17 @@ public interface MAPDialogMobility extends MAPDialog {
 			throws MAPException;
 	
 	public void addCheckImeiResponse(long invokeId, EquipmentStatus equipmentStatus, UESBIIu bmuef, MAPExtensionContainer extensionContainer) throws MAPException;
+	
+	public Long addCancelLocationRequest(int customInvokeTimeout, IMSI imsi,
+			IMSIWithLMSI imsiWithLmsi, CancellationType cancellationType,
+			MAPExtensionContainer extensionContainer,
+			TypeOfUpdate typeOfUpdate, boolean mtrfSupportedAndAuthorized,
+			boolean mtrfSupportedAndNotAuthorized,
+			ISDNAddressString newMSCNumber, ISDNAddressString newVLRNumber,
+			LMSI newLmsi) throws MAPException;
+
+	public void addCancelLocationResponse(long invokeId,
+			MAPExtensionContainer extensionContainer) throws MAPException;
 
 }
 

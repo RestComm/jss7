@@ -17,6 +17,12 @@ import org.mobicents.protocols.ss7.map.primitives.LAIFixedLengthImpl;
 import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
+
+/**
+ * 
+ * @author Lasith Waruna Perera
+ * 
+ */
 public class IMSIWithLMSIImpl implements IMSIWithLMSI, MAPAsnPrimitive  {
 	
 	private IMSI imsi;

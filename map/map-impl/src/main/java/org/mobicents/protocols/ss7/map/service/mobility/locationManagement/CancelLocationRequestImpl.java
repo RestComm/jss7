@@ -37,6 +37,13 @@ import org.mobicents.protocols.ss7.map.service.mobility.MobilityMessageImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.OfferedCamel4CSIsImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.SupportedCamelPhasesImpl;
 
+
+
+/**
+ * 
+ * @author Lasith Waruna Perera
+ * 
+ */
 public class CancelLocationRequestImpl extends MobilityMessageImpl implements CancelLocationRequest{
 	
 	private static final int TAG_typeOfUpdate = 0;
@@ -45,6 +52,8 @@ public class CancelLocationRequestImpl extends MobilityMessageImpl implements Ca
 	private static final int TAG_newMSCNumber = 3;
 	private static final int TAG_newVLRNumber = 4;
 	private static final int TAG_newLmsi = 5;
+	
+	public static final int TAG_cancelLocationRequest = 3;
 		
 	private IMSI imsi;
 	private IMSIWithLMSI imsiWithLmsi;
@@ -59,6 +68,27 @@ public class CancelLocationRequestImpl extends MobilityMessageImpl implements Ca
 	private long mapProtocolVersion;
 	
 	public CancelLocationRequestImpl(long mapProtocolVersion){
+		this.mapProtocolVersion = mapProtocolVersion;
+	}
+	
+	public CancelLocationRequestImpl(IMSI imsi, IMSIWithLMSI imsiWithLmsi,
+			CancellationType cancellationType,
+			MAPExtensionContainer extensionContainer,
+			TypeOfUpdate typeOfUpdate, boolean mtrfSupportedAndAuthorized,
+			boolean mtrfSupportedAndNotAuthorized,
+			ISDNAddressString newMSCNumber, ISDNAddressString newVLRNumber,
+			LMSI newLmsi, long mapProtocolVersion) {
+		super();
+		this.imsi = imsi;
+		this.imsiWithLmsi = imsiWithLmsi;
+		this.cancellationType = cancellationType;
+		this.extensionContainer = extensionContainer;
+		this.typeOfUpdate = typeOfUpdate;
+		this.mtrfSupportedAndAuthorized = mtrfSupportedAndAuthorized;
+		this.mtrfSupportedAndNotAuthorized = mtrfSupportedAndNotAuthorized;
+		this.newMSCNumber = newMSCNumber;
+		this.newVLRNumber = newVLRNumber;
+		this.newLmsi = newLmsi;
 		this.mapProtocolVersion = mapProtocolVersion;
 	}
 
@@ -125,7 +155,7 @@ public class CancelLocationRequestImpl extends MobilityMessageImpl implements Ca
 	@Override
 	public int getTag() throws MAPException {
 		if(this.mapProtocolVersion ==3){
-			return Tag.SEQUENCE;
+			return TAG_cancelLocationRequest;
 		}else{
 			if(imsi != null){
 				return Tag.STRING_OCTET;
@@ -158,11 +188,11 @@ public class CancelLocationRequestImpl extends MobilityMessageImpl implements Ca
 			this._decode(ansIS, length);
 		} catch (IOException e) {
 			throw new MAPParsingComponentException(
-					"IOException when decoding ProvideRoamingNumberRequest: ",
+					"IOException when decoding CancelLocationRequest: ",
 					e, MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
 			throw new MAPParsingComponentException(
-					"AsnException when decoding ProvideRoamingNumberRequest: ",
+					"AsnException when decoding CancelLocationRequest: ",
 					e, MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 		
@@ -175,11 +205,11 @@ public class CancelLocationRequestImpl extends MobilityMessageImpl implements Ca
 			this._decode(ansIS, length);
 		} catch (IOException e) {
 			throw new MAPParsingComponentException(
-					"IOException when decoding ProvideRoamingNumberRequest: ",
+					"IOException when decoding CancelLocationRequest: ",
 					e, MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
 			throw new MAPParsingComponentException(
-					"AsnException when decoding ProvideRoamingNumberRequest: ",
+					"AsnException when decoding CancelLocationRequest: ",
 					e, MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 		
@@ -208,12 +238,12 @@ public class CancelLocationRequestImpl extends MobilityMessageImpl implements Ca
 		} catch (AsnException e) {
 			e.printStackTrace();
 			throw new MAPException(
-					"AsnException when encoding ProvideRoamingNumberRequest: "
+					"AsnException when encoding CancelLocationRequest: "
 							+ e.getMessage(), e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new MAPException(
-					"AsnException when encoding ProvideRoamingNumberRequest: "
+					"AsnException when encoding CancelLocationRequest: "
 							+ e.getMessage(), e);
 		}
 		
@@ -224,7 +254,7 @@ public class CancelLocationRequestImpl extends MobilityMessageImpl implements Ca
 
 		if (this.imsi == null && this.imsiWithLmsi ==null) {
 			throw new MAPException(
-					"Error while encoding ProvideRoamingNumberRequest the mandatory parameter imsi and imsiWithLmsi is not defined");
+					"Error while encoding CancelLocationRequest the mandatory parameter imsi and imsiWithLmsi is not defined");
 		}
 
 		if(this.imsi!=null){
@@ -233,83 +263,87 @@ public class CancelLocationRequestImpl extends MobilityMessageImpl implements Ca
 			((IMSIWithLMSIImpl) this.imsiWithLmsi).encodeAll(asnOs);
 		}
 		
-		if (this.cancellationType != null) {
-			try {
-				asnOs.writeInteger( this.cancellationType.getCode());
-			} catch (IOException e) {
-				throw new MAPException(
-						"IOException while encoding ProvideRoamingNumberRequest parameter callPriority",
-						e);
-			} catch (AsnException e) {
-				throw new MAPException(
-						"IOException while encoding ProvideRoamingNumberRequest parameter callPriority",
-						e);
+		
+		if(this.mapProtocolVersion >= 3){
+			
+			if (this.cancellationType != null) {
+				try {
+					asnOs.writeInteger( this.cancellationType.getCode());
+				} catch (IOException e) {
+					throw new MAPException(
+							"IOException while encoding CancelLocationRequest parameter cancellationType",
+							e);
+				} catch (AsnException e) {
+					throw new MAPException(
+							"IOException while encoding CancelLocationRequest parameter cancellationType",
+							e);
+				}
 			}
-		}
-		
-		if(this.extensionContainer != null){
-			((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
-		}
-		
-		if (this.typeOfUpdate != null) {			
-			try {
-				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC,CancelLocationRequestImpl.TAG_typeOfUpdate,this.typeOfUpdate.getCode());
-			} catch (IOException e) {
-				throw new MAPException(
-						"IOException while encoding ProvideRoamingNumberRequest parameter callPriority",
-						e);
-			} catch (AsnException e) {
-				throw new MAPException(
-						"IOException while encoding ProvideRoamingNumberRequest parameter callPriority",
-						e);
+			
+			if(this.extensionContainer != null){
+				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
 			}
-		}
-		
-		if (this.mtrfSupportedAndAuthorized) {
-			try {
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC,
-						TAG_mtrfSupportedAndAuthorized);
-			} catch (IOException e) {
-				throw new MAPException(
-						"IOException while encoding ProvideRoamingNumberRequest parameter suppressionOfAnnouncement",
-						e);
-			} catch (AsnException e) {
-				throw new MAPException(
-						"AsnException while encoding ProvideRoamingNumberRequest parameter suppressionOfAnnouncement",
-						e);
+			
+			if (this.typeOfUpdate != null) {			
+				try {
+					asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC,CancelLocationRequestImpl.TAG_typeOfUpdate,this.typeOfUpdate.getCode());
+				} catch (IOException e) {
+					throw new MAPException(
+							"IOException while encoding CancelLocationRequest parameter typeOfUpdate",
+							e);
+				} catch (AsnException e) {
+					throw new MAPException(
+							"IOException while encoding CancelLocationRequest parameter typeOfUpdate",
+							e);
+				}
 			}
-		}
-		
-		if (this.mtrfSupportedAndNotAuthorized) {
-			try {
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC,
-						TAG_mtrfSupportedAndNotAuthorized);
-			} catch (IOException e) {
-				throw new MAPException(
-						"IOException while encoding ProvideRoamingNumberRequest parameter suppressionOfAnnouncement",
-						e);
-			} catch (AsnException e) {
-				throw new MAPException(
-						"AsnException while encoding ProvideRoamingNumberRequest parameter suppressionOfAnnouncement",
-						e);
+			
+			if (this.mtrfSupportedAndAuthorized) {
+				try {
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC,
+							TAG_mtrfSupportedAndAuthorized);
+				} catch (IOException e) {
+					throw new MAPException(
+							"IOException while encoding CancelLocationRequest parameter mtrfSupportedAndAuthorized",
+							e);
+				} catch (AsnException e) {
+					throw new MAPException(
+							"AsnException while encoding CancelLocationRequest parameter mtrfSupportedAndAuthorized",
+							e);
+				}
 			}
-		}
-		
-		if (this.newMSCNumber != null) {
-			((ISDNAddressStringImpl) this.newMSCNumber).encodeAll(asnOs,
-					Tag.CLASS_CONTEXT_SPECIFIC, TAG_newMSCNumber);
-		}
-		
-		if (this.newVLRNumber != null) {
-			((ISDNAddressStringImpl) this.newVLRNumber).encodeAll(asnOs,
-					Tag.CLASS_CONTEXT_SPECIFIC, TAG_newVLRNumber);
-		}
+			
+			if (this.mtrfSupportedAndNotAuthorized) {
+				try {
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC,
+							TAG_mtrfSupportedAndNotAuthorized);
+				} catch (IOException e) {
+					throw new MAPException(
+							"IOException while encoding CancelLocationRequest parameter mtrfSupportedAndNotAuthorized",
+							e);
+				} catch (AsnException e) {
+					throw new MAPException(
+							"AsnException while encoding CancelLocationRequest parameter mtrfSupportedAndNotAuthorized",
+							e);
+				}
+			}
+			
+			if (this.newMSCNumber != null) {
+				((ISDNAddressStringImpl) this.newMSCNumber).encodeAll(asnOs,
+						Tag.CLASS_CONTEXT_SPECIFIC, TAG_newMSCNumber);
+			}
+			
+			if (this.newVLRNumber != null) {
+				((ISDNAddressStringImpl) this.newVLRNumber).encodeAll(asnOs,
+						Tag.CLASS_CONTEXT_SPECIFIC, TAG_newVLRNumber);
+			}
+	
+			if (this.newLmsi != null) {
+				((LMSIImpl) this.newLmsi).encodeAll(asnOs,
+						Tag.CLASS_CONTEXT_SPECIFIC, TAG_newLmsi);
+			}
 
-		if (this.newLmsi != null) {
-			((LMSIImpl) this.newLmsi).encodeAll(asnOs,
-					Tag.CLASS_CONTEXT_SPECIFIC, TAG_newLmsi);
 		}
-
 		
 	}
 
@@ -342,71 +376,65 @@ public class CancelLocationRequestImpl extends MobilityMessageImpl implements Ca
 			
 			if(this.mapProtocolVersion == 3 ){
 
-				if(tag != Tag.STRING_OCTET){
+				if(tag == Tag.STRING_OCTET &&  ais.getTagClass() == Tag.CLASS_UNIVERSAL){
 					this.imsi = new IMSIImpl();
 					((IMSIImpl) this.imsi).decodeAll(ais);
-					break;
-				}
-				if(tag != Tag.SEQUENCE && ais.getTagClass() != Tag.CLASS_UNIVERSAL){
+				}else if(tag == Tag.SEQUENCE && ais.getTagClass() == Tag.CLASS_UNIVERSAL && ais.isTagPrimitive()){
 					this.imsiWithLmsi = new IMSIWithLMSIImpl();
 					((IMSIWithLMSIImpl) this.imsiWithLmsi).decodeAll(ais);
-					break;
-				}
-				
-				if(tag == Tag.INTEGER &&  ais.getTagClass() == Tag.CLASS_UNIVERSAL ){
+				}else if(tag == Tag.INTEGER &&  ais.getTagClass() == Tag.CLASS_UNIVERSAL ){
 					this.cancellationType = CancellationType.getInstance((int) ais.readInteger());
-					break;
-				}
-			
-				if (ais.getTagClass() != Tag.CLASS_UNIVERSAL && tag != Tag.SEQUENCE){
+				}else if (ais.getTagClass() != Tag.CLASS_UNIVERSAL && tag != Tag.SEQUENCE && (!ais.isTagPrimitive())){
 					this.extensionContainer = new MAPExtensionContainerImpl();
 					((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
-					break;
-				}
-			
-				switch (num) {
-					case CancelLocationRequestImpl.TAG_typeOfUpdate: // lmsi
-						this.typeOfUpdate = TypeOfUpdate.getInstance((int) ais.readInteger());
-						break;
-					case CancelLocationRequestImpl.TAG_mtrfSupportedAndAuthorized: 
-						ais.readNull();
-						this.mtrfSupportedAndAuthorized = true;
-						break;
-					case CancelLocationRequestImpl.TAG_mtrfSupportedAndNotAuthorized: 
-						ais.readNull();
-						this.mtrfSupportedAndNotAuthorized = true;
-						break;
-					case CancelLocationRequestImpl.TAG_newMSCNumber: 
-						this.newMSCNumber = new ISDNAddressStringImpl();
-						((ISDNAddressStringImpl) this.newMSCNumber).decodeAll(ais);
-						break;
-					case CancelLocationRequestImpl.TAG_newVLRNumber: 
-						this.newVLRNumber = new ISDNAddressStringImpl();
-						((ISDNAddressStringImpl) this.newVLRNumber).decodeAll(ais);
-						break;
-					case CancelLocationRequestImpl.TAG_newLmsi: 
-						this.newLmsi = new LMSIImpl();
-						((LMSIImpl) this.newLmsi).decodeAll(ais);
-						break;
+				}else{
+					switch (num) {
+						case CancelLocationRequestImpl.TAG_typeOfUpdate: // lmsi
+							this.typeOfUpdate = TypeOfUpdate.getInstance((int) ais.readInteger());
+							break;
+						case CancelLocationRequestImpl.TAG_mtrfSupportedAndAuthorized: 
+							ais.readNull();
+							this.mtrfSupportedAndAuthorized = true;
+							break;
+						case CancelLocationRequestImpl.TAG_mtrfSupportedAndNotAuthorized: 
+							ais.readNull();
+							this.mtrfSupportedAndNotAuthorized = true;
+							break;
+						case CancelLocationRequestImpl.TAG_newMSCNumber: 
+							this.newMSCNumber = new ISDNAddressStringImpl();
+							((ISDNAddressStringImpl) this.newMSCNumber).decodeAll(ais);
+							break;
+						case CancelLocationRequestImpl.TAG_newVLRNumber: 
+							this.newVLRNumber = new ISDNAddressStringImpl();
+							((ISDNAddressStringImpl) this.newVLRNumber).decodeAll(ais);
+							break;
+						case CancelLocationRequestImpl.TAG_newLmsi: 
+							this.newLmsi = new LMSIImpl();
+							((LMSIImpl) this.newLmsi).decodeAll(ais);
+							break;
+						default:
+							ais.advanceElement();
+							break;
+					}
 				}
 						
 			}else{
-				if(tag != Tag.STRING_OCTET){
+				if(tag == Tag.STRING_OCTET &&  ais.getTagClass() == Tag.CLASS_UNIVERSAL){
 					this.imsi = new IMSIImpl();
 					((IMSIImpl) this.imsi).decodeAll(ais);
-					break;
-				}else{
+				}
+				if(tag == Tag.SEQUENCE && ais.getTagClass() == Tag.CLASS_UNIVERSAL && ais.isTagPrimitive()){
 					this.imsiWithLmsi = new IMSIWithLMSIImpl();
 					((IMSIWithLMSIImpl) this.imsiWithLmsi).decodeAll(ais);
-					break;
 				}
+				
 			}
 
 			num++;
 		}
 
-		if (num < 3)
-			throw new MAPParsingComponentException("Error while decoding CancelLocationRequestImpl: Needs at least 3 mandatory parameters, found " + num,
+		if (num < 1)
+			throw new MAPParsingComponentException("Error while decoding CancelLocationRequest: Needs at least 1 mandatory parameters, found " + num,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		
 		

@@ -277,11 +277,11 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 			}
 			break;
 		case MAPOperationCode.cancelLocation:
-			if (acn == MAPApplicationContextName.networkLocUpContext ) {
+			if (acn == MAPApplicationContextName.locationCancellationContext ) {
 				if (compType == ComponentType.Invoke)
-					this.updateLocationRequest(parameter, mapDialogMobilityImpl, invokeId);
+					this.cancelLocationRequest(parameter, mapDialogMobilityImpl, invokeId);
 				else
-					this.updateLocationResponse(parameter, mapDialogMobilityImpl, invokeId);
+					this.cancelLocationResponse(parameter, mapDialogMobilityImpl, invokeId);
 			}
 			break;
 		default:
@@ -581,16 +581,33 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 	}
 	
 	
-	private void cancelLocationRequest(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
-		
-		long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
+	private void cancelLocationRequest(Parameter parameter,
+			MAPDialogMobilityImpl mapDialogImpl, Long invokeId)
+			throws MAPParsingComponentException {
+
+		long version = mapDialogImpl.getApplicationContext()
+				.getApplicationContextVersion().getVersion();
 		if (parameter == null)
-			throw new MAPParsingComponentException("Error while decoding cancelLocationRequest: Parameter is mandatory but not found",
+			throw new MAPParsingComponentException(
+					"Error while decoding cancelLocationRequest: Parameter is mandatory but not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
-		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
-			throw new MAPParsingComponentException("Error while decoding cancelLocationRequest: Bad tag or tagClass or parameter is primitive, received tag="
-					+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+		if (version == 3) {
+			if (parameter.getTag() != CancelLocationRequestImpl.TAG_cancelLocationRequest
+					|| parameter.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC
+					|| parameter.isPrimitive())
+				throw new MAPParsingComponentException(
+						"Error while decoding cancelLocationRequest: Bad tag or tagClass or parameter is primitive, received tag="
+								+ parameter.getTag(),
+						MAPParsingComponentExceptionReason.MistypedParameter);
+		} else {
+			if ((!(parameter.getTag() == Tag.SEQUENCE || parameter.getTag() == Tag.STRING_OCTET))
+					|| parameter.getTagClass() != Tag.CLASS_UNIVERSAL)
+				throw new MAPParsingComponentException(
+						"Error while decoding cancelLocationRequest: Bad tag or tagClass or parameter is primitive, received tag="
+								+ parameter.getTag(),
+						MAPParsingComponentExceptionReason.MistypedParameter);
+		}
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
@@ -603,30 +620,33 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onMAPMessage(ind);
-				((MAPServiceMobilityListener) serLis).onCancelLocationRequest(ind);
+				((MAPServiceMobilityListener) serLis)
+						.onCancelLocationRequest(ind);
 			} catch (Exception e) {
-				loger.error("Error processing cancelLocationRequest: " + e.getMessage(), e);
+				loger.error(
+						"Error processing cancelLocationRequest: "
+								+ e.getMessage(), e);
 			}
 		}
 	}
-	
-	private void cancelLocationResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
-		long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
+
+	private void cancelLocationResponse(Parameter parameter,
+			MAPDialogMobilityImpl mapDialogImpl, Long invokeId)
+			throws MAPParsingComponentException {
+		long version = mapDialogImpl.getApplicationContext()
+				.getApplicationContextVersion().getVersion();
 		if (parameter == null)
-			throw new MAPParsingComponentException("Error while decoding cancelLocationResponse: Parameter is mandatory but not found",
+			throw new MAPParsingComponentException(
+					"Error while decoding cancelLocationResponse: Parameter is mandatory but not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
-		if (version >= 2) {
-			if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
-				throw new MAPParsingComponentException(
-						"Error while decoding cancelLocationResponse V2_3: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
-						MAPParsingComponentExceptionReason.MistypedParameter);
-		} else {
-			if (parameter.getTag() != Tag.STRING_OCTET || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || !parameter.isPrimitive())
-				throw new MAPParsingComponentException(
-						"Error while decoding cancelLocationResponse V1: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
-						MAPParsingComponentExceptionReason.MistypedParameter);
-		}		
+		if (parameter.getTag() != Tag.SEQUENCE
+				|| parameter.getTagClass() != Tag.CLASS_UNIVERSAL
+				|| parameter.isPrimitive())
+			throw new MAPParsingComponentException(
+					"Error while decoding cancelLocationResponse V2_3: Bad tag or tagClass or parameter is primitive, received tag="
+							+ parameter.getTag(),
+					MAPParsingComponentExceptionReason.MistypedParameter);
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
@@ -639,9 +659,12 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 		for (MAPServiceListener serLis : this.serviceListeners) {
 			try {
 				serLis.onMAPMessage(ind);
-				((MAPServiceMobilityListener) serLis).onCancelLocationResponse(ind);
+				((MAPServiceMobilityListener) serLis)
+						.onCancelLocationResponse(ind);
 			} catch (Exception e) {
-				loger.error("Error processing cancelLocationResponse: " + e.getMessage(), e);
+				loger.error(
+						"Error processing cancelLocationResponse: "
+								+ e.getMessage(), e);
 			}
 		}
 	}

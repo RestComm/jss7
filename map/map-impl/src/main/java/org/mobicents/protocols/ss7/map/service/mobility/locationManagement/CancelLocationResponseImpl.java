@@ -21,7 +21,7 @@ import org.mobicents.protocols.ss7.map.service.mobility.MobilityMessageImpl;
 
 /**
  * 
- * @author Lasith
+ * @author Lasith Waruna Perera
  * 
  */
 public class CancelLocationResponseImpl extends MobilityMessageImpl implements
@@ -33,7 +33,14 @@ public class CancelLocationResponseImpl extends MobilityMessageImpl implements
 	public CancelLocationResponseImpl(long mapProtocolVersion) {
 		this.mapProtocolVersion = mapProtocolVersion;
 	}
-
+	
+	public CancelLocationResponseImpl(MAPExtensionContainer extensionContainer,
+			long mapProtocolVersion) {
+		super();
+		this.extensionContainer = extensionContainer;
+		this.mapProtocolVersion = mapProtocolVersion;
+	}
+	
 	@Override
 	public MAPMessageType getMessageType() {
 		return MAPMessageType.cancelLocation_Response;
@@ -69,19 +76,19 @@ public class CancelLocationResponseImpl extends MobilityMessageImpl implements
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new MAPParsingComponentException(
-					"IOException when decoding ProvideRoamingNumberResponse: "
+					"IOException when decoding CancelLocationResponse: "
 							+ e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
 			e.printStackTrace();
 			throw new MAPParsingComponentException(
-					"AsnException when decoding ProvideRoamingNumberResponse: "
+					"AsnException when decoding CancelLocationResponse: "
 							+ e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new MAPParsingComponentException(
-					"AsnException when decoding ProvideRoamingNumberResponse: "
+					"AsnException when decoding CancelLocationResponse: "
 							+ e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
@@ -96,13 +103,13 @@ public class CancelLocationResponseImpl extends MobilityMessageImpl implements
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new MAPParsingComponentException(
-					"IOException when decoding ProvideRoamingNumberResponse: "
+					"IOException when decoding CancelLocationResponse: "
 							+ e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
 			e.printStackTrace();
 			throw new MAPParsingComponentException(
-					"AsnException when decoding ProvideRoamingNumberResponse: "
+					"AsnException when decoding CancelLocationResponse: "
 							+ e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (Exception e) {
@@ -114,9 +121,13 @@ public class CancelLocationResponseImpl extends MobilityMessageImpl implements
 	private void _decode(AsnInputStream ansIS, int length)
 			throws MAPParsingComponentException, IOException, AsnException {
 		this.extensionContainer = null;
+		
+		AsnInputStream ais = ansIS.readSequenceStreamData(length);
+		if (ais.available() == 0)
+			return;
+		int tag = ais.readTag();
 		this.extensionContainer = new MAPExtensionContainerImpl();
-		((ISDNAddressStringImpl) this.extensionContainer).decodeData(ansIS,
-				length);
+		((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
 	}
 
 	@Override
@@ -139,7 +150,7 @@ public class CancelLocationResponseImpl extends MobilityMessageImpl implements
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
 			throw new MAPException(
-					"AsnException when encoding ProvideRoamingNumberResponse : "
+					"AsnException when encoding CancelLocationResponse : "
 							+ e.getMessage(), e);
 		}
 	}
