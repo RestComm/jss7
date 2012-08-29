@@ -175,7 +175,7 @@ public class ProvideRoamingNumberResponseImpl extends CallHandlingMessageImpl im
 			}
 		}else{
 			this.roamingNumber = new ISDNAddressStringImpl();
-			((ISDNAddressStringImpl) this.roamingNumber).decodeData(ansIS, length);
+			((ISDNAddressStringImpl) this.roamingNumber).decodeAll(ais);
 		}
 	
 	}
