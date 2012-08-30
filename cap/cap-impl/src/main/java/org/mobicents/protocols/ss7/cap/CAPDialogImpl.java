@@ -38,6 +38,7 @@ import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
 import org.mobicents.protocols.ss7.cap.errors.CAPErrorMessageImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.api.MessageType;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
@@ -78,6 +79,8 @@ public abstract class CAPDialogImpl implements CAPDialog {
 	private Set<Long> incomingInvokeList = new HashSet<Long>();
 
 	boolean returnMessageOnError = false;
+	protected MessageType tcapMessageType;
+	protected DelayedAreaState delayedAreaState;
 	
 
 	protected CAPDialogImpl(CAPApplicationContext appCntx, Dialog tcapDialog, CAPProviderImpl capProviderImpl, CAPServiceBase capService) {
@@ -104,7 +107,11 @@ public abstract class CAPDialogImpl implements CAPDialog {
 	public boolean getReturnMessageOnError() {
 		return returnMessageOnError;
 	}
-	
+
+	public MessageType getTCAPMessageType() {
+		return tcapMessageType;
+	}
+
 	@Override
 	public void keepAlive() {
 		this.tcapDialog.keepAlive();
@@ -237,7 +244,18 @@ public abstract class CAPDialogImpl implements CAPDialog {
 		}
 	}
 
-	@Override
+	public void sendDelayed() throws CAPException {
+		if (this.delayedAreaState == null) {
+			this.send();
+		} else {
+			switch (this.delayedAreaState) {
+			case No:
+				this.delayedAreaState = CAPDialogImpl.DelayedAreaState.Continue;
+				break;
+			}
+		}
+	}
+
 	public void close(boolean prearrangedEnd) throws CAPException {
 
 		synchronized (this) {
@@ -266,6 +284,29 @@ public abstract class CAPDialogImpl implements CAPDialog {
 				throw new CAPException("Awaiting TC-BEGIN response, can not send another dialog initiating primitive!");
 			case Expunged: // dialog has been terminated on TC level, cant send
 				throw new CAPException("Dialog has been terminated, can not send primitives!");
+			}
+		}
+	}
+
+	public void closeDelayed(boolean prearrangedEnd) throws CAPException {
+		if (this.delayedAreaState == null) {
+			this.close(prearrangedEnd);
+		} else {
+			if (prearrangedEnd) {
+				switch (this.delayedAreaState) {
+				case No:
+				case Continue:
+				case End:
+					this.delayedAreaState = CAPDialogImpl.DelayedAreaState.PrearrangedEnd;
+					break;
+				}
+			} else {
+				switch (this.delayedAreaState) {
+				case No:
+				case Continue:
+					this.delayedAreaState = CAPDialogImpl.DelayedAreaState.End;
+					break;
+				}
 			}
 		}
 	}
@@ -467,6 +508,10 @@ public abstract class CAPDialogImpl implements CAPDialog {
 				.append("CAPApplicationContext=").append(this.appCntx).append("TCAPDialogState=")
 				.append(this.tcapDialog.getState());
 		return sb.toString();
+	}
+
+	protected enum DelayedAreaState {
+		No, Continue, End, PrearrangedEnd;
 	}
 
 }

@@ -382,6 +382,28 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			this.deliverDialogDelimiter(capDialogImpl);
 		}
 	}
+
+	private void finishComponentProcessingState(CAPDialogImpl capDialogImpl) {
+
+		try {
+			switch (capDialogImpl.delayedAreaState) {
+			case Continue:
+				capDialogImpl.send();
+				break;
+			case End:
+				capDialogImpl.close(false);
+				break;
+			case PrearrangedEnd:
+				capDialogImpl.close(true);
+				break;
+			}
+		} catch (CAPException e) {
+			loger.error("Error while finishComponentProcessingState, delayedAreaState=" + capDialogImpl.delayedAreaState, e);
+		}
+
+		capDialogImpl.delayedAreaState = null;
+		capDialogImpl.tcapMessageType = null;
+	}
 	
 	public void onTCContinue(TCContinueIndication tcContinueIndication) {
 

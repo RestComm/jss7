@@ -26,7 +26,6 @@ import org.mobicents.protocols.ss7.cap.api.dialog.CAPDialogState;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
-import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.MessageType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
@@ -133,7 +132,7 @@ public interface CAPDialog {
 	 * in several processing components events - the result will be sent after
 	 * onDialogDelimiter() in a single TC-CONTINUE message
 	 */
-	public void sendDelayed() throws MAPException;
+	public void sendDelayed() throws CAPException;
 
 	/**
 	 * This method makes the same as close() method.
@@ -150,7 +149,7 @@ public interface CAPDialog {
 	 * If sendDelayed() or closeDelayed() were invoked, TC-CONTINUE/TC-END were not sent
 	 * and abort() or release() are invoked - no TC-CONTINUE/TC-END messages will be sent
 	 */
-	public void closeDelayed(boolean prearrangedEnd) throws MAPException;
+	public void closeDelayed(boolean prearrangedEnd) throws CAPException;
 
 	/**
 	 * Sends TC_U_ABORT Service Request with an abort reason.

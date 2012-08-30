@@ -689,9 +689,13 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 							loger.error("Error while firing TC-U-ABORT. ", e);
 						}
 
+						mapDialogImpl.tcapMessageType = MessageType.Continue;
+
 						this.deliverDialogProviderAbort(mapDialogImpl, MAPAbortProviderReason.AbnormalMAPDialogue, MAPAbortSource.MAPProblem, null);
 						mapDialogImpl.setState(MAPDialogState.EXPUNGED);
 
+						mapDialogImpl.tcapMessageType = null;
+						
 						return;
 					}
 				} else {
@@ -707,8 +711,12 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 							loger.error("Error while firing TC-U-ABORT. ", e);
 						}
 
+						mapDialogImpl.tcapMessageType = MessageType.Continue;
+
 						this.deliverDialogProviderAbort(mapDialogImpl, MAPAbortProviderReason.AbnormalMAPDialogue, MAPAbortSource.MAPProblem, null);
 						mapDialogImpl.setState(MAPDialogState.EXPUNGED);
+
+						mapDialogImpl.tcapMessageType = null;
 
 						return;
 					}
@@ -754,13 +762,21 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 					}
 				}
 
+				mapDialogImpl.delayedAreaState = MAPDialogImpl.DelayedAreaState.No;
+				mapDialogImpl.tcapMessageType = MessageType.Continue;
+
 				// Fire MAPAcceptInfo
 				mapDialogImpl.setState(MAPDialogState.ACTIVE);
 				this.deliverDialogAccept(mapDialogImpl, extensionContainer);
 
-				if (mapDialogImpl.getState() == MAPDialogState.EXPUNGED)
+				if (mapDialogImpl.getState() == MAPDialogState.EXPUNGED) {
 					// The Dialog was aborter
+					finishComponentProcessingState(mapDialogImpl);
 					return;
+				}
+			} else {
+				mapDialogImpl.delayedAreaState = MAPDialogImpl.DelayedAreaState.No;
+				mapDialogImpl.tcapMessageType = MessageType.Continue;
 			}
 
 			// Now let us decode the Components
@@ -775,6 +791,8 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			}
 
 			this.deliverDialogDelimiter(mapDialogImpl);
+
+			finishComponentProcessingState(mapDialogImpl);
 		}
 	}
 
@@ -818,8 +836,12 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 						if (onlyErrorReject) {
 							loger.error(String.format("Received first TC-END for MAPDialog=%s. But no application-context-name included", mapDialogImpl));
 
+							mapDialogImpl.tcapMessageType = MessageType.End;
+
 							this.deliverDialogProviderAbort(mapDialogImpl, MAPAbortProviderReason.AbnormalMAPDialogue, MAPAbortSource.MAPProblem, null);
 							mapDialogImpl.setState(MAPDialogState.EXPUNGED);
+
+							mapDialogImpl.tcapMessageType = null;
 
 							return;
 						}
@@ -831,9 +853,13 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 					if (mapAcn == null || !mapAcn.equals(mapDialogImpl.getApplicationContext())) {
 						loger.error(String.format("Received first TC-END. MAPDialog=%s. But MAPApplicationContext=%s", mapDialogImpl, mapAcn));
 
+						mapDialogImpl.tcapMessageType = MessageType.End;
+						
 						this.deliverDialogProviderAbort(mapDialogImpl, MAPAbortProviderReason.AbnormalMAPDialogue, MAPAbortSource.MAPProblem, null);
 						mapDialogImpl.setState(MAPDialogState.EXPUNGED);
 
+						mapDialogImpl.tcapMessageType = null;
+						
 						return;
 					}
 				}
@@ -894,10 +920,18 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 					}
 				}
 
+				mapDialogImpl.delayedAreaState = MAPDialogImpl.DelayedAreaState.No;
+				mapDialogImpl.tcapMessageType = MessageType.End;
+
 				this.deliverDialogAccept(mapDialogImpl, extensionContainer);
-				if (mapDialogImpl.getState() == MAPDialogState.EXPUNGED)
+				if (mapDialogImpl.getState() == MAPDialogState.EXPUNGED) {
 					// The Dialog was aborter
+					finishComponentProcessingState(mapDialogImpl);
 					return;
+				}
+			} else {
+				mapDialogImpl.delayedAreaState = MAPDialogImpl.DelayedAreaState.No;
+				mapDialogImpl.tcapMessageType = MessageType.End;
 			}
 
 			// Now let us decode the Components
@@ -908,6 +942,8 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 			this.deliverDialogClose(mapDialogImpl);
 			mapDialogImpl.setState(MAPDialogState.EXPUNGED);
+
+			finishComponentProcessingState(mapDialogImpl);
 		}
 	}
 
@@ -1006,6 +1042,8 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				break;
 			}
 
+			mapDialogImpl.tcapMessageType = MessageType.Abort;
+
 			if (abortProviderReason == MAPAbortProviderReason.VersionIncompatibility)
 				// On receipt of a TC-P-ABORT indication primitive in the
 				// "Dialogue Initiated" state with a P-abort parameter
@@ -1018,6 +1056,8 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				this.deliverDialogReject(mapDialogImpl, MAPRefuseReason.PotentialVersionIncompatibility, null, null, null);
 			else
 				this.deliverDialogProviderAbort(mapDialogImpl, abortProviderReason, abortSource, null);
+
+			mapDialogImpl.tcapMessageType = null;
 
 			mapDialogImpl.setState(MAPDialogState.EXPUNGED);
 		}

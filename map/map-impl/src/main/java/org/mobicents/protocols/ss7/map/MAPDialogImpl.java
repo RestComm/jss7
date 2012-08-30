@@ -258,7 +258,6 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		}
 	}
 
-	@Override
 	public void closeDelayed(boolean prearrangedEnd) throws MAPException {
 		if (this.delayedAreaState == null) {
 			this.close(prearrangedEnd);
@@ -328,7 +327,6 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		}
 	}
 
-	@Override
 	public void sendDelayed() throws MAPException {
 		if (this.delayedAreaState == null) {
 			this.send();
