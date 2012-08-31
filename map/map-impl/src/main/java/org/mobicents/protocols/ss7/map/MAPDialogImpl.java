@@ -85,6 +85,9 @@ public abstract class MAPDialogImpl implements MAPDialog {
 	protected AddressString destReference;
 	protected AddressString origReference;
 	protected MAPExtensionContainer extContainer = null;
+	protected AddressString receivedOrigReference;
+	protected AddressString receivedDestReference;
+	protected MAPExtensionContainer receivedExtensionContainer;
 
 	protected MAPDialogState state = MAPDialogState.IDLE;
 	
@@ -191,7 +194,19 @@ public abstract class MAPDialogImpl implements MAPDialog {
 			return this.incomingInvokeList.contains(invokeId);
 		}
 	}
-	
+
+	public AddressString getReceivedOrigReference() {
+		return receivedOrigReference;
+	}
+
+	public MAPExtensionContainer getReceivedExtensionContainer() {
+		return receivedExtensionContainer;
+	}
+
+	public AddressString getReceivedDestReference() {
+		return receivedDestReference;
+	}
+
 	public void abort(MAPUserAbortChoice mapUserAbortChoice) throws MAPException {
 
 		synchronized (this) {

@@ -86,13 +86,30 @@ public interface MAPDialog {
 	public boolean getReturnMessageOnError();
 
 	/**
-	 * In events for processing incoming messages this methods returns 
-	 * a message type of TCAP message that carries incoming messages
-	 * In other cases this method returns null
+	 * Returns the type of the last incoming TCAP primitive (TC-BEGIN, TC-CONTINUE, TC-END or TC-ABORT)
+	 * It will be equal null if we have just created a Dialog and no messages has income
 	 * 
 	 * @return
 	 */
 	public MessageType getTCAPMessageType();
+
+	/**
+	 * Return received OrigReference from MAPOpenInfo or null if no OrigReference has been received
+	 * @return
+	 */
+	public AddressString getReceivedOrigReference();
+
+	/**
+	 * Return received DestReference from MAPOpenInfo or null if no OrigReference has been received
+	 * @return
+	 */
+	public AddressString getReceivedDestReference();
+
+	/**
+	 * Return received ExtensionContainer from MAPOpenInfo or null if no OrigReference has been received
+	 * @return
+	 */
+	public MAPExtensionContainer getReceivedExtensionContainer();
 
 	/**
 	 * Remove MAPDialog without sending any messages and invoking events

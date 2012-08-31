@@ -69,7 +69,6 @@ import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.ISUPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPDialogState;
 import org.mobicents.protocols.ss7.tcap.api.MessageType;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
@@ -369,6 +368,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		synchronized (capDialogImpl) {
 			this.addDialog(capDialogImpl);
 			capDialogImpl.tcapMessageType = MessageType.Begin;
+			capDialogImpl.receivedGprsReferenceNumber = referenceNumber;
 
 			capDialogImpl.setState(CAPDialogState.InitialReceived);
 
@@ -477,6 +477,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 				if (userInfo != null) {
 					referenceNumber = ParseUserInfo(userInfo, tcContinueIndication.getDialog());
 				}
+				capDialogImpl.receivedGprsReferenceNumber = referenceNumber;
 
 				capDialogImpl.delayedAreaState = CAPDialogImpl.DelayedAreaState.No;
 
@@ -568,6 +569,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 				if (userInfo != null) {
 					referenceNumber = ParseUserInfo(userInfo, tcEndIndication.getDialog());
 				}
+				capDialogImpl.receivedGprsReferenceNumber = referenceNumber;
 
 				this.deliverDialogAccept(capDialogImpl, referenceNumber);
 				if (capDialogImpl.getState() == CAPDialogState.Expunged) {

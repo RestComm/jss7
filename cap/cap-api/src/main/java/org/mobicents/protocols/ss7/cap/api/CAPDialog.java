@@ -94,9 +94,14 @@ public interface CAPDialog {
 	public CAPGprsReferenceNumber getGprsReferenceNumber();
 
 	/**
-	 * In events for processing incoming messages this methods returns 
-	 * a message type of TCAP message that carries incoming messages
-	 * In other cases this method returns null
+	 * Return received GprsReferenceNumber or null if no GprsReferenceNumber has been received
+	 * @return
+	 */
+	public CAPGprsReferenceNumber getReceivedGprsReferenceNumber();
+
+	/**
+	 * Returns the type of the last incoming TCAP primitive (TC-BEGIN, TC-CONTINUE, TC-END or TC-ABORT)
+	 * It will be equal null if we have just created a Dialog and no messages has income
 	 * 
 	 * @return
 	 */

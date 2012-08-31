@@ -71,6 +71,7 @@ public abstract class CAPDialogImpl implements CAPDialog {
 	protected CAPApplicationContext appCntx;
 
 	protected CAPGprsReferenceNumber gprsReferenceNumber = null;
+	protected CAPGprsReferenceNumber receivedGprsReferenceNumber;
 
 	protected CAPDialogState state = CAPDialogState.Idle;
 	
@@ -202,7 +203,10 @@ public abstract class CAPDialogImpl implements CAPDialog {
 		return this.gprsReferenceNumber;
 	}
 
-	
+	public CAPGprsReferenceNumber getReceivedGprsReferenceNumber() {
+		return receivedGprsReferenceNumber;
+	}
+
 	public void send() throws CAPException {
 
 		synchronized (this) {

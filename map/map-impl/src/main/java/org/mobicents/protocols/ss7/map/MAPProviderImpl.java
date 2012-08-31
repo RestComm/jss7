@@ -593,6 +593,9 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		synchronized (mapDialogImpl) {
 			this.addDialog(mapDialogImpl);
 			mapDialogImpl.tcapMessageType = MessageType.Begin;
+			mapDialogImpl.receivedOrigReference = origReference;
+			mapDialogImpl.receivedDestReference = destReference;
+			mapDialogImpl.receivedExtensionContainer = extensionContainer;
 
 			mapDialogImpl.setState(MAPDialogState.INITIAL_RECEIVED);
 
