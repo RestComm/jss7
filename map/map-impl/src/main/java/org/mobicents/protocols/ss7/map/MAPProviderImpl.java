@@ -1057,6 +1057,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			loger.error("MAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
 			return;
 		}
+		mapDialogImpl.tcapMessageType = MessageType.Abort;
 
 		synchronized (mapDialogImpl) {
 			// Trying to parse an userInfo APDU if it exists

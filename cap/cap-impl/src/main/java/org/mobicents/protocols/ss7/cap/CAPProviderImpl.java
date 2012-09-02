@@ -666,7 +666,6 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			loger.warn("CAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
 			return;
 		}
-
 		capDialogImpl.tcapMessageType = MessageType.Abort;
 
 		synchronized (capDialogImpl) {
@@ -689,6 +688,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			loger.error("CAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
 			return;
 		}
+		capDialogImpl.tcapMessageType = MessageType.Abort;
 
 		synchronized (capDialogImpl) {
 			CAPGeneralAbortReason generalReason = CAPGeneralAbortReason.BadReceivedData;

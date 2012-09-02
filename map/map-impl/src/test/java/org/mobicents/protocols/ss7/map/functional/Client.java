@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.functional;
 
+import static org.testng.Assert.*;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.MAPDialogImpl;
@@ -713,6 +714,55 @@ public class Client extends EventTestHarness {
 		clientDialogMobility.addCheckImeiRequest_Huawei(imei, null, null, imsi);
 		
 		this.observerdEvents.add(TestEvent.createSentEvent(EventType.CheckImei, null, sequence++));
+		clientDialogMobility.send();
+	}
+
+	public void sendCheckImei_ForDelayedTest() throws Exception {
+		
+		this.mapProvider.getMAPServiceMobility().acivate();
+		
+		MAPApplicationContext appCnt = null;
+		
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.equipmentMngtContext, MAPApplicationContextVersion.version2);
+
+		AddressString origReference = this.mapParameterFactory.createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "11335577");
+		AddressString destReference = this.mapParameterFactory.createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "22446688");
+		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, origReference, this.remoteAddress, destReference);
+		clientDialogMobility.setExtentionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
+
+		IMEI imei = this.mapParameterFactory.createIMEI("333333334444444");
+		
+		clientDialogMobility.addCheckImeiRequest(imei, null, null);
+		clientDialogMobility.addCheckImeiRequest(imei, null, null);
+		
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.CheckImei, null, sequence++));
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.CheckImei, null, sequence++));
+
+		assertNull(clientDialogMobility.getTCAPMessageType());
+		
+		clientDialogMobility.send();
+	}
+
+	public void sendCheckImei_ForDelayedTest2() throws Exception {
+		
+		this.mapProvider.getMAPServiceMobility().acivate();
+		
+		MAPApplicationContext appCnt = null;
+		
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.equipmentMngtContext, MAPApplicationContextVersion.version2);
+
+		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+
+		IMEI imei = this.mapParameterFactory.createIMEI("333333334444444");
+		
+		clientDialogMobility.addCheckImeiRequest(imei, null, null);
+		clientDialogMobility.addCheckImeiRequest(imei, null, null);
+		
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.CheckImei, null, sequence++));
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.CheckImei, null, sequence++));
+
+		assertNull(clientDialogMobility.getTCAPMessageType());
+		
 		clientDialogMobility.send();
 	}
 
