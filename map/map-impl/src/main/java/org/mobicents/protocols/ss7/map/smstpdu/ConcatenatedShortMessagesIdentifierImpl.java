@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -37,6 +37,33 @@ public class ConcatenatedShortMessagesIdentifierImpl implements ConcatenatedShor
 	private int mesageSegmentCount;
 	private int mesageSegmentNumber;
 
+	/**
+	 * 
+	 * @param referenceIs16bit
+	 * @param reference
+	 *            Concatenated short message reference number. This octet shall
+	 *            contain a modulo 256 counter indicating the reference number
+	 *            for a particular concatenated short message. This reference
+	 *            number shall remain constant for every short message which
+	 *            makes up a particular concatenated short message.
+	 * @param mesageSegmentCount
+	 *            Maximum number of short messages in the concatenated short
+	 *            message. This octet shall contain a value in the range 0 to
+	 *            255 indicating the total number of short messages within the
+	 *            concatenated short message. The value shall start at 1 and
+	 *            remain constant for every short message which makes up the
+	 *            concatenated short message. If the value is zero then the
+	 *            receiving entity shall ignore the whole Information Element.
+	 * @param mesageSegmentNumber
+	 *            Sequence number of the current short message. This octet shall
+	 *            contain a value in the range 0 to 255 indicating the sequence
+	 *            number of a particular short message within the concatenated
+	 *            short message. The value shall start at 1 and increment by one
+	 *            for every short message sent within the concatenated short
+	 *            message. If the value is zero or the value is greater than the
+	 *            value in octet 2 then the receiving entity shall ignore the
+	 *            whole Information Element.
+	 */
 	public ConcatenatedShortMessagesIdentifierImpl(boolean referenceIs16bit, int reference, int mesageSegmentCount, int mesageSegmentNumber) {
 		this.referenceIs16bit = referenceIs16bit;
 		this.reference = reference;
@@ -61,7 +88,7 @@ public class ConcatenatedShortMessagesIdentifierImpl implements ConcatenatedShor
 			this.mesageSegmentNumber = encodedInformationElementData[3] & 0xFF;
 		}
 	}
-	
+
 	public boolean getReferenceIs16bit() {
 		return referenceIs16bit;
 	}
@@ -101,7 +128,7 @@ public class ConcatenatedShortMessagesIdentifierImpl implements ConcatenatedShor
 		}
 		return res;
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
