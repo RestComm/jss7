@@ -69,6 +69,7 @@ import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.ISUPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
+import org.mobicents.protocols.ss7.tcap.api.MessageType;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.TCListener;
@@ -366,13 +367,18 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		CAPDialogImpl capDialogImpl = ((CAPServiceBaseImpl) perfSer).createNewDialogIncoming(capAppCtx, tcBeginIndication.getDialog());
 		synchronized (capDialogImpl) {
 			this.addDialog(capDialogImpl);
+			capDialogImpl.tcapMessageType = MessageType.Begin;
+			capDialogImpl.receivedGprsReferenceNumber = referenceNumber;
 
 			capDialogImpl.setState(CAPDialogState.InitialReceived);
 
+			capDialogImpl.delayedAreaState = CAPDialogImpl.DelayedAreaState.No;
+
 			this.deliverDialogRequest(capDialogImpl, referenceNumber);
-			if (capDialogImpl.getState() == CAPDialogState.Expunged)
+			if (capDialogImpl.getState() == CAPDialogState.Expunged) {
 				// The Dialog was aborter or refused
 				return;
+			}
 
 			// Now let us decode the Components
 			if (comps != null) {
@@ -380,7 +386,33 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			}
 
 			this.deliverDialogDelimiter(capDialogImpl);
+
+			finishComponentProcessingState(capDialogImpl);
 		}
+	}
+
+	private void finishComponentProcessingState(CAPDialogImpl capDialogImpl) {
+
+		if (capDialogImpl.getState() == CAPDialogState.Expunged)
+			return;
+
+		try {
+			switch (capDialogImpl.delayedAreaState) {
+			case Continue:
+				capDialogImpl.send();
+				break;
+			case End:
+				capDialogImpl.close(false);
+				break;
+			case PrearrangedEnd:
+				capDialogImpl.close(true);
+				break;
+			}
+		} catch (CAPException e) {
+			loger.error("Error while finishComponentProcessingState, delayedAreaState=" + capDialogImpl.delayedAreaState, e);
+		}
+
+		capDialogImpl.delayedAreaState = null;
 	}
 	
 	public void onTCContinue(TCContinueIndication tcContinueIndication) {
@@ -398,6 +430,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			}
 			return;
 		}
+		capDialogImpl.tcapMessageType = MessageType.Continue;
 
 		synchronized (capDialogImpl) {
 			if (capDialogImpl.getState() == CAPDialogState.InitialSent) {
@@ -412,6 +445,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 					}
 
 //					capDialogImpl.setNormalDialogShutDown();
+
 					this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
 					capDialogImpl.setState(CAPDialogState.Expunged);
 
@@ -429,6 +463,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 					}
 
 //					capDialogImpl.setNormalDialogShutDown();
+
 					this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
 					capDialogImpl.setState(CAPDialogState.Expunged);
 
@@ -442,13 +477,20 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 				if (userInfo != null) {
 					referenceNumber = ParseUserInfo(userInfo, tcContinueIndication.getDialog());
 				}
+				capDialogImpl.receivedGprsReferenceNumber = referenceNumber;
+
+				capDialogImpl.delayedAreaState = CAPDialogImpl.DelayedAreaState.No;
 
 				capDialogImpl.setState(CAPDialogState.Active);
 				this.deliverDialogAccept(capDialogImpl, referenceNumber);
 
-				if (capDialogImpl.getState() == CAPDialogState.Expunged)
+				if (capDialogImpl.getState() == CAPDialogState.Expunged) {
 					// The Dialog was aborter
+					finishComponentProcessingState(capDialogImpl);
 					return;
+				}
+			} else {
+				capDialogImpl.delayedAreaState = CAPDialogImpl.DelayedAreaState.No;
 			}
 
 			// Now let us decode the Components
@@ -463,9 +505,11 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			}
 
 			this.deliverDialogDelimiter(capDialogImpl);
+
+			finishComponentProcessingState(capDialogImpl);
 		}
 	}	
-	
+
 	public void onTCEnd(TCEndIndication tcEndIndication) {
 
 		Dialog tcapDialog = tcEndIndication.getDialog();
@@ -481,6 +525,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			}
 			return;
 		}
+		capDialogImpl.tcapMessageType = MessageType.End;
 
 		synchronized (capDialogImpl) {
 			if (capDialogImpl.getState() == CAPDialogState.InitialSent) {
@@ -495,6 +540,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 					}
 
 //					capDialogImpl.setNormalDialogShutDown();
+
 					this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
 					capDialogImpl.setState(CAPDialogState.Expunged);
 
@@ -507,6 +553,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 					loger.error(String.format("Received first TC-END. CAPDialog=%s. But CAPApplicationContext=%s", capDialogImpl, capAcn));
 
 //					capDialogImpl.setNormalDialogShutDown();
+
 					this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
 					capDialogImpl.setState(CAPDialogState.Expunged);
 
@@ -522,11 +569,13 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 				if (userInfo != null) {
 					referenceNumber = ParseUserInfo(userInfo, tcEndIndication.getDialog());
 				}
+				capDialogImpl.receivedGprsReferenceNumber = referenceNumber;
 
 				this.deliverDialogAccept(capDialogImpl, referenceNumber);
-				if (capDialogImpl.getState() == CAPDialogState.Expunged)
+				if (capDialogImpl.getState() == CAPDialogState.Expunged) {
 					// The Dialog was aborter
 					return;
+				}
 			}
 
 			// Now let us decode the Components
@@ -537,6 +586,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
 //			capDialogImpl.setNormalDialogShutDown();
 			this.deliverDialogClose(capDialogImpl);
+
 			capDialogImpl.setState(CAPDialogState.Expunged);
 		}
 	}	
@@ -616,6 +666,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			loger.warn("CAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
 			return;
 		}
+		capDialogImpl.tcapMessageType = MessageType.Abort;
 
 		synchronized (capDialogImpl) {
 			PAbortCauseType pAbortCause = tcPAbortIndication.getPAbortCause();
@@ -637,6 +688,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			loger.error("CAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
 			return;
 		}
+		capDialogImpl.tcapMessageType = MessageType.Abort;
 
 		synchronized (capDialogImpl) {
 			CAPGeneralAbortReason generalReason = CAPGeneralAbortReason.BadReceivedData;
