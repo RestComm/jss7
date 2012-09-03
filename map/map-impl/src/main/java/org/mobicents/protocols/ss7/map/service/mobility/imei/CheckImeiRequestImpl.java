@@ -223,11 +223,20 @@ public class CheckImeiRequestImpl extends MobilityMessageImpl implements CheckIm
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
 			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
+			if (this.imsi == null) {
+				int pos = asnOs.StartContentDefiniteLength();
+				this.encodeData(asnOs);
+				asnOs.FinalizeContent(pos);
+			} else {
+				AsnOutputStream tempAos = new AsnOutputStream();
+				this.encodeData(tempAos);
+				asnOs.writeLength(this.getEncodedLength());
+				this.encodeData(asnOs);
+			}
 		} catch (AsnException e) {
 			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		} catch (IOException e) {
+			throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 
