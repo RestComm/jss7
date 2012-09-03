@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.cap.functional;
 
 import static org.testng.Assert.*;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -103,10 +104,10 @@ import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.api.MessageType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.InvokeProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
-import org.mobicents.protocols.ss7.tcap.asn.comp.ProblemType;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -1824,6 +1825,7 @@ public class CAPFunctionalTest extends SccpHarness {
 
 				assertEquals(generalReason, CAPGeneralAbortReason.ACNNotSupported);
 				assertNull(userReason);
+				assertEquals(capDialog.getTCAPMessageType(), MessageType.Abort);
 			}
 			
 			@Override
@@ -1894,6 +1896,7 @@ public class CAPFunctionalTest extends SccpHarness {
 
 				assertEquals(generalReason, CAPGeneralAbortReason.BadReceivedData);
 				assertNull(userReason);
+				assertEquals(capDialog.getTCAPMessageType(), MessageType.Abort);
 			}
 			
 			@Override
@@ -2146,6 +2149,7 @@ public class CAPFunctionalTest extends SccpHarness {
 				
 				assertEquals(generalReason, CAPGeneralAbortReason.BadReceivedData);
 				assertNull(userReason);
+				assertEquals(capDialog.getTCAPMessageType(), MessageType.Abort);
 			}
 
 			@Override
@@ -2195,8 +2199,6 @@ public class CAPFunctionalTest extends SccpHarness {
 	}
 
 	/**
-	 * broken referensedNumber 
-	 * 
 	 * 
 	 * TC-BEGIN + broken referensedNumber
 	 *   TC-ABORT
@@ -2211,6 +2213,11 @@ public class CAPFunctionalTest extends SccpHarness {
 				super.onDialogDelimiter(capDialog);
 
 				CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall) capDialog;
+			}
+
+			public void onDialogUserAbort(CAPDialog capDialog, CAPGeneralAbortReason generalReason, CAPUserAbortReason userReason) {
+				super.onDialogUserAbort(capDialog, generalReason, userReason);
+				assertEquals(capDialog.getTCAPMessageType(), MessageType.Abort);
 			}
 		};
 
@@ -2245,6 +2252,276 @@ public class CAPFunctionalTest extends SccpHarness {
 //		client.compareEvents(clientExpectedEvents);
 //		server.compareEvents(serverExpectedEvents);
 
+	}
+
+	/** 
+	 * Some not real test for testing:
+	 * - sendDelayed() / closeDelayed()
+	 * - getTCAPMessageType()
+	 * - saving origReferense, destReference, extContainer in MAPDialog
+	 * TC-BEGIN + referensedNumber + initialDPRequest + initialDPRequest
+	 *   TC-CONTINUE + sendDelayed(ContinueRequest) + sendDelayed(ContinueRequest)
+	 * TC-END + closeDelayed(CancelRequest) + sendDelayed(CancelRequest)
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testDelayedSendClose() throws Exception {
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+
+			int dialogStep = 0;
+
+			public void onDialogAccept(CAPDialog capDialog, CAPGprsReferenceNumber capGprsReferenceNumber) {
+				super.onDialogAccept(capDialog, capGprsReferenceNumber);
+
+				assertEquals((int)capGprsReferenceNumber.getDestinationReference(), 201);
+				assertEquals((int)capGprsReferenceNumber.getOriginationReference(), 202);
+
+				assertEquals(capDialog.getTCAPMessageType(), MessageType.Continue);
+			}
+
+			public void onContinueRequest(ContinueRequest ind) {
+				super.onContinueRequest(ind);
+
+				CAPDialogCircuitSwitchedCall d = ind.getCAPDialog();
+				assertEquals(d.getTCAPMessageType(), MessageType.Continue);
+
+				assertEquals((int)d.getReceivedGprsReferenceNumber().getDestinationReference(), 201);
+				assertEquals((int)d.getReceivedGprsReferenceNumber().getOriginationReference(), 202);
+
+				try {
+					d.addCancelRequest_AllRequests();
+					if (dialogStep == 0) {
+						d.closeDelayed(false);
+					} else {
+						d.sendDelayed();
+					}
+					dialogStep++;
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.CancelRequest, null, sequence++));
+				} catch (CAPException e) {
+					this.error("Error while adding CancelRequest/sending", e);
+					fail("Error while adding CancelRequest/sending");
+				}
+			};
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			int dialogStep = 0;
+
+			public void onDialogRequest(CAPDialog capDialog, CAPGprsReferenceNumber capGprsReferenceNumber) {
+				super.onDialogRequest(capDialog, capGprsReferenceNumber);
+
+				assertEquals((int)capGprsReferenceNumber.getDestinationReference(), 101);
+				assertEquals((int)capGprsReferenceNumber.getOriginationReference(), 102);
+
+				CAPGprsReferenceNumber grn = this.capParameterFactory.createCAPGprsReferenceNumber(201, 202);
+				capDialog.setGprsReferenceNumber(grn);
+			}
+
+			@Override
+			public void onInitialDPRequest(InitialDPRequest ind) {
+				super.onInitialDPRequest(ind);
+
+				CAPDialogCircuitSwitchedCall d = ind.getCAPDialog();
+
+				assertTrue(Client.checkTestInitialDp(ind));
+
+				assertEquals((int)d.getReceivedGprsReferenceNumber().getDestinationReference(), 101);
+				assertEquals((int)d.getReceivedGprsReferenceNumber().getOriginationReference(), 102);
+
+				if (dialogStep < 2) {
+					assertEquals(d.getTCAPMessageType(), MessageType.Begin);
+
+					try {
+						d.addContinueRequest();
+						d.sendDelayed();
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.ContinueRequest, null, sequence++));
+					} catch (CAPException e) {
+						this.error("Error while adding ContinueRequest/sending", e);
+						fail("Error while adding ContinueRequest/sending");
+					}
+				} else {
+					assertEquals(d.getTCAPMessageType(), MessageType.End);
+				}
+
+				dialogStep++;
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.InitialDpRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.InitialDpRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ContinueRequest, null, count++, (stamp));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.CancelRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ContinueRequest, null, count++, (stamp));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.CancelRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+		
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.InitialDpRequest, null, count++, (stamp));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ContinueRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.InitialDpRequest, null, count++, (stamp));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ContinueRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.CancelRequest, null, count++, (stamp));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.CancelRequest, null, count++, (stamp));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+		
+		client.sendInitialDp2();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+	}
+
+	/** 
+	 * Some not real test for testing:
+	 * - closeDelayed(true)
+	 * - getTCAPMessageType()
+	 * TC-BEGIN + initialDPRequest + initialDPRequest
+	 *   TC-END + Prearranged + [ContinueRequest + ContinueRequest]
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testDelayedClosePrearranged() throws Exception {
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			int dialogStep = 0;
+
+			public void onDialogAccept(CAPDialog capDialog, CAPGprsReferenceNumber capGprsReferenceNumber) {
+				super.onDialogAccept(capDialog, capGprsReferenceNumber);
+
+				assertNull(capGprsReferenceNumber);
+
+				assertEquals(capDialog.getTCAPMessageType(), MessageType.End);
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			int dialogStep = 0;
+
+			public void onDialogRequest(CAPDialog capDialog, CAPGprsReferenceNumber capGprsReferenceNumber) {
+				super.onDialogRequest(capDialog, capGprsReferenceNumber);
+
+				assertNull(capGprsReferenceNumber);
+
+				assertEquals(capDialog.getTCAPMessageType(), MessageType.Begin);
+			}
+
+			public void onInitialDPRequest(InitialDPRequest ind) {
+				super.onInitialDPRequest(ind);
+
+				CAPDialogCircuitSwitchedCall d = ind.getCAPDialog();
+
+				assertTrue(Client.checkTestInitialDp(ind));
+
+				assertNull(d.getReceivedGprsReferenceNumber());
+
+				assertEquals(d.getTCAPMessageType(), MessageType.Begin);
+
+				try {
+					d.addContinueRequest();
+					if (dialogStep == 0)
+						d.sendDelayed();
+					else
+						d.closeDelayed(true);
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.ContinueRequest, null, sequence++));
+				} catch (CAPException e) {
+					this.error("Error while adding ContinueRequest/sending", e);
+					fail("Error while adding ContinueRequest/sending");
+					}
+
+				dialogStep++;
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.InitialDpRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.InitialDpRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+		
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.InitialDpRequest, null, count++, (stamp));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ContinueRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.InitialDpRequest, null, count++, (stamp));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ContinueRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+		
+		client.sendInitialDp3();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
 	}
 
 	private void waitForEnd() {

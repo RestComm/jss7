@@ -89,22 +89,22 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
 	private static final Logger logger = Logger.getLogger(TCAPProviderImpl.class); // listenres
 
-	private List<TCListener> tcListeners = new CopyOnWriteArrayList<TCListener>();
-	protected ScheduledExecutorService _EXECUTOR;
+	private transient List<TCListener> tcListeners = new CopyOnWriteArrayList<TCListener>();
+	protected transient ScheduledExecutorService _EXECUTOR;
 	// boundry for Uni directional dialogs :), tx id is always encoded
 	// on 4 octets, so this is its max value
 	//private static final long _4_OCTETS_LONG_FILL = 4294967295l;
-	private ComponentPrimitiveFactory componentPrimitiveFactory;
-	private DialogPrimitiveFactory dialogPrimitiveFactory;
-	private SccpProvider sccpProvider;
+	private transient ComponentPrimitiveFactory componentPrimitiveFactory;
+	private transient DialogPrimitiveFactory dialogPrimitiveFactory;
+	private transient SccpProvider sccpProvider;
 
-	private MessageFactory messageFactory;
-	private ParameterFactory parameterFactory;
+	private transient MessageFactory messageFactory;
+	private transient ParameterFactory parameterFactory;
  
-	private TCAPStackImpl stack; // originating TX id ~=Dialog, its direct
+	private transient TCAPStackImpl stack; // originating TX id ~=Dialog, its direct
 									// mapping, but not described
 	// explicitly...
-	private Map<Long, DialogImpl> dialogs = new HashMap<Long, DialogImpl>();
+	private transient Map<Long, DialogImpl> dialogs = new HashMap<Long, DialogImpl>();
 	
 	private int seqControl = 0;
 	private int ssn;
