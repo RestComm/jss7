@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.primitives;
+package org.mobicents.protocols.ss7.cap.primitives;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,9 +30,9 @@ import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
+import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 
 /**
  * 
@@ -40,7 +40,7 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
  * @author sergey vetyutnev
  * 
  */
-public abstract class TbcdString implements MAPAsnPrimitive {
+public abstract class TbcdString implements CAPAsnPrimitive {
 
 	protected static int DIGIT_1_MASK = 0x0F;
 	protected static int DIGIT_2_MASK = 0xF0;
@@ -63,7 +63,7 @@ public abstract class TbcdString implements MAPAsnPrimitive {
 		this.data = data;
 	}
 
-	public int getTag() throws MAPException {
+	public int getTag() throws CAPException {
 		return Tag.STRING_OCTET;
 	}
 
@@ -76,51 +76,51 @@ public abstract class TbcdString implements MAPAsnPrimitive {
 	}
 
 	@Override
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
 		try {
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	protected void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException {
+	protected void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException {
 
 		if (!ansIS.isTagPrimitive())
-			throw new MAPParsingComponentException("Error decoding " + _PrimitiveName + ": field must be primitive",
-					MAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("Error decoding " + _PrimitiveName + ": field must be primitive",
+					CAPParsingComponentExceptionReason.MistypedParameter);
 		
 		if (length < this.minLength || length > this.maxLength)
-			throw new MAPParsingComponentException("Error decoding " + _PrimitiveName + ": the field must contain from " + this.minLength + " to "
-					+ this.maxLength + " octets. Contains: " + length, MAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("Error decoding " + _PrimitiveName + ": the field must contain from " + this.minLength + " to "
+					+ this.maxLength + " octets. Contains: " + length, CAPParsingComponentExceptionReason.MistypedParameter);
 
 		try {
 			this.data = decodeString(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding IMSI: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding IMSI: " + e.getMessage(), e,
+					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 	
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
 		
 		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 		
 		try {
 			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
@@ -128,19 +128,19 @@ public abstract class TbcdString implements MAPAsnPrimitive {
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+	public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
 		if (this.data == null)
-			throw new MAPException("Error while encoding the " + _PrimitiveName + ": data is not defined");
+			throw new CAPException("Error while encoding the " + _PrimitiveName + ": data is not defined");
 
 		encodeString(asnOs, this.data);
 	}
 
-	public static String decodeString(InputStream ansIS, int length) throws IOException, MAPParsingComponentException {
+	public static String decodeString(InputStream ansIS, int length) throws IOException, CAPParsingComponentException {
 		StringBuilder s = new StringBuilder();
 		for (int i1 = 0; i1 < length; i1++) {
 			int b = ansIS.read();
@@ -163,7 +163,7 @@ public abstract class TbcdString implements MAPAsnPrimitive {
 		return s.toString();
 	}
 
-	public static void encodeString(OutputStream asnOs, String data) throws MAPException {
+	public static void encodeString(OutputStream asnOs, String data) throws CAPException {
 		char[] chars = data.toCharArray();
 		for (int i = 0; i < chars.length; i = i + 2) {
 			char a = chars[i];
@@ -183,13 +183,13 @@ public abstract class TbcdString implements MAPAsnPrimitive {
 			try {
 				asnOs.write(digit);
 			} catch (IOException e) {
-				throw new MAPException("Error when encoding TbcdString: " + e.getMessage(), e);
+				throw new CAPException("Error when encoding TbcdString: " + e.getMessage(), e);
 			}
 		}
 		
 	}
 	
-	protected static int encodeNumber(char c) throws MAPException {
+	protected static int encodeNumber(char c) throws CAPException {
 		switch (c) {
 		case '0':
 			return 0;
@@ -222,14 +222,14 @@ public abstract class TbcdString implements MAPAsnPrimitive {
 		case 'c':
 			return 14;
 		default:
-			throw new MAPException(
+			throw new CAPException(
 					"char should be between 0 - 9, *, #, a, b, c for Telephony Binary Coded Decimal String. Received "
 							+ c);
 
 		}
 	}
 
-	protected static char decodeNumber(int i) throws MAPParsingComponentException {
+	protected static char decodeNumber(int i) throws CAPParsingComponentException {
 		switch (i) {
 		case 0:
 			return '0';
@@ -264,9 +264,9 @@ public abstract class TbcdString implements MAPAsnPrimitive {
 			// case 15:
 			// return 'd';
 		default:
-			throw new MAPParsingComponentException(
+			throw new CAPParsingComponentException(
 					"Integer should be between 0 - 15 for Telephony Binary Coded Decimal String. Received "
-							+ i, MAPParsingComponentExceptionReason.MistypedParameter);
+							+ i, CAPParsingComponentExceptionReason.MistypedParameter);
 
 		}
 	}
@@ -301,4 +301,3 @@ public abstract class TbcdString implements MAPAsnPrimitive {
 		return true;
 	}
 }
-
