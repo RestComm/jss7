@@ -44,6 +44,8 @@ public interface MAPServiceMobilityListener extends MAPServiceListener {
 	// -- Location Management Service
 	public void onUpdateLocationRequest(UpdateLocationRequest ind);
 	public void onUpdateLocationResponse(UpdateLocationResponse ind);
+	public void onCancelLocationRequest(CancelLocationRequest request);
+	public void onCancelLocationResponse(CancelLocationResponse response);
 
 	// -- Authentication management services
 	public void onSendAuthenticationInfoRequest(SendAuthenticationInfoRequest ind);
@@ -56,9 +58,5 @@ public interface MAPServiceMobilityListener extends MAPServiceListener {
 	// -- International mobile equipment identities management services
 	public void onCheckImeiRequest(CheckImeiRequest request);
 	public void onCheckImeiResponse(CheckImeiResponse response);
-	
-	// -- Cancle Locatoin Request
-	public void onCancelLocationRequest(CancelLocationRequest request);
-	public void onCancelLocationResponse(CancelLocationResponse response);
 
 }

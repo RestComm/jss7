@@ -541,20 +541,38 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 		oc.setLocalOperationCode((long) MAPOperationCode.cancelLocation);
 		resultLast.setOperationCode(oc);
 		
-		CancelLocationResponseImpl req = new CancelLocationResponseImpl(extensionContainer, this.appCntx.getApplicationContextVersion().getVersion());
-		
-		AsnOutputStream aos = new AsnOutputStream();
-		req.encodeData(aos);
-
-		Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-		p.setTagClass(req.getTagClass());
-		p.setPrimitive(req.getIsPrimitive());
-		p.setTag(req.getTag());
-		p.setData(aos.toByteArray());
-		resultLast.setParameter(p);
+		if (extensionContainer != null) {
+			CancelLocationResponseImpl req = new CancelLocationResponseImpl(extensionContainer, this.appCntx.getApplicationContextVersion().getVersion());
+			
+			AsnOutputStream aos = new AsnOutputStream();
+			req.encodeData(aos);
+	
+			Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+			p.setTagClass(req.getTagClass());
+			p.setPrimitive(req.getIsPrimitive());
+			p.setTag(req.getTag());
+			p.setData(aos.toByteArray());
+			resultLast.setParameter(p);
+		}
 
 		this.sendReturnResultLastComponent(resultLast);
 		
+	}
+
+
+	@Override
+	public Long addCancelLocationRequest(IMSI imsi, IMSIWithLMSI imsiWithLmsi,
+			CancellationType cancellationType,
+			MAPExtensionContainer extensionContainer,
+			TypeOfUpdate typeOfUpdate, boolean mtrfSupportedAndAuthorized,
+			boolean mtrfSupportedAndNotAuthorized,
+			ISDNAddressString newMSCNumber, ISDNAddressString newVLRNumber,
+			LMSI newLmsi) throws MAPException {
+
+		return this.addCancelLocationRequest(_Timer_Default, imsi, imsiWithLmsi,
+				cancellationType, extensionContainer, typeOfUpdate,
+				mtrfSupportedAndAuthorized, mtrfSupportedAndNotAuthorized,
+				newMSCNumber, newVLRNumber, newLmsi);
 	}
 
 }

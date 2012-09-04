@@ -30,6 +30,7 @@ public class ProvideRoamingNumberResponseImpl extends CallHandlingMessageImpl im
 	public boolean releaseResourcesSupported;
 	public ISDNAddressString vmscAddress;
 	private long mapProtocolVersion;
+	public static final String _PrimitiveName = "ProvideRoamingNumberResponse";
 	
 	
 	public ProvideRoamingNumberResponseImpl(ISDNAddressString roamingNumber,
@@ -90,15 +91,15 @@ public class ProvideRoamingNumberResponseImpl extends CallHandlingMessageImpl im
 			this._decode(ansIS, length);
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new MAPParsingComponentException("IOException when decoding ProvideRoamingNumberResponse: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding "+_PrimitiveName+": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
 			e.printStackTrace();
-			throw new MAPParsingComponentException("AsnException when decoding ProvideRoamingNumberResponse: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding "+_PrimitiveName+": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new MAPParsingComponentException("AsnException when decoding ProvideRoamingNumberResponse: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding "+_PrimitiveName+": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 		
@@ -113,11 +114,11 @@ public class ProvideRoamingNumberResponseImpl extends CallHandlingMessageImpl im
 			this._decode(ansIS, length);
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new MAPParsingComponentException("IOException when decoding ProvideRoamingNumberResponse: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding "+_PrimitiveName+": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
 			e.printStackTrace();
-			throw new MAPParsingComponentException("AsnException when decoding ProvideRoamingNumberResponse: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding "+_PrimitiveName+": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -131,8 +132,8 @@ public class ProvideRoamingNumberResponseImpl extends CallHandlingMessageImpl im
 		this.extensionContainer = null;
 		this.releaseResourcesSupported =  false;
 		this.vmscAddress = null;
-		
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
+		
 		if (this.mapProtocolVersion >= 3) {
 			
 			int num = 0;
@@ -145,7 +146,7 @@ public class ProvideRoamingNumberResponseImpl extends CallHandlingMessageImpl im
 				
 				if(num ==0){
 					if(ais.getTagClass() != Tag.CLASS_UNIVERSAL && tag != Tag.STRING_OCTET && !ais.isTagPrimitive()){
-						throw new MAPParsingComponentException("Error while decoding  ProvideRoamingNumberResponse " +
+						throw new MAPParsingComponentException("Error while decoding  "+_PrimitiveName+" " +
 								".roamingNumber: Parameter 0 bad tag or tag class or not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
 					}
 					
@@ -156,7 +157,7 @@ public class ProvideRoamingNumberResponseImpl extends CallHandlingMessageImpl im
 					if (ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
 						if(tag== Tag.STRING_OCTET){
 							this.vmscAddress = new ISDNAddressStringImpl();
-							((ISDNAddressStringImpl) this.roamingNumber).decodeAll(ais);
+							((ISDNAddressStringImpl) this.vmscAddress).decodeAll(ais);
 						}else if(tag == Tag.SEQUENCE){
 							this.extensionContainer = new MAPExtensionContainerImpl();
 							((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
@@ -175,7 +176,7 @@ public class ProvideRoamingNumberResponseImpl extends CallHandlingMessageImpl im
 			}
 		}else{
 			this.roamingNumber = new ISDNAddressStringImpl();
-			((ISDNAddressStringImpl) this.roamingNumber).decodeAll(ais);
+			((ISDNAddressStringImpl) this.roamingNumber).decodeData(ais,length);
 		}
 	
 	}
@@ -202,7 +203,7 @@ public class ProvideRoamingNumberResponseImpl extends CallHandlingMessageImpl im
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding ProvideRoamingNumberResponse : " + e.getMessage(), e);
+			throw new MAPException("AsnException when encoding "+_PrimitiveName+" : " + e.getMessage(), e);
 		}
 	}
 
@@ -225,16 +226,16 @@ public class ProvideRoamingNumberResponseImpl extends CallHandlingMessageImpl im
 					asnOs.writeNull();
 				}
 				if (this.vmscAddress!=null){
-					((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
+					((ISDNAddressStringImpl) this.vmscAddress).encodeAll(asnOs);
 				}
 			
 			} else {
-				((ISDNAddressStringImpl) this.roamingNumber).encodeAll(asnOs);
+				((ISDNAddressStringImpl) this.roamingNumber).encodeData(asnOs);
 			}
 		} catch (IOException e) {
-			throw new MAPException("IOException when encoding ProvideRoamingNumberResponse " + e.getMessage(), e);
+			throw new MAPException("IOException when encoding "+_PrimitiveName+" " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding ProvideRoamingNumberResponse " + e.getMessage(), e);
+			throw new MAPException("AsnException when encoding "+_PrimitiveName+" " + e.getMessage(), e);
 		}
 		
 	}
@@ -263,5 +264,47 @@ public class ProvideRoamingNumberResponseImpl extends CallHandlingMessageImpl im
 	public long getMapProtocolVersion() {
 		return this.mapProtocolVersion;
 	}
+
+	@Override
+	public String toString() {
+		return "ProvideRoamingNumberResponseImpl [roamingNumber="
+				+ roamingNumber + ", extensionContainer=" + extensionContainer
+				+ ", releaseResourcesSupported=" + releaseResourcesSupported
+				+ ", vmscAddress=" + vmscAddress + ", mapProtocolVersion="
+				+ mapProtocolVersion + "]";
+	}
+	
+	
+	public static void main(String args[]){
+		 AsnInputStream asn = new AsnInputStream(getEncodedData());
+		 try {
+			int tag = asn.readTag();
+			
+			 ProvideRoamingNumberResponseImpl prn = new
+					 ProvideRoamingNumberResponseImpl(3);
+			 prn.decodeAll(asn);
+			
+			 
+				ISDNAddressString roamingNumber = prn.getRoamingNumber();
+				MAPExtensionContainer extensionContainer = prn.getExtensionContainer();
+				boolean releaseResourcesSupported = prn.getReleaseResourcesSupported();
+				ISDNAddressString vmscAddress = prn.getVmscAddress(); 
+				long mapProtocolVersion = prn.getMapProtocolVersion();
+				
+				
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+
+	}
+	
+	private static byte[] getEncodedData() {
+		return new byte[] { 48, 59, 4, 7, -111, -108, -120, 115, 0, -110, -14, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, 4, 7, -111, -110, 17, 19, 50, 19, -15 };
+	}
+
+	
+	
 
 }

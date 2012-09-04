@@ -34,7 +34,6 @@ public interface MAPServiceCallHandlingListener extends MAPServiceListener {
 	public void onSendRoutingInformationRequest(SendRoutingInformationRequest request); 
     public void onSendRoutingInformationResponse(SendRoutingInformationResponse response);
    
-    // Provide roaming number
     public void onProvideRoamingNumberRequest(ProvideRoamingNumberRequest request);
     public void onProvideRoamingNumberResponse(ProvideRoamingNumberResponse response);
 }

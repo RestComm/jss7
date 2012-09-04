@@ -29,6 +29,7 @@ public class CancelLocationResponseImpl extends MobilityMessageImpl implements
 
 	private MAPExtensionContainer extensionContainer;
 	private long mapProtocolVersion;
+	public static final String _PrimitiveName = "CancelLocationResponse";
 
 	public CancelLocationResponseImpl(long mapProtocolVersion) {
 		this.mapProtocolVersion = mapProtocolVersion;
@@ -76,19 +77,19 @@ public class CancelLocationResponseImpl extends MobilityMessageImpl implements
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new MAPParsingComponentException(
-					"IOException when decoding CancelLocationResponse: "
+					"IOException when decoding "+_PrimitiveName+": "
 							+ e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
 			e.printStackTrace();
 			throw new MAPParsingComponentException(
-					"AsnException when decoding CancelLocationResponse: "
+					"AsnException when decoding "+_PrimitiveName+": "
 							+ e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new MAPParsingComponentException(
-					"AsnException when decoding CancelLocationResponse: "
+					"AsnException when decoding "+_PrimitiveName+": "
 							+ e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
@@ -103,13 +104,13 @@ public class CancelLocationResponseImpl extends MobilityMessageImpl implements
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new MAPParsingComponentException(
-					"IOException when decoding CancelLocationResponse: "
+					"IOException when decoding "+_PrimitiveName+": "
 							+ e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
 			e.printStackTrace();
 			throw new MAPParsingComponentException(
-					"AsnException when decoding CancelLocationResponse: "
+					"AsnException when decoding "+_PrimitiveName+": "
 							+ e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (Exception e) {
@@ -126,6 +127,9 @@ public class CancelLocationResponseImpl extends MobilityMessageImpl implements
 		if (ais.available() == 0)
 			return;
 		int tag = ais.readTag();
+		if (ais.isTagPrimitive()) {
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+		}
 		this.extensionContainer = new MAPExtensionContainerImpl();
 		((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
 	}
@@ -150,7 +154,7 @@ public class CancelLocationResponseImpl extends MobilityMessageImpl implements
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
 			throw new MAPException(
-					"AsnException when encoding CancelLocationResponse : "
+					"AsnException when encoding "+_PrimitiveName+" : "
 							+ e.getMessage(), e);
 		}
 	}
@@ -169,8 +173,15 @@ public class CancelLocationResponseImpl extends MobilityMessageImpl implements
 	}
 
 	@Override
-	public long getMapProtocolVersion() {
-		return this.mapProtocolVersion;
+	public String toString() {
+		return "CancelLocationResponseImpl [extensionContainer="
+				+ extensionContainer + ", mapProtocolVersion="
+				+ mapProtocolVersion + "]";
+	}
+	
+	
+	public long getMapProtocolVersion(){
+		return mapProtocolVersion;
 	}
 
 }

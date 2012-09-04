@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.functional;
 
+import java.util.ArrayList;
+
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.MAPDialogImpl;
@@ -40,6 +42,8 @@ import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
@@ -53,6 +57,9 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.MAPDialogLsm;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPDialogMobility;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.RequestingNodeType;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancellationType;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.IMSIWithLMSI;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.TypeOfUpdate;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPDialogSms;
 import org.mobicents.protocols.ss7.map.api.service.sms.SMDeliveryOutcome;
@@ -63,7 +70,11 @@ import org.mobicents.protocols.ss7.map.api.service.sms.SmsSignalInfo;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
 import org.mobicents.protocols.ss7.map.api.smstpdu.NumberingPlanIdentification;
 import org.mobicents.protocols.ss7.map.api.smstpdu.TypeOfNumber;
+import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
+import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.IMSIWithLMSIImpl;
 import org.mobicents.protocols.ss7.map.service.sms.AlertServiceCentreRequestImpl;
 import org.mobicents.protocols.ss7.map.service.sms.SM_RP_SMEAImpl;
 import org.mobicents.protocols.ss7.map.service.sms.SmsSignalInfoImpl;
@@ -571,6 +582,44 @@ public class Client extends EventTestHarness {
 		clientDialogMobility.addUpdateLocationRequest(imsi, mscNumber, null, vlrNumber, lmsi, null, null, true, false, null, addInfo, null, false, true);
 
 		this.observerdEvents.add(TestEvent.createSentEvent(EventType.UpdateLocation, null, sequence++));
+		clientDialogMobility.send();
+
+	}
+	
+	public void sendCancelLocation_V3() throws Exception {
+
+		this.mapProvider.getMAPServiceMobility().acivate();
+
+		MAPApplicationContext appCnt = null;
+
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.locationCancellationContext, MAPApplicationContextVersion.version3);
+
+		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+
+		IMSI imsi = new IMSIImpl("1111122222");
+		LMSI lmsi = this.mapParameterFactory.createLMSI(new byte[] { 0, 3, 98, 39 });
+		IMSIWithLMSI imsiWithLmsi  = new IMSIWithLMSIImpl(imsi, lmsi);
+		CancellationType cancellationType = CancellationType.getInstance(1);
+		
+		ArrayList<MAPPrivateExtension> al = new ArrayList<MAPPrivateExtension>();
+		al.add(this.mapParameterFactory
+				.createMAPPrivateExtension(new long[] { 1, 2, 3, 4 }, new byte[] { 11, 12, 13, 14, 15 }));
+		al.add(this.mapParameterFactory.createMAPPrivateExtension(new long[] { 1, 2, 3, 6 }, null));
+		al.add(this.mapParameterFactory.createMAPPrivateExtension(new long[] { 1, 2, 3, 5 }, new byte[] { 21, 22, 23, 24, 25,
+				26 }));
+
+		MAPExtensionContainer extensionContainer = this.mapParameterFactory.createMAPExtensionContainer(al, new byte[] { 31, 32, 33 });
+
+		TypeOfUpdate typeOfUpdate = TypeOfUpdate.getInstance(0);
+		boolean mtrfSupportedAndAuthorized = false;
+		boolean mtrfSupportedAndNotAuthorized = false;
+		ISDNAddressString newMSCNumber = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "22228");
+		ISDNAddressString newVLRNumber=  new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "22229");
+		LMSI newLmsi = this.mapParameterFactory.createLMSI(new byte[] { 0, 3, 98, 39 });
+		
+		clientDialogMobility.addCancelLocationRequest(imsi, imsiWithLmsi, cancellationType, extensionContainer, typeOfUpdate, mtrfSupportedAndAuthorized, mtrfSupportedAndNotAuthorized, newMSCNumber, newVLRNumber, newLmsi);
+
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.CancelLocation, null, sequence++));
 		clientDialogMobility.send();
 
 	}

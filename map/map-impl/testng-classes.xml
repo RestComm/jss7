@@ -10,7 +10,12 @@
 	  	</groups>
 	  	 -->
 	  	<packages>
-      		<package name="org.mobicents.protocols.ss7.map" />
+	  	 
+	  	    <package name="org.mobicents.protocols.ss7.map.service.callhandling" />
+	  	    <package name="org.mobicents.protocols.ss7.map.functional" />	
+	  	    
+     <!-- 	<package name="org.mobicents.protocols.ss7.map.service.mobility.locationManagement" />
+            <package name="org.mobicents.protocols.ss7.map" />
       		<package name="org.mobicents.protocols.ss7.map.dialog" />
       		<package name="org.mobicents.protocols.ss7.map.errors" />
       		<package name="org.mobicents.protocols.ss7.map.primitives" />
@@ -19,6 +24,7 @@
       		<package name="org.mobicents.protocols.ss7.map.service.supplementary" />
       		<package name="org.mobicents.protocols.ss7.map.functional" />	
       		<package name="org.mobicents.protocols.ss7.map.smstpdu" />
+      		 --> 	
   		 </packages>
 	</test>
 	

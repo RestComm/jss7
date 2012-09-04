@@ -101,6 +101,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.Quint
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.ReSynchronisationInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.TripletList;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.IMSIWithLMSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ISTSupportIndicator;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LAC;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LocationArea;
@@ -227,6 +228,7 @@ import org.mobicents.protocols.ss7.map.service.mobility.authentication.Quintuple
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.ReSynchronisationInfoImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.TripletListImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.ADDInfoImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.IMSIWithLMSIImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.LACImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.LocationAreaImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.PagingAreaImpl;
@@ -965,6 +967,10 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 
 	public VelocityEstimate createVelocityEstimate(byte[] data) {
 		return new VelocityEstimateImpl(data);
+	}
+	
+	public IMSIWithLMSI createServingNodeAddressMmeNumber(IMSI imsi, LMSI lmsi) {
+		return new IMSIWithLMSIImpl(imsi, lmsi);
 	}
 }
 

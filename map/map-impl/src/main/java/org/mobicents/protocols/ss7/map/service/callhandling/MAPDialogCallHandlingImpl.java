@@ -280,7 +280,7 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements
 
 	@Override
 	public Long addProvideRoamingNumberRequest(int customInvokeTimeout,
-			long mapProtocolVersion, IMSI imsi, ISDNAddressString mscNumber,
+			IMSI imsi, ISDNAddressString mscNumber,
 			ISDNAddressString msisdn, LMSI lmsi,
 			ExternalSignalInfo gsmBearerCapability,
 			ExternalSignalInfo networkSignalInfo,
@@ -329,7 +329,7 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements
 					prePagingSupported, longFTNSupported, suppressVtCsi,
 					offeredCamel4CSIsInInterrogatingNode,
 					mtRoamingRetrySupported, pagingArea, callPriority,
-					mtrfIndicator, oldMSCNumber, mapProtocolVersion);
+					mtrfIndicator, oldMSCNumber, this.appCntx.getApplicationContextVersion().getVersion());
 			AsnOutputStream aos = new AsnOutputStream();
 			req.encodeData(aos);
 
@@ -391,4 +391,35 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements
 		this.sendReturnResultLastComponent(resultLast);
 		
 	}
+
+	@Override
+	public Long addProvideRoamingNumberRequest(IMSI imsi,
+			ISDNAddressString mscNumber, ISDNAddressString msisdn, LMSI lmsi,
+			ExternalSignalInfo gsmBearerCapability,
+			ExternalSignalInfo networkSignalInfo,
+			boolean suppressionOfAnnouncement, ISDNAddressString gmscAddress,
+			CallReferenceNumber callReferenceNumber, boolean orInterrogation,
+			MAPExtensionContainer extensionContainer,
+			AlertingPattern alertingPattern, boolean ccbsCall,
+			SupportedCamelPhases supportedCamelPhasesInInterrogatingNode,
+			ExtExternalSignalInfo additionalSignalInfo,
+			boolean orNotSupportedInGMSC, boolean prePagingSupported,
+			boolean longFTNSupported, boolean suppressVtCsi,
+			OfferedCamel4CSIs offeredCamel4CSIsInInterrogatingNode,
+			boolean mtRoamingRetrySupported, PagingArea pagingArea,
+			EMLPPPriority callPriority, boolean mtrfIndicator,
+			ISDNAddressString oldMSCNumber) throws MAPException {
+		return this.addProvideRoamingNumberRequest(_Timer_Default, imsi,
+				mscNumber, msisdn, lmsi, gsmBearerCapability,
+				networkSignalInfo, suppressionOfAnnouncement, gmscAddress,
+				callReferenceNumber, orInterrogation, extensionContainer,
+				alertingPattern, ccbsCall,
+				supportedCamelPhasesInInterrogatingNode, additionalSignalInfo,
+				orNotSupportedInGMSC, prePagingSupported, longFTNSupported,
+				suppressVtCsi, offeredCamel4CSIsInInterrogatingNode,
+				mtRoamingRetrySupported, pagingArea, callPriority,
+				mtrfIndicator, oldMSCNumber);
+	}
+
+
 }

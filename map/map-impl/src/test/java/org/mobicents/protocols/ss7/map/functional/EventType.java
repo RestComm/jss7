@@ -22,7 +22,7 @@ public enum EventType {
 	SendAuthenticationInfo_V3, SendAuthenticationInfo_V2, SendAuthenticationInfoResp_V2, SendAuthenticationInfoResp_V3,
 
 	// mobility.locationManagement EventType
-	UpdateLocation, UpdateLocationResp,
+	UpdateLocation, UpdateLocationResp,CancelLocation, CancelLocationResp,
 	
 	// mobility.subscriberInformation EventType
 	AnyTimeInterrogation, AnyTimeInterrogationResp,

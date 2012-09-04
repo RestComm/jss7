@@ -40,6 +40,12 @@ import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Ext
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.OfferedCamel4CSIsImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.SupportedCamelPhasesImpl;
 
+
+//CallReferenceNumber is it primitive or not primitive
+//public boolean getIsPrimitive() {
+//	return true;
+//}
+
 /**
  * 
  * @author Lasith Waruna Perera
@@ -73,6 +79,7 @@ public class ProvideRoamingNumberRequestImpl extends CallHandlingMessageImpl
 	private static final int TAG_callPriority = 23;
 	private static final int TAG_mtrfIndicator = 24;
 	private static final int TAG_oldMSCNumber = 25;
+	public static final String _PrimitiveName = "ProvideRoamingNumberRequest";
 
 	private IMSI imsi;
 	private ISDNAddressString mscNumber;
@@ -200,11 +207,11 @@ public class ProvideRoamingNumberRequestImpl extends CallHandlingMessageImpl
 			this._decode(ansIS, length);
 		} catch (IOException e) {
 			throw new MAPParsingComponentException(
-					"IOException when decoding ProvideRoamingNumberRequest: ",
+					"IOException when decoding "+_PrimitiveName+": ",
 					e, MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
 			throw new MAPParsingComponentException(
-					"AsnException when decoding ProvideRoamingNumberRequest: ",
+					"AsnException when decoding "+_PrimitiveName+": ",
 					e, MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 
@@ -224,7 +231,7 @@ public class ProvideRoamingNumberRequestImpl extends CallHandlingMessageImpl
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag)
 			throws MAPException {
 		try {
-			asnOs.writeTag(tagClass, false, tag);
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
@@ -232,12 +239,12 @@ public class ProvideRoamingNumberRequestImpl extends CallHandlingMessageImpl
 		} catch (AsnException e) {
 			e.printStackTrace();
 			throw new MAPException(
-					"AsnException when encoding ProvideRoamingNumberRequest: "
+					"AsnException when encoding "+_PrimitiveName+": "
 							+ e.getMessage(), e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new MAPException(
-					"AsnException when encoding ProvideRoamingNumberRequest: "
+					"AsnException when encoding "+_PrimitiveName+": "
 							+ e.getMessage(), e);
 		}
 
@@ -248,12 +255,12 @@ public class ProvideRoamingNumberRequestImpl extends CallHandlingMessageImpl
 
 		if (this.imsi == null) {
 			throw new MAPException(
-					"Error while encoding ProvideRoamingNumberRequest the mandatory parameter imsi is not defined");
+					"Error while encoding "+_PrimitiveName+" the mandatory parameter imsi is not defined");
 		}
 
 		if (this.mscNumber == null && this.mapProtocolVersion >= 2) {
 			throw new MAPException(
-					"Error while encoding ProvideRoamingNumberRequest the mandatory parameter mscNumber is not defined");
+					"Error while encoding "+_PrimitiveName+" the mandatory parameter mscNumber is not defined");
 		}
 
 		// 1
@@ -290,225 +297,228 @@ public class ProvideRoamingNumberRequestImpl extends CallHandlingMessageImpl
 					Tag.CLASS_CONTEXT_SPECIFIC, TAG_networkSignalInfo);
 		}
 
-		// 7
-		if (this.suppressionOfAnnouncement) {
-			// suppressionOfAnnouncement
-			try {
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC,
-						TAG_suppressionOfAnnouncement);
-			} catch (IOException e) {
-				throw new MAPException(
-						"IOException while encoding ProvideRoamingNumberRequest parameter suppressionOfAnnouncement",
-						e);
-			} catch (AsnException e) {
-				throw new MAPException(
-						"AsnException while encoding ProvideRoamingNumberRequest parameter suppressionOfAnnouncement",
-						e);
+		
+		if(mapProtocolVersion <= 3){
+				// 7
+			if (this.suppressionOfAnnouncement) {
+				// suppressionOfAnnouncement
+				try {
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC,
+							TAG_suppressionOfAnnouncement);
+				} catch (IOException e) {
+					throw new MAPException(
+							"IOException while encoding "+_PrimitiveName+" parameter suppressionOfAnnouncement",
+							e);
+				} catch (AsnException e) {
+					throw new MAPException(
+							"AsnException while encoding "+_PrimitiveName+" parameter suppressionOfAnnouncement",
+							e);
+				}
 			}
-		}
-
-		// 8
-		if (this.gmscAddress != null) {
-			((ISDNAddressStringImpl) this.gmscAddress).encodeAll(asnOs,
-					Tag.CLASS_CONTEXT_SPECIFIC, TAG_gmscAddress);
-		}
-
-		// 9
-		if (this.callReferenceNumber != null) {
-			((CallReferenceNumberImpl) this.callReferenceNumber).encodeAll(
-					asnOs, Tag.CLASS_CONTEXT_SPECIFIC, TAG_callReferenceNumber);
-		}
-		// 10
-		if (this.orInterrogation) {
-			// orInterrogation
-			try {
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, TAG_orInterrogation);
-			} catch (IOException e) {
-				throw new MAPException(
-						"IOException while encoding ProvideRoamingNumberRequest parameter orInterrogation",
-						e);
-			} catch (AsnException e) {
-				throw new MAPException(
-						"AsnException while encoding ProvideRoamingNumberRequest parameter orInterrogation",
-						e);
+	
+			// 8
+			if (this.gmscAddress != null) {
+				((ISDNAddressStringImpl) this.gmscAddress).encodeAll(asnOs,
+						Tag.CLASS_CONTEXT_SPECIFIC, TAG_gmscAddress);
 			}
-		}
-
-		// 11
-		if (this.extensionContainer != null) {
-			((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(
-					asnOs, Tag.CLASS_CONTEXT_SPECIFIC, TAG_extensionContainer);
-		}
-
-		// 12
-		if (this.alertingPattern != null) {
-			((AlertingPatternImpl) this.alertingPattern).encodeAll(asnOs,
-					Tag.CLASS_CONTEXT_SPECIFIC, TAG_alertingPattern);
-		}
-
-		// 13
-		if (this.ccbsCall) {
-			// ccbsCall
-			try {
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, TAG_ccbsCall);
-			} catch (IOException e) {
-				throw new MAPException(
-						"IOException while encoding ProvideRoamingNumberRequest parameter ccbsCall",
-						e);
-			} catch (AsnException e) {
-				throw new MAPException(
-						"AsnException while encoding ProvideRoamingNumberRequest parameter ccbsCall",
-						e);
+	
+			// 9
+			if (this.callReferenceNumber != null) {
+				((CallReferenceNumberImpl) this.callReferenceNumber).encodeAll(
+						asnOs, Tag.CLASS_CONTEXT_SPECIFIC, TAG_callReferenceNumber);
 			}
-		}
-
-		// 14
-		if (this.supportedCamelPhasesInInterrogatingNode != null) {
-			((SupportedCamelPhasesImpl) this.supportedCamelPhasesInInterrogatingNode)
-					.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
-							TAG_supportedCamelPhasesInInterrogatingNode);
-		}
-
-		// 15
-		if (this.additionalSignalInfo != null) {
-			((ExtExternalSignalInfoImpl) this.additionalSignalInfo)
-					.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
-							TAG_additionalSignalInfo);
-		}
-
-		// 16
-		if (this.orNotSupportedInGMSC) {
-			// orNotSupportedInGMSC
-			try {
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC,
-						TAG_orNotSupportedInGMSC);
-			} catch (IOException e) {
-				throw new MAPException(
-						"IOException while encoding ProvideRoamingNumberRequest parameter orNotSupportedInGMSC",
-						e);
-			} catch (AsnException e) {
-				throw new MAPException(
-						"AsnException while encoding ProvideRoamingNumberRequest parameter orNotSupportedInGMSC",
-						e);
+			// 10
+			if (this.orInterrogation) {
+				// orInterrogation
+				try {
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, TAG_orInterrogation);
+				} catch (IOException e) {
+					throw new MAPException(
+							"IOException while encoding "+_PrimitiveName+" parameter orInterrogation",
+							e);
+				} catch (AsnException e) {
+					throw new MAPException(
+							"AsnException while encoding "+_PrimitiveName+" parameter orInterrogation",
+							e);
+				}
 			}
-		}
-
-		// 17
-		if (this.prePagingSupported) {
-			// prePagingSupported
-			try {
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC,
-						TAG_prePagingSupported);
-			} catch (IOException e) {
-				throw new MAPException(
-						"IOException while encoding ProvideRoamingNumberRequest parameter prePagingSupported",
-						e);
-			} catch (AsnException e) {
-				throw new MAPException(
-						"AsnException while encoding ProvideRoamingNumberRequest parameter prePagingSupported",
-						e);
+	
+			// 11
+			if (this.extensionContainer != null) {
+				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(
+						asnOs, Tag.CLASS_CONTEXT_SPECIFIC, TAG_extensionContainer);
 			}
-		}
-
-		// 18
-		if (this.longFTNSupported) {
-			// prePagingSupported
-			try {
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC,
-						TAG_longFTNSupported);
-			} catch (IOException e) {
-				throw new MAPException(
-						"IOException while encoding ProvideRoamingNumberRequest parameter longFTNSupported",
-						e);
-			} catch (AsnException e) {
-				throw new MAPException(
-						"AsnException while encoding ProvideRoamingNumberRequest parameter longFTNSupported",
-						e);
+	
+			// 12
+			if (this.alertingPattern != null) {
+				((AlertingPatternImpl) this.alertingPattern).encodeAll(asnOs,
+						Tag.CLASS_CONTEXT_SPECIFIC, TAG_alertingPattern);
 			}
-		}
-
-		// 19
-		if (this.suppressVtCsi) {
-			// suppressVtCsi
-			try {
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, TAG_suppressVtCsi);
-			} catch (IOException e) {
-				throw new MAPException(
-						"IOException while encoding ProvideRoamingNumberRequest parameter suppressVtCsi",
-						e);
-			} catch (AsnException e) {
-				throw new MAPException(
-						"AsnException while encoding ProvideRoamingNumberRequest parameter suppressVtCsi",
-						e);
+	
+			// 13
+			if (this.ccbsCall) {
+				// ccbsCall
+				try {
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, TAG_ccbsCall);
+				} catch (IOException e) {
+					throw new MAPException(
+							"IOException while encoding "+_PrimitiveName+" parameter ccbsCall",
+							e);
+				} catch (AsnException e) {
+					throw new MAPException(
+							"AsnException while encoding "+_PrimitiveName+" parameter ccbsCall",
+							e);
+				}
 			}
-		}
-
-		// 20
-		if (this.offeredCamel4CSIsInInterrogatingNode != null) {
-			((OfferedCamel4CSIsImpl) this.additionalSignalInfo).encodeAll(
-					asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
-					TAG_offeredCamel4CSIsInInterrogatingNode);
-		}
-
-		// 21
-		if (this.mtRoamingRetrySupported) {
-			// mtRoamingRetrySupported
-			try {
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC,
-						TAG_mtRoamingRetrySupported);
-			} catch (IOException e) {
-				throw new MAPException(
-						"IOException while encoding ProvideRoamingNumberRequest parameter mtRoamingRetrySupported",
-						e);
-			} catch (AsnException e) {
-				throw new MAPException(
-						"AsnException while encoding ProvideRoamingNumberRequest parameter mtRoamingRetrySupported",
-						e);
+	
+			// 14
+			if (this.supportedCamelPhasesInInterrogatingNode != null) {
+				((SupportedCamelPhasesImpl) this.supportedCamelPhasesInInterrogatingNode)
+						.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
+								TAG_supportedCamelPhasesInInterrogatingNode);
 			}
-		}
-
-		// 22
-		if (this.pagingArea != null) {
-			((PagingAreaImpl) this.additionalSignalInfo).encodeAll(asnOs,
-					Tag.CLASS_CONTEXT_SPECIFIC, TAG_pagingArea);
-		}
-
-		// 23
-		if (this.callPriority != null) {
-			try {
-				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC,
-						TAG_callPriority, this.callPriority.getCode());
-			} catch (IOException e) {
-				throw new MAPException(
-						"IOException while encoding ProvideRoamingNumberRequest parameter callPriority",
-						e);
-			} catch (AsnException e) {
-				throw new MAPException(
-						"IOException while encoding ProvideRoamingNumberRequest parameter callPriority",
-						e);
+	
+			// 15
+			if (this.additionalSignalInfo != null) {
+				((ExtExternalSignalInfoImpl) this.additionalSignalInfo)
+						.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
+								TAG_additionalSignalInfo);
 			}
-		}
-
-		// 24
-		if (this.mtrfIndicator) {
-			// mtrfIndicator
-			try {
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, TAG_mtrfIndicator);
-			} catch (IOException e) {
-				throw new MAPException(
-						"IOException while encoding ProvideRoamingNumberRequest parameter mtrfIndicator",
-						e);
-			} catch (AsnException e) {
-				throw new MAPException(
-						"AsnException while encoding ProvideRoamingNumberRequest parameter mtrfIndicator",
-						e);
+	
+			// 16
+			if (this.orNotSupportedInGMSC) {
+				// orNotSupportedInGMSC
+				try {
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC,
+							TAG_orNotSupportedInGMSC);
+				} catch (IOException e) {
+					throw new MAPException(
+							"IOException while encoding "+_PrimitiveName+" parameter orNotSupportedInGMSC",
+							e);
+				} catch (AsnException e) {
+					throw new MAPException(
+							"AsnException while encoding "+_PrimitiveName+" parameter orNotSupportedInGMSC",
+							e);
+				}
 			}
-		}
-
-		// 25
-		if (this.oldMSCNumber != null) {
-			((ISDNAddressStringImpl) this.oldMSCNumber).encodeAll(asnOs,
-					Tag.CLASS_CONTEXT_SPECIFIC, TAG_oldMSCNumber);
+	
+			// 17
+			if (this.prePagingSupported) {
+				// prePagingSupported
+				try {
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC,
+							TAG_prePagingSupported);
+				} catch (IOException e) {
+					throw new MAPException(
+							"IOException while encoding "+_PrimitiveName+" parameter prePagingSupported",
+							e);
+				} catch (AsnException e) {
+					throw new MAPException(
+							"AsnException while encoding "+_PrimitiveName+" parameter prePagingSupported",
+							e);
+				}
+			}
+	
+			// 18
+			if (this.longFTNSupported) {
+				// prePagingSupported
+				try {
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC,
+							TAG_longFTNSupported);
+				} catch (IOException e) {
+					throw new MAPException(
+							"IOException while encoding "+_PrimitiveName+" parameter longFTNSupported",
+							e);
+				} catch (AsnException e) {
+					throw new MAPException(
+							"AsnException while encoding "+_PrimitiveName+" parameter longFTNSupported",
+							e);
+				}
+			}
+	
+			// 19
+			if (this.suppressVtCsi) {
+				// suppressVtCsi
+				try {
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, TAG_suppressVtCsi);
+				} catch (IOException e) {
+					throw new MAPException(
+							"IOException while encoding "+_PrimitiveName+" parameter suppressVtCsi",
+							e);
+				} catch (AsnException e) {
+					throw new MAPException(
+							"AsnException while encoding "+_PrimitiveName+" parameter suppressVtCsi",
+							e);
+				}
+			}
+	
+			// 20
+			if (this.offeredCamel4CSIsInInterrogatingNode != null) {
+				((OfferedCamel4CSIsImpl) this.offeredCamel4CSIsInInterrogatingNode).encodeAll(
+						asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
+						TAG_offeredCamel4CSIsInInterrogatingNode);
+			}
+	
+			// 21
+			if (this.mtRoamingRetrySupported) {
+				// mtRoamingRetrySupported
+				try {
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC,
+							TAG_mtRoamingRetrySupported);
+				} catch (IOException e) {
+					throw new MAPException(
+							"IOException while encoding "+_PrimitiveName+" parameter mtRoamingRetrySupported",
+							e);
+				} catch (AsnException e) {
+					throw new MAPException(
+							"AsnException while encoding "+_PrimitiveName+" parameter mtRoamingRetrySupported",
+							e);
+				}
+			}
+	
+			// 22
+			if (this.pagingArea != null) {
+				((PagingAreaImpl) this.pagingArea).encodeAll(asnOs,
+						Tag.CLASS_CONTEXT_SPECIFIC, TAG_pagingArea);
+			}
+	
+			// 23
+			if (this.callPriority != null) {
+				try {
+					asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC,
+							TAG_callPriority, this.callPriority.getCode());
+				} catch (IOException e) {
+					throw new MAPException(
+							"IOException while encoding "+_PrimitiveName+" parameter callPriority",
+							e);
+				} catch (AsnException e) {
+					throw new MAPException(
+							"IOException while encoding "+_PrimitiveName+" parameter callPriority",
+							e);
+				}
+			}
+	
+			// 24
+			if (this.mtrfIndicator) {
+				// mtrfIndicator
+				try {
+					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, TAG_mtrfIndicator);
+				} catch (IOException e) {
+					throw new MAPException(
+							"IOException while encoding "+_PrimitiveName+" parameter mtrfIndicator",
+							e);
+				} catch (AsnException e) {
+					throw new MAPException(
+							"AsnException while encoding "+_PrimitiveName+" parameter mtrfIndicator",
+							e);
+				}
+			}
+	
+			// 25
+			if (this.oldMSCNumber != null) {
+				((ISDNAddressStringImpl) this.oldMSCNumber).encodeAll(asnOs,
+						Tag.CLASS_CONTEXT_SPECIFIC, TAG_oldMSCNumber);
+			}
 		}
 
 	}
@@ -595,7 +605,6 @@ public class ProvideRoamingNumberRequestImpl extends CallHandlingMessageImpl
 
 	@Override
 	public boolean getPrePagingSupported() {
-		// TODO Auto-generated method stub
 		return this.prePagingSupported;
 	}
 
@@ -672,9 +681,9 @@ public class ProvideRoamingNumberRequestImpl extends CallHandlingMessageImpl
 		this.mtrfIndicator = false;
 		this.oldMSCNumber = null;
 
-		try {
-
 			AsnInputStream ais = ansIS.readSequenceStreamData(length);
+		
+			
 			if (this.mapProtocolVersion <= 2) {
 
 				if (ais.available() > 0) {
@@ -683,54 +692,75 @@ public class ProvideRoamingNumberRequestImpl extends CallHandlingMessageImpl
 							break;
 
 						int tag = ais.readTag();
-						switch (tag) {
-						case TAG_imsi:
-							this.imsi = new IMSIImpl();
-							((IMSIImpl) this.imsi).decodeAll(ais);
-							break;
-						case TAG_mscNumber:
-							this.mscNumber = new ISDNAddressStringImpl();
-							((ISDNAddressStringImpl) this.mscNumber)
-									.decodeAll(ais);
-							break;
-						case TAG_msisdn:
-							this.msisdn = new ISDNAddressStringImpl();
-							((ISDNAddressStringImpl) this.msisdn)
-									.decodeAll(ais);
-							break;
-						case TAG_lmsi:
-							this.lmsi = new LMSIImpl();
-							((LMSIImpl) this.lmsi).decodeAll(ais);
-							break;
-						case TAG_gsmBearerCapability:
-							this.gsmBearerCapability = new ExternalSignalInfoImpl();
-							((ExternalSignalInfoImpl) this.gsmBearerCapability)
-									.decodeAll(ais);
-							break;
-						case TAG_networkSignalInfo:
-							this.networkSignalInfo = new ExternalSignalInfoImpl();
-							((ExternalSignalInfoImpl) this.networkSignalInfo)
-									.decodeAll(ais);
-							break;
-						default:
-							ais.advanceElement();
-							break;
+						
+						if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {	
+							switch (tag) {
+								case TAG_imsi:
+									if (!ais.isTagPrimitive()) {
+										throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+									}
+									this.imsi = new IMSIImpl();
+									((IMSIImpl) this.imsi).decodeAll(ais);
+									break;
+								case TAG_mscNumber:
+									if (!ais.isTagPrimitive()) {
+										throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+									}
+									this.mscNumber = new ISDNAddressStringImpl();
+									((ISDNAddressStringImpl) this.mscNumber)
+											.decodeAll(ais);
+									break;
+								case TAG_msisdn:
+									if (!ais.isTagPrimitive()) {
+										throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+									}
+									this.msisdn = new ISDNAddressStringImpl();
+									((ISDNAddressStringImpl) this.msisdn)
+											.decodeAll(ais);
+									break;
+								case TAG_lmsi:
+									if (!ais.isTagPrimitive()) {
+										throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+									}
+									this.lmsi = new LMSIImpl();
+									((LMSIImpl) this.lmsi).decodeAll(ais);
+									break;
+								case TAG_gsmBearerCapability:
+									if (ais.isTagPrimitive()) {
+										throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+									}
+									this.gsmBearerCapability = new ExternalSignalInfoImpl();
+									((ExternalSignalInfoImpl) this.gsmBearerCapability)
+											.decodeAll(ais);
+									break;
+								case TAG_networkSignalInfo:
+									if (ais.isTagPrimitive()) {
+										throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+									}
+									this.networkSignalInfo = new ExternalSignalInfoImpl();
+									((ExternalSignalInfoImpl) this.networkSignalInfo)
+											.decodeAll(ais);
+									break;
+								default:
+									ais.advanceElement();
+									break;
+							}
 						}
 					}
 				}
 
 				if (this.mapProtocolVersion == 2) {
-					if (this.imsi == null || this.lmsi == null
+					if (this.imsi == null 
 							|| this.mscNumber == null)
 						throw new MAPParsingComponentException(
-								"Error while decoding ProvideRoamingNumberRequestImpl V2"
-										+ ": imsi, lmsi or mscNumber must not be null",
+								"Error while decoding "+_PrimitiveName+" V2"
+										+ ": imsi  or mscNumber must not be null",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 				} else if (this.mapProtocolVersion == 1) {
-					if (this.imsi == null || this.lmsi == null)
+					if (this.imsi == null )
 						throw new MAPParsingComponentException(
-								"Error while decoding ProvideRoamingNumberRequestImpl V1"
-										+ ": imsi, lmsi or mscNumber must not be null",
+								"Error while decoding "+_PrimitiveName+" V1"
+										+ ": imsi  or mscNumber must not be null",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 				}
 
@@ -744,29 +774,47 @@ public class ProvideRoamingNumberRequestImpl extends CallHandlingMessageImpl
 
 						switch (tag) {
 							case TAG_imsi:// 1
+								if (!ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
 								this.imsi = new IMSIImpl();
 								((IMSIImpl) this.imsi).decodeAll(ais);
 								break;
 							case TAG_mscNumber:// 2
+								if (!ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
 								this.mscNumber = new ISDNAddressStringImpl();
 								((ISDNAddressStringImpl) this.mscNumber)
 										.decodeAll(ais);
 								break;
 							case TAG_msisdn:// 3
+								if (!ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
 								this.msisdn = new ISDNAddressStringImpl();
 								((ISDNAddressStringImpl) this.msisdn)
 										.decodeAll(ais);
 								break;
 							case TAG_lmsi:// 4
+								if (!ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
 								this.lmsi = new LMSIImpl();
 								((LMSIImpl) this.lmsi).decodeAll(ais);
 								break;
 							case TAG_gsmBearerCapability:// 5
+								if (ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
 								this.gsmBearerCapability = new ExternalSignalInfoImpl();
 								((ExternalSignalInfoImpl) this.gsmBearerCapability)
 										.decodeAll(ais);
 								break;
 							case TAG_networkSignalInfo:// 6
+								if (ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
 								this.networkSignalInfo = new ExternalSignalInfoImpl();
 								((ExternalSignalInfoImpl) this.networkSignalInfo)
 										.decodeAll(ais);
@@ -776,11 +824,17 @@ public class ProvideRoamingNumberRequestImpl extends CallHandlingMessageImpl
 								this.suppressionOfAnnouncement = true;
 								break;
 							case TAG_gmscAddress:// 8
+								if (!ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
 								this.gmscAddress = new ISDNAddressStringImpl();
 								((ISDNAddressStringImpl) this.gmscAddress)
 										.decodeAll(ais);
 								break;
 							case TAG_callReferenceNumber:// 9
+								if (!ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
 								this.callReferenceNumber = new CallReferenceNumberImpl();
 								((CallReferenceNumberImpl) this.callReferenceNumber)
 										.decodeAll(ais);
@@ -790,11 +844,17 @@ public class ProvideRoamingNumberRequestImpl extends CallHandlingMessageImpl
 								this.orInterrogation = true;
 								break;
 							case TAG_extensionContainer:// 11
+								if (ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
 								this.extensionContainer = new MAPExtensionContainerImpl();
 								((MAPExtensionContainerImpl) this.extensionContainer)
 										.decodeAll(ais);
 								break;
 							case TAG_alertingPattern:// 12
+								if (!ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
 								this.alertingPattern = new AlertingPatternImpl();
 								((AlertingPatternImpl) this.alertingPattern)
 										.decodeAll(ais);
@@ -804,11 +864,17 @@ public class ProvideRoamingNumberRequestImpl extends CallHandlingMessageImpl
 								this.ccbsCall = true;
 								break;
 							case TAG_supportedCamelPhasesInInterrogatingNode:// 14
+								if (!ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
 								this.supportedCamelPhasesInInterrogatingNode = new SupportedCamelPhasesImpl();
 								((SupportedCamelPhasesImpl) this.supportedCamelPhasesInInterrogatingNode)
 										.decodeAll(ais);
 								break;
 							case TAG_additionalSignalInfo:// 15
+								if (ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
 								this.additionalSignalInfo = new ExtExternalSignalInfoImpl();
 								((ExtExternalSignalInfoImpl) this.additionalSignalInfo)
 										.decodeAll(ais);
@@ -830,6 +896,9 @@ public class ProvideRoamingNumberRequestImpl extends CallHandlingMessageImpl
 								this.suppressVtCsi = true;
 								break;
 							case TAG_offeredCamel4CSIsInInterrogatingNode:// 20
+								if (!ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
 								this.offeredCamel4CSIsInInterrogatingNode = new OfferedCamel4CSIsImpl();
 								((OfferedCamel4CSIsImpl) this.offeredCamel4CSIsInInterrogatingNode)
 										.decodeAll(ais);
@@ -839,6 +908,9 @@ public class ProvideRoamingNumberRequestImpl extends CallHandlingMessageImpl
 								this.mtRoamingRetrySupported = true;
 								break;
 							case TAG_pagingArea:// 22
+								if (ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
 								this.pagingArea = new PagingAreaImpl();
 								((PagingAreaImpl) this.pagingArea).decodeAll(ais);
 								break;
@@ -851,6 +923,9 @@ public class ProvideRoamingNumberRequestImpl extends CallHandlingMessageImpl
 								this.mtrfIndicator = true;
 								break;
 							case TAG_oldMSCNumber:// 25
+								if (!ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
 								this.oldMSCNumber = new ISDNAddressStringImpl();
 								((ISDNAddressStringImpl) this.oldMSCNumber)
 										.decodeAll(ais);
@@ -865,25 +940,63 @@ public class ProvideRoamingNumberRequestImpl extends CallHandlingMessageImpl
 					}
 				}
 
-				if (this.msisdn == null || this.gmscAddress == null)
+				if (this.imsi == null || this.mscNumber == null)
 					throw new MAPParsingComponentException(
-							"Error while decoding ProvideRoamingNumberRequestImpl  V3"
-									+ ": msisdn,  and GMSCaddress must not be null",
+							"Error while decoding "+_PrimitiveName+"  V3"
+									+ ": imsi,  and mscNumber must not be null",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 			}
 
-		} catch (MAPParsingComponentException e) {
-			e.printStackTrace();
-			throw e;
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw e;
-		} catch (AsnException e) {
-			e.printStackTrace();
-			throw e;
-		}catch (Exception e) {
-			e.printStackTrace();
-			throw new AsnException(e);
-		}
 	}
+
+	@Override
+	public String toString() {
+		return "ProvideRoamingNumberRequestImpl [imsi=" + imsi + ", mscNumber="
+				+ mscNumber + ", msisdn=" + msisdn + ", lmsi=" + lmsi
+				+ ", gsmBearerCapability=" + gsmBearerCapability
+				+ ", networkSignalInfo=" + networkSignalInfo
+				+ ", suppressionOfAnnouncement=" + suppressionOfAnnouncement
+				+ ", gmscAddress=" + gmscAddress + ", callReferenceNumber="
+				+ callReferenceNumber + ", orInterrogation=" + orInterrogation
+				+ ", extensionContainer=" + extensionContainer
+				+ ", alertingPattern=" + alertingPattern + ", ccbsCall="
+				+ ccbsCall + ", supportedCamelPhasesInInterrogatingNode="
+				+ supportedCamelPhasesInInterrogatingNode
+				+ ", additionalSignalInfo=" + additionalSignalInfo
+				+ ", orNotSupportedInGMSC=" + orNotSupportedInGMSC
+				+ ", prePagingSupported=" + prePagingSupported
+				+ ", longFTNSupported=" + longFTNSupported + ", suppressVtCsi="
+				+ suppressVtCsi + ", offeredCamel4CSIsInInterrogatingNode="
+				+ offeredCamel4CSIsInInterrogatingNode
+				+ ", mtRoamingRetrySupported=" + mtRoamingRetrySupported
+				+ ", pagingArea=" + pagingArea + ", callPriority="
+				+ callPriority + ", mtrfIndicator=" + mtrfIndicator
+				+ ", oldMSCNumber=" + oldMSCNumber + ", mapProtocolVersion="
+				+ mapProtocolVersion + "]";
+	}
+	
+	
+	public static void main(String args[]){
+		
+		AsnInputStream asn = new AsnInputStream(getEncodedData());
+		try {
+			int tag = asn.readTag();
+			
+			ProvideRoamingNumberRequestImpl prn = new ProvideRoamingNumberRequestImpl(3);
+			prn.decodeAll(asn);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		
+	}
+	
+	private static byte[] getEncodedData() {
+		return new byte[] {48, -126, 1, 5, -128, 8, 16, 33, 2, 2, 16, -119, 34, -9, -127, 4, -111, 34, 34, -8, -126, 4, -111, 34, 34, -9, -124, 4, 0, 3, 98, 39, -91, 50, 10, 1, 2, 4, 4, 10, 20, 30, 40, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -90, 50, 10, 1, 2, 4, 4, 10, 20, 30, 40, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -120, 4, -111, 34, 34, -10, -119, 5, 19, -6, 61, 61, -22, -85, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -116, 1, 8, -113, 2, 4, -64, -82, 47, 4, 4, 10, 20, 30, 40, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -108, 2, 1, 14, -74, 4, -127, 2, 0, 123, -105, 1, 0, -103, 4, -111, 34, 34, -11};
+	}
+	
+	
+	
 }
