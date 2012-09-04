@@ -13,7 +13,7 @@
 	  			 -->
 	  	<packages>
 	  	  	 
-	  	    <package name="org.mobicents.protocols.ss7.map.service.callhandling" />
+	  	 <!--    <package name="org.mobicents.protocols.ss7.map.service.callhandling" /> --> 
 	  	    <package name="org.mobicents.protocols.ss7.map.functional" />	
 	  	    
 	  	    

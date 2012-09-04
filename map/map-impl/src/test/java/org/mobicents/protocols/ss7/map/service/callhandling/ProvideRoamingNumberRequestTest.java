@@ -218,7 +218,7 @@ public class ProvideRoamingNumberRequestTest {
 		
 
 		// 2
-		asn = new AsnInputStream(getEncodedData());
+		asn = new AsnInputStream(getEncodedData1());
 		tag = asn.readTag();
 		
 		prn = new ProvideRoamingNumberRequestImpl(2);

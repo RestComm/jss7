@@ -38,6 +38,10 @@ import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.MAPStack;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.AlertingCategory;
+import org.mobicents.protocols.ss7.map.api.primitives.EMLPPPriority;
+import org.mobicents.protocols.ss7.map.api.primitives.ExtProtocolId;
+import org.mobicents.protocols.ss7.map.api.primitives.ExternalSignalInfo;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
@@ -45,8 +49,11 @@ import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.primitives.ProtocolId;
+import org.mobicents.protocols.ss7.map.api.primitives.SignalInfo;
 import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.MAPDialogCallHandling;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientID;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientType;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSEvent;
@@ -59,8 +66,10 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.Reque
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancellationType;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.IMSIWithLMSI;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LocationArea;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.TypeOfUpdate;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPDialogSms;
 import org.mobicents.protocols.ss7.map.api.service.sms.SMDeliveryOutcome;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
@@ -70,11 +79,21 @@ import org.mobicents.protocols.ss7.map.api.service.sms.SmsSignalInfo;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
 import org.mobicents.protocols.ss7.map.api.smstpdu.NumberingPlanIdentification;
 import org.mobicents.protocols.ss7.map.api.smstpdu.TypeOfNumber;
+import org.mobicents.protocols.ss7.map.primitives.AlertingPatternImpl;
+import org.mobicents.protocols.ss7.map.primitives.ExtExternalSignalInfoImpl;
+import org.mobicents.protocols.ss7.map.primitives.ExternalSignalInfoImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
+import org.mobicents.protocols.ss7.map.primitives.SignalInfoImpl;
+import org.mobicents.protocols.ss7.map.service.callhandling.CallReferenceNumberImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.IMSIWithLMSIImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.LACImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.LocationAreaImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.PagingAreaImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.OfferedCamel4CSIsImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.SupportedCamelPhasesImpl;
 import org.mobicents.protocols.ss7.map.service.sms.AlertServiceCentreRequestImpl;
 import org.mobicents.protocols.ss7.map.service.sms.SM_RP_SMEAImpl;
 import org.mobicents.protocols.ss7.map.service.sms.SmsSignalInfoImpl;
@@ -114,6 +133,7 @@ public class Client extends EventTestHarness {
 	protected MAPDialogSms clientDialogSms;
 	protected MAPDialogMobility clientDialogMobility;
 	protected MAPDialogLsm clientDialogLsm;
+	protected MAPDialogCallHandling clientDialogCallHandling;
 
 	private long savedInvokeId;
 
@@ -131,11 +151,13 @@ public class Client extends EventTestHarness {
 		this.mapProvider.getMAPServiceSms().addMAPServiceListener(this);
 		this.mapProvider.getMAPServiceMobility().addMAPServiceListener(this);
 		this.mapProvider.getMAPServiceLsm().addMAPServiceListener(this);
+		this.mapProvider.getMAPServiceCallHandling().addMAPServiceListener(this);
 
 		this.mapProvider.getMAPServiceSupplementary().acivate();
 		this.mapProvider.getMAPServiceSms().acivate();
 		this.mapProvider.getMAPServiceMobility().acivate();
 		this.mapProvider.getMAPServiceLsm().acivate();
+		this.mapProvider.getMAPServiceCallHandling().acivate();
 	}
 
 	public void start() throws MAPException {
@@ -586,41 +608,132 @@ public class Client extends EventTestHarness {
 
 	}
 	
-	public void sendCancelLocation_V3() throws Exception {
+	public void sendCancelLocation() throws Exception {
 
-//		this.mapProvider.getMAPServiceMobility().acivate();
-//
-//		MAPApplicationContext appCnt = null;
-//
-//		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.locationCancellationContext, MAPApplicationContextVersion.version3);
-//
-//		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
-//
-//		IMSI imsi = new IMSIImpl("1111122222");
-//		LMSI lmsi = this.mapParameterFactory.createLMSI(new byte[] { 0, 3, 98, 39 });
-//		IMSIWithLMSI imsiWithLmsi  = new IMSIWithLMSIImpl(imsi, lmsi);
-//		CancellationType cancellationType = CancellationType.getInstance(1);
-//		
-//		ArrayList<MAPPrivateExtension> al = new ArrayList<MAPPrivateExtension>();
-//		al.add(this.mapParameterFactory
-//				.createMAPPrivateExtension(new long[] { 1, 2, 3, 4 }, new byte[] { 11, 12, 13, 14, 15 }));
-//		al.add(this.mapParameterFactory.createMAPPrivateExtension(new long[] { 1, 2, 3, 6 }, null));
-//		al.add(this.mapParameterFactory.createMAPPrivateExtension(new long[] { 1, 2, 3, 5 }, new byte[] { 21, 22, 23, 24, 25,
-//				26 }));
-//
-//		MAPExtensionContainer extensionContainer = this.mapParameterFactory.createMAPExtensionContainer(al, new byte[] { 31, 32, 33 });
-//
-//		TypeOfUpdate typeOfUpdate = TypeOfUpdate.getInstance(0);
-//		boolean mtrfSupportedAndAuthorized = false;
-//		boolean mtrfSupportedAndNotAuthorized = false;
-//		ISDNAddressString newMSCNumber = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "22228");
-//		ISDNAddressString newVLRNumber=  new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "22229");
-//		LMSI newLmsi = this.mapParameterFactory.createLMSI(new byte[] { 0, 3, 98, 39 });
-//		
-//		clientDialogMobility.addCancelLocationRequest(imsi, imsiWithLmsi, cancellationType, extensionContainer, typeOfUpdate, mtrfSupportedAndAuthorized, mtrfSupportedAndNotAuthorized, newMSCNumber, newVLRNumber, newLmsi);
-//
-//		this.observerdEvents.add(TestEvent.createSentEvent(EventType.CancelLocation, null, sequence++));
-//		clientDialogMobility.send();
+		this.mapProvider.getMAPServiceMobility().acivate();
+
+		MAPApplicationContext appCnt = null;
+
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.locationCancellationContext, MAPApplicationContextVersion.version3);
+
+		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+
+		IMSI imsi = new IMSIImpl("1111122222");
+		LMSI lmsi = this.mapParameterFactory.createLMSI(new byte[] { 0, 3, 98, 39 });
+		IMSIWithLMSI imsiWithLmsi  = new IMSIWithLMSIImpl(imsi, lmsi);
+		CancellationType cancellationType = CancellationType.getInstance(1);
+		
+		ArrayList<MAPPrivateExtension> al = new ArrayList<MAPPrivateExtension>();
+		al.add(this.mapParameterFactory
+				.createMAPPrivateExtension(new long[] { 1, 2, 3, 4 }, new byte[] { 11, 12, 13, 14, 15 }));
+		al.add(this.mapParameterFactory.createMAPPrivateExtension(new long[] { 1, 2, 3, 6 }, null));
+		al.add(this.mapParameterFactory.createMAPPrivateExtension(new long[] { 1, 2, 3, 5 }, new byte[] { 21, 22, 23, 24, 25,
+				26 }));
+
+		MAPExtensionContainer extensionContainer = this.mapParameterFactory.createMAPExtensionContainer(al, new byte[] { 31, 32, 33 });
+
+		TypeOfUpdate typeOfUpdate = TypeOfUpdate.getInstance(0);
+		boolean mtrfSupportedAndAuthorized = false;
+		boolean mtrfSupportedAndNotAuthorized = false;
+		ISDNAddressString newMSCNumber = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "22228");
+		ISDNAddressString newVLRNumber=  new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "22229");
+		LMSI newLmsi = this.mapParameterFactory.createLMSI(new byte[] { 0, 3, 98, 39 });
+		
+		clientDialogMobility.addCancelLocationRequest(imsi, imsiWithLmsi, cancellationType, extensionContainer, typeOfUpdate, mtrfSupportedAndAuthorized, mtrfSupportedAndNotAuthorized, newMSCNumber, newVLRNumber, newLmsi);
+
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.CancelLocation, null, sequence++));
+		clientDialogMobility.send();
+
+	}
+	
+	
+	public void sendProvideRoamingNumber() throws Exception {
+
+		this.mapProvider.getMAPServiceMobility().acivate();
+
+		MAPApplicationContext appCnt = null;
+
+		appCnt = MAPApplicationContext.getInstance(
+				MAPApplicationContextName.roamingNumberEnquiryContext,
+				MAPApplicationContextVersion.version3);
+
+		clientDialogCallHandling = this.mapProvider.getMAPServiceCallHandling()
+				.createNewDialog(appCnt, this.thisAddress, null,
+						this.remoteAddress, null);
+
+		ArrayList<MAPPrivateExtension> al = new ArrayList<MAPPrivateExtension>();
+		al.add(this.mapParameterFactory.createMAPPrivateExtension(new long[] {
+				1, 2, 3, 4 }, new byte[] { 11, 12, 13, 14, 15 }));
+		al.add(this.mapParameterFactory.createMAPPrivateExtension(new long[] {
+				1, 2, 3, 6 }, null));
+		al.add(this.mapParameterFactory.createMAPPrivateExtension(new long[] {
+				1, 2, 3, 5 }, new byte[] { 21, 22, 23, 24, 25, 26 }));
+
+		IMSI imsi = new IMSIImpl("011220200198227");
+		ISDNAddressString mscNumber = new ISDNAddressStringImpl(
+				AddressNature.international_number, NumberingPlan.ISDN, "22228");
+		ISDNAddressString msisdn = new ISDNAddressStringImpl(
+				AddressNature.international_number, NumberingPlan.ISDN, "22227");
+		LMSI lmsi = new LMSIImpl(new byte[] { 0, 3, 98, 39 });
+
+		MAPExtensionContainer extensionContainerForExtSigInfo = this.mapParameterFactory
+				.createMAPExtensionContainer(al, new byte[] { 31, 32, 33 });
+		byte[] data_ = new byte[] { 10, 20, 30, 40 };
+		SignalInfo signalInfo = new SignalInfoImpl(data_);
+		ProtocolId protocolId = ProtocolId.gsm_0806;
+		ExternalSignalInfo gsmBearerCapability = new ExternalSignalInfoImpl(
+				signalInfo, protocolId, extensionContainerForExtSigInfo);
+		ExternalSignalInfo networkSignalInfo = new ExternalSignalInfoImpl(
+				signalInfo, protocolId, extensionContainerForExtSigInfo);
+
+		boolean suppressionOfAnnouncement = false;
+		ISDNAddressString gmscAddress = new ISDNAddressStringImpl(
+				AddressNature.international_number, NumberingPlan.ISDN, "22226");
+		CallReferenceNumberImpl callReferenceNumber = new CallReferenceNumberImpl(
+				new byte[] { 19, -6, 61, 61, -22 });
+		boolean orInterrogation = false;
+		MAPExtensionContainer extensionContainer = this.mapParameterFactory
+				.createMAPExtensionContainer(al, new byte[] { 31, 32, 33 });
+		AlertingPatternImpl alertingPattern = new AlertingPatternImpl(
+				AlertingCategory.Category5);
+		boolean ccbsCall = false;
+		SupportedCamelPhases supportedCamelPhasesInInterrogatingNode = new SupportedCamelPhasesImpl(
+				true, true, false, false);
+		MAPExtensionContainer extensionContainerforAddSigInfo = this.mapParameterFactory
+				.createMAPExtensionContainer(al, new byte[] { 31, 32, 33 });
+		ExtExternalSignalInfoImpl additionalSignalInfo = new ExtExternalSignalInfoImpl(
+				signalInfo, ExtProtocolId.getExtProtocolId(0),
+				extensionContainerforAddSigInfo);
+		boolean orNotSupportedInGMSC = false;
+		boolean prePagingSupported = false;
+		boolean longFTNSupported = false;
+		boolean suppressVtCsi = false;
+		OfferedCamel4CSIsImpl offeredCamel4CSIsInInterrogatingNode = new OfferedCamel4CSIsImpl(
+				false, false, false, false, true, true, true);
+		boolean mtRoamingRetrySupported = false;
+		ArrayList<LocationArea> locationAreas = new ArrayList<LocationArea>();
+		LACImpl lac = new LACImpl(123);
+		LocationAreaImpl la = new LocationAreaImpl(lac);
+		locationAreas.add(la);
+		PagingAreaImpl pagingArea = new PagingAreaImpl(locationAreas);
+		EMLPPPriority callPriority = EMLPPPriority.getEMLPPPriority(0);
+		boolean mtrfIndicator = false;
+		ISDNAddressString oldMSCNumber = new ISDNAddressStringImpl(
+				AddressNature.international_number, NumberingPlan.ISDN, "22225");
+		
+		clientDialogCallHandling.addProvideRoamingNumberRequest(imsi,
+				mscNumber, msisdn, lmsi, gsmBearerCapability,
+				networkSignalInfo, suppressionOfAnnouncement, gmscAddress,
+				null, orInterrogation,
+				null, null, ccbsCall,
+				null, null,
+				orNotSupportedInGMSC, prePagingSupported, longFTNSupported,
+				suppressVtCsi, null,
+				mtRoamingRetrySupported, null, null,
+				mtrfIndicator, null);
+		this.observerdEvents.add(TestEvent.createSentEvent(
+				EventType.ProvideRoamingNumber, null, sequence++));
+		clientDialogCallHandling.send();
 
 	}
 

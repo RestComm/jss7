@@ -317,7 +317,7 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements
 				.getComponentPrimitiveFactory().createOperationCode();
 		oc.setLocalOperationCode((long) MAPOperationCode.provideRoamingNumber);
 		invoke.setOperationCode(oc);
-
+		
 		if (true) { // validate parameters here...
 			ProvideRoamingNumberRequestImpl req = new ProvideRoamingNumberRequestImpl(
 					imsi, mscNumber, msisdn, lmsi, gsmBearerCapability,
@@ -374,7 +374,7 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements
 		OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
 		oc.setLocalOperationCode((long) MAPOperationCode.provideRoamingNumber);
 		resultLast.setOperationCode(oc);
-		
+	
 		if(true) { // validate parameters here...
 			ProvideRoamingNumberResponseImpl res = new ProvideRoamingNumberResponseImpl(roamingNumber, extensionContainer, releaseResourcesSupported, vmscAddress, mapProtocolVersion);
 			AsnOutputStream aos = new AsnOutputStream();

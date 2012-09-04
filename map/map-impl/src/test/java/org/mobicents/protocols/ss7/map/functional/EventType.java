@@ -30,6 +30,9 @@ public enum EventType {
 	// mobility.imei EventType
 	CheckImei, CheckImeiResp,
 
+	//Call Handling Service 
+	ProvideRoamingNumber, ProvideRoamingNumberResp,
+	
 	// lsm EventType
 	ProvideSubscriberLocation, ProvideSubscriberLocationResp, SubscriberLocationReport, SubscriberLocationReportResp, SendRoutingInfoForLCS, SendRoutingInfoForLCSResp;
 }
