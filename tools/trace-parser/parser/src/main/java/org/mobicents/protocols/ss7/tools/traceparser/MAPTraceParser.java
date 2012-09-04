@@ -1341,7 +1341,10 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	
 	@Override
 	public void onForwardShortMessageRequest(ForwardShortMessageRequest forwSmInd) {
-		this.parseSmsSignalInfo(forwSmInd.getSM_RP_UI(), true, true);
+		if (forwSmInd.getSM_RP_DA().getServiceCentreAddressDA() != null)
+			this.parseSmsSignalInfo(forwSmInd.getSM_RP_UI(), true, false);
+		else
+			this.parseSmsSignalInfo(forwSmInd.getSM_RP_UI(), false, true);
 	}
 
 	@Override

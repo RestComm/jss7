@@ -23,7 +23,6 @@
 package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
 import java.io.IOException;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
