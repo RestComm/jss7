@@ -588,39 +588,39 @@ public class Client extends EventTestHarness {
 	
 	public void sendCancelLocation_V3() throws Exception {
 
-		this.mapProvider.getMAPServiceMobility().acivate();
-
-		MAPApplicationContext appCnt = null;
-
-		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.locationCancellationContext, MAPApplicationContextVersion.version3);
-
-		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
-
-		IMSI imsi = new IMSIImpl("1111122222");
-		LMSI lmsi = this.mapParameterFactory.createLMSI(new byte[] { 0, 3, 98, 39 });
-		IMSIWithLMSI imsiWithLmsi  = new IMSIWithLMSIImpl(imsi, lmsi);
-		CancellationType cancellationType = CancellationType.getInstance(1);
-		
-		ArrayList<MAPPrivateExtension> al = new ArrayList<MAPPrivateExtension>();
-		al.add(this.mapParameterFactory
-				.createMAPPrivateExtension(new long[] { 1, 2, 3, 4 }, new byte[] { 11, 12, 13, 14, 15 }));
-		al.add(this.mapParameterFactory.createMAPPrivateExtension(new long[] { 1, 2, 3, 6 }, null));
-		al.add(this.mapParameterFactory.createMAPPrivateExtension(new long[] { 1, 2, 3, 5 }, new byte[] { 21, 22, 23, 24, 25,
-				26 }));
-
-		MAPExtensionContainer extensionContainer = this.mapParameterFactory.createMAPExtensionContainer(al, new byte[] { 31, 32, 33 });
-
-		TypeOfUpdate typeOfUpdate = TypeOfUpdate.getInstance(0);
-		boolean mtrfSupportedAndAuthorized = false;
-		boolean mtrfSupportedAndNotAuthorized = false;
-		ISDNAddressString newMSCNumber = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "22228");
-		ISDNAddressString newVLRNumber=  new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "22229");
-		LMSI newLmsi = this.mapParameterFactory.createLMSI(new byte[] { 0, 3, 98, 39 });
-		
-		clientDialogMobility.addCancelLocationRequest(imsi, imsiWithLmsi, cancellationType, extensionContainer, typeOfUpdate, mtrfSupportedAndAuthorized, mtrfSupportedAndNotAuthorized, newMSCNumber, newVLRNumber, newLmsi);
-
-		this.observerdEvents.add(TestEvent.createSentEvent(EventType.CancelLocation, null, sequence++));
-		clientDialogMobility.send();
+//		this.mapProvider.getMAPServiceMobility().acivate();
+//
+//		MAPApplicationContext appCnt = null;
+//
+//		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.locationCancellationContext, MAPApplicationContextVersion.version3);
+//
+//		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+//
+//		IMSI imsi = new IMSIImpl("1111122222");
+//		LMSI lmsi = this.mapParameterFactory.createLMSI(new byte[] { 0, 3, 98, 39 });
+//		IMSIWithLMSI imsiWithLmsi  = new IMSIWithLMSIImpl(imsi, lmsi);
+//		CancellationType cancellationType = CancellationType.getInstance(1);
+//		
+//		ArrayList<MAPPrivateExtension> al = new ArrayList<MAPPrivateExtension>();
+//		al.add(this.mapParameterFactory
+//				.createMAPPrivateExtension(new long[] { 1, 2, 3, 4 }, new byte[] { 11, 12, 13, 14, 15 }));
+//		al.add(this.mapParameterFactory.createMAPPrivateExtension(new long[] { 1, 2, 3, 6 }, null));
+//		al.add(this.mapParameterFactory.createMAPPrivateExtension(new long[] { 1, 2, 3, 5 }, new byte[] { 21, 22, 23, 24, 25,
+//				26 }));
+//
+//		MAPExtensionContainer extensionContainer = this.mapParameterFactory.createMAPExtensionContainer(al, new byte[] { 31, 32, 33 });
+//
+//		TypeOfUpdate typeOfUpdate = TypeOfUpdate.getInstance(0);
+//		boolean mtrfSupportedAndAuthorized = false;
+//		boolean mtrfSupportedAndNotAuthorized = false;
+//		ISDNAddressString newMSCNumber = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "22228");
+//		ISDNAddressString newVLRNumber=  new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "22229");
+//		LMSI newLmsi = this.mapParameterFactory.createLMSI(new byte[] { 0, 3, 98, 39 });
+//		
+//		clientDialogMobility.addCancelLocationRequest(imsi, imsiWithLmsi, cancellationType, extensionContainer, typeOfUpdate, mtrfSupportedAndAuthorized, mtrfSupportedAndNotAuthorized, newMSCNumber, newVLRNumber, newLmsi);
+//
+//		this.observerdEvents.add(TestEvent.createSentEvent(EventType.CancelLocation, null, sequence++));
+//		clientDialogMobility.send();
 
 	}
 

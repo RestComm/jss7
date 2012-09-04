@@ -3844,124 +3844,124 @@ public class MAPFunctionalTest extends SccpHarness {
 	}
 	
 	
-
-	/**
-	 * TC-BEGIN + cancelLocation
-	 * TC-END + cancleLocationResponse
-	 */
-	@Test(groups = { "functional.flow", "dialog" })
-	public void testCancelLocation_V3() throws Exception {
-
-		Client client = new Client(stack1, this, peer1Address, peer2Address) {
-			@Override
-			public void onCancelLocationResponse(CancelLocationResponse ind) {
-				super.onCancelLocationResponse(ind);
-				System.out.println("public void onCancelLocationResponse(CancelLocationResponse ind) ");
-				assertNotNull(ind.getExtensionContainer());
-			}
-		};
-
-		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
-			@Override
-			public void onCancelLocationRequest(CancelLocationRequest ind) {
-				super.onCancelLocationRequest(ind);
-				System.out.println("public void onCancelLocationRequest(CancelLocationRequest ind)");
-
-				MAPDialogMobility d = ind.getMAPDialog();
-
-				IMSI imsi = ind.getImsi();
-				IMSIWithLMSI imsiWithLmsi  = ind.getImsiWithLmsi();
-				CancellationType cancellationType = ind.getCancellationType();
-				MAPExtensionContainer extensionContainer =  ind.getExtensionContainer();
-				TypeOfUpdate typeOfUpdate = ind.getTypeOfUpdate();
-				boolean mtrfSupportedAndAuthorized = ind.getMtrfSupportedAndAuthorized();
-				boolean mtrfSupportedAndNotAuthorized = ind.getMtrfSupportedAndNotAuthorized();
-				ISDNAddressString newMSCNumber = ind.getNewMSCNumber();
-				ISDNAddressString newVLRNumber= ind.getNewVLRNumber();
-				LMSI newLmsi = ind.getNewLmsi();
-				long mapProtocolVersion= ind.getMapProtocolVersion();
-			
-				assertTrue(imsi.getData().equals("1111122222"));
-				assertNull(imsiWithLmsi);
-				assertEquals(cancellationType.getCode(), 1);
-				assertNotNull(extensionContainer);
-				assertEquals(typeOfUpdate.getCode(),0);
-				assertFalse(mtrfSupportedAndAuthorized);
-				assertFalse(mtrfSupportedAndNotAuthorized);
-				assertTrue(newMSCNumber.getAddress().equals("22228"));
-				assertEquals(newMSCNumber.getAddressNature(), AddressNature.international_number);		
-				assertEquals(newMSCNumber.getNumberingPlan(), NumberingPlan.ISDN);		
-				assertTrue(newVLRNumber.getAddress().equals("22229"));
-				assertEquals(newVLRNumber.getAddressNature(), AddressNature.international_number);		
-				assertEquals(newVLRNumber.getNumberingPlan(), NumberingPlan.ISDN);	
-				assertTrue(Arrays.equals(newLmsi.getData(), new byte[] { 0, 3, 98, 39 }));
-				assertEquals(mapProtocolVersion, 3);
-
-				try {
-					d.addCancelLocationResponse(ind.getInvokeId(), extensionContainer);
-				} catch (MAPException e) {
-					this.error("Error while adding UpdateLocationResponse", e);
-					fail("Error while adding UpdateLocationResponse");
-				}
-			}
-
-			@Override
-			public void onDialogDelimiter(MAPDialog mapDialog) {
-				super.onDialogDelimiter(mapDialog);
-				try {
-					this.observerdEvents.add(TestEvent.createSentEvent(EventType.CancelLocationResp, null, sequence++));
-					mapDialog.close(false);
-				} catch (MAPException e) {
-					this.error("Error while sending the empty CancelLocationResponse", e);
-					fail("Error while sending the empty CancelLocationResponse");
-				}
-			}
-		};
-		
-		long stamp = System.currentTimeMillis();
-		int count = 0;
-		// Client side events
-		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
-		TestEvent te = TestEvent.createSentEvent(EventType.CancelLocation, null, count++, stamp);
-		clientExpectedEvents.add(te);
-
-		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
-		clientExpectedEvents.add(te);
-
-		te = TestEvent.createReceivedEvent(EventType.CancelLocationResp, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
-		clientExpectedEvents.add(te);
-
-		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
-		clientExpectedEvents.add(te);
-
-		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
-		clientExpectedEvents.add(te);
-
-		count = 0;
-		// Server side events
-		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
-		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
-		serverExpectedEvents.add(te);
-
-		te = TestEvent.createReceivedEvent(EventType.CancelLocation, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
-		serverExpectedEvents.add(te);
-
-		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
-		serverExpectedEvents.add(te);
-
-		te = TestEvent.createSentEvent(EventType.CancelLocationResp, null, count++, stamp);
-		serverExpectedEvents.add(te);
-
-		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
-		serverExpectedEvents.add(te);
-
-		client.sendCancelLocation_V3();
-		System.out.println("client.sendCancelLocation_V3();");
-		waitForEnd();
-		client.compareEvents(clientExpectedEvents);
-		server.compareEvents(serverExpectedEvents);
-
-	}
+//
+//	/**
+//	 * TC-BEGIN + cancelLocation
+//	 * TC-END + cancleLocationResponse
+//	 */
+//	@Test(groups = { "functional.flow", "dialog" })
+//	public void testCancelLocation_V3() throws Exception {
+//
+//		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+//			@Override
+//			public void onCancelLocationResponse(CancelLocationResponse ind) {
+//				super.onCancelLocationResponse(ind);
+//				System.out.println("public void onCancelLocationResponse(CancelLocationResponse ind) ");
+//				assertNotNull(ind.getExtensionContainer());
+//			}
+//		};
+//
+//		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+//			@Override
+//			public void onCancelLocationRequest(CancelLocationRequest ind) {
+//				super.onCancelLocationRequest(ind);
+//				System.out.println("public void onCancelLocationRequest(CancelLocationRequest ind)");
+//
+//				MAPDialogMobility d = ind.getMAPDialog();
+//
+//				IMSI imsi = ind.getImsi();
+//				IMSIWithLMSI imsiWithLmsi  = ind.getImsiWithLmsi();
+//				CancellationType cancellationType = ind.getCancellationType();
+//				MAPExtensionContainer extensionContainer =  ind.getExtensionContainer();
+//				TypeOfUpdate typeOfUpdate = ind.getTypeOfUpdate();
+//				boolean mtrfSupportedAndAuthorized = ind.getMtrfSupportedAndAuthorized();
+//				boolean mtrfSupportedAndNotAuthorized = ind.getMtrfSupportedAndNotAuthorized();
+//				ISDNAddressString newMSCNumber = ind.getNewMSCNumber();
+//				ISDNAddressString newVLRNumber= ind.getNewVLRNumber();
+//				LMSI newLmsi = ind.getNewLmsi();
+//				long mapProtocolVersion= ind.getMapProtocolVersion();
+//			
+//				assertTrue(imsi.getData().equals("1111122222"));
+//				assertNull(imsiWithLmsi);
+//				assertEquals(cancellationType.getCode(), 1);
+//				assertNotNull(extensionContainer);
+//				assertEquals(typeOfUpdate.getCode(),0);
+//				assertFalse(mtrfSupportedAndAuthorized);
+//				assertFalse(mtrfSupportedAndNotAuthorized);
+//				assertTrue(newMSCNumber.getAddress().equals("22228"));
+//				assertEquals(newMSCNumber.getAddressNature(), AddressNature.international_number);		
+//				assertEquals(newMSCNumber.getNumberingPlan(), NumberingPlan.ISDN);		
+//				assertTrue(newVLRNumber.getAddress().equals("22229"));
+//				assertEquals(newVLRNumber.getAddressNature(), AddressNature.international_number);		
+//				assertEquals(newVLRNumber.getNumberingPlan(), NumberingPlan.ISDN);	
+//				assertTrue(Arrays.equals(newLmsi.getData(), new byte[] { 0, 3, 98, 39 }));
+//				assertEquals(mapProtocolVersion, 3);
+//
+//				try {
+//					d.addCancelLocationResponse(ind.getInvokeId(), extensionContainer);
+//				} catch (MAPException e) {
+//					this.error("Error while adding UpdateLocationResponse", e);
+//					fail("Error while adding UpdateLocationResponse");
+//				}
+//			}
+//
+//			@Override
+//			public void onDialogDelimiter(MAPDialog mapDialog) {
+//				super.onDialogDelimiter(mapDialog);
+//				try {
+//					this.observerdEvents.add(TestEvent.createSentEvent(EventType.CancelLocationResp, null, sequence++));
+//					mapDialog.close(false);
+//				} catch (MAPException e) {
+//					this.error("Error while sending the empty CancelLocationResponse", e);
+//					fail("Error while sending the empty CancelLocationResponse");
+//				}
+//			}
+//		};
+//		
+//		long stamp = System.currentTimeMillis();
+//		int count = 0;
+//		// Client side events
+//		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+//		TestEvent te = TestEvent.createSentEvent(EventType.CancelLocation, null, count++, stamp);
+//		clientExpectedEvents.add(te);
+//
+//		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+//		clientExpectedEvents.add(te);
+//
+//		te = TestEvent.createReceivedEvent(EventType.CancelLocationResp, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+//		clientExpectedEvents.add(te);
+//
+//		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+//		clientExpectedEvents.add(te);
+//
+//		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+//		clientExpectedEvents.add(te);
+//
+//		count = 0;
+//		// Server side events
+//		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+//		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+//		serverExpectedEvents.add(te);
+//
+//		te = TestEvent.createReceivedEvent(EventType.CancelLocation, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+//		serverExpectedEvents.add(te);
+//
+//		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+//		serverExpectedEvents.add(te);
+//
+//		te = TestEvent.createSentEvent(EventType.CancelLocationResp, null, count++, stamp);
+//		serverExpectedEvents.add(te);
+//
+//		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+//		serverExpectedEvents.add(te);
+//
+//		client.sendCancelLocation_V3();
+//		System.out.println("client.sendCancelLocation_V3();");
+//		waitForEnd();
+//		client.compareEvents(clientExpectedEvents);
+//		server.compareEvents(serverExpectedEvents);
+//
+//	}
 
 
 	
