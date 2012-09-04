@@ -216,6 +216,304 @@ public class ProvideRoamingNumberRequestImpl extends CallHandlingMessageImpl
 		}
 
 	}
+	
+
+	private void _decode(AsnInputStream ansIS, int length)
+			throws MAPParsingComponentException, IOException, AsnException {
+		this.imsi = null;
+		this.mscNumber = null;
+		this.msisdn = null;
+		this.lmsi = null;
+		this.gsmBearerCapability = null;
+		this.networkSignalInfo = null;
+		this.suppressionOfAnnouncement = false;
+		this.gmscAddress = null;
+		this.callReferenceNumber = null;
+		this.orInterrogation = false;
+		this.extensionContainer = null;
+		this.alertingPattern = null;
+		this.ccbsCall = false;
+		this.supportedCamelPhasesInInterrogatingNode = null;
+		this.additionalSignalInfo = null;
+		this.orNotSupportedInGMSC = false;
+		this.prePagingSupported = false;
+		this.longFTNSupported = false;
+		this.suppressVtCsi = false;
+		this.offeredCamel4CSIsInInterrogatingNode = null;
+		this.mtRoamingRetrySupported = false;
+		this.pagingArea = null;
+		this.callPriority = null;
+		this.mtrfIndicator = false;
+		this.oldMSCNumber = null;
+
+			AsnInputStream ais = ansIS.readSequenceStreamData(length);
+		
+			
+			if (this.mapProtocolVersion <= 2) {
+
+				if (ais.available() > 0) {
+					while (true) {
+						if (ais.available() == 0)
+							break;
+
+						int tag = ais.readTag();
+						
+						if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {	
+							switch (tag) {
+								case TAG_imsi:
+									if (!ais.isTagPrimitive()) {
+										throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+									}
+									this.imsi = new IMSIImpl();
+									((IMSIImpl) this.imsi).decodeAll(ais);
+									break;
+								case TAG_mscNumber:
+									if (!ais.isTagPrimitive()) {
+										throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+									}
+									this.mscNumber = new ISDNAddressStringImpl();
+									((ISDNAddressStringImpl) this.mscNumber)
+											.decodeAll(ais);
+									break;
+								case TAG_msisdn:
+									if (!ais.isTagPrimitive()) {
+										throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+									}
+									this.msisdn = new ISDNAddressStringImpl();
+									((ISDNAddressStringImpl) this.msisdn)
+											.decodeAll(ais);
+									break;
+								case TAG_lmsi:
+									if (!ais.isTagPrimitive()) {
+										throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+									}
+									this.lmsi = new LMSIImpl();
+									((LMSIImpl) this.lmsi).decodeAll(ais);
+									break;
+								case TAG_gsmBearerCapability:
+									if (ais.isTagPrimitive()) {
+										throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+									}
+									this.gsmBearerCapability = new ExternalSignalInfoImpl();
+									((ExternalSignalInfoImpl) this.gsmBearerCapability)
+											.decodeAll(ais);
+									break;
+								case TAG_networkSignalInfo:
+									if (ais.isTagPrimitive()) {
+										throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+									}
+									this.networkSignalInfo = new ExternalSignalInfoImpl();
+									((ExternalSignalInfoImpl) this.networkSignalInfo)
+											.decodeAll(ais);
+									break;
+								default:
+									ais.advanceElement();
+									break;
+							}
+						}
+					}
+				}
+
+				if (this.mapProtocolVersion == 2) {
+					if (this.imsi == null 
+							|| this.mscNumber == null)
+						throw new MAPParsingComponentException(
+								"Error while decoding "+_PrimitiveName+" V2"
+										+ ": imsi  or mscNumber must not be null",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+				} else if (this.mapProtocolVersion == 1) {
+					if (this.imsi == null )
+						throw new MAPParsingComponentException(
+								"Error while decoding "+_PrimitiveName+" V1"
+										+ ": imsi  or mscNumber must not be null",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+				}
+
+			} else {
+				while (true) {
+					if (ais.available() == 0)
+						break;
+
+					int tag = ais.readTag();
+					if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+
+						switch (tag) {
+							case TAG_imsi:// 1
+								if (!ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
+								this.imsi = new IMSIImpl();
+								((IMSIImpl) this.imsi).decodeAll(ais);
+								break;
+							case TAG_mscNumber:// 2
+								if (!ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
+								this.mscNumber = new ISDNAddressStringImpl();
+								((ISDNAddressStringImpl) this.mscNumber)
+										.decodeAll(ais);
+								break;
+							case TAG_msisdn:// 3
+								if (!ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
+								this.msisdn = new ISDNAddressStringImpl();
+								((ISDNAddressStringImpl) this.msisdn)
+										.decodeAll(ais);
+								break;
+							case TAG_lmsi:// 4
+								if (!ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
+								this.lmsi = new LMSIImpl();
+								((LMSIImpl) this.lmsi).decodeAll(ais);
+								break;
+							case TAG_gsmBearerCapability:// 5
+								if (ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
+								this.gsmBearerCapability = new ExternalSignalInfoImpl();
+								((ExternalSignalInfoImpl) this.gsmBearerCapability)
+										.decodeAll(ais);
+								break;
+							case TAG_networkSignalInfo:// 6
+								if (ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
+								this.networkSignalInfo = new ExternalSignalInfoImpl();
+								((ExternalSignalInfoImpl) this.networkSignalInfo)
+										.decodeAll(ais);
+								break;
+							case TAG_suppressionOfAnnouncement:// 7
+								ais.readNull();
+								this.suppressionOfAnnouncement = true;
+								break;
+							case TAG_gmscAddress:// 8
+								if (!ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
+								this.gmscAddress = new ISDNAddressStringImpl();
+								((ISDNAddressStringImpl) this.gmscAddress)
+										.decodeAll(ais);
+								break;
+							case TAG_callReferenceNumber:// 9
+								if (!ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
+								this.callReferenceNumber = new CallReferenceNumberImpl();
+								((CallReferenceNumberImpl) this.callReferenceNumber)
+										.decodeAll(ais);
+								break;
+							case TAG_orInterrogation:// 10
+								ais.readNull();
+								this.orInterrogation = true;
+								break;
+							case TAG_extensionContainer:// 11
+								if (ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
+								this.extensionContainer = new MAPExtensionContainerImpl();
+								((MAPExtensionContainerImpl) this.extensionContainer)
+										.decodeAll(ais);
+								break;
+							case TAG_alertingPattern:// 12
+								if (!ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
+								this.alertingPattern = new AlertingPatternImpl();
+								((AlertingPatternImpl) this.alertingPattern)
+										.decodeAll(ais);
+								break;
+							case TAG_ccbsCall:// 13
+								ais.readNull();
+								this.ccbsCall = true;
+								break;
+							case TAG_supportedCamelPhasesInInterrogatingNode:// 14
+								if (!ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
+								this.supportedCamelPhasesInInterrogatingNode = new SupportedCamelPhasesImpl();
+								((SupportedCamelPhasesImpl) this.supportedCamelPhasesInInterrogatingNode)
+										.decodeAll(ais);
+								break;
+							case TAG_additionalSignalInfo:// 15
+								if (ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
+								this.additionalSignalInfo = new ExtExternalSignalInfoImpl();
+								((ExtExternalSignalInfoImpl) this.additionalSignalInfo)
+										.decodeAll(ais);
+								break;
+							case TAG_orNotSupportedInGMSC:// 16
+								ais.readNull();
+								this.orNotSupportedInGMSC = true;
+								break;
+							case TAG_prePagingSupported:// 17
+								ais.readNull();
+								this.prePagingSupported = true;
+								break;
+							case TAG_longFTNSupported:// 18
+								ais.readNull();
+								this.longFTNSupported = true;
+								break;
+							case TAG_suppressVtCsi:// 19
+								ais.readNull();
+								this.suppressVtCsi = true;
+								break;
+							case TAG_offeredCamel4CSIsInInterrogatingNode:// 20
+								if (!ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
+								this.offeredCamel4CSIsInInterrogatingNode = new OfferedCamel4CSIsImpl();
+								((OfferedCamel4CSIsImpl) this.offeredCamel4CSIsInInterrogatingNode)
+										.decodeAll(ais);
+								break;
+							case TAG_mtRoamingRetrySupported:// 21
+								ais.readNull();
+								this.mtRoamingRetrySupported = true;
+								break;
+							case TAG_pagingArea:// 22
+								if (ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
+								this.pagingArea = new PagingAreaImpl();
+								((PagingAreaImpl) this.pagingArea).decodeAll(ais);
+								break;
+							case TAG_callPriority:// 23
+								this.callPriority = EMLPPPriority
+										.getEMLPPPriority((int) ais.readInteger());
+								break;
+							case TAG_mtrfIndicator:// 24
+								ais.readNull();
+								this.mtrfIndicator = true;
+								break;
+							case TAG_oldMSCNumber:// 25
+								if (!ais.isTagPrimitive()) {
+									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+								}
+								this.oldMSCNumber = new ISDNAddressStringImpl();
+								((ISDNAddressStringImpl) this.oldMSCNumber)
+										.decodeAll(ais);
+								break;
+							default:
+								ais.advanceElement();
+								break;
+						}
+					} else {
+						ais.advanceElement();
+						// break;
+					}
+				}
+
+				if (this.imsi == null || this.mscNumber == null)
+					throw new MAPParsingComponentException(
+							"Error while decoding "+_PrimitiveName+"  V3"
+									+ ": imsi,  and mscNumber must not be null",
+							MAPParsingComponentExceptionReason.MistypedParameter);
+			}
+
+	}
+
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
@@ -653,302 +951,6 @@ public class ProvideRoamingNumberRequestImpl extends CallHandlingMessageImpl
 		return this.mapProtocolVersion;
 	}
 
-	private void _decode(AsnInputStream ansIS, int length)
-			throws MAPParsingComponentException, IOException, AsnException {
-		this.imsi = null;
-		this.mscNumber = null;
-		this.msisdn = null;
-		this.lmsi = null;
-		this.gsmBearerCapability = null;
-		this.networkSignalInfo = null;
-		this.suppressionOfAnnouncement = false;
-		this.gmscAddress = null;
-		this.callReferenceNumber = null;
-		this.orInterrogation = false;
-		this.extensionContainer = null;
-		this.alertingPattern = null;
-		this.ccbsCall = false;
-		this.supportedCamelPhasesInInterrogatingNode = null;
-		this.additionalSignalInfo = null;
-		this.orNotSupportedInGMSC = false;
-		this.prePagingSupported = false;
-		this.longFTNSupported = false;
-		this.suppressVtCsi = false;
-		this.offeredCamel4CSIsInInterrogatingNode = null;
-		this.mtRoamingRetrySupported = false;
-		this.pagingArea = null;
-		this.callPriority = null;
-		this.mtrfIndicator = false;
-		this.oldMSCNumber = null;
-
-			AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		
-			
-			if (this.mapProtocolVersion <= 2) {
-
-				if (ais.available() > 0) {
-					while (true) {
-						if (ais.available() == 0)
-							break;
-
-						int tag = ais.readTag();
-						
-						if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {	
-							switch (tag) {
-								case TAG_imsi:
-									if (!ais.isTagPrimitive()) {
-										throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-									}
-									this.imsi = new IMSIImpl();
-									((IMSIImpl) this.imsi).decodeAll(ais);
-									break;
-								case TAG_mscNumber:
-									if (!ais.isTagPrimitive()) {
-										throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-									}
-									this.mscNumber = new ISDNAddressStringImpl();
-									((ISDNAddressStringImpl) this.mscNumber)
-											.decodeAll(ais);
-									break;
-								case TAG_msisdn:
-									if (!ais.isTagPrimitive()) {
-										throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-									}
-									this.msisdn = new ISDNAddressStringImpl();
-									((ISDNAddressStringImpl) this.msisdn)
-											.decodeAll(ais);
-									break;
-								case TAG_lmsi:
-									if (!ais.isTagPrimitive()) {
-										throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-									}
-									this.lmsi = new LMSIImpl();
-									((LMSIImpl) this.lmsi).decodeAll(ais);
-									break;
-								case TAG_gsmBearerCapability:
-									if (ais.isTagPrimitive()) {
-										throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-									}
-									this.gsmBearerCapability = new ExternalSignalInfoImpl();
-									((ExternalSignalInfoImpl) this.gsmBearerCapability)
-											.decodeAll(ais);
-									break;
-								case TAG_networkSignalInfo:
-									if (ais.isTagPrimitive()) {
-										throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-									}
-									this.networkSignalInfo = new ExternalSignalInfoImpl();
-									((ExternalSignalInfoImpl) this.networkSignalInfo)
-											.decodeAll(ais);
-									break;
-								default:
-									ais.advanceElement();
-									break;
-							}
-						}
-					}
-				}
-
-				if (this.mapProtocolVersion == 2) {
-					if (this.imsi == null 
-							|| this.mscNumber == null)
-						throw new MAPParsingComponentException(
-								"Error while decoding "+_PrimitiveName+" V2"
-										+ ": imsi  or mscNumber must not be null",
-								MAPParsingComponentExceptionReason.MistypedParameter);
-				} else if (this.mapProtocolVersion == 1) {
-					if (this.imsi == null )
-						throw new MAPParsingComponentException(
-								"Error while decoding "+_PrimitiveName+" V1"
-										+ ": imsi  or mscNumber must not be null",
-								MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-
-			} else {
-				while (true) {
-					if (ais.available() == 0)
-						break;
-
-					int tag = ais.readTag();
-					if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-
-						switch (tag) {
-							case TAG_imsi:// 1
-								if (!ais.isTagPrimitive()) {
-									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-								}
-								this.imsi = new IMSIImpl();
-								((IMSIImpl) this.imsi).decodeAll(ais);
-								break;
-							case TAG_mscNumber:// 2
-								if (!ais.isTagPrimitive()) {
-									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-								}
-								this.mscNumber = new ISDNAddressStringImpl();
-								((ISDNAddressStringImpl) this.mscNumber)
-										.decodeAll(ais);
-								break;
-							case TAG_msisdn:// 3
-								if (!ais.isTagPrimitive()) {
-									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-								}
-								this.msisdn = new ISDNAddressStringImpl();
-								((ISDNAddressStringImpl) this.msisdn)
-										.decodeAll(ais);
-								break;
-							case TAG_lmsi:// 4
-								if (!ais.isTagPrimitive()) {
-									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-								}
-								this.lmsi = new LMSIImpl();
-								((LMSIImpl) this.lmsi).decodeAll(ais);
-								break;
-							case TAG_gsmBearerCapability:// 5
-								if (ais.isTagPrimitive()) {
-									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-								}
-								this.gsmBearerCapability = new ExternalSignalInfoImpl();
-								((ExternalSignalInfoImpl) this.gsmBearerCapability)
-										.decodeAll(ais);
-								break;
-							case TAG_networkSignalInfo:// 6
-								if (ais.isTagPrimitive()) {
-									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-								}
-								this.networkSignalInfo = new ExternalSignalInfoImpl();
-								((ExternalSignalInfoImpl) this.networkSignalInfo)
-										.decodeAll(ais);
-								break;
-							case TAG_suppressionOfAnnouncement:// 7
-								ais.readNull();
-								this.suppressionOfAnnouncement = true;
-								break;
-							case TAG_gmscAddress:// 8
-								if (!ais.isTagPrimitive()) {
-									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-								}
-								this.gmscAddress = new ISDNAddressStringImpl();
-								((ISDNAddressStringImpl) this.gmscAddress)
-										.decodeAll(ais);
-								break;
-							case TAG_callReferenceNumber:// 9
-								if (!ais.isTagPrimitive()) {
-									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-								}
-								this.callReferenceNumber = new CallReferenceNumberImpl();
-								((CallReferenceNumberImpl) this.callReferenceNumber)
-										.decodeAll(ais);
-								break;
-							case TAG_orInterrogation:// 10
-								ais.readNull();
-								this.orInterrogation = true;
-								break;
-							case TAG_extensionContainer:// 11
-								if (ais.isTagPrimitive()) {
-									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-								}
-								this.extensionContainer = new MAPExtensionContainerImpl();
-								((MAPExtensionContainerImpl) this.extensionContainer)
-										.decodeAll(ais);
-								break;
-							case TAG_alertingPattern:// 12
-								if (!ais.isTagPrimitive()) {
-									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-								}
-								this.alertingPattern = new AlertingPatternImpl();
-								((AlertingPatternImpl) this.alertingPattern)
-										.decodeAll(ais);
-								break;
-							case TAG_ccbsCall:// 13
-								ais.readNull();
-								this.ccbsCall = true;
-								break;
-							case TAG_supportedCamelPhasesInInterrogatingNode:// 14
-								if (!ais.isTagPrimitive()) {
-									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-								}
-								this.supportedCamelPhasesInInterrogatingNode = new SupportedCamelPhasesImpl();
-								((SupportedCamelPhasesImpl) this.supportedCamelPhasesInInterrogatingNode)
-										.decodeAll(ais);
-								break;
-							case TAG_additionalSignalInfo:// 15
-								if (ais.isTagPrimitive()) {
-									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-								}
-								this.additionalSignalInfo = new ExtExternalSignalInfoImpl();
-								((ExtExternalSignalInfoImpl) this.additionalSignalInfo)
-										.decodeAll(ais);
-								break;
-							case TAG_orNotSupportedInGMSC:// 16
-								ais.readNull();
-								this.orNotSupportedInGMSC = true;
-								break;
-							case TAG_prePagingSupported:// 17
-								ais.readNull();
-								this.prePagingSupported = true;
-								break;
-							case TAG_longFTNSupported:// 18
-								ais.readNull();
-								this.longFTNSupported = true;
-								break;
-							case TAG_suppressVtCsi:// 19
-								ais.readNull();
-								this.suppressVtCsi = true;
-								break;
-							case TAG_offeredCamel4CSIsInInterrogatingNode:// 20
-								if (!ais.isTagPrimitive()) {
-									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-								}
-								this.offeredCamel4CSIsInInterrogatingNode = new OfferedCamel4CSIsImpl();
-								((OfferedCamel4CSIsImpl) this.offeredCamel4CSIsInInterrogatingNode)
-										.decodeAll(ais);
-								break;
-							case TAG_mtRoamingRetrySupported:// 21
-								ais.readNull();
-								this.mtRoamingRetrySupported = true;
-								break;
-							case TAG_pagingArea:// 22
-								if (ais.isTagPrimitive()) {
-									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-								}
-								this.pagingArea = new PagingAreaImpl();
-								((PagingAreaImpl) this.pagingArea).decodeAll(ais);
-								break;
-							case TAG_callPriority:// 23
-								this.callPriority = EMLPPPriority
-										.getEMLPPPriority((int) ais.readInteger());
-								break;
-							case TAG_mtrfIndicator:// 24
-								ais.readNull();
-								this.mtrfIndicator = true;
-								break;
-							case TAG_oldMSCNumber:// 25
-								if (!ais.isTagPrimitive()) {
-									throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-								}
-								this.oldMSCNumber = new ISDNAddressStringImpl();
-								((ISDNAddressStringImpl) this.oldMSCNumber)
-										.decodeAll(ais);
-								break;
-							default:
-								ais.advanceElement();
-								break;
-						}
-					} else {
-						ais.advanceElement();
-						// break;
-					}
-				}
-
-				if (this.imsi == null || this.mscNumber == null)
-					throw new MAPParsingComponentException(
-							"Error while decoding "+_PrimitiveName+"  V3"
-									+ ": imsi,  and mscNumber must not be null",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-			}
-
-	}
-
 	@Override
 	public String toString() {
 		return "ProvideRoamingNumberRequestImpl [imsi=" + imsi + ", mscNumber="
@@ -975,28 +977,7 @@ public class ProvideRoamingNumberRequestImpl extends CallHandlingMessageImpl
 				+ mapProtocolVersion + "]";
 	}
 	
-	
-	public static void main(String args[]){
-		
-		AsnInputStream asn = new AsnInputStream(getEncodedData());
-		try {
-			int tag = asn.readTag();
-			
-			ProvideRoamingNumberRequestImpl prn = new ProvideRoamingNumberRequestImpl(3);
-			prn.decodeAll(asn);
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
-		
-	}
-	
-	private static byte[] getEncodedData() {
-		return new byte[] {48, -126, 1, 5, -128, 8, 16, 33, 2, 2, 16, -119, 34, -9, -127, 4, -111, 34, 34, -8, -126, 4, -111, 34, 34, -9, -124, 4, 0, 3, 98, 39, -91, 50, 10, 1, 2, 4, 4, 10, 20, 30, 40, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -90, 50, 10, 1, 2, 4, 4, 10, 20, 30, 40, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -120, 4, -111, 34, 34, -10, -119, 5, 19, -6, 61, 61, -22, -85, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -116, 1, 8, -113, 2, 4, -64, -82, 47, 4, 4, 10, 20, 30, 40, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -108, 2, 1, 14, -74, 4, -127, 2, 0, 123, -105, 1, 0, -103, 4, -111, 34, 34, -11};
-	}
-	
 	
 	
 }

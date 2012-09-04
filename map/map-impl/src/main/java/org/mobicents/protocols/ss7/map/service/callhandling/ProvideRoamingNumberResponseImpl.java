@@ -274,37 +274,6 @@ public class ProvideRoamingNumberResponseImpl extends CallHandlingMessageImpl im
 				+ mapProtocolVersion + "]";
 	}
 	
-	
-	public static void main(String args[]){
-		 AsnInputStream asn = new AsnInputStream(getEncodedData());
-		 try {
-			int tag = asn.readTag();
-			
-			 ProvideRoamingNumberResponseImpl prn = new
-					 ProvideRoamingNumberResponseImpl(3);
-			 prn.decodeAll(asn);
-			
-			 
-				ISDNAddressString roamingNumber = prn.getRoamingNumber();
-				MAPExtensionContainer extensionContainer = prn.getExtensionContainer();
-				boolean releaseResourcesSupported = prn.getReleaseResourcesSupported();
-				ISDNAddressString vmscAddress = prn.getVmscAddress(); 
-				long mapProtocolVersion = prn.getMapProtocolVersion();
-				
-				
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 
-	}
-	
-	private static byte[] getEncodedData() {
-		return new byte[] { 48, 59, 4, 7, -111, -108, -120, 115, 0, -110, -14, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, 4, 7, -111, -110, 17, 19, 50, 19, -15 };
-	}
-
-	
-	
 
 }
