@@ -137,8 +137,7 @@ public interface MAPDialogCallHandling extends MAPDialog {
 			EMLPPPriority callPriority, boolean mtrfIndicator,
 			ISDNAddressString oldMSCNumber) throws MAPException;
 
-	public void addProvideRoamingNumberResponse(long invokeId,
-			long mapProtocolVersion, ISDNAddressString roamingNumber,
+	public void addProvideRoamingNumberResponse(long invokeId, ISDNAddressString roamingNumber,
 			MAPExtensionContainer extensionContainer,
 			boolean releaseResourcesSupported, ISDNAddressString vmscAddress)
 			throws MAPException;

@@ -199,11 +199,11 @@ public class CancelLocationRequestImpl extends MobilityMessageImpl implements
 			this._decode(ansIS, length);
 		} catch (IOException e) {
 			throw new MAPParsingComponentException(
-					"IOException when decoding CancelLocationRequest: ", e,
+					"IOException when decoding "+_PrimitiveName+": ", e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
 			throw new MAPParsingComponentException(
-					"AsnException when decoding CancelLocationRequest: ", e,
+					"AsnException when decoding "+_PrimitiveName+": ", e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 
@@ -216,15 +216,155 @@ public class CancelLocationRequestImpl extends MobilityMessageImpl implements
 			this._decode(ansIS, length);
 		} catch (IOException e) {
 			throw new MAPParsingComponentException(
-					"IOException when decoding CancelLocationRequest: ", e,
+					"IOException when decoding "+_PrimitiveName+": ", e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
 			throw new MAPParsingComponentException(
-					"AsnException when decoding CancelLocationRequest: ", e,
+					"AsnException when decoding "+_PrimitiveName+": ", e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 
 	}
+	
+	
+	private void _decode(AsnInputStream ansIS, int length)
+			throws MAPParsingComponentException, IOException, AsnException {
+
+		this.imsi = null;
+		this.imsiWithLmsi = null;
+		this.cancellationType = null;
+		this.extensionContainer = null;
+		this.typeOfUpdate = null;
+		this.mtrfSupportedAndAuthorized = false;
+		this.mtrfSupportedAndNotAuthorized = false;
+		this.newMSCNumber = null;
+		this.newVLRNumber = null;
+		this.newLmsi = null;
+
+		if (this.mapProtocolVersion == 3) {
+			AsnInputStream ais = ansIS.readSequenceStreamData(length);
+			int num = 0;
+			while (true) {
+				if (ais.available() == 0)
+					break;
+
+				int tag = ais.readTag();
+
+				if (num == 0 && tag == Tag.STRING_OCTET
+						&& ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
+					this.imsi = new IMSIImpl();
+					((IMSIImpl) this.imsi).decodeAll(ais);
+				} else if (num == 0 && tag == Tag.SEQUENCE
+						&& ais.getTagClass() == Tag.CLASS_UNIVERSAL
+						) {
+					if (ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName
+										+ ".imsiWithLmsi: is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.imsiWithLmsi = new IMSIWithLMSIImpl();
+					((IMSIWithLMSIImpl) this.imsiWithLmsi).decodeAll(ais);
+				} else if (tag == Tag.INTEGER
+						&& ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
+					this.cancellationType = CancellationType
+							.getInstance((int) ais.readInteger());
+				} else if (ais.getTagClass() == Tag.CLASS_UNIVERSAL
+						&& tag == Tag.SEQUENCE && (!ais.isTagPrimitive())) {
+					this.extensionContainer = new MAPExtensionContainerImpl();
+					((MAPExtensionContainerImpl) this.extensionContainer)
+							.decodeAll(ais);
+				} else if(ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC){
+					switch (tag) {
+					case CancelLocationRequestImpl.TAG_typeOfUpdate: // lmsi
+						this.typeOfUpdate = TypeOfUpdate.getInstance((int) ais
+								.readInteger());
+						break;
+					case CancelLocationRequestImpl.TAG_mtrfSupportedAndAuthorized:
+						ais.readNull();
+						this.mtrfSupportedAndAuthorized = true;
+						break;
+					case CancelLocationRequestImpl.TAG_mtrfSupportedAndNotAuthorized:
+						ais.readNull();
+						this.mtrfSupportedAndNotAuthorized = true;
+						break;
+					case CancelLocationRequestImpl.TAG_newMSCNumber:
+						if (!ais.isTagPrimitive()) {
+							throw new MAPParsingComponentException(
+									"Error while decoding "
+											+ _PrimitiveName
+											+ ".newMSCNumber: is primitive",
+									MAPParsingComponentExceptionReason.MistypedParameter);
+						}
+						this.newMSCNumber = new ISDNAddressStringImpl();
+						((ISDNAddressStringImpl) this.newMSCNumber)
+								.decodeAll(ais);
+						break;
+					case CancelLocationRequestImpl.TAG_newVLRNumber:
+						if (!ais.isTagPrimitive()) {
+							throw new MAPParsingComponentException(
+									"Error while decoding "
+											+ _PrimitiveName
+											+ ".newVLRNumber: is primitive",
+									MAPParsingComponentExceptionReason.MistypedParameter);
+						}
+						this.newVLRNumber = new ISDNAddressStringImpl();
+						((ISDNAddressStringImpl) this.newVLRNumber)
+								.decodeAll(ais);
+						break;
+					case CancelLocationRequestImpl.TAG_newLmsi:
+						if (!ais.isTagPrimitive()) {
+							throw new MAPParsingComponentException(
+									"Error while decoding "
+											+ _PrimitiveName
+											+ ".newLmsi: is primitive",
+									MAPParsingComponentExceptionReason.MistypedParameter);
+						}
+						this.newLmsi = new LMSIImpl();
+						((LMSIImpl) this.newLmsi).decodeAll(ais);
+						break;
+					default:
+						ais.advanceElement();
+						break;
+					}
+				}
+
+				num++;
+			}
+			if (num < 1)
+				throw new MAPParsingComponentException(
+						"Error while decoding "+_PrimitiveName+": Needs at least 1 mandatory parameters, found "
+								+ num,
+						MAPParsingComponentExceptionReason.MistypedParameter);
+
+		} else {
+			AsnInputStream ais = ansIS.readSequenceStreamData(length);
+			int tag = ais.getTag();
+			if (tag == Tag.STRING_OCTET
+					&& ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
+				if (!ais.isTagPrimitive()) {
+					throw new MAPParsingComponentException(
+							"Error while decoding " + _PrimitiveName
+									+ ".imsi: is primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
+				}
+				this.imsi = new IMSIImpl();
+				((IMSIImpl) this.imsi).decodeData(ais,length);
+			}else if (tag == Tag.SEQUENCE && ais.getTagClass() == Tag.CLASS_UNIVERSAL
+					) {
+				if (ais.isTagPrimitive()) {
+					throw new MAPParsingComponentException(
+							"Error while decoding " + _PrimitiveName
+									+ ".imsiWithLmsi: is primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
+				}
+				this.imsiWithLmsi = new IMSIWithLMSIImpl();
+				((IMSIWithLMSIImpl) this.imsiWithLmsi).decodeData(ais,length);
+			}
+		}
+
+	}
+
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
@@ -249,12 +389,12 @@ public class CancelLocationRequestImpl extends MobilityMessageImpl implements
 		} catch (AsnException e) {
 			e.printStackTrace();
 			throw new MAPException(
-					"AsnException when encoding CancelLocationRequest: "
+					"AsnException when encoding "+_PrimitiveName+": "
 							+ e.getMessage(), e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new MAPException(
-					"AsnException when encoding CancelLocationRequest: "
+					"AsnException when encoding "+_PrimitiveName+": "
 							+ e.getMessage(), e);
 		}
 
@@ -265,7 +405,7 @@ public class CancelLocationRequestImpl extends MobilityMessageImpl implements
 
 		if (this.imsi == null && this.imsiWithLmsi == null) {
 			throw new MAPException(
-					"Error while encoding CancelLocationRequest the mandatory parameter imsi and imsiWithLmsi is not defined");
+					"Error while encoding "+_PrimitiveName+" the mandatory parameter imsi / imsiWithLmsi is not defined");
 		}
 
 	
@@ -284,11 +424,11 @@ public class CancelLocationRequestImpl extends MobilityMessageImpl implements
 						asnOs.writeInteger(this.cancellationType.getCode());
 					} catch (IOException e) {
 						throw new MAPException(
-								"IOException while encoding CancelLocationRequest parameter cancellationType",
+								"IOException while encoding "+_PrimitiveName+" parameter cancellationType",
 								e);
 					} catch (AsnException e) {
 						throw new MAPException(
-								"IOException while encoding CancelLocationRequest parameter cancellationType",
+								"IOException while encoding "+_PrimitiveName+" parameter cancellationType",
 								e);
 					}
 				}
@@ -305,11 +445,11 @@ public class CancelLocationRequestImpl extends MobilityMessageImpl implements
 								this.typeOfUpdate.getCode());
 					} catch (IOException e) {
 						throw new MAPException(
-								"IOException while encoding CancelLocationRequest parameter typeOfUpdate",
+								"IOException while encoding "+_PrimitiveName+" parameter typeOfUpdate",
 								e);
 					} catch (AsnException e) {
 						throw new MAPException(
-								"IOException while encoding CancelLocationRequest parameter typeOfUpdate",
+								"IOException while encoding "+_PrimitiveName+" parameter typeOfUpdate",
 								e);
 					}
 				}
@@ -320,11 +460,11 @@ public class CancelLocationRequestImpl extends MobilityMessageImpl implements
 								TAG_mtrfSupportedAndAuthorized);
 					} catch (IOException e) {
 						throw new MAPException(
-								"IOException while encoding CancelLocationRequest parameter mtrfSupportedAndAuthorized",
+								"IOException while encoding "+_PrimitiveName+" parameter mtrfSupportedAndAuthorized",
 								e);
 					} catch (AsnException e) {
 						throw new MAPException(
-								"AsnException while encoding CancelLocationRequest parameter mtrfSupportedAndAuthorized",
+								"AsnException while encoding "+_PrimitiveName+" parameter mtrfSupportedAndAuthorized",
 								e);
 					}
 				}
@@ -335,11 +475,11 @@ public class CancelLocationRequestImpl extends MobilityMessageImpl implements
 								TAG_mtrfSupportedAndNotAuthorized);
 					} catch (IOException e) {
 						throw new MAPException(
-								"IOException while encoding CancelLocationRequest parameter mtrfSupportedAndNotAuthorized",
+								"IOException while encoding "+_PrimitiveName+" parameter mtrfSupportedAndNotAuthorized",
 								e);
 					} catch (AsnException e) {
 						throw new MAPException(
-								"AsnException while encoding CancelLocationRequest parameter mtrfSupportedAndNotAuthorized",
+								"AsnException while encoding "+_PrimitiveName+" parameter mtrfSupportedAndNotAuthorized",
 								e);
 					}
 				}
@@ -378,143 +518,6 @@ public class CancelLocationRequestImpl extends MobilityMessageImpl implements
 		return this.mapProtocolVersion;
 	}
 
-	private void _decode(AsnInputStream ansIS, int length)
-			throws MAPParsingComponentException, IOException, AsnException {
-
-		this.imsi = null;
-		this.imsiWithLmsi = null;
-		this.cancellationType = null;
-		this.extensionContainer = null;
-		this.typeOfUpdate = null;
-		this.mtrfSupportedAndAuthorized = false;
-		this.mtrfSupportedAndNotAuthorized = false;
-		this.newMSCNumber = null;
-		this.newVLRNumber = null;
-		this.newLmsi = null;
-
-		if (this.mapProtocolVersion == 3) {
-			AsnInputStream ais = ansIS.readSequenceStreamData(length);
-			int num = 0;
-			while (true) {
-				if (ais.available() == 0)
-					break;
-
-				int tag = ais.readTag();
-
-				if (num == 0 && tag == Tag.STRING_OCTET
-						&& ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
-					this.imsi = new IMSIImpl();
-					((IMSIImpl) this.imsi).decodeAll(ais);
-				} else if (num == 0 && tag == Tag.SEQUENCE
-						&& ais.getTagClass() == Tag.CLASS_UNIVERSAL
-						) {
-					if (ais.isTagPrimitive()) {
-						throw new MAPParsingComponentException(
-								"Error while decoding " + _PrimitiveName
-										+ ".extensionContainer: is primitive",
-								MAPParsingComponentExceptionReason.MistypedParameter);
-					}
-					this.imsiWithLmsi = new IMSIWithLMSIImpl();
-					((IMSIWithLMSIImpl) this.imsiWithLmsi).decodeAll(ais);
-				} else if (tag == Tag.INTEGER
-						&& ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
-					this.cancellationType = CancellationType
-							.getInstance((int) ais.readInteger());
-				} else if (ais.getTagClass() == Tag.CLASS_UNIVERSAL
-						&& tag == Tag.SEQUENCE && (!ais.isTagPrimitive())) {
-					this.extensionContainer = new MAPExtensionContainerImpl();
-					((MAPExtensionContainerImpl) this.extensionContainer)
-							.decodeAll(ais);
-				} else if(ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC){
-					switch (tag) {
-					case CancelLocationRequestImpl.TAG_typeOfUpdate: // lmsi
-						this.typeOfUpdate = TypeOfUpdate.getInstance((int) ais
-								.readInteger());
-						break;
-					case CancelLocationRequestImpl.TAG_mtrfSupportedAndAuthorized:
-						ais.readNull();
-						this.mtrfSupportedAndAuthorized = true;
-						break;
-					case CancelLocationRequestImpl.TAG_mtrfSupportedAndNotAuthorized:
-						ais.readNull();
-						this.mtrfSupportedAndNotAuthorized = true;
-						break;
-					case CancelLocationRequestImpl.TAG_newMSCNumber:
-						if (!ais.isTagPrimitive()) {
-							throw new MAPParsingComponentException(
-									"Error while decoding "
-											+ _PrimitiveName
-											+ ".extensionContainer: is primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						}
-						this.newMSCNumber = new ISDNAddressStringImpl();
-						((ISDNAddressStringImpl) this.newMSCNumber)
-								.decodeAll(ais);
-						break;
-					case CancelLocationRequestImpl.TAG_newVLRNumber:
-						if (!ais.isTagPrimitive()) {
-							throw new MAPParsingComponentException(
-									"Error while decoding "
-											+ _PrimitiveName
-											+ ".extensionContainer: is primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						}
-						this.newVLRNumber = new ISDNAddressStringImpl();
-						((ISDNAddressStringImpl) this.newVLRNumber)
-								.decodeAll(ais);
-						break;
-					case CancelLocationRequestImpl.TAG_newLmsi:
-						if (!ais.isTagPrimitive()) {
-							throw new MAPParsingComponentException(
-									"Error while decoding "
-											+ _PrimitiveName
-											+ ".extensionContainer: is primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						}
-						this.newLmsi = new LMSIImpl();
-						((LMSIImpl) this.newLmsi).decodeAll(ais);
-						break;
-					default:
-						ais.advanceElement();
-						break;
-					}
-				}
-
-				num++;
-			}
-			if (num < 1)
-				throw new MAPParsingComponentException(
-						"Error while decoding CancelLocationRequest: Needs at least 1 mandatory parameters, found "
-								+ num,
-						MAPParsingComponentExceptionReason.MistypedParameter);
-
-		} else {
-			AsnInputStream ais = ansIS.readSequenceStreamData(length);
-			int tag = ais.getTag();
-			if (tag == Tag.STRING_OCTET
-					&& ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
-				if (!ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Error while decoding " + _PrimitiveName
-									+ ".extensionContainer: is primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				this.imsi = new IMSIImpl();
-				((IMSIImpl) this.imsi).decodeData(ais,length);
-			}else if (tag == Tag.SEQUENCE && ais.getTagClass() == Tag.CLASS_UNIVERSAL
-					) {
-				if (ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Error while decoding " + _PrimitiveName
-									+ ".extensionContainer: is primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				this.imsiWithLmsi = new IMSIWithLMSIImpl();
-				((IMSIWithLMSIImpl) this.imsiWithLmsi).decodeData(ais,length);
-			}
-		}
-
-	}
 
 	@Override
 	public String toString() {

@@ -144,7 +144,7 @@ public class IMSIWithLMSIImpl implements IMSIWithLMSI, MAPAsnPrimitive  {
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		if (this.imsi == null || this.lmsi == null ) {
-			throw new MAPException("Error while decoding "+_PrimitiveName +" : One and only one choice must be selected");
+			throw new MAPException("Error while decoding "+_PrimitiveName +" : lmsi or lmsi is null");
 		}
 		if (this.imsi != null) {
 			((IMSIImpl) this.imsi).encodeAll(asnOs);

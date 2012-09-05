@@ -3973,7 +3973,7 @@ public class MAPFunctionalTest extends SccpHarness {
 
 	}	
 	
-//	
+	
 //	/**
 //	 * TC-BEGIN + provideRoamingNumber
 //	 * TC-END + provideRoamingNumberResponse
@@ -4067,7 +4067,7 @@ public class MAPFunctionalTest extends SccpHarness {
 //						"29113123311");
 //
 //				try {
-//					d.addProvideRoamingNumberResponse(ind.getInvokeId(), mapProtocolVersion, roamingNumber, extensionContainer, releaseResourcesSupported, vmscAddress);
+//					d.addProvideRoamingNumberResponse(ind.getInvokeId(), roamingNumber, extensionContainer, releaseResourcesSupported, vmscAddress);
 //				} catch (MAPException e) {
 //					this.error("Error while adding UpdateLocationResponse", e);
 //					fail("Error while adding UpdateLocationResponse");

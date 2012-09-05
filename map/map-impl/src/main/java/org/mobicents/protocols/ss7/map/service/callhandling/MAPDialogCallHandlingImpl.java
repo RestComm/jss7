@@ -356,8 +356,7 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements
 	}
 
 	@Override
-	public void addProvideRoamingNumberResponse(long invokeId,
-			long mapProtocolVersion, ISDNAddressString roamingNumber,
+	public void addProvideRoamingNumberResponse(long invokeId, ISDNAddressString roamingNumber,
 			MAPExtensionContainer extensionContainer,
 			boolean releaseResourcesSupported, ISDNAddressString vmscAddress)
 			throws MAPException {
@@ -376,7 +375,7 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements
 		resultLast.setOperationCode(oc);
 	
 		if(true) { // validate parameters here...
-			ProvideRoamingNumberResponseImpl res = new ProvideRoamingNumberResponseImpl(roamingNumber, extensionContainer, releaseResourcesSupported, vmscAddress, mapProtocolVersion);
+			ProvideRoamingNumberResponseImpl res = new ProvideRoamingNumberResponseImpl(roamingNumber, extensionContainer, releaseResourcesSupported, vmscAddress, this.appCntx.getApplicationContextVersion().getVersion());
 			AsnOutputStream aos = new AsnOutputStream();
 			res.encodeData(aos);
 
