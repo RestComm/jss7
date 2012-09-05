@@ -24,13 +24,16 @@
 	</important>
 	<note>
 		<para>&THIS.PLATFORM; &THIS.APPLICATION;
-				MAP has implementation for USSD, SMS and Location Management Service (LMS) Messages only. Any contribution to implement
+				MAP has full implementation for USSD, SMS and Location Management Service (LMS) Services 
+				and partial implementation for Mobility service (updateLocation, sendAuthenticationInfo, 
+				anyTimeInterrogation, checkIMEI operations) only. Any contribution to implement
 				other messages are welcome. We will provide you all the help that you may need initially.
+				The list of implemented operations can be found in
+				<ulink type="http" url="http://code.google.com/p/jss7/source/browse/map/MAPMessagesImplemented.ods">MAPMessagesImplemented.ods</ulink>
 		</para>
 	</note>
 
-	<section
-		id="map_usage">
+	<section id="map_usage">
 		<title>&THIS.APPLICATION; MAP 
 		</title>
 		<para>
@@ -45,7 +48,7 @@
 			Others are one or more interfaces for listening associated with component events based on 
 			<classname>org.mobicents.protocols.ss7.map.api.MAPServiceListener interface.</classname>
 			Each  MAP-User  interested  in  listening  messages  specific  to  MAP  Service  implements  specific MAPServiceListener. 
-			Below there is a list of implemented services:
+			
 		</para>
 		
 		<para>
@@ -53,19 +56,39 @@
 			<itemizedlist> 
 				<listitem>
 					<para>
-						MAP-User interested only in USSD messages implements <classname>org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener</classname>
+						MAP-User interested only in call handling operations implements <classname>org.mobicents.protocols.ss7.map.api.service.callhandling.MAPServiceCallHandlingListener</classname>
+					</para>
+				</listitem>				
+				<listitem>
+					<para>
+						MAP-User interested only in LMS operations implements <classname>org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsmListener</classname>
+					</para>
+				</listitem>				
+				<listitem>
+					<para>
+						MAP-User interested only in mobility operations implements <classname>org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobilityListener</classname>
+					</para>
+				</listitem>				
+				<listitem>
+					<para>
+						MAP-User interested only in OAM operations implements <classname>org.mobicents.protocols.ss7.map.api.service.oam.MAPServiceOamListener</classname>
+					</para>
+				</listitem>				
+				<listitem>
+					<para>
+						MAP-User interested only in PDP context activation operations implements <classname>org.mobicents.protocols.ss7.map.api.service.pdpContextActivation.MAPServicePdpContextActivationListener</classname>
+					</para>
+				</listitem>				
+				<listitem>
+					<para>
+						MAP-User interested only in SMS operations implements <classname>org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSmsListener</classname>
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						MAP-User interested only in SMS messages implements <classname>org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSmsListener</classname>
+						MAP-User interested only in supplementary operations implements <classname>org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener</classname>
 					</para>
 				</listitem>
-					<listitem>
-					<para>
-						MAP-User interested only in LMS messages implements <classname>org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsmListener</classname>
-					</para>
-				</listitem>				
 			</itemizedlist>
 			MAP-User interested in all the services must implement all the service listener class.
 		</para>
@@ -122,13 +145,25 @@
 			Following MAPServiceBase are exposed by <classname>MAPProvider</classname>.
 			<itemizedlist>
 				<listitem>
+					<para>For call handling service <classname>org.mobicents.protocols.ss7.map.api.service.callhandling.MAPServiceCallHandling</classname></para>
+				</listitem>
+				<listitem>
 					<para>For LSM service <classname>org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsm</classname></para>
+				</listitem>
+				<listitem>
+					<para>For mobility service <classname>org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobility</classname></para>
+				</listitem>
+				<listitem>
+					<para>For OAM service <classname>org.mobicents.protocols.ss7.map.api.service.oam.MAPServiceOam</classname></para>
+				</listitem>
+				<listitem>
+					<para>For PDP context activation service <classname>org.mobicents.protocols.ss7.map.api.service.pdpContextActivation.MAPServicePdpContextActivation</classname></para>
 				</listitem>
 				<listitem>
 					<para>For SMS service <classname>org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSms</classname></para>
 				</listitem>
 				<listitem>
-					<para>For USSD service <classname>org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementary</classname></para>
+					<para>For supplementary service <classname>org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementary</classname></para>
 				</listitem>								
 			</itemizedlist>
 		</para>
@@ -153,9 +188,23 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 	</programlisting>		
 
 		<para>
-			The MAP User Application leverages <classname>MAPParameterFactory</classname> to create instances of 
-			<classname>USSDString</classname>, <classname>ISDNAddressString</classname> 
-			and many other primitives that are used by MAP services.
+			The MAP User Application leverages:
+			<itemizedlist>
+				<listitem>
+					<para><classname>MAPParameterFactory</classname> to create instances of 
+					<classname>USSDString</classname>, <classname>ISDNAddressString</classname>
+					and many other primitives that are used by MAP services.</para>
+				</listitem>
+				<listitem>
+					<para><classname>MAPSmsTpduParameterFactory</classname> to create instances of 
+					SMS TPDU primitives used for sending SMS messages
+					like <classname>SmsDeliverTpdu</classname> or <classname>SmsSubmitTpdu</classname>.</para>
+				</listitem>
+				<listitem>
+					<para><classname>MAPErrorMessageFactory</classname> to create instances of 
+					MAP error messages like <classname>MAPErrorMessageSystemFailure</classname>.</para>
+				</listitem>
+			</itemizedlist>
 		</para>
 
 		<programlisting
@@ -164,7 +213,7 @@ public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryLis
 		MapParameterFactory paramFact = mapProvider.getMapServiceFactory();
         USSDString ussdString = paramFact.createUSSDString("*125*+31628839999#",
                 null);
-        ISDNAddressString msisdn = this. paramFact.createISDNAddressString(
+        ISDNAddressString msisdn = paramFact.createISDNAddressString(
                 AddressNature.international_number, NumberingPlan.ISDN,
                 "31628838002");
 ]]></programlisting>
@@ -295,19 +344,26 @@ public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem proble
 
 		<para>
 			After all incoming components have been processing onDialogDelimiter(MAPDialog mapDialog); 
-			event is invoking. 
+			event is invoking (or onDialogClose(MAPDialog mapDialog) in TC-END case). 
 			If all response components have been prepared we can tell the stack to send response:
 			<itemizedlist>
 				<listitem>
-					<para><classname>currentMapDialog.mapDialog.close(false);</classname> - to send TC-END</para>
+					<para><classname>mapDialog.close(false);</classname> - to send TC-END</para>
 				</listitem>
 				<listitem>
-					<para><classname>currentMapDialog .mapDialog.send();</classname> - to send TC-CONTINUE</para>
+					<para><classname>mapDialog.send();</classname> - to send TC-CONTINUE</para>
 				</listitem>
 				<listitem>
-					<para><classname>currentMapDialog.mapDialog.close(true);</classname> - sends TC-END without any components (prearrangedEnd)</para>
+					<para><classname>mapDialog.close(true);</classname> - sends TC-END without any components (prearrangedEnd)</para>
 				</listitem>
 			</itemizedlist>
+			Instead of send() and close(boolean prearrangedEnd) methods you can invoke 
+			sendDelayed() or closeDelayed(boolean prearrangedEnd) methods.
+			These methods make the same as sned and close() methods.
+			But when invoking it from events of parsing incoming components
+			real sending and dialog closing will occur only when all incoming components events
+			and onDialogDelimiter() or onDialogClose() would be processed. 
+			
 			If all response components have been prepared we should return the control and 
 			will send a response when all components are ready.
 		</para>
@@ -315,7 +371,7 @@ public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem proble
 			In the error case you can terminate a MAP dialog in any method by invoking
 			<itemizedlist>
 				<listitem>
-					<para><classname>currentMapDialog.abort(mapUserAbortChoice);</classname> - sends TC-U-ABORT primitive</para>
+					<para><classname>mapDialog.abort(mapUserAbortChoice);</classname> - sends TC-U-ABORT primitive</para>
 				</listitem>
 			</itemizedlist>
 		</para>

@@ -80,7 +80,7 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	public void start() {
 		capStack.start();
 
-		// Make the supplementary service activated
+		// Make the circuitSwitchedCall service activated
         capProvider.getCAPServiceCircuitSwitchedCall().acivate();
 
         currentCapDialog = null;
@@ -204,7 +204,7 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	}
 
 	@Override
-	public void onProviderErrorComponent(CAPDialog mapDialog, Long invokeId, CAPComponentErrorReason providerError) {
+	public void onProviderErrorComponent(CAPDialog capDialog, Long invokeId, CAPComponentErrorReason providerError) {
 		// TODO Auto-generated method stub
 		
 	}
