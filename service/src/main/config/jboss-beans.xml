@@ -139,6 +139,8 @@
 		</constructor>
 		<property name="dialogIdleTimeout">60000</property>
 		<property name="invokeTimeout">30000</property>
+		<property name="dialogIdRangeStart">1</property>
+		<property name="dialogIdRangeEnd">30000</property>		
 		<property name="maxDialogs">25000</property>
 	</bean>
 
@@ -151,6 +153,8 @@
 		</constructor>
 		<property name="dialogIdleTimeout">60000</property>
 		<property name="invokeTimeout">30000</property>
+		<property name="dialogIdRangeStart">1</property>
+		<property name="dialogIdRangeEnd">30000</property>
 		<property name="maxDialogs">25000</property>
 	</bean>
 
@@ -163,6 +167,8 @@
 		</constructor>
 		<property name="dialogIdleTimeout">60000</property>
 		<property name="invokeTimeout">30000</property>
+		<property name="dialogIdRangeStart">1</property>
+		<property name="dialogIdRangeEnd">30000</property>		
 		<property name="maxDialogs">25000</property>
 	</bean>
 
