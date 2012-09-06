@@ -411,6 +411,18 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
 	void start() {
 		logger.info("Starting TCAP Provider");
+
+		if (stack.getDialogIdRangeStart() >= stack.getDialogIdRangeEnd())
+			throw new IllegalArgumentException("Range start value cannot be equal/greater than Range end value");
+		if (stack.getDialogIdRangeStart() < 1)
+			throw new IllegalArgumentException("Range start value must be greater or equal 1");
+		if (stack.getDialogIdRangeEnd() > Integer.MAX_VALUE)
+			throw new IllegalArgumentException("Range end value must be less or equal " + Integer.MAX_VALUE);
+		if (stack.getDialogIdRangeEnd() - stack.getDialogIdRangeStart() < 10000)
+			throw new IllegalArgumentException("Range \"end - start\" must has at least 10000 possible dialogs");
+		if (stack.getDialogIdRangeEnd() - stack.getDialogIdRangeStart() <= stack.maxDialogs)
+			throw new IllegalArgumentException("MaxDialog must be less than DialogIdRange");
+
 		this._EXECUTOR = Executors.newScheduledThreadPool(4);		
 		this.sccpProvider.registerSccpListener(ssn, this);
 		logger.info("Registered SCCP listener with address " + ssn);

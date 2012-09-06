@@ -85,14 +85,14 @@ public interface TCAPStack {
 	public int getMaxDialogs();
 
 	/**
-	* Sets the range of the generated dialog ids.
-	* In order to sanely normalize maxDialogs and avoid complexity,
-	* separate setters are not provided.
-	*
-	* @param start value
-	* @param end value
+	* Sets the start of the range of the generated dialog ids.
 	*/
-	public void setDialogIdRanges(long start, long end);
+	public void setDialogIdRangeStart(long val);
+
+	/**
+	* Sets the start of the range of the generated dialog ids.
+	*/
+	public void setDialogIdRangeEnd(long val);
 
 	/**
 	*

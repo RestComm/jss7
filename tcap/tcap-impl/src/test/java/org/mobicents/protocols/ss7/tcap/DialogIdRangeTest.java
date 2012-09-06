@@ -94,32 +94,83 @@ public class DialogIdRangeTest extends SccpHarness {
 //		d = this.tcapStack1.getProvider().getNewDialog(peer1Address, peer2Address);
 //		assertEquals((long)d.getDialogId(), 21);
 //		d.release();
+
+		this.tcapStack1.stop();
+
+		this.tcapStack1.setDialogIdRangeStart(20);
+		this.tcapStack1.setDialogIdRangeEnd(10020);
+		this.tcapStack1.start();
+		this.tcapStack1.stop();
+
+		this.tcapStack1.setDialogIdRangeStart(20);
+		this.tcapStack1.setDialogIdRangeEnd(10019);
+		try {
+			this.tcapStack1.start();
+			this.tcapStack1.stop();
+			fail("Must be exception");
+		} catch (Exception e) {
+		}		
+
+		this.tcapStack1.setDialogIdRangeStart(20000);
+		this.tcapStack1.setDialogIdRangeEnd(20);
+		try {
+			this.tcapStack1.start();
+			this.tcapStack1.stop();
+			fail("Must be exception");
+		} catch (Exception e) {
+		}		
+
+		this.tcapStack1.setDialogIdRangeStart(-1);
+		this.tcapStack1.setDialogIdRangeEnd(20000);
+		try {
+			this.tcapStack1.start();
+			this.tcapStack1.stop();
+			fail("Must be exception");
+		} catch (Exception e) {
+		}		
+
+		this.tcapStack1.setDialogIdRangeStart(1);
+		this.tcapStack1.setDialogIdRangeEnd(20000000000L);
+		try {
+			this.tcapStack1.start();
+			this.tcapStack1.stop();
+			fail("Must be exception");
+		} catch (Exception e) {
+		}		
 		
-		this.tcapStack1.setDialogIdRanges(20, 10020);
 
-		assertEquals(this.tcapStack1.getDialogIdRangeStart(), 20);
-		assertEquals(this.tcapStack1.getDialogIdRangeEnd(), 10020);
-
-		try {
-			this.tcapStack1.setDialogIdRanges(20, 10019);
-			fail("Must be exception");
-		} catch (Exception e) {
-		}
-		try {
-			this.tcapStack1.setDialogIdRanges(20000, 20);
-			fail("Must be exception");
-		} catch (Exception e) {
-		}
-		try {
-			this.tcapStack1.setDialogIdRanges(-1, 20000);
-			fail("Must be exception");
-		} catch (Exception e) {
-		}
-		try {
-			this.tcapStack1.setDialogIdRanges(1, 20000000000L);
-			fail("Must be exception");
-		} catch (Exception e) {
-		}
+		this.tcapStack1.setDialogIdRangeStart(20);
+		this.tcapStack1.setDialogIdRangeEnd(10020);
+		this.tcapStack1.start();
+		
+		
+		
+		
+//		this.tcapStack1.setDialogIdRanges(20, 10020);
+//
+//		assertEquals(this.tcapStack1.getDialogIdRangeStart(), 20);
+//		assertEquals(this.tcapStack1.getDialogIdRangeEnd(), 10020);
+//
+//		try {
+//			this.tcapStack1.setDialogIdRanges(20, 10019);
+//			fail("Must be exception");
+//		} catch (Exception e) {
+//		}
+//		try {
+//			this.tcapStack1.setDialogIdRanges(20000, 20);
+//			fail("Must be exception");
+//		} catch (Exception e) {
+//		}
+//		try {
+//			this.tcapStack1.setDialogIdRanges(-1, 20000);
+//			fail("Must be exception");
+//		} catch (Exception e) {
+//		}
+//		try {
+//			this.tcapStack1.setDialogIdRanges(1, 20000000000L);
+//			fail("Must be exception");
+//		} catch (Exception e) {
+//		}
 		
 		d = this.tcapStack1.getProvider().getNewDialog(peer1Address, peer2Address);
 		assertEquals((long)d.getDialogId(), 20);

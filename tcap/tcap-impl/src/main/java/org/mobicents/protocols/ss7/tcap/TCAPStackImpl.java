@@ -56,7 +56,7 @@ public class TCAPStackImpl implements TCAPStack {
 	private long dialogTimeout = _DIALOG_TIMEOUT;
 	private long invokeTimeout = _INVOKE_TIMEOUT;
 	// TODO: make this configurable
-	private int maxDialogs = _MAX_DIALOGS;
+	protected int maxDialogs = _MAX_DIALOGS;
 
 	// TODO: make this configurable
 	private long dialogIdRangeStart = 1;
@@ -166,21 +166,29 @@ public class TCAPStackImpl implements TCAPStack {
 		return maxDialogs;
 	}
 
-	public void setDialogIdRanges(long start, long end) {
-		if (start >= end)
-			throw new IllegalArgumentException("Range start value cannot be equal/greater than Range end value");
-		if (start < 1)
-			throw new IllegalArgumentException("Range start value must be greater or equal 1");
-		if (end > Integer.MAX_VALUE)
-			throw new IllegalArgumentException("Range end value must be less or equal " + Integer.MAX_VALUE);
-		if (end - start < 10000)
-			throw new IllegalArgumentException("Range \"end - start\" must has at least 10000 possible dialogs");
-		if (end - start <= maxDialogs)
-			throw new IllegalArgumentException("MaxDialog must be less than DialogIdRange");
-
-		dialogIdRangeStart = start;
-		dialogIdRangeEnd = end;
+	public void setDialogIdRangeStart(long val){
+		dialogIdRangeStart = val;
 	}
+
+	public void setDialogIdRangeEnd(long val) {
+		dialogIdRangeEnd = val;
+	}
+
+//	public void setDialogIdRanges(long start, long end) {
+//		if (start >= end)
+//			throw new IllegalArgumentException("Range start value cannot be equal/greater than Range end value");
+//		if (start < 1)
+//			throw new IllegalArgumentException("Range start value must be greater or equal 1");
+//		if (end > Integer.MAX_VALUE)
+//			throw new IllegalArgumentException("Range end value must be less or equal " + Integer.MAX_VALUE);
+//		if (end - start < 10000)
+//			throw new IllegalArgumentException("Range \"end - start\" must has at least 10000 possible dialogs");
+//		if (end - start <= maxDialogs)
+//			throw new IllegalArgumentException("MaxDialog must be less than DialogIdRange");
+//
+//		dialogIdRangeStart = start;
+//		dialogIdRangeEnd = end;
+//	}
 
 	public long getDialogIdRangeStart() {
 		return dialogIdRangeStart;
