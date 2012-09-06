@@ -446,48 +446,6 @@
                             <updatePolicy>never</updatePolicy>
                           </snapshots>
                 </repository>
-                <repository>
-                        <id>jboss-public-repository-group</id>
-                        <name>JBoss Public Maven Repository Group</name>
-                        <url>http://repository.jboss.org/nexus/content/groups/public/</url>
-                        <layout>default</layout>
-                        <releases>
-                                <enabled>true</enabled>
-                                <updatePolicy>never</updatePolicy>
-                        </releases>
-                        <snapshots>
-                                <enabled>true</enabled>
-                                <updatePolicy>never</updatePolicy>
-                        </snapshots>
-                </repository>
-                <repository>
-                        <id>jboss-3rd-party-repository-group</id>
-                        <name>JBoss ThirdParty Releases Repository Group</name>
-                        <url>http://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
-                        <layout>default</layout>
-                        <releases>
-                                <enabled>true</enabled>
-                                <updatePolicy>never</updatePolicy>
-                        </releases>
-                        <snapshots>
-                                <enabled>true</enabled>
-                                <updatePolicy>never</updatePolicy>
-                        </snapshots>
-                </repository>
-                <repository>
-                        <id>jboss-3rd-party-upload-repository-group</id>
-                        <name>JBoss ThirdParty Upload Repository Group</name>
-                        <url>http://repository.jboss.org/nexus/content/repositories/thirdparty-upload</url>
-                        <layout>default</layout>
-                        <releases>
-                                <enabled>true</enabled>
-                                <updatePolicy>never</updatePolicy>
-                        </releases>
-                        <snapshots>
-                                <enabled>true</enabled>
-                                <updatePolicy>never</updatePolicy>
-                        </snapshots>
-                </repository>
             <repository>
                 <id>java.net-Public</id>
                 <name>Maven Java Net Snapshots and Releases</name>
@@ -501,16 +459,5 @@
                                 <updatePolicy>never</updatePolicy>
                         </snapshots>
             </repository>               
-                <repository>
-                        <id>backup.repository.jboss.org</id>
-                        <name>JBoss Repository Backup</name>
-                        <url>http://anonsvn.jboss.org/repos/repository.jboss.org/maven2/</url>
-                        <snapshots>
-                                <enabled>true</enabled>
-                        </snapshots>
-                        <releases>
-                                <enabled>true</enabled>
-                        </releases>
-                </repository>
         </repositories>
 </project>

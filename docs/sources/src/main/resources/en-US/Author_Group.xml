@@ -13,6 +13,11 @@
 		<email>&AUTHOR.EMAIL.BARTOSZ;</email>
 	</author>
 	<author>
+		<firstname>Sergey</firstname>
+		<surname>Vetyutnev</surname>
+		<email>&AUTHOR.EMAIL.SERGEY;</email>
+	</author>	
+	<author>
 		<firstname>Vinu S</firstname>
 		<surname>Renish</surname>
 		<email>&AUTHOR.EMAIL.VINU;</email>

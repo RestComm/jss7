@@ -103,7 +103,7 @@
 
 		<programlisting
 			language="Java"
-			role="JAVA"><![CDATA[SccpProvider sccpProvider = getSccpProvider(); //JNDI lookup of SCCP Stack and get Provider
+			role="JAVA"><![CDATA[SccpProvider sccpProvider = getSccpProvider(); 
         CAPStackImpl capStack = new CAPStackImpl(sccpProvider, 146);
         capStack.start();
         ...]]>
@@ -451,16 +451,9 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 public class Example {
 
-	private static SccpProvider getSccpProvider() throws NamingException {
-		// no arg is ok, if we run in JBoss
-
-		InitialContext ctx = new InitialContext();
-		try {
-			String providerJndiName = "/mobicents/ss7/sccp";
-			return ((SccpStack) ctx.lookup(providerJndiName)).getSccpProvider();
-		} finally {
-			ctx.close();
-		}
+	private static SccpProvider getSccpProvider()  {
+		....
+		....
 	}
 
 	private static SccpAddress createLocalAddress() {

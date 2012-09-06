@@ -177,34 +177,41 @@
 					If the service started properly you should see following lines in the Unix terminal or Command Prompt depending on your environment:
 				</para>
 				<screen><![CDATA[
-16:42:26,124 INFO  [ManagementImpl] (HDScanner) SCTP configuration file path /home/abhayani/workarea/mobicents/binary/JSLEE/ss7-mobicents-jainslee-2.7.0.FINAL-jboss-5.1.0.GA/jboss-5.1.0.GA/server/default/data/SCTPManagement_sctp.xml
-16:42:26,126 INFO  [ServerImpl] (HDScanner) SctpServerChannel bound to=[/127.0.0.1:2775] 
-16:42:26,126 INFO  [ServerImpl] (HDScanner) Started Server=SCTPServer1
-16:42:26,127 INFO  [ManagementImpl] (HDScanner) Started SCTP Management=SCTPManagement WorkerThreads=0 SingleThread=true
-16:42:26,127 INFO  [SelectorThread] (Thread-18) SelectorThread for Management=SCTPManagement started.
-16:42:26,155 INFO  [M3UAManagement] (HDScanner) M3UA configuration file path /home/abhayani/workarea/mobicents/binary/JSLEE/ss7-mobicents-jainslee-2.7.0.FINAL-jboss-5.1.0.GA/jboss-5.1.0.GA/server/default/data/Mtp3UserPart_m3ua.xml
-16:42:26,160 INFO  [M3UAManagement] (HDScanner) Started M3UAManagement
-16:42:26,177 INFO  [Scheduler] (HDScanner) Starting 
-16:42:26,178 INFO  [Scheduler] (HDScanner) Started 
-16:42:26,206 INFO  [SccpStackImpl-SccpStack] (HDScanner) Starting ...
-16:42:26,250 INFO  [Router] (HDScanner) SCCP Router configuration file path /home/abhayani/workarea/mobicents/binary/JSLEE/ss7-mobicents-jainslee-2.7.0.FINAL-jboss-5.1.0.GA/jboss-5.1.0.GA/server/default/data/SccpStack_sccprouter.xml
-16:42:26,251 INFO  [Router] (HDScanner) Started SCCP Router
-16:42:26,253 INFO  [SccpResource] (HDScanner) SCCP Resource configuration file path /home/abhayani/workarea/mobicents/binary/JSLEE/ss7-mobicents-jainslee-2.7.0.FINAL-jboss-5.1.0.GA/jboss-5.1.0.GA/server/default/data/SccpStack_sccpresource.xml
-16:42:26,254 INFO  [SccpResource] (HDScanner) Started Sccp Resource
-16:42:26,255 INFO  [SccpStackImpl-SccpStack] (HDScanner) Starting routing engine...
-16:42:26,255 INFO  [SccpStackImpl-SccpStack] (HDScanner) Starting management ...
-16:42:26,255 INFO  [SccpStackImpl-SccpStack] (HDScanner) Starting MSU handler...
-16:42:26,285 INFO  [ShellServer] (HDScanner) Starting SS7 management shell environment
-16:42:26,315 INFO  [ShellServer] (HDScanner) ShellExecutor listening at /127.0.0.1:3435
-16:42:26,390 INFO  [TCAPStackImpl] (HDScanner) Starting ...org.mobicents.protocols.ss7.tcap.TCAPProviderImpl@550abb85
-16:42:26,390 INFO  [TCAPProviderImpl] (HDScanner) Starting TCAP Provider
-16:42:26,391 INFO  [TCAPProviderImpl] (HDScanner) Registered SCCP listener with address 8
-16:42:26,398 INFO  [TCAPStackImpl] (HDScanner) Starting ...org.mobicents.protocols.ss7.tcap.TCAPProviderImpl@41430830
-16:42:26,398 INFO  [TCAPProviderImpl] (HDScanner) Starting TCAP Provider
-16:42:26,398 INFO  [TCAPProviderImpl] (HDScanner) Registered SCCP listener with address 146
-16:42:27,056 INFO  [SS7Service] (HDScanner)  [[[[[[[[[ Mobicents jSS7 2.0.0-SNAPSHOT MAP service started ]]]]]]]]] 
-16:42:27,158 INFO  [SS7Service] (HDScanner)  [[[[[[[[[ Mobicents jSS7 2.0.0-SNAPSHOT CAP service started ]]]]]]]]] 
-16:42:27,199 INFO  [SS7Service] (HDScanner)  [[[[[[[[[ Mobicents jSS7 2.0.0-SNAPSHOT ISUP service started ]]]]]]]]] 
+20:34:20,329 INFO  [ManagementImpl] (main) SCTP configuration file path /home/abhayani/workarea/mobicents/binary/JSLEE/ss7-mobicents-jainslee-2.7.0.FINAL-jboss-5.1.0.GA/jboss-5.1.0.GA/server/default/data/SCTPManagement_sctp.xml
+20:34:20,343 INFO  [SelectorThread] (Thread-17) SelectorThread for Management=SCTPManagement started.
+20:34:20,343 INFO  [ManagementImpl] (main) Started SCTP Management=SCTPManagement WorkerThreads=0 SingleThread=true
+20:34:20,413 INFO  [M3UAManagement] (main) M3UA configuration file path /home/abhayani/workarea/mobicents/binary/JSLEE/ss7-mobicents-jainslee-2.7.0.FINAL-jboss-5.1.0.GA/jboss-5.1.0.GA/server/default/data/Mtp3UserPart_m3ua.xml
+20:34:20,413 INFO  [M3UAManagement] (main) Started M3UAManagement
+20:34:20,424 INFO  [Scheduler] (main) Starting 
+20:34:20,424 INFO  [Scheduler] (main) Started 
+20:34:20,442 INFO  [SccpStackImpl-SccpStack] (main) Starting ...
+20:34:20,450 INFO  [Router] (main) SCCP Router configuration file path /home/abhayani/workarea/mobicents/binary/JSLEE/ss7-mobicents-jainslee-2.7.0.FINAL-jboss-5.1.0.GA/jboss-5.1.0.GA/server/default/data/SccpStack_sccprouter.xml
+20:34:20,451 INFO  [Router] (main) Started SCCP Router
+20:34:20,451 INFO  [SccpResource] (main) SCCP Resource configuration file path /home/abhayani/workarea/mobicents/binary/JSLEE/ss7-mobicents-jainslee-2.7.0.FINAL-jboss-5.1.0.GA/jboss-5.1.0.GA/server/default/data/SccpStack_sccpresource.xml
+20:34:20,451 INFO  [SccpResource] (main) Started Sccp Resource
+20:34:20,451 INFO  [SccpStackImpl-SccpStack] (main) Starting routing engine...
+20:34:20,451 INFO  [SccpStackImpl-SccpStack] (main) Starting management ...
+20:34:20,451 INFO  [SccpStackImpl-SccpStack] (main) Starting MSU handler...
+20:34:20,466 INFO  [ShellServer] (main) Starting SS7 management shell environment
+20:34:20,470 INFO  [ShellServer] (main) ShellExecutor listening at /127.0.0.1:3435
+20:34:20,493 INFO  [TCAPStackImpl] (main) Starting ...org.mobicents.protocols.ss7.tcap.TCAPProviderImpl@24fcd6bb
+20:34:20,493 INFO  [TCAPProviderImpl] (main) Starting TCAP Provider
+20:34:20,493 INFO  [TCAPProviderImpl] (main) Registered SCCP listener with address 8
+20:34:20,496 INFO  [TCAPStackImpl] (main) Starting ...org.mobicents.protocols.ss7.tcap.TCAPProviderImpl@9d55d00
+20:34:20,496 INFO  [TCAPProviderImpl] (main) Starting TCAP Provider
+20:34:20,497 INFO  [TCAPProviderImpl] (main) Registered SCCP listener with address 146
+20:34:20,499 INFO  [TCAPStackImpl] (main) Starting ...org.mobicents.protocols.ss7.tcap.TCAPProviderImpl@7712e5aa
+20:34:20,499 INFO  [TCAPProviderImpl] (main) Starting TCAP Provider
+20:34:20,499 INFO  [TCAPProviderImpl] (main) Registered SCCP listener with address 9
+20:34:20,716 INFO  [SS7Service] (main)  [[[[[[[[[ Mobicents jSS7 2.0.0-SNAPSHOT TCAP service started ]]]]]]]]] 
+20:34:20,756 INFO  [SS7Service] (main)  [[[[[[[[[ Mobicents jSS7 2.0.0-SNAPSHOT MAP service started ]]]]]]]]] 
+20:34:20,765 INFO  [SS7Service] (main)  [[[[[[[[[ Mobicents jSS7 2.0.0-SNAPSHOT CAP service started ]]]]]]]]] 
+20:34:20,775 INFO  [SS7Service] (main)  [[[[[[[[[ Mobicents jSS7 2.0.0-SNAPSHOT ISUP service started ]]]]]]]]] 
+20:34:20,801 INFO  [Http11Protocol] (main) Starting Coyote HTTP/1.1 on http-127.0.0.1-8080
+20:34:20,816 INFO  [AjpProtocol] (main) Starting Coyote AJP/1.3 on ajp-127.0.0.1-8009
+20:34:20,821 INFO  [ServerImpl] (main) JBoss (Microcontainer) [5.1.0.GA (build: SVNTag=JBoss_5_1_0_GA date=200905221634)] Started in 27s:39ms
+
+
 ]]>
 				</screen>	
 				
@@ -682,10 +689,22 @@ Halting VM]]></screen>
 		<property name="dialogIdleTimeout">60000</property>
 		<property name="invokeTimeout">30000</property>
 		<property name="maxDialogs">25000</property>
+	</bean>
+	
+	<bean name="TcapStack" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
+		<constructor>
+			<parameter>
+				<inject bean="SccpStack" property="sccpProvider" />
+			</parameter>
+			<parameter>9</parameter>
+		</constructor>
+		<property name="dialogIdleTimeout">60000</property>
+		<property name="invokeTimeout">30000</property>
+		<property name="maxDialogs">25000</property>
 	</bean>]]></programlisting>   
                         <para>
                                 <classname>org.mobicents.protocols.ss7.tcap.TCAPStackImpl</classname> takes <classname>SccpStack</classname> as constructor
-                                argument. TCAP uses passed SCCP stack. COnstructor also takes the sub system number (SSN) which is registered with passed SCCP stack.
+                                argument. TCAP uses passed SCCP stack. Constructor also takes the sub system number (SSN) which is registered with passed SCCP stack.
                         </para>	
 	  
                         <para>                          
@@ -704,11 +723,29 @@ Halting VM]]></screen>
                                                                 Component invoke timeout value in milli-seconds 
                                                         </para>
                                                 </listitem>
-                                        </varlistentry>                                 
+                                        </varlistentry> 
+                                        <varlistentry>
+                                                <term>dialogIdRangeStart</term>
+                                                <listitem>
+                                                        <para>All the outgoing Dialog will have id started with dialogIdRangeStart. dialogIdRangeStart cannt be greater than dialogIdRangeEnd </para>
+                                                </listitem>
+                                        </varlistentry>   
+                                        <varlistentry>
+                                                <term>dialogIdRangeEnd</term>
+                                                <listitem>
+                                                        <para>
+                                                        	All the outgoing Dialog will have id started with dialogIdRangeStart and incremented by 1 for each new outgoing dialog till dialogIdRangeEnd. After this
+                                                        	dialog is will again start from  dialogIdRangeStart value.
+                                                        </para>
+                                                </listitem>
+                                        </varlistentry>                                                                                                               
                                         <varlistentry>
                                                 <term>maxDialogs</term>
                                                 <listitem>
-                                                        <para>Maximum concurrent dialog's allowed at any given point of time. If application tries to create more dialog than this, exception is thrown</para>
+                                                        <para>
+                                                        	Maximum concurrent dialog's allowed at any given point of time. If application tries to create more dialog than this, exception is thrown.
+                                                        	dialogIdRangeEnd - dialogIdRangeStart must alwasy be less than maxDialogs
+                                                        </para>
                                                 </listitem>
                                         </varlistentry>
                                 </variablelist>
@@ -829,10 +866,17 @@ Halting VM]]></screen>
                         <programlisting language="XML" role="XML"><![CDATA[<!-- ==================================================================== -->
 	<!-- Mobicents SS7 Service -->
 	<!-- ==================================================================== -->
+	<bean name="TCAPSS7Service" class="org.mobicents.ss7.SS7Service">
+		<constructor><parameter>TCAP</parameter></constructor>
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=TCAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
+		</annotation>
+		<property name="jndiName">java:/mobicents/ss7/tcap</property>
+		<property name="stack">
+			<inject bean="TcapStack" property="provider" />
+		</property>
+	</bean>
 	<bean name="MAPSS7Service" class="org.mobicents.ss7.SS7Service">
-		<constructor>
-			<parameter>MAP</parameter>
-		</constructor>
+		<constructor><parameter>MAP</parameter></constructor>
 		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=MAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
 		</annotation>
 		<property name="jndiName">java:/mobicents/ss7/map</property>
@@ -841,9 +885,7 @@ Halting VM]]></screen>
 		</property>
 	</bean>
 	<bean name="CAPSS7Service" class="org.mobicents.ss7.SS7Service">
-		<constructor>
-			<parameter>CAP</parameter>
-		</constructor>
+		<constructor><parameter>CAP</parameter></constructor>
 		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=CAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
 		</annotation>
 		<property name="jndiName">java:/mobicents/ss7/cap</property>
@@ -852,16 +894,15 @@ Halting VM]]></screen>
 		</property>
 	</bean>
 	<bean name="ISUPSS7Service" class="org.mobicents.ss7.SS7Service">
-		<constructor>
-			<parameter>ISUP</parameter>
-		</constructor>
+		<constructor><parameter>ISUP</parameter></constructor>
 		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=ISUPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
 		</annotation>
 		<property name="jndiName">java:/mobicents/ss7/isup</property>
 		<property name="stack">
 			<inject bean="IsupStack" property="isupProvider" />
 		</property>
-	</bean>]]></programlisting>             
+	</bean>]]></programlisting> 
+						<para> TCAPSS7Service binds TcapStack to JNDI <literal>java:/mobicents/ss7/tcap</literal>. </para>            
                         <para> MAPSS7Service binds MapStack to JNDI <literal>java:/mobicents/ss7/map</literal>. </para>
                         <para> CAPSS7Service binds CapStack to JNDI <literal>java:/mobicents/ss7/cap</literal>. </para>
                           <para> ISUPSS7Service binds IsupStack to JNDI <literal>java:/mobicents/ss7/isup</literal>. </para>
