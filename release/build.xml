@@ -125,7 +125,7 @@
 		</copy>
  		<echo>Copy ASN Docs</echo>
                 <copy todir="${zip.dir}/asn/docs" failonerror="${failoncopy}">
-                        <fileset dir="${checkout.basedir}/asn/docs/jdocbook-mobicents/target/docbook/docbook/publish">
+                        <fileset dir="${checkout.basedir}/asn/docs/jdocbook-mobicents/target/docbook/publish">
                                 <include name="**" />
                         </fileset>
                 </copy>  
@@ -140,7 +140,7 @@
                 
                 <echo>Copy SCTP Docs</echo>
                 <copy todir="${zip.dir}/sctp/docs" failonerror="${failoncopy}">
-                        <fileset dir="${checkout.basedir}/sctp/docs/jdocbook-mobicents/target/docbook/docbook/publish">
+                        <fileset dir="${checkout.basedir}/sctp/docs/jdocbook-mobicents/target/docbook/publish">
                                 <include name="**" />
                         </fileset>
                 </copy>                 
@@ -224,7 +224,7 @@
 
 		<echo>Copy Docs</echo>
 		<copy todir="${zip.dir}/ss7/docs" failonerror="${failoncopy}">
-			<fileset dir="${checkout.basedir}/ss7/docs/jdocbook-mobicents/target/docbook/docbook/publish">
+			<fileset dir="${checkout.basedir}/ss7/docs/jdocbook-mobicents/target/docbook/publish">
 				<include name="**" />
 			</fileset>
 		</copy>
