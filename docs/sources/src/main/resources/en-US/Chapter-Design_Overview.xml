@@ -106,11 +106,9 @@
 	<section
 		id="design_overview_ss7_service">
 		<title>SS7 Service Elements</title>
-				<para>SS7 Service creates an instance of higher layer of &THIS.PLATFORM; Stack and binds the instance to JNDI. SS7 Service is a JMX based service deployed in JBoss Application Server. 
-				It hides the underlying details like whether Level 4 and above are connected to peer via <literal>M3UA</literal> or if connected to the SS7 Hardware installed in 
-				the same machine as Level 4.
+				<para>SS7 Service creates an instance of higher layer of the &THIS.PLATFORM; Stack and binds the instance to JNDI. SS7 Service is a JMX based service deployed in JBoss Application Server. It hides the underlying details like whether Level 4 and above are connected to peer via <literal>M3UA</literal> or if connected to the SS7 Hardware installed in the same machine as Level 4.
 				</para>
-				<para>Following services are bound</para>
+				<para>Following services are bound:</para>
 				<table frame="all" pgwide="1">
 					<title>SS7 Services</title>
 					<tgroup colsep="1" cols="3">
@@ -145,7 +143,7 @@
 				</table>
 
 		<para>
-			The figure below depicts the elements that are deployed as part of SS7 MAP Service.
+			The figure below depicts the elements that are deployed as part of the SS7 MAP Service.
 		</para>
 
 		<mediaobject
@@ -219,7 +217,7 @@
 				&THIS.PLATFORM; M3UA Stack can be used on the Application Server side or on the Signaling Gateway side or can also be used in peer-to-peer mode IPSP. 
 			</para>
 			<para>
-				<literal>M3UA</literal> uses the  &THIS.PLATFORM; SCTP (Stream Control Transmission Protocol)
+				<literal>M3UA</literal> uses the  &THIS.PLATFORM; SCTP (Stream Control Transmission Protocol) Stack.
 			</para>
 		
 			<note>
