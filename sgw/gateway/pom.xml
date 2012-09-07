@@ -17,12 +17,6 @@
 	</properties>
 	
 	<dependencies>
-		<!-- clock -->
-		<dependency>
-			<groupId>org.mobicents.protocols.ss7.clock</groupId>
-			<artifactId>clock</artifactId>
-		</dependency>
-
 		<dependency>
 			<artifactId>mtp</artifactId>
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
