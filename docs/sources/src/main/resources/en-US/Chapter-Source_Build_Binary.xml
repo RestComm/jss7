@@ -318,7 +318,7 @@ Halting VM]]></screen>
              </para>
              <para>
                      For example in above case, when &THIS.PLATFORM; SS7 Service is started file <filename>SCTPManagement_sctp.xml</filename> 
-                     will be created at <filename>$JBOSS_HOME/server/profile_name/data</filename> directory
+                     will be created at <filename>$JBOSS_HOME/server/profile_name/data</filename> directory.
              </para>
              <para>                          
                       Stack has following properties: 
@@ -431,7 +431,7 @@ Halting VM]]></screen>
 			<title>Configuring dialogic</title>
 			<para><literal>Dialogic</literal> based MTP layer will only be used when you have installed Dialogic cards. 
 			
-			<literal>DialogicMtp3UserPart</literal> communicates with Dialogic hardware. Its asumed here that MTP3 and MTP2 is leveraged from
+			<literal>DialogicMtp3UserPart</literal> communicates with Dialogic hardware. It is assumed here that MTP3 and MTP2 is leveraged from
 			Dialogic stack either on-board or on-host. 
 			</para>
 			
@@ -738,7 +738,7 @@ Halting VM]]></screen>
                                                         	dialog is will again start from  dialogIdRangeStart value.
                                                         </para>
                                                 </listitem>
-                                        </varlistentry>                                                                                                               
+                                       </varlistentry>                                                                                                               
                                         <varlistentry>
                                                 <term>maxDialogs</term>
                                                 <listitem>
@@ -907,7 +907,7 @@ Halting VM]]></screen>
                         <para> CAPSS7Service binds CapStack to JNDI <literal>java:/mobicents/ss7/cap</literal>. </para>
                           <para> ISUPSS7Service binds IsupStack to JNDI <literal>java:/mobicents/ss7/isup</literal>. </para>
                         <para>The JNDI name can be configured to any valid JNDI name specific to your application.</para>
-                        <para>Feel free to delete service that your application is not using</para>
+                        <para>Feel free to delete service that your application is not using.</para>
                 </section>  		
 	</section>
 		

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">
+%BOOK_ENTITIES;
+]>
 
 <chapter
 	id="map">
@@ -22,14 +25,29 @@
 	<important>
 		<para>For better understanding of this chapter please read GSM 09.02.</para>
 	</important>
+	<para>
+MAP has full implementation for USSD, SMS and Location Management Service (LMS) Services 
+				and partial implementation for Mobility service (updateLocation, sendAuthenticationInfo, 
+				anyTimeInterrogation, checkIMEI operations) only. You can find the list of implemented MAP messages here: <ulink url="http://code.google.com/p/jss7/source/browse/map/MAPMessagesImplemented.ods"/>. The document uses color coding to represent the status of the implementation:
+			<variablelist>
+				<varlistentry>
+				<term>Green</term>
+				<listitem><para>Fully Implemented</para></listitem>
+				</varlistentry>
+				<varlistentry>
+				<term>Red</term>
+				<listitem><para>Interface available (but not yet implemented)</para></listitem>
+				</varlistentry>
+				<varlistentry>
+				<term>Yellow</term>
+				<listitem><para>Implementation in progress</para></listitem>
+				</varlistentry>
+			</variablelist>
+	</para>
 	<note>
 		<para>&THIS.PLATFORM; &THIS.APPLICATION;
-				MAP has full implementation for USSD, SMS and Location Management Service (LMS) Services 
-				and partial implementation for Mobility service (updateLocation, sendAuthenticationInfo, 
-				anyTimeInterrogation, checkIMEI operations) only. Any contribution to implement
-				other messages are welcome. We will provide you all the help that you may need initially.
-				The list of implemented operations can be found in
-				<ulink type="http" url="http://code.google.com/p/jss7/source/browse/map/MAPMessagesImplemented.ods">MAPMessagesImplemented.ods</ulink>
+				Any contribution to implement
+				other messages are welcome. We will provide you with all the help that you may require initially.
 		</para>
 	</note>
 
