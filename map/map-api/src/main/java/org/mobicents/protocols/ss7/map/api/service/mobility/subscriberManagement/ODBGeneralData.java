@@ -59,7 +59,7 @@ ODB-GeneralData ::= BIT STRING {
 	-- ODB-GeneralData type shall be treated like unsupported ODB-GeneralData
 	-- When the ODB-GeneralData type is removed from the HLR for a given subscriber, 
 	-- in NoteSubscriberDataModified operation sent toward the gsmSCF 
-	-- all bits shall be set to “O“.
+	-- all bits shall be set to O.
 
  * 
  * 

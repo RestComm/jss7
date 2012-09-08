@@ -39,7 +39,7 @@ public interface UserServiceInformation extends ISUPParameter {
 	public static final int _PARAMETER_CODE = 0x1D;
 	
 	//for parameters list see ITU-T Q.763 (12/1999) 3.57
-	//Recommendation Q.931 (05/98) Table 4-6/Q.931 – Bearer capability information element
+	//Recommendation Q.931 (05/98) Table 4-6/Q.931 Bearer capability information element
 	//Dialogic User Service Information structure : http://www.dialogic.com/webhelp/NASignaling/Release%205.1/NA_ISUP_Layer_Dev_Ref_Manual/user_service_information.htm
 	
 	//LAYER IDENTIFIERS

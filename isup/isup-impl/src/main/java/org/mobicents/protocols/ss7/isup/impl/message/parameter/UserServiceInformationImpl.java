@@ -113,7 +113,7 @@ public class UserServiceInformationImpl extends AbstractISUPParameter implements
 					this.l1UserInformation=v & 0x1F;
 					//check for bytes 5a to 5d depending on l1 information
 					
-					//note 2 – This octet may be present if octet 3 indicates unrestricted digital information and octet 5 indicates either
+					//note 2 This octet may be present if octet 3 indicates unrestricted digital information and octet 5 indicates either
 					//of the ITU-T standardized rate adaptions V.110, I.460 and X.30 or V.120 [9]. It may also be present if octet 3
 					//indicates 3.1 kHz audio and octet 5 indicates G.711.
 					
@@ -129,10 +129,10 @@ public class UserServiceInformationImpl extends AbstractISUPParameter implements
 								this.negotiation=(v >> 5) & 0x01;
 								this.userRate=v & 0x1F;
 							
-								//NOTE 7 – Octets 5b-5d may be omitted in the case of synchronous user rates.
+								//NOTE 7 Octets 5b-5d may be omitted in the case of synchronous user rates.
 								if(this.syncMode==_SA_SYNC)
 								{
-									//NOTE 3 – This structure of octet 5b only applies if octet 5 indicates ITU-T standardized rate adaption (see
+									//NOTE 3 This structure of octet 5b only applies if octet 5 indicates ITU-T standardized rate adaption (see
 									//Recommendations V.110 [7], I.460 [15] and X.30 [8]).								
 									v = b[index++];
 									this.intermediateRate= (v >> 5) & 0x3;
@@ -162,7 +162,7 @@ public class UserServiceInformationImpl extends AbstractISUPParameter implements
 								
 								if(this.syncMode==_SA_SYNC)
 								{																	
-									//NOTE 4 – This structure of octet 5b only applies if octet 5 indicates ITU-T standardized rate adaption (see
+									//NOTE 4 This structure of octet 5b only applies if octet 5 indicates ITU-T standardized rate adaption (see
 									//Recommendation V.120 [9]).								
 									v = b[index++];
 									this.hdr= (v >> 6) & 0x01;
@@ -217,7 +217,7 @@ public class UserServiceInformationImpl extends AbstractISUPParameter implements
 					break;
 				case _LAYER3_IDENTIFIER:
 					this.l3UserInformation=v & 0x1F;
-					//NOTE 5 – This octet may be included if octet 7 indicates ISO/IEC TR 9577 (Protocol Identification in the network
+					//NOTE 5 This octet may be included if octet 7 indicates ISO/IEC TR 9577 (Protocol Identification in the network
 					//layer).
 					if(this.l3UserInformation==_L3_ISO_9577)
 					{

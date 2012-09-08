@@ -36,18 +36,18 @@ Ext-GeographicalInformation ::= OCTET STRING (SIZE (1..maxExt-GeographicalInform
 	--		(d) Ellipsoid Arc
 	--		(e) Ellipsoid Point
 	-- Any other value in octet 1 shall be treated as invalid
-	-- Octets 2 to 8 for case (a) – Ellipsoid point with uncertainty circle
+	-- Octets 2 to 8 for case (a)  Ellipsoid point with uncertainty circle
 	--		Degrees of Latitude				3 octets
 	--		Degrees of Longitude				3 octets
 	--		Uncertainty code				1 octet
-	-- Octets 2 to 11 for case (b) – Ellipsoid point with uncertainty ellipse:
+	-- Octets 2 to 11 for case (b)  Ellipsoid point with uncertainty ellipse:
 	--		Degrees of Latitude				3 octets
 	--		Degrees of Longitude				3 octets
 	--		Uncertainty semi-major axis				1 octet
 	--		Uncertainty semi-minor axis				1 octet
 	--		Angle of major axis				1 octet
 	--		Confidence				1 octet
-	-- Octets 2 to 14 for case (c) – Ellipsoid point with altitude and uncertainty ellipsoid
+	-- Octets 2 to 14 for case (c)  Ellipsoid point with altitude and uncertainty ellipsoid
 	--		Degrees of Latitude				3 octets
 	--		Degrees of Longitude				3 octets
 	--		Altitude				2 octets
@@ -56,7 +56,7 @@ Ext-GeographicalInformation ::= OCTET STRING (SIZE (1..maxExt-GeographicalInform
 	--		Angle of major axis				1 octet
 	--		Uncertainty altitude				1 octet
 	--		Confidence				1 octet
-	-- Octets 2 to 13 for case (d) – Ellipsoid Arc
+	-- Octets 2 to 13 for case (d)  Ellipsoid Arc
 	--		Degrees of Latitude				3 octets
 	--		Degrees of Longitude				3 octets
 	--		Inner radius				2 octets
@@ -64,7 +64,7 @@ Ext-GeographicalInformation ::= OCTET STRING (SIZE (1..maxExt-GeographicalInform
 	--		Offset angle				1 octet
 	--		Included angle				1 octet
 	--		Confidence				1 octet
-	-- Octets 2 to 7 for case (e) – Ellipsoid Point
+	-- Octets 2 to 7 for case (e)  Ellipsoid Point
 	--		Degrees of Latitude				3 octets
 	--		Degrees of Longitude				3 octets
 

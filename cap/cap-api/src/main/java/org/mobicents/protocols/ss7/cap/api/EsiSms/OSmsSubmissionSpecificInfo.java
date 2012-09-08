@@ -26,7 +26,7 @@ package org.mobicents.protocols.ss7.cap.api.EsiSms;
 *
 
 o-smsSubmissionSpecificInfo [1] SEQUENCE {
--- no specific info defined—
+-- no specific info defined
 ...
 },
 

@@ -40,15 +40,15 @@ VelocityEstimate ::= OCTET STRING (SIZE (4..7))
 	-- Octets 2 to 4 for case (a) Horizontal velocity:
 	--		Bearing				1 octet
 	--		Horizontal Speed				2 octets
-	-- Octets 2 to 5 for case (b) – Horizontal with Vertical Velocity:
+	-- Octets 2 to 5 for case (b)  Horizontal with Vertical Velocity:
 	--		Bearing				1 octet
 	--		Horizontal Speed				2 octets
 	--		Vertical Speed				1 octet
-	-- Octets 2 to 5 for case (c) – Horizontal velocity with Uncertainty:
+	-- Octets 2 to 5 for case (c)  Horizontal velocity with Uncertainty:
 	--		Bearing				1 octet
 	--		Horizontal Speed				2 octets
 	--		Uncertainty Speed				1 octet
-	-- Octets 2 to 7 for case (d) – Horizontal with Vertical Velocity and Uncertainty:
+	-- Octets 2 to 7 for case (d)  Horizontal with Vertical Velocity and Uncertainty:
 	--		Bearing				1 octet
 	--		Horizontal Speed				2 octets
 	--		Vertical Speed				1 octet

@@ -49,7 +49,7 @@ sCIGPRSBillingChargingCharacteristics [0] SCIGPRSBillingChargingCharacteristics 
 }
 
 SCIGPRSBillingChargingCharacteristics {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE (4 .. 255))
-(CONSTRAINED BY {-- shall be the result of the BER-encoded value of type –
+(CONSTRAINED BY {-- shall be the result of the BER-encoded value of type 
 CAMEL-SCIGPRSBillingChargingCharacteristics})
 -- Indicates AOC information to be sent to a Mobile Station
 -- The violation of the UserDefinedConstraint shall be handled as an ASN.1 syntax error.

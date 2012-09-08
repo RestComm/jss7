@@ -45,7 +45,7 @@ T-BcsmCamelTDPDataList ::= SEQUENCE SIZE (1..10) OF T-BcsmCamelTDPData
 	--- T-BcsmCamelTDPData containing the same value for t-BcsmTriggerDetectionPoint.
 	--- For CAMEL Phase 2, this means that only one instance of T-BcsmCamelTDPData is allowed
 	--- with t-BcsmTriggerDetectionPoint being equal to DP12. 
-	--- For CAMEL Phase 3, more TDP’s are allowed.
+	--- For CAMEL Phase 3, more TDPs are allowed.
 
 CamelCapabilityHandling ::= INTEGER(1..16) 
 	-- value 1 = CAMEL phase 1,

@@ -36,7 +36,7 @@ failureCause [0] MO-SMSCause OPTIONAL,
 ...
 },
 o-smsSubmissionSpecificInfo [1] SEQUENCE {
--- no specific info defined—
+-- no specific info defined
 ...
 },
 t-smsFailureSpecificInfo [2] SEQUENCE {
@@ -44,7 +44,7 @@ failureCause [0] MT-SMSCause OPTIONAL,
 ...
 },
 t-smsDeliverySpecificInfo [3] SEQUENCE {
--- no specific info defined—
+-- no specific info defined
 ...
 } }
 
