@@ -1,9 +1,9 @@
 ===========================
  Mobicents SS7 Protocols Bundle
 ===========================
-               v2.0.0.BETA1
+               v2.0.0.BETA2
 
- Welcome to the Mobicents jSS7 Protocols Bundle v2.0.0.BETA1 release!
+ Welcome to the Mobicents jSS7 Protocols Bundle v2.0.0.BETA2 release!
 
 --------------
  Introduction
@@ -16,16 +16,20 @@ In this bundle you will find the latest released Mobicents jSS7 Protocol compone
 ------------------
 What's new in this release?
 ------------------
-This release is jam packed with new features
+This release is full of new features
 
- * CAP Protocol included in the binary for first time. Only version 1 and 2 of CAP are supported. Look at Issue 1 and 10
- * New MAP messages AnyTimeInterrogation (Issue 9), UpdateLocation (Issue 57) and SendAuthenticationInfo (Issue 58) included
- * Support for dahdi based cards, Digum and Sangoma (Issue 29) brought back
- * New GUI based SS7 Simulator introduced (Issue 17). This tool allows users to test SS7 stack convineintly with click of button!
- * SCCP pointcode loadbalancing taken care (Issue 13)
+ * The client side command line interface provides tab completion and help for every command
+ * CAP V2 circuit switched call fully implemented
+ * New MAP messages CheckIMEI implemented
+ * All the unimplemented MAP/CAP messages have API interfaces allready defined  
+ * M3UA ASP ID is can now be configured at ASP creation time
+ * SCTP layer supports configuring server that accepts connection from anonymous ip:port 
+ * Support for WinOS native drivers for Dialog  
+ * Enhanced SS7 simulator to act as SMS Center for testing 
 
 In addition many bugs fixed and some performance improvements.
-Complete list of issues covered in this release are listed here http://code.google.com/p/jss7/issues/list?can=1&q=Version%3D2.0.0.BETA1&sort=priority+version&groupby=version&colspec=Summary+Type+Status+ID&cells=tiles
+
+Complete list of issues covered in this release are listed here http://code.google.com/p/jss7/issues/list?can=1&q=Version%3D2.0.0.BETA2&sort=priority+version&groupby=version&colspec=Summary+Type+Status+ID&cells=tiles
 
 Please note that archives are now uploaded to https://oss.sonatype.org/content/groups/public. Please point to sonatype repository in your applications pom.xml
 
@@ -53,9 +57,9 @@ Daily build is configured at https://mobicents.ci.cloudbees.com/job/Mobicents-jS
  Release Contents
 ------------------
 
-  * ASN 2.0.0.FINAL
-  * SCTP 1.0.0.CR3 
-  * SS7 2.0.0.BETA1
+  * ASN 2.0.1.FINAL
+  * SCTP 1.0.0.CR4
+  * SS7 2.0.0.BETA2
 
   
 ------------------

@@ -38,7 +38,7 @@ unexpectedDataValue |
 unexpectedParameter |
 unknownPDPID}
 CODE opcode-resetTimerGPRS}
--- Direction: gsmSCF –> gprsSSF, Timer: Trtg
+-- Direction: gsmSCF > gprsSSF, Timer: Trtg
 -- This operation is used to request the gprsSSF to refresh an application timer in the gprsSSF.
 
 ResetTimerGPRSArg ::= SEQUENCE {
