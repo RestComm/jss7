@@ -23,12 +23,12 @@
 		) and the Transaction Capabilities Application Part (<acronym>TCAP</acronym>)
 	</para>
 	<important>
-		<para>For better understanding of this chapter please read GSM 09.02.</para>
+		<para>For better understanding of this chapter you must be familiar with the specifications defined in <literal>GSM 09.02</literal>.</para>
 	</important>
 	<para>
 MAP has full implementation for USSD, SMS and Location Management Service (LMS) Services 
 				and partial implementation for Mobility service (updateLocation, sendAuthenticationInfo, 
-				anyTimeInterrogation, checkIMEI operations) only. You can find the list of implemented MAP messages here: <ulink url="http://code.google.com/p/jss7/source/browse/map/MAPMessagesImplemented.ods"/>. The document uses color coding to represent the status of the implementation:
+				anyTimeInterrogation, checkIMEI operations) only. You can find the list of implemented MAP messages here: <ulink type="http" url="http://code.google.com/p/jss7/source/browse/map/MAPMessagesImplemented.ods">MAPMessagesImplemented.ods</ulink>. The document uses color coding to represent the status of the implementation:
 			<variablelist>
 				<varlistentry>
 				<term>Green</term>

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">
+%BOOK_ENTITIES;
+]>
 
 <chapter
 	id="cap">
@@ -8,26 +11,44 @@
 	<title>CAP</title>
 
 	<para>
-		<acronym>CAMEL</acronym> (Customized Applications for Mobile network Enhanced Logic) application part (<acronym>CAP</acronym>) 
-		is the protocol that is used to help the network operator to provide the subscribers 
-		with the operator specific services even when roaming outside the HPLMN.
+		The <acronym>CAMEL</acronym> (Customized Applications for Mobile network Enhanced Logic) Application Part (<acronym>CAP</acronym>) protocol is used by network operators to provide their subscribers 
+		with operator specific services even when roaming outside the HPLMN.
 		<acronym>CAP</acronym> provides services such as prepaid roaming services, fraud control, special numbers 
 		and closed user groups (e.g., office extension numbers that work everywhere).
 		CAP has been defined in four versions (phases), each of which has an accompanying specification that builds upon the previous phase.		 
 		This application layer provides a standardized set of services.
-		<acronym>CAP</acronym> uses the services of the <acronym>SS7</acronym>
+		<acronym>CAP</acronym> uses the services of the <literal>SS7</literal>
 		network, specifically the Signaling Connection Control Part (<acronym>SCCP</acronym>) 
 		and the Transaction Capabilities Application Part (<acronym>TCAP</acronym>)
 	</para>
 	<important>
-		<para>For better understanding of this chapter please read 3GPP TS 22.078 (service aspects) and 3GPP TS 23.078 (technical realization).</para>
+		<para>For better understanding of this chapter you must be familiar with the specifications defined in <literal>3GPP TS 22.078</literal> (service aspects) and <literal>3GPP TS 23.078</literal> (technical realization).</para>
 	</important>
 	<note>
 		<para>&THIS.PLATFORM; &THIS.APPLICATION;
-				CAP has full implementation now for Phase 1 and Phase 2. Any contribution to implement
-				other Phases are welcome. We will provide you all the help that you may need initially.
-			The list of implemented operations can be found in
+				CAP has full implementation for Phase 1 and Phase 2 we welcome any contribution to implement
+				other Phases. We will provide you with all the guidance you may require.
+			The list of implemented operations can be found at
 			<ulink type="http" url="http://code.google.com/p/jss7/source/browse/cap/CAPMessagesImplemented.ods">CAPMessagesImplemented.ods</ulink>.
+You can find the list of implemented operations here: <ulink type="http" url="http://code.google.com/p/jss7/source/browse/cap/CAPMessagesImplemented.ods">CAPMessagesImplemented.ods</ulink>. The document uses color coding to represent the status of the implementation:
+			<variablelist>
+				<varlistentry>
+				<term>Green</term>
+				<listitem><para>Fully Implemented</para></listitem>
+				</varlistentry>
+				<varlistentry>
+				<term>Red</term>
+				<listitem><para>Interface available (but not yet implemented)</para></listitem>
+				</varlistentry>
+				<varlistentry>
+				<term>Yellow</term>
+				<listitem><para>Implementation in progress</para></listitem>
+				</varlistentry>
+				<varlistentry>
+				<term>Blue</term>
+				<listitem><para>Implemeted only for CAP V2 and not available for CAP V3 and V4</para></listitem>
+				</varlistentry>
+			</variablelist>
 		</para>
 	</note>
 
@@ -43,13 +64,12 @@
 			CAP user application must implement interfaces to listen CAP messages and dialogue and component handling primitives.
 			One interface is <classname>org.mobicents.protocols.ss7.cap.api.CAPDialogListener</classname> 
 			(listening associated with dialog events).
-			Others are one or more interfaces for listening associated with component events based on 
+			Others are one or more interfaces for listening to messages associated with component events based on 
 			<classname>org.mobicents.protocols.ss7.cap.api.CAPServiceListener interface.</classname>
-			Each  CAP-User  interested  in  listening  messages  specific  to  CAP  Service  implements  specific CAPServiceListener. 
 		</para>
 
 		<para>
-			Each CAP-User interested in listening messages specific to CAP Service implements specific <classname>CAPServiceListener</classname>.
+			Each CAP-User interested in listening to messages specific to CAP Service implements specific <classname>CAPServiceListener</classname>.
 			<itemizedlist> 
 				<listitem>
 					<para>
@@ -98,7 +118,7 @@
 			passing the reference of <classname>SccpProvider</classname> and Sub System Number and 
 			then start it. All incoming messages are checked for destination SSN, 
 			if it matches with the one registered with this CAPStackImpl the corresponding listener 
-			is called else the peer receives error.
+			is called, else the peer receives error.
 		</para>
 
 		<programlisting
@@ -282,7 +302,7 @@ currentCapDialog.send();
 			- Wait for a response and other instructions from the SCF
 		</para>
 		<para>
-			At the SCF side when receiving TC-Begin message the following sequence of events occurs:
+			At the SCF side when receiving TC-Begin message the following sequence of events occur:
 		</para>
 		<programlisting
 			language="Java"
@@ -306,7 +326,7 @@ void CAPServiceCircuitSwitchedCallListener.onInitialDPRequest(InitialDPRequest i
 ]]></programlisting>
 
 		<para>
-			When processing component-depended messages you can add response components
+			When processing component-dependant messages you can add response components
 			or add other Invoke requests. 
 			In this case it is RequestReportBCSMEventRequest as an example:
 		</para>
@@ -344,7 +364,7 @@ currentCapDialog.send();
 ]]></programlisting>
 
 		<para>
-			If the preparing the response spends much time we should return the control and prepare the answer in your thread.
+			If preparing the response spends much time we should return the control and prepare the answer in your thread.
 		</para>
 		<para>
 			If error or reject primitives are included into a TCAP message following events occur:
