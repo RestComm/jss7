@@ -608,7 +608,7 @@ public class Client extends EventTestHarness {
 		clientDialogMobility.send();
 
 	}
-	
+
 	public void sendCancelLocation() throws Exception {
 
 		this.mapProvider.getMAPServiceMobility().acivate();
@@ -631,7 +631,7 @@ public class Client extends EventTestHarness {
 		al.add(this.mapParameterFactory.createMAPPrivateExtension(new long[] { 1, 2, 3, 5 }, new byte[] { 21, 22, 23, 24, 25,
 				26 }));
 
-		MAPExtensionContainer extensionContainer = this.mapParameterFactory.createMAPExtensionContainer(al, new byte[] { 31, 32, 33 });
+		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
 
 		TypeOfUpdate typeOfUpdate = TypeOfUpdate.getInstance(0);
 		boolean mtrfSupportedAndAuthorized = false;
@@ -646,8 +646,28 @@ public class Client extends EventTestHarness {
 		clientDialogMobility.send();
 
 	}
-	
-	
+
+	public void sendCancelLocation_V2() throws Exception {
+
+		this.mapProvider.getMAPServiceMobility().acivate();
+
+		MAPApplicationContext appCnt = null;
+
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.locationCancellationContext, MAPApplicationContextVersion.version2);
+
+		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+
+		IMSI imsi = new IMSIImpl("1111122222");
+		LMSI lmsi = this.mapParameterFactory.createLMSI(new byte[] { 0, 3, 98, 39 });
+		
+		clientDialogMobility.addCancelLocationRequest(imsi, null, null, null, null, false, false, null, null, null);
+
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.CancelLocation, null, sequence++));
+		clientDialogMobility.send();
+
+	}
+
+
 	public void sendProvideRoamingNumber() throws Exception {
 
 		this.mapProvider.getMAPServiceMobility().acivate();
@@ -693,8 +713,7 @@ public class Client extends EventTestHarness {
 		CallReferenceNumberImpl callReferenceNumber = new CallReferenceNumberImpl(
 				new byte[] { 19, -6, 61, 61, -22 });
 		boolean orInterrogation = false;
-		MAPExtensionContainer extensionContainer = this.mapParameterFactory
-				.createMAPExtensionContainer(al, new byte[] { 31, 32, 33 });
+		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
 		AlertingPatternImpl alertingPattern = new AlertingPatternImpl(
 				AlertingCategory.Category5);
 		boolean ccbsCall = false;
@@ -732,6 +751,41 @@ public class Client extends EventTestHarness {
 				suppressVtCsi, null,
 				mtRoamingRetrySupported, null, null,
 				mtrfIndicator, null);
+		this.observerdEvents.add(TestEvent.createSentEvent(
+				EventType.ProvideRoamingNumber, null, sequence++));
+		clientDialogCallHandling.send();
+
+	}
+
+
+	public void sendProvideRoamingNumber_V2() throws Exception {
+
+		this.mapProvider.getMAPServiceMobility().acivate();
+
+		MAPApplicationContext appCnt = null;
+
+		appCnt = MAPApplicationContext.getInstance(
+				MAPApplicationContextName.roamingNumberEnquiryContext,
+				MAPApplicationContextVersion.version2);
+
+		clientDialogCallHandling = this.mapProvider.getMAPServiceCallHandling()
+				.createNewDialog(appCnt, this.thisAddress, null,
+						this.remoteAddress, null);
+
+		ArrayList<MAPPrivateExtension> al = new ArrayList<MAPPrivateExtension>();
+		al.add(this.mapParameterFactory.createMAPPrivateExtension(new long[] {
+				1, 2, 3, 4 }, new byte[] { 11, 12, 13, 14, 15 }));
+		al.add(this.mapParameterFactory.createMAPPrivateExtension(new long[] {
+				1, 2, 3, 6 }, null));
+		al.add(this.mapParameterFactory.createMAPPrivateExtension(new long[] {
+				1, 2, 3, 5 }, new byte[] { 21, 22, 23, 24, 25, 26 }));
+
+		IMSI imsi = new IMSIImpl("011220200198227");
+		ISDNAddressString mscNumber = new ISDNAddressStringImpl(
+				AddressNature.international_number, NumberingPlan.ISDN, "22228");
+		
+		clientDialogCallHandling.addProvideRoamingNumberRequest(imsi, mscNumber, null, null, null, null, false, null, null, false, null, null, false, null,
+				null, false, false, false, false, null, false, null, null, false, null);
 		this.observerdEvents.add(TestEvent.createSentEvent(
 				EventType.ProvideRoamingNumber, null, sequence++));
 		clientDialogCallHandling.send();

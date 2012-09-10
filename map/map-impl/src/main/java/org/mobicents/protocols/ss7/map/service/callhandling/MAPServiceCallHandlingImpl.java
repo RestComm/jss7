@@ -299,7 +299,7 @@ public class MAPServiceCallHandlingImpl extends MAPServiceBaseImpl implements MA
 		}
 		
 		byte[] buf = parameter.getData();
-		AsnInputStream ais = new AsnInputStream(buf);
+		AsnInputStream ais = new AsnInputStream(buf, parameter.getTagClass(), parameter.isPrimitive(), parameter.getTag());
 
 		ind.decodeData(ais, buf.length);
 		ind.setInvokeId(invokeId);

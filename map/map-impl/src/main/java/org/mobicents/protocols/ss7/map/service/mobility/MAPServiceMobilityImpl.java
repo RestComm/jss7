@@ -383,7 +383,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 		}
 
 		byte[] buf = parameter.getData();
-		AsnInputStream ais = new AsnInputStream(buf);
+		AsnInputStream ais = new AsnInputStream(buf, parameter.getTagClass(), parameter.isPrimitive(), parameter.getTag());
 		CancelLocationRequestImpl ind = new CancelLocationRequestImpl(version);
 		ind.decodeData(ais, buf.length);
 
