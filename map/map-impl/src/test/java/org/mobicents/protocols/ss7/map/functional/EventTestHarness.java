@@ -475,20 +475,6 @@ public class EventTestHarness implements MAPDialogListener, MAPServiceSupplement
 	}
 
 	@Override
-	public void onSendRoutingInformationRequest(
-			SendRoutingInformationRequest request) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onSendRoutingInformationResponse(
-			SendRoutingInformationResponse response) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void onProvideRoamingNumberRequest(
 			ProvideRoamingNumberRequest request) {
 		this.logger.debug("onProvideRoamingNumberRequest");
@@ -502,6 +488,20 @@ public class EventTestHarness implements MAPDialogListener, MAPServiceSupplement
 		this.logger.debug("onProvideRoamingNumberResponse");
 		TestEvent te = TestEvent.createReceivedEvent(EventType.ProvideRoamingNumberResp, response, sequence++);
 		this.observerdEvents.add(te);
+		
+	}
+
+	@Override
+	public void onSendRoutingInformationRequest(
+			SendRoutingInformationRequest request) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSendRoutingInformationResponse(
+			SendRoutingInformationResponse response) {
+		// TODO Auto-generated method stub
 		
 	}
 }
