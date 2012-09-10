@@ -105,6 +105,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIu;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIuA;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIuB;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.IMSIWithLMSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ISTSupportIndicator;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LAC;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LocationArea;
@@ -235,6 +236,7 @@ import org.mobicents.protocols.ss7.map.service.mobility.imei.UESBIIuAImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.imei.UESBIIuBImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.imei.UESBIIuImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.ADDInfoImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.IMSIWithLMSIImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.LACImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.LocationAreaImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.PagingAreaImpl;
@@ -993,6 +995,10 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 	@Override
 	public UESBIIu createUESBIIu(UESBIIuA uesbiIuA, UESBIIuB uesbiIuB) {
 		return new UESBIIuImpl(uesbiIuA, uesbiIuB);
+	}
+
+	public IMSIWithLMSI createServingNodeAddressMmeNumber(IMSI imsi, LMSI lmsi) {
+		return new IMSIWithLMSIImpl(imsi, lmsi);
 	}
 }
 

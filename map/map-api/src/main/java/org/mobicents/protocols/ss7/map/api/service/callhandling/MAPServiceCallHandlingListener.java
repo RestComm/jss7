@@ -32,5 +32,8 @@ import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
  */
 public interface MAPServiceCallHandlingListener extends MAPServiceListener {
 	public void onSendRoutingInformationRequest(SendRoutingInformationRequest request); 
-    public void onSendRoutingInformationResponse(SendRoutingInformationResponse response); 
+    public void onSendRoutingInformationResponse(SendRoutingInformationResponse response);
+   
+    public void onProvideRoamingNumberRequest(ProvideRoamingNumberRequest request);
+    public void onProvideRoamingNumberResponse(ProvideRoamingNumberResponse response);
 }

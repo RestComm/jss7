@@ -48,6 +48,8 @@ import org.mobicents.protocols.ss7.map.service.mobility.authentication.SendAuthe
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.SendAuthenticationInfoResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.imei.CheckImeiRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.imei.CheckImeiResponseImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.CancelLocationRequestImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.CancelLocationResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateLocationRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateLocationResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.AnyTimeInterrogationRequestImpl;
@@ -129,7 +131,6 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 			}
 
 		// -- Location management services
-		// -- Fault recovery
 		case networkLocUpContext:
 			if (vers >= 1 && vers <= 3) {
 				return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
@@ -141,6 +142,19 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 			} else {
 				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
 			}
+		case locationCancellationContext:
+			if (vers >= 1 && vers <= 3) {
+				return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
+			} else if (vers > 3) {
+				long[] altOid = dialogApplicationContext.getOID();
+				altOid[7] = 3;
+				ApplicationContextName alt = TcapFactory.createApplicationContextName(altOid);
+				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect, alt);
+			} else {
+				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
+			}
+			
+		// -- Fault recovery
 
 		// -- International mobile equipment identities management services
 		case equipmentMngtContext:
@@ -168,7 +182,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
 			}
 		}
-
+		
 		return new ServingCheckDataImpl(ServingCheckResult.AC_NotServing);
 	}
 
@@ -180,7 +194,10 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 		// -- Location management services
 		case MAPOperationCode.updateLocation:
 			return MAPApplicationContext.getInstance(MAPApplicationContextName.networkLocUpContext, MAPApplicationContextVersion.version1);
-			
+		
+		case MAPOperationCode.cancelLocation:
+				return MAPApplicationContext.getInstance(MAPApplicationContextName.locationCancellationContext, MAPApplicationContextVersion.version1);
+		
 		// -- Authentication management services
 		case MAPOperationCode.sendParameters:
 			return MAPApplicationContext.getInstance(MAPApplicationContextName.infoRetrievalContext, MAPApplicationContextVersion.version1);
@@ -188,6 +205,8 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 		// -- IMEI services
 		case MAPOperationCode.checkIMEI:
 			return MAPApplicationContext.getInstance(MAPApplicationContextName.equipmentMngtContext, MAPApplicationContextVersion.version1);
+		
+		
 		}
 
 		return null;
@@ -226,7 +245,14 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 					this.updateLocationResponse(parameter, mapDialogMobilityImpl, invokeId);
 			}
 			break;
-		
+		case MAPOperationCode.cancelLocation:
+			if (acn == MAPApplicationContextName.locationCancellationContext ) {
+				if (compType == ComponentType.Invoke)
+					this.cancelLocationRequest(parameter, mapDialogMobilityImpl, invokeId);
+				else
+					this.cancelLocationResponse(parameter, mapDialogMobilityImpl, invokeId);
+			}
+			break;
 		// -- Authentication management services
 		case MAPOperationCode.sendAuthenticationInfo:
 			if (acn == MAPApplicationContextName.infoRetrievalContext && vers >= 2) {
@@ -324,6 +350,94 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 				((MAPServiceMobilityListener) serLis).onUpdateLocationResponse(ind);
 			} catch (Exception e) {
 				loger.error("Error processing updateLocationResponse: " + e.getMessage(), e);
+			}
+		}
+	}
+
+	private void cancelLocationRequest(Parameter parameter,
+			MAPDialogMobilityImpl mapDialogImpl, Long invokeId)
+			throws MAPParsingComponentException {
+
+		long version = mapDialogImpl.getApplicationContext()
+				.getApplicationContextVersion().getVersion();
+		if (parameter == null)
+			throw new MAPParsingComponentException(
+					"Error while decoding cancelLocationRequest: Parameter is mandatory but not found",
+					MAPParsingComponentExceptionReason.MistypedParameter);
+
+		if (version == 3) {
+			if (parameter.getTag() != CancelLocationRequestImpl.TAG_cancelLocationRequest
+					|| parameter.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC
+					|| parameter.isPrimitive())
+				throw new MAPParsingComponentException(
+						"Error while decoding cancelLocationRequest: Bad tag or tagClass or parameter is primitive, received tag="
+								+ parameter.getTag(),
+						MAPParsingComponentExceptionReason.MistypedParameter);
+		} else {
+			if ((!(parameter.getTag() == Tag.SEQUENCE || parameter.getTag() == Tag.STRING_OCTET))
+					|| parameter.getTagClass() != Tag.CLASS_UNIVERSAL)
+				throw new MAPParsingComponentException(
+						"Error while decoding cancelLocationRequest: Bad tag or tagClass or parameter is primitive, received tag="
+								+ parameter.getTag(),
+						MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+		CancelLocationRequestImpl ind = new CancelLocationRequestImpl(version);
+		ind.decodeData(ais, buf.length);
+
+		ind.setInvokeId(invokeId);
+		ind.setMAPDialog(mapDialogImpl);
+
+		for (MAPServiceListener serLis : this.serviceListeners) {
+			try {
+				serLis.onMAPMessage(ind);
+				((MAPServiceMobilityListener) serLis)
+						.onCancelLocationRequest(ind);
+			} catch (Exception e) {
+				loger.error(
+						"Error processing cancelLocationRequest: "
+								+ e.getMessage(), e);
+			}
+		}
+	}
+
+	private void cancelLocationResponse(Parameter parameter,
+			MAPDialogMobilityImpl mapDialogImpl, Long invokeId)
+			throws MAPParsingComponentException {
+		long version = mapDialogImpl.getApplicationContext()
+				.getApplicationContextVersion().getVersion();
+
+		CancelLocationResponseImpl ind = new CancelLocationResponseImpl();
+		
+		if (parameter != null) {
+			if (parameter.getTag() != Tag.SEQUENCE
+					|| parameter.getTagClass() != Tag.CLASS_UNIVERSAL
+					|| parameter.isPrimitive())
+				throw new MAPParsingComponentException(
+						"Error while decoding cancelLocationResponse V2_3: Bad tag or tagClass or parameter is primitive, received tag="
+								+ parameter.getTag(),
+						MAPParsingComponentExceptionReason.MistypedParameter);
+	
+			byte[] buf = parameter.getData();
+			AsnInputStream ais = new AsnInputStream(buf);
+			
+			ind.decodeData(ais, buf.length);
+		}
+
+		ind.setInvokeId(invokeId);
+		ind.setMAPDialog(mapDialogImpl);
+
+		for (MAPServiceListener serLis : this.serviceListeners) {
+			try {
+				serLis.onMAPMessage(ind);
+				((MAPServiceMobilityListener) serLis)
+						.onCancelLocationResponse(ind);
+			} catch (Exception e) {
+				loger.error(
+						"Error processing cancelLocationResponse: "
+								+ e.getMessage(), e);
 			}
 		}
 	}
@@ -551,5 +665,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 			}
 		}
 	}
+	
+	
 }
 

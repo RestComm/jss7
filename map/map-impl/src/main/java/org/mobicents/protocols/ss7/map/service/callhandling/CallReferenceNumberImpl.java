@@ -68,7 +68,7 @@ public class CallReferenceNumberImpl implements CallReferenceNumber, MAPAsnPrimi
 	}
 
 	public boolean getIsPrimitive() {
-		return false;
+		return true;
 	}
 
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {

@@ -35,10 +35,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * priorityLevel2 EMLPP-Priority ::= 2
  * priorityLevel3 EMLPP-Priority ::= 3
  * priorityLevel4 EMLPP-Priority ::= 4
- */
- 
-/*
- * 
+  * 
  * @author cristian veliscu
  * 
  */

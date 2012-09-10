@@ -169,5 +169,7 @@ public interface ProvideRoamingNumberRequest extends CallHandlingMessage {
 	public boolean getMtrfIndicator();
 
 	public ISDNAddressString getOldMSCNumber();
+	
+	public long getMapProtocolVersion();
 
 }

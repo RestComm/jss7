@@ -35,9 +35,6 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  SignalInfo ::= OCTET STRING (SIZE (1..200))
  
  *
- */
- 
-/*
  * 
  * @author cristian veliscu
  * 

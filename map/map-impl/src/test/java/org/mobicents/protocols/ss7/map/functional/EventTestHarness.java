@@ -20,6 +20,11 @@ import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.MAPServiceCallHandlingListener;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.ProvideRoamingNumberRequest;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.ProvideRoamingNumberResponse;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.SendRoutingInformationRequest;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.SendRoutingInformationResponse;
 import org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsmListener;
 import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationRequest;
 import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationResponse;
@@ -32,6 +37,8 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.SendA
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancelLocationRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancelLocationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationRequest;
@@ -66,7 +73,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
  *
  */
 public class EventTestHarness implements MAPDialogListener, MAPServiceSupplementaryListener, MAPServiceSmsListener, MAPServiceMobilityListener,
-		MAPServiceLsmListener {
+		MAPServiceLsmListener ,MAPServiceCallHandlingListener{
 	
 	private Logger logger = null;
 
@@ -450,6 +457,52 @@ public class EventTestHarness implements MAPDialogListener, MAPServiceSupplement
 		this.logger.debug("onSendRoutingInforForLCSResponse");
 		TestEvent te = TestEvent.createReceivedEvent(EventType.SendRoutingInfoForLCSResp, response, sequence++);
 		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onCancelLocationRequest(CancelLocationRequest request) {
+		this.logger.debug("onCancelLocationRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.CancelLocation, request, sequence++);
+		this.observerdEvents.add(te);
+		
+	}
+
+	@Override
+	public void onCancelLocationResponse(CancelLocationResponse response) {
+		this.logger.debug("onCancelLocationResponse");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.CancelLocationResp, response, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onSendRoutingInformationRequest(
+			SendRoutingInformationRequest request) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSendRoutingInformationResponse(
+			SendRoutingInformationResponse response) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProvideRoamingNumberRequest(
+			ProvideRoamingNumberRequest request) {
+		this.logger.debug("onProvideRoamingNumberRequest");
+	    TestEvent te = TestEvent.createReceivedEvent(EventType.ProvideRoamingNumber, request, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onProvideRoamingNumberResponse(
+			ProvideRoamingNumberResponse response) {
+		this.logger.debug("onProvideRoamingNumberResponse");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.ProvideRoamingNumberResp, response, sequence++);
+		this.observerdEvents.add(te);
+		
 	}
 }
 

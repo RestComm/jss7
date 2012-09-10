@@ -49,7 +49,10 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.imei.EquipmentStatus
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.RequestedEquipmentInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIu;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancellationType;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.IMSIWithLMSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PagingArea;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.TypeOfUpdate;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VLRCapability;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberInfo;
@@ -57,6 +60,8 @@ import org.mobicents.protocols.ss7.map.service.mobility.authentication.SendAuthe
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.SendAuthenticationInfoResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.imei.CheckImeiRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.imei.CheckImeiResponseImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.CancelLocationRequestImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.CancelLocationResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateLocationRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateLocationResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.AnyTimeInterrogationRequestImpl;
@@ -457,7 +462,6 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 		this.sendReturnResultLastComponent(resultLast);
 	}
 
-
 	@Override
 	public Long addCheckImeiRequest_Huawei(IMEI imei, RequestedEquipmentInfo requestedEquipmentInfo,
 			MAPExtensionContainer extensionContainer, IMSI imsi) throws MAPException {
@@ -517,6 +521,112 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 		this.sendInvokeComponent(invoke);
 
 		return invokeId;
+	}
+
+	@Override
+	public Long addCancelLocationRequest(IMSI imsi, IMSIWithLMSI imsiWithLmsi, CancellationType cancellationType, MAPExtensionContainer extensionContainer,
+			TypeOfUpdate typeOfUpdate, boolean mtrfSupportedAndAuthorized, boolean mtrfSupportedAndNotAuthorized, ISDNAddressString newMSCNumber,
+			ISDNAddressString newVLRNumber, LMSI newLmsi) throws MAPException {
+
+		return this.addCancelLocationRequest(_Timer_Default, imsi, imsiWithLmsi, cancellationType, extensionContainer, typeOfUpdate,
+				mtrfSupportedAndAuthorized, mtrfSupportedAndNotAuthorized, newMSCNumber, newVLRNumber, newLmsi);
+	}
+
+	@Override
+	public Long addCancelLocationRequest(int customInvokeTimeout, IMSI imsi,
+			IMSIWithLMSI imsiWithLmsi, CancellationType cancellationType,
+			MAPExtensionContainer extensionContainer,
+			TypeOfUpdate typeOfUpdate, boolean mtrfSupportedAndAuthorized,
+			boolean mtrfSupportedAndNotAuthorized,
+			ISDNAddressString newMSCNumber, ISDNAddressString newVLRNumber,
+			LMSI newLmsi) throws MAPException {
+
+		if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.locationCancellationContext)
+				|| (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version1
+						&& this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.appCntx
+						.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
+			throw new MAPException(
+					"Bad application context name for CancelLocationRequest: must be networkLocUpContext_V1, V2 or V3");
+
+		Invoke invoke = this.mapProviderImpl.getTCAPProvider()
+				.getComponentPrimitiveFactory().createTCInvokeRequest();
+		if (customInvokeTimeout == _Timer_Default)
+			invoke.setTimeout(_Timer_m);
+		else
+			invoke.setTimeout(customInvokeTimeout);
+
+		OperationCode oc = this.mapProviderImpl.getTCAPProvider()
+				.getComponentPrimitiveFactory().createOperationCode();
+		oc.setLocalOperationCode((long) MAPOperationCode.cancelLocation);
+		invoke.setOperationCode(oc);
+
+		CancelLocationRequestImpl req = new CancelLocationRequestImpl(imsi,
+				imsiWithLmsi, cancellationType, extensionContainer,
+				typeOfUpdate, mtrfSupportedAndAuthorized,
+				mtrfSupportedAndNotAuthorized, newMSCNumber, newVLRNumber,
+				newLmsi, this.appCntx.getApplicationContextVersion()
+						.getVersion());
+
+		AsnOutputStream aos = new AsnOutputStream();
+		req.encodeData(aos);
+
+		Parameter p = this.mapProviderImpl.getTCAPProvider()
+				.getComponentPrimitiveFactory().createParameter();
+		p.setTagClass(req.getTagClass());
+		p.setPrimitive(req.getIsPrimitive());
+		p.setTag(req.getTag());
+		p.setData(aos.toByteArray());
+		invoke.setParameter(p);
+
+		Long invokeId;
+		try {
+			invokeId = this.tcapDialog.getNewInvokeId();
+			invoke.setInvokeId(invokeId);
+		} catch (TCAPException e) {
+			throw new MAPException(e.getMessage(), e);
+		}
+
+		this.sendInvokeComponent(invoke);
+
+		return invokeId;
+
+	}
+
+	@Override
+	public void addCancelLocationResponse(long invokeId,
+			MAPExtensionContainer extensionContainer) throws MAPException {
+
+		if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.locationCancellationContext)
+				|| (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version1
+						&& this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2 && 
+						this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
+			throw new MAPException("Bad application context name for CancelLocationResponse: must be networkLocUpContext_V1, V2 or V3");
+
+		ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
+
+		resultLast.setInvokeId(invokeId);
+
+		// Operation Code
+		OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+		oc.setLocalOperationCode((long) MAPOperationCode.cancelLocation);
+		resultLast.setOperationCode(oc);
+
+		if (extensionContainer != null) {
+			CancelLocationResponseImpl req = new CancelLocationResponseImpl(extensionContainer);
+			
+			AsnOutputStream aos = new AsnOutputStream();
+			req.encodeData(aos);
+	
+			Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+			p.setTagClass(req.getTagClass());
+			p.setPrimitive(req.getIsPrimitive());
+			p.setTag(req.getTag());
+			p.setData(aos.toByteArray());
+			resultLast.setParameter(p);
+		}
+
+		this.sendReturnResultLastComponent(resultLast);
+		
 	}
 
 }
