@@ -1,3 +1,25 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
 package org.mobicents.protocols.ss7.map.service.callhandling;
 
 import java.io.IOException;
@@ -20,13 +42,10 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.CallReferenceNumber;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.InterrogationType;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.ProvideRoamingNumberRequest;
-import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ISTSupportIndicator;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PagingArea;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OfferedCamel4CSIs;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.ForwardingReason;
 import org.mobicents.protocols.ss7.map.primitives.AlertingPatternImpl;
 import org.mobicents.protocols.ss7.map.primitives.ExtExternalSignalInfoImpl;
 import org.mobicents.protocols.ss7.map.primitives.ExternalSignalInfoImpl;
@@ -34,9 +53,7 @@ import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
-import org.mobicents.protocols.ss7.map.service.lsm.LCSClientIDImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.PagingAreaImpl;
-import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtBasicServiceCodeImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.OfferedCamel4CSIsImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.SupportedCamelPhasesImpl;
 
@@ -46,8 +63,7 @@ import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Sup
  * @author Lasith Waruna Perera
  * 
  */
-public class ProvideRoamingNumberRequestImpl extends CallHandlingMessageImpl
-		implements ProvideRoamingNumberRequest {
+public class ProvideRoamingNumberRequestImpl extends CallHandlingMessageImpl implements ProvideRoamingNumberRequest {
 
 	private static final int TAG_imsi = 0;
 	private static final int TAG_mscNumber = 1;
@@ -594,7 +610,7 @@ public class ProvideRoamingNumberRequestImpl extends CallHandlingMessageImpl
 		}
 
 		
-		if(mapProtocolVersion <= 3){
+		if(mapProtocolVersion >= 3){
 				// 7
 			if (this.suppressionOfAnnouncement) {
 				// suppressionOfAnnouncement
@@ -951,31 +967,124 @@ public class ProvideRoamingNumberRequestImpl extends CallHandlingMessageImpl
 
 	@Override
 	public String toString() {
-		return "ProvideRoamingNumberRequestImpl [imsi=" + imsi + ", mscNumber="
-				+ mscNumber + ", msisdn=" + msisdn + ", lmsi=" + lmsi
-				+ ", gsmBearerCapability=" + gsmBearerCapability
-				+ ", networkSignalInfo=" + networkSignalInfo
-				+ ", suppressionOfAnnouncement=" + suppressionOfAnnouncement
-				+ ", gmscAddress=" + gmscAddress + ", callReferenceNumber="
-				+ callReferenceNumber + ", orInterrogation=" + orInterrogation
-				+ ", extensionContainer=" + extensionContainer
-				+ ", alertingPattern=" + alertingPattern + ", ccbsCall="
-				+ ccbsCall + ", supportedCamelPhasesInInterrogatingNode="
-				+ supportedCamelPhasesInInterrogatingNode
-				+ ", additionalSignalInfo=" + additionalSignalInfo
-				+ ", orNotSupportedInGMSC=" + orNotSupportedInGMSC
-				+ ", prePagingSupported=" + prePagingSupported
-				+ ", longFTNSupported=" + longFTNSupported + ", suppressVtCsi="
-				+ suppressVtCsi + ", offeredCamel4CSIsInInterrogatingNode="
-				+ offeredCamel4CSIsInInterrogatingNode
-				+ ", mtRoamingRetrySupported=" + mtRoamingRetrySupported
-				+ ", pagingArea=" + pagingArea + ", callPriority="
-				+ callPriority + ", mtrfIndicator=" + mtrfIndicator
-				+ ", oldMSCNumber=" + oldMSCNumber + ", mapProtocolVersion="
-				+ mapProtocolVersion + "]";
-	}
-	
+		StringBuilder sb = new StringBuilder();
+		sb.append(this._PrimitiveName);
+		sb.append(" [");
 
-	
-	
+		if (this.imsi != null) {
+			sb.append("imsi=");
+			sb.append(imsi.toString());
+			sb.append(", ");
+		}
+		if (this.mscNumber != null) {
+			sb.append("mscNumber=");
+			sb.append(mscNumber.toString());
+			sb.append(", ");
+		}
+		if (this.msisdn != null) {
+			sb.append("msisdn=");
+			sb.append(msisdn.toString());
+			sb.append(", ");
+		}
+		if (this.lmsi != null) {
+			sb.append("lmsi=");
+			sb.append(lmsi.toString());
+			sb.append(", ");
+		}
+		if (this.gsmBearerCapability != null) {
+			sb.append("gsmBearerCapability=");
+			sb.append(gsmBearerCapability.toString());
+			sb.append(", ");
+		}
+		if (this.networkSignalInfo != null) {
+			sb.append("networkSignalInfo=");
+			sb.append(networkSignalInfo.toString());
+			sb.append(", ");
+		}
+		if (this.suppressionOfAnnouncement) {
+			sb.append("suppressionOfAnnouncement, ");
+		}
+		if (this.gmscAddress != null) {
+			sb.append("gmscAddress=");
+			sb.append(gmscAddress.toString());
+			sb.append(", ");
+		}
+		if (this.callReferenceNumber != null) {
+			sb.append("callReferenceNumber=");
+			sb.append(callReferenceNumber.toString());
+			sb.append(", ");
+		}
+		if (this.orInterrogation) {
+			sb.append("orInterrogation, ");
+		}
+		if (this.extensionContainer != null) {
+			sb.append("extensionContainer=");
+			sb.append(extensionContainer.toString());
+			sb.append(", ");
+		}
+		if (this.alertingPattern != null) {
+			sb.append("alertingPattern=");
+			sb.append(alertingPattern.toString());
+			sb.append(", ");
+		}
+		if (this.ccbsCall) {
+			sb.append("ccbsCall, ");
+		}
+		if (this.supportedCamelPhasesInInterrogatingNode != null) {
+			sb.append("supportedCamelPhasesInInterrogatingNode=");
+			sb.append(supportedCamelPhasesInInterrogatingNode.toString());
+			sb.append(", ");
+		}
+		if (this.additionalSignalInfo != null) {
+			sb.append("additionalSignalInfo=");
+			sb.append(additionalSignalInfo.toString());
+			sb.append(", ");
+		}
+		if (this.orNotSupportedInGMSC) {
+			sb.append("orNotSupportedInGMSC, ");
+		}
+		if (this.prePagingSupported) {
+			sb.append("prePagingSupported, ");
+		}
+		if (this.longFTNSupported) {
+			sb.append("longFTNSupported, ");
+		}
+		if (this.suppressVtCsi) {
+			sb.append("suppressVtCsi, ");
+		}
+		if (this.offeredCamel4CSIsInInterrogatingNode != null) {
+			sb.append("offeredCamel4CSIsInInterrogatingNode=");
+			sb.append(offeredCamel4CSIsInInterrogatingNode.toString());
+			sb.append(", ");
+		}
+		if (this.mtRoamingRetrySupported) {
+			sb.append("mtRoamingRetrySupported, ");
+		}
+		if (this.pagingArea != null) {
+			sb.append("pagingArea=");
+			sb.append(pagingArea.toString());
+			sb.append(", ");
+		}
+		if (this.callPriority != null) {
+			sb.append("callPriority=");
+			sb.append(callPriority.toString());
+			sb.append(", ");
+		}
+		if (this.mtrfIndicator) {
+			sb.append("mtrfIndicator, ");
+		}
+		if (this.oldMSCNumber != null) {
+			sb.append("oldMSCNumber=");
+			sb.append(oldMSCNumber.toString());
+			sb.append(", ");
+		}
+
+		sb.append("mapProtocolVersion=");
+		sb.append(mapProtocolVersion);
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }
+

@@ -279,6 +279,20 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements
 	}
 
 	@Override
+	public Long addProvideRoamingNumberRequest(IMSI imsi, ISDNAddressString mscNumber, ISDNAddressString msisdn, LMSI lmsi,
+			ExternalSignalInfo gsmBearerCapability, ExternalSignalInfo networkSignalInfo, boolean suppressionOfAnnouncement, ISDNAddressString gmscAddress,
+			CallReferenceNumber callReferenceNumber, boolean orInterrogation, MAPExtensionContainer extensionContainer, AlertingPattern alertingPattern,
+			boolean ccbsCall, SupportedCamelPhases supportedCamelPhasesInInterrogatingNode, ExtExternalSignalInfo additionalSignalInfo,
+			boolean orNotSupportedInGMSC, boolean prePagingSupported, boolean longFTNSupported, boolean suppressVtCsi,
+			OfferedCamel4CSIs offeredCamel4CSIsInInterrogatingNode, boolean mtRoamingRetrySupported, PagingArea pagingArea, EMLPPPriority callPriority,
+			boolean mtrfIndicator, ISDNAddressString oldMSCNumber) throws MAPException {
+		return this.addProvideRoamingNumberRequest(_Timer_Default, imsi, mscNumber, msisdn, lmsi, gsmBearerCapability, networkSignalInfo,
+				suppressionOfAnnouncement, gmscAddress, callReferenceNumber, orInterrogation, extensionContainer, alertingPattern, ccbsCall,
+				supportedCamelPhasesInInterrogatingNode, additionalSignalInfo, orNotSupportedInGMSC, prePagingSupported, longFTNSupported, suppressVtCsi,
+				offeredCamel4CSIsInInterrogatingNode, mtRoamingRetrySupported, pagingArea, callPriority, mtrfIndicator, oldMSCNumber);
+	}
+
+	@Override
 	public Long addProvideRoamingNumberRequest(int customInvokeTimeout,
 			IMSI imsi, ISDNAddressString mscNumber,
 			ISDNAddressString msisdn, LMSI lmsi,
@@ -296,7 +310,6 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements
 			boolean mtRoamingRetrySupported, PagingArea pagingArea,
 			EMLPPPriority callPriority, boolean mtrfIndicator,
 			ISDNAddressString oldMSCNumber) throws MAPException {
-		// TODO Auto-generated method stub
 
 		MAPApplicationContextVersion vers = this.appCntx
 				.getApplicationContextVersion();
@@ -313,34 +326,24 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements
 		else
 			invoke.setTimeout(customInvokeTimeout);
 
-		OperationCode oc = this.mapProviderImpl.getTCAPProvider()
-				.getComponentPrimitiveFactory().createOperationCode();
+		OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
 		oc.setLocalOperationCode((long) MAPOperationCode.provideRoamingNumber);
 		invoke.setOperationCode(oc);
-		
-		if (true) { // validate parameters here...
-			ProvideRoamingNumberRequestImpl req = new ProvideRoamingNumberRequestImpl(
-					imsi, mscNumber, msisdn, lmsi, gsmBearerCapability,
-					networkSignalInfo, suppressionOfAnnouncement, gmscAddress,
-					callReferenceNumber, orInterrogation, extensionContainer,
-					alertingPattern, ccbsCall,
-					supportedCamelPhasesInInterrogatingNode,
-					additionalSignalInfo, orNotSupportedInGMSC,
-					prePagingSupported, longFTNSupported, suppressVtCsi,
-					offeredCamel4CSIsInInterrogatingNode,
-					mtRoamingRetrySupported, pagingArea, callPriority,
-					mtrfIndicator, oldMSCNumber, this.appCntx.getApplicationContextVersion().getVersion());
-			AsnOutputStream aos = new AsnOutputStream();
-			req.encodeData(aos);
 
-			Parameter p = this.mapProviderImpl.getTCAPProvider()
-					.getComponentPrimitiveFactory().createParameter();
-			p.setTagClass(req.getTagClass());
-			p.setPrimitive(req.getIsPrimitive());
-			p.setTag(req.getTag());
-			p.setData(aos.toByteArray());
-			invoke.setParameter(p);
-		}
+		ProvideRoamingNumberRequestImpl req = new ProvideRoamingNumberRequestImpl(imsi, mscNumber, msisdn, lmsi, gsmBearerCapability, networkSignalInfo,
+				suppressionOfAnnouncement, gmscAddress, callReferenceNumber, orInterrogation, extensionContainer, alertingPattern, ccbsCall,
+				supportedCamelPhasesInInterrogatingNode, additionalSignalInfo, orNotSupportedInGMSC, prePagingSupported, longFTNSupported, suppressVtCsi,
+				offeredCamel4CSIsInInterrogatingNode, mtRoamingRetrySupported, pagingArea, callPriority, mtrfIndicator, oldMSCNumber, this.appCntx
+						.getApplicationContextVersion().getVersion());
+		AsnOutputStream aos = new AsnOutputStream();
+		req.encodeData(aos);
+
+		Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+		p.setTagClass(req.getTagClass());
+		p.setPrimitive(req.getIsPrimitive());
+		p.setTag(req.getTag());
+		p.setData(aos.toByteArray());
+		invoke.setParameter(p);
 
 		Long invokeId;
 		try {
@@ -374,51 +377,20 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements
 		oc.setLocalOperationCode((long) MAPOperationCode.provideRoamingNumber);
 		resultLast.setOperationCode(oc);
 	
-		if(true) { // validate parameters here...
-			ProvideRoamingNumberResponseImpl res = new ProvideRoamingNumberResponseImpl(roamingNumber, extensionContainer, releaseResourcesSupported, vmscAddress, this.appCntx.getApplicationContextVersion().getVersion());
-			AsnOutputStream aos = new AsnOutputStream();
-			res.encodeData(aos);
+		ProvideRoamingNumberResponseImpl res = new ProvideRoamingNumberResponseImpl(roamingNumber, extensionContainer, releaseResourcesSupported, vmscAddress,
+				this.appCntx.getApplicationContextVersion().getVersion());
+		AsnOutputStream aos = new AsnOutputStream();
+		res.encodeData(aos);
 
-			Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-			p.setTagClass(res.getTagClass());
-			p.setPrimitive(res.getIsPrimitive());
-			p.setTag(res.getTag());
-			p.setData(aos.toByteArray());
-			resultLast.setParameter(p);
-		}
+		Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+		p.setTagClass(res.getTagClass());
+		p.setPrimitive(res.getIsPrimitive());
+		p.setTag(res.getTag());
+		p.setData(aos.toByteArray());
+		resultLast.setParameter(p);
 
 		this.sendReturnResultLastComponent(resultLast);
 		
 	}
-
-	@Override
-	public Long addProvideRoamingNumberRequest(IMSI imsi,
-			ISDNAddressString mscNumber, ISDNAddressString msisdn, LMSI lmsi,
-			ExternalSignalInfo gsmBearerCapability,
-			ExternalSignalInfo networkSignalInfo,
-			boolean suppressionOfAnnouncement, ISDNAddressString gmscAddress,
-			CallReferenceNumber callReferenceNumber, boolean orInterrogation,
-			MAPExtensionContainer extensionContainer,
-			AlertingPattern alertingPattern, boolean ccbsCall,
-			SupportedCamelPhases supportedCamelPhasesInInterrogatingNode,
-			ExtExternalSignalInfo additionalSignalInfo,
-			boolean orNotSupportedInGMSC, boolean prePagingSupported,
-			boolean longFTNSupported, boolean suppressVtCsi,
-			OfferedCamel4CSIs offeredCamel4CSIsInInterrogatingNode,
-			boolean mtRoamingRetrySupported, PagingArea pagingArea,
-			EMLPPPriority callPriority, boolean mtrfIndicator,
-			ISDNAddressString oldMSCNumber) throws MAPException {
-		return this.addProvideRoamingNumberRequest(_Timer_Default, imsi,
-				mscNumber, msisdn, lmsi, gsmBearerCapability,
-				networkSignalInfo, suppressionOfAnnouncement, gmscAddress,
-				callReferenceNumber, orInterrogation, extensionContainer,
-				alertingPattern, ccbsCall,
-				supportedCamelPhasesInInterrogatingNode, additionalSignalInfo,
-				orNotSupportedInGMSC, prePagingSupported, longFTNSupported,
-				suppressVtCsi, offeredCamel4CSIsInInterrogatingNode,
-				mtRoamingRetrySupported, pagingArea, callPriority,
-				mtrfIndicator, oldMSCNumber);
-	}
-
 
 }

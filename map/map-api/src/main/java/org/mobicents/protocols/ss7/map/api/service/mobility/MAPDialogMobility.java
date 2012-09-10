@@ -68,26 +68,16 @@ public interface MAPDialogMobility extends MAPDialog {
 
 	public void addUpdateLocationResponse(long invokeId, ISDNAddressString hlrNumber, MAPExtensionContainer extensionContainer, boolean addCapability,
 			boolean pagingAreaCapability) throws MAPException;
-	
-	public Long addCancelLocationRequest(int customInvokeTimeout, IMSI imsi,
-			IMSIWithLMSI imsiWithLmsi, CancellationType cancellationType,
-			MAPExtensionContainer extensionContainer,
-			TypeOfUpdate typeOfUpdate, boolean mtrfSupportedAndAuthorized,
-			boolean mtrfSupportedAndNotAuthorized,
-			ISDNAddressString newMSCNumber, ISDNAddressString newVLRNumber,
-			LMSI newLmsi) throws MAPException;
-	
-	public Long addCancelLocationRequest(IMSI imsi,
-			IMSIWithLMSI imsiWithLmsi, CancellationType cancellationType,
-			MAPExtensionContainer extensionContainer,
-			TypeOfUpdate typeOfUpdate, boolean mtrfSupportedAndAuthorized,
-			boolean mtrfSupportedAndNotAuthorized,
-			ISDNAddressString newMSCNumber, ISDNAddressString newVLRNumber,
-			LMSI newLmsi) throws MAPException;
 
-	public void addCancelLocationResponse(long invokeId,
-			MAPExtensionContainer extensionContainer) throws MAPException;
+	public Long addCancelLocationRequest(int customInvokeTimeout, IMSI imsi, IMSIWithLMSI imsiWithLmsi, CancellationType cancellationType,
+			MAPExtensionContainer extensionContainer, TypeOfUpdate typeOfUpdate, boolean mtrfSupportedAndAuthorized, boolean mtrfSupportedAndNotAuthorized,
+			ISDNAddressString newMSCNumber, ISDNAddressString newVLRNumber, LMSI newLmsi) throws MAPException;
 
+	public Long addCancelLocationRequest(IMSI imsi, IMSIWithLMSI imsiWithLmsi, CancellationType cancellationType, MAPExtensionContainer extensionContainer,
+			TypeOfUpdate typeOfUpdate, boolean mtrfSupportedAndAuthorized, boolean mtrfSupportedAndNotAuthorized, ISDNAddressString newMSCNumber,
+			ISDNAddressString newVLRNumber, LMSI newLmsi) throws MAPException;
+
+	public void addCancelLocationResponse(long invokeId, MAPExtensionContainer extensionContainer) throws MAPException;
 
 	// -- Authentication management services
 	public Long addSendAuthenticationInfoRequest(IMSI imsi, int numberOfRequestedVectors, boolean segmentationProhibited, boolean immediateResponsePreferred,

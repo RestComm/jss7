@@ -1,3 +1,25 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
 package org.mobicents.protocols.ss7.map.service.callhandling;
 
 import java.io.IOException;
@@ -23,7 +45,7 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
  * @author Lasith Waruna Perera
  * 
  */
-public class ProvideRoamingNumberResponseImpl extends CallHandlingMessageImpl implements ProvideRoamingNumberResponse{
+public class ProvideRoamingNumberResponseImpl extends CallHandlingMessageImpl implements ProvideRoamingNumberResponse {
 
 	public ISDNAddressString roamingNumber;
 	public MAPExtensionContainer extensionContainer;
@@ -267,13 +289,35 @@ public class ProvideRoamingNumberResponseImpl extends CallHandlingMessageImpl im
 
 	@Override
 	public String toString() {
-		return "ProvideRoamingNumberResponseImpl [roamingNumber="
-				+ roamingNumber + ", extensionContainer=" + extensionContainer
-				+ ", releaseResourcesSupported=" + releaseResourcesSupported
-				+ ", vmscAddress=" + vmscAddress + ", mapProtocolVersion="
-				+ mapProtocolVersion + "]";
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		if (this.roamingNumber != null) {
+			sb.append("roamingNumber=");
+			sb.append(roamingNumber.toString());
+			sb.append(", ");
+		}
+		if (this.extensionContainer != null) {
+			sb.append("extensionContainer=");
+			sb.append(extensionContainer.toString());
+			sb.append(", ");
+		}
+		if (this.releaseResourcesSupported) {
+			sb.append("releaseResourcesSupported, ");
+		}
+		if (this.vmscAddress != null) {
+			sb.append("vmscAddress=");
+			sb.append(vmscAddress.toString());
+			sb.append(", ");
+		}
+
+		sb.append("mapProtocolVersion=");
+		sb.append(mapProtocolVersion);
+
+		sb.append("]");
+
+		return sb.toString();
 	}
-	
-
-
 }
+

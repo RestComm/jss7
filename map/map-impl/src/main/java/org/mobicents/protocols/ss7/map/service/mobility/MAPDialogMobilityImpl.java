@@ -463,6 +463,15 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 	}
 
 	@Override
+	public Long addCancelLocationRequest(IMSI imsi, IMSIWithLMSI imsiWithLmsi, CancellationType cancellationType, MAPExtensionContainer extensionContainer,
+			TypeOfUpdate typeOfUpdate, boolean mtrfSupportedAndAuthorized, boolean mtrfSupportedAndNotAuthorized, ISDNAddressString newMSCNumber,
+			ISDNAddressString newVLRNumber, LMSI newLmsi) throws MAPException {
+
+		return this.addCancelLocationRequest(_Timer_Default, imsi, imsiWithLmsi, cancellationType, extensionContainer, typeOfUpdate,
+				mtrfSupportedAndAuthorized, mtrfSupportedAndNotAuthorized, newMSCNumber, newVLRNumber, newLmsi);
+	}
+
+	@Override
 	public Long addCancelLocationRequest(int customInvokeTimeout, IMSI imsi,
 			IMSIWithLMSI imsiWithLmsi, CancellationType cancellationType,
 			MAPExtensionContainer extensionContainer,
@@ -476,7 +485,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 						&& this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.appCntx
 						.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
 			throw new MAPException(
-					"Bad application context name for UpdateLocationRequest: must be networkLocUpContext_V1, V2 or V3");
+					"Bad application context name for CancelLocationRequest: must be networkLocUpContext_V1, V2 or V3");
 
 		Invoke invoke = this.mapProviderImpl.getTCAPProvider()
 				.getComponentPrimitiveFactory().createTCInvokeRequest();
@@ -530,7 +539,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 				|| (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version1
 						&& this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2 && 
 						this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
-			throw new MAPException("Bad application context name for UpdateLocationResponse: must be networkLocUpContext_V1, V2 or V3");
+			throw new MAPException("Bad application context name for CancelLocationResponse: must be networkLocUpContext_V1, V2 or V3");
 
 		ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
 
@@ -540,9 +549,9 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 		OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
 		oc.setLocalOperationCode((long) MAPOperationCode.cancelLocation);
 		resultLast.setOperationCode(oc);
-		
+
 		if (extensionContainer != null) {
-			CancelLocationResponseImpl req = new CancelLocationResponseImpl(extensionContainer, this.appCntx.getApplicationContextVersion().getVersion());
+			CancelLocationResponseImpl req = new CancelLocationResponseImpl(extensionContainer);
 			
 			AsnOutputStream aos = new AsnOutputStream();
 			req.encodeData(aos);
@@ -557,22 +566,6 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
 		this.sendReturnResultLastComponent(resultLast);
 		
-	}
-
-
-	@Override
-	public Long addCancelLocationRequest(IMSI imsi, IMSIWithLMSI imsiWithLmsi,
-			CancellationType cancellationType,
-			MAPExtensionContainer extensionContainer,
-			TypeOfUpdate typeOfUpdate, boolean mtrfSupportedAndAuthorized,
-			boolean mtrfSupportedAndNotAuthorized,
-			ISDNAddressString newMSCNumber, ISDNAddressString newVLRNumber,
-			LMSI newLmsi) throws MAPException {
-
-		return this.addCancelLocationRequest(_Timer_Default, imsi, imsiWithLmsi,
-				cancellationType, extensionContainer, typeOfUpdate,
-				mtrfSupportedAndAuthorized, mtrfSupportedAndNotAuthorized,
-				newMSCNumber, newVLRNumber, newLmsi);
 	}
 
 }

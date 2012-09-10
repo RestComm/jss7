@@ -31,13 +31,8 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
-import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
-import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
-import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
-import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
-import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.testng.annotations.Test;
 
 
@@ -76,12 +71,11 @@ public class CancelLocationResponseTest {
 		AsnInputStream asn = new AsnInputStream(rawData);
 
 		int tag = asn.readTag();
-		CancelLocationResponseImpl asc = new CancelLocationResponseImpl(3);
+		CancelLocationResponseImpl asc = new CancelLocationResponseImpl();
 		asc.decodeAll(asn);
 
 		assertEquals( tag,Tag.SEQUENCE);
 		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
-		assertEquals(asc.getMapProtocolVersion(), 3);
 		assertNotNull(asc.getExtensionContainer());
 	}
 
@@ -89,8 +83,7 @@ public class CancelLocationResponseTest {
 	public void testEncode() throws Exception {
 
 		MAPExtensionContainer extensionContainer =  GetTestExtensionContainer();
-		long mapProtocolVersion =3;
-		CancelLocationResponseImpl asc = new CancelLocationResponseImpl(extensionContainer, mapProtocolVersion);
+		CancelLocationResponseImpl asc = new CancelLocationResponseImpl(extensionContainer);
 
 		AsnOutputStream asnOS = new AsnOutputStream();
 		asc.encodeAll(asnOS);

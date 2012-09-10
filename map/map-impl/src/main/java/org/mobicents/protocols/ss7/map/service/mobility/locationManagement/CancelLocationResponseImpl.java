@@ -1,3 +1,25 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
 package org.mobicents.protocols.ss7.map.service.mobility.locationManagement;
 
 import java.io.IOException;
@@ -13,7 +35,6 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancelLocationResponse;
-import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.MobilityMessageImpl;
 
@@ -24,22 +45,17 @@ import org.mobicents.protocols.ss7.map.service.mobility.MobilityMessageImpl;
  * @author Lasith Waruna Perera
  * 
  */
-public class CancelLocationResponseImpl extends MobilityMessageImpl implements
-		CancelLocationResponse {
+public class CancelLocationResponseImpl extends MobilityMessageImpl implements CancelLocationResponse {
 
 	private MAPExtensionContainer extensionContainer;
-	private long mapProtocolVersion;
 	public static final String _PrimitiveName = "CancelLocationResponse";
 
-	public CancelLocationResponseImpl(long mapProtocolVersion) {
-		this.mapProtocolVersion = mapProtocolVersion;
+	public CancelLocationResponseImpl() {
 	}
 	
-	public CancelLocationResponseImpl(MAPExtensionContainer extensionContainer,
-			long mapProtocolVersion) {
+	public CancelLocationResponseImpl(MAPExtensionContainer extensionContainer) {
 		super();
 		this.extensionContainer = extensionContainer;
-		this.mapProtocolVersion = mapProtocolVersion;
 	}
 	
 	@Override
@@ -122,16 +138,36 @@ public class CancelLocationResponseImpl extends MobilityMessageImpl implements
 	private void _decode(AsnInputStream ansIS, int length)
 			throws MAPParsingComponentException, IOException, AsnException {
 		this.extensionContainer = null;
-		
+
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		if (ais.available() == 0)
-			return;
-		int tag = ais.readTag();
-		if (ais.isTagPrimitive()) {
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+		while (true) {
+			if (ais.available() == 0) {
+				break;
+			}
+
+			int tag = ais.readTag(); 
+
+			switch (ais.getTagClass()) {
+			case Tag.CLASS_UNIVERSAL:
+				switch (tag) {
+				case Tag.SEQUENCE:
+					if (ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.extensionContainer = new MAPExtensionContainerImpl();
+					((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+					break;
+				default:
+					ais.advanceElement();
+					break;
+				}
+				break;
+			default:
+				ais.advanceElement();
+				break;
+			}
 		}
-		this.extensionContainer = new MAPExtensionContainerImpl();
-		((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
 	}
 
 	@Override
@@ -174,14 +210,19 @@ public class CancelLocationResponseImpl extends MobilityMessageImpl implements
 
 	@Override
 	public String toString() {
-		return "CancelLocationResponseImpl [extensionContainer="
-				+ extensionContainer + ", mapProtocolVersion="
-				+ mapProtocolVersion + "]";
-	}
-	
-	
-	public long getMapProtocolVersion(){
-		return mapProtocolVersion;
-	}
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
 
+		if (this.extensionContainer != null) {
+			sb.append("extensionContainer=");
+			sb.append(extensionContainer.toString());
+			sb.append(", ");
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }
+

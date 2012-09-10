@@ -131,7 +131,6 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 			}
 
 		// -- Location management services
-		// -- Fault recovery
 		case networkLocUpContext:
 			if (vers >= 1 && vers <= 3) {
 				return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
@@ -144,16 +143,18 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
 			}
 		case locationCancellationContext:
-					if (vers >= 1 && vers <= 3) {
-						return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
-					} else if (vers > 3) {
-						long[] altOid = dialogApplicationContext.getOID();
-						altOid[7] = 3;
-						ApplicationContextName alt = TcapFactory.createApplicationContextName(altOid);
-						return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect, alt);
-					} else {
-						return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
-					}
+			if (vers >= 1 && vers <= 3) {
+				return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
+			} else if (vers > 3) {
+				long[] altOid = dialogApplicationContext.getOID();
+				altOid[7] = 3;
+				ApplicationContextName alt = TcapFactory.createApplicationContextName(altOid);
+				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect, alt);
+			} else {
+				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
+			}
+			
+		// -- Fault recovery
 
 		// -- International mobile equipment identities management services
 		case equipmentMngtContext:
@@ -352,8 +353,6 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 			}
 		}
 	}
-	
-	
 
 	private void cancelLocationRequest(Parameter parameter,
 			MAPDialogMobilityImpl mapDialogImpl, Long invokeId)
@@ -410,7 +409,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 		long version = mapDialogImpl.getApplicationContext()
 				.getApplicationContextVersion().getVersion();
 
-		CancelLocationResponseImpl ind = new CancelLocationResponseImpl(version);
+		CancelLocationResponseImpl ind = new CancelLocationResponseImpl();
 		
 		if (parameter != null) {
 			if (parameter.getTag() != Tag.SEQUENCE

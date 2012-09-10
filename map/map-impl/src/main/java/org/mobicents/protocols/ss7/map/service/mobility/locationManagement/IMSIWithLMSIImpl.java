@@ -1,3 +1,25 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
 package org.mobicents.protocols.ss7.map.service.mobility.locationManagement;
 
 import java.io.IOException;
@@ -13,9 +35,8 @@ import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.IMSIWithLMSI;
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
-import org.mobicents.protocols.ss7.map.primitives.LAIFixedLengthImpl;
 import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
-import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
+import org.mobicents.protocols.ss7.map.primitives.SequenceBase;
 
 
 /**
@@ -23,70 +44,22 @@ import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
  * @author Lasith Waruna Perera
  * 
  */
-public class IMSIWithLMSIImpl implements IMSIWithLMSI, MAPAsnPrimitive  {
+public class IMSIWithLMSIImpl extends SequenceBase implements IMSIWithLMSI {
 	
 	private IMSI imsi;
 	private LMSI lmsi;
-	
-	public IMSIWithLMSIImpl(){
-		
+
+	public IMSIWithLMSIImpl() {
+		super("IMSIWithLMSI");
 	}
 
 	public IMSIWithLMSIImpl(IMSI imsi, LMSI lmsi) {
-		super();
+		super("IMSIWithLMSI");
 		this.imsi = imsi;
 		this.lmsi = lmsi;
 	}
 
-	public static final String _PrimitiveName = "IMSIWithLMSI";
-	
-	@Override
-	public int getTag() throws MAPException {
-		return Tag.SEQUENCE;
-	}
-
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
-
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
-
-	@Override
-	public void decodeAll(AsnInputStream ansIS)
-			throws MAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding "+_PrimitiveName +": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding "+_PrimitiveName +": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length)
-			throws MAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding "+_PrimitiveName +" : " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding "+_PrimitiveName +": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-	
-	
-
-	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+	protected void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
 		this.imsi = null;
 		this.lmsi = null;
@@ -100,43 +73,26 @@ public class IMSIWithLMSIImpl implements IMSIWithLMSI, MAPAsnPrimitive  {
 			
 			int tag = ais.readTag();
 			
-			if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive())
-				throw new MAPParsingComponentException("Error while decoding "+_PrimitiveName +": Primitive has bad tag class or is not primitive",
-						MAPParsingComponentExceptionReason.MistypedParameter);
-	
-			switch (num ) {
-				case 0:
-					this.imsi = new IMSIImpl();
-					((IMSIImpl) this.imsi).decodeAll(ais);
-					break;
-				case 1:
-					this.lmsi = new LMSIImpl();
-					((LMSIImpl) this.lmsi).decodeAll(ais);
-					break;
-				default:
-					throw new MAPParsingComponentException("Error while decoding "+_PrimitiveName +": bad choice tag",
+			switch (num) {
+			case 0:
+				if (tag != Tag.STRING_OCTET && ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive())
+					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter imsi has bad tag class or is not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
+				this.imsi = new IMSIImpl();
+				((IMSIImpl) this.imsi).decodeAll(ais);
+				break;
+			case 1:
+				if (tag != Tag.STRING_OCTET && ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive())
+					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter lmsi has bad tag class or is not primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
+				this.lmsi = new LMSIImpl();
+				((LMSIImpl) this.lmsi).decodeAll(ais);
+				break;
+			default:
+				ais.advanceElement();
+				break;
 			}
 			num++;
-		}
-	}
-
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-		
-	}
-
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag)
-			throws MAPException {
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding "+_PrimitiveName +": " + e.getMessage(), e);
 		}
 	}
 
@@ -146,12 +102,9 @@ public class IMSIWithLMSIImpl implements IMSIWithLMSI, MAPAsnPrimitive  {
 		if (this.imsi == null || this.lmsi == null ) {
 			throw new MAPException("Error while decoding "+_PrimitiveName +" : lmsi or lmsi is null");
 		}
-		if (this.imsi != null) {
-			((IMSIImpl) this.imsi).encodeAll(asnOs);
-		}
-		if(this.lmsi  !=null) {
-			((LMSIImpl) this.lmsi).encodeAll(asnOs);
-		}
+
+		((IMSIImpl) this.imsi).encodeAll(asnOs);
+		((LMSIImpl) this.lmsi).encodeAll(asnOs);
 	}
 
 	@Override
@@ -162,5 +115,28 @@ public class IMSIWithLMSIImpl implements IMSIWithLMSI, MAPAsnPrimitive  {
 	@Override
 	public LMSI getLmsi() {
 		return this.lmsi;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		if (this.imsi!= null) {
+			sb.append("imsi=");
+			sb.append(imsi.toString());
+			sb.append(", ");
+		}
+
+		if (this.lmsi != null) {
+			sb.append("lmsi=");
+			sb.append(lmsi.toString());
+			sb.append(", ");
+		}
+
+		sb.append("]");
+
+		return sb.toString();
 	}
 }

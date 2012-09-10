@@ -155,22 +155,27 @@ public class MAPServiceCallHandlingImpl extends MAPServiceBaseImpl implements MA
 		Long ocValue = oc.getLocalOperationCode();
 		if (ocValue == null)
 			new MAPParsingComponentException("", MAPParsingComponentExceptionReason.UnrecognizedOperation);
+		MAPApplicationContextName acn = mapDialog.getApplicationContext().getApplicationContextName();
+		int vers = mapDialog.getApplicationContext().getApplicationContextVersion().getVersion();
+		int ocValueInt = (int) (long)ocValue;
 
-		if(ocValue.intValue() ==  MAPOperationCode.sendRoutingInfo) {
-		  if (compType == ComponentType.Invoke) 
-			 this.sendRoutingInformationRequest(parameter, mapDialogImpl, invokeId);
-		  else if(compType == ComponentType.ReturnResult || 
-				  compType == ComponentType.ReturnResultLast)
-			      this.sendRoutingInformationResponse(parameter, mapDialogImpl, invokeId);
+		switch (ocValueInt) {
+		case MAPOperationCode.sendRoutingInfo:
+			if (compType == ComponentType.Invoke)
+				this.sendRoutingInformationRequest(parameter, mapDialogImpl, invokeId);
+			else if (compType == ComponentType.ReturnResult || compType == ComponentType.ReturnResultLast)
+				this.sendRoutingInformationResponse(parameter, mapDialogImpl, invokeId);
+			break;
+
+		case MAPOperationCode.provideRoamingNumber:
+			if (compType == ComponentType.Invoke)
+				this.provideRoamingNumberRequest(parameter, mapDialogImpl, invokeId);
+			else if (compType == ComponentType.ReturnResult || compType == ComponentType.ReturnResultLast)
+				this.provideRoamingNumberResponse(parameter, mapDialogImpl, invokeId);
+			break;
+		default:
+			new MAPParsingComponentException("", MAPParsingComponentExceptionReason.UnrecognizedOperation);
 		}
-		else if(ocValue.intValue() ==  MAPOperationCode.provideRoamingNumber) {
-			  if (compType == ComponentType.Invoke) 
-					 this.provideRoamingNumberRequest(parameter, mapDialogImpl, invokeId);
-				  else if(compType == ComponentType.ReturnResult || 
-						  compType == ComponentType.ReturnResultLast)
-					      this.provideRoamingNumberResponse(parameter, mapDialogImpl, invokeId);
-		}
-		else throw new MAPParsingComponentException("", MAPParsingComponentExceptionReason.UnrecognizedOperation);
 	}
 	
 	private void sendRoutingInformationRequest(Parameter parameter, MAPDialogCallHandlingImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
@@ -241,8 +246,7 @@ public class MAPServiceCallHandlingImpl extends MAPServiceBaseImpl implements MA
 			}
 		}
 	}
-	
-	
+
 	private void provideRoamingNumberRequest(Parameter parameter, MAPDialogCallHandlingImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
 		long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
 		ProvideRoamingNumberRequestImpl ind = new ProvideRoamingNumberRequestImpl(version);
@@ -282,17 +286,16 @@ public class MAPServiceCallHandlingImpl extends MAPServiceBaseImpl implements MA
 			throw new MAPParsingComponentException("Error while decoding ProvideRoamingNumberResponseIndication: Parameter is mandatory but not found",
 			MAPParsingComponentExceptionReason.MistypedParameter);
 
-		if (version >= 3) { 
-		   if (parameter.getTag() != Tag.SEQUENCE || 
-			  parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
-			  throw new MAPParsingComponentException(
-			  "Error while decoding ProvideRoamingNumberResponseIndication: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
-			  MAPParsingComponentExceptionReason.MistypedParameter);
+		if (version >= 3) {
+			if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+				throw new MAPParsingComponentException(
+						"Error while decoding ProvideRoamingNumberResponseIndication: Bad tag or tagClass or parameter is primitive, received tag="
+								+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
 		} else {
-			   if (parameter.getTag() != Tag.STRING_OCTET || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || !parameter.isPrimitive())
-			      throw new MAPParsingComponentException(
-				  "Error while decoding ProvideRoamingNumberResponseIndication: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
-				  MAPParsingComponentExceptionReason.MistypedParameter);
+			if (parameter.getTag() != Tag.STRING_OCTET || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || !parameter.isPrimitive())
+				throw new MAPParsingComponentException(
+						"Error while decoding ProvideRoamingNumberResponseIndication: Bad tag or tagClass or parameter is primitive, received tag="
+								+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 		
 		byte[] buf = parameter.getData();

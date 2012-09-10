@@ -40,16 +40,10 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancellationType;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.IMSIWithLMSI;
-import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LocationArea;
-import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedLCSCapabilitySets;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.TypeOfUpdate;
-import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VLRCapability;
-import org.mobicents.protocols.ss7.map.primitives.GSNAddressImpl;
-import org.mobicents.protocols.ss7.map.primitives.IMEIImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
-import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.testng.annotations.Test;
 
 /**
@@ -60,10 +54,14 @@ import org.testng.annotations.Test;
 public class CancelLocationRequestTest {
 
 	private byte[] getEncodedData() {
-		return new byte[] {-93, 72, 4, 5, 17, 17, 33, 34, 34, 2, 1, 1, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -128, 1, 0, -125, 4, -111, 34, 34, -8, -124, 4, -111, 34, 34, -7, -123, 4, 0, 3, 98, 39};
+		return new byte[] { -93, 72, 4, 5, 17, 17, 33, 34, 34, 2, 1, 1, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48,
+				11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -128, 1, 0, -125, 4, -111, 34, 34, -8, -124, 4, -111, 34, 34, -7, -123, 4, 0,
+				3, 98, 39 };
 	}
 	private byte[] getEncodedData1() {
-		return new byte[] {-93, 80, 48, 13, 4, 5, 17, 17, 33, 34, 34, 4, 4, 0, 3, 98, 39, 2, 1, 1, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -128, 1, 0, -125, 4, -111, 34, 34, -8, -124, 4, -111, 34, 34, -7, -123, 4, 0, 3, 98, 39 };
+		return new byte[] { -93, 84, 48, 13, 4, 5, 17, 17, 33, 34, 34, 4, 4, 0, 3, 98, 39, 2, 1, 1, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14,
+				15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -128, 1, 0, -127, 0, -126, 0, -125, 4, -111, 34,
+				34, -8, -124, 4, -111, 34, 34, -7, -123, 4, 0, 3, 98, 39 };
 	}
 
 	private byte[] getEncodedData2() {
@@ -156,8 +154,8 @@ public class CancelLocationRequestTest {
 		assertEquals(cancellationType.getCode(), 1);
 		assertNotNull(extensionContainer);
 		assertEquals(typeOfUpdate.getCode(),0);
-		assertFalse(mtrfSupportedAndAuthorized);
-		assertFalse(mtrfSupportedAndNotAuthorized);
+		assertTrue(mtrfSupportedAndAuthorized);
+		assertTrue(mtrfSupportedAndNotAuthorized);
 		assertTrue(newMSCNumber.getAddress().equals("22228"));
 		assertEquals(newMSCNumber.getAddressNature(), AddressNature.international_number);		
 		assertEquals(newMSCNumber.getNumberingPlan(), NumberingPlan.ISDN);		
@@ -287,6 +285,8 @@ public class CancelLocationRequestTest {
 		
 		
 		
+		mtrfSupportedAndAuthorized = true;
+		mtrfSupportedAndNotAuthorized = true;
 		asc = new CancelLocationRequestImpl(null, imsiWithLmsi, cancellationType, extensionContainer, typeOfUpdate, mtrfSupportedAndAuthorized, mtrfSupportedAndNotAuthorized, newMSCNumber, newVLRNumber, newLmsi, mapProtocolVersion);
 
 		asnOS = new AsnOutputStream();

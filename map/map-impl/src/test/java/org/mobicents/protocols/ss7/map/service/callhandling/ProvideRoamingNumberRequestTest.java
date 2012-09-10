@@ -101,12 +101,32 @@ public class ProvideRoamingNumberRequestTest {
 	}
 			 
 	private byte[] getEncodedData() {
-		return new byte[] {48, -126, 1, 5, -128, 8, 16, 33, 2, 2, 16, -119, 34, -9, -127, 4, -111, 34, 34, -8, -126, 4, -111, 34, 34, -9, -124, 4, 0, 3, 98, 39, -91, 50, 10, 1, 2, 4, 4, 10, 20, 30, 40, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -90, 50, 10, 1, 2, 4, 4, 10, 20, 30, 40, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -120, 4, -111, 34, 34, -10, -119, 5, 19, -6, 61, 61, -22, -85, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -116, 1, 8, -113, 2, 4, -64, -82, 47, 4, 4, 10, 20, 30, 40, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -108, 2, 1, 14, -74, 4, -127, 2, 0, 123, -105, 1, 0, -103, 4, -111, 34, 34, -11};
+		return new byte[] { 48, -126, 1, 5, -128, 8, 16, 33, 2, 2, 16, -119, 34, -9, -127, 4, -111, 34, 34, -8, -126, 4, -111, 34, 34, -9, -124, 4, 0, 3, 98,
+				39, -91, 50, 10, 1, 2, 4, 4, 10, 20, 30, 40, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3,
+				42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -90, 50, 10, 1, 2, 4, 4, 10, 20, 30, 40, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12,
+				13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -120, 4, -111, 34, 34, -10, -119, 5, 19,
+				-6, 61, 61, -22, -85, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24,
+				25, 26, -95, 3, 31, 32, 33, -116, 1, 8, -113, 2, 4, -64, -82, 47, 4, 4, 10, 20, 30, 40, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13,
+				14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -108, 2, 1, 14, -74, 4, -127, 2, 0, 123,
+				-105, 1, 0, -103, 4, -111, 34, 34, -11 };
 	}
 	
-	
 	private byte[] getEncodedData1() {
-		return new byte[] {48, -127, -124, -128, 8, 16, 33, 2, 2, 16, -119, 34, -9, -127, 4, -111, 34, 34, -8, -126, 4, -111, 34, 34, -9, -124, 4, 0, 3, 98, 39, -91, 50, 10, 1, 2, 4, 4, 10, 20, 30, 40, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -90, 50, 10, 1, 2, 4, 4, 10, 20, 30, 40, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33};
+		return new byte[] { 48, -127, -124, -128, 8, 16, 33, 2, 2, 16, -119, 34, -9, -127, 4, -111, 34, 34, -8, -126, 4, -111, 34, 34, -9, -124, 4, 0, 3, 98,
+				39, -91, 50, 10, 1, 2, 4, 4, 10, 20, 30, 40, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3,
+				42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -90, 50, 10, 1, 2, 4, 4, 10, 20, 30, 40, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12,
+				13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
+	}
+	 
+	private byte[] getEncodedDataFull() {
+		return new byte[] { 48, -126, 1, 23, -128, 8, 16, 33, 2, 2, 16, -119, 34, -9, -127, 4, -111, 34, 34, -8, -126, 4, -111, 34, 34, -9, -124, 4, 0, 3, 98,
+				39, -91, 50, 10, 1, 2, 4, 4, 10, 20, 30, 40, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3,
+				42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -90, 50, 10, 1, 2, 4, 4, 10, 20, 30, 40, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12,
+				13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -121, 0, -120, 4, -111, 34, 34, -10,
+				-119, 5, 19, -6, 61, 61, -22, -118, 0, -85, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42,
+				3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -116, 1, 8, -115, 0, -113, 2, 4, -64, -82, 47, 4, 4, 10, 20, 30, 40, 48, 39, -96, 32, 48, 10,
+				6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -112, 0, -111,
+				0, -110, 0, -109, 0, -108, 2, 1, 14, -107, 0, -74, 4, -127, 2, 0, 123, -105, 1, 0, -104, 0, -103, 4, -111, 34, 34, -11 };
 	}
 	
 	public byte[] getDataLmsi() {
@@ -134,7 +154,7 @@ public class ProvideRoamingNumberRequestTest {
 	
 	@Test(groups = { "functional.decode", "service.callhandling" })
 	public void testDecode() throws Exception {
-	
+
 		AsnInputStream asn = new AsnInputStream(getEncodedData());
 		int tag = asn.readTag();
 		
@@ -294,6 +314,89 @@ public class ProvideRoamingNumberRequestTest {
 		assertFalse(mtrfIndicator);
 		assertNull(oldMSCNumber);
 		assertEquals(mapProtocolVersion, 2);
+
+
+		// Full
+		asn = new AsnInputStream(getEncodedDataFull());
+		tag = asn.readTag();
+
+		prn = new ProvideRoamingNumberRequestImpl(3);
+		prn.decodeAll(asn);
+
+		assertEquals( tag,Tag.SEQUENCE);
+		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
+		assertEquals(prn.getMapProtocolVersion(), 3);
+		
+		
+		imsi = prn.getImsi();
+		mscNumber = prn.getMscNumber();
+		msisdn = prn.getMsisdn();
+		lmsi = prn.getLmsi();
+		gsmBearerCapability = prn.getGsmBearerCapability();
+		networkSignalInfo = prn.getNetworkSignalInfo();
+		suppressionOfAnnouncement = prn.getSuppressionOfAnnouncement();
+		gmscAddress = prn.getGmscAddress();
+		callReferenceNumber = prn.getCallReferenceNumber();
+		orInterrogation = prn.getOrInterrogation();
+		extensionContainer = prn.getExtensionContainer();
+		alertingPattern = prn.getAlertingPattern();
+		ccbsCall = prn.getCcbsCall();
+		supportedCamelPhasesInInterrogatingNode = prn.getSupportedCamelPhasesInInterrogatingNode();
+		additionalSignalInfo = prn.getAdditionalSignalInfo();
+		orNotSupportedInGMSC = prn.getOrNotSupportedInGMSC();
+		prePagingSupported = prn.getPrePagingSupported();
+		longFTNSupported = prn.getLongFTNSupported();
+		suppressVtCsi = prn.getSuppressVtCsi();
+		offeredCamel4CSIsInInterrogatingNode = prn.getOfferedCamel4CSIsInInterrogatingNode();
+		mtRoamingRetrySupported= prn.getMtRoamingRetrySupported();
+		pagingArea = prn.getPagingArea();
+		callPriority = prn.getCallPriority();
+		mtrfIndicator = prn.getMtrfIndicator();
+		oldMSCNumber = prn.getOldMSCNumber();
+		mapProtocolVersion = prn.getMapProtocolVersion();
+		
+		
+		assertNotNull(imsi);
+		assertEquals(imsi.getData(), "011220200198227");
+		assertNotNull(mscNumber);
+		assertEquals(mscNumber.getAddressNature(), AddressNature.international_number);
+		assertEquals(mscNumber.getNumberingPlan(), NumberingPlan.ISDN);
+		assertEquals(mscNumber.getAddress(), "22228");	
+		assertNotNull(msisdn);
+		assertEquals(msisdn.getAddressNature(), AddressNature.international_number);
+		assertEquals(msisdn.getNumberingPlan(), NumberingPlan.ISDN);
+		assertEquals(msisdn.getAddress(), "22227");	
+		assertNotNull(lmsi);
+		assertTrue(Arrays.equals(lmsi.getData(), getDataLmsi()));
+		assertNotNull(gsmBearerCapability);
+		assertNotNull(networkSignalInfo);
+		assertTrue(suppressionOfAnnouncement);
+		assertNotNull(gmscAddress);
+		assertEquals(gmscAddress.getAddressNature(), AddressNature.international_number);
+		assertEquals(gmscAddress.getNumberingPlan(), NumberingPlan.ISDN);
+		assertEquals(gmscAddress.getAddress(), "22226");
+		assertNotNull(callReferenceNumber);
+		assertTrue(Arrays.equals(callReferenceNumber.getData(), getCallReferenceNumber()));
+		assertTrue(orInterrogation);
+		assertNotNull(extensionContainer);
+		assertNotNull(alertingPattern);
+		assertTrue(ccbsCall);
+		assertNotNull(supportedCamelPhasesInInterrogatingNode);
+		assertNotNull(additionalSignalInfo);
+		assertTrue(orNotSupportedInGMSC);
+		assertTrue(prePagingSupported);
+		assertTrue(longFTNSupported);
+		assertTrue(suppressVtCsi);
+		assertNotNull(offeredCamel4CSIsInInterrogatingNode);
+		assertTrue(mtRoamingRetrySupported);
+		assertNotNull(pagingArea);
+		assertNotNull(callPriority);
+		assertTrue(mtrfIndicator);
+		assertNotNull(oldMSCNumber);
+		assertEquals(oldMSCNumber.getAddressNature(), AddressNature.international_number);
+		assertEquals(oldMSCNumber.getNumberingPlan(), NumberingPlan.ISDN);
+		assertEquals(oldMSCNumber.getAddress(), "22225");
+		assertEquals(mapProtocolVersion, 3);
 		
 	} 
 	
@@ -362,9 +465,40 @@ public class ProvideRoamingNumberRequestTest {
 
 		AsnOutputStream asnOS = new AsnOutputStream();
 		prn.encodeAll(asnOS);
-
 		byte[] encodedData = asnOS.toByteArray();
 		assertTrue(Arrays.equals(getEncodedData(), encodedData));
+
+		
+		// Full
+		suppressionOfAnnouncement = true;
+		orInterrogation = true;
+		ccbsCall = true;
+		orNotSupportedInGMSC = true;
+		prePagingSupported = true;
+		longFTNSupported = true;
+		suppressVtCsi = true;
+		mtRoamingRetrySupported = true;
+		mtrfIndicator = true;
+		mapProtocolVersion = 3;
+
+		prn = new ProvideRoamingNumberRequestImpl(
+				imsi, mscNumber, msisdn, lmsi, gsmBearerCapability,
+				networkSignalInfo, suppressionOfAnnouncement, gmscAddress,
+				callReferenceNumber, orInterrogation, extensionContainer,
+				alertingPattern, ccbsCall,
+				supportedCamelPhasesInInterrogatingNode, additionalSignalInfo,
+				orNotSupportedInGMSC, prePagingSupported, longFTNSupported,
+				suppressVtCsi, offeredCamel4CSIsInInterrogatingNode,
+				mtRoamingRetrySupported, pagingArea, callPriority,
+				mtrfIndicator, oldMSCNumber, mapProtocolVersion);
+
+		asnOS = new AsnOutputStream();
+		prn.encodeAll(asnOS);
+		encodedData = asnOS.toByteArray();
+		assertTrue(Arrays.equals(getEncodedDataFull(), encodedData));
+
+		
+		// 2
 		mapProtocolVersion = 2;
 		prn = new ProvideRoamingNumberRequestImpl(
 				imsi, mscNumber, msisdn, lmsi, gsmBearerCapability,
