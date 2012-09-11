@@ -34,11 +34,13 @@ import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 public class IMEIImpl extends TbcdString implements IMEI {
 
 	public IMEIImpl() {
-		super(8, 8, "IMEI");
+		// There are some fake mobiles that IMEI length != 15
+		super(1, 8, "IMEI");
 	}
 
 	public IMEIImpl(String data) {
-		super(8, 8, "IMEI", data);
+		// There are some fake mobiles that IMEI length != 15
+		super(1, 8, "IMEI", data);
 	}
 
 	public String getIMEI() {
@@ -49,9 +51,7 @@ public class IMEIImpl extends TbcdString implements IMEI {
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.data == null)
 			throw new MAPException("Error while encoding the IMEI: IMEI must not be null");
-		if (this.data.length() < 15 || this.data.length() > 16)
-			throw new MAPException("Error while encoding the IMEI: Bad IMEI length - must be 15 or 16");
-		
+				
 		super.encodeData(asnOs);
 	}
 }

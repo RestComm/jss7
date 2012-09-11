@@ -64,6 +64,10 @@ public class CheckImeiRequestTest {
 				0x00, 0x08, 0x27, 0x34, 0x04, 0x03, 0x30, 0x58, 0x67, (byte)0xf3 };
 	}
 	
+	private byte[] getEncodedDataImeiLengthLessThan15() {
+		return new byte[] { 4, 1, -15 };
+	}
+	
 	@Test(groups = { "functional.decode", "imei" })
 	public void testDecode() throws Exception {
 		// Testing version 3
@@ -120,6 +124,18 @@ public class CheckImeiRequestTest {
 		
 		assertTrue(checkImeiImpl.getIMEI().getIMEI().equals("356467044989910"));
 		assertTrue(checkImeiImpl.getIMSI().getData().equals("724340300385763"));
+		
+		// Testing IMEI length != 15
+		rawData = getEncodedDataImeiLengthLessThan15();
+		asnIS = new AsnInputStream(rawData);
+		
+		tag = asnIS.readTag();
+		assertEquals(tag, Tag.STRING_OCTET);
+		checkImeiImpl = new CheckImeiRequestImpl(2);
+		checkImeiImpl.decodeAll(asnIS);
+		
+		assertTrue(checkImeiImpl.getIMEI().getIMEI().equals("1"));
+		assertNull(checkImeiImpl.getIMSI());
 	}
 	
 	@Test(groups = { "functional.encode", "imei" })
@@ -171,6 +187,17 @@ public class CheckImeiRequestTest {
 		
 		encodedData = asnOS.toByteArray();
 		rawData = getEncodedDataV2_Huawei();
+		assertTrue(Arrays.equals(rawData, encodedData));
+		
+		// Testing IMEI length != 15
+		imei = new IMEIImpl("1");
+		checkImei = new CheckImeiRequestImpl(2, imei, null, null);
+		
+		asnOS = new AsnOutputStream();
+		checkImei.encodeAll(asnOS);
+		
+		encodedData = asnOS.toByteArray();
+		rawData = getEncodedDataImeiLengthLessThan15();
 		assertTrue(Arrays.equals(rawData, encodedData));
 	}
 	
