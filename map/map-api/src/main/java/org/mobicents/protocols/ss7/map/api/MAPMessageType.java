@@ -39,6 +39,8 @@ public enum MAPMessageType {
 	updateLocation_Response,
 	checkIMEI_Request,
 	checkIMEI_Response,
+	cancelLocation_Request,
+	cancelLocation_Response,
 	
 	// -- supplementary
 	processUnstructuredSSRequest_Request,
@@ -80,6 +82,8 @@ public enum MAPMessageType {
 	
 	// -- call handling
 	sendRoutingInfo_Request,
-	sendRoutingInfo_Response;
+	sendRoutingInfo_Response,
+	provideRoamingNumber_Request,
+	privideRoamingNumber_Response;
 }
 

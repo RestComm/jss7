@@ -91,6 +91,8 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.MAPServiceCallHandlingListener;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.ProvideRoamingNumberRequest;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.ProvideRoamingNumberResponse;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.SendRoutingInformationRequest;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.SendRoutingInformationResponse;
 import org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsmListener;
@@ -105,6 +107,8 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.SendA
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancelLocationRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancelLocationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationRequest;
@@ -1725,6 +1729,32 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 
 	@Override
 	public void onSendRoutingInformationResponse(SendRoutingInformationResponse arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProvideRoamingNumberRequest(
+			ProvideRoamingNumberRequest request) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProvideRoamingNumberResponse(
+			ProvideRoamingNumberResponse response) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCancelLocationRequest(CancelLocationRequest request) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCancelLocationResponse(CancelLocationResponse response) {
 		// TODO Auto-generated method stub
 		
 	}

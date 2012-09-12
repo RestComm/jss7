@@ -53,5 +53,7 @@ public interface ProvideRoamingNumberResponse extends CallHandlingMessage {
 	public boolean getReleaseResourcesSupported();
 
 	public ISDNAddressString getVmscAddress();
+	
+	public long getMapProtocolVersion();
 
 }

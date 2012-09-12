@@ -32,9 +32,6 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  *  extensionContainer ExtensionContainer OPTIONAL,
  *  -- extensionContainer must not be used in version 2
  *	...}
- */
- 
-/*
  * 
  * @author cristian veliscu
  * 
