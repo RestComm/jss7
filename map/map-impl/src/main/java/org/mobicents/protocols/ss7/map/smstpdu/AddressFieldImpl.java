@@ -32,7 +32,6 @@ import org.mobicents.protocols.ss7.map.GSMCharset;
 import org.mobicents.protocols.ss7.map.GSMCharsetDecoder;
 import org.mobicents.protocols.ss7.map.GSMCharsetDecodingData;
 import org.mobicents.protocols.ss7.map.GSMCharsetEncoder;
-import org.mobicents.protocols.ss7.map.GSMCharsetEncodingData;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.smstpdu.AddressField;

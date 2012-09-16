@@ -11,6 +11,7 @@
 	  	 -->
 	  	<packages>
             <package name="org.mobicents.protocols.ss7.map" />
+      		<package name="org.mobicents.protocols.ss7.map.datacoding" />
       		<package name="org.mobicents.protocols.ss7.map.dialog" />
       		<package name="org.mobicents.protocols.ss7.map.errors" />
       		<package name="org.mobicents.protocols.ss7.map.functional" />	
