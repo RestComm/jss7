@@ -34,10 +34,12 @@ import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingCategory;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.map.primitives.AlertingPatternImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
@@ -81,8 +83,8 @@ public class ProcessUnstructuredSSRequestTest {
 
 		ProcessUnstructuredSSRequestImpl addNum = new ProcessUnstructuredSSRequestImpl();
 		addNum.decodeAll(asn);
-		byte dataCodingScheme = addNum.getDataCodingScheme();
-		assertEquals(dataCodingScheme, (byte) 0x0f);
+		CBSDataCodingScheme dataCodingScheme = addNum.getDataCodingScheme();
+		assertEquals(dataCodingScheme.getCode(), (byte) 0x0f);
 
 		USSDString ussdString = addNum.getUSSDString();
 		assertNotNull(ussdString);
@@ -95,9 +97,8 @@ public class ProcessUnstructuredSSRequestTest {
 	public void testEncode() throws Exception {
 		byte[] data = new byte[] { 0x30, 0x0a, 0x04, 0x01, 0x0f, 0x04, 0x05, 0x2a, (byte) 0xd9, (byte) 0x8c, 0x36, 0x02 };
 
-		USSDString ussdStr = new USSDStringImpl("*234#", null);
-		ProcessUnstructuredSSRequestImpl addNum = new ProcessUnstructuredSSRequestImpl((byte) 0x0f,
-				ussdStr, null, null);
+		USSDString ussdStr = new USSDStringImpl("*234#", null, null);
+		ProcessUnstructuredSSRequestImpl addNum = new ProcessUnstructuredSSRequestImpl(new CBSDataCodingSchemeImpl(0x0f), ussdStr, null, null);
 
 		AsnOutputStream asnOS = new AsnOutputStream();
 		addNum.encodeAll(asnOS);
@@ -113,9 +114,9 @@ public class ProcessUnstructuredSSRequestTest {
 		ISDNAddressStringImpl isdnAddress = new ISDNAddressStringImpl(AddressNature.international_number,
 				NumberingPlan.ISDN, "79273605819");
 		AlertingPatternImpl alertingPattern = new AlertingPatternImpl(AlertingCategory.Category3);
-		USSDString ussdStr = new USSDStringImpl("*234#", null);
-		ProcessUnstructuredSSRequestImpl original = new ProcessUnstructuredSSRequestImpl(
-				(byte) 0x0f, ussdStr, alertingPattern, isdnAddress);
+		USSDString ussdStr = new USSDStringImpl("*234#", null, null);
+		ProcessUnstructuredSSRequestImpl original = new ProcessUnstructuredSSRequestImpl(new CBSDataCodingSchemeImpl(0x0f), ussdStr, alertingPattern,
+				isdnAddress);
 
 		// Writes the area to a file.
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();

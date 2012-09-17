@@ -79,7 +79,7 @@ public class USSDStringTest {
 	public void testEncode() throws Exception {
 		byte[] data = new byte[] { 0x04, 0x04, 0x2a, 0x1c, 0x6e, (byte)0x04 };
 		
-		USSDStringImpl ussdStr = new USSDStringImpl("*88#", null);
+		USSDStringImpl ussdStr = new USSDStringImpl("*88#", null, null);
 		
 		AsnOutputStream asnOS = new AsnOutputStream();
 		ussdStr.encodeAll(asnOS);
@@ -91,7 +91,7 @@ public class USSDStringTest {
 	
 	@Test(groups = { "functional.serialize", "primitives" })
 	public void testSerialization() throws Exception {
-		USSDStringImpl original = new USSDStringImpl("*88#", null);
+		USSDStringImpl original = new USSDStringImpl("*88#", null, null);
 		// serialize
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ObjectOutputStream oos = new ObjectOutputStream(out);

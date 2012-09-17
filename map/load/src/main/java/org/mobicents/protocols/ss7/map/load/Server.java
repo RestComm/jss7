@@ -38,6 +38,7 @@ import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPMessage;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
@@ -59,6 +60,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSN
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponse;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystem;
 import org.mobicents.protocols.ss7.sccp.impl.SccpResource;
@@ -353,7 +355,7 @@ public class Server extends TestHarness {
 
 			USSDString ussdStrObj = this.mapProvider.getMAPParameterFactory().createUSSDString(
 					"USSD String : Hello World <CR> 1. Balance <CR> 2. Texts Remaining");
-			byte ussdDataCodingScheme = (byte) 0x0F;
+			CBSDataCodingScheme ussdDataCodingScheme = new CBSDataCodingSchemeImpl(0x0F);
 			MAPDialogSupplementary dialog = procUnstrReqInd.getMAPDialog();
 
 			dialog.setUserObject(invokeId);
@@ -416,7 +418,7 @@ public class Server extends TestHarness {
 		}
 		try {
 			USSDString ussdStrObj = this.mapProvider.getMAPParameterFactory().createUSSDString("Your balance is 500");
-			byte ussdDataCodingScheme = (byte) 0x0F;
+			CBSDataCodingScheme ussdDataCodingScheme = new CBSDataCodingSchemeImpl(0x0F);
 			MAPDialogSupplementary dialog = unstrResInd.getMAPDialog();
 
 			AddressString msisdn = this.mapProvider.getMAPParameterFactory().createAddressString(AddressNature.international_number, NumberingPlan.ISDN,

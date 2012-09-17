@@ -66,8 +66,11 @@ public class USSDStringImpl implements USSDString, MAPAsnPrimitive {
 	/**
 	 * 
 	 */
-	public USSDStringImpl() {
+	public USSDStringImpl(CBSDataCodingScheme dataCodingScheme, Charset gsm8Charset) {
 		super();
+
+		this.dataCodingScheme = dataCodingScheme;
+		this.gsm8Charset = gsm8Charset;
 	}
 
 	public USSDStringImpl(String ussdString, CBSDataCodingScheme dataCodingScheme, Charset gsm8Charset) {

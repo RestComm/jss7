@@ -80,6 +80,7 @@ import org.mobicents.protocols.ss7.map.api.service.sms.SmsSignalInfo;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
 import org.mobicents.protocols.ss7.map.api.smstpdu.NumberingPlanIdentification;
 import org.mobicents.protocols.ss7.map.api.smstpdu.TypeOfNumber;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.map.primitives.AlertingPatternImpl;
 import org.mobicents.protocols.ss7.map.primitives.ExtExternalSignalInfoImpl;
 import org.mobicents.protocols.ss7.map.primitives.ExternalSignalInfoImpl;
@@ -178,7 +179,7 @@ public class Client extends EventTestHarness {
 
 		USSDString ussdString = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_STRING);
 
-		clientDialog.addProcessUnstructuredSSRequest((byte) 0x0F, ussdString, null, msisdn);
+		clientDialog.addProcessUnstructuredSSRequest(new CBSDataCodingSchemeImpl(0x0f), ussdString, null, msisdn);
 
 		logger.debug("Sending USSDString" + MAPFunctionalTest.USSD_STRING);
 
@@ -203,7 +204,7 @@ public class Client extends EventTestHarness {
 
 		USSDString ussdString = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_STRING);
 
-		clientDialog.addProcessUnstructuredSSRequest((byte) 0x0F, ussdString, null, msisdn);
+		clientDialog.addProcessUnstructuredSSRequest(new CBSDataCodingSchemeImpl( 0x0f), ussdString, null, msisdn);
 
 		logger.debug("Sending USSDString" + MAPFunctionalTest.USSD_STRING);
 
@@ -230,7 +231,7 @@ public class Client extends EventTestHarness {
 
 		USSDString ussdString = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_STRING);
 
-		savedInvokeId = clientDialog.addProcessUnstructuredSSRequest((byte) 0x0F, ussdString, null, msisdn);
+		savedInvokeId = clientDialog.addProcessUnstructuredSSRequest(new CBSDataCodingSchemeImpl( 0x0f), ussdString, null, msisdn);
 
 		logger.debug("Sending USSDString" + MAPFunctionalTest.USSD_STRING);
 		this.observerdEvents.add(TestEvent.createSentEvent(EventType.ProcessUnstructuredSSRequestIndication, null, sequence++));

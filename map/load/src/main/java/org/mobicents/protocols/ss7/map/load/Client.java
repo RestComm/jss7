@@ -41,6 +41,7 @@ import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPMessage;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
@@ -62,6 +63,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSN
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponse;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystem;
 import org.mobicents.protocols.ss7.sccp.impl.SccpResource;
@@ -213,13 +215,13 @@ public class Client extends TestHarness {
 				MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext, MAPApplicationContextVersion.version2),
 				SCCP_CLIENT_ADDRESS, null, SCCP_SERVER_ADDRESS, null);
 
-		byte ussdDataCodingScheme = 0x0f;
+		CBSDataCodingScheme ussdDataCodingScheme = new CBSDataCodingSchemeImpl(0x0f);
 
 		// USSD String: *125*+31628839999#
 		// The Charset is null, here we let system use default Charset (UTF-7 as
 		// explained in GSM 03.38. However if MAP User wants, it can set its own
 		// impl of Charset
-		USSDString ussdString = this.mapProvider.getMAPParameterFactory().createUSSDString("*125*+31628839999#", null);
+		USSDString ussdString = this.mapProvider.getMAPParameterFactory().createUSSDString("*125*+31628839999#", null, null);
 
 		ISDNAddressString msisdn = this.mapProvider.getMAPParameterFactory().createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN,
 				"31628838002");
@@ -433,9 +435,9 @@ public class Client extends TestHarness {
 		MAPDialogSupplementary mapDialog = unstrReqInd.getMAPDialog();
 
 		try {
-			byte ussdDataCodingScheme = 0x0f;
+			CBSDataCodingScheme ussdDataCodingScheme = new CBSDataCodingSchemeImpl(0x0f);
 
-			USSDString ussdString = this.mapProvider.getMAPParameterFactory().createUSSDString("1", null);
+			USSDString ussdString = this.mapProvider.getMAPParameterFactory().createUSSDString("1", null, null);
 
 			AddressString msisdn = this.mapProvider.getMAPParameterFactory().createAddressString(AddressNature.international_number, NumberingPlan.ISDN,
 					"31628838002");

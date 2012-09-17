@@ -45,6 +45,7 @@ import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPStack;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
@@ -144,6 +145,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSR
 import org.mobicents.protocols.ss7.map.api.smstpdu.NumberingPlanIdentification;
 import org.mobicents.protocols.ss7.map.api.smstpdu.SmsSubmitTpdu;
 import org.mobicents.protocols.ss7.map.api.smstpdu.TypeOfNumber;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.TripletListTest;
@@ -295,7 +297,7 @@ public class MAPFunctionalTest extends SccpHarness {
 
 				USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_RESPONSE);
 				try {
-					mapDialog.addUnstructuredSSResponse(invokeId, (byte) 0x0F, ussdStringObj);
+					mapDialog.addUnstructuredSSResponse(invokeId, new CBSDataCodingSchemeImpl(0x0f), ussdStringObj);
 				} catch (MAPException e) {
 					this.error("Erro while trying to send UnstructuredSSResponse", e);
 					fail("Erro while trying to add UnstructuredSSResponse");
@@ -341,7 +343,7 @@ public class MAPFunctionalTest extends SccpHarness {
 				this.debug("InvokeId =  " + processUnstructuredSSRequestInvokeId);
 				USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_MENU);
 				try {
-					mapDialog.addUnstructuredSSRequest((byte) 0x0F, ussdStringObj, null, null);
+					mapDialog.addUnstructuredSSRequest(new CBSDataCodingSchemeImpl(0x0f), ussdStringObj, null, null);
 				} catch (MAPException e) {
 					this.error("Error while trying to send UnstructuredSSRequest", e);
 					fail("Erro while trying to add UnstructuredSSRequest");
@@ -357,7 +359,7 @@ public class MAPFunctionalTest extends SccpHarness {
 				MAPDialogSupplementary mapDialog = unstrResInd.getMAPDialog();
 				USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_FINAL_RESPONSE);
 				try {
-					mapDialog.addProcessUnstructuredSSResponse(processUnstructuredSSRequestInvokeId, (byte) 0x0F, ussdStringObj);
+					mapDialog.addProcessUnstructuredSSResponse(processUnstructuredSSRequestInvokeId, new CBSDataCodingSchemeImpl(0x0f), ussdStringObj);
 				} catch (MAPException e) {
 					logger.error(e);
 					fail("Erro while trying to add ProcessUnstructuredSSResponse");
@@ -481,7 +483,7 @@ public class MAPFunctionalTest extends SccpHarness {
 
 				USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_RESPONSE);
 				try {
-					mapDialog.addUnstructuredSSResponse(invokeId, (byte) 0x0F, ussdStringObj);
+					mapDialog.addUnstructuredSSResponse(invokeId, new CBSDataCodingSchemeImpl(0x0f), ussdStringObj);
 				} catch (MAPException e) {
 					this.error("Erro while trying to send UnstructuredSSResponse", e);
 					fail("Erro while trying to add UnstructuredSSResponse");
@@ -527,7 +529,7 @@ public class MAPFunctionalTest extends SccpHarness {
 				this.debug("InvokeId =  " + processUnstructuredSSRequestInvokeId);
 				USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_MENU);
 				try {
-					mapDialog.addUnstructuredSSRequest((byte) 0x0F, ussdStringObj, null, null);
+					mapDialog.addUnstructuredSSRequest(new CBSDataCodingSchemeImpl(0x0f), ussdStringObj, null, null);
 				} catch (MAPException e) {
 					this.error("Error while trying to send UnstructuredSSRequest", e);
 					fail("Erro while trying to add UnstructuredSSRequest");
@@ -543,7 +545,7 @@ public class MAPFunctionalTest extends SccpHarness {
 				MAPDialogSupplementary mapDialog = unstrResInd.getMAPDialog();
 				USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_FINAL_RESPONSE);
 				try {
-					mapDialog.addProcessUnstructuredSSResponse(processUnstructuredSSRequestInvokeId, (byte) 0x0F, ussdStringObj);
+					mapDialog.addProcessUnstructuredSSResponse(processUnstructuredSSRequestInvokeId, new CBSDataCodingSchemeImpl(0x0f), ussdStringObj);
 				} catch (MAPException e) {
 					logger.error(e);
 					fail("Erro while trying to add ProcessUnstructuredSSResponse");
@@ -812,7 +814,7 @@ public class MAPFunctionalTest extends SccpHarness {
 				MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
 				USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_MENU);
 				try {
-					mapDialog.addUnstructuredSSRequest((byte) 0x0F, ussdStringObj, null, null);
+					mapDialog.addUnstructuredSSRequest(new CBSDataCodingSchemeImpl(0x0f), ussdStringObj, null, null);
 					this.observerdEvents.add(TestEvent.createSentEvent(EventType.UnstructuredSSRequestIndication, null, sequence++));
 					mapDialog.send();
 				} catch (MAPException e) {
@@ -1301,7 +1303,7 @@ public class MAPFunctionalTest extends SccpHarness {
 				returnResult.setOperationCode(oc);
 
 				USSDString ussdStrObj = this.mapProvider.getMAPParameterFactory().createUSSDString("Your balance is 500");
-				byte ussdDataCodingScheme = (byte) 0x0F;
+				CBSDataCodingScheme ussdDataCodingScheme = new CBSDataCodingSchemeImpl(0x0f);
 				ProcessUnstructuredSSResponseImpl req = new ProcessUnstructuredSSResponseImpl(ussdDataCodingScheme, ussdStrObj);
 				AsnOutputStream aos = new AsnOutputStream();
 				try {
@@ -1332,7 +1334,7 @@ public class MAPFunctionalTest extends SccpHarness {
 					} else {
 						this.observerdEvents.add(TestEvent.createSentEvent(EventType.ProcessUnstructuredSSResponseIndication, null, sequence++));
 						USSDString ussdStrObj = this.mapProvider.getMAPParameterFactory().createUSSDString("Your balance is 500");
-						byte ussdDataCodingScheme = (byte) 0x0F;
+						CBSDataCodingScheme ussdDataCodingScheme = new CBSDataCodingSchemeImpl(0x0f);
 						((MAPDialogSupplementary) mapDialog).addProcessUnstructuredSSResponse(this.processUnstructuredSSRequestInvokeId, ussdDataCodingScheme,
 								ussdStrObj);
 
