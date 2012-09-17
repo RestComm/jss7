@@ -36,10 +36,12 @@ import org.mobicents.protocols.ss7.map.api.MAPMessageType;
 import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequest;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.map.primitives.AlertingPatternImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
@@ -68,7 +70,7 @@ public class ProcessUnstructuredSSRequestImpl extends SupplementaryMessageImpl i
 		super();
 	}
 
-	public ProcessUnstructuredSSRequestImpl(byte ussdDataCodingSch, USSDString ussdString,
+	public ProcessUnstructuredSSRequestImpl(CBSDataCodingScheme ussdDataCodingSch, USSDString ussdString,
 			AlertingPattern alertingPattern, ISDNAddressString msisdnAddressString) {
 		super(ussdDataCodingSch, ussdString);
 		this.alertingPattern = alertingPattern;
@@ -158,7 +160,7 @@ public class ProcessUnstructuredSSRequestImpl extends SupplementaryMessageImpl i
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
 		int length1 = ais.readLength();
-		this.ussdDataCodingSch = ais.readOctetStringData(length1)[0];
+		this.ussdDataCodingSch = new CBSDataCodingSchemeImpl(ais.readOctetStringData(length1)[0]);
 
 		tag = ais.readTag();
 
@@ -223,7 +225,7 @@ public class ProcessUnstructuredSSRequestImpl extends SupplementaryMessageImpl i
 			throw new MAPException("ussdString must not be null");
 
 		try {
-			asnOs.writeOctetString(new byte[] { this.ussdDataCodingSch });
+			asnOs.writeOctetString(new byte[] { (byte)this.ussdDataCodingSch.getCode() });
 
 			((USSDStringImpl) this.ussdString).encodeAll(asnOs);
 

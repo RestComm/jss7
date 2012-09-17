@@ -26,10 +26,9 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.MAPDialogImpl;
 import org.mobicents.protocols.ss7.map.MAPProviderImpl;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
-import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
-import org.mobicents.protocols.ss7.map.api.MAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
@@ -59,13 +58,13 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 		super(appCntx, tcapDialog, mapProviderImpl, mapService, origReference, destReference);
 	}
 
-	public Long addProcessUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter, ISDNAddressString msisdn)
-			throws MAPException {
+	public Long addProcessUnstructuredSSRequest(CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter,
+			ISDNAddressString msisdn) throws MAPException {
 		return this.addProcessUnstructuredSSRequest(_Timer_Default, ussdDataCodingScheme, ussdString, alertingPatter, msisdn);
 	}
 
-	public Long addProcessUnstructuredSSRequest(int customInvokeTimeout, byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter,
-			ISDNAddressString msisdn) throws MAPException {
+	public Long addProcessUnstructuredSSRequest(int customInvokeTimeout, CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString,
+			AlertingPattern alertingPatter, ISDNAddressString msisdn) throws MAPException {
 
 		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
 		if (customInvokeTimeout == _Timer_Default)
@@ -104,7 +103,7 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 
 	}
 
-	public void addProcessUnstructuredSSResponse(long invokeId, byte ussdDataCodingScheme, USSDString ussdString) throws MAPException {
+	public void addProcessUnstructuredSSResponse(long invokeId, CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString) throws MAPException {
 		Return returnResult = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
 
 		returnResult.setInvokeId(invokeId);
@@ -128,12 +127,12 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 		this.sendReturnResultLastComponent((ReturnResultLast) returnResult);
 	}
 
-	public Long addUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter, ISDNAddressString msisdn)
-			throws MAPException {
+	public Long addUnstructuredSSRequest(CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter,
+			ISDNAddressString msisdn) throws MAPException {
 		return this.addUnstructuredSSRequest(_Timer_Default, ussdDataCodingScheme, ussdString, alertingPatter, msisdn);
 	}
 
-	public Long addUnstructuredSSRequest(int customInvokeTimeout, byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter,
+	public Long addUnstructuredSSRequest(int customInvokeTimeout, CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter,
 			ISDNAddressString msisdn) throws MAPException {
 
 		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
@@ -171,13 +170,13 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 		return invokeId;
 	}
 	
-	public Long addUnstructuredSSNotifyRequest(byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter, ISDNAddressString msisdn)
-			throws MAPException {
+	public Long addUnstructuredSSNotifyRequest(CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter,
+			ISDNAddressString msisdn) throws MAPException {
 		return this.addUnstructuredSSNotifyRequest(_Timer_Default, ussdDataCodingScheme, ussdString, alertingPatter, msisdn);
 	}
 
-	public Long addUnstructuredSSNotifyRequest(int customInvokeTimeout, byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter,
-			ISDNAddressString msisdn) throws MAPException {
+	public Long addUnstructuredSSNotifyRequest(int customInvokeTimeout, CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString,
+			AlertingPattern alertingPatter, ISDNAddressString msisdn) throws MAPException {
 
 		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
 		if (customInvokeTimeout == _Timer_Default)
@@ -214,7 +213,7 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 		return invokeId;
 	}
 
-	public void addUnstructuredSSResponse(long invokeId, byte ussdDataCodingScheme, USSDString ussdString) throws MAPException {
+	public void addUnstructuredSSResponse(long invokeId, CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString) throws MAPException {
 
 		Return returnResult = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
 

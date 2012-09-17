@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.map.api;
 
 import java.nio.charset.Charset;
 
+import org.mobicents.protocols.ss7.map.api.datacoding.NationalLanguageIdentifier;
 import org.mobicents.protocols.ss7.map.api.smstpdu.AbsoluteTimeStamp;
 import org.mobicents.protocols.ss7.map.api.smstpdu.AddressField;
 import org.mobicents.protocols.ss7.map.api.smstpdu.CharacterSet;
@@ -100,8 +101,8 @@ public interface MAPSmsTpduParameterFactory {
 
 	public ConcatenatedShortMessagesIdentifier createConcatenatedShortMessagesIdentifier(boolean referenceIs16bit, int reference, int mesageSegmentCount,
 			int mesageSegmentNumber);
-	public NationalLanguageLockingShiftIdentifier createNationalLanguageLockingShiftIdentifier(int nationalLanguageCode);
-	public NationalLanguageSingleShiftIdentifier createNationalLanguageSingleShiftIdentifier(int nationalLanguageCode);
+	public NationalLanguageLockingShiftIdentifier createNationalLanguageLockingShiftIdentifier(NationalLanguageIdentifier nationalLanguageCode);
+	public NationalLanguageSingleShiftIdentifier createNationalLanguageSingleShiftIdentifier(NationalLanguageIdentifier nationalLanguageCode);
 }
 
 

@@ -29,6 +29,7 @@ import org.mobicents.protocols.asn.BitSetStrictLength;
 import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.primitives.AdditionalNumberType;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
@@ -313,7 +314,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
  */
 public class MAPParameterFactoryImpl implements MAPParameterFactory {
 
-	public ProcessUnstructuredSSRequest createProcessUnstructuredSSRequestIndication(byte ussdDataCodingSch, USSDString ussdString,
+	public ProcessUnstructuredSSRequest createProcessUnstructuredSSRequestIndication(CBSDataCodingScheme ussdDataCodingSch, USSDString ussdString,
 			AlertingPattern alertingPattern, ISDNAddressString msisdnAddressString) {
 
 		ProcessUnstructuredSSRequest request = new ProcessUnstructuredSSRequestImpl(ussdDataCodingSch, ussdString, alertingPattern,
@@ -321,18 +322,18 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 		return request;
 	}
 
-	public ProcessUnstructuredSSResponse createProcessUnstructuredSSResponseIndication(byte ussdDataCodingScheme, USSDString ussdString) {
+	public ProcessUnstructuredSSResponse createProcessUnstructuredSSResponseIndication(CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString) {
 		ProcessUnstructuredSSResponse response = new ProcessUnstructuredSSResponseImpl(ussdDataCodingScheme, ussdString);
 		return response;
 	}
 
-	public UnstructuredSSRequest createUnstructuredSSRequestIndication(byte ussdDataCodingSch, USSDString ussdString,
+	public UnstructuredSSRequest createUnstructuredSSRequestIndication(CBSDataCodingScheme ussdDataCodingSch, USSDString ussdString,
 			AlertingPattern alertingPattern, ISDNAddressString msisdnAddressString) {
 		UnstructuredSSRequest request = new UnstructuredSSRequestImpl(ussdDataCodingSch, ussdString, alertingPattern, msisdnAddressString);
 		return request;
 	}
 
-	public UnstructuredSSResponse createUnstructuredSSRequestIndication(byte ussdDataCodingScheme, USSDString ussdString) {
+	public UnstructuredSSResponse createUnstructuredSSRequestIndication(CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString) {
 		UnstructuredSSResponse response = new UnstructuredSSResponseImpl(ussdDataCodingScheme, ussdString);
 		return response;
 	}
@@ -340,7 +341,7 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.map.api.MAPParameterFactory#createUnstructuredSSNotifyRequestIndication(byte, org.mobicents.protocols.ss7.map.api.primitives.USSDString, org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern, org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString)
 	 */
-	public UnstructuredSSNotifyRequest createUnstructuredSSNotifyRequestIndication(byte ussdDataCodingSch, USSDString ussdString,
+	public UnstructuredSSNotifyRequest createUnstructuredSSNotifyRequestIndication(CBSDataCodingScheme ussdDataCodingSch, USSDString ussdString,
 			AlertingPattern alertingPattern, ISDNAddressString msisdnAddressString) {
 		UnstructuredSSNotifyRequest request = new UnstructuredSSNotifyRequestImpl(ussdDataCodingSch, ussdString, alertingPattern, msisdnAddressString);
 		return request;
@@ -354,20 +355,20 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 		return response;
 	}
 
-	public USSDString createUSSDString(String ussdString, Charset charset) {
-		return new USSDStringImpl(ussdString, charset);
+	public USSDString createUSSDString(String ussdString, CBSDataCodingScheme dataCodingScheme, Charset gsm8Charset) {
+		return new USSDStringImpl(ussdString, dataCodingScheme, gsm8Charset);
 	}
 
 	public USSDString createUSSDString(String ussdString) {
-		return new USSDStringImpl(ussdString, null);
+		return new USSDStringImpl(ussdString, null, null);
 	}
 
-	public USSDString createUSSDString(byte[] ussdString, Charset charset) {
-		return new USSDStringImpl(ussdString, charset);
+	public USSDString createUSSDString(byte[] ussdString, CBSDataCodingScheme dataCodingScheme, Charset gsm8Charset) {
+		return new USSDStringImpl(ussdString, dataCodingScheme, gsm8Charset);
 	}
 
 	public USSDString createUSSDString(byte[] ussdString) {
-		return new USSDStringImpl(ussdString, null);
+		return new USSDStringImpl(ussdString, null, null);
 	}
 
 	public AddressString createAddressString(AddressNature addNature, NumberingPlan numPlan, String address) {

@@ -24,7 +24,7 @@ package org.mobicents.protocols.ss7.map.datacoding;
 
 import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingGroup;
 import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
-import org.mobicents.protocols.ss7.map.api.datacoding.NationalLanguageShiftTable;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSNationalLanguage;
 import org.mobicents.protocols.ss7.map.api.smstpdu.CharacterSet;
 import org.mobicents.protocols.ss7.map.api.smstpdu.DataCodingSchemaMessageClass;
 
@@ -41,7 +41,7 @@ public class CBSDataCodingSchemeImpl implements CBSDataCodingScheme {
 		this.code = code;
 	}
 	
-	public CBSDataCodingSchemeImpl(CBSDataCodingGroup dataCodingGroup, CharacterSet characterSet, NationalLanguageShiftTable nationalLanguageShiftTable,
+	public CBSDataCodingSchemeImpl(CBSDataCodingGroup dataCodingGroup, CharacterSet characterSet, CBSNationalLanguage nationalLanguageShiftTable,
 			DataCodingSchemaMessageClass messageClass, boolean isCompressed) {
 
 		if (dataCodingGroup == null) {
@@ -132,9 +132,9 @@ public class CBSDataCodingSchemeImpl implements CBSDataCodingScheme {
 	}
 
 	@Override
-	public NationalLanguageShiftTable getNationalLanguageShiftTable() {
+	public CBSNationalLanguage getNationalLanguageShiftTable() {
 		if (this.getDataCodingGroup() == CBSDataCodingGroup.GeneralGsm7)
-			return NationalLanguageShiftTable.getInstance((code & 0xF0) >> 4, (code & 0x0F));
+			return CBSNationalLanguage.getInstance((code & 0xF0) >> 4, (code & 0x0F));
 		else
 			return null;
 	}

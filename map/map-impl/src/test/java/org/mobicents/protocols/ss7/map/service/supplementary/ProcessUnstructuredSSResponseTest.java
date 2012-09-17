@@ -63,7 +63,7 @@ public class ProcessUnstructuredSSResponseTest {
 
 		ProcessUnstructuredSSResponseImpl addNum = new ProcessUnstructuredSSResponseImpl();
 		addNum.decodeAll(asn);
-		byte dataCodingScheme = addNum.getUSSDDataCodingScheme();
+		byte dataCodingScheme = addNum.getDataCodingScheme();
 		assertEquals( dataCodingScheme,(byte) 0x0f);
 
 		USSDString ussdString = addNum.getUSSDString();

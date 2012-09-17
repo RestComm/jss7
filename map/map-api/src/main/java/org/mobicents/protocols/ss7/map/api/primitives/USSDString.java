@@ -23,7 +23,8 @@
 package org.mobicents.protocols.ss7.map.api.primitives;
 
 import java.io.Serializable;
-import java.nio.charset.Charset;
+
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 
 /**
  * USSD-String ::= OCTET STRING (SIZE (1..maxUSSD-StringLength))
@@ -57,7 +58,7 @@ public interface USSDString extends Serializable {
 	 * 
 	 * @return
 	 */
-	public Charset getCharset();
+	public CBSDataCodingScheme getDataCodingScheme();
 
 
 }

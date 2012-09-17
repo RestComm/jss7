@@ -28,6 +28,11 @@ import java.util.Arrays;
 
 import static org.testng.Assert.*;
 
+import org.mobicents.protocols.ss7.map.datacoding.GSMCharset;
+import org.mobicents.protocols.ss7.map.datacoding.GSMCharsetDecoder;
+import org.mobicents.protocols.ss7.map.datacoding.GSMCharsetDecodingData;
+import org.mobicents.protocols.ss7.map.datacoding.GSMCharsetEncoder;
+import org.mobicents.protocols.ss7.map.datacoding.GSMCharsetEncodingData;
 import org.testng.annotations.*;
 
 /**

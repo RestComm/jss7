@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map;
+package org.mobicents.protocols.ss7.map.datacoding;
 
 /**
  * 
@@ -28,32 +28,31 @@ package org.mobicents.protocols.ss7.map;
  * @author sergey vetyutnev
  * 
  */
-public class GSMCharsetDecodingData {
+public class GSMCharsetEncodingData {
 
 	protected int totalSeptetCount;
-	protected int leadingSeptetSkipCount;
+	protected byte[] leadingBuffer;
 	protected boolean ussdStyleEncoding;
 
 	/**
 	 * SMS case constructor
 	 * 
-	 * @param totalSeptetCount
-	 *            Length of a decoded message in characters (for SMS case)
-	 * @param leadingSeptetSkipCount
-	 *            Count of leading septets to skip
+	 * @param leadingBuffer
+	 *            Encoded UserDataHeader (if does not exist == null)
 	 */
-	public GSMCharsetDecodingData(int totalSeptetCount, int leadingSeptetSkipCount) {
-		this.totalSeptetCount = totalSeptetCount;
-		this.leadingSeptetSkipCount = leadingSeptetSkipCount;
+	public GSMCharsetEncodingData(byte[] leadingBuffer) {
+		this.leadingBuffer = leadingBuffer;
 		this.ussdStyleEncoding = false;
 	}
 
 	/**
 	 * USSD case constructor
 	 */
-	public GSMCharsetDecodingData() {
-		this.totalSeptetCount = Integer.MAX_VALUE;
-		this.leadingSeptetSkipCount = 0;
+	public GSMCharsetEncodingData() {
 		this.ussdStyleEncoding = true;
+	}
+
+	public int getTotalSeptetCount() {
+		return totalSeptetCount;
 	}
 }

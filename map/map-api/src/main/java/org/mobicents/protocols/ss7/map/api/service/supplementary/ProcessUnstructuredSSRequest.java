@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
@@ -68,7 +69,7 @@ public interface ProcessUnstructuredSSRequest extends  SupplementaryMessage {
 	 * 
 	 * @return
 	 */
-	public byte getUSSDDataCodingScheme();
+	public CBSDataCodingScheme getDataCodingScheme();
 
 	/**
 	 * <p>

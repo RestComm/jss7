@@ -27,7 +27,7 @@ package org.mobicents.protocols.ss7.map.api.datacoding;
 * @author sergey vetyutnev
 * 
 */
-public enum NationalLanguageShiftTable {
+public enum CBSNationalLanguage {
 	German(0),
 	English(1),
 	Italian(2),
@@ -53,7 +53,7 @@ public enum NationalLanguageShiftTable {
 
 	private int code;
 
-	private NationalLanguageShiftTable(int code) {
+	private CBSNationalLanguage(int code) {
 		this.code = code;
 	}
 
@@ -61,15 +61,15 @@ public enum NationalLanguageShiftTable {
 		return code;
 	}
 
-	public int getCodingGroupBits() {
+	public int getCBSCodingGroupBits() {
 		return (code & 0xF0) >> 4;
 	}
 
-	public int getLowBits() {
+	public int getCBSLowBits() {
 		return (code & 0x0F);
 	}
 
-	public static NationalLanguageShiftTable getInstance(int codingGroupBits, int lowBits) {
+	public static CBSNationalLanguage getInstance(int codingGroupBits, int lowBits) {
 		if (codingGroupBits == 0) {
 			switch (lowBits) {
 			case 0:

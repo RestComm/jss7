@@ -81,7 +81,7 @@ public class ProcessUnstructuredSSRequestTest {
 
 		ProcessUnstructuredSSRequestImpl addNum = new ProcessUnstructuredSSRequestImpl();
 		addNum.decodeAll(asn);
-		byte dataCodingScheme = addNum.getUSSDDataCodingScheme();
+		byte dataCodingScheme = addNum.getDataCodingScheme();
 		assertEquals(dataCodingScheme, (byte) 0x0f);
 
 		USSDString ussdString = addNum.getUSSDString();
@@ -137,7 +137,7 @@ public class ProcessUnstructuredSSRequestTest {
 				ProcessUnstructuredSSRequestImpl.class);
 
 		assertEquals(copy.getMSISDNAddressString(), original.getMSISDNAddressString());
-		assertEquals(copy.getUSSDDataCodingScheme(), original.getUSSDDataCodingScheme());
+		assertEquals(copy.getDataCodingScheme(), original.getDataCodingScheme());
 		assertEquals(copy.getUSSDString(), original.getUSSDString());
 		assertEquals(copy.getAlertingPattern(), original.getAlertingPattern());
 

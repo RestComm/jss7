@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.smstpdu;
 
+import org.mobicents.protocols.ss7.map.api.datacoding.NationalLanguageIdentifier;
 import org.mobicents.protocols.ss7.map.api.smstpdu.NationalLanguageSingleShiftIdentifier;
 import org.mobicents.protocols.ss7.map.api.smstpdu.UserDataHeader;
 
@@ -32,7 +33,7 @@ import org.mobicents.protocols.ss7.map.api.smstpdu.UserDataHeader;
  */
 public class NationalLanguageSingleShiftIdentifierImpl extends Gsm7NationalLanguageIdentifierImpl implements NationalLanguageSingleShiftIdentifier {
 
-	public NationalLanguageSingleShiftIdentifierImpl(int nationalLanguageCode) {
+	public NationalLanguageSingleShiftIdentifierImpl(NationalLanguageIdentifier nationalLanguageCode) {
 		super(nationalLanguageCode);
 	}
 
@@ -49,7 +50,7 @@ public class NationalLanguageSingleShiftIdentifierImpl extends Gsm7NationalLangu
 		StringBuilder sb = new StringBuilder();
 		sb.append("NationalLanguageSingleShiftIdentifier [");
 		sb.append("nationalLanguageCode=");
-		sb.append(this.getNationalLanguageCode());
+		sb.append(this.getNationalLanguageIdentifier());
 		sb.append("]");
 
 		return sb.toString();

@@ -36,8 +36,10 @@ import org.mobicents.protocols.ss7.map.api.MAPMessageType;
 import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
 
 /**
@@ -54,7 +56,7 @@ public class UnstructuredSSResponseImpl extends SupplementaryMessageImpl impleme
 		super();
 	}
 
-	public UnstructuredSSResponseImpl(byte ussdDataCodingSch, USSDString ussdString) {
+	public UnstructuredSSResponseImpl(CBSDataCodingScheme ussdDataCodingSch, USSDString ussdString) {
 		super(ussdDataCodingSch, ussdString);
 	}
 
@@ -119,7 +121,7 @@ public class UnstructuredSSResponseImpl extends SupplementaryMessageImpl impleme
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
 		int length1 = ais.readLength();
-		this.ussdDataCodingSch = ais.readOctetStringData(length1)[0];
+		this.ussdDataCodingSch = new CBSDataCodingSchemeImpl(ais.readOctetStringData(length1)[0]);
 
 		tag = ais.readTag();
 
@@ -157,7 +159,7 @@ public class UnstructuredSSResponseImpl extends SupplementaryMessageImpl impleme
 			throw new MAPException("ussdString must not be null");
 
 		try {
-			asnOs.writeOctetString(new byte[] { this.ussdDataCodingSch });
+			asnOs.writeOctetString(new byte[] { (byte)this.ussdDataCodingSch.getCode() });
 
 			((USSDStringImpl) this.ussdString).encodeAll(asnOs);
 

@@ -26,9 +26,11 @@ import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
 import org.mobicents.protocols.ss7.map.MessageImpl;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SupplementaryMessage;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
 
@@ -44,7 +46,7 @@ public abstract class SupplementaryMessageImpl extends MessageImpl implements Su
 	private static final byte DEFAULT_DATA_CODING_SCHEME = 0x0f;
 	private static final String DEFAULT_USSD_STRING = "";
 
-	protected byte ussdDataCodingSch;
+	protected CBSDataCodingScheme ussdDataCodingSch;
 
 	protected USSDString ussdString;
 
@@ -55,7 +57,7 @@ public abstract class SupplementaryMessageImpl extends MessageImpl implements Su
 		super();
 	}
 
-	public SupplementaryMessageImpl(byte ussdDataCodingSch, USSDString ussdString) {
+	public SupplementaryMessageImpl(CBSDataCodingScheme ussdDataCodingSch, USSDString ussdString) {
 		this.ussdDataCodingSch = ussdDataCodingSch;
 		this.ussdString = ussdString;
 	}
@@ -64,7 +66,7 @@ public abstract class SupplementaryMessageImpl extends MessageImpl implements Su
 		return (MAPDialogSupplementary) super.getMAPDialog();
 	}
 
-	public byte getUSSDDataCodingScheme() {
+	public CBSDataCodingScheme getDataCodingScheme() {
 		return ussdDataCodingSch;
 	}
 
@@ -98,16 +100,15 @@ public abstract class SupplementaryMessageImpl extends MessageImpl implements Su
 		public void read(javolution.xml.XMLFormat.InputElement xml, SupplementaryMessageImpl ussdMessage)
 				throws XMLStreamException {
 			MAP_MESSAGE_XML.read(xml, ussdMessage);
-			ussdMessage.ussdDataCodingSch = xml.getAttribute(DATA_CODING_SCHEME, DEFAULT_DATA_CODING_SCHEME);
-			ussdMessage.ussdString = new USSDStringImpl(xml.getAttribute(STRING, DEFAULT_USSD_STRING), null);
-
+			ussdMessage.ussdDataCodingSch = new CBSDataCodingSchemeImpl(xml.getAttribute(DATA_CODING_SCHEME, DEFAULT_DATA_CODING_SCHEME));
+			ussdMessage.ussdString = new USSDStringImpl(xml.getAttribute(STRING, DEFAULT_USSD_STRING), ussdMessage.ussdDataCodingSch, null);
 		}
 
 		@Override
 		public void write(SupplementaryMessageImpl ussdMessage, javolution.xml.XMLFormat.OutputElement xml)
 				throws XMLStreamException {
 			MAP_MESSAGE_XML.write(ussdMessage, xml);
-			xml.setAttribute(DATA_CODING_SCHEME, ussdMessage.ussdDataCodingSch);
+			xml.setAttribute(DATA_CODING_SCHEME, ussdMessage.ussdDataCodingSch.getCode());
 			xml.setAttribute(STRING, ussdMessage.getUSSDString().getString());
 		}
 	};

@@ -25,7 +25,7 @@ package org.mobicents.protocols.ss7.map.datacoding;
 import static org.testng.Assert.*;
 
 import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingGroup;
-import org.mobicents.protocols.ss7.map.api.datacoding.NationalLanguageShiftTable;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSNationalLanguage;
 import org.mobicents.protocols.ss7.map.api.smstpdu.CharacterSet;
 import org.mobicents.protocols.ss7.map.api.smstpdu.DataCodingSchemaMessageClass;
 import org.testng.annotations.Test;
@@ -42,28 +42,28 @@ public class CBSDataCodingSchemeTest {
 
 		CBSDataCodingSchemeImpl dcs = new CBSDataCodingSchemeImpl(0);		
 		assertEquals(dcs.getDataCodingGroup(), CBSDataCodingGroup.GeneralGsm7);
-		assertEquals(dcs.getNationalLanguageShiftTable(), NationalLanguageShiftTable.German);
+		assertEquals(dcs.getNationalLanguageShiftTable(), CBSNationalLanguage.German);
 		assertEquals(dcs.getCharacterSet(), CharacterSet.GSM7);
 		assertNull(dcs.getMessageClass());
 		assertFalse(dcs.getIsCompressed());
 
 		dcs = new CBSDataCodingSchemeImpl(0x0B);		
 		assertEquals(dcs.getDataCodingGroup(), CBSDataCodingGroup.GeneralGsm7);
-		assertEquals(dcs.getNationalLanguageShiftTable(), NationalLanguageShiftTable.Greek);
+		assertEquals(dcs.getNationalLanguageShiftTable(), CBSNationalLanguage.Greek);
 		assertEquals(dcs.getCharacterSet(), CharacterSet.GSM7);
 		assertNull(dcs.getMessageClass());
 		assertFalse(dcs.getIsCompressed());
 
 		dcs = new CBSDataCodingSchemeImpl(0x22);		
 		assertEquals(dcs.getDataCodingGroup(), CBSDataCodingGroup.GeneralGsm7);
-		assertEquals(dcs.getNationalLanguageShiftTable(), NationalLanguageShiftTable.Arabic);
+		assertEquals(dcs.getNationalLanguageShiftTable(), CBSNationalLanguage.Arabic);
 		assertEquals(dcs.getCharacterSet(), CharacterSet.GSM7);
 		assertNull(dcs.getMessageClass());
 		assertFalse(dcs.getIsCompressed());
 
 		dcs = new CBSDataCodingSchemeImpl(0x0F);		
 		assertEquals(dcs.getDataCodingGroup(), CBSDataCodingGroup.GeneralGsm7);
-		assertEquals(dcs.getNationalLanguageShiftTable(), NationalLanguageShiftTable.LanguageUnspecified);
+		assertEquals(dcs.getNationalLanguageShiftTable(), CBSNationalLanguage.LanguageUnspecified);
 		assertEquals(dcs.getCharacterSet(), CharacterSet.GSM7);
 		assertNull(dcs.getMessageClass());
 		assertFalse(dcs.getIsCompressed());
@@ -150,19 +150,19 @@ public class CBSDataCodingSchemeTest {
 	@Test(groups = { "functional.encode", "datacoding" })
 	public void testEncode() throws Exception {
 
-		CBSDataCodingSchemeImpl dcs = new CBSDataCodingSchemeImpl(CBSDataCodingGroup.GeneralGsm7, CharacterSet.GSM7, NationalLanguageShiftTable.German, null,
+		CBSDataCodingSchemeImpl dcs = new CBSDataCodingSchemeImpl(CBSDataCodingGroup.GeneralGsm7, CharacterSet.GSM7, CBSNationalLanguage.German, null,
 				false);
 		assertEquals(dcs.getCode(), 0);
 
-		dcs = new CBSDataCodingSchemeImpl(CBSDataCodingGroup.GeneralGsm7, CharacterSet.GSM7, NationalLanguageShiftTable.Greek, null,
+		dcs = new CBSDataCodingSchemeImpl(CBSDataCodingGroup.GeneralGsm7, CharacterSet.GSM7, CBSNationalLanguage.Greek, null,
 				false);
 		assertEquals(dcs.getCode(), 0x0B);
 
-		dcs = new CBSDataCodingSchemeImpl(CBSDataCodingGroup.GeneralGsm7, CharacterSet.GSM7, NationalLanguageShiftTable.Arabic, null,
+		dcs = new CBSDataCodingSchemeImpl(CBSDataCodingGroup.GeneralGsm7, CharacterSet.GSM7, CBSNationalLanguage.Arabic, null,
 				false);
 		assertEquals(dcs.getCode(), 0x22);
 
-		dcs = new CBSDataCodingSchemeImpl(CBSDataCodingGroup.GeneralGsm7, CharacterSet.GSM7, NationalLanguageShiftTable.LanguageUnspecified, null,
+		dcs = new CBSDataCodingSchemeImpl(CBSDataCodingGroup.GeneralGsm7, CharacterSet.GSM7, CBSNationalLanguage.LanguageUnspecified, null,
 				false);
 		assertEquals(dcs.getCode(), 0x0F);
 

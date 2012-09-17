@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,11 +20,14 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map;
+package org.mobicents.protocols.ss7.map.datacoding;
 
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
+
+import org.mobicents.protocols.ss7.map.api.datacoding.NationalLanguageIdentifier;
+
 
 /**
  * <p>
@@ -68,6 +71,17 @@ public class GSMCharset extends Charset {
 		this.extensionTable = extentionTable; 
 	}
 
+	public GSMCharset(String canonicalName, String[] aliases, NationalLanguageIdentifier nationalLanguageLockingShiftIdentifier,
+			NationalLanguageIdentifier nationalLanguageSingleShiftIdentifier) {
+		super(canonicalName, aliases);
+
+		// TODO: after implementing National Language Shift Tables make here selection depending on nationalLanguageIdentifier
+		// nationalLanguageLockingShift and nationalLanguageIdentifierSingleShift can be ==null
+
+		this.mainTable = BYTE_TO_CHAR_DefaultAlphabet; 
+		this.extensionTable = BYTE_TO_CHAR_DefaultAlphabetExtentionTable; 
+	}
+	
 	@Override
 	public boolean contains(Charset cs) {
 		return this.getClass().isInstance(cs);

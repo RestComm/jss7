@@ -27,6 +27,7 @@ import java.util.ArrayList;
 
 import org.mobicents.protocols.asn.BitSetStrictLength;
 import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.primitives.AdditionalNumberType;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
@@ -185,17 +186,17 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
  */
 public interface MAPParameterFactory {
 
-	public ProcessUnstructuredSSRequest createProcessUnstructuredSSRequestIndication(byte ussdDataCodingSch, USSDString ussdString,
+	public ProcessUnstructuredSSRequest createProcessUnstructuredSSRequestIndication(CBSDataCodingScheme ussdDataCodingSch, USSDString ussdString,
 			AlertingPattern alertingPattern, ISDNAddressString msisdnAddressString);
 
-	public ProcessUnstructuredSSResponse createProcessUnstructuredSSResponseIndication(byte ussdDataCodingScheme, USSDString ussdString);
+	public ProcessUnstructuredSSResponse createProcessUnstructuredSSResponseIndication(CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString);
 
-	public UnstructuredSSRequest createUnstructuredSSRequestIndication(byte ussdDataCodingSch, USSDString ussdString,
+	public UnstructuredSSRequest createUnstructuredSSRequestIndication(CBSDataCodingScheme ussdDataCodingSch, USSDString ussdString,
 			AlertingPattern alertingPattern, ISDNAddressString msisdnAddressString);
 
-	public UnstructuredSSResponse createUnstructuredSSRequestIndication(byte ussdDataCodingScheme, USSDString ussdString);
+	public UnstructuredSSResponse createUnstructuredSSRequestIndication(CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString);
 	
-	public UnstructuredSSNotifyRequest createUnstructuredSSNotifyRequestIndication(byte ussdDataCodingSch, USSDString ussdString,
+	public UnstructuredSSNotifyRequest createUnstructuredSSNotifyRequestIndication(CBSDataCodingScheme ussdDataCodingSch, USSDString ussdString,
 			AlertingPattern alertingPattern, ISDNAddressString msisdnAddressString);
 
 	public UnstructuredSSNotifyResponse createUnstructuredSSNotifyResponseIndication();
@@ -221,7 +222,7 @@ public interface MAPParameterFactory {
 	 *            The Charset used for encoding the passed USSD String
 	 * @return new instance of {@link USSDString}
 	 */
-	public USSDString createUSSDString(String ussdString, Charset charSet);
+	public USSDString createUSSDString(String ussdString, CBSDataCodingScheme dataCodingScheme, Charset gsm8Charset);
 
 	/**
 	 * Creates a new instance of {@link USSDString}. The passed USSD String
@@ -244,7 +245,7 @@ public interface MAPParameterFactory {
 	 *            The Charset used for encoding the passed USSD String byte[]
 	 * @return new instance of {@link USSDString}
 	 */
-	public USSDString createUSSDString(byte[] ussdString, Charset charSet);
+	public USSDString createUSSDString(byte[] ussdString, CBSDataCodingScheme dataCodingScheme, Charset gsm8Charset);
 
 	/**
 	 * Creates a new instance of {@link AddressString}
