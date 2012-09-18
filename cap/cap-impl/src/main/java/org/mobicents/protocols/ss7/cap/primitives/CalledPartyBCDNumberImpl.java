@@ -33,14 +33,14 @@ import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.primitives.CalledPartyBCDNumber;
-import org.mobicents.protocols.ss7.map.GSMCharset;
-import org.mobicents.protocols.ss7.map.GSMCharsetDecoder;
-import org.mobicents.protocols.ss7.map.GSMCharsetDecodingData;
-import org.mobicents.protocols.ss7.map.GSMCharsetEncoder;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.map.datacoding.GSMCharset;
+import org.mobicents.protocols.ss7.map.datacoding.GSMCharsetDecoder;
+import org.mobicents.protocols.ss7.map.datacoding.GSMCharsetDecodingData;
+import org.mobicents.protocols.ss7.map.datacoding.GSMCharsetEncoder;
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 import org.mobicents.protocols.ss7.map.primitives.TbcdString;
 

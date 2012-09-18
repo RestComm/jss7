@@ -505,6 +505,7 @@ import org.mobicents.protocols.ss7.map.api.MAPMessage;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.MAPStack;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
@@ -526,6 +527,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSN
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponse;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
@@ -564,173 +566,144 @@ public class UssdClientExample implements MAPDialogListener, MAPServiceSupplemen
 		mapStack.stop();
 	}
 
-	public void sendProcessUssdRequest(SccpAddress origAddress, AddressString origReference, 
-			SccpAddress remoteAddress, AddressString destReference,
-			String ussdMessage, AlertingPattern alertingPattern, ISDNAddressString msisdn) 
-			throws MAPException {
+	public void sendProcessUssdRequest(SccpAddress origAddress, AddressString origReference, SccpAddress remoteAddress, AddressString destReference,
+			String ussdMessage, AlertingPattern alertingPattern, ISDNAddressString msisdn) throws MAPException {
 		// First create Dialog
 		currentMapDialog = mapProvider.getMAPServiceSupplementary().createNewDialog(
-				MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext, 
-				MAPApplicationContextVersion.version2), origAddress,
+				MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext, MAPApplicationContextVersion.version2), origAddress,
 				destReference, remoteAddress, destReference);
 
-		// The dataCodingScheme is still byte, as I am not exactly getting how
-		// to encode/decode this.
-		byte ussdDataCodingScheme = 0x0f;
+		CBSDataCodingScheme ussdDataCodingScheme = new CBSDataCodingSchemeImpl(0x0f);
 		// The Charset is null, here we let system use default Charset (UTF-7 as
 		// explained in GSM 03.38. However if MAP User wants, it can set its own
 		// impl of Charset
-		USSDString ussdString = paramFact.createUSSDString(ussdMessage, null);
+		USSDString ussdString = paramFact.createUSSDString(ussdMessage, null, null);
 
-		currentMapDialog.addProcessUnstructuredSSRequest(ussdDataCodingScheme, ussdString, 
-			alertingPattern, msisdn);
+		currentMapDialog.addProcessUnstructuredSSRequest(ussdDataCodingScheme, ussdString, alertingPattern, msisdn);
 		// This will initiate the TC-BEGIN with INVOKE component
 		currentMapDialog.send();
 	}	
 
-	@Override
 	public void onProcessUnstructuredSSResponse(ProcessUnstructuredSSResponse ind) {
 		if (currentMapDialog == ind.getMAPDialog()) {
 			USSDString ussdString = ind.getUSSDString();
-			String response = ussdString.getString();
-			// processing USSD response
+			try {
+				String response = ussdString.getString(null);
+				// processing USSD response
+			} catch (MAPException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
 
-	@Override
 	public void onErrorComponent(MAPDialog mapDialog, Long invokeId, MAPErrorMessage mapErrorMessage) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onProviderErrorComponent(MAPDialog mapDialog, Long invokeId, MAPProviderError providerError) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onInvokeTimeout(MAPDialog mapDialog, Long invokeId) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onMAPMessage(MAPMessage mapMessage) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onUnstructuredSSRequest(UnstructuredSSRequest unstrReqInd) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onUnstructuredSSResponse(UnstructuredSSResponse unstrResInd) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onUnstructuredSSNotifyRequest(UnstructuredSSNotifyRequest unstrNotifyInd) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onUnstructuredSSNotifyResponse(UnstructuredSSNotifyResponse unstrNotifyInd) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onDialogDelimiter(MAPDialog mapDialog) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
-	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, 
-			AddressString origReference, MAPExtensionContainer extensionContainer) {
+	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, AddressString origReference, MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
-	public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, 
-			AddressString origReference, IMSI eriImsi, AddressString eriVlrNo) {
+	public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, AddressString origReference, IMSI eriImsi, AddressString eriVlrNo) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onDialogAccept(MAPDialog mapDialog, MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
-	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, 
-			MAPProviderError providerError, ApplicationContextName alternativeApplicationContext, 
+	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
+			ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason, MAPExtensionContainer extensionContainer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason, MAPAbortSource abortSource,
 			MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
-	public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason, 
-		MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason, 
-		MAPAbortSource abortSource,
-			MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void onDialogClose(MAPDialog mapDialog) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onDialogNotice(MAPDialog mapDialog, MAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onDialogRelease(MAPDialog mapDialog) {
 		currentMapDialog = null;
 	}
 
-	@Override
 	public void onDialogTimeout(MAPDialog mapDialog) {
 		// TODO Auto-generated method stub
 		
 	}
 }
-
 ]]>
 	</programlisting>
 
@@ -746,6 +719,7 @@ import org.mobicents.protocols.ss7.map.api.MAPMessage;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.MAPStack;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
@@ -765,6 +739,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSN
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponse;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
@@ -802,30 +777,25 @@ public class UssdServerExample implements MAPDialogListener, MAPServiceSupplemen
 		mapStack.stop();
 	}
 
-	@Override
 	public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest ind) {
 
 		USSDString ussdString = ind.getUSSDString();
-		String request = ussdString.getString();
-
-		// processing USSD request
-		String response = "Your balans is 100$";
-
-		// The dataCodingScheme is still byte, as I am not exactly getting how
-		// to encode/decode this.
-		byte ussdDataCodingScheme = 0x0f;
-		USSDString ussdResponse = paramFact.createUSSDString(response, null);
-
 		try {
-			currentMapDialog.addProcessUnstructuredSSResponse(ind.getInvokeId(), 
-				ussdDataCodingScheme, ussdResponse);
-		} catch (MAPException e) {
+			String request = ussdString.getString(null);
+
+			// processing USSD request
+			String response = "Your balans is 100$";
+
+			CBSDataCodingScheme ussdDataCodingScheme = new CBSDataCodingSchemeImpl(0x0f);
+			USSDString ussdResponse = paramFact.createUSSDString(response, null, null);
+
+			currentMapDialog.addProcessUnstructuredSSResponse(ind.getInvokeId(), ussdDataCodingScheme, ussdResponse);
+		} catch (MAPException e1) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
+			e1.printStackTrace();
+		}
 	}
 
-	@Override
 	public void onDialogDelimiter(MAPDialog mapDialog) {
 		// This will initiate the TC-END with ReturnResultLast component
 		try {
@@ -837,130 +807,102 @@ public class UssdServerExample implements MAPDialogListener, MAPServiceSupplemen
 	}
 
 
-	@Override
-	public void onErrorComponent(MAPDialog mapDialog, Long invokeId, 
-			MAPErrorMessage mapErrorMessage) {
+	public void onErrorComponent(MAPDialog mapDialog, Long invokeId, MAPErrorMessage mapErrorMessage) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
-	public void onProviderErrorComponent(MAPDialog mapDialog, Long invokeId, 
-			MAPProviderError providerError) {
+	public void onProviderErrorComponent(MAPDialog mapDialog, Long invokeId, MAPProviderError providerError) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onInvokeTimeout(MAPDialog mapDialog, Long invokeId) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onMAPMessage(MAPMessage mapMessage) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onProcessUnstructuredSSResponse(ProcessUnstructuredSSResponse ind) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onUnstructuredSSRequest(UnstructuredSSRequest unstrReqInd) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onUnstructuredSSResponse(UnstructuredSSResponse unstrResInd) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onUnstructuredSSNotifyRequest(UnstructuredSSNotifyRequest unstrNotifyInd) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onUnstructuredSSNotifyResponse(UnstructuredSSNotifyResponse unstrNotifyInd) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
-	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, 
-			AddressString origReference, MAPExtensionContainer extensionContainer) {
+	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, AddressString origReference, MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
-	public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, 
-			AddressString origReference, IMSI eriImsi, AddressString eriVlrNo) {
+	public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, AddressString origReference, IMSI eriImsi, AddressString eriVlrNo) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onDialogAccept(MAPDialog mapDialog, MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
-	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, 
-			MAPProviderError providerError,
-			ApplicationContextName alternativeApplicationContext, 
+	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
+			ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason, MAPExtensionContainer extensionContainer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason, MAPAbortSource abortSource,
 			MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
-	public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason, 
-			MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason, 
-			MAPAbortSource abortSource,
-			MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void onDialogClose(MAPDialog mapDialog) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onDialogNotice(MAPDialog mapDialog, MAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onDialogRelease(MAPDialog mapDialog) {
 		currentMapDialog = null;
 	}
 
-	@Override
 	public void onDialogTimeout(MAPDialog mapDialog) {
 		// TODO Auto-generated method stub
 		
