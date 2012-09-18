@@ -355,20 +355,20 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 		return response;
 	}
 
-	public USSDString createUSSDString(String ussdString, CBSDataCodingScheme dataCodingScheme, Charset gsm8Charset) {
+	public USSDString createUSSDString(String ussdString, CBSDataCodingScheme dataCodingScheme, Charset gsm8Charset) throws MAPException {
 		return new USSDStringImpl(ussdString, dataCodingScheme, gsm8Charset);
 	}
 
-	public USSDString createUSSDString(String ussdString) {
+	public USSDString createUSSDString(String ussdString) throws MAPException {
 		return new USSDStringImpl(ussdString, null, null);
 	}
 
 	public USSDString createUSSDString(byte[] ussdString, CBSDataCodingScheme dataCodingScheme, Charset gsm8Charset) {
-		return new USSDStringImpl(ussdString, dataCodingScheme, gsm8Charset);
+		return new USSDStringImpl(ussdString, dataCodingScheme);
 	}
 
 	public USSDString createUSSDString(byte[] ussdString) {
-		return new USSDStringImpl(ussdString, null, null);
+		return new USSDStringImpl(ussdString, null);
 	}
 
 	public AddressString createAddressString(AddressNature addNature, NumberingPlan numPlan, String address) {
@@ -887,11 +887,11 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 		return new LCSClientExternalIDImpl(externalAddress, extensionContainer);
 	}
 
-	public LCSClientName createLCSClientName(byte dataCodingScheme, USSDString nameString, LCSFormatIndicator lcsFormatIndicator) {
+	public LCSClientName createLCSClientName(CBSDataCodingScheme dataCodingScheme, USSDString nameString, LCSFormatIndicator lcsFormatIndicator) {
 		return new LCSClientNameImpl(dataCodingScheme, nameString, lcsFormatIndicator);
 	}
 
-	public LCSCodeword createLCSCodeword(byte dataCodingScheme, USSDString lcsCodewordString) {
+	public LCSCodeword createLCSCodeword(CBSDataCodingScheme dataCodingScheme, USSDString lcsCodewordString) {
 		return new LCSCodewordImpl(dataCodingScheme, lcsCodewordString);
 	}
 
@@ -911,7 +911,7 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 		return new LCSQoSImpl(horizontalAccuracy, verticalAccuracy, verticalCoordinateRequest, responseTime, extensionContainer);
 	}
 
-	public LCSRequestorID createLCSRequestorID(byte dataCodingScheme, USSDString requestorIDString, LCSFormatIndicator lcsFormatIndicator) {
+	public LCSRequestorID createLCSRequestorID(CBSDataCodingScheme dataCodingScheme, USSDString requestorIDString, LCSFormatIndicator lcsFormatIndicator) {
 		return new LCSRequestorIDImpl(dataCodingScheme, requestorIDString, lcsFormatIndicator);
 	}
 

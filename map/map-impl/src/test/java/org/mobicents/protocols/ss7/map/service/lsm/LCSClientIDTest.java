@@ -43,7 +43,7 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientExternalID;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientInternalID;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientName;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientType;
-import org.mobicents.protocols.ss7.map.api.service.lsm.LCSFormatIndicator;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.APNImpl;
@@ -110,9 +110,9 @@ public class LCSClientIDTest {
 
 		LCSClientName lcsClientName = lcsClientID.getLCSClientName();
 		assertNotNull(lcsClientName);
-		assertEquals( lcsClientName.getDataCodingScheme(),(byte) 0x0f);
+		assertEquals(lcsClientName.getDataCodingScheme().getCode(), 0x0f);
 		USSDString nameString = lcsClientName.getNameString();
-		assertTrue(nameString.getString().equals("ndmgapp2ndmgapp2"));
+		assertTrue(nameString.getString(null).equals("ndmgapp2ndmgapp2"));
 
 		
 		data = getDataFull();
@@ -131,15 +131,15 @@ public class LCSClientIDTest {
 
 		lcsClientName = lcsClientID.getLCSClientName();
 		assertNotNull(lcsClientName);
-		assertEquals( lcsClientName.getDataCodingScheme(),(byte) 0x0f);
+		assertEquals( lcsClientName.getDataCodingScheme().getCode(), 0x0f);
 		nameString = lcsClientName.getNameString();
-		assertEquals( nameString.getString(),"ndmgapp2ndmgapp2");
+		assertEquals( nameString.getString(null),"ndmgapp2ndmgapp2");
 
 		assertTrue(lcsClientID.getLCSClientExternalID().getExternalAddress().getAddress().equals("44332211"));
 		assertTrue(lcsClientID.getLCSClientDialedByMS().getAddress().equals("5544332211"));
 		assertTrue(Arrays.equals(lcsClientID.getLCSAPN().getData(), getDataAPN()));
-		assertEquals( lcsClientID.getLCSRequestorID().getDataCodingScheme(),(byte) 0x0f);
-		assertTrue(lcsClientID.getLCSRequestorID().getRequestorIDString().getString().equals("ndmgapp2ndmgapp2"));
+		assertEquals( lcsClientID.getLCSRequestorID().getDataCodingScheme().getCode(), 0x0f);
+		assertTrue(lcsClientID.getLCSRequestorID().getRequestorIDString().getString(null).equals("ndmgapp2ndmgapp2"));
 	}
 
 	@Test(groups = { "functional.encode","service.lsm"})
@@ -148,7 +148,7 @@ public class LCSClientIDTest {
 		byte[] data = getData();
 
 		USSDString nameString = MAPParameterFactory.createUSSDString("ndmgapp2ndmgapp2");
-		LCSClientName lcsClientName = new LCSClientNameImpl((byte) 0x0f, nameString, null);
+		LCSClientName lcsClientName = new LCSClientNameImpl(new CBSDataCodingSchemeImpl(0x0f), nameString, null);
 
 		LCSClientIDImpl lcsClientID = new LCSClientIDImpl(LCSClientType.plmnOperatorServices, null, LCSClientInternalID.broadcastService, lcsClientName, null,
 				null, null);
@@ -167,7 +167,7 @@ public class LCSClientIDTest {
 		LCSClientExternalID extId = new LCSClientExternalIDImpl(externalAddress, null);
 		AddressStringImpl clientDialedByMS = new AddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "5544332211");
 		APNImpl apn = new APNImpl(getDataAPN()); 
-		LCSRequestorIDImpl reqId = new LCSRequestorIDImpl((byte) 0x0f, nameString, null); 
+		LCSRequestorIDImpl reqId = new LCSRequestorIDImpl(new CBSDataCodingSchemeImpl(0x0f), nameString, null); 
 		
 		lcsClientID = new LCSClientIDImpl(LCSClientType.plmnOperatorServices, extId, LCSClientInternalID.broadcastService, lcsClientName, clientDialedByMS,
 				apn, reqId);
@@ -183,7 +183,7 @@ public class LCSClientIDTest {
 	@Test(groups = { "functional.serialize", "service.lsm" })
 	public void testSerialization() throws Exception {
 		USSDString nameString = MAPParameterFactory.createUSSDString("ndmgapp2ndmgapp2");
-		LCSClientName lcsClientName = new LCSClientNameImpl((byte) 0x0f, nameString, null);
+		LCSClientName lcsClientName = new LCSClientNameImpl(new CBSDataCodingSchemeImpl(0x0f), nameString, null);
 
 		LCSClientIDImpl original = new LCSClientIDImpl(LCSClientType.plmnOperatorServices, null, LCSClientInternalID.broadcastService, lcsClientName, null,
 				null, null);

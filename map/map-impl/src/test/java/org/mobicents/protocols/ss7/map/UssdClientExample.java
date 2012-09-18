@@ -92,8 +92,13 @@ public class UssdClientExample implements MAPDialogListener, MAPServiceSupplemen
 	public void onProcessUnstructuredSSResponse(ProcessUnstructuredSSResponse ind) {
 		if (currentMapDialog == ind.getMAPDialog()) {
 			USSDString ussdString = ind.getUSSDString();
-			String response = ussdString.getString();
-			// processing USSD response
+			try {
+				String response = ussdString.getString(null);
+				// processing USSD response
+			} catch (MAPException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 

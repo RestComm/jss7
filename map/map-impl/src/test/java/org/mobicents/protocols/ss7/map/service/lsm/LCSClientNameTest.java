@@ -41,6 +41,7 @@ import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSFormatIndicator;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
@@ -92,7 +93,7 @@ public class LCSClientNameTest {
 
 		assertEquals( lcsClientName.getDataCodingScheme(),(byte) 0x0f);
 		assertNotNull(lcsClientName.getNameString());
-		assertEquals( lcsClientName.getNameString().getString(),"ndmgapp2ndmgapp2");
+		assertEquals( lcsClientName.getNameString().getString(null),"ndmgapp2ndmgapp2");
 
 		assertNull(lcsClientName.getLCSFormatIndicator());
 
@@ -107,7 +108,7 @@ public class LCSClientNameTest {
 
 		assertEquals( lcsClientName.getDataCodingScheme(),(byte) 0x0f);
 		assertNotNull(lcsClientName.getNameString());
-		assertEquals( lcsClientName.getNameString().getString(),"ndmgapp2ndmgapp2");
+		assertEquals( lcsClientName.getNameString().getString(null),"ndmgapp2ndmgapp2");
 
 		assertEquals(lcsClientName.getLCSFormatIndicator(), LCSFormatIndicator.msisdn);
 	}
@@ -117,7 +118,7 @@ public class LCSClientNameTest {
 		byte[] data = getData();
 
 		USSDString nameString = MAPParameterFactory.createUSSDString("ndmgapp2ndmgapp2");
-		LCSClientNameImpl lcsClientName = new LCSClientNameImpl((byte) 0x0f, nameString, null);
+		LCSClientNameImpl lcsClientName = new LCSClientNameImpl(new CBSDataCodingSchemeImpl(0x0f), nameString, null);
 		AsnOutputStream asnOS = new AsnOutputStream();
 		lcsClientName.encodeAll(asnOS, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 		
@@ -128,7 +129,7 @@ public class LCSClientNameTest {
 	
 		data = getDataFull();
 
-		lcsClientName = new LCSClientNameImpl((byte) 0x0f, nameString, LCSFormatIndicator.msisdn);
+		lcsClientName = new LCSClientNameImpl(new CBSDataCodingSchemeImpl(0x0f), nameString, LCSFormatIndicator.msisdn);
 		asnOS = new AsnOutputStream();
 		lcsClientName.encodeAll(asnOS, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 		
@@ -140,7 +141,7 @@ public class LCSClientNameTest {
 	@Test(groups = { "functional.serialize", "service.lsm" })
 	public void testSerialization() throws Exception {
 		USSDString nameString = MAPParameterFactory.createUSSDString("ndmgapp2ndmgapp2");
-		LCSClientNameImpl original = new LCSClientNameImpl((byte) 0x0f, nameString, null);
+		LCSClientNameImpl original = new LCSClientNameImpl(new CBSDataCodingSchemeImpl(0x0f), nameString, null);
 
 		// serialize
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -157,7 +158,7 @@ public class LCSClientNameTest {
 		
 		//test result
 		assertEquals(copy.getDataCodingScheme(), original.getDataCodingScheme());
-		assertEquals(copy.getNameString().getString(), original.getNameString().getString());
+		assertEquals(copy.getNameString().getString(null), original.getNameString().getString(null));
 		assertEquals(copy.getLCSFormatIndicator(), original.getLCSFormatIndicator());
 	}
 }

@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
 
 import java.io.Serializable;
 
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 
 /**
@@ -41,7 +42,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
  *
  */
 public interface LCSClientName extends Serializable {
-	byte getDataCodingScheme();
+	CBSDataCodingScheme getDataCodingScheme();
 	
 	/**
 	 * NameString ::= USSD-String (SIZE (1..maxNameStringLength))

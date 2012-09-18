@@ -209,7 +209,7 @@ public interface MAPParameterFactory {
 	 *            The USSD String
 	 * @return new instance of {@link USSDString}
 	 */
-	public USSDString createUSSDString(String ussdString);
+	public USSDString createUSSDString(String ussdString) throws MAPException;
 
 	/**
 	 * Creates a new instance of {@link USSDString} using the passed
@@ -222,7 +222,7 @@ public interface MAPParameterFactory {
 	 *            The Charset used for encoding the passed USSD String
 	 * @return new instance of {@link USSDString}
 	 */
-	public USSDString createUSSDString(String ussdString, CBSDataCodingScheme dataCodingScheme, Charset gsm8Charset);
+	public USSDString createUSSDString(String ussdString, CBSDataCodingScheme dataCodingScheme, Charset gsm8Charset) throws MAPException;
 
 	/**
 	 * Creates a new instance of {@link USSDString}. The passed USSD String
@@ -507,15 +507,15 @@ public interface MAPParameterFactory {
 	public LCSClientID createLCSClientID(LCSClientType lcsClientType, LCSClientExternalID lcsClientExternalID, LCSClientInternalID lcsClientInternalID,
 			LCSClientName lcsClientName, AddressString lcsClientDialedByMS, APN lcsAPN, LCSRequestorID lcsRequestorID);
 	public LCSClientExternalID createLCSClientExternalID(final ISDNAddressString externalAddress, final MAPExtensionContainer extensionContainer);
-	public LCSClientName createLCSClientName(byte dataCodingScheme, USSDString nameString, LCSFormatIndicator lcsFormatIndicator);
-	public LCSCodeword createLCSCodeword(byte dataCodingScheme, USSDString lcsCodewordString);
+	public LCSClientName createLCSClientName(CBSDataCodingScheme dataCodingScheme, USSDString nameString, LCSFormatIndicator lcsFormatIndicator);
+	public LCSCodeword createLCSCodeword(CBSDataCodingScheme dataCodingScheme, USSDString lcsCodewordString);
 	public LCSLocationInfo createLCSLocationInfo(ISDNAddressString networkNodeNumber, LMSI lmsi, MAPExtensionContainer extensionContainer,
 			boolean gprsNodeIndicator, AdditionalNumber additionalNumber, SupportedLCSCapabilitySets supportedLCSCapabilitySets,
 			SupportedLCSCapabilitySets additionalLCSCapabilitySets, DiameterIdentity mmeName, DiameterIdentity aaaServerName);
 	public LCSPrivacyCheck createLCSPrivacyCheck(PrivacyCheckRelatedAction callSessionUnrelated, PrivacyCheckRelatedAction callSessionRelated);
 	public LCSQoS createLCSQoS(Integer horizontalAccuracy, Integer verticalAccuracy, boolean verticalCoordinateRequest, ResponseTime responseTime,
 			MAPExtensionContainer extensionContainer);
-	public LCSRequestorID createLCSRequestorID(byte dataCodingScheme, USSDString requestorIDString, LCSFormatIndicator lcsFormatIndicator);
+	public LCSRequestorID createLCSRequestorID(CBSDataCodingScheme dataCodingScheme, USSDString requestorIDString, LCSFormatIndicator lcsFormatIndicator);
 	public LocationType createLocationType(final LocationEstimateType locationEstimateType, final DeferredLocationEventType deferredLocationEventType);
 	public PeriodicLDRInfo createPeriodicLDRInfo(int reportingAmount, int reportingInterval);
 	public PositioningDataInformation createPositioningDataInformation(byte[] data);

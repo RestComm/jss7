@@ -41,6 +41,7 @@ import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSFormatIndicator;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
@@ -95,7 +96,7 @@ public class LCSRequestorIDTest {
 
 		assertEquals( lcsRequestorID.getDataCodingScheme(),(byte) 0x0f);
 		assertNotNull(lcsRequestorID.getRequestorIDString());
-		assertEquals( lcsRequestorID.getRequestorIDString().getString(),"ndmgapp2ndmgapp2");
+		assertEquals( lcsRequestorID.getRequestorIDString().getString(null),"ndmgapp2ndmgapp2");
 
 		assertNull(lcsRequestorID.getLCSFormatIndicator());
 
@@ -111,7 +112,7 @@ public class LCSRequestorIDTest {
 
 		assertEquals( lcsRequestorID.getDataCodingScheme(),(byte) 0x0f);
 		assertNotNull(lcsRequestorID.getRequestorIDString());
-		assertEquals( lcsRequestorID.getRequestorIDString().getString(),"ndmgapp2ndmgapp2");
+		assertEquals( lcsRequestorID.getRequestorIDString().getString(null),"ndmgapp2ndmgapp2");
 
 		assertEquals(lcsRequestorID.getLCSFormatIndicator(), LCSFormatIndicator.emailAddress);
 	}
@@ -121,7 +122,7 @@ public class LCSRequestorIDTest {
 		byte[] data = getData();
 
 		USSDString nameString = MAPParameterFactory.createUSSDString("ndmgapp2ndmgapp2");
-		LCSRequestorIDImpl lcsRequestorID = new LCSRequestorIDImpl((byte) 0x0f, nameString, null);
+		LCSRequestorIDImpl lcsRequestorID = new LCSRequestorIDImpl(new CBSDataCodingSchemeImpl(0x0f), nameString, null);
 		AsnOutputStream asnOS = new AsnOutputStream();
 		lcsRequestorID.encodeAll(asnOS);
 
@@ -132,7 +133,7 @@ public class LCSRequestorIDTest {
 	
 		data = getDataFull();
 
-		lcsRequestorID = new LCSRequestorIDImpl((byte) 0x0f, nameString, LCSFormatIndicator.emailAddress);
+		lcsRequestorID = new LCSRequestorIDImpl(new CBSDataCodingSchemeImpl(0x0f), nameString, LCSFormatIndicator.emailAddress);
 		asnOS = new AsnOutputStream();
 		lcsRequestorID.encodeAll(asnOS);
 
@@ -144,7 +145,7 @@ public class LCSRequestorIDTest {
 	@Test(groups = { "functional.serialize", "service.lsm" })
 	public void testSerialization() throws Exception {
 		USSDString nameString = MAPParameterFactory.createUSSDString("ndmgapp2ndmgapp2");
-		LCSRequestorIDImpl original = new LCSRequestorIDImpl((byte) 0x0f, nameString, null);
+		LCSRequestorIDImpl original = new LCSRequestorIDImpl(new CBSDataCodingSchemeImpl(0x0f), nameString, null);
 
 		// serialize
 		ByteArrayOutputStream out = new ByteArrayOutputStream();

@@ -31,9 +31,11 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientName;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSFormatIndicator;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
 
@@ -49,7 +51,7 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 
 	public static final String _PrimitiveName = "LCSClientName";
 
-	private byte dataCodingScheme = 0;
+	private CBSDataCodingScheme dataCodingScheme;
 	private USSDString nameString;
 	private LCSFormatIndicator lcsFormatIndicator;
 
@@ -65,7 +67,7 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 	 * @param nameString
 	 * @param lcsFormatIndicator
 	 */
-	public LCSClientNameImpl(byte dataCodingScheme, USSDString nameString, LCSFormatIndicator lcsFormatIndicator) {
+	public LCSClientNameImpl(CBSDataCodingScheme dataCodingScheme, USSDString nameString, LCSFormatIndicator lcsFormatIndicator) {
 		super();
 		this.dataCodingScheme = dataCodingScheme;
 		this.nameString = nameString;
@@ -78,7 +80,7 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientName#
 	 * getDataCodingScheme()
 	 */
-	public byte getDataCodingScheme() {
+	public CBSDataCodingScheme getDataCodingScheme() {
 		return this.dataCodingScheme;
 	}
 
@@ -176,7 +178,7 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 
 	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-		this.dataCodingScheme = 0;
+		this.dataCodingScheme = null;
 		this.nameString = null;
 		this.lcsFormatIndicator = null;
 
@@ -192,7 +194,7 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 		}
 
 		int length1 = ais.readLength();
-		this.dataCodingScheme = ais.readOctetStringData(length1)[0];
+		this.dataCodingScheme = new CBSDataCodingSchemeImpl(ais.readOctetStringData(length1)[0]);
 
 		tag = ais.readTag();
 
@@ -203,7 +205,7 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 
-		this.nameString = new USSDStringImpl();
+		this.nameString = new USSDStringImpl(this.dataCodingScheme);
 		((USSDStringImpl)this.nameString).decodeAll(ais);
 
 		while (true) {
@@ -271,7 +273,7 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 			throw new MAPException("nameString must not be null");
 
 		try {
-			asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_DATA_CODING_SCHEME, new byte[] { this.dataCodingScheme });
+			asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_DATA_CODING_SCHEME, new byte[] { (byte)this.dataCodingScheme.getCode() });
 
 			((USSDStringImpl)this.nameString).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_NAME_STRING);
 
@@ -289,7 +291,7 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + dataCodingScheme;
+		result = prime * result + dataCodingScheme.getCode();
 		result = prime * result + ((lcsFormatIndicator == null) ? 0 : lcsFormatIndicator.hashCode());
 		result = prime * result + ((nameString == null) ? 0 : nameString.hashCode());
 		return result;
@@ -304,7 +306,7 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 		if (getClass() != obj.getClass())
 			return false;
 		LCSClientNameImpl other = (LCSClientNameImpl) obj;
-		if (dataCodingScheme != other.dataCodingScheme)
+		if (dataCodingScheme.getCode() != other.dataCodingScheme.getCode())
 			return false;
 		if (lcsFormatIndicator != other.lcsFormatIndicator)
 			return false;

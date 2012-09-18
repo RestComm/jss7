@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -167,7 +167,7 @@ public class UnstructuredSSRequestImpl extends SupplementaryMessageImpl implemen
 					"Error while decoding UnstructuredSSRequestIndication: Parameter ussd-String bad tag class or not primitive",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
-		this.ussdString = new USSDStringImpl();
+		this.ussdString = new USSDStringImpl(this.ussdDataCodingSch);
 		((USSDStringImpl) this.ussdString).decodeAll(ais);
 
 		while (true) {

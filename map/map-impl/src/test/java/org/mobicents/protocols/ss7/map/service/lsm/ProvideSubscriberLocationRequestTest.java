@@ -56,6 +56,7 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.ReportingPLMNList;
 import org.mobicents.protocols.ss7.map.api.service.lsm.ResponseTime;
 import org.mobicents.protocols.ss7.map.api.service.lsm.ResponseTimeCategory;
 import org.mobicents.protocols.ss7.map.api.service.lsm.SupportedGADShapes;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.map.primitives.GSNAddressImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMEIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
@@ -145,7 +146,7 @@ public class ProvideSubscriberLocationRequestTest {
 		LCSClientName lcsClientName = lcsClientId.getLCSClientName();
 		assertNotNull(lcsClientName);
 		assertEquals( lcsClientName.getDataCodingScheme(),(byte) 0x0f);
-		assertEquals( lcsClientName.getNameString().getString(),"ndmgapp2ndmgapp2");
+		assertEquals( lcsClientName.getNameString().getString(null),"ndmgapp2ndmgapp2");
 
 		IMSI imsi = reqInd.getIMSI();
 		assertNotNull(imsi);
@@ -213,7 +214,7 @@ public class ProvideSubscriberLocationRequestTest {
 		lcsClientName = lcsClientId.getLCSClientName();
 		assertNotNull(lcsClientName);
 		assertEquals( lcsClientName.getDataCodingScheme(),(byte) 0x0f);
-		assertEquals( lcsClientName.getNameString().getString(),"ndmgapp2ndmgapp2");
+		assertEquals( lcsClientName.getNameString().getString(null),"ndmgapp2ndmgapp2");
 
 		imsi = reqInd.getIMSI();
 		assertNotNull(imsi);
@@ -245,7 +246,7 @@ public class ProvideSubscriberLocationRequestTest {
 		assertNull(reqInd.getExtensionContainer());
 		assertEquals((int) reqInd.getLCSReferenceNumber(), 5);
 		assertEquals((int) reqInd.getLCSServiceTypeID(), 6);
-		assertTrue(reqInd.getLCSCodeword().getLCSCodewordString().getString().equals("xxyyyzz"));
+		assertTrue(reqInd.getLCSCodeword().getLCSCodewordString().getString(null).equals("xxyyyzz"));
 		assertEquals(reqInd.getLCSPrivacyCheck().getCallSessionUnrelated(), PrivacyCheckRelatedAction.allowedWithNotification);
 		assertEquals(reqInd.getLCSPrivacyCheck().getCallSessionRelated(), PrivacyCheckRelatedAction.allowedWithoutNotification);
 
@@ -267,7 +268,7 @@ public class ProvideSubscriberLocationRequestTest {
 		ISDNAddressString mlcNumber = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "55619007");
 
 		USSDString nameString = MAPParameterFactory.createUSSDString("ndmgapp2ndmgapp2");
-		LCSClientName lcsClientName = new LCSClientNameImpl((byte) 0x0f, nameString, null);
+		LCSClientName lcsClientName = new LCSClientNameImpl(new CBSDataCodingSchemeImpl(0x0f), nameString, null);
 
 		LCSClientID lcsClientID = new LCSClientIDImpl(LCSClientType.plmnOperatorServices, null, LCSClientInternalID.broadcastService, lcsClientName, null,
 				null, null);
@@ -294,7 +295,7 @@ public class ProvideSubscriberLocationRequestTest {
 		LMSIImpl lmsi = new LMSIImpl(getDataLmsi());
 		IMEIImpl imei = new IMEIImpl("1234567890123456");
 		USSDString lcsCodewordString = MAPParameterFactory.createUSSDString("xxyyyzz");
-		LCSCodewordImpl lcsCodeword = new LCSCodewordImpl((byte) 0x0f, lcsCodewordString);
+		LCSCodewordImpl lcsCodeword = new LCSCodewordImpl(new CBSDataCodingSchemeImpl(0x0f), lcsCodewordString);
 		LCSPrivacyCheckImpl lcsPrivacyCheck = new LCSPrivacyCheckImpl(PrivacyCheckRelatedAction.allowedWithNotification, PrivacyCheckRelatedAction.allowedWithoutNotification);
 		ArrayList<Area> areaList = new ArrayList<Area>();
 		AreaIdentification areaIdentification = new AreaIdentificationImpl(AreaType.countryCode, 250, 0, 0, 0);

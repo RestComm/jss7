@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -26,6 +26,7 @@ import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
 import org.mobicents.protocols.ss7.map.MessageImpl;
+import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
@@ -47,7 +48,6 @@ public abstract class SupplementaryMessageImpl extends MessageImpl implements Su
 	private static final String DEFAULT_USSD_STRING = "";
 
 	protected CBSDataCodingScheme ussdDataCodingSch;
-
 	protected USSDString ussdString;
 
 	/**
@@ -77,12 +77,15 @@ public abstract class SupplementaryMessageImpl extends MessageImpl implements Su
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		
+
 		sb.append(", ussdDataCodingSch=");
 		sb.append(ussdDataCodingSch);
 		if (ussdString != null) {
 			sb.append(", ussdString=");
-			sb.append(ussdString.getString());
+			try {
+				sb.append(ussdString.getString(null));
+			} catch (Exception e) {
+			}
 		}
 
 		sb.append("]");
@@ -101,7 +104,12 @@ public abstract class SupplementaryMessageImpl extends MessageImpl implements Su
 				throws XMLStreamException {
 			MAP_MESSAGE_XML.read(xml, ussdMessage);
 			ussdMessage.ussdDataCodingSch = new CBSDataCodingSchemeImpl(xml.getAttribute(DATA_CODING_SCHEME, DEFAULT_DATA_CODING_SCHEME));
-			ussdMessage.ussdString = new USSDStringImpl(xml.getAttribute(STRING, DEFAULT_USSD_STRING), ussdMessage.ussdDataCodingSch, null);
+			try {
+				ussdMessage.ussdString = new USSDStringImpl(xml.getAttribute(STRING, DEFAULT_USSD_STRING), ussdMessage.ussdDataCodingSch, null);
+			} catch (MAPException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		@Override
@@ -109,7 +117,12 @@ public abstract class SupplementaryMessageImpl extends MessageImpl implements Su
 				throws XMLStreamException {
 			MAP_MESSAGE_XML.write(ussdMessage, xml);
 			xml.setAttribute(DATA_CODING_SCHEME, ussdMessage.ussdDataCodingSch.getCode());
-			xml.setAttribute(STRING, ussdMessage.getUSSDString().getString());
+			try {
+				xml.setAttribute(STRING, ussdMessage.getUSSDString().getString(null));
+			} catch (MAPException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	};
 

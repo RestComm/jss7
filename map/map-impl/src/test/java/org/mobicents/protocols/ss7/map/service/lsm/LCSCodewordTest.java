@@ -39,6 +39,7 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
@@ -81,7 +82,7 @@ public class LCSCodewordTest {
 
 		assertEquals( lcsCodeword.getDataCodingScheme(),(byte) 0x0f);
 		assertNotNull(lcsCodeword.getLCSCodewordString());
-		assertEquals( lcsCodeword.getLCSCodewordString().getString(),"ndmgapp2ndmgapp2");
+		assertEquals( lcsCodeword.getLCSCodewordString().getString(null),"ndmgapp2ndmgapp2");
 
 	}
 
@@ -91,7 +92,7 @@ public class LCSCodewordTest {
 				(byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
 
 		USSDString nameString = MAPParameterFactory.createUSSDString("ndmgapp2ndmgapp2");
-		LCSCodewordImpl lcsCodeword = new LCSCodewordImpl((byte) 0x0f, nameString);
+		LCSCodewordImpl lcsCodeword = new LCSCodewordImpl(new CBSDataCodingSchemeImpl(0x0f), nameString);
 		AsnOutputStream asnOS = new AsnOutputStream();
 		lcsCodeword.encodeAll(asnOS, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 		
@@ -103,7 +104,7 @@ public class LCSCodewordTest {
 	@Test(groups = { "functional.serialize", "service.lsm" })
 	public void testSerialization() throws Exception {
 		USSDString nameString = MAPParameterFactory.createUSSDString("ndmgapp2ndmgapp2");
-		LCSCodewordImpl original = new LCSCodewordImpl((byte) 0x0f, nameString);
+		LCSCodewordImpl original = new LCSCodewordImpl(new CBSDataCodingSchemeImpl(0x0f), nameString);
 
 		// serialize
 		ByteArrayOutputStream out = new ByteArrayOutputStream();

@@ -71,7 +71,7 @@ public class ProcessUnstructuredSSResponseTest {
 		USSDString ussdString = addNum.getUSSDString();
 		assertNotNull(ussdString);
 
-		assertEquals( ussdString.getString(),"Your balance = 350");
+		assertEquals( ussdString.getString(null),"Your balance = 350");
 
 	}
 

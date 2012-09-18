@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -49,6 +49,7 @@ import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
 /**
  * 
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public class ProcessUnstructuredSSRequestImpl extends SupplementaryMessageImpl implements
@@ -159,8 +160,7 @@ public class ProcessUnstructuredSSRequestImpl extends SupplementaryMessageImpl i
 					"Error while decoding ProcessUnstructuredSSRequestIndication: Parameter ussd-DataCodingScheme bad tag class or not primitive",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
-		int length1 = ais.readLength();
-		this.ussdDataCodingSch = new CBSDataCodingSchemeImpl(ais.readOctetStringData(length1)[0]);
+		this.ussdDataCodingSch = new CBSDataCodingSchemeImpl(ais.readOctetString()[0]);
 
 		tag = ais.readTag();
 
@@ -170,7 +170,7 @@ public class ProcessUnstructuredSSRequestImpl extends SupplementaryMessageImpl i
 					"Error while decoding ProcessUnstructuredSSRequestIndication: Parameter ussd-String bad tag class or not primitive",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
-		this.ussdString = new USSDStringImpl();
+		this.ussdString = new USSDStringImpl(this.ussdDataCodingSch);
 		((USSDStringImpl) this.ussdString).decodeAll(ais);
 
 		while (true) {

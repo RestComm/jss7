@@ -84,12 +84,12 @@ public class ProcessUnstructuredSSRequestTest {
 		ProcessUnstructuredSSRequestImpl addNum = new ProcessUnstructuredSSRequestImpl();
 		addNum.decodeAll(asn);
 		CBSDataCodingScheme dataCodingScheme = addNum.getDataCodingScheme();
-		assertEquals(dataCodingScheme.getCode(), (byte) 0x0f);
+		assertEquals(dataCodingScheme.getCode(), 0x0f);
 
 		USSDString ussdString = addNum.getUSSDString();
 		assertNotNull(ussdString);
 
-		assertEquals(ussdString.getString(), "*234#");
+		assertEquals(ussdString.getString(null), "*234#");
 
 	}
 

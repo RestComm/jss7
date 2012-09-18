@@ -75,7 +75,7 @@ public class UnstructuredSSRequestTest {
 		USSDString ussdString = addNum.getUSSDString();
 		assertNotNull(ussdString);
 
-		assertEquals( ussdString.getString(),"USSD String : Hello World <CR> 1. Balance <CR> 2. Texts Remaining");
+		assertEquals( ussdString.getString(null),"USSD String : Hello World <CR> 1. Balance <CR> 2. Texts Remaining");
 
 	}
 

@@ -286,17 +286,17 @@ public class MAPFunctionalTest extends SccpHarness {
 			public void onUnstructuredSSRequest(UnstructuredSSRequest unstrReqInd) {
 				super.onUnstructuredSSRequest(unstrReqInd);
 
-				String ussdString = unstrReqInd.getUSSDString().getString();
-				AddressString msisdn = unstrReqInd.getMSISDNAddressString();
-				this.debug("Received UnstructuredSSRequestIndication " + ussdString);
-
-				assertEquals(MAPFunctionalTest.USSD_MENU, ussdString);
-
-				MAPDialogSupplementary mapDialog = unstrReqInd.getMAPDialog();
-				Long invokeId = unstrReqInd.getInvokeId();
-
-				USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_RESPONSE);
 				try {
+					String ussdString = unstrReqInd.getUSSDString().getString(null);
+					AddressString msisdn = unstrReqInd.getMSISDNAddressString();
+					this.debug("Received UnstructuredSSRequestIndication " + ussdString);
+
+					assertEquals(MAPFunctionalTest.USSD_MENU, ussdString);
+
+					MAPDialogSupplementary mapDialog = unstrReqInd.getMAPDialog();
+					Long invokeId = unstrReqInd.getInvokeId();
+
+					USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_RESPONSE);
 					mapDialog.addUnstructuredSSResponse(invokeId, new CBSDataCodingSchemeImpl(0x0f), ussdStringObj);
 				} catch (MAPException e) {
 					this.error("Erro while trying to send UnstructuredSSResponse", e);
@@ -334,15 +334,15 @@ public class MAPFunctionalTest extends SccpHarness {
 			@Override
 			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
-				String ussdString = procUnstrReqInd.getUSSDString().getString();
-				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
-				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
-				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
-				MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
-				processUnstructuredSSRequestInvokeId = procUnstrReqInd.getInvokeId();
-				this.debug("InvokeId =  " + processUnstructuredSSRequestInvokeId);
-				USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_MENU);
 				try {
+					String ussdString = procUnstrReqInd.getUSSDString().getString(null);
+					AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+					this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+					assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+					MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
+					processUnstructuredSSRequestInvokeId = procUnstrReqInd.getInvokeId();
+					this.debug("InvokeId =  " + processUnstructuredSSRequestInvokeId);
+					USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_MENU);
 					mapDialog.addUnstructuredSSRequest(new CBSDataCodingSchemeImpl(0x0f), ussdStringObj, null, null);
 				} catch (MAPException e) {
 					this.error("Error while trying to send UnstructuredSSRequest", e);
@@ -353,12 +353,12 @@ public class MAPFunctionalTest extends SccpHarness {
 			@Override
 			public void onUnstructuredSSResponse(UnstructuredSSResponse unstrResInd) {
 				super.onUnstructuredSSResponse(unstrResInd);
-				String ussdString = unstrResInd.getUSSDString().getString();
-				logger.debug("Received UnstructuredSSResponse " + ussdString);
-				assertEquals(MAPFunctionalTest.USSD_RESPONSE, ussdString);
-				MAPDialogSupplementary mapDialog = unstrResInd.getMAPDialog();
-				USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_FINAL_RESPONSE);
 				try {
+					String ussdString = unstrResInd.getUSSDString().getString(null);
+					logger.debug("Received UnstructuredSSResponse " + ussdString);
+					assertEquals(MAPFunctionalTest.USSD_RESPONSE, ussdString);
+					MAPDialogSupplementary mapDialog = unstrResInd.getMAPDialog();
+					USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_FINAL_RESPONSE);
 					mapDialog.addProcessUnstructuredSSResponse(processUnstructuredSSRequestInvokeId, new CBSDataCodingSchemeImpl(0x0f), ussdStringObj);
 				} catch (MAPException e) {
 					logger.error(e);
@@ -472,17 +472,17 @@ public class MAPFunctionalTest extends SccpHarness {
 			public void onUnstructuredSSRequest(UnstructuredSSRequest unstrReqInd) {
 				super.onUnstructuredSSRequest(unstrReqInd);
 
-				String ussdString = unstrReqInd.getUSSDString().getString();
-				AddressString msisdn = unstrReqInd.getMSISDNAddressString();
-				this.debug("Received UnstructuredSSRequestIndication " + ussdString);
-
-				assertEquals(MAPFunctionalTest.USSD_MENU, ussdString);
-
-				MAPDialogSupplementary mapDialog = unstrReqInd.getMAPDialog();
-				Long invokeId = unstrReqInd.getInvokeId();
-
-				USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_RESPONSE);
 				try {
+					String ussdString = unstrReqInd.getUSSDString().getString(null);
+					AddressString msisdn = unstrReqInd.getMSISDNAddressString();
+					this.debug("Received UnstructuredSSRequestIndication " + ussdString);
+
+					assertEquals(MAPFunctionalTest.USSD_MENU, ussdString);
+
+					MAPDialogSupplementary mapDialog = unstrReqInd.getMAPDialog();
+					Long invokeId = unstrReqInd.getInvokeId();
+
+					USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_RESPONSE);
 					mapDialog.addUnstructuredSSResponse(invokeId, new CBSDataCodingSchemeImpl(0x0f), ussdStringObj);
 				} catch (MAPException e) {
 					this.error("Erro while trying to send UnstructuredSSResponse", e);
@@ -520,15 +520,15 @@ public class MAPFunctionalTest extends SccpHarness {
 			@Override
 			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
-				String ussdString = procUnstrReqInd.getUSSDString().getString();
-				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
-				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
-				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
-				MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
-				processUnstructuredSSRequestInvokeId = procUnstrReqInd.getInvokeId();
-				this.debug("InvokeId =  " + processUnstructuredSSRequestInvokeId);
-				USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_MENU);
 				try {
+					String ussdString = procUnstrReqInd.getUSSDString().getString(null);
+					AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+					this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+					assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+					MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
+					processUnstructuredSSRequestInvokeId = procUnstrReqInd.getInvokeId();
+					this.debug("InvokeId =  " + processUnstructuredSSRequestInvokeId);
+					USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_MENU);
 					mapDialog.addUnstructuredSSRequest(new CBSDataCodingSchemeImpl(0x0f), ussdStringObj, null, null);
 				} catch (MAPException e) {
 					this.error("Error while trying to send UnstructuredSSRequest", e);
@@ -539,12 +539,12 @@ public class MAPFunctionalTest extends SccpHarness {
 			@Override
 			public void onUnstructuredSSResponse(UnstructuredSSResponse unstrResInd) {
 				super.onUnstructuredSSResponse(unstrResInd);
-				String ussdString = unstrResInd.getUSSDString().getString();
-				logger.debug("Received UnstructuredSSResponse " + ussdString);
-				assertEquals(MAPFunctionalTest.USSD_RESPONSE, ussdString);
-				MAPDialogSupplementary mapDialog = unstrResInd.getMAPDialog();
-				USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_FINAL_RESPONSE);
 				try {
+					String ussdString = unstrResInd.getUSSDString().getString(null);
+					logger.debug("Received UnstructuredSSResponse " + ussdString);
+					assertEquals(MAPFunctionalTest.USSD_RESPONSE, ussdString);
+					MAPDialogSupplementary mapDialog = unstrResInd.getMAPDialog();
+					USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_FINAL_RESPONSE);
 					mapDialog.addProcessUnstructuredSSResponse(processUnstructuredSSRequestInvokeId, new CBSDataCodingSchemeImpl(0x0f), ussdStringObj);
 				} catch (MAPException e) {
 					logger.error(e);
@@ -654,10 +654,16 @@ public class MAPFunctionalTest extends SccpHarness {
 			@Override
 			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
-				String ussdString = procUnstrReqInd.getUSSDString().getString();
-				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
-				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
-				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+				String ussdString;
+				try {
+					ussdString = procUnstrReqInd.getUSSDString().getString(null);
+					AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+					this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+					assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+				} catch (MAPException e) {
+					this.error("Error while trying to parse ussdString", e);
+					fail("Erro while trying to parse ussdString");
+				}
 
 			}
 
@@ -779,11 +785,17 @@ public class MAPFunctionalTest extends SccpHarness {
 			public void onUnstructuredSSRequest(UnstructuredSSRequest unstrReqInd) {
 				super.onUnstructuredSSRequest(unstrReqInd);
 
-				String ussdString = unstrReqInd.getUSSDString().getString();
-				AddressString msisdn = unstrReqInd.getMSISDNAddressString();
-				this.debug("Received UnstructuredSSRequestIndication " + ussdString);
+				String ussdString;
+				try {
+					ussdString = unstrReqInd.getUSSDString().getString(null);
+					AddressString msisdn = unstrReqInd.getMSISDNAddressString();
+					this.debug("Received UnstructuredSSRequestIndication " + ussdString);
 
-				assertEquals(MAPFunctionalTest.USSD_MENU, ussdString);
+					assertEquals(MAPFunctionalTest.USSD_MENU, ussdString);
+				} catch (MAPException e) {
+					this.error("Error while trying to parse ussdString", e);
+					fail("Error while trying to parse ussdString");
+				}
 			}
 
 			@Override
@@ -807,13 +819,13 @@ public class MAPFunctionalTest extends SccpHarness {
 			@Override
 			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
-				String ussdString = procUnstrReqInd.getUSSDString().getString();
-				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
-				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
-				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
-				MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
-				USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_MENU);
 				try {
+					String ussdString = procUnstrReqInd.getUSSDString().getString(null);
+					AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+					this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+					assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+					MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
+					USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_MENU);
 					mapDialog.addUnstructuredSSRequest(new CBSDataCodingSchemeImpl(0x0f), ussdStringObj, null, null);
 					this.observerdEvents.add(TestEvent.createSentEvent(EventType.UnstructuredSSRequestIndication, null, sequence++));
 					mapDialog.send();
@@ -971,10 +983,16 @@ public class MAPFunctionalTest extends SccpHarness {
 			@Override
 			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
-				String ussdString = procUnstrReqInd.getUSSDString().getString();
-				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
-				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
-				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+				String ussdString;
+				try {
+					ussdString = procUnstrReqInd.getUSSDString().getString(null);
+					AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+					this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+					assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+				} catch (MAPException e) {
+					this.error("Error while trying to parse ussdString", e);
+					fail("Error while trying to parse ussdString");
+				}
 			}
 
 			@Override
@@ -1064,13 +1082,13 @@ public class MAPFunctionalTest extends SccpHarness {
 			@Override
 			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
-				String ussdString = procUnstrReqInd.getUSSDString().getString();
-				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
-				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
-				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
-				MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
-				MAPErrorMessage msg = this.mapErrorMessageFactory.createMAPErrorMessageSystemFailure(2, null, null, null);
 				try {
+					String ussdString = procUnstrReqInd.getUSSDString().getString(null);
+					AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+					this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+					assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+					MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
+					MAPErrorMessage msg = this.mapErrorMessageFactory.createMAPErrorMessageSystemFailure(2, null, null, null);
 					mapDialog.sendErrorComponent(procUnstrReqInd.getInvokeId(), msg);
 				} catch (MAPException e) {
 					this.error("Error while trying to add Error Component", e);
@@ -1163,14 +1181,14 @@ public class MAPFunctionalTest extends SccpHarness {
 			@Override
 			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
-				String ussdString = procUnstrReqInd.getUSSDString().getString();
-				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
-				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
-				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
-				MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
-				MAPErrorMessage msg = this.mapErrorMessageFactory.createMAPErrorMessageSMDeliveryFailure(SMEnumeratedDeliveryFailureCause.scCongestion, null,
-						null);
 				try {
+					String ussdString = procUnstrReqInd.getUSSDString().getString(null);
+					AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+					this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+					assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+					MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
+					MAPErrorMessage msg = this.mapErrorMessageFactory.createMAPErrorMessageSMDeliveryFailure(SMEnumeratedDeliveryFailureCause.scCongestion, null,
+							null);
 					mapDialog.sendErrorComponent(procUnstrReqInd.getInvokeId(), msg);
 				} catch (MAPException e) {
 					this.error("Error while trying to add Error Component", e);
@@ -1263,10 +1281,16 @@ public class MAPFunctionalTest extends SccpHarness {
 			@Override
 			public void onProcessUnstructuredSSResponse(ProcessUnstructuredSSResponse procUnstrResponse) {
 				super.onProcessUnstructuredSSResponse(procUnstrResponse);
-				String ussdString = procUnstrResponse.getUSSDString().getString();
-				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
-				responseReceived++;
-				assertEquals(ussdString, "Your balance is 500");
+				String ussdString;
+				try {
+					ussdString = procUnstrResponse.getUSSDString().getString(null);
+					this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+					responseReceived++;
+					assertEquals(ussdString, "Your balance is 500");
+				} catch (MAPException e) {
+					this.error("Error while trying to parse ussdString", e);
+					fail("Error while trying to parse ussdString");
+				}
 
 			}
 
@@ -1285,10 +1309,16 @@ public class MAPFunctionalTest extends SccpHarness {
 			@Override
 			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
-				String ussdString = procUnstrReqInd.getUSSDString().getString();
-				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
-				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
-				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+				String ussdString;
+				try {
+					ussdString = procUnstrReqInd.getUSSDString().getString(null);
+					AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+					this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+					assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+				} catch (MAPException e1) {
+					this.error("Error while trying to parse ussdString", e1);
+					fail("Error while trying to parse ussdString");
+				}
 
 				MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
 
@@ -1302,11 +1332,12 @@ public class MAPFunctionalTest extends SccpHarness {
 				oc.setLocalOperationCode((long) MAPOperationCode.processUnstructuredSS_Request);
 				returnResult.setOperationCode(oc);
 
-				USSDString ussdStrObj = this.mapProvider.getMAPParameterFactory().createUSSDString("Your balance is 500");
-				CBSDataCodingScheme ussdDataCodingScheme = new CBSDataCodingSchemeImpl(0x0f);
-				ProcessUnstructuredSSResponseImpl req = new ProcessUnstructuredSSResponseImpl(ussdDataCodingScheme, ussdStrObj);
-				AsnOutputStream aos = new AsnOutputStream();
 				try {
+					CBSDataCodingScheme ussdDataCodingScheme = new CBSDataCodingSchemeImpl(0x0f);
+					USSDString ussdStrObj = this.mapProvider.getMAPParameterFactory().createUSSDString("Your balance is 500", ussdDataCodingScheme, null);
+					ProcessUnstructuredSSResponseImpl req = new ProcessUnstructuredSSResponseImpl(ussdDataCodingScheme, ussdStrObj);
+					AsnOutputStream aos = new AsnOutputStream();
+
 					req.encodeData(aos);
 
 					Parameter p = ((MAPProviderImpl) this.mapProvider).getTCAPProvider().getComponentPrimitiveFactory().createParameter();
@@ -1433,14 +1464,15 @@ public class MAPFunctionalTest extends SccpHarness {
 			@Override
 			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
-				String ussdString = procUnstrReqInd.getUSSDString().getString();
-				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
-				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
-				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
-				MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
-
-				Problem problem = this.mapProvider.getMAPParameterFactory().createProblemInvoke(InvokeProblemType.DuplicateInvokeID);
 				try {
+					String ussdString = procUnstrReqInd.getUSSDString().getString(null);
+					AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+					this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+					assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+					MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
+
+					Problem problem = this.mapProvider.getMAPParameterFactory().createProblemInvoke(InvokeProblemType.DuplicateInvokeID);
+
 					mapDialog.sendRejectComponent(procUnstrReqInd.getInvokeId(), problem);
 				} catch (MAPException e) {
 					this.error("Error while trying to send Duplicate InvokeId Component", e);
@@ -1534,14 +1566,15 @@ public class MAPFunctionalTest extends SccpHarness {
 			@Override
 			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
-				String ussdString = procUnstrReqInd.getUSSDString().getString();
-				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
-				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
-				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
-				MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
-				MAPErrorMessage msg = this.mapErrorMessageFactory.createMAPErrorMessageSMDeliveryFailure(SMEnumeratedDeliveryFailureCause.scCongestion, null,
-						null);
 				try {
+					String ussdString = procUnstrReqInd.getUSSDString().getString(null);
+					AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+					this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+					assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+					MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
+					MAPErrorMessage msg = this.mapErrorMessageFactory.createMAPErrorMessageSMDeliveryFailure(SMEnumeratedDeliveryFailureCause.scCongestion, null,
+							null);
+
 					mapDialog.sendErrorComponent(procUnstrReqInd.getInvokeId(), msg);
 				} catch (MAPException e) {
 					this.error("Error while trying to add Error Component", e);
@@ -1633,14 +1666,15 @@ public class MAPFunctionalTest extends SccpHarness {
 			@Override
 			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
-				String ussdString = procUnstrReqInd.getUSSDString().getString();
-				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
-				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
-				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
-				MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
-
-				Problem problem = this.mapProvider.getMAPParameterFactory().createProblemGeneral(GeneralProblemType.MistypedComponent);
 				try {
+					String ussdString = procUnstrReqInd.getUSSDString().getString(null);
+					AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+					this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+					assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+					MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
+
+					Problem problem = this.mapProvider.getMAPParameterFactory().createProblemGeneral(GeneralProblemType.MistypedComponent);
+
 					mapDialog.sendRejectComponent(null, problem);
 				} catch (MAPException e) {
 					this.error("Error while trying to add Duplicate InvokeId Component", e);

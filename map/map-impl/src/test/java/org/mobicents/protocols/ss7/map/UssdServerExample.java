@@ -68,20 +68,20 @@ public class UssdServerExample implements MAPDialogListener, MAPServiceSupplemen
 	public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest ind) {
 
 		USSDString ussdString = ind.getUSSDString();
-		String request = ussdString.getString();
-
-		// processing USSD request
-		String response = "Your balans is 100$";
-
-		CBSDataCodingScheme ussdDataCodingScheme = new CBSDataCodingSchemeImpl(0x0f);
-		USSDString ussdResponse = paramFact.createUSSDString(response, null, null);
-
 		try {
+			String request = ussdString.getString(null);
+
+			// processing USSD request
+			String response = "Your balans is 100$";
+
+			CBSDataCodingScheme ussdDataCodingScheme = new CBSDataCodingSchemeImpl(0x0f);
+			USSDString ussdResponse = paramFact.createUSSDString(response, null, null);
+
 			currentMapDialog.addProcessUnstructuredSSResponse(ind.getInvokeId(), ussdDataCodingScheme, ussdResponse);
-		} catch (MAPException e) {
+		} catch (MAPException e1) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
+			e1.printStackTrace();
+		}
 	}
 
 	public void onDialogDelimiter(MAPDialog mapDialog) {

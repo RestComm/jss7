@@ -31,9 +31,11 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSFormatIndicator;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSRequestorID;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
 
@@ -49,7 +51,7 @@ public class LCSRequestorIDImpl implements LCSRequestorID, MAPAsnPrimitive {
 
 	public static final String _PrimitiveName = "LCSRequestorID";
 
-	private byte dataCodingScheme;
+	private CBSDataCodingScheme dataCodingScheme;
 	private USSDString requestorIDString;
 	private LCSFormatIndicator lcsFormatIndicator;
 
@@ -65,7 +67,7 @@ public class LCSRequestorIDImpl implements LCSRequestorID, MAPAsnPrimitive {
 	 * @param requestorIDString
 	 * @param lcsFormatIndicator
 	 */
-	public LCSRequestorIDImpl(byte dataCodingScheme, USSDString requestorIDString, LCSFormatIndicator lcsFormatIndicator) {
+	public LCSRequestorIDImpl(CBSDataCodingScheme dataCodingScheme, USSDString requestorIDString, LCSFormatIndicator lcsFormatIndicator) {
 		super();
 		this.dataCodingScheme = dataCodingScheme;
 		this.requestorIDString = requestorIDString;
@@ -78,7 +80,7 @@ public class LCSRequestorIDImpl implements LCSRequestorID, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.LCSRequestorID#
 	 * getDataCodingScheme()
 	 */
-	public byte getDataCodingScheme() {
+	public CBSDataCodingScheme getDataCodingScheme() {
 		return this.dataCodingScheme;
 	}
 
@@ -175,7 +177,7 @@ public class LCSRequestorIDImpl implements LCSRequestorID, MAPAsnPrimitive {
 
 	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-		this.dataCodingScheme = 0;
+		this.dataCodingScheme = null;
 		this.requestorIDString = null;
 		this.lcsFormatIndicator = null;
 
@@ -191,7 +193,7 @@ public class LCSRequestorIDImpl implements LCSRequestorID, MAPAsnPrimitive {
 		}
 
 		int length1 = ais.readLength();
-		this.dataCodingScheme = ais.readOctetStringData(length1)[0];
+		this.dataCodingScheme = new CBSDataCodingSchemeImpl(ais.readOctetStringData(length1)[0]);
 
 		tag = ais.readTag();
 
@@ -202,7 +204,7 @@ public class LCSRequestorIDImpl implements LCSRequestorID, MAPAsnPrimitive {
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 
-		this.requestorIDString = new USSDStringImpl();
+		this.requestorIDString = new USSDStringImpl(this.dataCodingScheme);
 		((USSDStringImpl)this.requestorIDString).decodeAll(ais);
 
 		while (true) {
@@ -270,7 +272,7 @@ public class LCSRequestorIDImpl implements LCSRequestorID, MAPAsnPrimitive {
 			throw new MAPException("nameString must not be null");
 
 		try {
-			asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_DATA_CODING_SCHEME, new byte[] { this.dataCodingScheme });
+			asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_DATA_CODING_SCHEME, new byte[] { (byte)this.dataCodingScheme.getCode() });
 
 			((USSDStringImpl)this.requestorIDString).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_NAME_STRING);
 
@@ -288,7 +290,7 @@ public class LCSRequestorIDImpl implements LCSRequestorID, MAPAsnPrimitive {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + dataCodingScheme;
+		result = prime * result + dataCodingScheme.getCode();
 		result = prime * result + ((lcsFormatIndicator == null) ? 0 : lcsFormatIndicator.hashCode());
 		result = prime * result + ((requestorIDString == null) ? 0 : requestorIDString.hashCode());
 		return result;
@@ -303,7 +305,7 @@ public class LCSRequestorIDImpl implements LCSRequestorID, MAPAsnPrimitive {
 		if (getClass() != obj.getClass())
 			return false;
 		LCSRequestorIDImpl other = (LCSRequestorIDImpl) obj;
-		if (dataCodingScheme != other.dataCodingScheme)
+		if (dataCodingScheme.getCode() != other.dataCodingScheme.getCode())
 			return false;
 		if (lcsFormatIndicator != other.lcsFormatIndicator)
 			return false;
