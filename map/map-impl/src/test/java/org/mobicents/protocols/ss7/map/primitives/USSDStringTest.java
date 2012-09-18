@@ -22,8 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.primitives;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -65,25 +64,60 @@ public class USSDStringTest {
 	public void tearDown() {
 	}
 
+	public static byte[] getDataGSM7() {
+		return new byte[] { 0x04, 0x04, 0x2a, 0x1c, 0x6e, (byte)0x04 };
+	}
+
+	public static byte[] getDataUcs2() {
+		return new byte[] { 4, 8, 0, 42, 0, 56, 0, 56, 0, 35 };
+	}
+
+	public static byte[] getDataUcs2Lang() {
+		return new byte[] { 4, 11, -14, -70, 2, 0, 71, 0, 103, 0, 84, 0, 116 };
+	}
+
+	public static byte[] getDataGsm7Lang() {
+		return new byte[] { 4, 7, -14, -70, -30, 120, -90, -46, 27 };
+	}
+	
 	@Test(groups = { "functional.decode","primitives"})
 	public void testDecode() throws Exception {
-		byte[] data = new byte[] { 0x04, 0x04, 0x2a, 0x1c, 0x6e, (byte)0x04 };
+		byte[] data = getDataGSM7();
 		
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
 
-		USSDStringImpl ussdStr = new USSDStringImpl(new CBSDataCodingSchemeImpl(0x0f));
+		USSDStringImpl ussdStr = new USSDStringImpl(new CBSDataCodingSchemeImpl(CBSDataCodingGroup.GeneralGsm7, CharacterSet.GSM7, null, null, false));
 		ussdStr.decodeAll(asn);
-		
-		assertEquals( ussdStr.getString(null),"*88#");
 
+		assertTrue(ussdStr.getString(null).equals("*88#"));
+
+		data = getDataUcs2();
+		asn = new AsnInputStream(data);
+		tag = asn.readTag();
+		ussdStr = new USSDStringImpl(new CBSDataCodingSchemeImpl(CBSDataCodingGroup.GeneralDataCodingIndication, CharacterSet.UCS2, null, null, false));
+		ussdStr.decodeAll(asn);
+		assertTrue(ussdStr.getString(null).equals("*88#"));	
+
+		data = getDataUcs2Lang();
+		asn = new AsnInputStream(data);
+		tag = asn.readTag();
+		ussdStr = new USSDStringImpl(new CBSDataCodingSchemeImpl(CBSDataCodingGroup.GeneralWithLanguageIndication, CharacterSet.UCS2, null, null, false));
+		ussdStr.decodeAll(asn);
+		assertTrue(ussdStr.getString(null).equals("ru\nGgTt"));	
+
+		data = getDataGsm7Lang();
+		asn = new AsnInputStream(data);
+		tag = asn.readTag();
+		ussdStr = new USSDStringImpl(new CBSDataCodingSchemeImpl(CBSDataCodingGroup.GeneralWithLanguageIndication, CharacterSet.GSM7, null, null, false));
+		ussdStr.decodeAll(asn);
+		assertTrue(ussdStr.getString(null).equals("ru\nGgTt"));	
 	}
-	
-	//TODO Fix the GSMEncoder. This is failing 
+
 	@Test(groups = { "functional.encode","primitives"})
 	public void testEncode() throws Exception {
-		byte[] data = new byte[] { 0x04, 0x04, 0x2a, 0x1c, 0x6e, (byte)0x04 };
-		
+		byte[] data = getDataGSM7();
+
 		CBSDataCodingScheme dcs = new CBSDataCodingSchemeImpl(CBSDataCodingGroup.GeneralGsm7, CharacterSet.GSM7, null, null, false);
 		USSDStringImpl ussdStr = new USSDStringImpl("*88#", dcs, null);
 		
@@ -92,6 +126,33 @@ public class USSDStringTest {
 		
 		byte[] encodedData = asnOS.toByteArray();
 
+		assertTrue( Arrays.equals(data,encodedData));
+
+
+		data = getDataUcs2();
+		dcs = new CBSDataCodingSchemeImpl(CBSDataCodingGroup.GeneralDataCodingIndication, CharacterSet.UCS2, null, null, false);
+		ussdStr = new USSDStringImpl("*88#", dcs, null);
+		asnOS = new AsnOutputStream();
+		ussdStr.encodeAll(asnOS);
+		encodedData = asnOS.toByteArray();
+		assertTrue( Arrays.equals(data,encodedData));
+
+
+		data = getDataUcs2Lang();
+		dcs = new CBSDataCodingSchemeImpl(CBSDataCodingGroup.GeneralWithLanguageIndication, CharacterSet.UCS2, null, null, false);
+		ussdStr = new USSDStringImpl("ru\nGgTt", dcs, null);
+		asnOS = new AsnOutputStream();
+		ussdStr.encodeAll(asnOS);
+		encodedData = asnOS.toByteArray();
+		assertTrue( Arrays.equals(data,encodedData));
+
+
+		data = getDataGsm7Lang();
+		dcs = new CBSDataCodingSchemeImpl(CBSDataCodingGroup.GeneralWithLanguageIndication, CharacterSet.GSM7, null, null, false);
+		ussdStr = new USSDStringImpl("ru\nGgTt", dcs, null);
+		asnOS = new AsnOutputStream();
+		ussdStr.encodeAll(asnOS);
+		encodedData = asnOS.toByteArray();
 		assertTrue( Arrays.equals(data,encodedData));
 	}
 	

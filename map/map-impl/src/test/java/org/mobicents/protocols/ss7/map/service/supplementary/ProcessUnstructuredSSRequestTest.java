@@ -89,7 +89,7 @@ public class ProcessUnstructuredSSRequestTest {
 		USSDString ussdString = addNum.getUSSDString();
 		assertNotNull(ussdString);
 
-		assertEquals(ussdString.getString(null), "*234#");
+		assertTrue(ussdString.getString(null).equals("*234#"));
 
 	}
 
@@ -138,7 +138,7 @@ public class ProcessUnstructuredSSRequestTest {
 				ProcessUnstructuredSSRequestImpl.class);
 
 		assertEquals(copy.getMSISDNAddressString(), original.getMSISDNAddressString());
-		assertEquals(copy.getDataCodingScheme(), original.getDataCodingScheme());
+		assertEquals(copy.getDataCodingScheme().getCode(), original.getDataCodingScheme().getCode());
 		assertEquals(copy.getUSSDString(), original.getUSSDString());
 		assertEquals(copy.getAlertingPattern(), original.getAlertingPattern());
 

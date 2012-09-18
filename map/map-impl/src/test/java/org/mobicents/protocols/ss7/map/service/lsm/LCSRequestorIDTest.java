@@ -94,7 +94,7 @@ public class LCSRequestorIDTest {
 		LCSRequestorIDImpl lcsRequestorID = new LCSRequestorIDImpl();
 		lcsRequestorID.decodeAll(asn);
 
-		assertEquals( lcsRequestorID.getDataCodingScheme(),(byte) 0x0f);
+		assertEquals( lcsRequestorID.getDataCodingScheme().getCode(), 0x0f);
 		assertNotNull(lcsRequestorID.getRequestorIDString());
 		assertEquals( lcsRequestorID.getRequestorIDString().getString(null),"ndmgapp2ndmgapp2");
 
@@ -110,7 +110,7 @@ public class LCSRequestorIDTest {
 		lcsRequestorID = new LCSRequestorIDImpl();
 		lcsRequestorID.decodeAll(asn);
 
-		assertEquals( lcsRequestorID.getDataCodingScheme(),(byte) 0x0f);
+		assertEquals( lcsRequestorID.getDataCodingScheme().getCode(), 0x0f);
 		assertNotNull(lcsRequestorID.getRequestorIDString());
 		assertEquals( lcsRequestorID.getRequestorIDString().getString(null),"ndmgapp2ndmgapp2");
 

@@ -22,7 +22,6 @@
 package org.mobicents.protocols.ss7.map.service.supplementary;
 
 import static org.testng.Assert.*;
-import org.testng.*;
 import org.testng.annotations.*;
 
 import java.util.Arrays;
@@ -70,7 +69,7 @@ public class UnstructuredSSRequestTest {
 		UnstructuredSSRequestImpl addNum = new UnstructuredSSRequestImpl();
 		addNum.decodeAll(asn);
 		CBSDataCodingScheme dataCodingScheme = addNum.getDataCodingScheme();
-		assertEquals( dataCodingScheme.getDataCodingGroup(),(byte) 0x0f);
+		assertEquals( dataCodingScheme.getCode(), 0x0f);
 
 		USSDString ussdString = addNum.getUSSDString();
 		assertNotNull(ussdString);

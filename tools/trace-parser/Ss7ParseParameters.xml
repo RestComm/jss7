@@ -11,7 +11,7 @@
    <string>C:\111\MsgLog.txt</string>
   </void>
   <void property="sourceFilePath">
-   <string>E:\Java_workspace\Trace\Lena\tra.p01</string>
+   <string>E:\Java_workspace\Trace\Lena\ussd\hlr-link-long ussd.p00</string>
   </void>
   <void property="tcapMsgData">
    <boolean>true</boolean>

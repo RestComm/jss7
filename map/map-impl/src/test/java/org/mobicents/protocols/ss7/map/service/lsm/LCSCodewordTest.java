@@ -80,9 +80,9 @@ public class LCSCodewordTest {
 		LCSCodewordImpl lcsCodeword = new LCSCodewordImpl();
 		lcsCodeword.decodeAll(asn);
 
-		assertEquals( lcsCodeword.getDataCodingScheme(),(byte) 0x0f);
+		assertEquals( lcsCodeword.getDataCodingScheme().getCode(),0x0f);
 		assertNotNull(lcsCodeword.getLCSCodewordString());
-		assertEquals( lcsCodeword.getLCSCodewordString().getString(null),"ndmgapp2ndmgapp2");
+		assertTrue(lcsCodeword.getLCSCodewordString().getString(null).equals("ndmgapp2ndmgapp2"));
 
 	}
 
@@ -120,7 +120,7 @@ public class LCSCodewordTest {
 		LCSCodewordImpl copy = (LCSCodewordImpl) o;
 		
 		//test result
-		assertEquals(copy.getDataCodingScheme(), original.getDataCodingScheme());
+		assertEquals(copy.getDataCodingScheme().getCode(), original.getDataCodingScheme().getCode());
 		assertEquals(copy.getLCSCodewordString(), original.getLCSCodewordString());
 	}
 }

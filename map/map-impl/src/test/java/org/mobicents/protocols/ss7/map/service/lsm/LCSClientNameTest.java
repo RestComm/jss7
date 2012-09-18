@@ -91,9 +91,9 @@ public class LCSClientNameTest {
 		LCSClientNameImpl lcsClientName = new LCSClientNameImpl();
 		lcsClientName.decodeAll(asn);
 
-		assertEquals( lcsClientName.getDataCodingScheme(),(byte) 0x0f);
+		assertEquals(lcsClientName.getDataCodingScheme().getCode(), 0x0f);
 		assertNotNull(lcsClientName.getNameString());
-		assertEquals( lcsClientName.getNameString().getString(null),"ndmgapp2ndmgapp2");
+		assertTrue(lcsClientName.getNameString().getString(null).equals("ndmgapp2ndmgapp2"));
 
 		assertNull(lcsClientName.getLCSFormatIndicator());
 
@@ -106,9 +106,9 @@ public class LCSClientNameTest {
 		lcsClientName = new LCSClientNameImpl();
 		lcsClientName.decodeAll(asn);
 
-		assertEquals( lcsClientName.getDataCodingScheme(),(byte) 0x0f);
+		assertEquals(lcsClientName.getDataCodingScheme().getCode(), 0x0f);
 		assertNotNull(lcsClientName.getNameString());
-		assertEquals( lcsClientName.getNameString().getString(null),"ndmgapp2ndmgapp2");
+		assertTrue(lcsClientName.getNameString().getString(null).equals("ndmgapp2ndmgapp2"));
 
 		assertEquals(lcsClientName.getLCSFormatIndicator(), LCSFormatIndicator.msisdn);
 	}
@@ -157,7 +157,7 @@ public class LCSClientNameTest {
 		LCSClientNameImpl copy = (LCSClientNameImpl) o;
 		
 		//test result
-		assertEquals(copy.getDataCodingScheme(), original.getDataCodingScheme());
+		assertEquals(copy.getDataCodingScheme().getCode(), original.getDataCodingScheme().getCode());
 		assertEquals(copy.getNameString().getString(null), original.getNameString().getString(null));
 		assertEquals(copy.getLCSFormatIndicator(), original.getLCSFormatIndicator());
 	}

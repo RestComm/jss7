@@ -145,8 +145,8 @@ public class ProvideSubscriberLocationRequestTest {
 		assertEquals( lcsClientId.getLCSClientInternalID(),LCSClientInternalID.broadcastService);
 		LCSClientName lcsClientName = lcsClientId.getLCSClientName();
 		assertNotNull(lcsClientName);
-		assertEquals( lcsClientName.getDataCodingScheme(),(byte) 0x0f);
-		assertEquals( lcsClientName.getNameString().getString(null),"ndmgapp2ndmgapp2");
+		assertEquals( lcsClientName.getDataCodingScheme().getCode(), 0x0f);
+		assertTrue( lcsClientName.getNameString().getString(null).equals("ndmgapp2ndmgapp2"));
 
 		IMSI imsi = reqInd.getIMSI();
 		assertNotNull(imsi);
@@ -213,8 +213,8 @@ public class ProvideSubscriberLocationRequestTest {
 		assertEquals( lcsClientId.getLCSClientInternalID(),LCSClientInternalID.broadcastService);
 		lcsClientName = lcsClientId.getLCSClientName();
 		assertNotNull(lcsClientName);
-		assertEquals( lcsClientName.getDataCodingScheme(),(byte) 0x0f);
-		assertEquals( lcsClientName.getNameString().getString(null),"ndmgapp2ndmgapp2");
+		assertEquals( lcsClientName.getDataCodingScheme().getCode(), 0x0f);
+		assertTrue( lcsClientName.getNameString().getString(null).equals("ndmgapp2ndmgapp2"));
 
 		imsi = reqInd.getIMSI();
 		assertNotNull(imsi);

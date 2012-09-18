@@ -126,18 +126,20 @@ public class USSDStringImpl extends OctetStringBase implements USSDString {
 					encoder.setGSMCharsetEncodingData(new GSMCharsetEncodingData());
 					bb = null;
 					try {
-						bb = encoder.encode(CharBuffer.wrap(ussdString.substring(0, 3)));
+						String sb = ussdString.substring(0, 3);
+						bb = encoder.encode(CharBuffer.wrap(sb));
 					} catch (Exception e) {
 						// This can not occur
 					}
 					byte[] buf1;
 					if (bb != null) {
 						buf1 = new byte[bb.limit()];
-						bb.get(this.data);
+						bb.get(buf1);
 					} else
 						buf1 = new byte[0];
 
-					bb = ucs2Charset.encode(ussdString.substring(3));
+					String sb2 = ussdString.substring(3);
+					bb = ucs2Charset.encode(sb2);
 					this.data = new byte[buf1.length + bb.limit()];
 					System.arraycopy(buf1, 0, this.data, 0, buf1.length);
 					bb.get(this.data, buf1.length, this.data.length - buf1.length);
@@ -207,7 +209,7 @@ public class USSDStringImpl extends OctetStringBase implements USSDString {
 					if (this.data.length < 3)
 						buf2 = new byte[this.data.length];
 					System.arraycopy(this.data, 0, buf2, 0, buf2.length);
-					bb = ByteBuffer.wrap(this.data);
+					bb = ByteBuffer.wrap(buf2);
 					bf = null;
 					try {
 						bf = decoder.decode(bb);
@@ -223,11 +225,15 @@ public class USSDStringImpl extends OctetStringBase implements USSDString {
 						buf = new byte[this.data.length - 3];
 						System.arraycopy(this.data, 3, buf, 0, buf.length);
 					}
-				}
 
-				bb = ByteBuffer.wrap(buf);
-				bf = ucs2Charset.decode(bb);
-				res = bf.toString();
+					bb = ByteBuffer.wrap(buf);
+					bf = ucs2Charset.decode(bb);
+					res = pref + bf.toString();
+				} else {
+					bb = ByteBuffer.wrap(buf);
+					bf = ucs2Charset.decode(bb);
+					res = bf.toString();
+				}
 				break;
 			}
 		}

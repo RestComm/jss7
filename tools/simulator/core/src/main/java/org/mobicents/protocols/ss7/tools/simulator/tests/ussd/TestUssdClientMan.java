@@ -49,6 +49,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSN
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponse;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.map.dialog.MAPUserAbortChoiceImpl;
 import org.mobicents.protocols.ss7.map.primitives.AlertingPatternImpl;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
@@ -390,7 +391,13 @@ public class TestUssdClientMan extends TesterBase implements TestUssdClientManMB
 	private String doPerformProcessUnstructuredRequest(String msg, boolean manualMode) {
 		
 		MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
-		USSDString ussdString = mapProvider.getMAPParameterFactory().createUSSDString(msg);
+		USSDString ussdString = null;
+		try {
+			ussdString = mapProvider.getMAPParameterFactory().createUSSDString(msg, new CBSDataCodingSchemeImpl(this.dataCodingScheme), null);
+		} catch (MAPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		MAPApplicationContext mapUssdAppContext = MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext,
 				MAPApplicationContextVersion.version2);
 
@@ -409,7 +416,7 @@ public class TestUssdClientMan extends TesterBase implements TestUssdClientManMB
 			AlertingPattern alPattern = null;
 			if (this.alertingPattern >= 0 && this.alertingPattern <= 255)
 				alPattern = new AlertingPatternImpl(new byte[] { (byte) this.alertingPattern });
-			curDialog.addProcessUnstructuredSSRequest((byte) this.dataCodingScheme, ussdString, alPattern, msisdn);
+			curDialog.addProcessUnstructuredSSRequest(new CBSDataCodingSchemeImpl(this.dataCodingScheme), ussdString, alPattern, msisdn);
 
 			curDialog.send();
 
@@ -501,10 +508,16 @@ public class TestUssdClientMan extends TesterBase implements TestUssdClientManMB
 		MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
 		if (msg == null || msg.equals(""))
 			return "USSD message is empty";
-		USSDString ussdString = mapProvider.getMAPParameterFactory().createUSSDString(msg);
+		USSDString ussdString = null;
+		try {
+			ussdString = mapProvider.getMAPParameterFactory().createUSSDString(msg, new CBSDataCodingSchemeImpl(this.dataCodingScheme), null);
+		} catch (MAPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		try {
-			curDialog.addUnstructuredSSResponse(invokeId, (byte) this.dataCodingScheme, ussdString);
+			curDialog.addUnstructuredSSResponse(invokeId, new CBSDataCodingSchemeImpl(this.dataCodingScheme), ussdString);
 
 			curDialog.send();
 
@@ -543,13 +556,23 @@ public class TestUssdClientMan extends TesterBase implements TestUssdClientManMB
 			MAPDialogSupplementary curDialog = currentDialog;
 			if (curDialog != ind.getMAPDialog())
 				return;
-			currentRequestDef += "procUnstrSsResp=\"" + ind.getUSSDString().getString() + "\";";
+			try {
+				currentRequestDef += "procUnstrSsResp=\"" + ind.getUSSDString().getString(null) + "\";";
+			} catch (MAPException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		this.countProcUnstResp++;
 		if (!this.oneNotificationFor100Dialogs) {
-			String uData = this.createUssdMessageData(ind.getMAPDialog().getDialogId(), ind.getUSSDDataCodingScheme(), null, null);
-			this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: procUnstrSsResp: " + ind.getUSSDString().getString(), uData, Level.DEBUG);
+			String uData = this.createUssdMessageData(ind.getMAPDialog().getDialogId(), ind.getDataCodingScheme().getCode(), null, null);
+			try {
+				this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: procUnstrSsResp: " + ind.getUSSDString().getString(null), uData, Level.DEBUG);
+			} catch (MAPException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		this.doRemoveDialog();
@@ -565,10 +588,20 @@ public class TestUssdClientMan extends TesterBase implements TestUssdClientManMB
 
 		invokeId = ind.getInvokeId();
 		
-		currentRequestDef += "Rcvd: unstrSsReq=\"" + ind.getUSSDString().getString() + "\";";
+		try {
+			currentRequestDef += "Rcvd: unstrSsReq=\"" + ind.getUSSDString().getString(null) + "\";";
+		} catch (MAPException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		this.countUnstReq++;
-		String uData = this.createUssdMessageData(curDialog.getDialogId(), ind.getUSSDDataCodingScheme(), null, null);
-		this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: unstrSsReq: " + ind.getUSSDString().getString(), uData, Level.DEBUG);
+		String uData = this.createUssdMessageData(curDialog.getDialogId(), ind.getDataCodingScheme().getCode(), null, null);
+		try {
+			this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: unstrSsReq: " + ind.getUSSDString().getString(null), uData, Level.DEBUG);
+		} catch (MAPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -586,8 +619,13 @@ public class TestUssdClientMan extends TesterBase implements TestUssdClientManMB
 		invokeId = ind.getInvokeId();
 		
 		this.countUnstNotifReq++;
-		String uData = this.createUssdMessageData(dlg.getDialogId(), ind.getUSSDDataCodingScheme(), null, null);
-		this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: unstrSsNotify: " + ind.getUSSDString().getString(), uData, Level.DEBUG);
+		String uData = this.createUssdMessageData(dlg.getDialogId(), ind.getDataCodingScheme().getCode(), null, null);
+		try {
+			this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: unstrSsNotify: " + ind.getUSSDString().getString(null), uData, Level.DEBUG);
+		} catch (MAPException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		try {
 			dlg.addUnstructuredSSNotifyResponse(invokeId);
