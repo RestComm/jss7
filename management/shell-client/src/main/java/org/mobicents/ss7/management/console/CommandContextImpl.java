@@ -35,6 +35,8 @@ import org.mobicents.ss7.management.transceiver.MessageFactory;
  */
 public class CommandContextImpl implements CommandContext {
 
+	public static final String CONNECTED_AUTHENTICATING_MESSAGE = "Authenticating against configured security realm";
+	
 	private MessageFactory messageFactory = ChannelProvider.provider().getMessageFactory();
 
 	private String prompt;
@@ -60,7 +62,7 @@ public class CommandContextImpl implements CommandContext {
 	private String username;
 
 	/** the command line specified password */
-	private char[] password;
+	private String password;
 
 	/**
 	 * 
@@ -74,6 +76,7 @@ public class CommandContextImpl implements CommandContext {
 		}
 
 	}
+
 
 	/**
 	 * Set the prefix. Adds this prefix on next line after reading current line
@@ -187,6 +190,23 @@ public class CommandContextImpl implements CommandContext {
 
 				client.connect(new InetSocketAddress(this.controllerHost, this.controllerPort));
 				this.prompt = this.prefix + "(" + host + ":" + port + ")" + Shell.CLI_POSTFIX;
+			}
+
+			Message incomingFirstMessage = this.client.run(null);
+			String mesage = incomingFirstMessage.toString();
+			
+			this.printLine(mesage);
+			if(mesage.contains(CONNECTED_AUTHENTICATING_MESSAGE)){
+				username = this.console.readLine("Username:");
+				this.client.run(messageFactory.createMessage(username));
+				
+				password = this.console.readLine("Passowrd:", '*');
+				Message message = this.client.run(messageFactory.createMessage(password));
+				
+				if(message != null){
+					this.printLine(message.toString());
+					this.disconnectController();
+				}
 			}
 		} catch (Exception e) {
 			this.printLine(e.getMessage());

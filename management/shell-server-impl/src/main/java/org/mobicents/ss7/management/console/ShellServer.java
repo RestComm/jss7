@@ -1,23 +1,23 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and/or its affiliates, and individual
- * contributors as indicated by the @authors tag. All rights reserved.
- * See the copyright.txt in the distribution for a full listing
- * of individual contributors.
- * 
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU General Public License, v. 2.0.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License,
- * v. 2.0 along with this distribution; if not, write to the Free 
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA 02110-1301, USA.
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 package org.mobicents.ss7.management.console;
 
@@ -46,6 +46,10 @@ import org.mobicents.ss7.management.transceiver.ShellServerChannel;
  */
 public class ShellServer extends Task {
 	Logger logger = Logger.getLogger(ShellServer.class);
+
+	public static final String CONNECTED_MESSAGE = "Connected to %s %s %s";
+	
+	Version version = Version.instance;
 
 	private ChannelProvider provider;
 	private ShellServerChannel serverChannel;
@@ -153,7 +157,8 @@ public class ShellServer extends Task {
 						} else {
 							String[] options = rxMessage.split(" ");
 							ShellExecutor shellExecutor = null;
-							for (FastList.Node<ShellExecutor> n = this.shellExecutors.head(), end1 = this.shellExecutors.tail(); (n = n.getNext()) != end1;) {
+							for (FastList.Node<ShellExecutor> n = this.shellExecutors.head(), end1 = this.shellExecutors
+									.tail(); (n = n.getNext()) != end1;) {
 								ShellExecutor value = n.getValue();
 								if (value.handles(options[0])) {
 									shellExecutor = value;
@@ -162,7 +167,8 @@ public class ShellServer extends Task {
 							}
 
 							if (shellExecutor == null) {
-								logger.warn(String.format("Received command=\"%s\" for which no ShellExecutor is configured ", rxMessage));
+								logger.warn(String.format(
+										"Received command=\"%s\" for which no ShellExecutor is configured ", rxMessage));
 								chan.send(messageFactory.createMessage("Invalid command"));
 							} else {
 								this.txMessage = shellExecutor.execute(options);
@@ -185,14 +191,16 @@ public class ShellServer extends Task {
 				}
 			}
 		} catch (IOException e) {
-			logger.error("IO Exception while operating on ChannelSelectionKey. Client CLI connection will be closed now", e);
+			logger.error(
+					"IO Exception while operating on ChannelSelectionKey. Client CLI connection will be closed now", e);
 			try {
 				this.closeChannel();
 			} catch (IOException e1) {
 				logger.error("IO Exception while closing Channel", e);
 			}
 		} catch (Exception e) {
-			logger.error("Exception while operating on ChannelSelectionKey. Client CLI connection will be closed now", e);
+			logger.error("Exception while operating on ChannelSelectionKey. Client CLI connection will be closed now",
+					e);
 			try {
 				this.closeChannel();
 			} catch (IOException e1) {
@@ -210,6 +218,9 @@ public class ShellServer extends Task {
 		channel = serverChannel.accept();
 		skey.cancel();
 		skey = channel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+
+		channel.send(messageFactory.createMessage(String.format(CONNECTED_MESSAGE, this.version.getProperty("name"),
+				this.version.getProperty("version"), this.version.getProperty("vendor"))));
 	}
 
 	private void closeChannel() throws IOException {
