@@ -93,9 +93,17 @@
 			<artifactId>javolution</artifactId>
 		</dependency>
 		<dependency>
-			<artifactId>shell</artifactId>
+			<artifactId>shell-server-api</artifactId>
 			<groupId>org.mobicents.protocols.ss7.management</groupId>
 		</dependency>
+		<dependency>
+			<artifactId>shell-server-impl</artifactId>
+			<groupId>org.mobicents.protocols.ss7.management</groupId>
+		</dependency>		
+		<dependency>
+			<artifactId>shell-transport</artifactId>
+			<groupId>org.mobicents.protocols.ss7.management</groupId>
+		</dependency>		
 		<dependency>
 			<artifactId>scheduler</artifactId>
 			<groupId>org.mobicents.protocols.ss7.scheduler</groupId>

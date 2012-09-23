@@ -31,12 +31,6 @@
 			<version>${pom.version}</version>
 		</dependency>
 		
-		<!-- shell -->
-		<dependency>
-			<groupId>org.mobicents.protocols.ss7.management</groupId>
-			<artifactId>shell</artifactId>
-		</dependency>
-
 		<!-- javolution -->
 		<dependency>
 			<groupId>javolution</groupId>

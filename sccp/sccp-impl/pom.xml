@@ -13,12 +13,6 @@
 
 
 	<dependencies>
-		<!-- shell -->
-		<dependency>
-			<groupId>org.mobicents.protocols.ss7.management</groupId>
-			<artifactId>shell</artifactId>
-		</dependency>
-
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
 			<artifactId>sccp-api</artifactId>
