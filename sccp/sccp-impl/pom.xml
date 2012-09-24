@@ -19,6 +19,11 @@
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.mobicents.protocols.ss7.management</groupId>
+			<artifactId>shell-server-api</artifactId>
+			<version>${pom.version}</version>
+		</dependency>		
+		<dependency>
 			<artifactId>mtp-api</artifactId>
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
 		</dependency>
