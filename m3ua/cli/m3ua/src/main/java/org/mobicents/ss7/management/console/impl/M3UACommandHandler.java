@@ -21,12 +21,8 @@
  */
 package org.mobicents.ss7.management.console.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.mobicents.ss7.management.console.CommandContext;
 import org.mobicents.ss7.management.console.CommandHandlerWithHelp;
-import org.mobicents.ss7.management.console.CommandLineCompleter;
 import org.mobicents.ss7.management.console.Tree;
 import org.mobicents.ss7.management.console.Tree.Node;
 

@@ -17,6 +17,11 @@
 			<artifactId>commons</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.mobicents.protocols.ss7.management</groupId>
+			<artifactId>shell-server-api</artifactId>
+			<version>${pom.version}</version>
+		</dependency>		
+		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<scope>provided</scope>

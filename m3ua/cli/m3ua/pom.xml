@@ -16,9 +16,9 @@
 		<!-- MTP3 -->
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.management</groupId>
-			<artifactId>shell-server-api</artifactId>
+			<artifactId>shell-client</artifactId>
 			<version>${pom.version}</version>
-		</dependency>
+		</dependency>		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
