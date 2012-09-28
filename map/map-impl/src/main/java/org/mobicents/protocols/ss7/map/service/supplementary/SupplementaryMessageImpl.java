@@ -25,7 +25,9 @@ package org.mobicents.protocols.ss7.map.service.supplementary;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
+import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.map.MessageImpl;
+import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
@@ -39,10 +41,11 @@ import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
  * 
  */
 public abstract class SupplementaryMessageImpl extends MessageImpl implements SupplementaryMessage, MAPAsnPrimitive {
+	
+	private static final Logger logger = Logger.getLogger(SupplementaryMessageImpl.class);
 
 	private static final String DATA_CODING_SCHEME = "dataCodingScheme";
 	private static final String STRING = "string";
-	private static final String WHITE_SPACE = " ";
 
 	private static final byte DEFAULT_DATA_CODING_SCHEME = 0x0f;
 	private static final String DEFAULT_USSD_STRING = "";
@@ -105,67 +108,24 @@ public abstract class SupplementaryMessageImpl extends MessageImpl implements Su
 			ussdMessage.ussdDataCodingSch = new CBSDataCodingSchemeImpl(xml.getAttribute(DATA_CODING_SCHEME, DEFAULT_DATA_CODING_SCHEME));
 
 			String encodedString = xml.getAttribute(STRING, DEFAULT_USSD_STRING);
-			String[] encodedStringChars = encodedString.split(WHITE_SPACE);
-			byte[] encodedData = new byte[encodedStringChars.length];
-
-			for (int count = 0; count < encodedData.length; count++) {
-				encodedData[count] = Byte.parseByte(encodedStringChars[count]);
+			try {
+				ussdMessage.ussdString = new USSDStringImpl(encodedString, ussdMessage.ussdDataCodingSch, null);
+			} catch (MAPException e) {
+				logger.error("Error while trying to read ussd string", e);
 			}
-			ussdMessage.ussdString = new USSDStringImpl(encodedData, ussdMessage.ussdDataCodingSch);
 		}
 
 		@Override
 		public void write(SupplementaryMessageImpl ussdMessage, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
 			MAP_MESSAGE_XML.write(ussdMessage, xml);
 			xml.setAttribute(DATA_CODING_SCHEME, ussdMessage.ussdDataCodingSch.getCode());
-			StringBuffer sb = new StringBuffer();
-			byte[] rawData = ussdMessage.ussdString.getEncodedString();
-			int length = rawData.length;
-
-			for (int count = 0; count < length; count++) {
-				if (count != 0) {
-					sb.append(WHITE_SPACE);
-				}
-				sb.append(rawData[count]);
+			String ussdStr = "";
+			try {
+				ussdStr = ussdMessage.ussdString.getString(null);
+			} catch (MAPException e) {
+				logger.error("Error while trying to write ussd string", e);
 			}
-
-			xml.setAttribute(STRING, sb.toString());
+			xml.setAttribute(STRING, ussdStr);
 		}
 	};
-    
-    
-    
-//	/**
-//	 * XML Serialization/Deserialization
-//	 */
-//	protected static final XMLFormat<SupplementaryMessageImpl> USSD_MESSAGE_XML = new XMLFormat<SupplementaryMessageImpl>(
-//			SupplementaryMessageImpl.class) {
-//
-//		@Override
-//		public void read(javolution.xml.XMLFormat.InputElement xml, SupplementaryMessageImpl ussdMessage)
-//				throws XMLStreamException {
-//			MAP_MESSAGE_XML.read(xml, ussdMessage);
-//			ussdMessage.ussdDataCodingSch = new CBSDataCodingSchemeImpl(xml.getAttribute(DATA_CODING_SCHEME, DEFAULT_DATA_CODING_SCHEME));
-//			try {
-//				ussdMessage.ussdString = new USSDStringImpl(xml.getAttribute(STRING, DEFAULT_USSD_STRING), ussdMessage.ussdDataCodingSch, null);
-//			} catch (MAPException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-//
-//		@Override
-//		public void write(SupplementaryMessageImpl ussdMessage, javolution.xml.XMLFormat.OutputElement xml)
-//				throws XMLStreamException {
-//			MAP_MESSAGE_XML.write(ussdMessage, xml);
-//			xml.setAttribute(DATA_CODING_SCHEME, ussdMessage.ussdDataCodingSch.getCode());
-//			try {
-//				xml.setAttribute(STRING, ussdMessage.getUSSDString().getString(null));
-//			} catch (MAPException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-//	};
-
 }
