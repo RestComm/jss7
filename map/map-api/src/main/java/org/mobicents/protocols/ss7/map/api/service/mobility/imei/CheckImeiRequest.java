@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.imei;
 
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
@@ -77,5 +78,7 @@ public interface CheckImeiRequest extends MobilityMessage {
 	public RequestedEquipmentInfo getRequestedEquipmentInfo();
 	
 	public MAPExtensionContainer getExtensionContainer();
+	
+	public IMSI getIMSI();
 	
 }
