@@ -196,12 +196,12 @@
 
                 <echo>Copy Shell</echo>
                 <copy todir="${zip.dir}/ss7/shell/lib" failonerror="${failoncopy}">
-                        <fileset dir="${checkout.basedir}/ss7/management/shell/target/mobicents-cli/lib">
+                        <fileset dir="${checkout.basedir}/ss7/management/shell-client/target/mobicents-cli/lib">
                                 <include name="**" />
                         </fileset>
                 </copy>
                 <copy todir="${zip.dir}/ss7/shell/bin" failonerror="${failoncopy}">
-                        <fileset dir="${checkout.basedir}/ss7/management/shell/target/mobicents-cli/bin">
+                        <fileset dir="${checkout.basedir}/ss7/management/shell-client/target/mobicents-cli/bin">
                                 <include name="**" />
                         </fileset>
                 </copy>
