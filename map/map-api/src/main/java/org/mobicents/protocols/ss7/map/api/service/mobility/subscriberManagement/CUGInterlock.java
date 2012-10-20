@@ -22,14 +22,12 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
-/*
- * CUG-Interlock ::= OCTET STRING (SIZE (4))
- */
- 
-/*
- * 
+/**
+CUG-Interlock ::= OCTET STRING (SIZE (4))
+
+ *
  * @author cristian veliscu
- * 
+ *
  */
 public interface CUGInterlock {
 	public byte[] getData(); 

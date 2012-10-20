@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,50 +22,51 @@
 
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TeleserviceCodeValue;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtTeleserviceCodeImpl;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.Test;
 
 /**
- * 
- * @author sergey vetyutnev
- *
- */
+*
+* @author sergey vetyutnev
+* 
+*/
 public class ExtTeleserviceCodeTest {
 
-	private byte[] getEncodedData1() {
-		return new byte[] { (byte) 131, 1, 17 };
-	}
+	byte[] data = new byte[] { 4, 1, 0x11 };
+	byte[] dataEncoded = new byte[] { 0x11 };
 
-	private byte[] getData1() {
-		return new byte[] { 17 };
-	}
-
-	@Test(groups = { "functional.decode","primitives"})
+	@Test(groups = { "functional.decode", "subscriberManagement" })
 	public void testDecode() throws Exception {
 
-		byte[] rawData = getEncodedData1();
-		AsnInputStream asn = new AsnInputStream(rawData);
+		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
+		assertEquals(tag, Tag.STRING_OCTET);
+
 		ExtTeleserviceCodeImpl impl = new ExtTeleserviceCodeImpl();
 		impl.decodeAll(asn);
-		assertTrue(Arrays.equals(impl.getData(), this.getData1()));
+
+		assertTrue(Arrays.equals(impl.getData(), dataEncoded));
+		assertEquals(impl.getTeleserviceCodeValue(), TeleserviceCodeValue.telephony);
 	}
-	
-	@Test(groups = { "functional.encode","primitives"})
+
+	@Test(groups = { "functional.encode","subscriberManagement"})
 	public void testEncode() throws Exception {
 
-		ExtTeleserviceCodeImpl impl = new ExtTeleserviceCodeImpl(this.getData1());
+		ExtTeleserviceCodeImpl impl = new ExtTeleserviceCodeImpl(TeleserviceCodeValue.telephony);
 		AsnOutputStream asnOS = new AsnOutputStream();
-		impl.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, 3);
+		impl.encodeAll(asnOS);
 		byte[] encodedData = asnOS.toByteArray();
-		byte[] rawData = getEncodedData1();
+		byte[] rawData = data;
 		assertTrue(Arrays.equals(rawData, encodedData));		
 	}
+
 }

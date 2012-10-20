@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.map.api.service.sms;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TeleserviceCode;
 
 /**
  *
@@ -106,6 +107,10 @@ public interface SendRoutingInfoForSMRequest extends SmsMessage {
 	public SM_RP_MTI getSM_RP_MTI();
 
 	public SM_RP_SMEA getSM_RP_SMEA();
+
+	// for MAP V1 only
+	public TeleserviceCode getTeleservice();
+
 }
 
 

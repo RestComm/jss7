@@ -29,12 +29,12 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.MCSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.MGCSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.MTsmsCAMELTDPCriteria;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OBcsmCamelTDPCriteria;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OBcsmCamelTdpCriteria;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OCSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SMSCSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SSCSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SpecificCSIWithdraw;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TBCSMCAMELTDPCriteria;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TBcsmCamelTdpCriteria;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TCSI;
 
 /**	
@@ -81,17 +81,17 @@ public interface CAMELSubscriptionInfo {
 
 	public OCSI getOCsi();
 
-	public ArrayList<OBcsmCamelTDPCriteria> getOBcsmCamelTDPCriteriaList();
+	public ArrayList<OBcsmCamelTdpCriteria> getOBcsmCamelTDPCriteriaList();
 
 	public DCSI getDCsi();
 
 	public TCSI getTCsi();
 
-	public ArrayList<TBCSMCAMELTDPCriteria> getTBcsmCamelTdpCriteriaList();
+	public ArrayList<TBcsmCamelTdpCriteria> getTBcsmCamelTdpCriteriaList();
 
 	public TCSI getVtCsi();
 
-	public ArrayList<TBCSMCAMELTDPCriteria> getVtBcsmCamelTdpCriteriaList();
+	public ArrayList<TBcsmCamelTdpCriteria> getVtBcsmCamelTdpCriteriaList();
 
 	public boolean getTifCsi();
 
@@ -117,12 +117,12 @@ public interface CAMELSubscriptionInfo {
 
 	public OCSI geToImCsi();
 
-	public ArrayList<OBcsmCamelTDPCriteria> getOImBcsmCamelTdpCriteriaList();
+	public ArrayList<OBcsmCamelTdpCriteria> getOImBcsmCamelTdpCriteriaList();
 
 	public DCSI getDImCsi();
 
 	public TCSI getVtImCsi();
 
-	public ArrayList<TBCSMCAMELTDPCriteria> getVtImBcsmCamelTdpCriteriaList();
+	public ArrayList<TBcsmCamelTdpCriteria> getVtImBcsmCamelTdpCriteriaList();
 
 }

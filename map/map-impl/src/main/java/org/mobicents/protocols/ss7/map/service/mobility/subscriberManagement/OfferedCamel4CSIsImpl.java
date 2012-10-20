@@ -1,23 +1,36 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
 
-import java.io.IOException;
-
-import org.mobicents.protocols.asn.AsnException;
-import org.mobicents.protocols.asn.AsnInputStream;
-import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.asn.BitSetStrictLength;
-import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OfferedCamel4CSIs;
-import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
+import org.mobicents.protocols.ss7.map.primitives.BitStringBase;
 
 /**
  * @author amit bhayani
+ * @author sergey vetyutnev
  *
  */
-public class OfferedCamel4CSIsImpl implements OfferedCamel4CSIs, MAPAsnPrimitive {
+public class OfferedCamel4CSIsImpl extends BitStringBase implements OfferedCamel4CSIs {
 	
 	private static final int _ID_o_csi = 0;
 	private static final int _ID_d_csi = 1;
@@ -26,27 +39,14 @@ public class OfferedCamel4CSIsImpl implements OfferedCamel4CSIs, MAPAsnPrimitive
 	private static final int _ID_mt_sms_csi = 4;
 	private static final int _ID_mg_csi = 5;
 	private static final int _ID_psi_enhancements = 6;
-	
-	private BitSetStrictLength bitString = new BitSetStrictLength(7);
-	
-	/**
-	 * 
-	 */
+
 	public OfferedCamel4CSIsImpl() {
+		super(7, 16, 7, "OfferedCamel4CSIs");
 	}
 
-
-	/**
-	 * @param oCsi
-	 * @param dCsi
-	 * @param vtCsi
-	 * @param tCsi
-	 * @param mtSMSCsi
-	 * @param mgCsi
-	 * @param psiEnhancements
-	 */
 	public OfferedCamel4CSIsImpl(boolean oCsi, boolean dCsi, boolean vtCsi, boolean tCsi, boolean mtSMSCsi, boolean mgCsi, boolean psiEnhancements) {
-		super();
+		super(7, 16, 7, "OfferedCamel4CSIs");
+
 		if (oCsi)
 			this.bitString.set(_ID_o_csi);
 		if (dCsi)
@@ -112,100 +112,6 @@ public class OfferedCamel4CSIsImpl implements OfferedCamel4CSIs, MAPAsnPrimitive
 	 */
 	public boolean getPsiEnhancements() {
 		return this.bitString.get(_ID_psi_enhancements);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTag()
-	 */
-	public int getTag() throws MAPException {
-		return Tag.STRING_BIT;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTagClass()
-	 */
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getIsPrimitive()
-	 */
-	public boolean getIsPrimitive() {
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeAll(org.mobicents.protocols.asn.AsnInputStream)
-	 */
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding OfferedCamel4CSIs: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding OfferedCamel4CSIs: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeData(org.mobicents.protocols.asn.AsnInputStream, int)
-	 */
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding OfferedCamel4CSIs: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding OfferedCamel4CSIs: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-	
-	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
-		if (length == 0 || length > 3)
-			throw new MAPParsingComponentException("Error decoding SupportedCamelPhases: the OfferedCamel4CSIs field must contain from 1 or 3 octets. Contains: " + length,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		
-		this.bitString = ansIS.readBitStringData(length);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream)
-	 */
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_BIT);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream, int, int)
-	 */
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		try {
-			asnOs.writeTag(tagClass, true, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding OfferedCamel4CSIs: " + e.getMessage(), e);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeData(org.mobicents.protocols.asn.AsnOutputStream)
-	 */
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		try {
-			asnOs.writeBitStringData(this.bitString);
-		} catch (IOException e) {
-			throw new MAPException("IOException when encoding OfferedCamel4CSIs: " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding OfferedCamel4CSIs: " + e.getMessage(), e);
-		}
 	}
 
 	@Override

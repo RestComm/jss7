@@ -51,7 +51,7 @@ import org.testng.*;import org.testng.annotations.*;
  *
  */
 public class MoForwardShortMessageRequestTest  {
-	
+
 	private byte[] getEncodedDataSimple() {
 		return new byte[] { 48, 38, -124, 7, -111, 34, 51, 67, -103, 32, 50, -126, 8, -111, 50, 17, 50, 33, 67, 51, -12, 4, 17, 11, 22, 33, 44, 55, 66, 77, 0,
 				1, 2, 3, 4, 5, 6, 7, 9, 8 };
@@ -72,7 +72,7 @@ public class MoForwardShortMessageRequestTest  {
 				48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31,
 				32, 33, 4, 8, 66, -128, 24, 33, 50, 67, 84, -11 };
 	}
-	
+
 	@Test(groups = { "functional.decode","service.sms"})
 	public void testDecode() throws Exception {
 		

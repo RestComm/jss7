@@ -55,4 +55,6 @@ public interface ExtBearerServiceCode {
 
 	public byte[] getData();
 
+	public BearerServiceCodeValue getBearerServiceCodeValue();
+
 }

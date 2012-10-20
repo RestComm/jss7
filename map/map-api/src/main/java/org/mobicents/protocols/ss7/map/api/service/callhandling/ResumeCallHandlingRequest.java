@@ -28,7 +28,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.DCSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OBcsmCamelTDPCriteria;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OBcsmCamelTdpCriteria;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OCSI;
 
 /**
@@ -100,7 +100,7 @@ public interface ResumeCallHandlingRequest extends CallHandlingMessage {
 
 	public DCSI getDCsi();
 
-	public ArrayList<OBcsmCamelTDPCriteria> getOBcsmCamelTDPCriteriaList();
+	public ArrayList<OBcsmCamelTdpCriteria> getOBcsmCamelTDPCriteriaList();
 
 	public ExtBasicServiceCode getBasicServiceGroup2();
 

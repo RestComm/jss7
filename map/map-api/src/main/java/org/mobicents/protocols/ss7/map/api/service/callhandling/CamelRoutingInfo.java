@@ -21,6 +21,7 @@
  */
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
+
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /* 
@@ -39,5 +40,5 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 public interface CamelRoutingInfo {
 	public ForwardingData getForwardingData();
 	public GmscCamelSubscriptionInfo getGmscCamelSubscriptionInfo();
-	public MAPExtensionContainer getMAPExtensionContainer();
+	public MAPExtensionContainer getExtensionContainer();
 }

@@ -34,7 +34,8 @@ T-BcsmCamelTDPData ::= SEQUENCE {
 	gsmSCF-Address	[0] ISDN-AddressString,
 	defaultCallHandling	[1] DefaultCallHandling,
 	extensionContainer	[2] ExtensionContainer	OPTIONAL,
-	...}
+	...
+	}
 
 ServiceKey ::= INTEGER (0..2147483647)
 
