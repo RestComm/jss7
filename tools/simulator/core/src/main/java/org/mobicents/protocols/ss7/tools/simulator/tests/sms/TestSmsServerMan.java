@@ -453,7 +453,7 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 					this.mapMan.createDestAddress(destIsdnNumber, this.hlrSsn), null);
 			curDialog.setUserObject(messageData);
 
-			curDialog.addSendRoutingInfoForSMRequest(msisdn, true, serviceCentreAddress, null, false, null, null);
+			curDialog.addSendRoutingInfoForSMRequest(msisdn, true, serviceCentreAddress, null, false, null, null, null);
 			curDialog.send();
 
 			String sriData = createSriData(curDialog.getDialogId(), destIsdnNumber, serviceCentreAddr);
