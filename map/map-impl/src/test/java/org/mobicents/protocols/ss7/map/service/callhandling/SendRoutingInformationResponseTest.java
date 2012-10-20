@@ -29,8 +29,6 @@ import java.util.Arrays;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
-import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
@@ -43,14 +41,13 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.ForwardingReaso
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.ForwardingOptionsImpl;
-import org.testng.Assert.*;
-import org.testng.*;
 import org.testng.annotations.*;
 
 
 /*
  * 
  * @author cristian veliscu
+ * @author sergey vetyutnev
  * 
  */
 public class SendRoutingInformationResponseTest {
@@ -83,11 +80,19 @@ public class SendRoutingInformationResponseTest {
 	private byte[] getForwardingData() {
 		return new byte[] { 48, 12, (byte) 133, 7, -111, -105, 114, 99, 80, 24, -7, (byte) 134, 1, 36};
 	}
+
+	public byte[] getData1() {
+		return new byte[] { (byte) 163, 19, (byte) 137, 8, 16, 33, 2, 2, 16, -119, 34, -9, 4, 7, -111, -105, 114, 99, 80, 24, -7 };
+	}
+
+	public byte[] getData2() {
+		return new byte[] { (byte) 163, 24, (byte) 137, 8, 16, 33, 2, 2, 16, -119, 34, -9, 48, 12, (byte) 133, 7, -111, -105, 114, 99, 80, 24, -7, (byte) 134, 1, 36 };
+	}
 	
 	@Test(groups = { "functional.decode", "service.callhandling" })
 	public void testDecode() throws Exception {
-		byte[] data = new byte[] { (byte) 163, 19, (byte) 137, 8, 16, 33, 2, 2, 16, -119, 34, -9, 4, 7, -111, -105, 114, 99, 80, 24, -7 };
-		byte[] data_ = new byte[] { (byte) 163, 24, (byte) 137, 8, 16, 33, 2, 2, 16, -119, 34, -9, 48, 12, (byte) 133, 7, -111, -105, 114, 99, 80, 24, -7, (byte) 134, 1, 36 };
+		byte[] data = getData1();
+		byte[] data_ = getData2();
 		
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
@@ -107,6 +112,7 @@ public class SendRoutingInformationResponseTest {
 		assertEquals(roamingNumber.getAddressNature(), AddressNature.international_number);
 		assertEquals(roamingNumber.getNumberingPlan(), NumberingPlan.ISDN);
 		assertEquals(roamingNumber.getAddress(), "79273605819");	
+
 		
 		//:::::::::::::::::::::::::::::::::
 		AsnInputStream asn_ = new AsnInputStream(data_);
@@ -134,12 +140,14 @@ public class SendRoutingInformationResponseTest {
 		assertTrue(!forwardingOptions_.isRedirectingPresentation());
 		assertTrue(forwardingOptions_.isNotificationToCallingParty());
 		assertTrue(forwardingOptions_.getForwardingReason() == ForwardingReason.busy);
+
+	
 	} 
 	
 	@Test(groups = { "functional.encode", "service.callhandling" })
 	public void testEncode() throws Exception {
-		byte[] data = new byte[] { (byte) 163, 19, (byte) 137, 8, 16, 33, 2, 2, 16, -119, 34, -9, 4, 7, -111, -105, 114, 99, 80, 24, -7 };
-		byte[] data_ = new byte[] { (byte) 163, 24, (byte) 137, 8, 16, 33, 2, 2, 16, -119, 34, -9, 48, 12, (byte) 133, 7, -111, -105, 114, 99, 80, 24, -7, (byte) 134, 1, 36 };
+		byte[] data = getData1();
+		byte[] data_ = getData2();
 		
 		IMSIImpl imsi = new IMSIImpl("011220200198227");
 		ISDNAddressString roamingNumber = new ISDNAddressStringImpl(AddressNature.international_number, 

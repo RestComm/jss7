@@ -246,7 +246,7 @@ public class LocationInfoWithLMSIImpl implements LocationInfoWithLMSI, MAPAsnPri
 
 		try {
 			if (this.networkNodeNumber == null)
-				throw new MAPException("Error while decoding LocationInfoWithLMSI: networkNodeNumber must not be null");
+				throw new MAPException("Error while encoding LocationInfoWithLMSI: networkNodeNumber must not be null");
 
 			((ISDNAddressStringImpl)this.networkNodeNumber).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_NetworkNodeNumber);
 

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,136 +22,62 @@
 
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
 
-import java.io.IOException;
-
-import org.mobicents.protocols.asn.AsnException;
-import org.mobicents.protocols.asn.AsnInputStream;
-import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BearerServiceCodeValue;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBearerServiceCode;
-import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
+import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class ExtBearerServiceCodeImpl implements ExtBearerServiceCode, MAPAsnPrimitive  {
+public class ExtBearerServiceCodeImpl extends OctetStringBase implements ExtBearerServiceCode  {
 
-	public static final String _PrimitiveName = "ExtBearerServiceCode";
-	
-	private byte[] data;
-
-	
 	public ExtBearerServiceCodeImpl() {
+		super(1, 5, "ExtBearerServiceCode");
 	}
 
 	public ExtBearerServiceCodeImpl(byte[] data) {
-		this.data = data;
+		super(1, 5, "ExtBearerServiceCode", data);
 	}
-	
+
+	public ExtBearerServiceCodeImpl(BearerServiceCodeValue value) {
+		super(1, 5, "ExtBearerServiceCode");
+
+		if (value != null)
+			this.data = new byte[] { (byte) (value.getBearerServiceCode()) };
+	}
+
 	public byte[] getData() {
 		return data;
 	}
-	
-	public int getTag() throws MAPException {
-		return Tag.STRING_OCTET;
-	}
 
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
-
-	public boolean getIsPrimitive() {
-		return true;
-	}
-
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	private void _decode(AsnInputStream ais, int length) throws MAPParsingComponentException, IOException, AsnException {
-
-		this.data = ais.readOctetStringData(length);
-		if (this.data.length < 1 || this.data.length > 5)
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": octetString must be from 1 to 5 bytes length, found: "
-					+ this.data.length, MAPParsingComponentExceptionReason.MistypedParameter);
-	}
-
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
-
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		
-		try {
-			asnOs.writeTag(tagClass, true, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
-
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-
-		if (this.data == null)
-			throw new MAPException("data must not be null");
-		if (this.data.length < 1 && this.data.length > 5)
-			throw new MAPException("data length must be from 1 to 5");
-
-		asnOs.writeOctetStringData(data);
+	public BearerServiceCodeValue getBearerServiceCodeValue() {
+		if (data == null || data.length < 1)
+			return null;
+		else
+			return BearerServiceCodeValue.getInstance(this.data[0]);
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("ExtBearerServiceCode [");
+		sb.append(this._PrimitiveName);
+		sb.append(" [");
 
-		if (this.data != null) {
-			sb.append("data=");
-			sb.append(printDataArr(this.data));
+		sb.append("Value=");
+		sb.append(this.getBearerServiceCodeValue());
+
+		sb.append(", Data=[");
+		if (data != null) {
+			for (int i1 : data) {
+				sb.append(i1);
+				sb.append(", ");
+			}
 		}
-
 		sb.append("]");
 
-		return sb.toString();
-	}
-
-	private String printDataArr(byte[] arr) {
-		StringBuilder sb = new StringBuilder();
-		for (int b : arr) {
-			sb.append(b);
-			sb.append(" ");
-		}
+		sb.append("]");
 
 		return sb.toString();
 	}

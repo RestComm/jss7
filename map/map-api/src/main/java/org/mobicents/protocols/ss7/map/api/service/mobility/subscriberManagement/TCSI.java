@@ -67,8 +67,8 @@ public interface TCSI {
 
 	public Integer getCamelCapabilityHandling();
 
-	public MAPExtensionContainer getNotificationToCSE();
+	public boolean getNotificationToCSE();
 
-	public MAPExtensionContainer getCsiActive();
+	public boolean getCsiActive();
 
 }
