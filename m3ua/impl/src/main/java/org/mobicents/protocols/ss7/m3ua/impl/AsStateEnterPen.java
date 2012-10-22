@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,12 +19,12 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.m3ua.Asp;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.StateEventHandler;
@@ -39,27 +39,27 @@ public class AsStateEnterPen implements StateEventHandler {
 
 	private static final Logger logger = Logger.getLogger(AsStateEnterPen.class);
 
-	private As as = null;
+	private AsImpl asImpl = null;
 	private FSM fsm;
 
-	public AsStateEnterPen(As as, FSM fsm) {
-		this.as = as;
+	public AsStateEnterPen(AsImpl asImpl, FSM fsm) {
+		this.asImpl = asImpl;
 		this.fsm = fsm;
 	}
 
 	public void onEvent(State state) {
 		if (logger.isDebugEnabled()) {
-			logger.debug(String.format("Entered in PENDING state for As=%s", as.getName()));
+			logger.debug(String.format("Entered in PENDING state for As=%s", asImpl.getName()));
 		}
 		// If there is even one ASP in INACTIVE state for this AS, ACTIVATE it
-		for (FastList.Node<Asp> n = as.getAspList().head(), end = as.getAspList().tail(); (n = n.getNext()) != end;) {
-			Asp asp = n.getValue();
+		for (FastList.Node<Asp> n = asImpl.appServerProcs.head(), end = asImpl.appServerProcs.tail(); (n = n.getNext()) != end;) {
+			AspImpl aspImpl = (AspImpl)n.getValue();
 
-			FSM aspLocalFSM = asp.getLocalFSM();
+			FSM aspLocalFSM = aspImpl.getLocalFSM();
 
 			if (AspState.getState(aspLocalFSM.getState().getName()) == AspState.INACTIVE) {
-				AspFactory aspFactory = asp.getAspFactory();
-				aspFactory.sendAspActive(this.as);
+				AspFactoryImpl aspFactoryImpl = aspImpl.getAspFactory();
+				aspFactoryImpl.sendAspActive(this.asImpl);
 
 				// Transition the state of ASP to ACTIVE_SENT
 				try {

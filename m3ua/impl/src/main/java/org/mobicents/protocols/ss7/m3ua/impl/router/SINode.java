@@ -22,11 +22,11 @@
 
 package org.mobicents.protocols.ss7.m3ua.impl.router;
 
-import org.mobicents.protocols.ss7.m3ua.impl.As;
+import org.mobicents.protocols.ss7.m3ua.impl.AsImpl;
 
 /**
  * <p>
- * SINode has reference to {@link As}
+ * SINode has reference to {@link AsImpl}
  * </p>
  * 
  * @author amit bhayani
@@ -34,11 +34,11 @@ import org.mobicents.protocols.ss7.m3ua.impl.As;
  */
 public class SINode {
 	protected int si;
-	protected As as = null;
+	protected AsImpl asImpl = null;
 
-	protected SINode(int si, As as) {
+	protected SINode(int si, AsImpl asImpl) {
 		this.si = si;
-		this.as = as;
+		this.asImpl = asImpl;
 	}
 
 }

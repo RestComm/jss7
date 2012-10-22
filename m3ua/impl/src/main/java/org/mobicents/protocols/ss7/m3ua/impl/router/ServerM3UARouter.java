@@ -24,7 +24,7 @@ package org.mobicents.protocols.ss7.m3ua.impl.router;
 
 import javolution.util.FastList;
 
-import org.mobicents.protocols.ss7.m3ua.impl.As;
+import org.mobicents.protocols.ss7.m3ua.impl.AsImpl;
 import org.mobicents.protocols.ss7.m3ua.parameter.OPCList;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingKey;
 import org.mobicents.protocols.ss7.m3ua.parameter.ServiceIndicators;
@@ -39,7 +39,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.ServiceIndicators;
  * The {@link ServerM3UARouter} act as tree where each {@link DPCNode} act as parent
  * node containing {@link OPCNode} as leafs. Each {@link OPCNode} further
  * contains {@link SINode} as leafs. The {@link SINode} contains the reference
- * to corresponding {@link As}.
+ * to corresponding {@link AsImpl}.
  * </p>
  * 
  * @author amit bhayani
@@ -67,10 +67,10 @@ public class ServerM3UARouter {
 	 * </p>
 	 * 
 	 * @param rk
-	 * @param as
+	 * @param asImpl
 	 * @throws Exception
 	 */
-	public void addRk(RoutingKey rk, As as) throws Exception {
+	public void addRk(RoutingKey rk, AsImpl asImpl) throws Exception {
 		int dpc = rk.getDestinationPointCodes()[0].getPointCode();
 		OPCList[] opcArray = rk.getOPCLists();
 
@@ -92,13 +92,13 @@ public class ServerM3UARouter {
 		for (FastList.Node<DPCNode> n = dpcList.head(), end = dpcList.tail(); (n = n.getNext()) != end;) {
 			DPCNode dpcNode = n.getValue();
 			if (dpcNode.dpc == dpc) {
-				this.addSi(dpcNode, opcIntArr, siShortArr, as);
+				this.addSi(dpcNode, opcIntArr, siShortArr, asImpl);
 				return;
 			}
 		}
 
 		DPCNode dpcNode = new DPCNode(dpc);
-		this.addSi(dpcNode, opcIntArr, siShortArr, as);
+		this.addSi(dpcNode, opcIntArr, siShortArr, asImpl);
 		this.dpcList.add(dpcNode);
 
 	}
@@ -120,7 +120,7 @@ public class ServerM3UARouter {
 	 * @param si
 	 * @return
 	 */
-	public As getAs(int dpc, int opc, short si) {
+	public AsImpl getAs(int dpc, int opc, short si) {
 		for (FastList.Node<DPCNode> n = dpcList.head(), end = dpcList.tail(); (n = n.getNext()) != end;) {
 			DPCNode dpcNode = n.getValue();
 			if (dpcNode.dpc == dpc) {
@@ -130,10 +130,10 @@ public class ServerM3UARouter {
 		return null;
 	}
 
-	private void addSi(DPCNode dpcNode, int[] opcIntArr, short[] siShortArr, As as) throws Exception {
+	private void addSi(DPCNode dpcNode, int[] opcIntArr, short[] siShortArr, AsImpl asImpl) throws Exception {
 		for (int i = 0; i < opcIntArr.length; i++) {
 			for (int j = 0; j < siShortArr.length; j++) {
-				dpcNode.addSi(opcIntArr[i], siShortArr[j], as);
+				dpcNode.addSi(opcIntArr[i], siShortArr[j], asImpl);
 			}
 		}
 	}

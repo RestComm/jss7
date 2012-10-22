@@ -19,32 +19,28 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.mobicents.protocols.ss7.m3ua.impl;
+package org.mobicents.protocols.ss7.m3ua;
 
-import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
+import java.util.List;
+
+import org.mobicents.protocols.api.Association;
 
 /**
  * 
  * @author amit bhayani
  *
  */
-public class THLocalAspDwnToAspUpSnt implements TransitionHandler {
+public interface AspFactory {
 
-	private AspImpl aspImpl;
-	private FSM fsm;
-	private static final Logger logger = Logger.getLogger(THLocalAspDwnToAspUpSnt.class);
-
-	public THLocalAspDwnToAspUpSnt(AspImpl aspImpl, FSM fsm) {
-		this.aspImpl = aspImpl;
-		this.fsm = fsm;
-	}
-
-	public boolean process(State state) {
-		this.aspImpl.getAspFactory().sendAspUp();
-		return true;
-	}
-
+	public String getName();
+	
+	public Association getAssociation();
+	
+	public List<Asp> getAspList();
+	
+	public boolean getStatus();
+	
+	public Functionality getFunctionality();
+	
+	public IPSPType getIpspType();
 }

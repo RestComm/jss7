@@ -19,32 +19,25 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.mobicents.protocols.ss7.m3ua.impl;
-
-import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
+package org.mobicents.protocols.ss7.m3ua;
 
 /**
- * 
  * @author amit bhayani
  *
  */
-public class THLocalAspDwnToAspUpSnt implements TransitionHandler {
+public interface M3UAManagementEventListener {
+	
+	public void onAsCreated(As as);
+	
+	public void onAsDestroyed(As as);
+	
+	public void onAspFactoryCreated(AspFactory aspFactory);
+	
+	public void onAspFactoryDestroyed(AspFactory aspFactory);
+	
+	public void onAspAssignedToAs(As as, Asp asp);
+	
+	public void onAspUnassignedFromAs(As as, Asp asp);
 
-	private AspImpl aspImpl;
-	private FSM fsm;
-	private static final Logger logger = Logger.getLogger(THLocalAspDwnToAspUpSnt.class);
-
-	public THLocalAspDwnToAspUpSnt(AspImpl aspImpl, FSM fsm) {
-		this.aspImpl = aspImpl;
-		this.fsm = fsm;
-	}
-
-	public boolean process(State state) {
-		this.aspImpl.getAspFactory().sendAspUp();
-		return true;
-	}
-
+	public void onRemoveAllResources();
 }

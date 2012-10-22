@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -26,6 +26,8 @@ import javolution.xml.XMLFormat;
 import javolution.xml.XMLSerializable;
 import javolution.xml.stream.XMLStreamException;
 
+import org.mobicents.protocols.ss7.m3ua.As;
+import org.mobicents.protocols.ss7.m3ua.Asp;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.IPSPType;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
@@ -38,7 +40,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.ASPIdentifier;
  * @author amit bhayani
  * 
  */
-public class Asp implements XMLSerializable {
+public class AspImpl implements XMLSerializable, Asp {
 
 	protected static final String NAME = "name";
 
@@ -54,30 +56,30 @@ public class Asp implements XMLSerializable {
 	 **/
 	protected FSM peerFSM;
 
-	protected AspFactory aspFactory;
+	protected AspFactoryImpl aspFactoryImpl;
 
-	protected As as;
+	protected AsImpl asImpl;
 
 	protected ASPIdentifier aSPIdentifier;
 
 	private MessageFactory messageFactory = new MessageFactoryImpl();
 
-	public Asp() {
+	public AspImpl() {
 
 	}
 
-	public Asp(String name, AspFactory aspFactroy) {
+	public AspImpl(String name, AspFactoryImpl aspFactroy) {
 		this.name = name;
-		this.aspFactory = aspFactroy;
+		this.aspFactoryImpl = aspFactroy;
 		this.init();
 	}
 
 	private void init() {
 
-		switch (this.aspFactory.functionality) {
+		switch (this.aspFactoryImpl.functionality) {
 		case IPSP:
-			if (this.aspFactory.exchangeType == ExchangeType.SE) {
-				if (this.aspFactory.ipspType == IPSPType.CLIENT) {
+			if (this.aspFactoryImpl.exchangeType == ExchangeType.SE) {
+				if (this.aspFactoryImpl.ipspType == IPSPType.CLIENT) {
 					// If this ASP is IPSP and client side, it should send the
 					// ASP_UP to other side
 					this.initLocalFSM();
@@ -95,7 +97,7 @@ public class Asp implements XMLSerializable {
 			}
 			break;
 		case AS:
-			if (this.aspFactory.exchangeType == ExchangeType.SE) {
+			if (this.aspFactoryImpl.exchangeType == ExchangeType.SE) {
 				// If this is AS side, it should always send the ASP_UP to other
 				// side
 				this.initLocalFSM();
@@ -106,7 +108,7 @@ public class Asp implements XMLSerializable {
 			}
 			break;
 		case SGW:
-			if (this.aspFactory.exchangeType == ExchangeType.SE) {
+			if (this.aspFactoryImpl.exchangeType == ExchangeType.SE) {
 				// If this is SGW, it should always receive ASP_UP from other
 				// side
 				this.initPeerFSM();
@@ -314,24 +316,24 @@ public class Asp implements XMLSerializable {
 		return this.name;
 	}
 
-	public FSM getLocalFSM() {
+	protected FSM getLocalFSM() {
 		return localFSM;
 	}
 
-	public FSM getPeerFSM() {
+	protected FSM getPeerFSM() {
 		return peerFSM;
 	}
 
 	public As getAs() {
-		return as;
+		return asImpl;
 	}
 
-	public void setAs(As as) {
-		this.as = as;
+	public void setAs(AsImpl asImpl) {
+		this.asImpl = asImpl;
 	}
 
-	public AspFactory getAspFactory() {
-		return this.aspFactory;
+	public AspFactoryImpl getAspFactory() {
+		return this.aspFactoryImpl;
 	}
 
 	public ASPIdentifier getASPIdentifier() {
@@ -349,16 +351,16 @@ public class Asp implements XMLSerializable {
 	/**
 	 * XML Serialization/Deserialization
 	 */
-	protected static final XMLFormat<Asp> ASP_XML = new XMLFormat<Asp>(Asp.class) {
+	protected static final XMLFormat<AspImpl> ASP_XML = new XMLFormat<AspImpl>(AspImpl.class) {
 
 		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml, Asp asp) throws XMLStreamException {
-			asp.name = xml.getAttribute(NAME, "");
+		public void read(javolution.xml.XMLFormat.InputElement xml, AspImpl aspImpl) throws XMLStreamException {
+			aspImpl.name = xml.getAttribute(NAME, "");
 		}
 
 		@Override
-		public void write(Asp asp, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
-			xml.setAttribute(NAME, asp.name);
+		public void write(AspImpl aspImpl, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			xml.setAttribute(NAME, aspImpl.name);
 		}
 	};
 }

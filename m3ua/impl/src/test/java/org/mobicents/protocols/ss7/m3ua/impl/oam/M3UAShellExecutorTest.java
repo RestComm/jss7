@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,7 +19,6 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.mobicents.protocols.ss7.m3ua.impl.oam;
 
 import java.util.List;
@@ -39,7 +38,7 @@ import org.mobicents.protocols.api.ManagementEventListener;
 import org.mobicents.protocols.api.PayloadData;
 import org.mobicents.protocols.api.Server;
 import org.mobicents.protocols.api.ServerListener;
-import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement;
+import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl;
 
 /**
  * 
@@ -50,7 +49,7 @@ public class M3UAShellExecutorTest {
 
 	M3UAShellExecutor m3uaExec = null;
 	private TransportManagement transportManagement = null;
-	M3UAManagement clientM3UAMgmt = null;
+	M3UAManagementImpl clientM3UAMgmt = null;
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -66,7 +65,7 @@ public class M3UAShellExecutorTest {
 
 		this.transportManagement = new TransportManagement();
 
-		this.clientM3UAMgmt = new M3UAManagement("M3UAShellExecutorTest");
+		this.clientM3UAMgmt = new M3UAManagementImpl("M3UAShellExecutorTest");
 		this.clientM3UAMgmt.setTransportManagement(this.transportManagement);
 		this.clientM3UAMgmt.start();
 
@@ -75,9 +74,7 @@ public class M3UAShellExecutorTest {
 	@AfterMethod
 	public void tearDown() throws Exception {
 		// Clean up
-		clientM3UAMgmt.getAppServers().clear();
-		clientM3UAMgmt.getAspfactories().clear();
-		clientM3UAMgmt.getRoute().clear();
+		clientM3UAMgmt.removeAllResourses();
 		clientM3UAMgmt.stop();
 
 	}
@@ -188,7 +185,6 @@ public class M3UAShellExecutorTest {
 		result = m3uaExec.execute("m3ua as destroy testas".split(" "));
 		assertEquals(result, String.format(M3UAOAMMessages.DESTROY_AS_SUCESSFULL, "testas"));
 
-		clientM3UAMgmt.stop();
 	}
 
 	class TestAssociation implements Association {

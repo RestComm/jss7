@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -40,14 +40,14 @@ import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
  */
 public class THPeerAsPenToInAct implements TransitionHandler {
 
-	private As as;
+	private AsImpl asImpl;
 
-	public THPeerAsPenToInAct(As as, FSM fsm) {
-		this.as = as;
+	public THPeerAsPenToInAct(AsImpl asImpl, FSM fsm) {
+		this.asImpl = asImpl;
 	}
 
 	public boolean process(State state) {
-		this.as.clearPendingQueue();
+		this.asImpl.clearPendingQueue();
 		return true;
 	}
 

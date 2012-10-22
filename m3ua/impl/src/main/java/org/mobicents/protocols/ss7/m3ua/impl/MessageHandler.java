@@ -1,3 +1,24 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
@@ -17,19 +38,19 @@ import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
  */
 public abstract class MessageHandler {
 
-	protected AspFactory aspFactory = null;
+	protected AspFactoryImpl aspFactoryImpl = null;
 
-	public MessageHandler(AspFactory aspFactory) {
-		this.aspFactory = aspFactory;
+	public MessageHandler(AspFactoryImpl aspFactoryImpl) {
+		this.aspFactoryImpl = aspFactoryImpl;
 	}
 
 	protected void sendError(RoutingContext rc, ErrorCode errorCode) {
-		Error error = (Error) this.aspFactory.messageFactory.createMessage(MessageClass.MANAGEMENT, MessageType.ERROR);
+		Error error = (Error) this.aspFactoryImpl.messageFactory.createMessage(MessageClass.MANAGEMENT, MessageType.ERROR);
 		error.setErrorCode(errorCode);
 		if (rc != null) {
 			error.setRoutingContext(rc);
 		}
-		this.aspFactory.write(error);
+		this.aspFactoryImpl.write(error);
 	}
 
 	/**
@@ -39,37 +60,37 @@ public abstract class MessageHandler {
 	 * 
 	 * @return
 	 */
-	protected Asp getAspForNullRc() {
+	protected AspImpl getAspForNullRc() {
 		// We know if null RC, ASP cannot be shared and AspFactory will
 		// have only one ASP
 
-		Asp asp = this.aspFactory.getAspList().get(0);
+		AspImpl aspImpl = (AspImpl)this.aspFactoryImpl.aspList.get(0);
 
-		if (this.aspFactory.getAspList().size() > 1) {
+		if (this.aspFactoryImpl.aspList.size() > 1) {
 			// verify that AS to which this ASP is added is also having null
 			// RC or this asp is not shared by any other AS in which case we
 			// know messages are intended for same AS
 
-			ErrorCode errorCodeObj = this.aspFactory.parameterFactory
+			ErrorCode errorCodeObj = this.aspFactoryImpl.parameterFactory
 					.createErrorCode(ErrorCode.Invalid_Routing_Context);
 			sendError(null, errorCodeObj);
 			return null;
 		}
 
-		return asp;
+		return aspImpl;
 	}
 
-	protected FSM getAspFSMForRxPayload(Asp asp) {
+	protected FSM getAspFSMForRxPayload(AspImpl aspImpl) {
 		FSM fsm = null;
-		if (aspFactory.getFunctionality() == Functionality.AS
-				|| (aspFactory.getFunctionality() == Functionality.SGW && aspFactory.getExchangeType() == ExchangeType.DE)
-				|| (aspFactory.getFunctionality() == Functionality.IPSP && aspFactory.getExchangeType() == ExchangeType.DE)
-				|| (aspFactory.getFunctionality() == Functionality.IPSP
-						&& aspFactory.getExchangeType() == ExchangeType.SE && aspFactory.getIpspType() == IPSPType.CLIENT)) {
-			fsm = asp.getLocalFSM();
+		if (aspFactoryImpl.getFunctionality() == Functionality.AS
+				|| (aspFactoryImpl.getFunctionality() == Functionality.SGW && aspFactoryImpl.getExchangeType() == ExchangeType.DE)
+				|| (aspFactoryImpl.getFunctionality() == Functionality.IPSP && aspFactoryImpl.getExchangeType() == ExchangeType.DE)
+				|| (aspFactoryImpl.getFunctionality() == Functionality.IPSP
+						&& aspFactoryImpl.getExchangeType() == ExchangeType.SE && aspFactoryImpl.getIpspType() == IPSPType.CLIENT)) {
+			fsm = aspImpl.getLocalFSM();
 
 		} else {
-			fsm = asp.getPeerFSM();
+			fsm = aspImpl.getPeerFSM();
 		}
 
 		return fsm;

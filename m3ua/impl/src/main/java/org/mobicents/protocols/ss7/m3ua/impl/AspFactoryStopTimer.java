@@ -1,23 +1,23 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and/or its affiliates, and individual
- * contributors as indicated by the @authors tag. All rights reserved.
- * See the copyright.txt in the distribution for a full listing
- * of individual contributors.
- * 
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU General Public License, v. 2.0.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License,
- * v. 2.0 along with this distribution; if not, write to the Free 
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA 02110-1301, USA.
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 package org.mobicents.protocols.ss7.m3ua.impl;
 
@@ -34,7 +34,7 @@ public class AspFactoryStopTimer extends M3UATask {
 
 	private int STOP_TIMER_TIMEOUT = 3000;
 
-	private AspFactory aspFactory = null;
+	private AspFactoryImpl aspFactoryImpl = null;
 
 	private long initiatedTime = 0l;
 
@@ -42,9 +42,9 @@ public class AspFactoryStopTimer extends M3UATask {
 	 * @param association
 	 * @param transportManagement
 	 */
-	public AspFactoryStopTimer(AspFactory aspFactory) {
+	public AspFactoryStopTimer(AspFactoryImpl aspFactoryImpl) {
 		super();
-		this.aspFactory = aspFactory;
+		this.aspFactoryImpl = aspFactoryImpl;
 		this.initiatedTime = System.currentTimeMillis();
 	}
 
@@ -57,13 +57,13 @@ public class AspFactoryStopTimer extends M3UATask {
 	public void tick(long now) {
 		if (now - this.initiatedTime >= STOP_TIMER_TIMEOUT) {
 			
-			if (this.aspFactory.association.isConnected()) {
+			if (this.aspFactoryImpl.association.isConnected()) {
 				logger.warn(String.format("Asp=%s was stopped but underlying Association=%s was not stopped after TIMEOUT=%d ms. Forcing stop now",
-						this.aspFactory.getName(), this.aspFactory.association.getName(), STOP_TIMER_TIMEOUT));
+						this.aspFactoryImpl.getName(), this.aspFactoryImpl.association.getName(), STOP_TIMER_TIMEOUT));
 				try {
-					this.aspFactory.transportManagement.stopAssociation(this.aspFactory.association.getName());
+					this.aspFactoryImpl.transportManagement.stopAssociation(this.aspFactoryImpl.association.getName());
 				} catch (Exception e) {
-					logger.error(String.format("Exception while trying to stop Association=%s", this.aspFactory.association.getName()));
+					logger.error(String.format("Exception while trying to stop Association=%s", this.aspFactoryImpl.association.getName()));
 				}
 			}
 			

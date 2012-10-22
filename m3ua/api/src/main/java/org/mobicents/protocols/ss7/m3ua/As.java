@@ -19,32 +19,40 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.mobicents.protocols.ss7.m3ua.impl;
+package org.mobicents.protocols.ss7.m3ua;
 
-import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
+import java.util.List;
+
+import org.mobicents.protocols.ss7.m3ua.parameter.NetworkAppearance;
+import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
+import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
-public class THLocalAspDwnToAspUpSnt implements TransitionHandler {
 
-	private AspImpl aspImpl;
-	private FSM fsm;
-	private static final Logger logger = Logger.getLogger(THLocalAspDwnToAspUpSnt.class);
+public interface As {
 
-	public THLocalAspDwnToAspUpSnt(AspImpl aspImpl, FSM fsm) {
-		this.aspImpl = aspImpl;
-		this.fsm = fsm;
-	}
+	public String getName();
 
-	public boolean process(State state) {
-		this.aspImpl.getAspFactory().sendAspUp();
-		return true;
-	}
+	public RoutingContext getRoutingContext();
+
+	public Functionality getFunctionality();
+
+	public ExchangeType getExchangeType();
+
+	public IPSPType getIpspType();
+
+	public NetworkAppearance getNetworkAppearance();
+
+	public TrafficModeType getTrafficModeType();
+
+	public TrafficModeType getDefaultTrafficModeType();
+
+	public int getMinAspActiveForLb();
+
+	public List<Asp> getAspList();
 
 }

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -27,6 +27,7 @@ import javolution.util.FastSet;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
+import org.mobicents.protocols.ss7.m3ua.Asp;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.StateEventHandler;
@@ -41,14 +42,14 @@ import org.mobicents.protocols.ss7.m3ua.impl.fsm.UnknownTransitionException;
  */
 public class AsStatePenTimeout implements StateEventHandler {
 
-	private As as;
+	private AsImpl asImpl;
 	private FSM fsm;
 	private static final Logger logger = Logger.getLogger(AsStatePenTimeout.class);
 
 	boolean inactive = false;
 
-	public AsStatePenTimeout(As as, FSM fsm) {
-		this.as = as;
+	public AsStatePenTimeout(AsImpl asImpl, FSM fsm) {
+		this.asImpl = asImpl;
 		this.fsm = fsm;
 	}
 
@@ -70,20 +71,20 @@ public class AsStatePenTimeout implements StateEventHandler {
 	public void onEvent(State state) {
 
 		if (logger.isEnabledFor(Priority.WARN)) {
-			logger.warn(String.format("PENDING timedout for As=%s", this.as.getName()));
+			logger.warn(String.format("PENDING timedout for As=%s", this.asImpl.getName()));
 		}
 
 		// Clear the Pending Queue for this As
-		this.as.clearPendingQueue();
+		this.asImpl.clearPendingQueue();
 
 		this.inactive = false;
 
 		// check if there are any ASP's who are INACTIVE, transition to
 		// INACTIVE else DOWN
-		for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n.getNext()) != end;) {
-			Asp asp = n.getValue();
+		for (FastList.Node<Asp> n = this.asImpl.appServerProcs.head(), end = this.asImpl.appServerProcs.tail(); (n = n.getNext()) != end;) {
+			AspImpl aspImpl = (AspImpl)n.getValue();
 
-			FSM aspLocalFSM = asp.getLocalFSM();
+			FSM aspLocalFSM = aspImpl.getLocalFSM();
 
 			if (AspState.getState(aspLocalFSM.getState().getName()) == AspState.INACTIVE) {
 				try {
@@ -108,14 +109,14 @@ public class AsStatePenTimeout implements StateEventHandler {
 		}
 		
 		//Now send MTP3 PAUSE 
-		FastSet<AsStateListener> asStateListeners = this.as.getAsStateListeners();
+		FastSet<AsStateListener> asStateListeners = this.asImpl.getAsStateListeners();
 		for (FastSet.Record r = asStateListeners.head(), end = asStateListeners.tail(); (r = r.getNext()) != end;) {
 			AsStateListener asAsStateListener = asStateListeners.valueOf(r);
 			try {
-				asAsStateListener.onAsInActive(this.as);
+				asAsStateListener.onAsInActive(this.asImpl);
 			} catch (Exception e) {
 				logger.error(String.format("Error while calling AsStateListener=%s onAsInActive method for As=%s",
-						asAsStateListener, this.as));
+						asAsStateListener, this.asImpl));
 			}
 		}
 	}

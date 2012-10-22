@@ -1,3 +1,24 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import java.util.Iterator;
@@ -7,6 +28,8 @@ import javolution.xml.XMLBinding;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
+import org.mobicents.protocols.ss7.m3ua.As;
+
 /**
  * 
  * @author amit bhayani
@@ -14,9 +37,9 @@ import javolution.xml.stream.XMLStreamException;
  */
 public class M3UAXMLBinding extends XMLBinding {
 
-	private M3UAManagement m3uaManagement = null;
+	private M3UAManagementImpl m3uaManagement = null;
 
-	public void setM3uaManagement(M3UAManagement m3uaManagement) {
+	public void setM3uaManagement(M3UAManagementImpl m3uaManagement) {
 		this.m3uaManagement = m3uaManagement;
 	}
 
@@ -35,7 +58,7 @@ public class M3UAXMLBinding extends XMLBinding {
 			final Map map = (Map) obj;
 			for (Iterator it = map.entrySet().iterator(); it.hasNext();) {
 				Map.Entry entry = (Map.Entry) it.next();
-				As[] asList = (As[]) entry.getValue();
+				AsImpl[] asList = (AsImpl[]) entry.getValue();
 
 				if (asList == null) {
 					continue;
@@ -45,9 +68,9 @@ public class M3UAXMLBinding extends XMLBinding {
 
 				StringBuffer sb = new StringBuffer();
 				for (int count = 0; count < asList.length; count++) {
-					As as = asList[count];
-					if (as != null) {
-						sb.append(as.getName()).append(",");
+					AsImpl asImpl = asList[count];
+					if (asImpl != null) {
+						sb.append(asImpl.getName()).append(",");
 					}
 				}
 
@@ -67,7 +90,7 @@ public class M3UAXMLBinding extends XMLBinding {
 			while (xml.hasNext()) {
 				String key = xml.get("key", String.class);
 				String value = xml.get("value", String.class);
-				As[] asList = new As[m3uaManagement.getMaxAsForRoute()];
+				AsImpl[] asList = new AsImpl[m3uaManagement.getMaxAsForRoute()];
 
 				if (value != null && !value.equals("")) {
 					String[] asNames = value.split(",");
@@ -78,7 +101,7 @@ public class M3UAXMLBinding extends XMLBinding {
 							// TODO add warning
 							continue;
 						}
-						asList[count] = as;
+						asList[count] = (AsImpl)as;
 					}
 				}// if (value != null && !value.equals(""))
 

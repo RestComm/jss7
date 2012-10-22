@@ -1,3 +1,24 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import static org.testng.Assert.assertEquals;
@@ -62,7 +83,7 @@ import org.testng.annotations.Test;
 public class IPSPServerFSMTest {
 	private ParameterFactoryImpl parmFactory = new ParameterFactoryImpl();
 	private MessageFactoryImpl messageFactory = new MessageFactoryImpl();
-	private M3UAManagement serverM3UAMgmt = null;
+	private M3UAManagementImpl serverM3UAMgmt = null;
 	private Semaphore semaphore = null;
 	private Mtp3UserPartListenerimpl mtp3UserPartListener = null;
 
@@ -83,7 +104,7 @@ public class IPSPServerFSMTest {
 	public void setUp() throws Exception {
 		semaphore = new Semaphore(0);
 		this.transportManagement = new TransportManagement();
-		this.serverM3UAMgmt = new M3UAManagement("IPSPServerFSMTest");
+		this.serverM3UAMgmt = new M3UAManagementImpl("IPSPServerFSMTest");
 		this.serverM3UAMgmt.setTransportManagement(this.transportManagement);
 		this.mtp3UserPartListener = new Mtp3UserPartListenerimpl();
 		this.serverM3UAMgmt.addMtp3UserPartListener(this.mtp3UserPartListener);
@@ -116,13 +137,13 @@ public class IPSPServerFSMTest {
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
 		// As remAs = sgw.createAppServer("testas", rc, rKey, trModType);
-		As remAs = serverM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, IPSPType.SERVER, rc, null,
+		AsImpl remAs = (AsImpl)serverM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, IPSPType.SERVER, rc, null,
 				null);
 		FSM asLocalFSM = remAs.getLocalFSM();
 
-		AspFactory aspFactory = serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
+		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl)serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
 
-		Asp remAsp = serverM3UAMgmt.assignAspToAs("testas", "testasp");
+		AspImpl remAsp = serverM3UAMgmt.assignAspToAs("testas", "testasp");
 		
 		// Create Route
 		this.serverM3UAMgmt.addRoute(2, -1, -1, "testas");
@@ -136,7 +157,7 @@ public class IPSPServerFSMTest {
 
 		// Peer sends ASP_UP
 		M3UAMessageImpl message = messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP);
-		aspFactory.read(message);
+		aspFactoryImpl.read(message);
 
 		assertEquals(AspState.INACTIVE, this.getAspState(aspPeerFSM));
 		assertTrue(validateMessage(testAssociation, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP_ACK, -1, -1));
@@ -148,7 +169,7 @@ public class IPSPServerFSMTest {
 		message = messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE);
 		((ASPActiveImpl) message).setRoutingContext(rc);
 
-		aspFactory.read(message);
+		aspFactoryImpl.read(message);
 		assertEquals(AspState.ACTIVE, this.getAspState(aspPeerFSM));
 		assertTrue(validateMessage(testAssociation, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK,
 				-1, -1));
@@ -175,7 +196,7 @@ public class IPSPServerFSMTest {
 		message = messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_INACTIVE);
 		((ASPInactiveImpl) message).setRoutingContext(rc);
 
-		aspFactory.read(message);
+		aspFactoryImpl.read(message);
 		assertEquals(AspState.INACTIVE, this.getAspState(aspPeerFSM));
 		assertTrue(validateMessage(testAssociation, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_INACTIVE_ACK,
 				-1, -1));
@@ -184,7 +205,7 @@ public class IPSPServerFSMTest {
 
 		// Check for ASP_DOWN
 		message = messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN);
-		aspFactory.read(message);
+		aspFactoryImpl.read(message);
 		assertEquals(AspState.DOWN, this.getAspState(aspPeerFSM));
 		assertTrue(validateMessage(testAssociation, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN_ACK, -1,
 				-1));
@@ -213,13 +234,13 @@ public class IPSPServerFSMTest {
 		TestAssociation testAssociation = (TestAssociation) this.transportManagement.addAssociation(null, 0, null, 0,
 				"testAssoc1");
 
-		As remAs = serverM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, IPSPType.SERVER, null, null,
+		AsImpl remAs = (AsImpl)serverM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, IPSPType.SERVER, null, null,
 				null);
 		FSM asLocalFSM = remAs.getLocalFSM();
 
-		AspFactory aspFactory = serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
+		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl)serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
 
-		Asp remAsp = serverM3UAMgmt.assignAspToAs("testas", "testasp");
+		AspImpl remAsp = serverM3UAMgmt.assignAspToAs("testas", "testasp");
 		
 		// Create Route
 		this.serverM3UAMgmt.addRoute(2, -1, -1, "testas");
@@ -233,7 +254,7 @@ public class IPSPServerFSMTest {
 
 		// Peer sends ASP_UP
 		M3UAMessageImpl message = messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP);
-		aspFactory.read(message);
+		aspFactoryImpl.read(message);
 
 		assertEquals(AspState.INACTIVE, this.getAspState(aspPeerFSM));
 		assertTrue(validateMessage(testAssociation, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP_ACK, -1, -1));
@@ -243,7 +264,7 @@ public class IPSPServerFSMTest {
 		// Check for ASP_ACTIVE
 		message = messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE);
 
-		aspFactory.read(message);
+		aspFactoryImpl.read(message);
 		assertEquals(AspState.ACTIVE, this.getAspState(aspPeerFSM));
 		assertTrue(validateMessage(testAssociation, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK,
 				-1, -1));
@@ -268,7 +289,7 @@ public class IPSPServerFSMTest {
 
 		// Peer sends ASP_INACTIVE
 		message = messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_INACTIVE);
-		aspFactory.read(message);
+		aspFactoryImpl.read(message);
 		assertEquals(AspState.INACTIVE, this.getAspState(aspPeerFSM));
 		assertTrue(validateMessage(testAssociation, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_INACTIVE_ACK,
 				-1, -1));
@@ -277,7 +298,7 @@ public class IPSPServerFSMTest {
 
 		// Check for ASP_DOWN
 		message = messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN);
-		aspFactory.read(message);
+		aspFactoryImpl.read(message);
 		assertEquals(AspState.DOWN, this.getAspState(aspPeerFSM));
 		assertTrue(validateMessage(testAssociation, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN_ACK, -1,
 				-1));
@@ -314,12 +335,12 @@ public class IPSPServerFSMTest {
 
 		// As remAs = sgw.createAppServer("testas", rc, rKey, trModType);
 
-		As remAs = serverM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, IPSPType.SERVER, rc,
+		AsImpl remAs = (AsImpl)serverM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, IPSPType.SERVER, rc,
 				trModType, null);
 
-		AspFactory aspFactory = serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
+		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl)serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
 
-		Asp remAsp = serverM3UAMgmt.assignAspToAs("testas", "testasp");
+		AspImpl remAsp = serverM3UAMgmt.assignAspToAs("testas", "testasp");
 		
 		// Create Route
 		this.serverM3UAMgmt.addRoute(2, -1, -1, "testas");
@@ -335,7 +356,7 @@ public class IPSPServerFSMTest {
 
 		// Peer sends ASP_UP
 		M3UAMessageImpl message = messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP);
-		aspFactory.read(message);
+		aspFactoryImpl.read(message);
 
 		assertEquals(AspState.INACTIVE, this.getAspState(aspPeerFSM));
 		assertTrue(validateMessage(testAssociation1, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP_ACK, -1, -1));
@@ -345,7 +366,7 @@ public class IPSPServerFSMTest {
 		// Check for ASP_ACTIVE
 		message = messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE);
 		((ASPActiveImpl) message).setRoutingContext(rc);
-		aspFactory.read(message);
+		aspFactoryImpl.read(message);
 		assertEquals(AspState.ACTIVE, this.getAspState(aspPeerFSM));
 		assertTrue(validateMessage(testAssociation1, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK,
 				-1, -1));
@@ -366,7 +387,7 @@ public class IPSPServerFSMTest {
 
 		// Check for ASP_UP received while ASP is already ACTIVE
 		message = messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP);
-		aspFactory.read(message);
+		aspFactoryImpl.read(message);
 		// The ASP Transitions to INACTIVE
 		assertEquals(AspState.INACTIVE, this.getAspState(aspPeerFSM));
 		// Receives ASP_UP Ack messages
@@ -404,13 +425,13 @@ public class IPSPServerFSMTest {
 
 		TrafficModeType trModType = parmFactory.createTrafficModeType(TrafficModeType.Override);
 
-		As remAs = serverM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, IPSPType.SERVER, rc,
+		AsImpl remAs = (AsImpl)serverM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, IPSPType.SERVER, rc,
 				trModType, null);
 		FSM asLocalFSM = remAs.getLocalFSM();
 
-		AspFactory aspFactory = serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
+		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl)serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
 
-		Asp remAsp = serverM3UAMgmt.assignAspToAs("testas", "testasp");
+		AspImpl remAsp = serverM3UAMgmt.assignAspToAs("testas", "testasp");
 		
 		// Create Route
 		this.serverM3UAMgmt.addRoute(2, -1, -1, "testas");
@@ -424,7 +445,7 @@ public class IPSPServerFSMTest {
 
 		// Peer sends ASP_UP
 		M3UAMessageImpl message = messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP);
-		aspFactory.read(message);
+		aspFactoryImpl.read(message);
 
 		assertEquals(AspState.INACTIVE, this.getAspState(aspPeerFSM));
 		assertTrue(validateMessage(testAssociation1, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP_ACK, -1, -1));
@@ -434,7 +455,7 @@ public class IPSPServerFSMTest {
 		// Peer sends ASP_ACTIVE
 		message = messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE);
 		((ASPActiveImpl) message).setRoutingContext(rc);
-		aspFactory.read(message);
+		aspFactoryImpl.read(message);
 		assertEquals(AspState.ACTIVE, this.getAspState(aspPeerFSM));
 		assertTrue(validateMessage(testAssociation1, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK,
 				-1, -1));
@@ -456,7 +477,7 @@ public class IPSPServerFSMTest {
 		// Check for ASP_INACTIVE
 		message = messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_INACTIVE);
 		((ASPInactiveImpl) message).setRoutingContext(rc);
-		aspFactory.read(message);
+		aspFactoryImpl.read(message);
 		assertEquals(AspState.INACTIVE, this.getAspState(aspPeerFSM));
 		assertTrue(validateMessage(testAssociation1, MessageClass.ASP_TRAFFIC_MAINTENANCE,
 				MessageType.ASP_INACTIVE_ACK, -1, -1));
@@ -476,7 +497,7 @@ public class IPSPServerFSMTest {
 		// Now bring UP the ASP
 		message = messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE);
 		((ASPActiveImpl) message).setRoutingContext(rc);
-		aspFactory.read(message);
+		aspFactoryImpl.read(message);
 
 		assertTrue(validateMessage(testAssociation1, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE_ACK,
 				-1, -1));
