@@ -364,11 +364,11 @@ public class AsImpl implements XMLSerializable, As {
 	// return AsState.getState(this.peerFSM.getState().getName());
 	// }
 
-	protected FSM getPeerFSM() {
+	public FSM getPeerFSM() {
 		return peerFSM;
 	}
 
-	protected FSM getLocalFSM() {
+	public FSM getLocalFSM() {
 		return localFSM;
 	}
 

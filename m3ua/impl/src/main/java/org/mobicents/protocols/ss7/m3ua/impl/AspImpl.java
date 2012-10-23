@@ -316,11 +316,11 @@ public class AspImpl implements XMLSerializable, Asp {
 		return this.name;
 	}
 
-	protected FSM getLocalFSM() {
+	public FSM getLocalFSM() {
 		return localFSM;
 	}
 
-	protected FSM getPeerFSM() {
+	public FSM getPeerFSM() {
 		return peerFSM;
 	}
 
