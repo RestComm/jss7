@@ -88,6 +88,18 @@ public class DahdiMtp3UserPart implements Mtp3UserPart {
 		
 	}
 
+	@Override
+	public boolean isUseLsbForLinksetSelection() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setUseLsbForLinksetSelection(boolean arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 
 }

@@ -34,6 +34,7 @@ import org.mobicents.protocols.ss7.m3ua.IPSPType;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAOAMMessages;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
+import org.mobicents.protocols.ss7.mtp.RoutingLabelFormat;
 
 /**
  * <p>
@@ -42,14 +43,15 @@ import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
  * <p>
  * The DPC, OPC and SI of Message Signaling unit (MSU) transfered by M3UA-User
  * to M3UA layer for routing is checked against configured key. If found, the
- * corresponding {@link AsImpl} is checked for state and if ACTIVE, message will be
- * delivered via this {@link AsImpl}. If multiple {@link AsImpl} are configured and
- * at-least 2 or more are ACTIVE, then depending on {@link TrafficModeType}
- * configured load-sharing is achieved by using SLS from received MSU.
+ * corresponding {@link AsImpl} is checked for state and if ACTIVE, message will
+ * be delivered via this {@link AsImpl}. If multiple {@link AsImpl} are
+ * configured and at-least 2 or more are ACTIVE, then depending on
+ * {@link TrafficModeType} configured load-sharing is achieved by using SLS from
+ * received MSU.
  * </p>
  * <p>
- * For any given key (combination of DPC, OPC and SI) maximum {@link AsImpl} can be
- * configured which acts as route for these key combination.
+ * For any given key (combination of DPC, OPC and SI) maximum {@link AsImpl} can
+ * be configured which acts as route for these key combination.
  * </p>
  * <p>
  * Same {@link AsImpl} can serve multiple key combinations.
@@ -69,7 +71,13 @@ public class M3UARouteManagement {
 	private static final String KEY_SEPARATOR = ":";
 	private static final int WILDCARD = -1;
 
+	private static final int BIT_ONE = 0x01;
+
 	private M3UAManagementImpl m3uaManagement = null;
+
+	private final int msbMask;
+	private final int lsbMask;
+	private int asSlsShiftPlaces = 0x00;
 
 	/**
 	 * persists key vs corresponding As that servers for this key
@@ -88,6 +96,29 @@ public class M3UARouteManagement {
 	// for given DPC
 	protected M3UARouteManagement(M3UAManagementImpl m3uaManagement) {
 		this.m3uaManagement = m3uaManagement;
+
+		RoutingLabelFormat routingLabelFormat = this.m3uaManagement.getRoutingLabelFormat();
+		this.msbMask = routingLabelFormat.getSlsMsbMask();
+		this.lsbMask = routingLabelFormat.getSlsLsbMask();
+		
+		if (this.m3uaManagement.isUseLsbForLinksetSelection()) {
+			this.asSlsShiftPlaces = 0x00;
+		} else {			
+			switch (routingLabelFormat.getMaxSls()) {
+			case 256:
+				this.asSlsShiftPlaces = 0x07;
+				break;
+			case 32:
+				this.asSlsShiftPlaces = 0x04;
+				break;
+			case 16:
+				this.asSlsShiftPlaces = 0x03;
+				break;
+			default:
+				this.asSlsShiftPlaces = 0x03;
+				break;
+			}
+		}
 	}
 
 	/**
@@ -115,23 +146,23 @@ public class M3UARouteManagement {
 	}
 
 	/**
-	 * Creates key (combination of dpc:opc:si) and adds instance of {@link AsImpl}
-	 * represented by asName as route for this key
+	 * Creates key (combination of dpc:opc:si) and adds instance of
+	 * {@link AsImpl} represented by asName as route for this key
 	 * 
 	 * @param dpc
 	 * @param opc
 	 * @param si
 	 * @param asName
 	 * @throws Exception
-	 *             If corresponding {@link AsImpl} doesn't exist or {@link AsImpl}
-	 *             already added
+	 *             If corresponding {@link AsImpl} doesn't exist or
+	 *             {@link AsImpl} already added
 	 */
 	protected void addRoute(int dpc, int opc, int si, String asName) throws Exception {
 		AsImpl asImpl = null;
 		for (FastList.Node<As> n = this.m3uaManagement.appServers.head(), end = this.m3uaManagement.appServers.tail(); (n = n
 				.getNext()) != end;) {
 			if (n.getValue().getName().compareTo(asName) == 0) {
-				asImpl = (AsImpl)n.getValue();
+				asImpl = (AsImpl) n.getValue();
 				break;
 			}
 		}
@@ -150,8 +181,8 @@ public class M3UARouteManagement {
 			for (int count = 0; count < asArray.length; count++) {
 				AsImpl asTemp = asArray[count];
 				if (asTemp != null && asImpl.equals(asTemp)) {
-					throw new Exception(String.format("As=%s already added for dpc=%d opc=%d si=%d", asImpl.getName(), dpc,
-							opc, si));
+					throw new Exception(String.format("As=%s already added for dpc=%d opc=%d si=%d", asImpl.getName(),
+							dpc, opc, si));
 				}
 			}
 		} else {
@@ -191,7 +222,7 @@ public class M3UARouteManagement {
 		for (FastList.Node<As> n = this.m3uaManagement.appServers.head(), end = this.m3uaManagement.appServers.tail(); (n = n
 				.getNext()) != end;) {
 			if (n.getValue().getName().compareTo(asName) == 0) {
-				asImpl = (AsImpl)n.getValue();
+				asImpl = (AsImpl) n.getValue();
 				break;
 			}
 		}
@@ -206,8 +237,8 @@ public class M3UARouteManagement {
 		AsImpl[] asArray = route.get(key);
 
 		if (asArray == null) {
-			throw new Exception(String.format("No AS=%s configured  for dpc=%d opc=%d si=%d", asImpl.getName(), dpc, opc,
-					si));
+			throw new Exception(String.format("No AS=%s configured  for dpc=%d opc=%d si=%d", asImpl.getName(), dpc,
+					opc, si));
 		}
 
 		for (int count = 0; count < asArray.length; count++) {
@@ -221,7 +252,8 @@ public class M3UARouteManagement {
 			}
 		}
 
-		throw new Exception(String.format("No AS=%s configured  for dpc=%d opc=%d si=%d", asImpl.getName(), dpc, opc, si));
+		throw new Exception(String.format("No AS=%s configured  for dpc=%d opc=%d si=%d", asImpl.getName(), dpc, opc,
+				si));
 	}
 
 	/**
@@ -266,31 +298,55 @@ public class M3UARouteManagement {
 			return null;
 		}
 
-		for (int count = 0; count < asArray.length; count++) {
-			AsImpl asImpl = asArray[count];
+		int count = 0;
 
-			FSM fsm = null;
-			if (asImpl != null) {
-				if (asImpl.getFunctionality() == Functionality.AS
-						|| (asImpl.getFunctionality() == Functionality.SGW && asImpl.getExchangeType() == ExchangeType.DE)
-						|| (asImpl.getFunctionality() == Functionality.IPSP && asImpl.getExchangeType() == ExchangeType.DE)
-						|| (asImpl.getFunctionality() == Functionality.IPSP && asImpl.getExchangeType() == ExchangeType.SE && asImpl
-								.getIpspType() == IPSPType.CLIENT)) {
-					fsm = asImpl.getPeerFSM();
-				} else {
-					fsm = asImpl.getLocalFSM();
-				}
+		if (this.m3uaManagement.isUseLsbForLinksetSelection()) {
+			count = (sls & this.lsbMask);
+		} else {
+			count = (sls & this.msbMask);
+		}
 
-				AsState asState = AsState.getState(fsm.getState().getName());
+		count = (count >> this.asSlsShiftPlaces);
+		
+		// First attempt
+		AsImpl asImpl = asArray[count];
+		if (this.isAsActive(asImpl)) {
+			return asImpl;
+		}
 
-				if (asState == AsState.ACTIVE) {
-					return asImpl;
-				}
-
-			}// if (as != null)
-		}// for
+		// Second Attempt
+		if (count == BIT_ONE) {
+			count = 0;
+		} else {
+			count = BIT_ONE;
+		}
+		
+		asImpl = asArray[count];
+		if (this.isAsActive(asImpl)) {
+			return asImpl;
+		}
 
 		return null;
+	}
+
+	private boolean isAsActive(AsImpl asImpl) {
+		FSM fsm = null;
+		if (asImpl != null) {
+			if (asImpl.getFunctionality() == Functionality.AS
+					|| (asImpl.getFunctionality() == Functionality.SGW && asImpl.getExchangeType() == ExchangeType.DE)
+					|| (asImpl.getFunctionality() == Functionality.IPSP && asImpl.getExchangeType() == ExchangeType.DE)
+					|| (asImpl.getFunctionality() == Functionality.IPSP && asImpl.getExchangeType() == ExchangeType.SE && asImpl
+							.getIpspType() == IPSPType.CLIENT)) {
+				fsm = asImpl.getPeerFSM();
+			} else {
+				fsm = asImpl.getLocalFSM();
+			}
+
+			AsState asState = AsState.getState(fsm.getState().getName());
+
+			return (asState == AsState.ACTIVE);
+		}// if (as != null)
+		return false;
 	}
 
 	private void addAsToDPC(int dpc, AsImpl asImpl) {

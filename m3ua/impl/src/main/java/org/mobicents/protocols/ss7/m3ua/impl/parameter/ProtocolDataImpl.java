@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,11 +19,9 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.mobicents.protocols.ss7.m3ua.impl.parameter;
 
 import org.mobicents.protocols.ss7.m3ua.parameter.ProtocolData;
-import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 
 /**
  * Implements Protocol Data parameter.
@@ -43,17 +41,6 @@ public class ProtocolDataImpl extends ParameterImpl implements ProtocolData {
 
 	protected ProtocolDataImpl() {
 		this.tag = ParameterImpl.Protocol_Data;
-	}
-
-	protected ProtocolDataImpl(Mtp3TransferPrimitive mtp3TransferPrimitive) {
-		this();
-		this.opc = mtp3TransferPrimitive.getOpc();
-		this.dpc = mtp3TransferPrimitive.getDpc();
-		this.si = mtp3TransferPrimitive.getSi();
-		this.ni = mtp3TransferPrimitive.getNi();
-		this.mp = mtp3TransferPrimitive.getMp();
-		this.sls = mtp3TransferPrimitive.getSls();
-		this.data = mtp3TransferPrimitive.getData();
 	}
 
 	protected ProtocolDataImpl(int opc, int dpc, int si, int ni, int mp, int sls, byte[] data) {

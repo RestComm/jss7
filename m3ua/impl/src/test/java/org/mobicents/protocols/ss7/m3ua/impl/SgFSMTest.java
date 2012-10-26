@@ -70,6 +70,7 @@ import org.mobicents.protocols.ss7.mtp.Mtp3Primitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3StatusPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitiveFactory;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPartListener;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
@@ -597,7 +598,15 @@ public class SgFSMTest {
 	@Test
 	public void testTwoAspInAsLoadshare() throws Exception {
 		// 5.1.2. Two ASPs in Application Server ("1+1" Sparing)
-
+		int dpc = 2;
+		int opc = 1;
+		int si = 3;
+		int ni = 1;
+		int mp = 0;
+		
+		
+		Mtp3TransferPrimitiveFactory factory = serverM3UAMgmt.getMtp3TransferPrimitiveFactory();
+		
 		TestAssociation testAssociation1 = (TestAssociation) this.transportManagement.addAssociation(null, 0, null, 0,
 				"testAssoc1");
 		TestAssociation testAssociation2 = (TestAssociation) this.transportManagement.addAssociation(null, 0, null, 0,
@@ -605,18 +614,20 @@ public class SgFSMTest {
 
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
-		DestinationPointCode[] dpc = new DestinationPointCode[] { parmFactory
+		DestinationPointCode[] dpcObj = new DestinationPointCode[] { parmFactory
 				.createDestinationPointCode(123, (short) 0) };
 
 		ServiceIndicators[] servInds = new ServiceIndicators[] { parmFactory.createServiceIndicators(new short[] { 3 }) };
 
 		TrafficModeType trModType = parmFactory.createTrafficModeType(TrafficModeType.Loadshare);
 		LocalRKIdentifier lRkId = parmFactory.createLocalRKIdentifier(1);
-		RoutingKey rKey = parmFactory.createRoutingKey(lRkId, rc, null, null, dpc, servInds, null);
+		RoutingKey rKey = parmFactory.createRoutingKey(lRkId, rc, null, null, dpcObj, servInds, null);
 
 		// As remAs = sgw.createAppServer("testas", rc, rKey, trModType);
 		AsImpl remAs = (AsImpl) serverM3UAMgmt.createAs("testas", Functionality.SGW, ExchangeType.SE, null, rc,
 				trModType, null);
+		
+		serverM3UAMgmt.addRoute(dpc, opc, si, "testas");
 
 		FSM asLocalFSM = remAs.getLocalFSM();
 
@@ -691,6 +702,24 @@ public class SgFSMTest {
 		assertTrue(validateMessage(testAssociation2, MessageClass.MANAGEMENT, MessageType.NOTIFY,
 				Status.STATUS_AS_State_Change, Status.INFO_AS_ACTIVE));
 
+		
+		//Send Transfer Message and check load balancing behavior
+		//int si, int ni, int mp, int opc, int dpc, int sls, byte[] data, RoutingLabelFormat pointCodeFormat
+		for(int sls=0;sls<256;sls++){
+			Mtp3TransferPrimitive mtp3TransferPrimitive = factory.createMtp3TransferPrimitive(3, 1, 0, 1, 2, sls, new byte[] { 1, 2, 3, 4 });
+			serverM3UAMgmt.sendMessage(mtp3TransferPrimitive);
+		}
+		
+		for(int count=0;count<128;count++){
+			assertTrue(validateMessage(testAssociation1, MessageClass.TRANSFER_MESSAGES,
+				MessageType.PAYLOAD, -1, -1));
+		}
+		
+		for(int count=0;count<128;count++){
+			assertTrue(validateMessage(testAssociation2, MessageClass.TRANSFER_MESSAGES,
+				MessageType.PAYLOAD, -1, -1));
+		}
+		
 		// INACTIVATE ASP1.But AS remains ACTIVE in any case
 		message = messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_INACTIVE);
 		((ASPInactiveImpl) message).setRoutingContext(rc);
@@ -704,6 +733,18 @@ public class SgFSMTest {
 				Status.INFO_Insufficient_ASP_Resources_Active));
 		// AS remains ACTIVE
 		assertEquals(AsState.ACTIVE, this.getAsState(asLocalFSM));
+		
+		//PAYLOAD all goes through ASP2
+		//int si, int ni, int mp, int opc, int dpc, int sls, byte[] data, RoutingLabelFormat pointCodeFormat
+		for(int sls=0;sls<256;sls++){
+			Mtp3TransferPrimitive mtp3TransferPrimitive = factory.createMtp3TransferPrimitive(3, 1, 0, 1, 2, sls, new byte[] { 1, 2, 3, 4 });
+			serverM3UAMgmt.sendMessage(mtp3TransferPrimitive);
+		}
+		
+		for(int count=0;count<256;count++){
+			assertTrue(validateMessage(testAssociation2, MessageClass.TRANSFER_MESSAGES,
+				MessageType.PAYLOAD, -1, -1));
+		}
 
 		// Bring down ASP1
 		message = messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN);
@@ -735,6 +776,7 @@ public class SgFSMTest {
 		// Bring down ASP2
 		message = messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN);
 		aspFactory2.read(message);
+		
 	}
 	
 	@Test

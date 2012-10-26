@@ -109,7 +109,7 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 
 	private ScheduledExecutorService fsmTicker;
 
-	protected int maxAsForRoute = 4;
+	protected int maxAsForRoute = 2;
 
 	private M3UARouteManagement routeManagement = null;
 
@@ -121,6 +121,8 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 	 * will be logged
 	 */
 	private int maxSequenceNumber = MAX_SEQUENCE_NUMBER;
+
+	private int[] seqContrlVsSlsTable = null;
 
 	public M3UAManagementImpl(String name) {
 		this.name = name;
@@ -220,6 +222,10 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 
 		fsmTicker = Executors.newSingleThreadScheduledExecutor();
 		fsmTicker.scheduleAtFixedRate(m3uaScheduler, 500, 500, TimeUnit.MILLISECONDS);
+
+		// Reset the Sequence Control Vs SLS Table
+		this.seqContrlVsSlsTable = new int[this.maxSequenceNumber];
+		this.resetSeqControlVsSlsTable();
 
 		logger.info("Started M3UAManagement");
 	}
@@ -382,7 +388,7 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 			m3uaManagementEventListener.onAsDestroyed(as);
 
 		}
-		
+
 		return as;
 	}
 
@@ -478,7 +484,7 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 			M3UAManagementEventListener m3uaManagementEventListener = n.getValue();
 			m3uaManagementEventListener.onAspFactoryCreated(factory);
 		}
-		
+
 		return factory;
 	}
 
@@ -494,7 +500,7 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 		aspFactroy.unsetAssociation();
 		this.aspfactories.remove(aspFactroy);
 		this.store();
-		
+
 		for (FastList.Node<M3UAManagementEventListener> n = this.managementEventListeners.head(), end = this.managementEventListeners
 				.tail(); (n = n.getNext()) != end;) {
 			M3UAManagementEventListener m3uaManagementEventListener = n.getValue();
@@ -585,7 +591,7 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 		asImpl.addAppServerProcess(aspImpl);
 
 		this.store();
-		
+
 		for (FastList.Node<M3UAManagementEventListener> n = this.managementEventListeners.head(), end = this.managementEventListeners
 				.tail(); (n = n.getNext()) != end;) {
 			M3UAManagementEventListener m3uaManagementEventListener = n.getValue();
@@ -606,13 +612,13 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 		AspImpl aspImpl = asImpl.removeAppServerProcess(aspName);
 		aspImpl.getAspFactory().destroyAsp(aspImpl);
 		this.store();
-		
+
 		for (FastList.Node<M3UAManagementEventListener> n = this.managementEventListeners.head(), end = this.managementEventListeners
 				.tail(); (n = n.getNext()) != end;) {
 			M3UAManagementEventListener m3uaManagementEventListener = n.getValue();
 			m3uaManagementEventListener.onAspUnassignedFromAs(asImpl, aspImpl);
 		}
-		
+
 		return aspImpl;
 	}
 
@@ -745,7 +751,7 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 
 		// We store the cleared state
 		this.store();
-		
+
 		for (FastList.Node<M3UAManagementEventListener> n = this.managementEventListeners.head(), end = this.managementEventListeners
 				.tail(); (n = n.getNext()) != end;) {
 			M3UAManagementEventListener m3uaManagementEventListener = n.getValue();
@@ -908,7 +914,11 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 
 	@Override
 	public void sendMessage(Mtp3TransferPrimitive mtp3TransferPrimitive) throws IOException {
-		ProtocolData data = this.parameterFactory.createProtocolData(mtp3TransferPrimitive);
+		ProtocolData data = this.parameterFactory.createProtocolData(mtp3TransferPrimitive.getOpc(),
+				mtp3TransferPrimitive.getDpc(), mtp3TransferPrimitive.getSi(), mtp3TransferPrimitive.getNi(),
+				mtp3TransferPrimitive.getMp(), this.seqContrlVsSlsTable[mtp3TransferPrimitive.getSls()],
+				mtp3TransferPrimitive.getData());
+
 		PayloadData payload = (PayloadData) messageFactory.createMessage(MessageClass.TRANSFER_MESSAGES,
 				MessageType.PAYLOAD);
 		payload.setData(data);
@@ -921,6 +931,19 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 		payload.setNetworkAppearance(asImpl.getNetworkAppearance());
 		payload.setRoutingContext(asImpl.getRoutingContext());
 		asImpl.write(payload);
+	}
+
+	/**
+	 * regenerate the SLS table
+	 */
+	private void resetSeqControlVsSlsTable() {
+		int sls = 0;
+		for (int count = 0; count < this.maxSequenceNumber; count++) {
+			if (sls >= this.getRoutingLabelFormat().getMaxSls()) {
+				sls = 0;
+			}
+			this.seqContrlVsSlsTable[count] = sls++;
+		}
 	}
 
 }

@@ -58,6 +58,8 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 	private RoutingLabelFormat routingLabelFormat = RoutingLabelFormat.ITU;
 
 	private Mtp3TransferPrimitiveFactory mtp3TransferPrimitiveFactory = null;
+	
+	private boolean useLsbForLinksetSelection = false;
 
 	public Mtp3UserPartBaseImpl() {
 	}
@@ -104,16 +106,29 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 		}
 	}
 
+	@Override
 	public RoutingLabelFormat getRoutingLabelFormat() {
 		return this.routingLabelFormat;
 	}
 
+	@Override
 	public void setRoutingLabelFormat(RoutingLabelFormat routingLabelFormat) {
 		this.routingLabelFormat = routingLabelFormat;
 	}
 
+	@Override
 	public Mtp3TransferPrimitiveFactory getMtp3TransferPrimitiveFactory() {
 		return this.mtp3TransferPrimitiveFactory;
+	}
+
+	@Override
+	public boolean isUseLsbForLinksetSelection() {
+		return useLsbForLinksetSelection;
+	}
+
+	@Override
+	public void setUseLsbForLinksetSelection(boolean useLsbForLinksetSelection) {
+		this.useLsbForLinksetSelection = useLsbForLinksetSelection;
 	}
 
 	public void start() throws Exception {

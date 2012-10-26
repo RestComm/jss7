@@ -52,6 +52,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.NetworkAppearance;
 import org.mobicents.protocols.ss7.m3ua.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
+import org.mobicents.protocols.ss7.mtp.RoutingLabelFormat;
 
 /**
  * 
@@ -108,6 +109,12 @@ public class AsImpl implements XMLSerializable, As {
 	private ExchangeType exchangeType = null;
 	private IPSPType ipspType = null;
 	private NetworkAppearance networkAppearance = null;
+
+	private int[] slsVsAspTable = null;
+	private int maxAsps = 0;
+
+	private int aspSlsMask = 0x07;
+	private int aspSlsShiftPlaces = 0x00;
 
 	public AsImpl() {
 
@@ -331,7 +338,50 @@ public class AsImpl implements XMLSerializable, As {
 	}
 
 	protected void setM3UAManagement(M3UAManagementImpl m3uaManagement) {
-		m3UAManagementImpl = m3uaManagement;
+		this.m3UAManagementImpl = m3uaManagement;
+
+		RoutingLabelFormat routingLabelFormat = this.m3UAManagementImpl.getRoutingLabelFormat();
+
+		// TODO : Its assumed that 1 bit of SLS is always used for AS
+		// loadsharing. But what if there is no loadsharing among AS and all
+		// bits are to be used for ASP loadsharing?
+		this.maxAsps = (routingLabelFormat.getMaxSls() >> 1);
+
+		this.slsVsAspTable = new int[this.maxAsps];
+
+		if (this.m3UAManagementImpl.isUseLsbForLinksetSelection()) {
+			this.aspSlsShiftPlaces = 0x01;
+			switch (routingLabelFormat.getMaxSls()) {
+			case 256:
+				this.aspSlsMask = 0xfe;
+				break;
+			case 32:
+				this.aspSlsMask = 0x1e;
+				break;
+			case 16:
+				this.aspSlsMask = 0x0e;
+				break;
+			default:
+				this.aspSlsMask = 0x0e;
+				break;
+			}
+		} else {
+			this.aspSlsShiftPlaces = 0x0;
+			switch (routingLabelFormat.getMaxSls()) {
+			case 256:
+				this.aspSlsMask = 0x7f;
+				break;
+			case 32:
+				this.aspSlsMask = 0x0f;
+				break;
+			case 16:
+				this.aspSlsMask = 0x07;
+				break;
+			default:
+				this.aspSlsMask = 0x07;
+				break;
+			}
+		}
 	}
 
 	protected M3UAManagementImpl getM3UAManagement() {
@@ -462,6 +512,8 @@ public class AsImpl implements XMLSerializable, As {
 	protected void addAppServerProcess(AspImpl aspImpl) throws Exception {
 		aspImpl.setAs(this);
 		appServerProcs.add(aspImpl);
+
+		this.resetSlsVsAspTable();
 	}
 
 	protected AspImpl removeAppServerProcess(String aspName) throws Exception {
@@ -510,6 +562,9 @@ public class AsImpl implements XMLSerializable, As {
 		if (aspPeerFSM != null) {
 			aspPeerFSM.cancel();
 		}
+
+		this.resetSlsVsAspTable();
+
 		return aspImpl;
 	}
 
@@ -535,12 +590,26 @@ public class AsImpl implements XMLSerializable, As {
 			isASPLocalFsm = false;
 		}
 
+		int sls = message.getData().getSLS();
+
 		switch (AsState.getState(fsm.getState().getName())) {
 		case ACTIVE:
 			boolean aspFound = false;
+			
 			// TODO : Algo to select correct ASP
-			for (FastList.Node<Asp> n = this.appServerProcs.head(), end = this.appServerProcs.tail(); (n = n.getNext()) != end;) {
-				AspImpl aspTemp = (AspImpl) n.getValue();
+
+			int aspIndex = (sls & this.aspSlsMask);
+			aspIndex = (aspIndex >> this.aspSlsShiftPlaces);
+
+			int aspNumber = this.slsVsAspTable[aspIndex];
+
+			for (int i = 0; i < this.appServerProcs.size(); i++) {
+				if (aspNumber >= this.appServerProcs.size()) {
+					aspNumber = 0;
+				}
+				
+				AspImpl aspTemp = (AspImpl)this.appServerProcs.get(aspNumber++);
+				
 				FSM aspFsm = null;
 
 				if (isASPLocalFsm) {
@@ -554,7 +623,7 @@ public class AsImpl implements XMLSerializable, As {
 					aspFound = true;
 					break;
 				}
-			}
+			}//for
 
 			if (!aspFound) {
 				// This should never happen.
@@ -694,5 +763,15 @@ public class AsImpl implements XMLSerializable, As {
 
 	public FastSet<AsStateListener> getAsStateListeners() {
 		return asStateListeners;
+	}
+
+	private void resetSlsVsAspTable() {
+		int aspNumber = 0;
+		for (int count = 0; count < this.maxAsps; count++) {
+			if (aspNumber >= this.appServerProcs.size()) {
+				aspNumber = 0;
+			}
+			this.slsVsAspTable[count] = aspNumber++;
+		}
 	}
 }
