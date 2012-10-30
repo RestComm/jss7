@@ -124,7 +124,7 @@ public class DestinationRoutingAddressImpl implements DestinationRoutingAddress,
 
 			int tag = ais.readTag();
 
-			if (tag != Tag.STRING_OCTET && ais.getTagClass() != Tag.CLASS_UNIVERSAL)
+			if (tag != Tag.STRING_OCTET || ais.getTagClass() != Tag.CLASS_UNIVERSAL)
 				throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag or tagClass when decoding CalledPartyNumber",
 						CAPParsingComponentExceptionReason.MistypedParameter);			
 

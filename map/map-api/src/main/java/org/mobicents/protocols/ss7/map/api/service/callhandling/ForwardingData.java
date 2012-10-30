@@ -37,9 +37,6 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.ForwardingOptio
  *  extensionContainer [7] ExtensionContainer OPTIONAL,
  *  ...,
  *  longForwardedToNumber [8] FTN-AddressString OPTIONAL}
- */
- 
-/*
  * 
  * @author cristian veliscu
  * 

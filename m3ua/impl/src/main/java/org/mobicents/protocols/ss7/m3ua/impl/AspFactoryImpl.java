@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import java.nio.ByteBuffer;
+import java.util.List;
 
 import javolution.util.FastList;
 import javolution.xml.XMLFormat;
@@ -34,6 +35,8 @@ import org.mobicents.protocols.api.Association;
 import org.mobicents.protocols.api.AssociationListener;
 import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.api.Management;
+import org.mobicents.protocols.ss7.m3ua.Asp;
+import org.mobicents.protocols.ss7.m3ua.AspFactory;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.IPSPType;
@@ -72,9 +75,9 @@ import org.mobicents.protocols.ss7.m3ua.parameter.ParameterFactory;
  * @author amit bhayani
  * 
  */
-public class AspFactory implements AssociationListener, XMLSerializable {
+public class AspFactoryImpl implements AssociationListener, XMLSerializable, AspFactory {
 
-	private static final Logger logger = Logger.getLogger(AspFactory.class);
+	private static final Logger logger = Logger.getLogger(AspFactoryImpl.class);
 
 	private static long ASP_ID_COUNT = 1l;
 
@@ -99,7 +102,7 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 
 	protected Management transportManagement = null;
 
-	protected M3UAManagement m3UAManagement = null;
+	protected M3UAManagementImpl m3UAManagementImpl = null;
 
 	private ASPIdentifier aspid;
 
@@ -107,7 +110,8 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 	protected MessageFactory messageFactory = new MessageFactoryImpl();
 
 	private TransferMessageHandler transferMessageHandler = new TransferMessageHandler(this);
-	private SignalingNetworkManagementHandler signalingNetworkManagementHandler = new SignalingNetworkManagementHandler(this);
+	private SignalingNetworkManagementHandler signalingNetworkManagementHandler = new SignalingNetworkManagementHandler(
+			this);
 	private ManagementMessageHandler managementMessageHandler = new ManagementMessageHandler(this);
 	private AspStateMaintenanceHandler aspStateMaintenanceHandler = new AspStateMaintenanceHandler(this);
 	private AspTrafficMaintenanceHandler aspTrafficMaintenanceHandler = new AspTrafficMaintenanceHandler(this);
@@ -119,20 +123,20 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 
 	private long aspupSentTime = 0l;
 
-	private int maxSequenceNumber = M3UAManagement.MAX_SEQUENCE_NUMBER;
+	private int maxSequenceNumber = M3UAManagementImpl.MAX_SEQUENCE_NUMBER;
 	private int[] slsTable = null;
 	private int maxOutboundStreams;
 
 	protected AspFactoryStopTimer aspFactoryStopTimer = null;
 
-	public AspFactory() {
+	public AspFactoryImpl() {
 		// clean transmission buffer
 		txBuffer.clear();
 		txBuffer.rewind();
 		txBuffer.flip();
 	}
 
-	public AspFactory(String name, int maxSequenceNumber, long aspId) {
+	public AspFactoryImpl(String name, int maxSequenceNumber, long aspId) {
 		this();
 		this.name = name;
 		this.maxSequenceNumber = maxSequenceNumber;
@@ -147,44 +151,46 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 		return aspid;
 	}
 
-	public void setM3UAManagement(M3UAManagement m3uaManagement) {
-		this.m3UAManagement = m3uaManagement;
+	public void setM3UAManagement(M3UAManagementImpl m3uaManagement) {
+		this.m3UAManagementImpl = m3uaManagement;
 		this.transferMessageHandler.setM3UAManagement(m3uaManagement);
 	}
 
-	public M3UAManagement getM3UAManagement() {
-		return m3UAManagement;
+	public M3UAManagementImpl getM3UAManagement() {
+		return m3UAManagementImpl;
 	}
 
-	public void start() throws Exception {
+	protected void start() throws Exception {
 		this.transportManagement.startAssociation(this.association.getName());
 		this.started = true;
 	}
 
-	public void stop() throws Exception {
+	protected void stop() throws Exception {
 		this.started = false;
 
 		if (this.association == null)
 			return;
 
-		if (this.functionality == Functionality.AS || (this.functionality == Functionality.SGW && this.exchangeType == ExchangeType.DE)
+		if (this.functionality == Functionality.AS
+				|| (this.functionality == Functionality.SGW && this.exchangeType == ExchangeType.DE)
 				|| (this.functionality == Functionality.IPSP && this.exchangeType == ExchangeType.DE)
 				|| (this.functionality == Functionality.IPSP && this.exchangeType == ExchangeType.SE && this.ipspType == IPSPType.CLIENT)) {
 
 			if (this.association.isConnected()) {
-				ASPDown aspDown = (ASPDown) this.messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN);
+				ASPDown aspDown = (ASPDown) this.messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE,
+						MessageType.ASP_DOWN);
 				this.write(aspDown);
 				for (FastList.Node<Asp> n = aspList.head(), end = aspList.tail(); (n = n.getNext()) != end;) {
-					Asp asp = n.getValue();
+					AspImpl aspImpl = (AspImpl) n.getValue();
 
 					try {
-						FSM aspLocalFSM = asp.getLocalFSM();
+						FSM aspLocalFSM = aspImpl.getLocalFSM();
 						aspLocalFSM.signal(TransitionState.ASP_DOWN_SENT);
 
-						As peerAs = asp.getAs();
+						AsImpl peerAs = (AsImpl)aspImpl.getAs();
 						FSM asPeerFSM = peerAs.getPeerFSM();
 
-						asPeerFSM.setAttribute(As.ATTRIBUTE_ASP, asp);
+						asPeerFSM.setAttribute(AsImpl.ATTRIBUTE_ASP, aspImpl);
 						asPeerFSM.signal(TransitionState.ASP_DOWN);
 
 					} catch (UnknownTransitionException e) {
@@ -194,23 +200,26 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 
 				// Start the timer to kill the underlying transport Association
 				aspFactoryStopTimer = new AspFactoryStopTimer(this);
-				this.m3UAManagement.m3uaScheduler.execute(aspFactoryStopTimer);
+				this.m3UAManagementImpl.m3uaScheduler.execute(aspFactoryStopTimer);
 			} else {
 				for (FastList.Node<Asp> n = aspList.head(), end = aspList.tail(); (n = n.getNext()) != end;) {
-					Asp asp = n.getValue();
+					AspImpl aspImpl = (AspImpl) n.getValue();
 
 					try {
-						FSM aspLocalFSM = asp.getLocalFSM();
+						FSM aspLocalFSM = aspImpl.getLocalFSM();
 						aspLocalFSM.signal(TransitionState.COMM_DOWN);
 
-						As peerAs = asp.getAs();
+						AsImpl peerAs = (AsImpl)aspImpl.getAs();
 						FSM asPeerFSM = peerAs.getPeerFSM();
-						asPeerFSM.setAttribute(As.ATTRIBUTE_ASP, asp);
+						asPeerFSM.setAttribute(AsImpl.ATTRIBUTE_ASP, aspImpl);
 						asPeerFSM.signal(TransitionState.ASP_DOWN);
 					} catch (UnknownTransitionException e) {
 						logger.error(e.getMessage(), e);
 					}
 				}
+				
+				//Finally stop the association
+				this.transportManagement.stopAssociation(this.association.getName());
 			}
 
 		} else {
@@ -235,7 +244,7 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 		return functionality;
 	}
 
-	public void setFunctionality(Functionality functionality) {
+	protected void setFunctionality(Functionality functionality) {
 		this.functionality = functionality;
 	}
 
@@ -243,7 +252,7 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 		return ipspType;
 	}
 
-	public void setIpspType(IPSPType ipspType) {
+	protected void setIpspType(IPSPType ipspType) {
 		this.ipspType = ipspType;
 	}
 
@@ -251,11 +260,11 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 		return exchangeType;
 	}
 
-	public void setExchangeType(ExchangeType exchangeType) {
+	protected void setExchangeType(ExchangeType exchangeType) {
 		this.exchangeType = exchangeType;
 	}
 
-	public void setTransportManagement(Management transportManagement) {
+	protected void setTransportManagement(Management transportManagement) {
 		this.transportManagement = transportManagement;
 	}
 
@@ -263,7 +272,7 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 		return this.association;
 	}
 
-	public void setAssociation(Association association) {
+	protected void setAssociation(Association association) {
 		// Unset the listener to previous association
 		if (this.association != null) {
 			this.association.setAssociationListener(null);
@@ -274,10 +283,11 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 		this.association.setAssociationListener(this);
 	}
 
-	public void unsetAssociation() throws Exception {
+	protected void unsetAssociation() throws Exception {
 		if (this.association != null) {
 			if (this.association.isStarted()) {
-				throw new Exception(String.format("Association=%s is still started. Stop first", this.association.getName()));
+				throw new Exception(String.format("Association=%s is still started. Stop first",
+						this.association.getName()));
 			}
 			this.association.setAssociationListener(null);
 			this.association = null;
@@ -288,19 +298,21 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 		return this.name;
 	}
 
-	public void read(M3UAMessage message) {
+	protected void read(M3UAMessage message) {
 		switch (message.getMessageClass()) {
 		case MessageClass.MANAGEMENT:
 			switch (message.getMessageType()) {
 			case MessageType.ERROR:
-				this.managementMessageHandler.handleError((org.mobicents.protocols.ss7.m3ua.message.mgmt.Error) message);
+				this.managementMessageHandler
+						.handleError((org.mobicents.protocols.ss7.m3ua.message.mgmt.Error) message);
 				break;
 			case MessageType.NOTIFY:
 				Notify notify = (Notify) message;
 				this.managementMessageHandler.handleNotify(notify);
 				break;
 			default:
-				logger.error(String.format("Rx : MGMT with invalid MessageType=%d message=%s", message.getMessageType(), message));
+				logger.error(String.format("Rx : MGMT with invalid MessageType=%d message=%s",
+						message.getMessageType(), message));
 				break;
 			}
 			break;
@@ -312,7 +324,8 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 				this.transferMessageHandler.handlePayload(payload);
 				break;
 			default:
-				logger.error(String.format("Rx : Transfer message with invalid MessageType=%d message=%s", message.getMessageType(), message));
+				logger.error(String.format("Rx : Transfer message with invalid MessageType=%d message=%s",
+						message.getMessageType(), message));
 				break;
 			}
 			break;
@@ -344,7 +357,8 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 				this.signalingNetworkManagementHandler.handleDestinationRestricted(drst);
 				break;
 			default:
-				logger.error(String.format("Received SSNM with invalid MessageType=%d message=%s", message.getMessageType(), message));
+				logger.error(String.format("Received SSNM with invalid MessageType=%d message=%s",
+						message.getMessageType(), message));
 				break;
 			}
 			break;
@@ -372,7 +386,8 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 				this.aspStateMaintenanceHandler.handleHeartbeat(hrtBeat);
 				break;
 			default:
-				logger.error(String.format("Received ASPSM with invalid MessageType=%d message=%s", message.getMessageType(), message));
+				logger.error(String.format("Received ASPSM with invalid MessageType=%d message=%s",
+						message.getMessageType(), message));
 				break;
 			}
 
@@ -397,7 +412,8 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 				this.aspTrafficMaintenanceHandler.handleAspInactiveAck(aspInaciveAck);
 				break;
 			default:
-				logger.error(String.format("Received ASPTM with invalid MessageType=%d message=%s", message.getMessageType(), message));
+				logger.error(String.format("Received ASPTM with invalid MessageType=%d message=%s",
+						message.getMessageType(), message));
 				break;
 			}
 			break;
@@ -405,12 +421,13 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 		case MessageClass.ROUTING_KEY_MANAGEMENT:
 			break;
 		default:
-			logger.error(String.format("Received message with invalid MessageClass=%d message=%s", message.getMessageClass(), message));
+			logger.error(String.format("Received message with invalid MessageClass=%d message=%s",
+					message.getMessageClass(), message));
 			break;
 		}
 	}
 
-	public void write(M3UAMessage message) {
+	protected void write(M3UAMessage message) {
 
 		synchronized (txBuffer) {
 			try {
@@ -427,31 +444,35 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 				case MessageClass.ASP_STATE_MAINTENANCE:
 				case MessageClass.MANAGEMENT:
 				case MessageClass.ROUTING_KEY_MANAGEMENT:
-					payloadData = new org.mobicents.protocols.api.PayloadData(data.length, data, true, true, SCTP_PAYLOAD_PROT_ID_M3UA, 0);
+					payloadData = new org.mobicents.protocols.api.PayloadData(data.length, data, true, true,
+							SCTP_PAYLOAD_PROT_ID_M3UA, 0);
 					break;
 				case MessageClass.TRANSFER_MESSAGES:
 					PayloadData payload = (PayloadData) message;
 					int seqControl = payload.getData().getSLS();
-					payloadData = new org.mobicents.protocols.api.PayloadData(data.length, data, true, false, SCTP_PAYLOAD_PROT_ID_M3UA,
-							this.slsTable[seqControl]);
+					payloadData = new org.mobicents.protocols.api.PayloadData(data.length, data, true, false,
+							SCTP_PAYLOAD_PROT_ID_M3UA, this.slsTable[seqControl]);
 					break;
 				default:
-					payloadData = new org.mobicents.protocols.api.PayloadData(data.length, data, true, true, SCTP_PAYLOAD_PROT_ID_M3UA, 0);
+					payloadData = new org.mobicents.protocols.api.PayloadData(data.length, data, true, true,
+							SCTP_PAYLOAD_PROT_ID_M3UA, 0);
 					break;
 				}
 
 				this.association.send(payloadData);
 			} catch (Exception e) {
-				logger.error(String.format("Error while trying to send PayloadData to SCTP layer. M3UAMessage=%s", message));
+				logger.error(String.format("Error while trying to send PayloadData to SCTP layer. M3UAMessage=%s",
+						message));
 			}
 		}
 	}
 
-	protected Asp createAsp() {
-		Asp remAsp = new Asp(this.name, this);
+	protected AspImpl createAsp() {
+		AspImpl remAsp = new AspImpl(this.name, this);
 
 		// We set ASP IP only if its AS or IPSP Client side
-		if (this.getFunctionality() == Functionality.AS || (this.getFunctionality() == Functionality.IPSP && this.getIpspType() == IPSPType.CLIENT)) {
+		if (this.getFunctionality() == Functionality.AS
+				|| (this.getFunctionality() == Functionality.IPSP && this.getIpspType() == IPSPType.CLIENT)) {
 			remAsp.setASPIdentifier(aspid);
 		}
 
@@ -459,29 +480,31 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 		return remAsp;
 	}
 
-	public boolean destroyAsp(Asp asp) {
-		asp.aspFactory = null;
-		return this.aspList.remove(asp);
+	protected boolean destroyAsp(AspImpl aspImpl) {
+		aspImpl.aspFactoryImpl = null;
+		return this.aspList.remove(aspImpl);
 	}
 
-	public FastList<Asp> getAspList() {
-		return this.aspList;
+	public List<Asp> getAspList() {
+		return this.aspList.unmodifiable();
 	}
 
-	protected Asp getAsp(long rc) {
+	protected AspImpl getAsp(long rc) {
 		for (FastList.Node<Asp> n = aspList.head(), end = aspList.tail(); (n = n.getNext()) != end;) {
-			Asp asp = n.getValue();
-			if (asp.getAs().getRoutingContext() != null && asp.getAs().getRoutingContext().getRoutingContexts()[0] == rc) {
-				return asp;
+			Asp aspImpl = n.getValue();
+			if (aspImpl.getAs().getRoutingContext() != null
+					&& aspImpl.getAs().getRoutingContext().getRoutingContexts()[0] == rc) {
+				return (AspImpl) aspImpl;
 			}
 		}
 		return null;
 	}
 
-	protected void sendAspActive(As as) {
-		ASPActive aspActive = (ASPActive) this.messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE);
-		aspActive.setRoutingContext(as.getRoutingContext());
-		aspActive.setTrafficModeType(as.getTrafficModeType());
+	protected void sendAspActive(AsImpl asImpl) {
+		ASPActive aspActive = (ASPActive) this.messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE,
+				MessageType.ASP_ACTIVE);
+		aspActive.setRoutingContext(asImpl.getRoutingContext());
+		aspActive.setTrafficModeType(asImpl.getTrafficModeType());
 		this.write(aspActive);
 	}
 
@@ -495,29 +518,29 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 
 	private void handleCommDown() {
 		for (FastList.Node<Asp> n = aspList.head(), end = aspList.tail(); (n = n.getNext()) != end;) {
-			Asp asp = n.getValue();
+			AspImpl aspImpl = (AspImpl) n.getValue();
 			try {
-				FSM aspLocalFSM = asp.getLocalFSM();
+				FSM aspLocalFSM = aspImpl.getLocalFSM();
 				if (aspLocalFSM != null) {
 					aspLocalFSM.signal(TransitionState.COMM_DOWN);
 				}
 
-				FSM aspPeerFSM = asp.getPeerFSM();
+				FSM aspPeerFSM = aspImpl.getPeerFSM();
 				if (aspPeerFSM != null) {
 					aspPeerFSM.signal(TransitionState.COMM_DOWN);
 				}
 
-				As as = asp.getAs();
+				AsImpl asImpl = (AsImpl)aspImpl.getAs();
 
-				FSM asLocalFSM = as.getLocalFSM();
+				FSM asLocalFSM = asImpl.getLocalFSM();
 				if (asLocalFSM != null) {
-					asLocalFSM.setAttribute(As.ATTRIBUTE_ASP, asp);
+					asLocalFSM.setAttribute(AsImpl.ATTRIBUTE_ASP, aspImpl);
 					asLocalFSM.signal(TransitionState.ASP_DOWN);
 				}
 
-				FSM asPeerFSM = as.getPeerFSM();
+				FSM asPeerFSM = asImpl.getPeerFSM();
 				if (asPeerFSM != null) {
-					asPeerFSM.setAttribute(As.ATTRIBUTE_ASP, asp);
+					asPeerFSM.setAttribute(AsImpl.ATTRIBUTE_ASP, aspImpl);
 					asPeerFSM.signal(TransitionState.ASP_DOWN);
 				}
 			} catch (UnknownTransitionException e) {
@@ -530,7 +553,8 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 		// TODO : Possibility of race condition?
 		long now = System.currentTimeMillis();
 		if ((now - aspupSentTime) > 2000) {
-			ASPUp aspUp = (ASPUp) this.messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP);
+			ASPUp aspUp = (ASPUp) this.messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE,
+					MessageType.ASP_UP);
 			aspUp.setASPIdentifier(this.aspid);
 			this.write(aspUp);
 			aspupSentTime = now;
@@ -538,7 +562,8 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 	}
 
 	private void handleCommUp() {
-		if (this.functionality == Functionality.AS || (this.functionality == Functionality.SGW && this.exchangeType == ExchangeType.DE)
+		if (this.functionality == Functionality.AS
+				|| (this.functionality == Functionality.SGW && this.exchangeType == ExchangeType.DE)
 				|| (this.functionality == Functionality.IPSP && this.exchangeType == ExchangeType.DE)
 				|| (this.functionality == Functionality.IPSP && this.exchangeType == ExchangeType.SE && this.ipspType == IPSPType.CLIENT)) {
 			this.aspupSentTime = 0l;
@@ -546,14 +571,14 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 		}
 
 		for (FastList.Node<Asp> n = aspList.head(), end = aspList.tail(); (n = n.getNext()) != end;) {
-			Asp asp = n.getValue();
+			AspImpl aspImpl = (AspImpl) n.getValue();
 			try {
-				FSM aspLocalFSM = asp.getLocalFSM();
+				FSM aspLocalFSM = aspImpl.getLocalFSM();
 				if (aspLocalFSM != null) {
 					aspLocalFSM.signal(TransitionState.COMM_UP);
 				}
 
-				FSM aspPeerFSM = asp.getPeerFSM();
+				FSM aspPeerFSM = aspImpl.getPeerFSM();
 				if (aspPeerFSM != null) {
 					aspPeerFSM.signal(TransitionState.COMM_UP);
 				}
@@ -567,29 +592,33 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 	/**
 	 * XML Serialization/Deserialization
 	 */
-	protected static final XMLFormat<AspFactory> ASP_FACTORY_XML = new XMLFormat<AspFactory>(AspFactory.class) {
+	protected static final XMLFormat<AspFactoryImpl> ASP_FACTORY_XML = new XMLFormat<AspFactoryImpl>(
+			AspFactoryImpl.class) {
 
 		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml, AspFactory aspFactory) throws XMLStreamException {
-			aspFactory.name = xml.getAttribute(NAME, "");
-			aspFactory.associationName = xml.getAttribute(ASSOCIATION_NAME, "");
-			aspFactory.started = xml.getAttribute(STARTED).toBoolean();
-			aspFactory.maxSequenceNumber = xml.getAttribute(MAX_SEQUENCE_NUMBER, M3UAManagement.MAX_SEQUENCE_NUMBER);
-			aspFactory.slsTable = new int[aspFactory.maxSequenceNumber];
+		public void read(javolution.xml.XMLFormat.InputElement xml, AspFactoryImpl aspFactoryImpl)
+				throws XMLStreamException {
+			aspFactoryImpl.name = xml.getAttribute(NAME, "");
+			aspFactoryImpl.associationName = xml.getAttribute(ASSOCIATION_NAME, "");
+			aspFactoryImpl.started = xml.getAttribute(STARTED).toBoolean();
+			aspFactoryImpl.maxSequenceNumber = xml.getAttribute(MAX_SEQUENCE_NUMBER,
+					M3UAManagementImpl.MAX_SEQUENCE_NUMBER);
+			aspFactoryImpl.slsTable = new int[aspFactoryImpl.maxSequenceNumber];
 
 			// For backward compatible
-			long aspIdTemp = xml.getAttribute(ASP_ID, aspFactory.generateId());
+			long aspIdTemp = xml.getAttribute(ASP_ID, aspFactoryImpl.generateId());
 
-			aspFactory.aspid = aspFactory.parameterFactory.createASPIdentifier(aspIdTemp);
+			aspFactoryImpl.aspid = aspFactoryImpl.parameterFactory.createASPIdentifier(aspIdTemp);
 		}
 
 		@Override
-		public void write(AspFactory aspFactory, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
-			xml.setAttribute(NAME, aspFactory.name);
-			xml.setAttribute(ASSOCIATION_NAME, aspFactory.associationName);
-			xml.setAttribute(STARTED, aspFactory.started);
-			xml.setAttribute(MAX_SEQUENCE_NUMBER, aspFactory.maxSequenceNumber);
-			xml.setAttribute(ASP_ID, aspFactory.aspid.getAspId());
+		public void write(AspFactoryImpl aspFactoryImpl, javolution.xml.XMLFormat.OutputElement xml)
+				throws XMLStreamException {
+			xml.setAttribute(NAME, aspFactoryImpl.name);
+			xml.setAttribute(ASSOCIATION_NAME, aspFactoryImpl.associationName);
+			xml.setAttribute(STARTED, aspFactoryImpl.started);
+			xml.setAttribute(MAX_SEQUENCE_NUMBER, aspFactoryImpl.maxSequenceNumber);
+			xml.setAttribute(ASP_ID, aspFactoryImpl.aspid.getAspId());
 		}
 	};
 
@@ -599,7 +628,8 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 
 	@Override
 	public void onCommunicationLost(Association association) {
-		logger.warn(String.format("Communication channel lost for AspFactroy=%s Association=%s", this.name, association.getName()));
+		logger.warn(String.format("Communication channel lost for AspFactroy=%s Association=%s", this.name,
+				association.getName()));
 		this.handleCommDown();
 	}
 
@@ -611,7 +641,8 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 
 	@Override
 	public void onCommunicationShutdown(Association association) {
-		logger.warn(String.format("Communication channel shutdown for AspFactroy=%s Association=%s", this.name, association.getName()));
+		logger.warn(String.format("Communication channel shutdown for AspFactroy=%s Association=%s", this.name,
+				association.getName()));
 		this.handleCommDown();
 
 	}
@@ -671,32 +702,35 @@ public class AspFactory implements AssociationListener, XMLSerializable {
 	 */
 	@Override
 	public void inValidStreamId(org.mobicents.protocols.api.PayloadData payloadData) {
-		logger.error(String.format("Tx : PayloadData with streamNumber=%d which is greater than or equal to maxSequenceNumber=%d. Droping PayloadData=%s",
-				payloadData.getStreamNumber(), this.maxOutboundStreams, payloadData));
+		logger.error(String
+				.format("Tx : PayloadData with streamNumber=%d which is greater than or equal to maxSequenceNumber=%d. Droping PayloadData=%s",
+						payloadData.getStreamNumber(), this.maxOutboundStreams, payloadData));
 	}
 
 	public void show(StringBuffer sb) {
-		sb.append(M3UAOAMMessages.SHOW_ASP_NAME).append(this.name).append(M3UAOAMMessages.SHOW_ASPID).append(this.aspid.getAspId())
-				.append(M3UAOAMMessages.SHOW_SCTP_ASSOC).append(this.associationName).append(M3UAOAMMessages.SHOW_STARTED).append(this.started);
+		sb.append(M3UAOAMMessages.SHOW_ASP_NAME).append(this.name).append(M3UAOAMMessages.SHOW_ASPID)
+				.append(this.aspid.getAspId()).append(M3UAOAMMessages.SHOW_SCTP_ASSOC).append(this.associationName)
+				.append(M3UAOAMMessages.SHOW_STARTED).append(this.started);
 
 		sb.append(M3UAOAMMessages.NEW_LINE);
 		sb.append(M3UAOAMMessages.SHOW_ASSIGNED_TO);
 
 		for (FastList.Node<Asp> n = aspList.head(), end = aspList.tail(); (n = n.getNext()) != end;) {
-			Asp asp = n.getValue();
-			sb.append(M3UAOAMMessages.TAB).append(M3UAOAMMessages.SHOW_AS_NAME).append(asp.getAs().getName()).append(M3UAOAMMessages.SHOW_FUNCTIONALITY)
-					.append(this.functionality).append(M3UAOAMMessages.SHOW_MODE).append(this.exchangeType);
+			AspImpl aspImpl = (AspImpl) n.getValue();
+			sb.append(M3UAOAMMessages.TAB).append(M3UAOAMMessages.SHOW_AS_NAME).append(aspImpl.getAs().getName())
+					.append(M3UAOAMMessages.SHOW_FUNCTIONALITY).append(this.functionality)
+					.append(M3UAOAMMessages.SHOW_MODE).append(this.exchangeType);
 
 			if (this.functionality == Functionality.IPSP) {
 				sb.append(M3UAOAMMessages.SHOW_IPSP_TYPE).append(this.ipspType);
 			}
 
-			if (asp.getLocalFSM() != null) {
-				sb.append(M3UAOAMMessages.SHOW_LOCAL_FSM_STATE).append(asp.getLocalFSM().getState());
+			if (aspImpl.getLocalFSM() != null) {
+				sb.append(M3UAOAMMessages.SHOW_LOCAL_FSM_STATE).append(aspImpl.getLocalFSM().getState());
 			}
 
-			if (asp.getPeerFSM() != null) {
-				sb.append(M3UAOAMMessages.SHOW_PEER_FSM_STATE).append(asp.getPeerFSM().getState());
+			if (aspImpl.getPeerFSM() != null) {
+				sb.append(M3UAOAMMessages.SHOW_PEER_FSM_STATE).append(aspImpl.getPeerFSM().getState());
 			}
 
 			sb.append(M3UAOAMMessages.NEW_LINE);

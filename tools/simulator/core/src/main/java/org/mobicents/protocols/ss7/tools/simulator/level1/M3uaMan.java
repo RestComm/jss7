@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.tools.simulator.level1;
 
+import java.util.List;
+
 import javolution.util.FastList;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
@@ -30,14 +32,16 @@ import org.apache.log4j.Level;
 import org.mobicents.protocols.api.Association;
 import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.sctp.ManagementImpl;
+import org.mobicents.protocols.ss7.m3ua.As;
+import org.mobicents.protocols.ss7.m3ua.Asp;
+import org.mobicents.protocols.ss7.m3ua.AspFactory;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.IPSPType;
-import org.mobicents.protocols.ss7.m3ua.impl.As;
+import org.mobicents.protocols.ss7.m3ua.impl.AsImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.AsState;
-import org.mobicents.protocols.ss7.m3ua.impl.Asp;
-import org.mobicents.protocols.ss7.m3ua.impl.AspFactory;
-import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement;
+import org.mobicents.protocols.ss7.m3ua.impl.AspImpl;
+import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.parameter.NetworkAppearance;
@@ -90,7 +94,7 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 	private TesterHost testerHost;
 	private ManagementImpl sctpManagement;
 	private ParameterFactoryImpl factory = new ParameterFactoryImpl();
-	private M3UAManagement m3uaMgmt; 
+	private M3UAManagementImpl m3uaMgmt; 
 	private boolean isSctpConnectionUp = false;
 	private boolean isM3uaConnectionActive = false;
 	private Association assoc;
@@ -350,19 +354,21 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 		sb.append("  M3UA:");
 
 		this.m3uaMgmt.getAppServers();
-		FastList<As> lstAs = this.m3uaMgmt.getAppServers();
+		List<As> lstAs = this.m3uaMgmt.getAppServers();
 		for (As as : lstAs) {
 			if (as.getName().equals("testas")) {
-				FSM lFsm = as.getLocalFSM();
-				FSM pFsm = as.getPeerFSM();
+				AsImpl asImpl = (AsImpl)as;
+				FSM lFsm = asImpl.getLocalFSM();
+				FSM pFsm = asImpl.getPeerFSM();
 				FSM lFsmP = null;
 				FSM pFsmP = null;
 
-				FastList<Asp> lstAsp = as.getAspList();
+				List<Asp> lstAsp = as.getAspList();
 				for (Asp asp : lstAsp) {
 					// we take only the first ASP (it should be a single)
-					lFsmP = asp.getLocalFSM();
-					pFsmP = asp.getPeerFSM();
+					AspImpl aspImpl = (AspImpl)asp;
+					lFsmP = aspImpl.getLocalFSM();
+					pFsmP = aspImpl.getPeerFSM();
 					break;
 				}
 
@@ -470,11 +476,12 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 		}
 		if (this.m3uaMgmt != null) {
 			boolean active = false;
-			FastList<As> lstAs = this.m3uaMgmt.getAppServers();
+			List<As> lstAs = this.m3uaMgmt.getAppServers();
 			for (As as : lstAs) {
 				if (as.getName().equals("testas")) {
-					FSM lFsm = as.getLocalFSM();
-					FSM pFsm = as.getPeerFSM();
+					AsImpl asImpl = (AsImpl)as;
+					FSM lFsm = asImpl.getLocalFSM();
+					FSM pFsm = asImpl.getPeerFSM();
 					if ((lFsm == null || lFsm.getState().getName().equals(AsState.ACTIVE.toString()))
 							&& (pFsm == null || pFsm.getState().getName().equals(AsState.ACTIVE.toString()))) {
 						active = true;
@@ -505,7 +512,7 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 		this.sctpManagement.removeAllResourses();
 
 		// init M3UA stack
-		this.m3uaMgmt = new M3UAManagement("SimM3uaServer_" + name);
+		this.m3uaMgmt = new M3UAManagementImpl("SimM3uaServer_" + name);
 		this.m3uaMgmt.setTransportManagement(this.sctpManagement);
 		this.m3uaMgmt.start();
 		this.m3uaMgmt.removeAllResourses();

@@ -31,8 +31,18 @@ import java.io.IOException;
  */
 public interface Mtp3UserPart {
 
+	/**
+	 * Add {@link Mtp3UserPartListener}
+	 * 
+	 * @param listener
+	 */
 	public void addMtp3UserPartListener(Mtp3UserPartListener listener);
 
+	/**
+	 * Remove {@link Mtp3UserPartListener}
+	 * 
+	 * @param listener
+	 */
 	public void removeMtp3UserPartListener(Mtp3UserPartListener listener);
 
 	/**
@@ -73,5 +83,21 @@ public interface Mtp3UserPart {
 	 * 
 	 */
 	public void sendMessage(Mtp3TransferPrimitive msg) throws IOException;
+
+	/**
+	 * If set to true, lowest bit of SLS is used for loadbalancing between
+	 * Linkset else highest bit of SLS is used.
+	 * 
+	 * @param useLsbForLinksetSelection
+	 */
+	public void setUseLsbForLinksetSelection(boolean useLsbForLinksetSelection);
+
+	/**
+	 * Returns true if lowest bit of SLS is used for loadbalancing between
+	 * Linkset else returns false
+	 * 
+	 * @return
+	 */
+	public boolean isUseLsbForLinksetSelection();
 
 }

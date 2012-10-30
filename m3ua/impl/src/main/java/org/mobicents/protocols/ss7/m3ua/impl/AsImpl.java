@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.m3ua.impl;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javolution.util.FastList;
@@ -33,6 +34,8 @@ import javolution.xml.XMLSerializable;
 import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.m3ua.As;
+import org.mobicents.protocols.ss7.m3ua.Asp;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.IPSPType;
@@ -49,15 +52,16 @@ import org.mobicents.protocols.ss7.m3ua.parameter.NetworkAppearance;
 import org.mobicents.protocols.ss7.m3ua.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
+import org.mobicents.protocols.ss7.mtp.RoutingLabelFormat;
 
 /**
  * 
  * @author amit bhayani
  * 
  */
-public class As implements XMLSerializable {
+public class AsImpl implements XMLSerializable, As {
 
-	private static final Logger logger = Logger.getLogger(As.class);
+	private static final Logger logger = Logger.getLogger(AsImpl.class);
 
 	private static final String NAME = "name";
 	private static final String ROUTING_CONTEXT = "routingContext";
@@ -99,18 +103,24 @@ public class As implements XMLSerializable {
 
 	protected MessageFactory messageFactory = new MessageFactoryImpl();
 
-	protected M3UAManagement m3UAManagement = null;
+	protected M3UAManagementImpl m3UAManagementImpl = null;
 
 	private Functionality functionality = null;
 	private ExchangeType exchangeType = null;
 	private IPSPType ipspType = null;
 	private NetworkAppearance networkAppearance = null;
 
-	public As() {
+	private int[] slsVsAspTable = null;
+	private int maxAsps = 0;
+
+	private int aspSlsMask = 0x07;
+	private int aspSlsShiftPlaces = 0x00;
+
+	public AsImpl() {
 
 	}
 
-	public As(String name, RoutingContext rc, TrafficModeType trMode, Functionality functionality,
+	public AsImpl(String name, RoutingContext rc, TrafficModeType trMode, Functionality functionality,
 			ExchangeType exchangeType, IPSPType ipspType, NetworkAppearance networkAppearance) {
 		this.name = name;
 		this.rc = rc;
@@ -327,29 +337,72 @@ public class As implements XMLSerializable {
 		return this.name;
 	}
 
-	public void setM3UAManagement(M3UAManagement m3uaManagement) {
-		m3UAManagement = m3uaManagement;
+	protected void setM3UAManagement(M3UAManagementImpl m3uaManagement) {
+		this.m3UAManagementImpl = m3uaManagement;
+
+		RoutingLabelFormat routingLabelFormat = this.m3UAManagementImpl.getRoutingLabelFormat();
+
+		// TODO : Its assumed that 1 bit of SLS is always used for AS
+		// loadsharing. But what if there is no loadsharing among AS and all
+		// bits are to be used for ASP loadsharing?
+		this.maxAsps = (routingLabelFormat.getMaxSls() >> 1);
+
+		this.slsVsAspTable = new int[this.maxAsps];
+
+		if (this.m3UAManagementImpl.isUseLsbForLinksetSelection()) {
+			this.aspSlsShiftPlaces = 0x01;
+			switch (routingLabelFormat.getMaxSls()) {
+			case 256:
+				this.aspSlsMask = 0xfe;
+				break;
+			case 32:
+				this.aspSlsMask = 0x1e;
+				break;
+			case 16:
+				this.aspSlsMask = 0x0e;
+				break;
+			default:
+				this.aspSlsMask = 0x0e;
+				break;
+			}
+		} else {
+			this.aspSlsShiftPlaces = 0x0;
+			switch (routingLabelFormat.getMaxSls()) {
+			case 256:
+				this.aspSlsMask = 0x7f;
+				break;
+			case 32:
+				this.aspSlsMask = 0x0f;
+				break;
+			case 16:
+				this.aspSlsMask = 0x07;
+				break;
+			default:
+				this.aspSlsMask = 0x07;
+				break;
+			}
+		}
 	}
 
-	public M3UAManagement getM3UAManagement() {
-		return m3UAManagement;
+	protected M3UAManagementImpl getM3UAManagement() {
+		return m3UAManagementImpl;
 	}
 
-	public MessageFactory getMessageFactory() {
+	protected MessageFactory getMessageFactory() {
 		return messageFactory;
 	}
 
-	public ParameterFactory getParameterFactory() {
+	protected ParameterFactory getParameterFactory() {
 		return parameterFactory;
 	}
 
 	/**
-	 * Get the list of {@link Asp} for this As
+	 * Get the list of {@link AspImpl} for this As
 	 * 
 	 * @return
 	 */
-	public FastList<Asp> getAspList() {
-		return this.appServerProcs;
+	public List<Asp> getAspList() {
+		return this.appServerProcs.unmodifiable();
 	}
 
 	/**
@@ -399,7 +452,7 @@ public class As implements XMLSerializable {
 	 * 
 	 * @param trMode
 	 */
-	public void setTrafficModeType(TrafficModeType trMode) {
+	protected void setTrafficModeType(TrafficModeType trMode) {
 		// TODO : Check if TrafficModeType is not null throw error?
 		this.trMode = trMode;
 	}
@@ -416,7 +469,7 @@ public class As implements XMLSerializable {
 	/**
 	 * Set default {@link TrafficModeType} which is loadshare
 	 */
-	public void setDefaultTrafficModeType() {
+	protected void setDefaultTrafficModeType() {
 		// TODO : Check if TrafficModeType is not null throw error?
 		this.trMode = this.defaultTrafModType;
 	}
@@ -427,18 +480,18 @@ public class As implements XMLSerializable {
 
 	/**
 	 * If the {@link TrafficModeType} is loadshare, set the minimum number of
-	 * {@link Asp} that should be
+	 * {@link AspImpl} that should be
 	 * {@link org.mobicents.protocols.ss7.m3ua.impl.AspState#ACTIVE} before
 	 * state of this As becomes {@link AsState#ACTIVE}
 	 * 
 	 * @param lb
 	 */
-	public void setMinAspActiveForLb(int lb) {
+	protected void setMinAspActiveForLb(int lb) {
 		this.minAspActiveForLb = lb;
 	}
 
 	/**
-	 * Get the minimum number of {@link Asp} that should be
+	 * Get the minimum number of {@link AspImpl} that should be
 	 * {@link org.mobicents.protocols.ss7.m3ua.impl.AspState#ACTIVE} before
 	 * state of this As becomes {@link AsState#ACTIVE}. Used only if
 	 * {@link TrafficModeType} is loadshare
@@ -450,32 +503,34 @@ public class As implements XMLSerializable {
 	}
 
 	/**
-	 * Add new {@link Asp} for this As.
+	 * Add new {@link AspImpl} for this As.
 	 * 
-	 * @param asp
+	 * @param aspImpl
 	 * @throws Exception
 	 *             throws exception if the Asp with same name already exist
 	 */
-	protected void addAppServerProcess(Asp asp) throws Exception {
-		asp.setAs(this);
-		appServerProcs.add(asp);
+	protected void addAppServerProcess(AspImpl aspImpl) throws Exception {
+		aspImpl.setAs(this);
+		appServerProcs.add(aspImpl);
+
+		this.resetSlsVsAspTable();
 	}
 
-	protected Asp removeAppServerProcess(String aspName) throws Exception {
-		Asp asp = null;
+	protected AspImpl removeAppServerProcess(String aspName) throws Exception {
+		AspImpl aspImpl = null;
 		for (FastList.Node<Asp> n = this.appServerProcs.head(), end = this.appServerProcs.tail(); (n = n.getNext()) != end;) {
-			Asp aspTemp = n.getValue();
+			AspImpl aspTemp = (AspImpl) n.getValue();
 			if (aspTemp.getName().equals(aspName)) {
-				asp = aspTemp;
+				aspImpl = aspTemp;
 				break;
 			}
 		}
 
-		if (asp == null) {
+		if (aspImpl == null) {
 			throw new Exception(String.format(M3UAOAMMessages.NO_ASP_FOUND, aspName));
 		}
 
-		FSM aspLocalFSM = asp.getLocalFSM();
+		FSM aspLocalFSM = aspImpl.getLocalFSM();
 		if (aspLocalFSM != null) {
 			AspState aspLocalState = AspState.getState(aspLocalFSM.getState().getName());
 
@@ -486,7 +541,7 @@ public class As implements XMLSerializable {
 			}
 		}
 
-		FSM aspPeerFSM = asp.getPeerFSM();
+		FSM aspPeerFSM = aspImpl.getPeerFSM();
 		if (aspPeerFSM != null) {
 			AspState aspPeerState = AspState.getState(aspPeerFSM.getState().getName());
 
@@ -497,8 +552,8 @@ public class As implements XMLSerializable {
 			}
 		}
 
-		this.appServerProcs.remove(asp);
-		asp.setAs(null);
+		this.appServerProcs.remove(aspImpl);
+		aspImpl.setAs(null);
 
 		if (aspLocalFSM != null) {
 			aspLocalFSM.cancel();
@@ -507,17 +562,20 @@ public class As implements XMLSerializable {
 		if (aspPeerFSM != null) {
 			aspPeerFSM.cancel();
 		}
-		return asp;
+
+		this.resetSlsVsAspTable();
+
+		return aspImpl;
 	}
 
 	/**
-	 * write the {@link PayloadData} to underlying {@link Asp}. If the state of
-	 * As is PENDING, the PayloadData is stored in pending queue.
+	 * write the {@link PayloadData} to underlying {@link AspImpl}. If the state
+	 * of As is PENDING, the PayloadData is stored in pending queue.
 	 * 
 	 * @param message
 	 * @throws IOException
 	 */
-	public void write(PayloadData message) throws IOException {
+	protected void write(PayloadData message) throws IOException {
 
 		FSM fsm = null;
 		boolean isASPLocalFsm = true;
@@ -532,12 +590,26 @@ public class As implements XMLSerializable {
 			isASPLocalFsm = false;
 		}
 
+		int sls = message.getData().getSLS();
+
 		switch (AsState.getState(fsm.getState().getName())) {
 		case ACTIVE:
 			boolean aspFound = false;
+			
 			// TODO : Algo to select correct ASP
-			for (FastList.Node<Asp> n = this.appServerProcs.head(), end = this.appServerProcs.tail(); (n = n.getNext()) != end;) {
-				Asp aspTemp = n.getValue();
+
+			int aspIndex = (sls & this.aspSlsMask);
+			aspIndex = (aspIndex >> this.aspSlsShiftPlaces);
+
+			int aspNumber = this.slsVsAspTable[aspIndex];
+
+			for (int i = 0; i < this.appServerProcs.size(); i++) {
+				if (aspNumber >= this.appServerProcs.size()) {
+					aspNumber = 0;
+				}
+				
+				AspImpl aspTemp = (AspImpl)this.appServerProcs.get(aspNumber++);
+				
 				FSM aspFsm = null;
 
 				if (isASPLocalFsm) {
@@ -551,7 +623,7 @@ public class As implements XMLSerializable {
 					aspFound = true;
 					break;
 				}
-			}
+			}//for
 
 			if (!aspFound) {
 				// This should never happen.
@@ -571,7 +643,7 @@ public class As implements XMLSerializable {
 		}
 	}
 
-	public void clearPendingQueue() {
+	protected void clearPendingQueue() {
 		if (logger.isDebugEnabled()) {
 			if (this.penQueue.size() > 0) {
 				logger.debug(String.format("Cleaning %d PayloadData message from pending queue of As name=%s",
@@ -581,50 +653,50 @@ public class As implements XMLSerializable {
 		this.penQueue.clear();
 	}
 
-	public void sendPendingPayloadData(Asp asp) {
+	protected void sendPendingPayloadData(AspImpl aspImpl) {
 		PayloadData payload = null;
 		while ((payload = this.penQueue.poll()) != null) {
-			asp.getAspFactory().write(payload);
+			aspImpl.getAspFactory().write(payload);
 		}
 	}
 
 	/**
 	 * XML Serialization/Deserialization
 	 */
-	protected static final XMLFormat<As> AS_XML = new XMLFormat<As>(As.class) {
+	protected static final XMLFormat<AsImpl> AS_XML = new XMLFormat<AsImpl>(AsImpl.class) {
 
 		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml, As as) throws XMLStreamException {
-			as.name = xml.getAttribute(NAME, "");
-			as.minAspActiveForLb = xml.getAttribute(MIN_ASP_ACT_LB).toInt();
+		public void read(javolution.xml.XMLFormat.InputElement xml, AsImpl asImpl) throws XMLStreamException {
+			asImpl.name = xml.getAttribute(NAME, "");
+			asImpl.minAspActiveForLb = xml.getAttribute(MIN_ASP_ACT_LB).toInt();
 
-			as.functionality = Functionality.getFunctionality(xml.getAttribute("functionality", ""));
-			as.exchangeType = ExchangeType.getExchangeType(xml.getAttribute("exchangeType", ""));
-			as.ipspType = IPSPType.getIPSPType(xml.getAttribute("ipspType", ""));
+			asImpl.functionality = Functionality.getFunctionality(xml.getAttribute("functionality", ""));
+			asImpl.exchangeType = ExchangeType.getExchangeType(xml.getAttribute("exchangeType", ""));
+			asImpl.ipspType = IPSPType.getIPSPType(xml.getAttribute("ipspType", ""));
 
-			as.rc = xml.get(ROUTING_CONTEXT, RoutingContextImpl.class);
-			as.networkAppearance = xml.get(NETWORK_APPEARANCE, NetworkAppearanceImpl.class);
-			as.trMode = xml.get(TRAFFIC_MODE, TrafficModeTypeImpl.class);
-			as.defaultTrafModType = xml.get(DEFAULT_TRAFFIC_MODE, TrafficModeTypeImpl.class);
-			as.appServerProcs = xml.get(ASP_LIST, FastList.class);
-			as.init();
+			asImpl.rc = xml.get(ROUTING_CONTEXT, RoutingContextImpl.class);
+			asImpl.networkAppearance = xml.get(NETWORK_APPEARANCE, NetworkAppearanceImpl.class);
+			asImpl.trMode = xml.get(TRAFFIC_MODE, TrafficModeTypeImpl.class);
+			asImpl.defaultTrafModType = xml.get(DEFAULT_TRAFFIC_MODE, TrafficModeTypeImpl.class);
+			asImpl.appServerProcs = xml.get(ASP_LIST, FastList.class);
+			asImpl.init();
 		}
 
 		@Override
-		public void write(As as, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
-			xml.setAttribute(NAME, as.name);
-			xml.setAttribute(MIN_ASP_ACT_LB, as.minAspActiveForLb);
-			xml.setAttribute("functionality", as.functionality.getType());
-			xml.setAttribute("exchangeType", as.exchangeType.getType());
-			if (as.ipspType != null) {
-				xml.setAttribute("ipspType", as.ipspType.getType());
+		public void write(AsImpl asImpl, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			xml.setAttribute(NAME, asImpl.name);
+			xml.setAttribute(MIN_ASP_ACT_LB, asImpl.minAspActiveForLb);
+			xml.setAttribute("functionality", asImpl.functionality.getType());
+			xml.setAttribute("exchangeType", asImpl.exchangeType.getType());
+			if (asImpl.ipspType != null) {
+				xml.setAttribute("ipspType", asImpl.ipspType.getType());
 			}
 
-			xml.add((RoutingContextImpl) as.rc, ROUTING_CONTEXT, RoutingContextImpl.class);
-			xml.add((NetworkAppearanceImpl) as.networkAppearance, NETWORK_APPEARANCE, NetworkAppearanceImpl.class);
-			xml.add((TrafficModeTypeImpl) as.trMode, TRAFFIC_MODE, TrafficModeTypeImpl.class);
-			xml.add((TrafficModeTypeImpl) as.defaultTrafModType, DEFAULT_TRAFFIC_MODE, TrafficModeTypeImpl.class);
-			xml.add(as.appServerProcs, ASP_LIST, FastList.class);
+			xml.add((RoutingContextImpl) asImpl.rc, ROUTING_CONTEXT, RoutingContextImpl.class);
+			xml.add((NetworkAppearanceImpl) asImpl.networkAppearance, NETWORK_APPEARANCE, NetworkAppearanceImpl.class);
+			xml.add((TrafficModeTypeImpl) asImpl.trMode, TRAFFIC_MODE, TrafficModeTypeImpl.class);
+			xml.add((TrafficModeTypeImpl) asImpl.defaultTrafModType, DEFAULT_TRAFFIC_MODE, TrafficModeTypeImpl.class);
+			xml.add(asImpl.appServerProcs, ASP_LIST, FastList.class);
 
 		}
 	};
@@ -663,10 +735,10 @@ public class As implements XMLSerializable {
 		sb.append(M3UAOAMMessages.SHOW_ASSIGNED_TO);
 
 		for (FastList.Node<Asp> n = this.appServerProcs.head(), end = this.appServerProcs.tail(); (n = n.getNext()) != end;) {
-			Asp aspTemp = n.getValue();
-			AspFactory aspFactory = aspTemp.getAspFactory();
-			sb.append(M3UAOAMMessages.TAB).append(M3UAOAMMessages.SHOW_ASP_NAME).append(aspFactory.getName())
-					.append(M3UAOAMMessages.SHOW_STARTED).append(aspFactory.getStatus());
+			AspImpl aspTemp = (AspImpl) n.getValue();
+			AspFactoryImpl aspFactoryImpl = aspTemp.getAspFactory();
+			sb.append(M3UAOAMMessages.TAB).append(M3UAOAMMessages.SHOW_ASP_NAME).append(aspFactoryImpl.getName())
+					.append(M3UAOAMMessages.SHOW_STARTED).append(aspFactoryImpl.getStatus());
 			sb.append(M3UAOAMMessages.NEW_LINE);
 		}
 	}
@@ -691,5 +763,15 @@ public class As implements XMLSerializable {
 
 	public FastSet<AsStateListener> getAsStateListeners() {
 		return asStateListeners;
+	}
+
+	private void resetSlsVsAspTable() {
+		int aspNumber = 0;
+		for (int count = 0; count < this.maxAsps; count++) {
+			if (aspNumber >= this.appServerProcs.size()) {
+				aspNumber = 0;
+			}
+			this.slsVsAspTable[count] = aspNumber++;
+		}
 	}
 }

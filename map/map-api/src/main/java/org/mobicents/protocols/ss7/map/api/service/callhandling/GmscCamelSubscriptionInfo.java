@@ -26,9 +26,9 @@ import java.util.ArrayList;
 
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.DCSI;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OBcsmCamelTDPCriteria;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OBcsmCamelTdpCriteria;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OCSI;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TBCSMCAMELTDPCriteria;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TBcsmCamelTdpCriteria;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TCSI;
 
 /**
@@ -59,9 +59,9 @@ public interface GmscCamelSubscriptionInfo {
 
 	public MAPExtensionContainer getMAPExtensionContainer();
 
-	public ArrayList<OBcsmCamelTDPCriteria> getOBcsmCamelTDPCriteriaList();
+	public ArrayList<OBcsmCamelTdpCriteria> getOBcsmCamelTdpCriteriaList();
 
-	public ArrayList<TBCSMCAMELTDPCriteria> getTBcsmCamelTdpCriteriaList();
+	public ArrayList<TBcsmCamelTdpCriteria> getTBcsmCamelTdpCriteriaList();
 
 	public DCSI getDCsi();
 

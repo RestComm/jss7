@@ -48,4 +48,6 @@ public interface BearerServiceCode {
 
 	int getData();
 
+	public BearerServiceCodeValue getBearerServiceCodeValue();
+
 }

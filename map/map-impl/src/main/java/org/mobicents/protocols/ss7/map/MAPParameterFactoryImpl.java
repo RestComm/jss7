@@ -51,7 +51,12 @@ import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.primitives.PlmnId;
 import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.CUGCheckInfo;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.CallReferenceNumber;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.CamelInfo;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.CamelRoutingInfo;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.ForwardingData;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.GmscCamelSubscriptionInfo;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AddGeographicalInformation;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AdditionalNumber;
 import org.mobicents.protocols.ss7.map.api.service.lsm.Area;
@@ -147,8 +152,13 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.TransactionId;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.UserCSGInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.APN;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BearerServiceCode;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BearerServiceCodeValue;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CSGId;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGInterlock;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ChargingCharacteristics;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.DCSI;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.DefaultCallHandling;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.Ext2QoSSubscribed;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.Ext3QoSSubscribed;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.Ext4QoSSubscribed;
@@ -158,10 +168,20 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtQoSSubscribed;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtTeleserviceCode;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.LSAIdentity;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OBcsmCamelTDPData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OBcsmCamelTdpCriteria;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OBcsmTriggerDetectionPoint;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OCSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OfferedCamel4CSIs;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.PDPAddress;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.PDPType;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TBcsmCamelTDPData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TBcsmCamelTdpCriteria;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TBcsmTriggerDetectionPoint;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TCSI;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TeleserviceCode;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TeleserviceCodeValue;
 import org.mobicents.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
 import org.mobicents.protocols.ss7.map.api.service.sms.MWStatus;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
@@ -174,6 +194,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSN
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponse;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
+import org.mobicents.protocols.ss7.map.api.smstpdu.AddressField;
 import org.mobicents.protocols.ss7.map.api.smstpdu.SmsTpdu;
 import org.mobicents.protocols.ss7.map.dialog.MAPUserAbortChoiceImpl;
 import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
@@ -192,7 +213,11 @@ import org.mobicents.protocols.ss7.map.primitives.MAPPrivateExtensionImpl;
 import org.mobicents.protocols.ss7.map.primitives.PlmnIdImpl;
 import org.mobicents.protocols.ss7.map.primitives.SubscriberIdentityImpl;
 import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
+import org.mobicents.protocols.ss7.map.service.callhandling.CUGCheckInfoImpl;
 import org.mobicents.protocols.ss7.map.service.callhandling.CallReferenceNumberImpl;
+import org.mobicents.protocols.ss7.map.service.callhandling.CamelInfoImpl;
+import org.mobicents.protocols.ss7.map.service.callhandling.CamelRoutingInfoImpl;
+import org.mobicents.protocols.ss7.map.service.callhandling.GmscCamelSubscriptionInfoImpl;
 import org.mobicents.protocols.ss7.map.service.lsm.AddGeographicalInformationImpl;
 import org.mobicents.protocols.ss7.map.service.lsm.AdditionalNumberImpl;
 import org.mobicents.protocols.ss7.map.service.lsm.AreaDefinitionImpl;
@@ -272,7 +297,9 @@ import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.TE
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.TransactionIdImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.UserCSGInformationImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.APNImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.BearerServiceCodeImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.CSGIdImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.CUGInterlockImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ChargingCharacteristicsImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Ext2QoSSubscribedImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Ext3QoSSubscribedImpl;
@@ -283,10 +310,15 @@ import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Ext
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtQoSSubscribedImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtTeleserviceCodeImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.LSAIdentityImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.OBcsmCamelTDPDataImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.OCSIImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.OfferedCamel4CSIsImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.PDPAddressImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.PDPTypeImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.SupportedCamelPhasesImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.TBcsmCamelTDPDataImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.TCSIImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.TeleserviceCodeImpl;
 import org.mobicents.protocols.ss7.map.service.sms.LocationInfoWithLMSIImpl;
 import org.mobicents.protocols.ss7.map.service.sms.MWStatusImpl;
 import org.mobicents.protocols.ss7.map.service.sms.SM_RP_DAImpl;
@@ -453,6 +485,10 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 		return new SM_RP_SMEAImpl(data);
 	}
 
+	public SM_RP_SMEA createSM_RP_SMEA(AddressField addressField) throws MAPException {
+		return new SM_RP_SMEAImpl(addressField);
+	}
+
 	public MWStatus createMWStatus(boolean scAddressNotIncluded, boolean mnrfSet, boolean mcefSet, boolean mnrgSet) {
 		return new MWStatusImpl(scAddressNotIncluded, mnrfSet, mcefSet, mnrgSet);
 	}
@@ -548,8 +584,32 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 		return new ExtBearerServiceCodeImpl(data);
 	}
 
+	public ExtBearerServiceCode createExtBearerServiceCode(BearerServiceCodeValue value) {
+		return new ExtBearerServiceCodeImpl(value);
+	}
+
+	public BearerServiceCode createBearerServiceCode(int data) {
+		return new BearerServiceCodeImpl(data);
+	}
+
+	public BearerServiceCode createBearerServiceCode(BearerServiceCodeValue value) {
+		return new BearerServiceCodeImpl(value);
+	}
+
 	public ExtTeleserviceCode createExtTeleserviceCode(byte[] data) {
 		return new ExtTeleserviceCodeImpl(data);
+	}
+
+	public ExtTeleserviceCode createExtTeleserviceCode(TeleserviceCodeValue value) {
+		return new ExtTeleserviceCodeImpl(value);
+	}
+
+	public TeleserviceCode createTeleserviceCode(int data) {
+		return new TeleserviceCodeImpl(data);
+	}
+
+	public TeleserviceCode createTeleserviceCode(TeleserviceCodeValue value) {
+		return new TeleserviceCodeImpl(value);
 	}
 
 	public AuthenticationTriplet createAuthenticationTriplet(byte[] rand, byte[] sres, byte[] kc) {
@@ -578,6 +638,10 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 
 	public PlmnId createPlmnId(byte[] data) {
 		return new PlmnIdImpl(data);
+	}
+
+	public PlmnId createPlmnId(int mcc, int mnc) {
+		return new PlmnIdImpl(mcc, mnc);
 	}
 
 	public GSNAddress createGSNAddress(byte[] data) {
@@ -1000,6 +1064,58 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 
 	public IMSIWithLMSI createServingNodeAddressMmeNumber(IMSI imsi, LMSI lmsi) {
 		return new IMSIWithLMSIImpl(imsi, lmsi);
+	}
+
+	@Override
+	public CamelRoutingInfo createCamelRoutingInfo(ForwardingData forwardingData, GmscCamelSubscriptionInfo gmscCamelSubscriptionInfo,
+			MAPExtensionContainer extensionContainer) {
+		return new CamelRoutingInfoImpl(forwardingData, gmscCamelSubscriptionInfo, extensionContainer);
+	}
+
+	@Override
+	public GmscCamelSubscriptionInfo createGmscCamelSubscriptionInfo(TCSI tCsi, OCSI oCsi, MAPExtensionContainer extensionContainer,
+			ArrayList<OBcsmCamelTdpCriteria> oBcsmCamelTDPCriteriaList, ArrayList<TBcsmCamelTdpCriteria> tBcsmCamelTdpCriteriaList, DCSI dCsi) {
+		return new GmscCamelSubscriptionInfoImpl(tCsi, oCsi, extensionContainer, oBcsmCamelTDPCriteriaList, tBcsmCamelTdpCriteriaList, dCsi);
+	}
+
+	@Override
+	public TCSI createTCSI(ArrayList<TBcsmCamelTDPData> tBcsmCamelTDPDataList, MAPExtensionContainer extensionContainer, Integer camelCapabilityHandling,
+			boolean notificationToCSE, boolean csiActive) {
+		return new TCSIImpl(tBcsmCamelTDPDataList, extensionContainer, camelCapabilityHandling, notificationToCSE, csiActive);
+	}
+
+	@Override
+	public OCSI createOCSI(ArrayList<OBcsmCamelTDPData> oBcsmCamelTDPDataList, MAPExtensionContainer extensionContainer, Integer camelCapabilityHandling,
+			boolean notificationToCSE, boolean csiActive) {
+		return new OCSIImpl(oBcsmCamelTDPDataList, extensionContainer, camelCapabilityHandling, notificationToCSE, csiActive);
+	}
+
+	@Override
+	public TBcsmCamelTDPData createTBcsmCamelTDPData(TBcsmTriggerDetectionPoint tBcsmTriggerDetectionPoint, long serviceKey, ISDNAddressString gsmSCFAddress,
+			DefaultCallHandling defaultCallHandling, MAPExtensionContainer extensionContainer) {
+		return new TBcsmCamelTDPDataImpl(tBcsmTriggerDetectionPoint, serviceKey, gsmSCFAddress, defaultCallHandling, extensionContainer);
+	}
+
+	@Override
+	public OBcsmCamelTDPData createOBcsmCamelTDPData(OBcsmTriggerDetectionPoint oBcsmTriggerDetectionPoint, long serviceKey, ISDNAddressString gsmSCFAddress,
+			DefaultCallHandling defaultCallHandling, MAPExtensionContainer extensionContainer) {
+		return new OBcsmCamelTDPDataImpl(oBcsmTriggerDetectionPoint, serviceKey, gsmSCFAddress, defaultCallHandling, extensionContainer);
+	}
+
+	@Override
+	public CamelInfo createCamelInfo(SupportedCamelPhases supportedCamelPhases, boolean suppressTCSI, MAPExtensionContainer extensionContainer,
+			OfferedCamel4CSIs offeredCamel4CSIs) {
+		return new CamelInfoImpl(supportedCamelPhases, suppressTCSI, extensionContainer, offeredCamel4CSIs);
+	}
+
+	@Override
+	public CUGInterlock createCUGInterlock(byte[] data) {
+		return new CUGInterlockImpl(data);
+	}
+
+	@Override
+	public CUGCheckInfo createCUGCheckInfo(CUGInterlock cugInterlock, boolean cugOutgoingAccess, MAPExtensionContainer extensionContainer) {
+		return new CUGCheckInfoImpl(cugInterlock, cugOutgoingAccess, extensionContainer);
 	}
 }
 

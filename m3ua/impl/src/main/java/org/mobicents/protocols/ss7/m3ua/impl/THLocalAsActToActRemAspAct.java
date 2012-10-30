@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,12 +19,12 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.m3ua.Asp;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
@@ -46,33 +46,33 @@ public class THLocalAsActToActRemAspAct implements TransitionHandler {
 
 	private static final Logger logger = Logger.getLogger(THLocalAsActToActRemAspAct.class);
 
-	private As as = null;
+	private AsImpl asImpl = null;
 	private FSM fsm;
 
-	public THLocalAsActToActRemAspAct(As as, FSM fsm) {
-		this.as = as;
+	public THLocalAsActToActRemAspAct(AsImpl asImpl, FSM fsm) {
+		this.asImpl = asImpl;
 		this.fsm = fsm;
 	}
 
 	public boolean process(State state) {
 		try {
 
-			if (this.as.getTrafficModeType().getMode() == TrafficModeType.Broadcast) {
+			if (this.asImpl.getTrafficModeType().getMode() == TrafficModeType.Broadcast) {
 				// We don't handle this
 				return false;
 			}
 
-			Asp remAsp = (Asp) this.fsm.getAttribute(As.ATTRIBUTE_ASP);
+			AspImpl remAsp = (AspImpl) this.fsm.getAttribute(AsImpl.ATTRIBUTE_ASP);
 
-			if (this.as.getTrafficModeType().getMode() == TrafficModeType.Loadshare
-					&& as.getFunctionality() != Functionality.IPSP) {
+			if (this.asImpl.getTrafficModeType().getMode() == TrafficModeType.Loadshare
+					&& asImpl.getFunctionality() != Functionality.IPSP) {
 				// Send Notify only for ASP or SGW
 
 				// Iterate through ASP's and send AS_ACTIVE to ASP's who
 				// are INACTIVE
-				for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n
+				for (FastList.Node<Asp> n = this.asImpl.appServerProcs.head(), end = this.asImpl.appServerProcs.tail(); (n = n
 						.getNext()) != end;) {
-					Asp remAspImpl = n.getValue();
+					AspImpl remAspImpl = (AspImpl) n.getValue();
 
 					FSM aspPeerFSM = remAspImpl.getPeerFSM();
 					AspState aspState = AspState.getState(aspPeerFSM.getState().getName());
@@ -82,21 +82,21 @@ public class THLocalAsActToActRemAspAct implements TransitionHandler {
 						remAspImpl.getAspFactory().write(msg);
 					}
 				}
-			} else if (this.as.getTrafficModeType().getMode() == TrafficModeType.Override) {
+			} else if (this.asImpl.getTrafficModeType().getMode() == TrafficModeType.Override) {
 				// Look at 5.2.2. 1+1 Sparing, Backup Override
 
-				for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n
+				for (FastList.Node<Asp> n = this.asImpl.appServerProcs.head(), end = this.asImpl.appServerProcs.tail(); (n = n
 						.getNext()) != end;) {
-					Asp remAspImpl = n.getValue();
+					AspImpl remAspImpl = (AspImpl) n.getValue();
 
 					FSM aspPeerFSM = remAspImpl.getPeerFSM();
 					AspState aspState = AspState.getState(aspPeerFSM.getState().getName());
 
 					// Transition the other ASP to INACTIVE
 					if (aspState == AspState.ACTIVE && !(remAspImpl.getName().equals(remAsp.getName()))) {
-						if (as.getFunctionality() != Functionality.IPSP) {
+						if (asImpl.getFunctionality() != Functionality.IPSP) {
 							// Send Notify only for ASP or SGW
-							
+
 							Notify msg = createNotify(remAspImpl, Status.STATUS_Other, Status.INFO_Alternate_ASP_Active);
 							remAspImpl.getAspFactory().write(msg);
 						}
@@ -117,18 +117,19 @@ public class THLocalAsActToActRemAspAct implements TransitionHandler {
 		return false;
 	}
 
-	private Notify createNotify(Asp remAsp, int type, int info) {
-		Notify msg = (Notify) this.as.getMessageFactory().createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
+	private Notify createNotify(AspImpl remAsp, int type, int info) {
+		Notify msg = (Notify) this.asImpl.getMessageFactory()
+				.createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
 
-		Status status = this.as.getParameterFactory().createStatus(type, info);
+		Status status = this.asImpl.getParameterFactory().createStatus(type, info);
 		msg.setStatus(status);
 
 		if (remAsp.getASPIdentifier() != null) {
 			msg.setASPIdentifier(remAsp.getASPIdentifier());
 		}
 
-		if (this.as.getRoutingContext() != null) {
-			msg.setRoutingContext(this.as.getRoutingContext());
+		if (this.asImpl.getRoutingContext() != null) {
+			msg.setRoutingContext(this.asImpl.getRoutingContext());
 		}
 
 		return msg;

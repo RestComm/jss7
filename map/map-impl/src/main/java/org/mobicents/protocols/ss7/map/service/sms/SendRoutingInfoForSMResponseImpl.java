@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -40,24 +40,34 @@ import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMRespo
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
+/**
+ * 
+ * @author sergey vetyutnev
+ * 
+ */
 public class SendRoutingInfoForSMResponseImpl extends SmsMessageImpl implements SendRoutingInfoForSMResponse {
 	
 	protected static final int _TAG_LocationInfoWithLMSI = 0; 
+	protected static final int _TAG_mwdSet = 2; 
 	protected static final int _TAG_ExtensionContainer = 4; 
+
+	protected String _PrimitiveName = "SendRoutingInfoForSMResponse";
 
 	private IMSI imsi;
 	private LocationInfoWithLMSI locationInfoWithLMSI;
 	private MAPExtensionContainer extensionContainer;
+	private Boolean mwdSet;
 	
 	
 	public SendRoutingInfoForSMResponseImpl() {
 	}	
 	
-	public SendRoutingInfoForSMResponseImpl(IMSI imsi, LocationInfoWithLMSI locationInfoWithLMSI, MAPExtensionContainer extensionContainer) {
+	public SendRoutingInfoForSMResponseImpl(IMSI imsi, LocationInfoWithLMSI locationInfoWithLMSI, MAPExtensionContainer extensionContainer, Boolean mwdSet) {
 		this.imsi = imsi;
 		this.locationInfoWithLMSI = locationInfoWithLMSI;
 		this.extensionContainer = extensionContainer;
-	}	
+		this.mwdSet = mwdSet;
+	}
 
 	public MAPMessageType getMessageType() {
 		return MAPMessageType.sendRoutingInfoForSM_Response;
@@ -79,7 +89,11 @@ public class SendRoutingInfoForSMResponseImpl extends SmsMessageImpl implements 
 		return this.extensionContainer;
 	}
 
-	
+	public Boolean getMwdSet() {
+		return mwdSet;
+	}
+
+
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
@@ -98,10 +112,10 @@ public class SendRoutingInfoForSMResponseImpl extends SmsMessageImpl implements 
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding sendRoutingInfoForSMResponse: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding sendRoutingInfoForSMResponse: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -111,10 +125,10 @@ public class SendRoutingInfoForSMResponseImpl extends SmsMessageImpl implements 
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding sendRoutingInfoForSMResponse: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding sendRoutingInfoForSMResponse: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -124,7 +138,8 @@ public class SendRoutingInfoForSMResponseImpl extends SmsMessageImpl implements 
 		this.imsi = null;
 		this.locationInfoWithLMSI = null;
 		this.extensionContainer = null;
-		
+		this.mwdSet = null;
+
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 		int num = 0;
 		while (true) {
@@ -136,7 +151,7 @@ public class SendRoutingInfoForSMResponseImpl extends SmsMessageImpl implements 
 			case 0:
 				// imsi
 				if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive() || tag != Tag.STRING_OCTET)
-					throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMResponse.imsi: Parameter 0 bad tag or tag class or not primitive",
+					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".imsi: Parameter 0 bad tag or tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.imsi = new IMSIImpl();
 				((IMSIImpl)this.imsi).decodeAll(ais);
@@ -145,7 +160,7 @@ public class SendRoutingInfoForSMResponseImpl extends SmsMessageImpl implements 
 			case 1:
 				// locationInfoWithLMSI
 				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive() || tag != _TAG_LocationInfoWithLMSI)
-					throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMResponse.locationInfoWithLMSI: Parameter 1 bad tag class or tag or primitive",
+					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".locationInfoWithLMSI: Parameter 1 bad tag class or tag or primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.locationInfoWithLMSI = new LocationInfoWithLMSIImpl();
 				((LocationInfoWithLMSIImpl)this.locationInfoWithLMSI).decodeAll(ais);
@@ -156,10 +171,16 @@ public class SendRoutingInfoForSMResponseImpl extends SmsMessageImpl implements 
 					switch (tag) {
 					case _TAG_ExtensionContainer:
 						if (ais.isTagPrimitive())
-								throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMResponse.extensionContainer: Parameter extensionContainer is primitive",
+								throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: Parameter extensionContainer is primitive",
 										MAPParsingComponentExceptionReason.MistypedParameter);
 						this.extensionContainer = new MAPExtensionContainerImpl();
 						((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
+					break;
+					case _TAG_mwdSet:
+						if (!ais.isTagPrimitive())
+								throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".mwdSet: Parameter mwdSet is not primitive",
+										MAPParsingComponentExceptionReason.MistypedParameter);
+						this.mwdSet = ais.readBoolean();
 					break;
 
 					default:
@@ -178,7 +199,7 @@ public class SendRoutingInfoForSMResponseImpl extends SmsMessageImpl implements 
 		}
 
 		if (num < 2)
-			throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMResponse: Needs at least 2 mandatory parameters, found " + num,
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Needs at least 2 mandatory parameters, found " + num,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
@@ -193,7 +214,7 @@ public class SendRoutingInfoForSMResponseImpl extends SmsMessageImpl implements 
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding sendRoutingInfoForSMResponse: " + e.getMessage(), e);
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 
@@ -206,6 +227,14 @@ public class SendRoutingInfoForSMResponseImpl extends SmsMessageImpl implements 
 		((LocationInfoWithLMSIImpl)this.locationInfoWithLMSI).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LocationInfoWithLMSI);
 		if (this.extensionContainer != null)
 			((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_ExtensionContainer);
+		if (this.mwdSet != null)
+			try {
+				asnOs.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_mwdSet, this.mwdSet);
+			} catch (IOException e) {
+				throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+			} catch (AsnException e) {
+				throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+			}
 	}	
 	
 	@Override
@@ -228,6 +257,10 @@ public class SendRoutingInfoForSMResponseImpl extends SmsMessageImpl implements 
 		if (this.extensionContainer != null) {
 			sb.append(", extensionContainer=");
 			sb.append(this.extensionContainer.toString());
+		}
+		if (this.mwdSet != null) {
+			sb.append(", mwdSet=");
+			sb.append(this.mwdSet.toString());
 		}
 
 		sb.append("]");

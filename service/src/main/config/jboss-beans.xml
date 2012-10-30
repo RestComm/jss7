@@ -34,7 +34,7 @@
 	<!-- M3UAManagement is managing the m3ua side commands -->
 	<!-- ==================================================================== -->
 	<!-- -->
-	<bean name="Mtp3UserPart" class="org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement">
+	<bean name="Mtp3UserPart" class="org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl">
 		<constructor>
 			<parameter>Mtp3UserPart</parameter>
 		</constructor>

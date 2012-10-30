@@ -63,7 +63,7 @@ public interface VlrCamelSubscriptionInfo {
 
 	public SSCSI getSsCsi();
 
-	public ArrayList<OBcsmCamelTDPCriteria> getOBcsmCamelTDPCriteriaList();
+	public ArrayList<OBcsmCamelTdpCriteria> getOBcsmCamelTDPCriteriaList();
 
 	public boolean getTifCsi();
 
@@ -73,7 +73,7 @@ public interface VlrCamelSubscriptionInfo {
 
 	public TCSI getVtCsi();
 
-	public ArrayList<TBCSMCAMELTDPCriteria> getTBcsmCamelTdpCriteriaList();
+	public ArrayList<TBcsmCamelTdpCriteria> getTBcsmCamelTdpCriteriaList();
 
 	public DCSI getDCsi();
 

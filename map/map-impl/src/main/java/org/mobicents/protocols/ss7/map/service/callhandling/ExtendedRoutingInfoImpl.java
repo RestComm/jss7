@@ -39,6 +39,7 @@ import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 /*
  * 
  * @author cristian veliscu
+ * @author sergey vetyutnev
  * 
  */
 public class ExtendedRoutingInfoImpl implements ExtendedRoutingInfo, MAPAsnPrimitive  {
@@ -125,16 +126,18 @@ public class ExtendedRoutingInfoImpl implements ExtendedRoutingInfo, MAPAsnPrimi
 		if (ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
 			switch (tag) {
 			case Tag.SEQUENCE: 
-			case Tag.STRING_OCTET: this.routingInfo = new RoutingInfoImpl();
-								   ((RoutingInfoImpl) this.routingInfo).decodeData(ais, length); 
-								   break;
+			case Tag.STRING_OCTET:
+				this.routingInfo = new RoutingInfoImpl();
+				((RoutingInfoImpl) this.routingInfo).decodeData(ais, length);
+				break;
 			default: throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tagNumber",
 					 MAPParsingComponentExceptionReason.MistypedParameter);
 			}
 		} else if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 			switch (tag) {
 			case TAG_camel:
-				// TODO: decode CAMEL routing info - implement it
+				this.camelRoutingInfo = new CamelRoutingInfoImpl();
+				((CamelRoutingInfoImpl) this.camelRoutingInfo).decodeData(ais, length);
 				break; 
 			default: throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tagNumber",
 					 MAPParsingComponentExceptionReason.MistypedParameter);
@@ -173,7 +176,7 @@ public class ExtendedRoutingInfoImpl implements ExtendedRoutingInfo, MAPAsnPrimi
 		if (this.routingInfo != null) {
 			((RoutingInfoImpl) this.routingInfo).encodeData(asnOs);
 		} else { 
-			// TODO: encode CAMEL routing info implement it
+			((CamelRoutingInfoImpl) this.camelRoutingInfo).encodeData(asnOs);
 		}
 	}
 

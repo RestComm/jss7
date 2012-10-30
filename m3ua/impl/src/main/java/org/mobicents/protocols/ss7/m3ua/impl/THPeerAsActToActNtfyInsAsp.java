@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,12 +19,12 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.m3ua.Asp;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
@@ -41,11 +41,11 @@ public class THPeerAsActToActNtfyInsAsp implements TransitionHandler {
 
 	private static final Logger logger = Logger.getLogger(THPeerAsActToActNtfyInsAsp.class);
 
-	private As as = null;
+	private AsImpl asImpl = null;
 	private FSM fsm;
 
-	public THPeerAsActToActNtfyInsAsp(As as, FSM fsm) {
-		this.as = as;
+	public THPeerAsActToActNtfyInsAsp(AsImpl asImpl, FSM fsm) {
+		this.asImpl = asImpl;
 		this.fsm = fsm;
 	}
 
@@ -53,15 +53,16 @@ public class THPeerAsActToActNtfyInsAsp implements TransitionHandler {
 
 		// Iterate through all the ASP for this AS and activate if they are
 		// inactive
-		for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n.getNext()) != end;) {
-			Asp aspTemp = n.getValue();
-			AspFactory factory = aspTemp.getAspFactory();
+		for (FastList.Node<Asp> n = this.asImpl.appServerProcs.head(), end = this.asImpl.appServerProcs.tail(); (n = n
+				.getNext()) != end;) {
+			AspImpl aspTemp = (AspImpl)n.getValue();
+			AspFactoryImpl factory = aspTemp.getAspFactory();
 
 			FSM aspLocalFSM = aspTemp.getLocalFSM();
 			AspState aspState = AspState.getState(aspLocalFSM.getState().getName());
 
 			if (aspState == AspState.INACTIVE && factory.getStatus()) {
-				factory.sendAspActive(this.as);
+				factory.sendAspActive(this.asImpl);
 				try {
 					aspLocalFSM.signal(TransitionState.ASP_ACTIVE_SENT);
 				} catch (UnknownTransitionException e) {

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -35,14 +35,14 @@ public class THPeerAsPendToAct implements TransitionHandler {
 
 	private static final Logger logger = Logger.getLogger(THPeerAsPendToAct.class);
 
-	private As as = null;
+	private AsImpl asImpl = null;
 	private FSM fsm;
 
 	/**
 	 * 
 	 */
-	public THPeerAsPendToAct(As as, FSM fsm) {
-		this.as = as;
+	public THPeerAsPendToAct(AsImpl asImpl, FSM fsm) {
+		this.asImpl = asImpl;
 		this.fsm = fsm;
 	}
 
@@ -57,8 +57,8 @@ public class THPeerAsPendToAct implements TransitionHandler {
 	public boolean process(State state) {
 		
 		// Send the PayloadData (if any) from pending queue to other side
-		Asp causeAsp = (Asp) this.fsm.getAttribute(As.ATTRIBUTE_ASP);
-		this.as.sendPendingPayloadData(causeAsp);
+		AspImpl causeAsp = (AspImpl) this.fsm.getAttribute(AsImpl.ATTRIBUTE_ASP);
+		this.asImpl.sendPendingPayloadData(causeAsp);
 		
 		return true;
 	}

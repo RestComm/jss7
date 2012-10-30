@@ -21,19 +21,18 @@
  */
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
+
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGInterlock;
 
-/*
+/**
  * 
- * CUG-CheckInfo ::= SEQUENCE {
- * cug-Interlock CUG-Interlock,
- * cug-OutgoingAccess NULL OPTIONAL,
- * extensionContainer ExtensionContainer OPTIONAL,
- * ...}
- */ 
- 
-/*
+CUG-CheckInfo ::= SEQUENCE {
+ cug-Interlock CUG-Interlock,
+ cug-OutgoingAccess NULL OPTIONAL,
+ extensionContainer ExtensionContainer OPTIONAL,
+ ...}
+
  * 
  * @author cristian veliscu
  * 
@@ -41,5 +40,5 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 public interface CUGCheckInfo {
 	public CUGInterlock getCUGInterlock();
 	public boolean getCUGOutgoingAccess();
-	public MAPExtensionContainer getMAPExtensionContainer();
+	public MAPExtensionContainer getExtensionContainer();
 }

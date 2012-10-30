@@ -707,7 +707,7 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 		LocationInfoWithLMSI li = mapProvider.getMAPParameterFactory().createLocationInfoWithLMSI(networkNodeNumber, null, null, null, null);
 
 		try {
-			curDialog.addSendRoutingInfoForSMResponse(invokeId, imsi, li, null);
+			curDialog.addSendRoutingInfoForSMResponse(invokeId, imsi, li, null, null);
 			this.needSendClose = true;
 
 			this.countSriResp++;

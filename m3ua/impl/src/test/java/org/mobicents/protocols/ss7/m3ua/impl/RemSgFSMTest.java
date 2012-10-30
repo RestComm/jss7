@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,7 +19,6 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 
@@ -56,6 +55,7 @@ import org.mobicents.protocols.ss7.m3ua.impl.parameter.ProtocolDataImpl;
 import org.mobicents.protocols.ss7.m3ua.message.M3UAMessage;
 import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
 import org.mobicents.protocols.ss7.m3ua.message.MessageType;
+import org.mobicents.protocols.ss7.m3ua.message.aspsm.ASPDownAck;
 import org.mobicents.protocols.ss7.m3ua.message.asptm.ASPActiveAck;
 import org.mobicents.protocols.ss7.m3ua.message.mgmt.Notify;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
@@ -83,7 +83,7 @@ public class RemSgFSMTest {
 
 	private ParameterFactoryImpl parmFactory = new ParameterFactoryImpl();
 	private MessageFactoryImpl messageFactory = new MessageFactoryImpl();
-	private M3UAManagement clientM3UAMgmt = null;
+	private M3UAManagementImpl clientM3UAMgmt = null;
 	private Mtp3UserPartListenerimpl mtp3UserPartListener = null;
 	
 	private Semaphore semaphore = null;
@@ -105,7 +105,7 @@ public class RemSgFSMTest {
 	public void setUp() throws Exception {
 		semaphore = new Semaphore(0);
 		this.transportManagement = new TransportManagement();
-		this.clientM3UAMgmt = new M3UAManagement("RemSgFSMTest");
+		this.clientM3UAMgmt = new M3UAManagementImpl("RemSgFSMTest");
 		this.clientM3UAMgmt.setTransportManagement(this.transportManagement);
 		this.mtp3UserPartListener = new Mtp3UserPartListenerimpl();
 		this.clientM3UAMgmt.addMtp3UserPartListener(this.mtp3UserPartListener);
@@ -115,9 +115,7 @@ public class RemSgFSMTest {
 
 	@AfterMethod
 	public void tearDown() throws Exception {
-		clientM3UAMgmt.getAppServers().clear();
-		clientM3UAMgmt.getAspfactories().clear();
-		clientM3UAMgmt.getRoute().clear();
+		clientM3UAMgmt.removeAllResourses();
 		clientM3UAMgmt.stop();
 	}
 
@@ -142,12 +140,12 @@ public class RemSgFSMTest {
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
 		// As as = rsgw.createAppServer("testas", rc, rKey, trModType);
-		As as = this.clientM3UAMgmt.createAs("testas", Functionality.AS, ExchangeType.SE, null, rc, null, null);
+		AsImpl asImpl = (AsImpl)this.clientM3UAMgmt.createAs("testas", Functionality.AS, ExchangeType.SE, null, rc, null, null);
 
-		AspFactory localAspFactory = this.clientM3UAMgmt.createAspFactory("testasp", "testAssoc1");
+		AspFactoryImpl localAspFactory = (AspFactoryImpl)this.clientM3UAMgmt.createAspFactory("testasp", "testAssoc1");
 		localAspFactory.start();
 
-		Asp asp = clientM3UAMgmt.assignAspToAs("testas", "testasp");
+		AspImpl aspImpl = clientM3UAMgmt.assignAspToAs("testas", "testasp");
 		
 		// Create Route. Adding 3 routes
 		this.clientM3UAMgmt.addRoute(3, -1, -1, "testas");
@@ -159,7 +157,7 @@ public class RemSgFSMTest {
 		testAssociation.signalCommUp();
 
 		// Once comunication is UP, ASP_UP should have been sent.
-		FSM aspLocalFSM = asp.getLocalFSM();
+		FSM aspLocalFSM = aspImpl.getLocalFSM();
 		assertEquals(AspState.UP_SENT, this.getAspState(aspLocalFSM));
 		assertTrue(validateMessage(testAssociation, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP, -1, -1));
 
@@ -178,7 +176,7 @@ public class RemSgFSMTest {
 		assertTrue(validateMessage(testAssociation, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE, -1,
 				-1));
 
-		FSM asPeerFSM = as.getPeerFSM();
+		FSM asPeerFSM = asImpl.getPeerFSM();
 		// also the AS should be INACTIVE now
 		assertEquals(AsState.INACTIVE, this.getAsState(asPeerFSM));
 
@@ -251,6 +249,10 @@ public class RemSgFSMTest {
 
 		// Make sure we don't have any more
 		assertNull(testAssociation.txPoll());
+		
+		ASPDownAck aspDownAck = (ASPDownAck) messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE,
+				MessageType.ASP_DOWN_ACK);
+		localAspFactory.read(aspDownAck);
 
 	}
 	
@@ -265,12 +267,12 @@ public class RemSgFSMTest {
 		this.transportManagement.addAssociation(null, 0, null, 0, "testAssoc1");
 
 		// As as = rsgw.createAppServer("testas", rc, rKey, trModType);
-		As as = this.clientM3UAMgmt.createAs("testas", Functionality.AS, ExchangeType.SE, null, null, null, null);
+		AsImpl asImpl = (AsImpl)this.clientM3UAMgmt.createAs("testas", Functionality.AS, ExchangeType.SE, null, null, null, null);
 
-		AspFactory localAspFactory = this.clientM3UAMgmt.createAspFactory("testasp", "testAssoc1");
+		AspFactoryImpl localAspFactory = (AspFactoryImpl)this.clientM3UAMgmt.createAspFactory("testasp", "testAssoc1");
 		localAspFactory.start();
 
-		Asp asp = clientM3UAMgmt.assignAspToAs("testas", "testasp");
+		AspImpl aspImpl = clientM3UAMgmt.assignAspToAs("testas", "testasp");
 		
 		// Create Route
 		this.clientM3UAMgmt.addRoute(2, -1, -1, "testas");
@@ -280,7 +282,7 @@ public class RemSgFSMTest {
 		testAssociation.signalCommUp();
 
 		// Once comunication is UP, ASP_UP should have been sent.
-		FSM aspLocalFSM = asp.getLocalFSM();
+		FSM aspLocalFSM = aspImpl.getLocalFSM();
 		assertEquals(AspState.UP_SENT, this.getAspState(aspLocalFSM));
 		assertTrue(validateMessage(testAssociation, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP, -1, -1));
 
@@ -299,7 +301,7 @@ public class RemSgFSMTest {
 		assertTrue(validateMessage(testAssociation, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE, -1,
 				-1));
 
-		FSM asPeerFSM = as.getPeerFSM();
+		FSM asPeerFSM = asImpl.getPeerFSM();
 		// also the AS should be INACTIVE now
 		assertEquals(AsState.INACTIVE, this.getAsState(asPeerFSM));
 
@@ -333,7 +335,7 @@ public class RemSgFSMTest {
 		assertNull(this.mtp3UserPartListener.rxMtp3TransferPrimitivePoll());
 		
 		//Since we didn't set the Traffic Mode while creating AS, it should now be set to loadshare as default
-		assertEquals(TrafficModeType.Loadshare, as.getTrafficModeType().getMode());
+		assertEquals(TrafficModeType.Loadshare, asImpl.getTrafficModeType().getMode());
 
 		// Lets stop ASP Factory
 		localAspFactory.stop();
@@ -357,8 +359,11 @@ public class RemSgFSMTest {
 		// Make sure we don't have any more
 		assertNull(testAssociation.txPoll());
 
+		ASPDownAck aspDownAck = (ASPDownAck) messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE,
+				MessageType.ASP_DOWN_ACK);
+		localAspFactory.read(aspDownAck);
 	}
-
+	
 	@Test
 	public void testSingleAspInMultipleAs() throws Exception {
 		// 5.1.1.3. Single ASP in Multiple Application Servers (Each with "1+0"
@@ -368,19 +373,19 @@ public class RemSgFSMTest {
 		// Define 1st AS
 		RoutingContext rc1 = parmFactory.createRoutingContext(new long[] { 100 });
 
-		As remAs1 = this.clientM3UAMgmt.createAs("testas1", Functionality.AS, ExchangeType.SE, null, rc1, null, null);
+		AsImpl remAs1 = (AsImpl)this.clientM3UAMgmt.createAs("testas1", Functionality.AS, ExchangeType.SE, null, rc1, null, null);
 
 		// Define 2nd AS
 		RoutingContext rc2 = parmFactory.createRoutingContext(new long[] { 200 });
 
-		As remAs2 = clientM3UAMgmt.createAs("testas2", Functionality.AS, ExchangeType.SE, null, rc2, null, null);
+		AsImpl remAs2 = (AsImpl)clientM3UAMgmt.createAs("testas2", Functionality.AS, ExchangeType.SE, null, rc2, null, null);
 
-		AspFactory aspFactory = clientM3UAMgmt.createAspFactory("testasp", "testAssoc1");
-		aspFactory.start();
+		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl)clientM3UAMgmt.createAspFactory("testasp", "testAssoc1");
+		aspFactoryImpl.start();
 
 		// Both ASP uses same underlying M3UAChannel
-		Asp remAsp1 = clientM3UAMgmt.assignAspToAs("testas1", "testasp");
-		Asp remAsp2 = clientM3UAMgmt.assignAspToAs("testas2", "testasp");
+		AspImpl remAsp1 = clientM3UAMgmt.assignAspToAs("testas1", "testasp");
+		AspImpl remAsp2 = clientM3UAMgmt.assignAspToAs("testas2", "testasp");
 		
 		// Create Route
 		this.clientM3UAMgmt.addRoute(2, -1, -1, "testas1");
@@ -418,7 +423,7 @@ public class RemSgFSMTest {
 		// for both the AS
 		M3UAMessageImpl message = messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE,
 				MessageType.ASP_UP_ACK);
-		aspFactory.read(message);
+		aspFactoryImpl.read(message);
 		assertEquals(AspState.ACTIVE_SENT, this.getAspState(asp1LocalFSM));
 		assertEquals(AspState.ACTIVE_SENT, this.getAspState(asp2LocalFSM));
 
@@ -432,7 +437,7 @@ public class RemSgFSMTest {
 		notify.setRoutingContext(rc1);
 		Status status = parmFactory.createStatus(Status.STATUS_AS_State_Change, Status.INFO_AS_INACTIVE);
 		notify.setStatus(status);
-		aspFactory.read(notify);
+		aspFactoryImpl.read(notify);
 		// the AS1 should be INACTIVE now but AS2 still DOWN
 		assertEquals(AsState.INACTIVE, this.getAsState(as1PeerFSM));
 		assertEquals(AsState.DOWN, this.getAsState(as2PeerFSM));
@@ -441,7 +446,7 @@ public class RemSgFSMTest {
 		notify.setRoutingContext(rc2);// RC 200
 		status = parmFactory.createStatus(Status.STATUS_AS_State_Change, Status.INFO_AS_INACTIVE);
 		notify.setStatus(status);
-		aspFactory.read(notify);
+		aspFactoryImpl.read(notify);
 		// AS2 should be INACTIVE now
 		assertEquals(AsState.INACTIVE, this.getAsState(as2PeerFSM));
 
@@ -450,7 +455,7 @@ public class RemSgFSMTest {
 		ASPActiveAck aspActiveAck = (ASPActiveAck) messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE,
 				MessageType.ASP_ACTIVE_ACK);
 		aspActiveAck.setRoutingContext(this.parmFactory.createRoutingContext(new long[] { 100, 200 }));
-		aspFactory.read(aspActiveAck);
+		aspFactoryImpl.read(aspActiveAck);
 
 		// Both ASP are ACTIVE now
 		assertEquals(AspState.ACTIVE, this.getAspState(asp1LocalFSM));
@@ -460,7 +465,7 @@ public class RemSgFSMTest {
 		notify.setRoutingContext(rc1);
 		status = parmFactory.createStatus(Status.STATUS_AS_State_Change, Status.INFO_AS_ACTIVE);
 		notify.setStatus(status);
-		aspFactory.read(notify);
+		aspFactoryImpl.read(notify);
 		// the AS1 should be ACTIVE now but AS2 still INACTIVE
 		assertEquals(AsState.ACTIVE, this.getAsState(as1PeerFSM));
 		assertEquals(AsState.INACTIVE, this.getAsState(as2PeerFSM));
@@ -493,7 +498,7 @@ public class RemSgFSMTest {
 		notify.setRoutingContext(rc2);
 		status = parmFactory.createStatus(Status.STATUS_AS_State_Change, Status.INFO_AS_ACTIVE);
 		notify.setStatus(status);
-		aspFactory.read(notify);
+		aspFactoryImpl.read(notify);
 		// the AS2 is also ACTIVE now
 		assertEquals(AsState.ACTIVE, this.getAsState(as1PeerFSM));
 		assertEquals(AsState.ACTIVE, this.getAsState(as2PeerFSM));
@@ -506,7 +511,7 @@ public class RemSgFSMTest {
 		assertEquals(TrafficModeType.Loadshare, remAs2.getTrafficModeType().getMode());
 
 		// Lets stop ASP Factory
-		aspFactory.stop();
+		aspFactoryImpl.stop();
 
 		assertEquals(AspState.DOWN_SENT, this.getAspState(asp1LocalFSM));
 		assertEquals(AspState.DOWN_SENT, this.getAspState(asp2LocalFSM));
@@ -538,8 +543,13 @@ public class RemSgFSMTest {
 
 		// Make sure we don't have any more
 		assertNull(testAssociation.txPoll());
-	}
+		
 
+		ASPDownAck aspDownAck = (ASPDownAck) messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE,
+				MessageType.ASP_DOWN_ACK);
+		aspFactoryImpl.read(aspDownAck);
+	}	
+	
 	@Test
 	public void testTwoAspInAsOverride() throws Exception {
 		// 5.1.2. Two ASPs in Application Server ("1+1" Sparing)
@@ -554,18 +564,18 @@ public class RemSgFSMTest {
 		TrafficModeType trModType = parmFactory.createTrafficModeType(TrafficModeType.Override);
 
 		// As remAs = rsgw.createAppServer("testas", rc, rKey, trModType);
-		As remAs = this.clientM3UAMgmt.createAs("testas", Functionality.AS, ExchangeType.SE, null, rc, null, null);
+		AsImpl remAs = (AsImpl)this.clientM3UAMgmt.createAs("testas", Functionality.AS, ExchangeType.SE, null, rc, null, null);
 
-		AspFactory aspFactory1 = this.clientM3UAMgmt.createAspFactory("testasp1", "testAssoc1");
+		AspFactoryImpl aspFactory1 = (AspFactoryImpl)this.clientM3UAMgmt.createAspFactory("testasp1", "testAssoc1");
 		aspFactory1.start();
 
 		// AspFactory aspFactory2 = rsgw.createAspFactory("testasp2",
 		// "127.0.0.1", 2777, "127.0.0.1", 2778);
-		AspFactory aspFactory2 = this.clientM3UAMgmt.createAspFactory("testasp2", "testAssoc2");
+		AspFactoryImpl aspFactory2 = (AspFactoryImpl)this.clientM3UAMgmt.createAspFactory("testasp2", "testAssoc2");
 		aspFactory2.start();
 
-		Asp remAsp1 = clientM3UAMgmt.assignAspToAs("testas", "testasp1");
-		Asp remAsp2 = clientM3UAMgmt.assignAspToAs("testas", "testasp2");
+		AspImpl remAsp1 = clientM3UAMgmt.assignAspToAs("testas", "testasp1");
+		AspImpl remAsp2 = clientM3UAMgmt.assignAspToAs("testas", "testasp2");
 		
 		// Create Route
 		this.clientM3UAMgmt.addRoute(2, -1, -1, "testas");
@@ -680,6 +690,20 @@ public class RemSgFSMTest {
 		//No more MTP3 Primitive or message
 		assertNull(this.mtp3UserPartListener.rxMtp3PrimitivePoll());
 		assertNull(this.mtp3UserPartListener.rxMtp3TransferPrimitivePoll());	
+		
+		
+		// Lets stop ASP Factory
+		aspFactory1.stop();
+		aspFactory2.stop();
+
+		assertEquals(AspState.DOWN_SENT, this.getAspState(asp2LocalFSM));
+		assertTrue(validateMessage(testAssociation2, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN, -1, -1));
+		// also the AS is PENDING
+		assertEquals(AsState.PENDING, this.getAsState(asPeerFSM));
+
+		// The far end sends DOWN_ACK
+		message = messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN_ACK);
+		aspFactory2.read(message);
 
 	}
 	
@@ -692,17 +716,17 @@ public class RemSgFSMTest {
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
 		// As as = rsgw.createAppServer("testas", rc, rKey, trModType);
-		As as = this.clientM3UAMgmt.createAs("testas", Functionality.AS, ExchangeType.SE, null, rc, null, null);
-		FSM asPeerFSM = as.getPeerFSM();
+		AsImpl asImpl = (AsImpl)this.clientM3UAMgmt.createAs("testas", Functionality.AS, ExchangeType.SE, null, rc, null, null);
+		FSM asPeerFSM = asImpl.getPeerFSM();
 		
-		AspFactory localAspFactory = clientM3UAMgmt.createAspFactory("testasp", "testAssoc");
+		AspFactoryImpl localAspFactory = (AspFactoryImpl)clientM3UAMgmt.createAspFactory("testasp", "testAssoc");
 		localAspFactory.start();
 
-		Asp asp = clientM3UAMgmt.assignAspToAs("testas", "testasp");
+		AspImpl aspImpl = clientM3UAMgmt.assignAspToAs("testas", "testasp");
 		// Create Route
 		this.clientM3UAMgmt.addRoute(2, -1, -1, "testas");
 		
-		FSM aspLocalFSM = asp.getLocalFSM();
+		FSM aspLocalFSM = aspImpl.getLocalFSM();
 		
 		// Check for Communication UP
 		testAssociation.signalCommUp();
@@ -780,7 +804,7 @@ public class RemSgFSMTest {
 		payload.setRoutingContext(rc);
 		payload.setData(p1);
 
-		as.write(payload);
+		asImpl.write(payload);
 
 		// Now again the ASP is brought up
 		testAssociation.signalCommUp();
@@ -834,9 +858,22 @@ public class RemSgFSMTest {
 
 		// Make sure we don't have any more
 		assertNull(testAssociation.txPoll());
+		
+		
+		// Lets stop ASP Factory
+		localAspFactory.stop();
 
-	}
+		assertEquals(AspState.DOWN_SENT, this.getAspState(aspLocalFSM));
+		assertTrue(validateMessage(testAssociation, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN, -1, -1));
+		// also the AS is PENDING
+		assertEquals(AsState.PENDING, this.getAsState(asPeerFSM));
 
+		// The far end sends DOWN_ACK
+		message = messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN_ACK);
+		localAspFactory.read(message);
+
+	}	
+	
 	private boolean validateMessage(TestAssociation testAssociation, int msgClass, int msgType, int type, int info) {
 		M3UAMessage message = testAssociation.txPoll();
 		if (message == null) {
@@ -901,7 +938,7 @@ public class RemSgFSMTest {
 
 		@Override
 		public String getName() {
-			return null;
+			return this.name;
 		}
 
 		@Override
@@ -991,6 +1028,10 @@ public class RemSgFSMTest {
 		public void stopAnonymousAssociation() throws Exception {
 			// TODO Auto-generated method stub
 			
+		}
+		
+		protected void stop() {
+			this.started = false;
 		}
 
 	}
@@ -1107,9 +1148,9 @@ public class RemSgFSMTest {
 		}
 
 		@Override
-		public void stopAssociation(String arg0) throws Exception {
-			// TODO Auto-generated method stub
-
+		public void stopAssociation(String assocName) throws Exception {
+			Association association = this.associations.get(assocName);
+			((TestAssociation)association).stop();
 		}
 
 		@Override

@@ -891,5 +891,15 @@ public class SccpExecutorTest {
 			// TODO Auto-generated method stub
 			
 		}
+
+		@Override
+		public boolean isUseLsbForLinksetSelection() {
+			return false;
+		}
+
+		@Override
+		public void setUseLsbForLinksetSelection(boolean arg0) {
+			
+		}
 	}
 }

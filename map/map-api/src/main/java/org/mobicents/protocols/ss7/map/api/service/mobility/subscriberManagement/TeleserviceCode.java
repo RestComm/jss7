@@ -43,4 +43,6 @@ public interface TeleserviceCode {
 
 	public int getData();
 
+	public TeleserviceCodeValue getTeleserviceCodeValue();
+
 }

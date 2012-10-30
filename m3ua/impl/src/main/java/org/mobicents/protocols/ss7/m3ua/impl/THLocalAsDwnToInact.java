@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,7 +19,6 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import org.apache.log4j.Logger;
@@ -41,20 +40,20 @@ public class THLocalAsDwnToInact implements TransitionHandler {
 
 	private static final Logger logger = Logger.getLogger(THLocalAsDwnToInact.class);
 
-	private As as = null;
+	private AsImpl asImpl = null;
 	private FSM fsm;
 
-	public THLocalAsDwnToInact(As as, FSM fsm) {
-		this.as = as;
+	public THLocalAsDwnToInact(AsImpl asImpl, FSM fsm) {
+		this.asImpl = asImpl;
 		this.fsm = fsm;
 	}
 
 	public boolean process(State state) {
 		try {
 
-			if (as.getFunctionality() != Functionality.IPSP) {
+			if (asImpl.getFunctionality() != Functionality.IPSP) {
 				//Send Notify only for ASP or SGW
-				Asp remAsp = (Asp) this.fsm.getAttribute(As.ATTRIBUTE_ASP);
+				AspImpl remAsp = (AspImpl) this.fsm.getAttribute(AsImpl.ATTRIBUTE_ASP);
 
 				if (remAsp == null) {
 					logger.error(String.format("No ASP found. %s", this.fsm.toString()));
@@ -72,10 +71,10 @@ public class THLocalAsDwnToInact implements TransitionHandler {
 		return false;
 	}
 
-	private Notify createNotify(Asp remAsp) {
-		Notify msg = (Notify) this.as.getMessageFactory().createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
+	private Notify createNotify(AspImpl remAsp) {
+		Notify msg = (Notify) this.asImpl.getMessageFactory().createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
 
-		Status status = this.as.getParameterFactory().createStatus(Status.STATUS_AS_State_Change,
+		Status status = this.asImpl.getParameterFactory().createStatus(Status.STATUS_AS_State_Change,
 				Status.INFO_AS_INACTIVE);
 		msg.setStatus(status);
 
@@ -83,8 +82,8 @@ public class THLocalAsDwnToInact implements TransitionHandler {
 			msg.setASPIdentifier(remAsp.getASPIdentifier());
 		}
 
-		if (this.as.getRoutingContext() != null) {
-			msg.setRoutingContext(this.as.getRoutingContext());
+		if (this.asImpl.getRoutingContext() != null) {
+			msg.setRoutingContext(this.asImpl.getRoutingContext());
 		}
 
 		return msg;

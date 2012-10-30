@@ -29,7 +29,8 @@ import javolution.util.FastList;
 import javolution.util.FastMap;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement;
+import org.mobicents.protocols.ss7.m3ua.M3UAManagement;
+import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl;
 import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3StatusPrimitive;
@@ -56,7 +57,7 @@ public class NodalInterworkingFunction extends Task implements Layer4,Mtp3UserPa
 
 	private LinksetManager linksetManager = null;
 
-	private M3UAManagement m3UAManagement = null;
+	private M3UAManagementImpl m3UAManagement = null;
 	private Mtp3TransferPrimitiveFactory mtp3TransferPrimitiveFactory = null;
 
 	private boolean started = false;
@@ -92,7 +93,7 @@ public class NodalInterworkingFunction extends Task implements Layer4,Mtp3UserPa
 		return m3UAManagement;
 	}
 
-	public void setM3UAManagement(M3UAManagement m3UAManagement) {
+	public void setM3UAManagement(M3UAManagementImpl m3UAManagement) {
 		this.m3UAManagement = m3UAManagement;
 		this.m3UAManagement.addMtp3UserPartListener(this);
 		this.mtp3TransferPrimitiveFactory = this.m3UAManagement.getMtp3TransferPrimitiveFactory();

@@ -29,24 +29,18 @@ import java.util.Arrays;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
-import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.ForwardingData;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.InterrogationType;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.ForwardingOptions;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.ForwardingReason;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
-import org.testng.Assert.*;
-import org.testng.*;
 import org.testng.annotations.*;
 
 
 /*
  * 
  * @author cristian veliscu
+ * @author sergey vetyutnev
  * 
  */
 public class SendRoutingInformationRequestTest {
@@ -67,6 +61,10 @@ public class SendRoutingInformationRequestTest {
 	@AfterTest
 	public void tearDown() {
 	}
+
+	public byte[] getData1() {
+		return new byte[] { 48, 21, (byte) 128, 7, -111, -110, 17, 19, 50, 19, -15, (byte) 131, 1, 1, (byte) 134, 7, -111, -108, -120, 115, 0, -110, -14 };
+	}
 	
 	private byte[] getMSISDNData() {
 		return new byte[] { (byte) 128, 7, -111, -110, 17, 19, 50, 19, -15 };
@@ -78,7 +76,7 @@ public class SendRoutingInformationRequestTest {
 	
 	@Test(groups = { "functional.decode", "service.callhandling" })
 	public void testDecode() throws Exception {
-		byte[] data = { 48, 21, (byte) 128, 7, -111, -110, 17, 19, 50, 19, -15, (byte) 131, 1, 1, (byte) 134, 7, -111, -108, -120, 115, 0, -110, -14 };
+		byte[] data = getData1();
 	
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
@@ -104,7 +102,7 @@ public class SendRoutingInformationRequestTest {
 	
 	@Test(groups = { "functional.encode", "service.callhandling" })
 	public void testEncode() throws Exception {
-		byte[] data = { 48, 21, (byte) 128, 7, -111, -110, 17, 19, 50, 19, -15, (byte) 131, 1, 1, (byte) 134, 7, -111, -108, -120, 115, 0, -110, -14 };
+		byte[] data = getData1();
 		
 		InterrogationType type = InterrogationType.forwarding;
 		ISDNAddressString msisdn = new ISDNAddressStringImpl(AddressNature.international_number, 

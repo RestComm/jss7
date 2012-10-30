@@ -2783,7 +2783,7 @@ public class MAPFunctionalTest extends SccpHarness {
 
 				try {
 					d.addSendRoutingInfoForSMResponse(sendRoutingInfoForSMInd.getInvokeId(), imsi, locationInfoWithLMSI,
-							MAPExtensionContainerTest.GetTestExtensionContainer());
+							MAPExtensionContainerTest.GetTestExtensionContainer(), null);
 					d.addInformServiceCentreRequest(storedMSISDN, mwStatus, MAPExtensionContainerTest.GetTestExtensionContainer(),
 							absentSubscriberDiagnosticSM, additionalAbsentSubscriberDiagnosticSM);
 				} catch (MAPException e) {

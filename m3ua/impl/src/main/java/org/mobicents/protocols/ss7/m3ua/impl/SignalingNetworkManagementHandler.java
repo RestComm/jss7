@@ -1,3 +1,24 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import org.apache.log4j.Level;
@@ -30,33 +51,33 @@ public class SignalingNetworkManagementHandler extends MessageHandler {
 
 	private static final Logger logger = Logger.getLogger(SignalingNetworkManagementHandler.class);
 
-	public SignalingNetworkManagementHandler(AspFactory aspFactory) {
-		super(aspFactory);
+	public SignalingNetworkManagementHandler(AspFactoryImpl aspFactoryImpl) {
+		super(aspFactoryImpl);
 	}
 
 	public void handleDestinationUnavailable(DestinationUnavailable duna) {
 
 		RoutingContext rcObj = duna.getRoutingContexts();
 
-		if (aspFactory.getFunctionality() == Functionality.AS) {
+		if (aspFactoryImpl.getFunctionality() == Functionality.AS) {
 
 			if (rcObj == null) {
-				Asp asp = this.getAspForNullRc();
-				if (asp == null) {
-					ErrorCode errorCodeObj = this.aspFactory.parameterFactory
+				AspImpl aspImpl = this.getAspForNullRc();
+				if (aspImpl == null) {
+					ErrorCode errorCodeObj = this.aspFactoryImpl.parameterFactory
 							.createErrorCode(ErrorCode.Invalid_Routing_Context);
 					sendError(rcObj, errorCodeObj);
 					logger.error(String
 							.format("Rx : DUNA=%s with null RC for Aspfactory=%s. But no ASP configured for null RC. Sending back Error",
-									duna, this.aspFactory.getName()));
+									duna, this.aspFactoryImpl.getName()));
 					return;
 				}
 
-				FSM fsm = asp.getLocalFSM();
+				FSM fsm = aspImpl.getLocalFSM();
 
 				if (fsm == null) {
 					logger.error(String.format("Rx : DUNA=%s for ASP=%s. But Local FSM is null.", duna,
-							this.aspFactory.getName()));
+							this.aspFactoryImpl.getName()));
 					return;
 				}
 
@@ -68,7 +89,7 @@ public class SignalingNetworkManagementHandler extends MessageHandler {
 
 					for (int i = 0; i < affectedPcs.length; i++) {
 						Mtp3PausePrimitive mtpPausePrimi = new Mtp3PausePrimitive(affectedPcs[i]);
-						asp.getAs().getM3UAManagement().sendPauseMessageToLocalUser(mtpPausePrimi);
+						((AsImpl)aspImpl.getAs()).getM3UAManagement().sendPauseMessageToLocalUser(mtpPausePrimi);
 					}
 				} else {
 					logger.error(String.format("Rx : DUNA for null RoutingContext. But ASP State=%s. Message=%s",
@@ -78,25 +99,25 @@ public class SignalingNetworkManagementHandler extends MessageHandler {
 			} else {
 				long[] rcs = rcObj.getRoutingContexts();
 				for (int count = 0; count < rcs.length; count++) {
-					Asp asp = this.aspFactory.getAsp(rcs[count]);
-					if (asp == null) {
+					AspImpl aspImpl = this.aspFactoryImpl.getAsp(rcs[count]);
+					if (aspImpl == null) {
 						// this is error. Send back error
-						RoutingContext rcObjTemp = this.aspFactory.parameterFactory
+						RoutingContext rcObjTemp = this.aspFactoryImpl.parameterFactory
 								.createRoutingContext(new long[] { rcs[count] });
-						ErrorCode errorCodeObj = this.aspFactory.parameterFactory
+						ErrorCode errorCodeObj = this.aspFactoryImpl.parameterFactory
 								.createErrorCode(ErrorCode.Invalid_Routing_Context);
 						sendError(rcObjTemp, errorCodeObj);
 						logger.error(String
 								.format("Rx : DUNA=%s with RC=%d for Aspfactory=%s. But no ASP configured for this RC. Sending back Error",
-										duna, rcs[count], this.aspFactory.getName()));
+										duna, rcs[count], this.aspFactoryImpl.getName()));
 						continue;
 					}// if (asp == null)
 
-					FSM fsm = asp.getLocalFSM();
+					FSM fsm = aspImpl.getLocalFSM();
 
 					if (fsm == null) {
 						logger.error(String.format("Rx : DUNA=%s for ASP=%s. But Local FSM is null.", duna,
-								this.aspFactory.getName()));
+								this.aspFactoryImpl.getName()));
 						return;
 					}
 
@@ -108,7 +129,7 @@ public class SignalingNetworkManagementHandler extends MessageHandler {
 
 						for (int i = 0; i < affectedPcs.length; i++) {
 							Mtp3PausePrimitive mtpPausePrimi = new Mtp3PausePrimitive(affectedPcs[i]);
-							asp.getAs().getM3UAManagement().sendPauseMessageToLocalUser(mtpPausePrimi);
+							((AsImpl)aspImpl.getAs()).getM3UAManagement().sendPauseMessageToLocalUser(mtpPausePrimi);
 						}
 					} else {
 						logger.error(String.format("Rx : DUNA for RoutingContext=%d. But ASP State=%s. Message=%s",
@@ -121,7 +142,7 @@ public class SignalingNetworkManagementHandler extends MessageHandler {
 			// TODO : Should we silently drop DUNA?
 
 			// ASPACTIVE_ACK is unexpected in this state
-			ErrorCode errorCodeObj = this.aspFactory.parameterFactory.createErrorCode(ErrorCode.Unexpected_Message);
+			ErrorCode errorCodeObj = this.aspFactoryImpl.parameterFactory.createErrorCode(ErrorCode.Unexpected_Message);
 			sendError(rcObj, errorCodeObj);
 		}
 	}
@@ -129,25 +150,25 @@ public class SignalingNetworkManagementHandler extends MessageHandler {
 	public void handleDestinationAvailable(DestinationAvailable dava) {
 		RoutingContext rcObj = dava.getRoutingContexts();
 
-		if (aspFactory.getFunctionality() == Functionality.AS) {
+		if (aspFactoryImpl.getFunctionality() == Functionality.AS) {
 
 			if (rcObj == null) {
-				Asp asp = this.getAspForNullRc();
-				if (asp == null) {
-					ErrorCode errorCodeObj = this.aspFactory.parameterFactory
+				AspImpl aspImpl = this.getAspForNullRc();
+				if (aspImpl == null) {
+					ErrorCode errorCodeObj = this.aspFactoryImpl.parameterFactory
 							.createErrorCode(ErrorCode.Invalid_Routing_Context);
 					sendError(rcObj, errorCodeObj);
 					logger.error(String
 							.format("Rx : DAVA=%s with null RC for Aspfactory=%s. But no ASP configured for null RC. Sending back Error",
-									dava, this.aspFactory.getName()));
+									dava, this.aspFactoryImpl.getName()));
 					return;
 				}
 
-				FSM fsm = asp.getLocalFSM();
+				FSM fsm = aspImpl.getLocalFSM();
 
 				if (fsm == null) {
 					logger.error(String.format("Rx : DAVA=%s for ASP=%s. But Local FSM is null.", dava,
-							this.aspFactory.getName()));
+							this.aspFactoryImpl.getName()));
 					return;
 				}
 
@@ -159,7 +180,7 @@ public class SignalingNetworkManagementHandler extends MessageHandler {
 
 					for (int i = 0; i < affectedPcs.length; i++) {
 						Mtp3ResumePrimitive mtpResumePrimi = new Mtp3ResumePrimitive(affectedPcs[i]);
-						asp.getAs().getM3UAManagement().sendResumeMessageToLocalUser(mtpResumePrimi);
+						((AsImpl)aspImpl.getAs()).getM3UAManagement().sendResumeMessageToLocalUser(mtpResumePrimi);
 					}
 				} else {
 					logger.error(String.format("Rx : DAVA for null RoutingContext. But ASP State=%s. Message=%s",
@@ -169,25 +190,25 @@ public class SignalingNetworkManagementHandler extends MessageHandler {
 			} else {
 				long[] rcs = rcObj.getRoutingContexts();
 				for (int count = 0; count < rcs.length; count++) {
-					Asp asp = this.aspFactory.getAsp(rcs[count]);
-					if (asp == null) {
+					AspImpl aspImpl = this.aspFactoryImpl.getAsp(rcs[count]);
+					if (aspImpl == null) {
 						// this is error. Send back error
-						RoutingContext rcObjTemp = this.aspFactory.parameterFactory
+						RoutingContext rcObjTemp = this.aspFactoryImpl.parameterFactory
 								.createRoutingContext(new long[] { rcs[count] });
-						ErrorCode errorCodeObj = this.aspFactory.parameterFactory
+						ErrorCode errorCodeObj = this.aspFactoryImpl.parameterFactory
 								.createErrorCode(ErrorCode.Invalid_Routing_Context);
 						sendError(rcObjTemp, errorCodeObj);
 						logger.error(String
 								.format("Rx : DAVA=%s with RC=%d for Aspfactory=%s. But no ASP configured for this RC. Sending back Error",
-										dava, rcs[count], this.aspFactory.getName()));
+										dava, rcs[count], this.aspFactoryImpl.getName()));
 						continue;
 					}// if (asp == null)
 
-					FSM fsm = asp.getLocalFSM();
+					FSM fsm = aspImpl.getLocalFSM();
 
 					if (fsm == null) {
 						logger.error(String.format("Rx : DAVA=%s for ASP=%s. But Local FSM is null", dava,
-								this.aspFactory.getName()));
+								this.aspFactoryImpl.getName()));
 						return;
 					}
 
@@ -199,7 +220,7 @@ public class SignalingNetworkManagementHandler extends MessageHandler {
 
 						for (int i = 0; i < affectedPcs.length; i++) {
 							Mtp3PausePrimitive mtpPausePrimi = new Mtp3PausePrimitive(affectedPcs[i]);
-							asp.getAs().getM3UAManagement().sendPauseMessageToLocalUser(mtpPausePrimi);
+							((AsImpl)aspImpl.getAs()).getM3UAManagement().sendPauseMessageToLocalUser(mtpPausePrimi);
 						}
 					} else {
 						logger.error(String.format("Rx : DAVA for RoutingContext=%d. But ASP State=%s. Message=%s",
@@ -212,44 +233,44 @@ public class SignalingNetworkManagementHandler extends MessageHandler {
 			// TODO : Should we silently drop DUNA?
 
 			// ASPACTIVE_ACK is unexpected in this state
-			ErrorCode errorCodeObj = this.aspFactory.parameterFactory.createErrorCode(ErrorCode.Unexpected_Message);
+			ErrorCode errorCodeObj = this.aspFactoryImpl.parameterFactory.createErrorCode(ErrorCode.Unexpected_Message);
 			sendError(rcObj, errorCodeObj);
 		}
 	}
 
 	public void handleDestinationStateAudit(DestinationStateAudit daud) {
 		RoutingContext rcObj = daud.getRoutingContexts();
-		if (aspFactory.getFunctionality() == Functionality.SGW) {
+		if (aspFactoryImpl.getFunctionality() == Functionality.SGW) {
 			logger.warn(String.format("Received DAUD=%s. Handling of DAUD message is not yet implemented", daud));
 		} else {
 			// TODO : Should we silently drop DUNA?
 
 			// ASPACTIVE_ACK is unexpected in this state
-			ErrorCode errorCodeObj = this.aspFactory.parameterFactory.createErrorCode(ErrorCode.Unexpected_Message);
+			ErrorCode errorCodeObj = this.aspFactoryImpl.parameterFactory.createErrorCode(ErrorCode.Unexpected_Message);
 			sendError(rcObj, errorCodeObj);
 		}
 	}
 
 	public void handleSignallingCongestion(SignallingCongestion scon) {
 		RoutingContext rcObj = scon.getRoutingContexts();
-		if (aspFactory.getFunctionality() == Functionality.AS || aspFactory.getFunctionality() == Functionality.IPSP) {
+		if (aspFactoryImpl.getFunctionality() == Functionality.AS || aspFactoryImpl.getFunctionality() == Functionality.IPSP) {
 			if (rcObj == null) {
-				Asp asp = this.getAspForNullRc();
-				if (asp == null) {
-					ErrorCode errorCodeObj = this.aspFactory.parameterFactory
+				AspImpl aspImpl = this.getAspForNullRc();
+				if (aspImpl == null) {
+					ErrorCode errorCodeObj = this.aspFactoryImpl.parameterFactory
 							.createErrorCode(ErrorCode.Invalid_Routing_Context);
 					sendError(rcObj, errorCodeObj);
 					logger.error(String
 							.format("Rx : SCON=%s with null RC for Aspfactory=%s. But no ASP configured for null RC. Sending back Error",
-									scon, this.aspFactory.getName()));
+									scon, this.aspFactoryImpl.getName()));
 					return;
 				}
 
-				FSM fsm = asp.getLocalFSM();
+				FSM fsm = aspImpl.getLocalFSM();
 
 				if (fsm == null) {
 					logger.error(String.format("Rx : SCON=%s for ASP=%s. But Local FSM is null.", scon,
-							this.aspFactory.getName()));
+							this.aspFactoryImpl.getName()));
 					return;
 				}
 
@@ -271,7 +292,7 @@ public class SignalingNetworkManagementHandler extends MessageHandler {
 
 						Mtp3StatusPrimitive mtpPausePrimi = new Mtp3StatusPrimitive(affectedPcs[i],
 								Mtp3StatusCause.SignallingNetworkCongested, cong);
-						asp.getAs().getM3UAManagement().sendStatusMessageToLocalUser(mtpPausePrimi);
+						((AsImpl)aspImpl.getAs()).getM3UAManagement().sendStatusMessageToLocalUser(mtpPausePrimi);
 					}
 				} else {
 					logger.error(String.format("Rx : SCON for null RoutingContext. But ASP State=%s. Message=%s",
@@ -280,25 +301,25 @@ public class SignalingNetworkManagementHandler extends MessageHandler {
 			} else {
 				long[] rcs = rcObj.getRoutingContexts();
 				for (int count = 0; count < rcs.length; count++) {
-					Asp asp = this.aspFactory.getAsp(rcs[count]);
-					if (asp == null) {
+					AspImpl aspImpl = this.aspFactoryImpl.getAsp(rcs[count]);
+					if (aspImpl == null) {
 						// this is error. Send back error
-						RoutingContext rcObjTemp = this.aspFactory.parameterFactory
+						RoutingContext rcObjTemp = this.aspFactoryImpl.parameterFactory
 								.createRoutingContext(new long[] { rcs[count] });
-						ErrorCode errorCodeObj = this.aspFactory.parameterFactory
+						ErrorCode errorCodeObj = this.aspFactoryImpl.parameterFactory
 								.createErrorCode(ErrorCode.Invalid_Routing_Context);
 						sendError(rcObjTemp, errorCodeObj);
 						logger.error(String
 								.format("Rx : SCON=%s with RC=%d for Aspfactory=%s. But no ASP configured for this RC. Sending back Error",
-										scon, rcs[count], this.aspFactory.getName()));
+										scon, rcs[count], this.aspFactoryImpl.getName()));
 						continue;
 					}// if (asp == null)
 
-					FSM fsm = asp.getLocalFSM();
+					FSM fsm = aspImpl.getLocalFSM();
 
 					if (fsm == null) {
 						logger.error(String.format("Rx : SCON=%s for ASP=%s. But Local FSM is null", scon,
-								this.aspFactory.getName()));
+								this.aspFactoryImpl.getName()));
 						return;
 					}
 
@@ -320,7 +341,7 @@ public class SignalingNetworkManagementHandler extends MessageHandler {
 
 							Mtp3StatusPrimitive mtpPausePrimi = new Mtp3StatusPrimitive(affectedPcs[i],
 									Mtp3StatusCause.SignallingNetworkCongested, cong);
-							asp.getAs().getM3UAManagement().sendStatusMessageToLocalUser(mtpPausePrimi);
+							((AsImpl)aspImpl.getAs()).getM3UAManagement().sendStatusMessageToLocalUser(mtpPausePrimi);
 						}
 					} else {
 						logger.error(String.format("Rx : DAVA for RoutingContext=%d. But ASP State=%s. Message=%s",
@@ -333,7 +354,7 @@ public class SignalingNetworkManagementHandler extends MessageHandler {
 			// TODO : Should we silently drop DUNA?
 
 			// SCON is unexpected in this state
-			ErrorCode errorCodeObj = this.aspFactory.parameterFactory.createErrorCode(ErrorCode.Unexpected_Message);
+			ErrorCode errorCodeObj = this.aspFactoryImpl.parameterFactory.createErrorCode(ErrorCode.Unexpected_Message);
 			sendError(rcObj, errorCodeObj);
 		}
 	}
@@ -341,25 +362,25 @@ public class SignalingNetworkManagementHandler extends MessageHandler {
 	public void handleDestinationUPUnavailable(DestinationUPUnavailable dupu) {
 		RoutingContext rcObj = dupu.getRoutingContext();
 
-		if (aspFactory.getFunctionality() == Functionality.AS) {
+		if (aspFactoryImpl.getFunctionality() == Functionality.AS) {
 
 			if (rcObj == null) {
-				Asp asp = this.getAspForNullRc();
-				if (asp == null) {
-					ErrorCode errorCodeObj = this.aspFactory.parameterFactory
+				AspImpl aspImpl = this.getAspForNullRc();
+				if (aspImpl == null) {
+					ErrorCode errorCodeObj = this.aspFactoryImpl.parameterFactory
 							.createErrorCode(ErrorCode.Invalid_Routing_Context);
 					sendError(rcObj, errorCodeObj);
 					logger.error(String
 							.format("Rx : DUPU=%s with null RC for Aspfactory=%s. But no ASP configured for null RC. Sending back Error",
-									dupu, this.aspFactory.getName()));
+									dupu, this.aspFactoryImpl.getName()));
 					return;
 				}
 
-				FSM fsm = asp.getLocalFSM();
+				FSM fsm = aspImpl.getLocalFSM();
 
 				if (fsm == null) {
 					logger.error(String.format("Rx : DUPU=%s for ASP=%s. But Local FSM is null.", dupu,
-							this.aspFactory.getName()));
+							this.aspFactoryImpl.getName()));
 					return;
 				}
 
@@ -376,7 +397,7 @@ public class SignalingNetworkManagementHandler extends MessageHandler {
 						cause = userCause.getCause();
 						Mtp3StatusPrimitive mtpPausePrimi = new Mtp3StatusPrimitive(affectedPcs[i],
 								Mtp3StatusCause.getMtp3StatusCause(cause), 0);
-						asp.getAs().getM3UAManagement().sendStatusMessageToLocalUser(mtpPausePrimi);
+						((AsImpl)aspImpl.getAs()).getM3UAManagement().sendStatusMessageToLocalUser(mtpPausePrimi);
 					}
 				} else {
 					logger.error(String.format("Rx : DUPU for null RoutingContext. But ASP State=%s. Message=%s",
@@ -386,25 +407,25 @@ public class SignalingNetworkManagementHandler extends MessageHandler {
 			} else {
 				long[] rcs = rcObj.getRoutingContexts();
 				for (int count = 0; count < rcs.length; count++) {
-					Asp asp = this.aspFactory.getAsp(rcs[count]);
-					if (asp == null) {
+					AspImpl aspImpl = this.aspFactoryImpl.getAsp(rcs[count]);
+					if (aspImpl == null) {
 						// this is error. Send back error
-						RoutingContext rcObjTemp = this.aspFactory.parameterFactory
+						RoutingContext rcObjTemp = this.aspFactoryImpl.parameterFactory
 								.createRoutingContext(new long[] { rcs[count] });
-						ErrorCode errorCodeObj = this.aspFactory.parameterFactory
+						ErrorCode errorCodeObj = this.aspFactoryImpl.parameterFactory
 								.createErrorCode(ErrorCode.Invalid_Routing_Context);
 						sendError(rcObjTemp, errorCodeObj);
 						logger.error(String
 								.format("Rx : DUPU=%s with RC=%d for Aspfactory=%s. But no ASP configured for this RC. Sending back Error",
-										dupu, rcs[count], this.aspFactory.getName()));
+										dupu, rcs[count], this.aspFactoryImpl.getName()));
 						continue;
 					}// if (asp == null)
 
-					FSM fsm = asp.getLocalFSM();
+					FSM fsm = aspImpl.getLocalFSM();
 
 					if (fsm == null) {
 						logger.error(String.format("Rx : DUPU=%s for ASP=%s. But Local FSM is null", dupu,
-								this.aspFactory.getName()));
+								this.aspFactoryImpl.getName()));
 						return;
 					}
 
@@ -420,7 +441,7 @@ public class SignalingNetworkManagementHandler extends MessageHandler {
 							cause = userCause.getCause();
 							Mtp3StatusPrimitive mtpPausePrimi = new Mtp3StatusPrimitive(affectedPcs[i],
 									Mtp3StatusCause.getMtp3StatusCause(cause), 0);
-							asp.getAs().getM3UAManagement().sendStatusMessageToLocalUser(mtpPausePrimi);
+							((AsImpl)aspImpl.getAs()).getM3UAManagement().sendStatusMessageToLocalUser(mtpPausePrimi);
 						}
 					} else {
 						logger.error(String.format("Rx : DUPU for RoutingContext=%d. But ASP State=%s. Message=%s",
@@ -433,14 +454,14 @@ public class SignalingNetworkManagementHandler extends MessageHandler {
 			// TODO : Should we silently drop DUNA?
 
 			// ASPACTIVE_ACK is unexpected in this state
-			ErrorCode errorCodeObj = this.aspFactory.parameterFactory.createErrorCode(ErrorCode.Unexpected_Message);
+			ErrorCode errorCodeObj = this.aspFactoryImpl.parameterFactory.createErrorCode(ErrorCode.Unexpected_Message);
 			sendError(rcObj, errorCodeObj);
 		}
 	}
 
 	public void handleDestinationRestricted(DestinationRestricted drst) {
 
-		if (aspFactory.getFunctionality() == Functionality.AS) {
+		if (aspFactoryImpl.getFunctionality() == Functionality.AS) {
 			if (logger.isEnabledFor(Level.WARN)) {
 				logger.warn(String.format("Received DRST message for AS side. Not implemented yet", drst));
 			}
