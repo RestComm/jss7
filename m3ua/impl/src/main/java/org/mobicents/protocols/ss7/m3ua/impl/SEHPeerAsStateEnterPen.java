@@ -27,41 +27,46 @@ import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.m3ua.Asp;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSMState;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.UnknownTransitionException;
 
 /**
- * 
  * @author amit bhayani
  * 
  */
-public class THPeerAsActToPen implements TransitionHandler {
+public class SEHPeerAsStateEnterPen extends SEHAsStateEnterPen {
 
-	private static final Logger logger = Logger.getLogger(THPeerAsActToPen.class);
+	private static final Logger logger = Logger.getLogger(SEHPeerAsStateEnterPen.class);
 
-	private AsImpl asImpl = null;
-	private FSM fsm;
-
-	public THPeerAsActToPen(AsImpl asImpl, FSM fsm) {
-		this.asImpl = asImpl;
-		this.fsm = fsm;
+	/**
+	 * @param asImpl
+	 * @param fsm
+	 */
+	public SEHPeerAsStateEnterPen(AsImpl asImpl, FSM fsm) {
+		super(asImpl, fsm);
 	}
 
-	public boolean process(FSMState state) {
-		AspImpl causeAsp = (AspImpl) this.fsm.getAttribute(AsImpl.ATTRIBUTE_ASP);
+	@Override
+	public void onEvent(FSMState state) {
+		super.onEvent(state);
 
-		// check if there is atleast one other ASP in ACTIVE state. If
-		// yes this AS remains in ACTIVE state else goes in PENDING state.
-		for (FastList.Node<Asp> n = this.asImpl.appServerProcs.head(), end = this.asImpl.appServerProcs.tail(); (n = n
-				.getNext()) != end;) {
-			AspImpl aspImpl = (AspImpl)n.getValue();
+		// If there is even one ASP in INACTIVE state for this AS, ACTIVATE it
+		for (FastList.Node<Asp> n = asImpl.appServerProcs.head(), end = asImpl.appServerProcs.tail(); (n = n.getNext()) != end;) {
+			AspImpl aspImpl = (AspImpl) n.getValue();
+
 			FSM aspLocalFSM = aspImpl.getLocalFSM();
-			AspState aspState = AspState.getState(aspLocalFSM.getState().getName());
 
-			if (aspImpl != causeAsp && aspState == AspState.ACTIVE) {
-				return false;
+			if (AspState.getState(aspLocalFSM.getState().getName()) == AspState.INACTIVE) {
+				AspFactoryImpl aspFactoryImpl = aspImpl.getAspFactory();
+				aspFactoryImpl.sendAspActive(this.asImpl);
+
+				// Transition the state of ASP to ACTIVE_SENT
+				try {
+					aspLocalFSM.signal(TransitionState.ASP_ACTIVE_SENT);
+				} catch (UnknownTransitionException e) {
+					logger.error(e.getMessage(), e);
+				}
 			}
 		}
-		return true;
 	}
 
 }

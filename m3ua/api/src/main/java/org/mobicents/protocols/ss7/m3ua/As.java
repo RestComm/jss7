@@ -54,5 +54,7 @@ public interface As {
 	public int getMinAspActiveForLb();
 
 	public List<Asp> getAspList();
+	
+	public State getState();
 
 }

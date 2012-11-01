@@ -23,7 +23,7 @@ package org.mobicents.protocols.ss7.m3ua.impl;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSMState;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.UnknownTransitionException;
 
@@ -47,7 +47,7 @@ public class THPeerAsActToActNtfyAltAspAct implements TransitionHandler {
 		this.fsm = fsm;
 	}
 
-	public boolean process(State state) {
+	public boolean process(FSMState state) {
 		AspImpl causeAsp = (AspImpl) this.fsm.getAttribute(AsImpl.ATTRIBUTE_ASP);
 
 		try {

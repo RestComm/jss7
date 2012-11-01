@@ -23,7 +23,7 @@
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSMState;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
 
 /**
@@ -46,7 +46,7 @@ public class THPeerAsPenToInAct implements TransitionHandler {
 		this.asImpl = asImpl;
 	}
 
-	public boolean process(State state) {
+	public boolean process(FSMState state) {
 		this.asImpl.clearPendingQueue();
 		return true;
 	}

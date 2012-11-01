@@ -35,4 +35,6 @@ public interface Asp {
 	public As getAs();
 	
 	public ASPIdentifier getASPIdentifier();
+	
+	public State getState();
 }

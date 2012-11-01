@@ -39,6 +39,7 @@ import org.mobicents.protocols.ss7.m3ua.Asp;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.IPSPType;
+import org.mobicents.protocols.ss7.m3ua.State;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAOAMMessages;
@@ -116,6 +117,8 @@ public class AsImpl implements XMLSerializable, As {
 	private int aspSlsMask = 0x07;
 	private int aspSlsShiftPlaces = 0x00;
 
+	protected State state = AsState.DOWN;
+
 	public AsImpl() {
 
 	}
@@ -184,12 +187,12 @@ public class AsImpl implements XMLSerializable, As {
 	private void initPeerFSM() {
 		this.peerFSM = new FSM(this.name + "_PEER");
 		// Define states
-		this.peerFSM.createState(AsState.DOWN.toString());
-		this.peerFSM.createState(AsState.ACTIVE.toString());
-		this.peerFSM.createState(AsState.INACTIVE.toString());
+		this.peerFSM.createState(AsState.DOWN.toString()).setOnEnter(new SEHPeerAsStateEnterDown(this));
+		this.peerFSM.createState(AsState.ACTIVE.toString()).setOnEnter(new SEHPeerAsStateEnterActive(this));
+		this.peerFSM.createState(AsState.INACTIVE.toString()).setOnEnter(new SEHPeerAsStateEnterInactive(this));
 		this.peerFSM.createState(AsState.PENDING.toString())
 				.setOnTimeOut(new AsStatePenTimeout(this, this.peerFSM), 2000)
-				.setOnEnter(new AsStateEnterPen(this, this.peerFSM));
+				.setOnEnter(new SEHPeerAsStateEnterPen(this, this.peerFSM));
 
 		this.peerFSM.setStart(AsState.DOWN.toString());
 		this.peerFSM.setEnd(AsState.DOWN.toString());
@@ -264,11 +267,12 @@ public class AsImpl implements XMLSerializable, As {
 		this.localFSM = new FSM(this.name + "_LOCAL");
 
 		// Define states
-		this.localFSM.createState(AsState.DOWN.toString());
-		this.localFSM.createState(AsState.ACTIVE.toString());
-		this.localFSM.createState(AsState.INACTIVE.toString());
-		this.localFSM.createState(AsState.PENDING.toString()).setOnTimeOut(
-				new RemAsStatePenTimeout(this, this.localFSM), 2000);
+		this.localFSM.createState(AsState.DOWN.toString()).setOnEnter(new SEHLocalAsStateEnterDown(this));
+		this.localFSM.createState(AsState.ACTIVE.toString()).setOnEnter(new SEHLocalAsStateEnterActive(this));
+		this.localFSM.createState(AsState.INACTIVE.toString()).setOnEnter(new SEHLocalAsStateEnterInactive(this));
+		this.localFSM.createState(AsState.PENDING.toString())
+				.setOnTimeOut(new RemAsStatePenTimeout(this, this.localFSM), 2000)
+				.setOnEnter(new SEHLocalAsStateEnterPen(this, this.localFSM));
 
 		this.localFSM.setStart(AsState.DOWN.toString());
 		this.localFSM.setEnd(AsState.DOWN.toString());
@@ -335,6 +339,10 @@ public class AsImpl implements XMLSerializable, As {
 	 */
 	public String getName() {
 		return this.name;
+	}
+
+	public State getState() {
+		return this.state;
 	}
 
 	protected void setM3UAManagement(M3UAManagementImpl m3uaManagement) {
@@ -595,7 +603,7 @@ public class AsImpl implements XMLSerializable, As {
 		switch (AsState.getState(fsm.getState().getName())) {
 		case ACTIVE:
 			boolean aspFound = false;
-			
+
 			// TODO : Algo to select correct ASP
 
 			int aspIndex = (sls & this.aspSlsMask);
@@ -607,9 +615,9 @@ public class AsImpl implements XMLSerializable, As {
 				if (aspNumber >= this.appServerProcs.size()) {
 					aspNumber = 0;
 				}
-				
-				AspImpl aspTemp = (AspImpl)this.appServerProcs.get(aspNumber++);
-				
+
+				AspImpl aspTemp = (AspImpl) this.appServerProcs.get(aspNumber++);
+
 				FSM aspFsm = null;
 
 				if (isASPLocalFsm) {
@@ -623,7 +631,7 @@ public class AsImpl implements XMLSerializable, As {
 					aspFound = true;
 					break;
 				}
-			}//for
+			}// for
 
 			if (!aspFound) {
 				// This should never happen.

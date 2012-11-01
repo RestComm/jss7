@@ -113,7 +113,7 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 
 	private M3UARouteManagement routeManagement = null;
 
-	private FastList<M3UAManagementEventListener> managementEventListeners = new FastList<M3UAManagementEventListener>();
+	protected FastList<M3UAManagementEventListener> managementEventListeners = new FastList<M3UAManagementEventListener>();
 
 	/**
 	 * Maximum sequence number received from SCCTP user. If SCCTP users sends
@@ -646,6 +646,13 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 
 		aspFactoryImpl.start();
 		this.store();
+
+		for (FastList.Node<M3UAManagementEventListener> n = this.managementEventListeners.head(), end = this.managementEventListeners
+				.tail(); (n = n.getNext()) != end;) {
+			M3UAManagementEventListener m3uaManagementEventListener = n.getValue();
+			m3uaManagementEventListener.onAspFactoryStarted(aspFactoryImpl);
+
+		}
 	}
 
 	/**
@@ -675,6 +682,16 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 
 		if (needStore)
 			this.store();
+
+		// TODO : Should calling
+		// m3uaManagementEventListener.onAspFactoryStopped() be before actual
+		// stop of aspFactory? The problem is ASP_DOWN and AS_INACTIV callbacks
+		// are before AspFactoryStopped. Is it ok?
+		for (FastList.Node<M3UAManagementEventListener> n = this.managementEventListeners.head(), end = this.managementEventListeners
+				.tail(); (n = n.getNext()) != end;) {
+			M3UAManagementEventListener m3uaManagementEventListener = n.getValue();
+			m3uaManagementEventListener.onAspFactoryStopped(aspFactoryImpl);
+		}
 	}
 
 	public void addRoute(int dpc, int opc, int si, String asName) throws Exception {

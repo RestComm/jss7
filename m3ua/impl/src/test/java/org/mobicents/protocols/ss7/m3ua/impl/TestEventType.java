@@ -19,41 +19,13 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.mobicents.protocols.ss7.m3ua.impl;
-
-import org.mobicents.protocols.ss7.m3ua.State;
 
 /**
  * 
  * @author amit bhayani
  * 
  */
-public enum AsState implements State {
-	DOWN("DOWN"), INACTIVE("INACTIVE"), ACTIVE("ACTIVE"), PENDING("PENDING");
-
-	private String name;
-
-	private AsState(String name) {
-		this.name = name;
-	}
-
-	public String getName() {
-		return this.name;
-	}
-
-	public static AsState getState(String name) {
-		if (name.equals(DOWN.getName())) {
-			return DOWN;
-		} else if (name.equals(INACTIVE.getName())) {
-			return INACTIVE;
-		} else if (name.equals(ACTIVE.getName())) {
-			return ACTIVE;
-		} else if (name.equals(PENDING.getName())) {
-			return PENDING;
-		}
-
-		return null;
-	}
-
+public enum TestEventType {
+	AsCreated, AsDestroyed, AspFactoryCreated, AspFactoryDestroyed, AspAssignedToAs, AspUnassignedFromAs, RemoveAllResources, AspFactoryStarted, AspFactoryStopped, AspActive, AspInactive, AspDown, AsActive, AsPending, AsInactive, AsDown;
 }

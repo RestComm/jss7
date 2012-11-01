@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -30,7 +30,7 @@ import javolution.util.FastList;
  * @author kulikov
  * 
  */
-public class State {
+public class FSMState {
 	private String name;
 	private FSM fsm;
 
@@ -45,27 +45,27 @@ public class State {
 	// time is to be maintained
 	private long oldActivated;
 
-	private StateEventHandler enterEventHandler;
-	private StateEventHandler exitEventHandler;
-	private StateEventHandler timeOutEventHandler;
+	private FSMStateEventHandler enterEventHandler;
+	private FSMStateEventHandler exitEventHandler;
+	private FSMStateEventHandler timeOutEventHandler;
 
-	protected State(FSM fsm, String name) {
+	protected FSMState(FSM fsm, String name) {
 		this.name = name;
 		this.fsm = fsm;
 		this.timeout = 0;
 	}
 
-	public State setOnEnter(StateEventHandler handler) {
+	public FSMState setOnEnter(FSMStateEventHandler handler) {
 		this.enterEventHandler = handler;
 		return this;
 	}
 
-	public State setOnExit(StateEventHandler handler) {
+	public FSMState setOnExit(FSMStateEventHandler handler) {
 		this.exitEventHandler = handler;
 		return this;
 	}
 
-	public State setOnTimeOut(StateEventHandler handler, long timeout) {
+	public FSMState setOnTimeOut(FSMStateEventHandler handler, long timeout) {
 		this.timeOutEventHandler = handler;
 		this.timeout = timeout;
 		return this;
@@ -123,7 +123,7 @@ public class State {
 	 * @param name
 	 *            the name of the transition.
 	 */
-	public State signal(String namem) throws UnknownTransitionException {
+	public FSMState signal(String namem) throws UnknownTransitionException {
 		Transition t = find(namem);
 		if (t != null) {
 			return t.process(this);

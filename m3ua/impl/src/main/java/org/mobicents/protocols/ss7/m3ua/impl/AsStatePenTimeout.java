@@ -29,18 +29,18 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
 import org.mobicents.protocols.ss7.m3ua.Asp;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.StateEventHandler;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSMState;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSMStateEventHandler;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.UnknownTransitionException;
 
 /**
- * {@link AsStatePenTimeout#onEvent(State)} is called when the pending timer
+ * {@link AsStatePenTimeout#onEvent(FSMState)} is called when the pending timer
  * T(r) expires.
  * 
  * @author amit bhayani
  * 
  */
-public class AsStatePenTimeout implements StateEventHandler {
+public class AsStatePenTimeout implements FSMStateEventHandler {
 
 	private AsImpl asImpl;
 	private FSM fsm;
@@ -68,7 +68,7 @@ public class AsStatePenTimeout implements StateEventHandler {
 	 * one ASP is in ASP-INACTIVE; otherwise, it will move to AS-DOWN state.
 	 * </p>
 	 */
-	public void onEvent(State state) {
+	public void onEvent(FSMState state) {
 
 		if (logger.isEnabledFor(Priority.WARN)) {
 			logger.warn(String.format("PENDING timedout for As=%s", this.asImpl.getName()));

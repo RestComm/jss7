@@ -26,7 +26,7 @@ import javolution.util.FastList;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.m3ua.Asp;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSMState;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.UnknownTransitionException;
 
@@ -49,7 +49,7 @@ public class THPeerAsActToActNtfyInsAsp implements TransitionHandler {
 		this.fsm = fsm;
 	}
 
-	public boolean process(State state) {
+	public boolean process(FSMState state) {
 
 		// Iterate through all the ASP for this AS and activate if they are
 		// inactive

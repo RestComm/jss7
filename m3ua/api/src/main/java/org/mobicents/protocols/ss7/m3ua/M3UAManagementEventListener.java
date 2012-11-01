@@ -40,4 +40,22 @@ public interface M3UAManagementEventListener {
 	public void onAspUnassignedFromAs(As as, Asp asp);
 
 	public void onRemoveAllResources();
+	
+	public void onAspFactoryStarted(AspFactory aspFactory);
+	
+	public void onAspFactoryStopped(AspFactory aspFactory);
+	
+	public void onAspActive(Asp asp);
+	
+	public void onAspInactive(Asp asp);
+	
+	public void onAspDown(Asp asp);
+	
+	public void onAsActive(As as);
+	
+	public void onAsPending(As as);
+	
+	public void onAsInactive(As as);
+	
+	public void onAsDown(As as);
 }

@@ -26,7 +26,7 @@ import javolution.util.FastList;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.m3ua.Asp;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSMState;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
 
 /**
@@ -48,7 +48,7 @@ public class THLocalAsInactToDwn implements TransitionHandler {
 
 	int inactCount = 0;
 
-	public boolean process(State state) {
+	public boolean process(FSMState state) {
 		inactCount = 0;
 
 		try {

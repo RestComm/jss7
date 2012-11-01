@@ -24,7 +24,7 @@ package org.mobicents.protocols.ss7.m3ua.impl;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSMState;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
 import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
 import org.mobicents.protocols.ss7.m3ua.message.MessageType;
@@ -48,7 +48,7 @@ public class THLocalAsDwnToInact implements TransitionHandler {
 		this.fsm = fsm;
 	}
 
-	public boolean process(State state) {
+	public boolean process(FSMState state) {
 		try {
 
 			if (asImpl.getFunctionality() != Functionality.IPSP) {

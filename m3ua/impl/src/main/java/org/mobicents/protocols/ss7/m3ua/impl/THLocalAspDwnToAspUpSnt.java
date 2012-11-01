@@ -23,7 +23,7 @@ package org.mobicents.protocols.ss7.m3ua.impl;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSMState;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
 
 /**
@@ -42,7 +42,7 @@ public class THLocalAspDwnToAspUpSnt implements TransitionHandler {
 		this.fsm = fsm;
 	}
 
-	public boolean process(State state) {
+	public boolean process(FSMState state) {
 		this.aspImpl.getAspFactory().sendAspUp();
 		return true;
 	}

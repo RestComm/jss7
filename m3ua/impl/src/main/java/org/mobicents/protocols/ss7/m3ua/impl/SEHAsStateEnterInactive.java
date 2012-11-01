@@ -23,45 +23,38 @@ package org.mobicents.protocols.ss7.m3ua.impl;
 
 import javolution.util.FastList;
 
-import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.m3ua.Asp;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
+import org.mobicents.protocols.ss7.m3ua.M3UAManagementEventListener;
+import org.mobicents.protocols.ss7.m3ua.State;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSMState;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSMStateEventHandler;
 
 /**
  * 
  * @author amit bhayani
- * 
+ *
  */
-public class THPeerAsActToPen implements TransitionHandler {
+public abstract class SEHAsStateEnterInactive implements FSMStateEventHandler {
 
-	private static final Logger logger = Logger.getLogger(THPeerAsActToPen.class);
+	private AsImpl asImpl;
 
-	private AsImpl asImpl = null;
-	private FSM fsm;
-
-	public THPeerAsActToPen(AsImpl asImpl, FSM fsm) {
+	public SEHAsStateEnterInactive(AsImpl asImpl) {
 		this.asImpl = asImpl;
-		this.fsm = fsm;
 	}
 
-	public boolean process(FSMState state) {
-		AspImpl causeAsp = (AspImpl) this.fsm.getAttribute(AsImpl.ATTRIBUTE_ASP);
+	@Override
+	public void onEvent(FSMState state) {
+		// Call listener and indicate of state change only if not already done
+		if (!this.asImpl.state.getName().equals(State.STATE_INACTIVE)) {
+			this.asImpl.state = AsState.INACTIVE;
 
-		// check if there is atleast one other ASP in ACTIVE state. If
-		// yes this AS remains in ACTIVE state else goes in PENDING state.
-		for (FastList.Node<Asp> n = this.asImpl.appServerProcs.head(), end = this.asImpl.appServerProcs.tail(); (n = n
-				.getNext()) != end;) {
-			AspImpl aspImpl = (AspImpl)n.getValue();
-			FSM aspLocalFSM = aspImpl.getLocalFSM();
-			AspState aspState = AspState.getState(aspLocalFSM.getState().getName());
+			FastList<M3UAManagementEventListener> managementEventListenersTmp = this.asImpl.m3UAManagementImpl.managementEventListeners;
 
-			if (aspImpl != causeAsp && aspState == AspState.ACTIVE) {
-				return false;
+			for (FastList.Node<M3UAManagementEventListener> n = managementEventListenersTmp.head(), end = managementEventListenersTmp
+					.tail(); (n = n.getNext()) != end;) {
+				M3UAManagementEventListener m3uaManagementEventListener = n.getValue();
+				m3uaManagementEventListener.onAsInactive(this.asImpl);
 			}
 		}
-		return true;
 	}
 
 }

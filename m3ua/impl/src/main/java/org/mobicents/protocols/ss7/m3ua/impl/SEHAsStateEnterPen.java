@@ -24,49 +24,43 @@ package org.mobicents.protocols.ss7.m3ua.impl;
 import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.m3ua.Asp;
+import org.mobicents.protocols.ss7.m3ua.M3UAManagementEventListener;
+import org.mobicents.protocols.ss7.m3ua.State;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.StateEventHandler;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.UnknownTransitionException;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSMState;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSMStateEventHandler;
 
 /**
  * 
  * @author amit bhayani
  *
  */
-public class AsStateEnterPen implements StateEventHandler {
+public abstract class SEHAsStateEnterPen implements FSMStateEventHandler {
 
-	private static final Logger logger = Logger.getLogger(AsStateEnterPen.class);
+	private static final Logger logger = Logger.getLogger(SEHAsStateEnterPen.class);
 
-	private AsImpl asImpl = null;
+	protected AsImpl asImpl = null;
 	private FSM fsm;
 
-	public AsStateEnterPen(AsImpl asImpl, FSM fsm) {
+	public SEHAsStateEnterPen(AsImpl asImpl, FSM fsm) {
 		this.asImpl = asImpl;
 		this.fsm = fsm;
 	}
 
-	public void onEvent(State state) {
+	public void onEvent(FSMState state) {
 		if (logger.isDebugEnabled()) {
 			logger.debug(String.format("Entered in PENDING state for As=%s", asImpl.getName()));
 		}
-		// If there is even one ASP in INACTIVE state for this AS, ACTIVATE it
-		for (FastList.Node<Asp> n = asImpl.appServerProcs.head(), end = asImpl.appServerProcs.tail(); (n = n.getNext()) != end;) {
-			AspImpl aspImpl = (AspImpl)n.getValue();
+		
+		if (!this.asImpl.state.getName().equals(State.STATE_PENDING)) {
+			this.asImpl.state = AsState.PENDING;
 
-			FSM aspLocalFSM = aspImpl.getLocalFSM();
+			FastList<M3UAManagementEventListener> managementEventListenersTmp = this.asImpl.m3UAManagementImpl.managementEventListeners;
 
-			if (AspState.getState(aspLocalFSM.getState().getName()) == AspState.INACTIVE) {
-				AspFactoryImpl aspFactoryImpl = aspImpl.getAspFactory();
-				aspFactoryImpl.sendAspActive(this.asImpl);
-
-				// Transition the state of ASP to ACTIVE_SENT
-				try {
-					aspLocalFSM.signal(TransitionState.ASP_ACTIVE_SENT);
-				} catch (UnknownTransitionException e) {
-					logger.error(e.getMessage(), e);
-				}
+			for (FastList.Node<M3UAManagementEventListener> n = managementEventListenersTmp.head(), end = managementEventListenersTmp
+					.tail(); (n = n.getNext()) != end;) {
+				M3UAManagementEventListener m3uaManagementEventListener = n.getValue();
+				m3uaManagementEventListener.onAsPending(this.asImpl);
 			}
 		}
 	}

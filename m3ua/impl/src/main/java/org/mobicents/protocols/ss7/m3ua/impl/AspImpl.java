@@ -30,6 +30,7 @@ import org.mobicents.protocols.ss7.m3ua.As;
 import org.mobicents.protocols.ss7.m3ua.Asp;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.IPSPType;
+import org.mobicents.protocols.ss7.m3ua.State;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.message.MessageFactory;
@@ -63,6 +64,8 @@ public class AspImpl implements XMLSerializable, Asp {
 	protected ASPIdentifier aSPIdentifier;
 
 	private MessageFactory messageFactory = new MessageFactoryImpl();
+
+	protected State state = AspState.DOWN;
 
 	public AspImpl() {
 
@@ -124,13 +127,13 @@ public class AspImpl implements XMLSerializable, Asp {
 	private void initLocalFSM() {
 		this.localFSM = new FSM(this.name + "_LOCAL");
 		// Define states
-		this.localFSM.createState(AspState.DOWN_SENT.toString());
-		this.localFSM.createState(AspState.DOWN.toString());
-		this.localFSM.createState(AspState.UP_SENT.toString());
-		this.localFSM.createState(AspState.INACTIVE.toString());
-		this.localFSM.createState(AspState.ACTIVE_SENT.toString());
-		this.localFSM.createState(AspState.ACTIVE.toString());
-		this.localFSM.createState(AspState.INACTIVE_SENT.toString());
+		this.localFSM.createState(AspState.DOWN_SENT.toString()).setOnEnter(new AspStateEnterDown(this));
+		this.localFSM.createState(AspState.DOWN.toString()).setOnEnter(new AspStateEnterDown(this));
+		this.localFSM.createState(AspState.UP_SENT.toString()).setOnEnter(new AspStateEnterDown(this));
+		this.localFSM.createState(AspState.INACTIVE.toString()).setOnEnter(new AspStateEnterInactive(this));
+		this.localFSM.createState(AspState.ACTIVE_SENT.toString()).setOnEnter(new AspStateEnterInactive(this));
+		this.localFSM.createState(AspState.ACTIVE.toString()).setOnEnter(new AspStateEnterActive(this));
+		this.localFSM.createState(AspState.INACTIVE_SENT.toString()).setOnEnter(new AspStateEnterInactive(this));
 
 		this.localFSM.setStart(AspState.DOWN.toString());
 		this.localFSM.setEnd(AspState.DOWN.toString());
@@ -241,9 +244,9 @@ public class AspImpl implements XMLSerializable, Asp {
 	private void initPeerFSM() {
 		this.peerFSM = new FSM(this.name + "_PEER");
 		// Define states
-		this.peerFSM.createState(AspState.DOWN.toString());
-		this.peerFSM.createState(AspState.ACTIVE.toString());
-		this.peerFSM.createState(AspState.INACTIVE.toString());
+		this.peerFSM.createState(AspState.DOWN.toString()).setOnEnter(new AspStateEnterDown(this));
+		this.peerFSM.createState(AspState.ACTIVE.toString()).setOnEnter(new AspStateEnterActive(this));
+		this.peerFSM.createState(AspState.INACTIVE.toString()).setOnEnter(new AspStateEnterInactive(this));
 
 		this.peerFSM.setStart(AspState.DOWN.toString());
 		this.peerFSM.setEnd(AspState.DOWN.toString());
@@ -314,6 +317,10 @@ public class AspImpl implements XMLSerializable, Asp {
 
 	public String getName() {
 		return this.name;
+	}
+
+	public State getState() {
+		return this.state;
 	}
 
 	public FSM getLocalFSM() {

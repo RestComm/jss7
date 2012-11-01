@@ -23,45 +23,38 @@ package org.mobicents.protocols.ss7.m3ua.impl;
 
 import javolution.util.FastList;
 
-import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.m3ua.Asp;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
+import org.mobicents.protocols.ss7.m3ua.M3UAManagementEventListener;
+import org.mobicents.protocols.ss7.m3ua.State;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSMState;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSMStateEventHandler;
 
 /**
  * 
  * @author amit bhayani
- * 
+ *
  */
-public class THPeerAsActToPen implements TransitionHandler {
+public class AspStateEnterInactive implements FSMStateEventHandler {
 
-	private static final Logger logger = Logger.getLogger(THPeerAsActToPen.class);
+	private final AspImpl aspImpl;
 
-	private AsImpl asImpl = null;
-	private FSM fsm;
-
-	public THPeerAsActToPen(AsImpl asImpl, FSM fsm) {
-		this.asImpl = asImpl;
-		this.fsm = fsm;
+	public AspStateEnterInactive(AspImpl aspImpl) {
+		this.aspImpl = aspImpl;
 	}
 
-	public boolean process(FSMState state) {
-		AspImpl causeAsp = (AspImpl) this.fsm.getAttribute(AsImpl.ATTRIBUTE_ASP);
+	@Override
+	public void onEvent(FSMState state) {
 
-		// check if there is atleast one other ASP in ACTIVE state. If
-		// yes this AS remains in ACTIVE state else goes in PENDING state.
-		for (FastList.Node<Asp> n = this.asImpl.appServerProcs.head(), end = this.asImpl.appServerProcs.tail(); (n = n
-				.getNext()) != end;) {
-			AspImpl aspImpl = (AspImpl)n.getValue();
-			FSM aspLocalFSM = aspImpl.getLocalFSM();
-			AspState aspState = AspState.getState(aspLocalFSM.getState().getName());
+		// Call listener and indicate of state change only if not already done
+		if (!this.aspImpl.state.getName().equals(State.STATE_INACTIVE)) {
+			this.aspImpl.state = AspState.INACTIVE;
 
-			if (aspImpl != causeAsp && aspState == AspState.ACTIVE) {
-				return false;
+			FastList<M3UAManagementEventListener> managementEventListenersTmp = this.aspImpl.aspFactoryImpl.m3UAManagementImpl.managementEventListeners;
+
+			for (FastList.Node<M3UAManagementEventListener> n = managementEventListenersTmp.head(), end = managementEventListenersTmp
+					.tail(); (n = n.getNext()) != end;) {
+				M3UAManagementEventListener m3uaManagementEventListener = n.getValue();
+				m3uaManagementEventListener.onAspInactive(this.aspImpl);
 			}
 		}
-		return true;
 	}
-
 }

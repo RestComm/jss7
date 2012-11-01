@@ -29,8 +29,8 @@ import org.mobicents.protocols.ss7.m3ua.Asp;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.StateEventHandler;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSMState;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSMStateEventHandler;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.UnknownTransitionException;
 import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
 import org.mobicents.protocols.ss7.m3ua.message.MessageType;
@@ -38,13 +38,13 @@ import org.mobicents.protocols.ss7.m3ua.message.mgmt.Notify;
 import org.mobicents.protocols.ss7.m3ua.parameter.Status;
 
 /**
- * {@link RemAsStatePenTimeout#onEvent(State)} is called when the pending timer
+ * {@link RemAsStatePenTimeout#onEvent(FSMState)} is called when the pending timer
  * T(r) expires.
  * 
  * @author amit bhayani
  * 
  */
-public class RemAsStatePenTimeout implements StateEventHandler {
+public class RemAsStatePenTimeout implements FSMStateEventHandler {
 
 	private AsImpl asImpl;
 	private FSM fsm;
@@ -72,7 +72,7 @@ public class RemAsStatePenTimeout implements StateEventHandler {
 	 * one ASP is in ASP-INACTIVE; otherwise, it will move to AS-DOWN state.
 	 * </p>
 	 */
-	public void onEvent(State state) {
+	public void onEvent(FSMState state) {
 		this.inactive = false;
 
 		// Clear the Pending Queue for this As
