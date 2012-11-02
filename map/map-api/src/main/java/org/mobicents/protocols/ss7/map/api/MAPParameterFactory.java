@@ -125,6 +125,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GPRSMSClass;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GeodeticInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GeographicalInformation;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LIPAPermission;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformationEPS;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformationGPRS;
@@ -135,12 +136,14 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.MSRadioAccessCapability;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.NotReachableReason;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.NumberPortabilityStatus;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.PDPContext;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.PDPContextInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.PSSubscriberState;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.PSSubscriberStateChoice;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RAIdentity;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RouteingNumber;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SIPTOPermission;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberState;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberStateChoice;
@@ -149,6 +152,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.TransactionId;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.UserCSGInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.APN;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.APNOIReplacement;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BearerServiceCode;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BearerServiceCodeValue;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CSGId;
@@ -172,6 +176,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OfferedCamel4CSIs;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.PDPAddress;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.PDPType;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.QoSSubscribed;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TBcsmCamelTDPData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TBcsmCamelTdpCriteria;
@@ -474,6 +479,12 @@ public interface MAPParameterFactory {
 			Ext2QoSSubscribed qos2Requested, Ext2QoSSubscribed qos2Negotiated, Ext3QoSSubscribed qos3Subscribed, Ext3QoSSubscribed qos3Requested,
 			Ext3QoSSubscribed qos3Negotiated, Ext4QoSSubscribed qos4Subscribed, Ext4QoSSubscribed qos4Requested, Ext4QoSSubscribed qos4Negotiated,
 			ExtPDPType extPdpType, PDPAddress extPdpAddress);
+	public PDPContext createPDPContext(int pdpContextId, PDPType pdpType, PDPAddress pdpAddress, QoSSubscribed qosSubscribed, boolean vplmnAddressAllowed,
+			APN apn, MAPExtensionContainer extensionContainer, ExtQoSSubscribed extQoSSubscribed, ChargingCharacteristics chargingCharacteristics,
+			Ext2QoSSubscribed ext2QoSSubscribed, Ext3QoSSubscribed ext3QoSSubscribed, Ext4QoSSubscribed ext4QoSSubscribed, APNOIReplacement apnoiReplacement,
+			ExtPDPType extpdpType, PDPAddress extpdpAddress, SIPTOPermission sipToPermission, LIPAPermission lipaPermission);
+	public APNOIReplacement createAPNOIReplacement(byte[] data);
+	public QoSSubscribed createQoSSubscribed(byte[] data);
 	public CSGId createCSGId(BitSetStrictLength data);
 	public LSAIdentity createLSAIdentity(byte[] data);
 	public GPRSChargingID createGPRSChargingID(byte[] data);

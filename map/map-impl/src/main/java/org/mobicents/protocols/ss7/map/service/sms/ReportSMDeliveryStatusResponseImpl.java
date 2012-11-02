@@ -48,7 +48,9 @@ public class ReportSMDeliveryStatusResponseImpl extends SmsMessageImpl implement
 
 	private ISDNAddressString storedMSISDN;
 	private MAPExtensionContainer extensionContainer;
-	
+
+	protected String _PrimitiveName = "ReportSMDeliveryStatusResponse";
+
 	public ReportSMDeliveryStatusResponseImpl() {
 	}
 	
@@ -93,10 +95,10 @@ public class ReportSMDeliveryStatusResponseImpl extends SmsMessageImpl implement
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding ReportSMDeliveryStatusResponse: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding ReportSMDeliveryStatusResponse: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -106,10 +108,10 @@ public class ReportSMDeliveryStatusResponseImpl extends SmsMessageImpl implement
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding ReportSMDeliveryStatusResponse: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding ReportSMDeliveryStatusResponse: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -131,7 +133,7 @@ public class ReportSMDeliveryStatusResponseImpl extends SmsMessageImpl implement
 				case Tag.STRING_OCTET:
 					// storedMSISDN
 					if (!ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding ReportSMDeliveryStatusResponse: Parameter storedMSISDN is not primitive",
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter storedMSISDN is not primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					this.storedMSISDN = new ISDNAddressStringImpl();
 					((ISDNAddressStringImpl)this.storedMSISDN).decodeAll(ais);
@@ -140,7 +142,7 @@ public class ReportSMDeliveryStatusResponseImpl extends SmsMessageImpl implement
 				case Tag.SEQUENCE:
 					// ExtensionContainer
 					if (ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding ReportSMDeliveryStatusResponse: Parameter extensionContainer is primitive",
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter extensionContainer is primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					this.extensionContainer = new MAPExtensionContainerImpl();
 					((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
@@ -168,7 +170,7 @@ public class ReportSMDeliveryStatusResponseImpl extends SmsMessageImpl implement
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding ReportSMDeliveryStatusResponse: " + e.getMessage(), e);
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 
@@ -183,7 +185,8 @@ public class ReportSMDeliveryStatusResponseImpl extends SmsMessageImpl implement
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("ReportSMDeliveryStatusResponse [");
+		sb.append(_PrimitiveName);
+		sb.append(" [");
 		
 		if(this.getMAPDialog() != null){
 			sb.append("DialogId=").append(this.getMAPDialog().getDialogId());

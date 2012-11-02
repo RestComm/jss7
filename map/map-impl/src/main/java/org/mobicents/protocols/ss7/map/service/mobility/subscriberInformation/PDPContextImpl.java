@@ -1,3 +1,25 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
 import java.io.IOException;
@@ -13,14 +35,37 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LIPAPermission;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.PDPContext;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SIPTOPermission;
-import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.APN;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.APNOIReplacement;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ChargingCharacteristics;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.Ext2QoSSubscribed;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.Ext3QoSSubscribed;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.Ext4QoSSubscribed;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtPDPType;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtQoSSubscribed;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.PDPAddress;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.PDPType;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.QoSSubscribed;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
+import org.mobicents.protocols.ss7.map.primitives.SequenceBase;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.APNImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.APNOIReplacementImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ChargingCharacteristicsImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Ext2QoSSubscribedImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Ext3QoSSubscribedImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Ext4QoSSubscribedImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtPDPTypeImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtQoSSubscribedImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.PDPAddressImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.PDPTypeImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.QoSSubscribedImpl;
 
 /**
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
-public class PDPContextImpl implements PDPContext, MAPAsnPrimitive {
+public class PDPContextImpl extends SequenceBase implements PDPContext {
 
 	private static final int _ID_pdp_Type = 16;
 	private static final int _ID_pdp_Address = 17;
@@ -39,29 +84,53 @@ public class PDPContextImpl implements PDPContext, MAPAsnPrimitive {
 	private static final int _ID_sipto_Permission = 8;
 	private static final int _ID_lipa_Permission = 9;
 
-	private Integer pdpContextId;
-	private byte[] pdpType;
-	private byte[] pdpAddress;
-	private byte[] qosSubscribed;
-	private Boolean vplmnAddressAllowed;
-	private byte[] apn;
+	private int pdpContextId;
+	private PDPType pdpType;
+	private PDPAddress pdpAddress;
+	private QoSSubscribed qosSubscribed;
+	private boolean vplmnAddressAllowed;
+	private APN apn;
 	private MAPExtensionContainer extensionContainer;
-	private byte[] extQoSSubscribed;
-	private byte[] chargingCharacteristics;
-	private byte[] ext2QoSSubscribed;
-	private byte[] ext3QoSSubscribed;
-	private byte[] ext4QoSSubscribed;
-	private byte[] apnoiReplacement;
-	private byte[] extpdpType;
-	private byte[] extpdpAddress;
+	private ExtQoSSubscribed extQoSSubscribed;
+	private ChargingCharacteristics chargingCharacteristics;
+	private Ext2QoSSubscribed ext2QoSSubscribed;
+	private Ext3QoSSubscribed ext3QoSSubscribed;
+	private Ext4QoSSubscribed ext4QoSSubscribed;
+	private APNOIReplacement apnoiReplacement;
+	private ExtPDPType extpdpType;
+	private PDPAddress extpdpAddress;
 	private SIPTOPermission sipToPermission;
 	private LIPAPermission lipaPermission;
 
-	/**
-	 * 
-	 */
-	public PDPContextImpl() {
-		// TODO Auto-generated constructor stub
+	public PDPContextImpl(int pdpContextId, PDPType pdpType, PDPAddress pdpAddress, QoSSubscribed qosSubscribed, boolean vplmnAddressAllowed, APN apn,
+			MAPExtensionContainer extensionContainer, ExtQoSSubscribed extQoSSubscribed, ChargingCharacteristics chargingCharacteristics,
+			Ext2QoSSubscribed ext2QoSSubscribed, Ext3QoSSubscribed ext3QoSSubscribed, Ext4QoSSubscribed ext4QoSSubscribed, APNOIReplacement apnoiReplacement,
+			ExtPDPType extpdpType, PDPAddress extpdpAddress, SIPTOPermission sipToPermission, LIPAPermission lipaPermission) {
+		super("PDPContext");
+
+		this.pdpContextId = pdpContextId;
+		this.pdpType = pdpType;
+		this.pdpAddress = pdpAddress;
+		this.qosSubscribed = qosSubscribed;
+		this.vplmnAddressAllowed = vplmnAddressAllowed;
+		this.apn = apn;
+		this.extensionContainer = extensionContainer;
+		this.extQoSSubscribed = extQoSSubscribed;
+		this.chargingCharacteristics = chargingCharacteristics;
+		this.ext2QoSSubscribed = ext2QoSSubscribed;
+		this.ext3QoSSubscribed = ext3QoSSubscribed;
+		this.ext4QoSSubscribed = ext4QoSSubscribed;
+		this.apnoiReplacement = apnoiReplacement;
+		this.extpdpType = extpdpType;
+		this.extpdpAddress = extpdpAddress;
+		this.sipToPermission = sipToPermission;
+		this.lipaPermission = lipaPermission;
+	}
+
+	public PDPContextImpl(int pdpContextId) {
+		super("PDPContext");
+
+		this.pdpContextId = pdpContextId;
 	}
 
 	/*
@@ -71,7 +140,7 @@ public class PDPContextImpl implements PDPContext, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.service.subscriberInformation.PDPContext
 	 * #getPDPContextId()
 	 */
-	public Integer getPDPContextId() {
+	public int getPDPContextId() {
 		return this.pdpContextId;
 	}
 
@@ -82,7 +151,7 @@ public class PDPContextImpl implements PDPContext, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.service.subscriberInformation.PDPContext
 	 * #getPDPType()
 	 */
-	public byte[] getPDPType() {
+	public PDPType getPDPType() {
 		return this.pdpType;
 	}
 
@@ -93,7 +162,7 @@ public class PDPContextImpl implements PDPContext, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.service.subscriberInformation.PDPContext
 	 * #getPDPAddress()
 	 */
-	public byte[] getPDPAddress() {
+	public PDPAddress getPDPAddress() {
 		return this.pdpAddress;
 	}
 
@@ -104,7 +173,7 @@ public class PDPContextImpl implements PDPContext, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.service.subscriberInformation.PDPContext
 	 * #getQoSSubscribed()
 	 */
-	public byte[] getQoSSubscribed() {
+	public QoSSubscribed getQoSSubscribed() {
 		return this.qosSubscribed;
 	}
 
@@ -115,7 +184,7 @@ public class PDPContextImpl implements PDPContext, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.service.subscriberInformation.PDPContext
 	 * #isVPLMNAddressAllowed()
 	 */
-	public Boolean isVPLMNAddressAllowed() {
+	public boolean isVPLMNAddressAllowed() {
 		return this.vplmnAddressAllowed;
 	}
 
@@ -126,7 +195,7 @@ public class PDPContextImpl implements PDPContext, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.service.subscriberInformation.PDPContext
 	 * #getAPN()
 	 */
-	public byte[] getAPN() {
+	public APN getAPN() {
 		return this.apn;
 	}
 
@@ -148,7 +217,7 @@ public class PDPContextImpl implements PDPContext, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.service.subscriberInformation.PDPContext
 	 * #getExtQoSSubscribed()
 	 */
-	public byte[] getExtQoSSubscribed() {
+	public ExtQoSSubscribed getExtQoSSubscribed() {
 		return this.extQoSSubscribed;
 	}
 
@@ -159,7 +228,7 @@ public class PDPContextImpl implements PDPContext, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.service.subscriberInformation.PDPContext
 	 * #getChargingCharacteristics()
 	 */
-	public byte[] getChargingCharacteristics() {
+	public ChargingCharacteristics getChargingCharacteristics() {
 		return this.chargingCharacteristics;
 	}
 
@@ -170,7 +239,7 @@ public class PDPContextImpl implements PDPContext, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.service.subscriberInformation.PDPContext
 	 * #getExt2QoSSubscribed()
 	 */
-	public byte[] getExt2QoSSubscribed() {
+	public Ext2QoSSubscribed getExt2QoSSubscribed() {
 		return this.ext2QoSSubscribed;
 	}
 
@@ -181,7 +250,7 @@ public class PDPContextImpl implements PDPContext, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.service.subscriberInformation.PDPContext
 	 * #getExt3QoSSubscribed()
 	 */
-	public byte[] getExt3QoSSubscribed() {
+	public Ext3QoSSubscribed getExt3QoSSubscribed() {
 		return this.ext3QoSSubscribed;
 	}
 
@@ -192,7 +261,7 @@ public class PDPContextImpl implements PDPContext, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.service.subscriberInformation.PDPContext
 	 * #getExt4QoSSubscribed()
 	 */
-	public byte[] getExt4QoSSubscribed() {
+	public Ext4QoSSubscribed getExt4QoSSubscribed() {
 		return this.ext4QoSSubscribed;
 	}
 
@@ -203,7 +272,7 @@ public class PDPContextImpl implements PDPContext, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.service.subscriberInformation.PDPContext
 	 * #getAPNOIReplacement()
 	 */
-	public byte[] getAPNOIReplacement() {
+	public APNOIReplacement getAPNOIReplacement() {
 		return this.apnoiReplacement;
 	}
 
@@ -214,7 +283,7 @@ public class PDPContextImpl implements PDPContext, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.service.subscriberInformation.PDPContext
 	 * #getExtPDPType()
 	 */
-	public byte[] getExtPDPType() {
+	public ExtPDPType getExtPDPType() {
 		return this.extpdpType;
 	}
 
@@ -225,7 +294,7 @@ public class PDPContextImpl implements PDPContext, MAPAsnPrimitive {
 	 * org.mobicents.protocols.ss7.map.api.service.subscriberInformation.PDPContext
 	 * #getExtPDPAddress()
 	 */
-	public byte[] getExtPDPAddress() {
+	public PDPAddress getExtPDPAddress() {
 		return this.extpdpAddress;
 	}
 
@@ -251,81 +320,12 @@ public class PDPContextImpl implements PDPContext, MAPAsnPrimitive {
 		return this.lipaPermission;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTag()
-	 */
-	public int getTag() throws MAPException {
-		return Tag.SEQUENCE;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTagClass()
-	 */
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getIsPrimitive
-	 * ()
-	 */
-	public boolean getIsPrimitive() {
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeAll(
-	 * org.mobicents.protocols.asn.AsnInputStream)
-	 */
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding PDPContext: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding PDPContext: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeData
-	 * (org.mobicents.protocols.asn.AsnInputStream, int)
-	 */
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding PDPContext: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding PDPContext: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
-		this.pdpContextId = null;
+	protected void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+		this.pdpContextId = -1;
 		this.pdpType = null;
 		this.pdpAddress = null;
 		this.qosSubscribed = null;
-		this.vplmnAddressAllowed = null;
+		this.vplmnAddressAllowed = false;
 		this.apn = null;
 		this.extensionContainer = null;
 		this.extQoSSubscribed = null;
@@ -347,10 +347,13 @@ public class PDPContextImpl implements PDPContext, MAPAsnPrimitive {
 
 			int tag = ais.readTag();
 
-			if (ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
-
+			switch(ais.getTagClass()) {
+			case Tag.CLASS_UNIVERSAL: {
 				switch (tag) {
-				case Tag.INTEGER: // AgeOfLocationInformation
+				case Tag.INTEGER: // pdpContextId
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".pdpContextId: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
 					this.pdpContextId = (int) ais.readInteger();
 					break;
 
@@ -358,105 +361,121 @@ public class PDPContextImpl implements PDPContext, MAPAsnPrimitive {
 					ais.advanceElement();
 					break;
 				}
-			} else if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+			}
+				break;
+
+			case Tag.CLASS_CONTEXT_SPECIFIC: {
 				switch (tag) {
 				case _ID_pdp_Type:
-					this.pdpType = ais.readOctetStringData(length);
-					if (this.pdpType.length != 2)
-						throw new MAPParsingComponentException("Error while decoding pdpType value must be 2 bytes length, found: " + this.pdpType.length,
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".pdpType: Parameter is not primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.pdpType = new PDPTypeImpl();
+					((PDPTypeImpl) this.pdpType).decodeAll(ais);
 					break;
 
 				case _ID_pdp_Address:
-					this.pdpAddress = ais.readOctetStringData(length);
-					if (this.pdpAddress.length < 1 || this.pdpAddress.length > 16)
-						throw new MAPParsingComponentException("Error while decoding pdpAddress value must be 1 to 16 bytes length, found: "
-								+ this.pdpAddress.length, MAPParsingComponentExceptionReason.MistypedParameter);
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".pdpAddress: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.pdpAddress = new PDPAddressImpl();
+					((PDPAddressImpl) this.pdpAddress).decodeAll(ais);
 					break;
 
 				case _ID_QoS_Subscribed:
-					this.qosSubscribed = ais.readOctetStringData(length);
-					if (this.qosSubscribed.length != 3)
-						throw new MAPParsingComponentException("Error while decoding qosSubscribed value must be 3 bytes length, found: "
-								+ this.qosSubscribed.length, MAPParsingComponentExceptionReason.MistypedParameter);
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".qosSubscribed: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.qosSubscribed = new QoSSubscribedImpl();
+					((QoSSubscribedImpl) this.qosSubscribed).decodeAll(ais);
 					break;
 
 				case _ID_vplmnAddressAllowed:
-					if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
-						throw new MAPParsingComponentException(
-								"Error while decoding PDPContext: Parameter [vplmnAddressAllowed	[19] NULL ] bad tag class, tag or not primitive",
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".vplmnAddressAllowed: Parameter is not primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
-					}
+					ais.readNull();
 					this.vplmnAddressAllowed = true;
 					break;
 
 				case _ID_apn:
-					this.apn = ais.readOctetStringData(length);
-					if (this.apn.length < 2 || this.apn.length > 63)
-						throw new MAPParsingComponentException("Error while decoding APN value must be 2 to 63 bytes length, found: " + this.apn.length,
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".apn: Parameter is not primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.apn = new APNImpl();
+					((APNImpl) this.apn).decodeAll(ais);
 					break;
 
 				case _ID_extensionContainer:
+					if (ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: Parameter not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
 					this.extensionContainer = new MAPExtensionContainerImpl();
 					((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
 					break;
 
 				case _ID_ext_QoS_Subscribed:
-					this.extQoSSubscribed = ais.readOctetStringData(length);
-					if (this.extQoSSubscribed.length < 1 || this.extQoSSubscribed.length > 9)
-						throw new MAPParsingComponentException("Error while decoding extQoSSubscribed value must be 1 to 9 bytes length, found: "
-								+ this.extQoSSubscribed.length, MAPParsingComponentExceptionReason.MistypedParameter);
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extQoSSubscribed: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.extQoSSubscribed = new ExtQoSSubscribedImpl();
+					((ExtQoSSubscribedImpl) this.extQoSSubscribed).decodeAll(ais);
 					break;
 
 				case _ID_pdp_ChargingCharacteristics:
-					this.chargingCharacteristics = ais.readOctetStringData(length);
-					if (this.ext4QoSSubscribed.length != 2)
-						throw new MAPParsingComponentException("Error while decoding chargingCharacteristics value must be 2 bytes length, found: "
-								+ this.chargingCharacteristics.length, MAPParsingComponentExceptionReason.MistypedParameter);
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".chargingCharacteristics: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.chargingCharacteristics = new ChargingCharacteristicsImpl();
+					((ChargingCharacteristicsImpl) this.chargingCharacteristics).decodeAll(ais);
 					break;
 
 				case _ID_ext2_QoS_Subscribed:
-					this.ext2QoSSubscribed = ais.readOctetStringData(length);
-					if (this.ext2QoSSubscribed.length < 1 || this.ext2QoSSubscribed.length > 3)
-						throw new MAPParsingComponentException("Error while decoding GeographicalInformation value must be 1 to 3 bytes length, found: "
-								+ this.ext2QoSSubscribed.length, MAPParsingComponentExceptionReason.MistypedParameter);
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".ext2QoSSubscribed: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.ext2QoSSubscribed = new Ext2QoSSubscribedImpl();
+					((Ext2QoSSubscribedImpl) this.ext2QoSSubscribed).decodeAll(ais);
 					break;
 
 				case _ID_ext3_QoS_Subscribed:
-					this.ext3QoSSubscribed = ais.readOctetStringData(length);
-					if (this.ext3QoSSubscribed.length < 1 || this.ext3QoSSubscribed.length > 2)
-						throw new MAPParsingComponentException("Error while decoding ext3QoSSubscribed value must be 1 to 2 bytes length, found: "
-								+ this.ext3QoSSubscribed.length, MAPParsingComponentExceptionReason.MistypedParameter);
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".ext3QoSSubscribed: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.ext3QoSSubscribed = new Ext3QoSSubscribedImpl();
+					((Ext3QoSSubscribedImpl) this.ext3QoSSubscribed).decodeAll(ais);
 					break;
 
 				case _ID_ext4_QoS_Subscribed:
-					this.ext4QoSSubscribed = ais.readOctetStringData(length);
-					if (this.ext4QoSSubscribed.length != 1)
-						throw new MAPParsingComponentException("Error while decoding ext4QoSSubscribed value must be 1 bytes length, found: "
-								+ this.ext4QoSSubscribed.length, MAPParsingComponentExceptionReason.MistypedParameter);
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".ext4QoSSubscribed: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.ext4QoSSubscribed = new Ext4QoSSubscribedImpl();
+					((Ext4QoSSubscribedImpl) this.ext4QoSSubscribed).decodeAll(ais);
 					break;
 
 				case _ID_apn_oi_Replacement:
-					this.apnoiReplacement = ais.readOctetStringData(length);
-					if (this.apnoiReplacement.length < 9 || this.apnoiReplacement.length > 100)
-						throw new MAPParsingComponentException("Error while decoding apnoiReplacement value must be 9 to 100 bytes length, found: "
-								+ this.apnoiReplacement.length, MAPParsingComponentExceptionReason.MistypedParameter);
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".apnoiReplacement: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.apnoiReplacement = new APNOIReplacementImpl();
+					((APNOIReplacementImpl) this.apnoiReplacement).decodeAll(ais);
 					break;
 
 				case _ID_ext_pdp_Type:
-					this.extpdpType = ais.readOctetStringData(length);
-					if (this.extpdpType.length != 2)
-						throw new MAPParsingComponentException(
-								"Error while decoding extpdpType value must be 2 bytes length, found: " + this.extpdpType.length,
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extpdpType: Parameter is not primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.extpdpType = new ExtPDPTypeImpl();
+					((ExtPDPTypeImpl) this.extpdpType).decodeAll(ais);
 					break;
 
 				case _ID_ext_pdp_Address:
-					this.extpdpAddress = ais.readOctetStringData(length);
-					if (this.extpdpAddress.length < 1 || this.extpdpAddress.length > 16)
-						throw new MAPParsingComponentException("Error while decoding extpdpAddress value must be 1 to 16 bytes length, found: "
-								+ this.extpdpAddress.length, MAPParsingComponentExceptionReason.MistypedParameter);
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extpdpAddress: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.extpdpAddress = new PDPAddressImpl();
+					((PDPAddressImpl) this.extpdpAddress).decodeAll(ais);
 					break;
 
 				case _ID_sipto_Permission:
@@ -481,36 +500,29 @@ public class PDPContextImpl implements PDPContext, MAPAsnPrimitive {
 
 				}
 			}
+				break;
 
-		}
-	}
+			default:
+				ais.advanceElement();
+				break;
+			}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
-	 * org.mobicents.protocols.asn.AsnOutputStream)
-	 */
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, this.getTag());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
-	 * org.mobicents.protocols.asn.AsnOutputStream, int, int)
-	 */
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		try {
-			asnOs.writeTag(tagClass, true, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding PDPContext : " + e.getMessage(), e);
+			if (this.pdpContextId < 1) {
+				throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": A mandatory parameter ContextId has not found",
+						MAPParsingComponentExceptionReason.MistypedParameter);
+			}
+			if (this.pdpType != null) {
+				throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": A mandatory parameter pdpType has not found",
+						MAPParsingComponentExceptionReason.MistypedParameter);
+			}
+			if (this.qosSubscribed != null) {
+				throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": A mandatory parameter qosSubscribed has not found",
+						MAPParsingComponentExceptionReason.MistypedParameter);
+			}
+			if (this.apn != null) {
+				throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": A mandatory parameter apn has not found",
+						MAPParsingComponentExceptionReason.MistypedParameter);
+			}
 		}
 	}
 
@@ -522,53 +534,55 @@ public class PDPContextImpl implements PDPContext, MAPAsnPrimitive {
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		try {
-			if (this.pdpContextId != null)
-				asnOs.writeInteger((int) this.pdpContextId);
 
-			if (this.pdpType != null)
-				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _ID_pdp_Type, this.pdpType);
+		if (this.pdpType == null || this.qosSubscribed == null || this.apn == null) {
+			throw new MAPException("pdpType, qosSubscribed and apn parameters must not be null");
+		}
+
+		try {
+			asnOs.writeInteger((int) this.pdpContextId);
+
+			((PDPTypeImpl) this.pdpType).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_pdp_Type);
 
 			if (this.pdpAddress != null)
-				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _ID_pdp_Address, this.pdpAddress);
+				((PDPAddressImpl) this.pdpAddress).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_pdp_Address);
 
-			if (this.qosSubscribed != null)
-				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _ID_QoS_Subscribed, this.qosSubscribed);
+			((QoSSubscribedImpl) this.qosSubscribed).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_QoS_Subscribed);
 
-			if (this.vplmnAddressAllowed != null && this.vplmnAddressAllowed)
+			if (this.vplmnAddressAllowed)
 				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_vplmnAddressAllowed);
 
-			if (this.apn != null)
-				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _ID_apn, this.apn);
+			((APNImpl) this.apn).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_apn);
 
 			if (this.extensionContainer != null)
 				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensionContainer);
 
 			if (this.extQoSSubscribed != null)
-				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _ID_ext_QoS_Subscribed, this.extQoSSubscribed);
+				((ExtQoSSubscribedImpl) this.extQoSSubscribed).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_ext_QoS_Subscribed);
 
 			if (this.chargingCharacteristics != null)
-				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _ID_pdp_ChargingCharacteristics, this.chargingCharacteristics);
+				((ChargingCharacteristicsImpl) this.chargingCharacteristics).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_pdp_ChargingCharacteristics);
 
 			if (this.ext2QoSSubscribed != null)
-				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _ID_ext2_QoS_Subscribed, this.ext2QoSSubscribed);
+				((Ext2QoSSubscribedImpl) this.ext2QoSSubscribed).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_ext2_QoS_Subscribed);
 
 			if (this.ext3QoSSubscribed != null)
-				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _ID_ext3_QoS_Subscribed, this.ext3QoSSubscribed);
+				((Ext3QoSSubscribedImpl) this.ext3QoSSubscribed).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_ext3_QoS_Subscribed);
 
 			if (this.ext4QoSSubscribed != null)
-				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _ID_ext4_QoS_Subscribed, this.ext4QoSSubscribed);
+				((Ext4QoSSubscribedImpl) this.ext4QoSSubscribed).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_ext4_QoS_Subscribed);
 
 			if (this.apnoiReplacement != null)
-				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _ID_apn_oi_Replacement, this.apnoiReplacement);
+				((APNOIReplacementImpl) this.apnoiReplacement).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_apn_oi_Replacement);
 
 			if (this.extpdpType != null)
-				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _ID_ext_pdp_Type, this.extpdpType);
+				((ExtPDPTypeImpl) this.extpdpType).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_ext_pdp_Type);
 
 			if (this.extpdpAddress != null)
-				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _ID_ext_pdp_Address, this.extpdpAddress);
+				((PDPAddressImpl) this.extpdpAddress).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_ext_pdp_Address);
 
 			if (this.sipToPermission != null)
+				((PDPAddressImpl) this.pdpAddress).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_pdp_Address);
 				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_sipto_Permission, this.sipToPermission.getCode());
 
 			if (this.lipaPermission != null)
@@ -579,6 +593,79 @@ public class PDPContextImpl implements PDPContext, MAPAsnPrimitive {
 		} catch (AsnException e) {
 			throw new MAPException("AsnException when encoding PDPContext : " + e.getMessage(), e);
 		}
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		sb.append("pdpContextId=");
+		sb.append(this.pdpContextId);
+		if (this.pdpType != null) {
+			sb.append(", pdpType=");
+			sb.append(this.pdpType.toString());
+		}
+		if (this.qosSubscribed != null) {
+			sb.append(", qosSubscribed=");
+			sb.append(this.qosSubscribed.toString());
+		}
+		if (this.vplmnAddressAllowed) {
+			sb.append(", vplmnAddressAllowed");
+		}
+		if (this.apn != null) {
+			sb.append(", apn=");
+			sb.append(this.apn.toString());
+		}
+		if (this.extensionContainer != null) {
+			sb.append(", extensionContainer=");
+			sb.append(this.extensionContainer.toString());
+		}
+		if (this.extQoSSubscribed != null) {
+			sb.append(", extQoSSubscribed=");
+			sb.append(this.extQoSSubscribed.toString());
+		}
+		if (this.chargingCharacteristics != null) {
+			sb.append(", chargingCharacteristics=");
+			sb.append(this.chargingCharacteristics.toString());
+		}
+		if (this.ext2QoSSubscribed != null) {
+			sb.append(", ext2QoSSubscribed=");
+			sb.append(this.ext2QoSSubscribed.toString());
+		}
+		if (this.ext3QoSSubscribed != null) {
+			sb.append(", ext3QoSSubscribed=");
+			sb.append(this.ext3QoSSubscribed.toString());
+		}
+		if (this.ext4QoSSubscribed != null) {
+			sb.append(", ext4QoSSubscribed=");
+			sb.append(this.ext4QoSSubscribed.toString());
+		}
+		if (this.apnoiReplacement != null) {
+			sb.append(", apnoiReplacement=");
+			sb.append(this.apnoiReplacement.toString());
+		}
+		if (this.extpdpType != null) {
+			sb.append(", extpdpType=");
+			sb.append(this.extpdpType.toString());
+		}
+		if (this.extpdpAddress != null) {
+			sb.append(", extpdpAddress=");
+			sb.append(this.extpdpAddress.toString());
+		}
+		if (this.sipToPermission != null) {
+			sb.append(", sipToPermission=");
+			sb.append(this.sipToPermission.toString());
+		}
+		if (this.lipaPermission != null) {
+			sb.append(", lipaPermission=");
+			sb.append(this.lipaPermission.toString());
+		}
+
+		sb.append("]");
+
+		return sb.toString();
 	}
 
 }

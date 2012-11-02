@@ -25,6 +25,13 @@ package org.mobicents.protocols.ss7.map.api.primitives;
 import java.util.ArrayList;
 
 /**
+
+ExtensionContainer ::= SEQUENCE {
+	privateExtensionList	[0]PrivateExtensionList	OPTIONAL, 
+	pcs-Extensions	[1]PCS-Extensions	OPTIONAL,
+	...}
+
+ * 
  * @author sergey vetyutnev
  */
 public interface MAPExtensionContainer {

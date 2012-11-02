@@ -43,8 +43,6 @@ import org.mobicents.protocols.ss7.map.primitives.SequenceBase;
  */
 public class UESBIIuImpl extends SequenceBase implements UESBIIu {
 
-	public static final String _PrimitiveName = "UESBIIu";
-	
 	private static final int _TAG_UESBI_IuA = 0;
 	private static final int _TAG_UESBI_IuB = 1;
 	
@@ -52,11 +50,11 @@ public class UESBIIuImpl extends SequenceBase implements UESBIIu {
 	private UESBIIuB uesbiIuB;
 	
 	public UESBIIuImpl() {
-		super(_PrimitiveName);
+		super("UESBIIu");
 	}
 	
 	public UESBIIuImpl(UESBIIuA uesbiIuA, UESBIIuB uesbiIuB) {
-		super(_PrimitiveName);
+		super("UESBIIu");
 		this.uesbiIuA = uesbiIuA;
 		this.uesbiIuB = uesbiIuB;
 	}
