@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,9 +20,6 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * 
- */
 package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.IOException;
@@ -46,8 +43,8 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 	private static final String _OCTET_STRING_ENCODE = "US-ASCII";
 
 	// mandatory
-	private long originatingTransactionId;
-	private long destinationTransactionId;
+	private byte[] originatingTransactionId;
+	private byte[] destinationTransactionId;
 	// opt
 	private DialogPortion dp;
 	// opt
@@ -71,7 +68,7 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage#
 	 * getDestinationTransactionId()
 	 */
-	public long getDestinationTransactionId() {
+	public byte[] getDestinationTransactionId() {
 
 		return this.destinationTransactionId;
 	}
@@ -94,7 +91,7 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage#
 	 * getOriginatingTransactionId()
 	 */
-	public long getOriginatingTransactionId() {
+	public byte[] getOriginatingTransactionId() {
 
 		return this.originatingTransactionId;
 	}
@@ -117,7 +114,7 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage#
 	 * setDestinationTransactionId(java.lang.String)
 	 */
-	public void setDestinationTransactionId(long t) {
+	public void setDestinationTransactionId(byte[] t) {
 		this.destinationTransactionId = t;
 
 	}
@@ -140,7 +137,7 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage#
 	 * setOriginatingTransactionId(java.lang.String)
 	 */
-	public void setOriginatingTransactionId(long t) {
+	public void setOriginatingTransactionId(byte[] t) {
 
 		this.originatingTransactionId = t;
 	}
@@ -159,12 +156,14 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 			int tag = localAis.readTag();
 			if (tag != _TAG_OTX || localAis.getTagClass() != Tag.CLASS_APPLICATION)
 				throw new ParseException("Error decoding TC-Continue: Expected OriginatingTransactionId, found tag: " + tag);
-			this.originatingTransactionId = Utils.readTransactionId(localAis);
+//			this.originatingTransactionId = Utils.readTransactionId(localAis);
+			this.originatingTransactionId = localAis.readOctetString();
 
 			tag = localAis.readTag();
 			if (tag != _TAG_DTX || localAis.getTagClass() != Tag.CLASS_APPLICATION)
 				throw new ParseException("Error decoding TC-Continue: Expected DestinationTransactionId, found tag: " + tag);
-			this.destinationTransactionId = Utils.readTransactionId(localAis);
+//			this.destinationTransactionId = Utils.readTransactionId(localAis);
+			this.destinationTransactionId = localAis.readOctetString();
 
 			if (localAis.available() == 0)
 				return;
@@ -229,8 +228,10 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 			aos.writeTag(Tag.CLASS_APPLICATION, false, _TAG);
 			int pos = aos.StartContentDefiniteLength();
 
-			Utils.writeTransactionId(aos, this.originatingTransactionId, Tag.CLASS_APPLICATION, _TAG_OTX);
-			Utils.writeTransactionId(aos, this.destinationTransactionId, Tag.CLASS_APPLICATION, _TAG_DTX);
+//			Utils.writeTransactionId(aos, this.originatingTransactionId, Tag.CLASS_APPLICATION, _TAG_OTX);
+//			Utils.writeTransactionId(aos, this.destinationTransactionId, Tag.CLASS_APPLICATION, _TAG_DTX);
+			aos.writeOctetString(Tag.CLASS_APPLICATION, _TAG_OTX, this.originatingTransactionId);
+			aos.writeOctetString(Tag.CLASS_APPLICATION, _TAG_DTX, this.destinationTransactionId);
 
 			if (this.dp != null)
 				this.dp.encode(aos);

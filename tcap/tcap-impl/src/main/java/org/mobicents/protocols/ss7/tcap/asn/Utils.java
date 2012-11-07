@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,9 +20,6 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * 
- */
 package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.IOException;
@@ -36,9 +33,9 @@ import org.mobicents.protocols.asn.AsnOutputStream;
  * @author baranowb
  *
  */
-final class Utils {
+public final class Utils {
 
-	
+
 	public static long readTransactionId(AsnInputStream ais) throws AsnException, IOException
 	{
 		//here  we have AIS, with txid - this is integer, but its coded as 
@@ -68,5 +65,30 @@ final class Utils {
 		
 		aos.writeOctetString(tagClass, tag, data);
 		
+	}
+
+	public static long decodeTransactionId(byte[] data) {
+		byte[] longRep = new byte[8];
+		// copy data so longRep = {0,0,0,...,data};
+		System.arraycopy(data, 0, longRep, longRep.length - data.length, data.length);
+		ByteBuffer bb = ByteBuffer.wrap(longRep);
+		return bb.getLong();
+
+	}
+
+	public static byte[] encodeTransactionId(long txId) {
+		// txId may only be up to 4 bytes, that is 0xFF FF FF FF
+		byte[] data = new byte[4];
+		// long ll = txId.longValue();
+		// data[3] = (byte) ll;
+		// data[2] = (byte) (ll>> 8);
+		// data[1] = (byte) (ll>>16);
+		// data[0] = (byte) (ll >> 24);
+		data[3] = (byte) txId;
+		data[2] = (byte) (txId >> 8);
+		data[1] = (byte) (txId >> 16);
+		data[0] = (byte) (txId >> 24);
+
+		return data;
 	}
 }
