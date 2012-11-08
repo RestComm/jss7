@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.testng.annotations.Test; import static org.testng.Assert.*;
 
@@ -56,6 +57,10 @@ public class TCAbortTest  {
 		return new byte[] { 103, 9, 73, 4, 123, -91, 52, 19, 74, 1, 125 };
 	}
 
+	private byte[] getDestTrId() {
+		return new byte[] { 0x7B, (byte) 0xA5, 0x34, 0x13 };
+	}
+	
 	@Test(groups = { "functional.encode" })
 	public void testBasicTCAbortTestEncode() throws IOException, ParseException {
 
@@ -63,7 +68,7 @@ public class TCAbortTest  {
 		byte[] expected = getDataDialogPort();
 
 		TCAbortMessageImpl tcAbortMessage = new TCAbortMessageImpl();
-		tcAbortMessage.setDestinationTransactionId(2074424339l);
+		tcAbortMessage.setDestinationTransactionId(getDestTrId());
 
 		DialogPortion dp = TcapFactory.createDialogPortion();
 		dp.setUnidirectional(false);
@@ -100,7 +105,7 @@ public class TCAbortTest  {
 		expected = getDataAbortCause();
 
 		tcAbortMessage = new TCAbortMessageImpl();
-		tcAbortMessage.setDestinationTransactionId(2074424339l);
+		tcAbortMessage.setDestinationTransactionId(getDestTrId());
 		tcAbortMessage.setPAbortCause(PAbortCauseType.DialogueIdleTimeout);
 
 		aos = new AsnOutputStream();
@@ -123,9 +128,9 @@ public class TCAbortTest  {
 
 		TCAbortMessageImpl impl = new TCAbortMessageImpl();
 		impl.decode(ais);
-		
-		assertTrue(2074424339 == impl.getDestinationTransactionId());
-		
+
+		assertTrue(Arrays.equals(impl.getDestinationTransactionId(), getDestTrId()));
+
 		DialogPortion dp = impl.getDialogPortion();
 		
 		assertNotNull(dp);
@@ -143,9 +148,10 @@ public class TCAbortTest  {
 
 		impl = new TCAbortMessageImpl();
 		impl.decode(ais);
-		
-		assertTrue(2074424339 == impl.getDestinationTransactionId());
-		
+
+		assertTrue(Arrays.equals(impl.getDestinationTransactionId(), getDestTrId()));
+//		assertTrue(2074424339 == impl.getDestinationTransactionId());
+
 		dp = impl.getDialogPortion();
 		assertNull(dp);
 		assertEquals(PAbortCauseType.DialogueIdleTimeout, impl.getPAbortCause());

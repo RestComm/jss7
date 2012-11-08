@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -70,6 +70,7 @@ import org.mobicents.protocols.ss7.tcap.asn.TCEndMessageImpl;
 import org.mobicents.protocols.ss7.tcap.asn.TCUniMessageImpl;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
+import org.mobicents.protocols.ss7.tcap.asn.Utils;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
@@ -118,7 +119,7 @@ public class DialogImpl implements Dialog {
 
 	private Long localTransactionIdObject;
 	private long localTransactionId;
-	private long remoteTransactionId;
+	private byte[] remoteTransactionId;
 
 	private SccpAddress localAddress;
 	private SccpAddress remoteAddress;
@@ -391,7 +392,7 @@ public class DialogImpl implements Dialog {
 			}
 
 			// now comps
-			tcbm.setOriginatingTransactionId(this.localTransactionId);
+			tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId));
 			if (this.scheduledComponentList.size() > 0) {
 				Component[] componentsToSend = new Component[this.scheduledComponentList.size()];
 				this.prepareComponents(componentsToSend);
@@ -458,7 +459,7 @@ public class DialogImpl implements Dialog {
 
 				}
 
-				tcbm.setOriginatingTransactionId(this.localTransactionId);
+				tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId));
 				tcbm.setDestinationTransactionId(this.remoteTransactionId);
 				if (this.scheduledComponentList.size() > 0) {
 					Component[] componentsToSend = new Component[this.scheduledComponentList.size()];
@@ -490,7 +491,7 @@ public class DialogImpl implements Dialog {
 				// in this we ignore acn and passed args(except qos)
 				TCContinueMessageImpl tcbm = (TCContinueMessageImpl) TcapFactory.createTCContinueMessage();
 
-				tcbm.setOriginatingTransactionId(this.localTransactionId);
+				tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId));
 				tcbm.setDestinationTransactionId(this.remoteTransactionId);
 				if (this.scheduledComponentList.size() > 0) {
 					Component[] componentsToSend = new Component[this.scheduledComponentList.size()];
@@ -866,7 +867,7 @@ public class DialogImpl implements Dialog {
 		}
 
 		// now comps
-		tcbm.setOriginatingTransactionId(this.localTransactionId);
+		tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId));
 		if (this.scheduledComponentList.size() > 0) {
 			Component[] componentsToSend = new Component[this.scheduledComponentList.size()];
 			for (int index = 0; index < this.scheduledComponentList.size(); index++) {
@@ -914,7 +915,7 @@ public class DialogImpl implements Dialog {
 
 		}
 
-		tcbm.setOriginatingTransactionId(this.localTransactionId);
+		tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId));
 		tcbm.setDestinationTransactionId(this.remoteTransactionId);
 		if (this.scheduledComponentList.size() > 0) {
 			Component[] componentsToSend = new Component[this.scheduledComponentList.size()];
@@ -1063,7 +1064,7 @@ public class DialogImpl implements Dialog {
 	 * @param remoteTransactionId
 	 *            the remoteTransactionId to set
 	 */
-	void setRemoteTransactionId(Long remoteTransactionId) {
+	void setRemoteTransactionId(byte[] remoteTransactionId) {
 		this.remoteTransactionId = remoteTransactionId;
 	}
 

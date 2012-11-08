@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.testng.annotations.Test; import static org.testng.Assert.*;
 
@@ -89,8 +90,10 @@ public class TcContinueTest  {
 		TCContinueMessage tcm = TcapFactory.createTCContinueMessage(ais);
 		
 		assertNull(tcm.getDialogPortion(),"Dialog portion should not be present");
-		assertEquals(145031169L, tcm.getOriginatingTransactionId(),"Originating transaction id does not match");
-		assertEquals(144965633L, tcm.getDestinationTransactionId(),"Desination transaction id does not match");
+//		assertEquals(145031169L, tcm.getOriginatingTransactionId(),"Originating transaction id does not match");
+		assertTrue(Arrays.equals(tcm.getOriginatingTransactionId(), new byte[] { 0x08, (byte) 0xA5, 0, 0x01, }), "Originating transaction id does not match");
+//		assertEquals(144965633L, tcm.getDestinationTransactionId(),"Destination transaction id does not match");
+		assertTrue(Arrays.equals(tcm.getDestinationTransactionId(), new byte[] { 8, (byte) 0xA4, 0, 1, }), "Destination transaction id does not match");
 		
 		assertNotNull(tcm.getComponent(),"Component portion should be present");
 		assertEquals(1,tcm.getComponent().length,"Component count is wrong");
@@ -218,8 +221,10 @@ public class TcContinueTest  {
 		TCContinueMessage tcm = TcapFactory.createTCContinueMessage(ais);
 		
 		assertNull(tcm.getDialogPortion(),"Dialog portion should not be present");
-		assertEquals(145031169L, tcm.getOriginatingTransactionId(),"Originating transaction id does not match");
-		assertEquals(144965633L,tcm.getDestinationTransactionId(),"Desination transaction id does not match");
+//		assertEquals(145031169L, tcm.getOriginatingTransactionId(),"Originating transaction id does not match");
+//		assertEquals(144965633L,tcm.getDestinationTransactionId(),"Desination transaction id does not match");
+		assertTrue(Arrays.equals(tcm.getOriginatingTransactionId(), new byte[] { 0x08, (byte) 0xA5, 0, 0x01, }), "Originating transaction id does not match");
+		assertTrue(Arrays.equals(tcm.getDestinationTransactionId(), new byte[] { 8, (byte) 0xA4, 0, 1, }), "Destination transaction id does not match");
 		
 		assertNotNull(tcm.getComponent(),"Component portion should be present");
 		assertEquals(1,tcm.getComponent().length,"Component count is wrong");
@@ -358,8 +363,10 @@ public class TcContinueTest  {
 		TCContinueMessage tcm = TcapFactory.createTCContinueMessage(ais);
 		
 		assertNull(tcm.getDialogPortion(),"Dialog portion should not be present");
-		assertEquals(144965633L, tcm.getDestinationTransactionId(),"Destination transaction id does not match");
-		assertEquals(145031169L, tcm.getOriginatingTransactionId(),"Originating transaction id does not match");
+//		assertEquals(144965633L, tcm.getDestinationTransactionId(),"Destination transaction id does not match");
+//		assertEquals(145031169L, tcm.getOriginatingTransactionId(),"Originating transaction id does not match");
+		assertTrue(Arrays.equals(tcm.getOriginatingTransactionId(), new byte[] { 0x08, (byte) 0xA5, 0, 0x01, }), "Originating transaction id does not match");
+		assertTrue(Arrays.equals(tcm.getDestinationTransactionId(), new byte[] { 8, (byte) 0xA4, 0, 1, }), "Destination transaction id does not match");
 		//comp portion
 		assertNotNull(tcm.getComponent(),"Component portion should be present");
 		assertEquals(2,tcm.getComponent().length,"Component count is wrong");
@@ -479,8 +486,10 @@ public class TcContinueTest  {
 		TCContinueMessage tcm = TcapFactory.createTCContinueMessage(ais);
 		assertNull(tcm.getComponent(),"Component portion should not be present");
 		assertNotNull(tcm.getDialogPortion(),"Dialog portion should not be null");
-		assertEquals(145031169L, tcm.getDestinationTransactionId(),"Destination transaction id does not match");
-		assertEquals(145031169L, tcm.getOriginatingTransactionId(),"Originating transaction id does not match");
+//		assertEquals(145031169L, tcm.getDestinationTransactionId(),"Destination transaction id does not match");
+//		assertEquals(145031169L, tcm.getOriginatingTransactionId(),"Originating transaction id does not match");
+		assertTrue(Arrays.equals(tcm.getOriginatingTransactionId(), new byte[] { 0x08, (byte) 0xA5, 0, 0x01, }), "Originating transaction id does not match");
+		assertTrue(Arrays.equals(tcm.getDestinationTransactionId(), new byte[] { 8, (byte) 0xA5, 0, 1, }), "Destination transaction id does not match");
 		
 		assertFalse( tcm.getDialogPortion().isUnidirectional(),"Dialog should not be Uni");
 		DialogAPDU _dapd = tcm.getDialogPortion().getDialogAPDU();
@@ -552,8 +561,10 @@ public class TcContinueTest  {
 		
 		assertNull(tcm.getDialogPortion(),"Dialog portion should be null");
 		assertNull(tcm.getComponent(),"Component portion should not be present");
-		assertEquals(145031169L, tcm.getDestinationTransactionId(),"Destination transaction id does not match");
-		assertEquals(145031169L, tcm.getOriginatingTransactionId(),"Originating transaction id does not match");
+//		assertEquals(145031169L, tcm.getDestinationTransactionId(),"Destination transaction id does not match");
+//		assertEquals(145031169L, tcm.getOriginatingTransactionId(),"Originating transaction id does not match");
+		assertTrue(Arrays.equals(tcm.getOriginatingTransactionId(), new byte[] { 0x08, (byte) 0xA5, 0, 0x01, }), "Originating transaction id does not match");
+		assertTrue(Arrays.equals(tcm.getDestinationTransactionId(), new byte[] { 8, (byte) 0xA5, 0, 1, }), "Destination transaction id does not match");
 	
 		AsnOutputStream aos = new AsnOutputStream();
 		tcm.encode(aos);
@@ -726,12 +737,14 @@ public class TcContinueTest  {
 		TCContinueMessage tcm = TcapFactory.createTCContinueMessage(ais);
 		
 		//universal
-		assertEquals(144965633L, tcm.getDestinationTransactionId(),"Destination transaction id does not match");
-		assertEquals(145031169L, tcm.getOriginatingTransactionId(),"Originating transaction id does not match");
+//		assertEquals(144965633L, tcm.getDestinationTransactionId(),"Destination transaction id does not match");
+//		assertEquals(145031169L, tcm.getOriginatingTransactionId(),"Originating transaction id does not match");
+		assertTrue(Arrays.equals(tcm.getOriginatingTransactionId(), new byte[] { 0x08, (byte) 0xA5, 0, 0x01, }), "Originating transaction id does not match");
+		assertTrue(Arrays.equals(tcm.getDestinationTransactionId(), new byte[] { 8, (byte) 0xA4, 0, 1, }), "Destination transaction id does not match");
 		
 		//dialog portion
 		assertNotNull(tcm.getDialogPortion(),"Dialog portion should not be null");
-		assertEquals(144965633L, tcm.getDestinationTransactionId(),"Destination transaction id does not match");
+//		assertEquals(144965633L, tcm.getDestinationTransactionId(),"Destination transaction id does not match");
 		
 		assertFalse( tcm.getDialogPortion().isUnidirectional(),"Dialog should not be Uni");
 		DialogAPDU _dapd = tcm.getDialogPortion().getDialogAPDU();

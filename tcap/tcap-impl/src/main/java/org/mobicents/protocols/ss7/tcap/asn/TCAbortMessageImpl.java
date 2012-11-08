@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,9 +20,6 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * 
- */
 package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.IOException;
@@ -44,7 +41,7 @@ public class TCAbortMessageImpl implements TCAbortMessage {
 
 	private static final String _OCTET_STRING_ENCODE = "US-ASCII";
 
-	private long destTxId;
+	private byte[] destTxId;
 	private PAbortCauseType type;
 	private DialogPortion dp;
 
@@ -54,7 +51,7 @@ public class TCAbortMessageImpl implements TCAbortMessage {
 	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCAbortMessage#
 	 * getDestinationTransactionId()
 	 */
-	public long getDestinationTransactionId() {
+	public byte[] getDestinationTransactionId() {
 
 		return destTxId;
 	}
@@ -88,7 +85,7 @@ public class TCAbortMessageImpl implements TCAbortMessage {
 	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCAbortMessage#
 	 * setDestinationTransactionId()
 	 */
-	public void setDestinationTransactionId(long t) {
+	public void setDestinationTransactionId(byte[] t) {
 		this.destTxId = t;
 
 	}
@@ -133,7 +130,8 @@ public class TCAbortMessageImpl implements TCAbortMessage {
 			int tag = localAis.readTag();
 			if (tag != _TAG_DTX || localAis.getTagClass() != Tag.CLASS_APPLICATION)
 				throw new ParseException("Error decoding TC-Abort: Expected DestinationTransactionId, found tag: " + tag);
-			this.destTxId = Utils.readTransactionId(localAis);
+//			this.destTxId = Utils.readTransactionId(localAis);
+			this.destTxId = localAis.readOctetString();
 
 			if (localAis.available() == 0)
 				return;
@@ -184,7 +182,8 @@ public class TCAbortMessageImpl implements TCAbortMessage {
 			aos.writeTag(Tag.CLASS_APPLICATION, false, _TAG);
 			int pos = aos.StartContentDefiniteLength();
 
-			Utils.writeTransactionId(aos, this.destTxId, Tag.CLASS_APPLICATION, _TAG_DTX);
+//			Utils.writeTransactionId(aos, this.destTxId, Tag.CLASS_APPLICATION, _TAG_DTX);
+			aos.writeOctetString(Tag.CLASS_APPLICATION, _TAG_DTX, this.destTxId);
 
 			if (this.type != null)
 				aos.writeInteger(Tag.CLASS_APPLICATION, _TAG_P, this.type.getType());

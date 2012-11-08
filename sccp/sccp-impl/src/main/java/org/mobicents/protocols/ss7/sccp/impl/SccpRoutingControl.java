@@ -398,6 +398,21 @@ public class SccpRoutingControl {
 				return true;
 			else
 				return false;
+		} else if (loadSharingAlgo == LoadSharingAlgorithm.Bit2) {
+			if ((msg.getSls() & 0x04) == 0)
+				return true;
+			else
+				return false;
+		} else if (loadSharingAlgo == LoadSharingAlgorithm.Bit1) {
+			if ((msg.getSls() & 0x02) == 0)
+				return true;
+			else
+				return false;
+		} else if (loadSharingAlgo == LoadSharingAlgorithm.Bit0) {
+			if ((msg.getSls() & 0x01) == 0)
+				return true;
+			else
+				return false;
 		} else {
 			// TODO: implement complicated algorithms for selecting a destination
 			// (CallingPartyAddress & SLS depended)
