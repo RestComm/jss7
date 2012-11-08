@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.tcap;
 
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
@@ -35,8 +36,10 @@ import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCNoticeIndication;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
  * @author baranowb
@@ -94,5 +97,35 @@ public class Client extends EventTestHarness{
 
 	public DialogImpl getCurDialog() {
 		return (DialogImpl) this.dialog;
+	}
+	
+	public Invoke createNewInvoke(){
+		
+		Invoke invoke = this.tcapProvider.getComponentPrimitiveFactory().createTCInvokeRequest();
+		invoke.setInvokeId(12l);
+		
+		OperationCode oc = TcapFactory.createOperationCode();
+		
+		oc.setLocalOperationCode(59L);
+		invoke.setOperationCode(oc);
+		
+		Parameter p1 = TcapFactory.createParameter();
+		p1.setTagClass(Tag.CLASS_UNIVERSAL);
+		p1.setTag(Tag.STRING_OCTET);
+		p1.setData(new byte[]{0x0F});
+		
+		Parameter p2 = TcapFactory.createParameter();
+		p2.setTagClass(Tag.CLASS_UNIVERSAL);
+		p2.setTag(Tag.STRING_OCTET);
+		p2.setData(new byte[] { (byte) 0xaa, (byte) 0x98, (byte) 0xac, (byte) 0xa6, 0x5a, (byte) 0xcd, 0x62, 0x36, 0x19, 0x0e, 0x37, (byte) 0xcb, (byte) 0xe5,
+				0x72, (byte) 0xb9, 0x11 });
+	
+		Parameter pm = TcapFactory.createParameter();
+		pm.setTagClass(Tag.CLASS_UNIVERSAL);
+		pm.setTag(Tag.SEQUENCE);
+		pm.setParameters(new Parameter[]{p1, p2});
+		invoke.setParameter(pm);
+		
+		return invoke;
 	}
 }

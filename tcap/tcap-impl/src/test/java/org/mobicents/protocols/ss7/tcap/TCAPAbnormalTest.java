@@ -26,6 +26,8 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
@@ -33,7 +35,10 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.TRPseudoState;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
+import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -48,6 +53,7 @@ import org.testng.annotations.Test;
 public class TCAPAbnormalTest extends SccpHarness {
 
 	public static final long WAIT_TIME = 500;
+	public static final long INVOKE_WAIT_TIME = 500;
 	private static final int _DIALOG_TIMEOUT = 5000;
 
 	private TCAPStackImpl tcapStack1;
@@ -416,6 +422,71 @@ public class TCAPAbnormalTest extends SccpHarness {
         client.compareEvents(clientExpectedEvents);
         server.compareEvents(serverExpectedEvents);
     }
+	
+	@Test(groups = { "functional.flow"})
+    public void invokeTimeoutTest1() throws Exception{
+
+		// Invoke timeouts before dialog timesout
+		long stamp = System.currentTimeMillis();
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.Begin, null, 0, stamp);
+		clientExpectedEvents.add(te);
+		te = TestEvent.createReceivedEvent(EventType.InvokeTimeout, null, 1, stamp + INVOKE_WAIT_TIME);
+		clientExpectedEvents.add(te);
+		te = TestEvent.createReceivedEvent(EventType.DialogTimeout, null, 2, stamp + _DIALOG_TIMEOUT);
+		clientExpectedEvents.add(te);
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 3, stamp + _DIALOG_TIMEOUT);
+		clientExpectedEvents.add(te);
+
+        List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+
+		client.startClientDialog();
+		
+		DialogImpl tcapDialog = client.getCurDialog();
+		Invoke invoke = client.createNewInvoke();
+		invoke.setTimeout(INVOKE_WAIT_TIME);
+		tcapDialog.sendComponent(invoke);
+		
+		client.sendBeginUnreachableAddress(false);
+		Thread.sleep(WAIT_TIME);
+		Thread.sleep(_DIALOG_TIMEOUT);
+
+        client.compareEvents(clientExpectedEvents);
+        server.compareEvents(serverExpectedEvents);
+    }	
+	
+	@Test(groups = { "functional.flow"})
+    public void invokeTimeoutTest2() throws Exception{
+
+		// Invoke timeouts after dialog timeout
+		
+		long stamp = System.currentTimeMillis();
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.Begin, null, 0, stamp);
+		clientExpectedEvents.add(te);
+		
+		te = TestEvent.createReceivedEvent(EventType.DialogTimeout, null, 1, stamp + (_DIALOG_TIMEOUT));
+		clientExpectedEvents.add(te);
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 2, stamp + (_DIALOG_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+        List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+
+		client.startClientDialog();
+		
+		DialogImpl tcapDialog = client.getCurDialog();
+		Invoke invoke = client.createNewInvoke();
+		invoke.setTimeout(_DIALOG_TIMEOUT * 2);
+		tcapDialog.sendComponent(invoke);
+		
+		client.sendBeginUnreachableAddress(false);
+		Thread.sleep(WAIT_TIME);
+		Thread.sleep(_DIALOG_TIMEOUT *2);
+
+        client.compareEvents(clientExpectedEvents);
+        server.compareEvents(serverExpectedEvents);
+    }		
+	
 
 	public static byte[] getMessageWithUnsupportedProtocolVersion() {
 		return new byte[] { 98, 117, 72, 1, 1, 107, 69, 40, 67, 6, 7, 0, 17, (byte) 134, 5, 1, 1, 1, (byte) 160, 56, 96, 54, (byte) 128, 2, 6, 64, (byte) 161,

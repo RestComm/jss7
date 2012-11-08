@@ -1691,6 +1691,12 @@ public class DialogImpl implements Dialog {
 				if (d.idleTimerActionTaken) {
 					startIdleTimer();
 				} else {
+					for(int i=0; i<d.operationsSent.length;i++){
+						InvokeImpl invokeImpl = d.operationsSent[i];
+						if(invokeImpl != null){
+							invokeImpl.stopTimer();
+						}
+					}
 					d.release();
 				}
 
