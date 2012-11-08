@@ -188,6 +188,15 @@ public class DialogImpl implements Dialog {
 	}
 
 	public void release() {
+		for(int i=0; i<this.operationsSent.length;i++){
+			InvokeImpl invokeImpl = this.operationsSent[i];
+			if(invokeImpl != null){
+				invokeImpl.setState(OperationState.Idle);
+				//TODO whether to call operationTimedOut or not is still not clear 
+				//operationTimedOut(invokeImpl);
+			}
+		}
+		
 		this.setState(TRPseudoState.Expunged);
 	}
 
@@ -1692,12 +1701,6 @@ public class DialogImpl implements Dialog {
 				if (d.idleTimerActionTaken) {
 					startIdleTimer();
 				} else {
-					for(int i=0; i<d.operationsSent.length;i++){
-						InvokeImpl invokeImpl = d.operationsSent[i];
-						if(invokeImpl != null){
-							invokeImpl.stopTimer();
-						}
-					}
 					d.release();
 				}
 
