@@ -24,13 +24,18 @@ package org.mobicents.protocols.ss7.map.load;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.sctp.ManagementImpl;
+import org.mobicents.protocols.ss7.m3ua.As;
+import org.mobicents.protocols.ss7.m3ua.Asp;
+import org.mobicents.protocols.ss7.m3ua.AspFactory;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.IPSPType;
-import org.mobicents.protocols.ss7.m3ua.impl.As;
-import org.mobicents.protocols.ss7.m3ua.impl.Asp;
-import org.mobicents.protocols.ss7.m3ua.impl.AspFactory;
-import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement;
+import org.mobicents.protocols.ss7.m3ua.M3UAManagement;
+//import org.mobicents.protocols.ss7.m3ua.impl.As;
+//import org.mobicents.protocols.ss7.m3ua.impl.Asp;
+//import org.mobicents.protocols.ss7.m3ua.impl.AspFactory;
+//import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement;
+import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 import org.mobicents.protocols.ss7.map.MAPStackImpl;
@@ -87,7 +92,7 @@ public class Server extends TestHarness {
 	private SccpResource sccpResource;
 
 	// M3UA
-	private M3UAManagement serverM3UAMgmt;
+	private M3UAManagementImpl serverM3UAMgmt;
 
 	// SCTP
 	private ManagementImpl sctpManagement;
@@ -127,7 +132,7 @@ public class Server extends TestHarness {
 	}
 
 	private void initM3UA() throws Exception {
-		this.serverM3UAMgmt = new M3UAManagement("Server");
+		this.serverM3UAMgmt = new M3UAManagementImpl("Server");
 		this.serverM3UAMgmt.setTransportManagement(this.sctpManagement);
 		this.serverM3UAMgmt.start();
 		this.serverM3UAMgmt.removeAllResourses();
