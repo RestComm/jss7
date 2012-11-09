@@ -29,6 +29,7 @@ import java.nio.charset.Charset;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingGroup;
 import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSNationalLanguage;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.map.datacoding.GSMCharset;
@@ -48,6 +49,8 @@ public class USSDStringImpl extends OctetStringBase implements USSDString {
 	private CBSDataCodingScheme dataCodingScheme;
 
 	private static GSMCharset gsm7Charset = new GSMCharset("GSM", new String[] {});
+	private static GSMCharset gsm7Charset_Urdu = new GSMCharset("GSM", new String[] {}, GSMCharset.BYTE_TO_CHAR_UrduAlphabet,
+			GSMCharset.BYTE_TO_CHAR_UrduAlphabetExtentionTable);
 	private static Charset ucs2Charset = Charset.forName("UTF-16BE");
 
 
@@ -88,6 +91,9 @@ public class USSDStringImpl extends OctetStringBase implements USSDString {
 			switch (dataCodingScheme.getCharacterSet()) {
 			case GSM7:
 				Charset cSet = gsm7Charset;
+				if (dataCodingScheme.getNationalLanguageShiftTable() == CBSNationalLanguage.Arabic) {
+					cSet = gsm7Charset_Urdu;
+				}
 				GSMCharsetEncoder encoder = (GSMCharsetEncoder) cSet.newEncoder();
 				encoder.setGSMCharsetEncodingData(new GSMCharsetEncodingData());
 				ByteBuffer bb = null;
@@ -176,6 +182,9 @@ public class USSDStringImpl extends OctetStringBase implements USSDString {
 			switch (dataCodingScheme.getCharacterSet()) {
 			case GSM7:
 				GSMCharset cSet = gsm7Charset;
+				if (dataCodingScheme.getNationalLanguageShiftTable() == CBSNationalLanguage.Arabic) {
+					cSet = gsm7Charset_Urdu;
+				}
 				GSMCharsetDecoder decoder = (GSMCharsetDecoder) cSet.newDecoder();
 				decoder.setGSMCharsetDecodingData(new GSMCharsetDecodingData());		
 				ByteBuffer bb = ByteBuffer.wrap(this.data);
