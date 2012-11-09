@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -157,6 +157,7 @@ import org.mobicents.protocols.ss7.tcap.asn.DialogPortion;
 import org.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDU;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
+import org.mobicents.protocols.ss7.tcap.asn.Utils;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
@@ -487,8 +488,8 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 				TCContinueMessage tcm = TcapFactory.createTCContinueMessage(ais);
 				// received continue, destID == localDialogId(originatingTxId of
 				// begin);
-				long originatingTransactionId = tcm.getOriginatingTransactionId();
-				long destinationTransactionId = tcm.getDestinationTransactionId();
+				long originatingTransactionId = Utils.decodeTransactionId(tcm.getOriginatingTransactionId());
+				long destinationTransactionId = Utils.decodeTransactionId(tcm.getDestinationTransactionId());
 				int dpc = message.getIncomingDpc();
 				Map<Long, DialogImplWrapper> dpcData = this.dialogs.get(dpc);
 				int acnValue = 0;
@@ -550,7 +551,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 				TCBeginMessage tcb = TcapFactory.createTCBeginMessage(ais);
 				DialogImplWrapper di = new DialogImplWrapper(localAddress, remoteAddress, ++this.dialogEnumerator, true, this.tcapProvider.getExecuter(),
 						this.tcapProvider, 0);
-				long originatingTransactionId = tcb.getOriginatingTransactionId();
+				long originatingTransactionId = Utils.decodeTransactionId(tcb.getOriginatingTransactionId());
 				int opc = message.getIncomingOpc();
 				Map<Long, DialogImplWrapper> opcData = this.dialogs.get(opc);
 				if (opcData == null) {
@@ -601,7 +602,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 
 			case TCEndMessage._TAG: {
 				TCEndMessage teb = TcapFactory.createTCEndMessage(ais);
-				long destinationTransactionId = teb.getDestinationTransactionId();
+				long destinationTransactionId = Utils.decodeTransactionId(teb.getDestinationTransactionId());
 
 				int dpc = message.getIncomingDpc();
 				Map<Long, DialogImplWrapper> dpcData = this.dialogs.get(dpc);
@@ -645,7 +646,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 
 			case TCAbortMessage._TAG: {
 				TCAbortMessage tub = TcapFactory.createTCAbortMessage(ais);
-				long destinationTransactionId = tub.getDestinationTransactionId();
+				long destinationTransactionId = Utils.decodeTransactionId(tub.getDestinationTransactionId());
 
 				int dpc = message.getIncomingDpc();
 				Map<Long, DialogImplWrapper> dpcData = this.dialogs.get(dpc);

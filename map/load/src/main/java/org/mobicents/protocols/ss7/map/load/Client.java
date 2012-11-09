@@ -26,11 +26,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.sctp.ManagementImpl;
+import org.mobicents.protocols.ss7.m3ua.Asp;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.IPSPType;
-import org.mobicents.protocols.ss7.m3ua.impl.Asp;
-import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement;
+import org.mobicents.protocols.ss7.m3ua.M3UAManagement;
+//import org.mobicents.protocols.ss7.m3ua.impl.Asp;
+//import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement;
+import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 import org.mobicents.protocols.ss7.map.MAPStackImpl;
@@ -96,7 +99,7 @@ public class Client extends TestHarness {
 	private SccpResource sccpResource;
 
 	// M3UA
-	private M3UAManagement clientM3UAMgmt;
+	private M3UAManagementImpl clientM3UAMgmt;
 
 	// SCTP
 	private ManagementImpl sctpManagement;
@@ -141,7 +144,7 @@ public class Client extends TestHarness {
 	}
 
 	private void initM3UA() throws Exception {
-		this.clientM3UAMgmt = new M3UAManagement("Client");
+		this.clientM3UAMgmt = new M3UAManagementImpl("Client");
 		this.clientM3UAMgmt.setTransportManagement(this.sctpManagement);
 		this.clientM3UAMgmt.start();
 		this.clientM3UAMgmt.removeAllResourses();
