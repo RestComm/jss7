@@ -35,7 +35,9 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingGroup;
 import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSNationalLanguage;
 import org.mobicents.protocols.ss7.map.api.smstpdu.CharacterSet;
+import org.mobicents.protocols.ss7.map.api.smstpdu.DataCodingSchemaMessageClass;
 import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterTest;
@@ -79,6 +81,12 @@ public class USSDStringTest {
 	public static byte[] getDataGsm7Lang() {
 		return new byte[] { 4, 7, -14, -70, -30, 120, -90, -46, 27 };
 	}
+
+	public static byte[] getDataGsm7LangArabic() {
+		return new byte[] { 4, 8, 16, 80, 68, 50, 1, -123, 55, 65 };
+	}
+
+	public static String getStringGsm7LangArabic() { return "\u062B \u062C\u0681\u0684 aA"; }
 	
 	@Test(groups = { "functional.decode","primitives"})
 	public void testDecode() throws Exception {
@@ -112,6 +120,13 @@ public class USSDStringTest {
 		ussdStr = new USSDStringImpl(new CBSDataCodingSchemeImpl(CBSDataCodingGroup.GeneralWithLanguageIndication, CharacterSet.GSM7, null, null, false));
 		ussdStr.decodeAll(asn);
 		assertTrue(ussdStr.getString(null).equals("ru\nGgTt"));	
+
+		data = getDataGsm7LangArabic();
+		asn = new AsnInputStream(data);
+		tag = asn.readTag();
+		ussdStr = new USSDStringImpl(new CBSDataCodingSchemeImpl(CBSDataCodingGroup.GeneralGsm7, CharacterSet.GSM7, CBSNationalLanguage.Arabic, null, false));
+		ussdStr.decodeAll(asn);
+		assertTrue(ussdStr.getString(null).equals(getStringGsm7LangArabic()));	
 	}
 
 	@Test(groups = { "functional.encode","primitives"})
@@ -150,6 +165,19 @@ public class USSDStringTest {
 		data = getDataGsm7Lang();
 		dcs = new CBSDataCodingSchemeImpl(CBSDataCodingGroup.GeneralWithLanguageIndication, CharacterSet.GSM7, null, null, false);
 		ussdStr = new USSDStringImpl("ru\nGgTt", dcs, null);
+		asnOS = new AsnOutputStream();
+		ussdStr.encodeAll(asnOS);
+		encodedData = asnOS.toByteArray();
+		assertTrue( Arrays.equals(data,encodedData));
+
+
+		data = getDataGsm7LangArabic();
+		dcs = new CBSDataCodingSchemeImpl(CBSDataCodingGroup.GeneralGsm7, CharacterSet.GSM7, CBSNationalLanguage.Arabic, null, false);
+		assertEquals(dcs.getCode(), 34);
+		// CBSDataCodingGroup dataCodingGroup, CharacterSet characterSet, CBSNationalLanguage nationalLanguageShiftTable,
+		// DataCodingSchemaMessageClass messageClass, boolean isCompressed
+		String s1 = getStringGsm7LangArabic();
+		ussdStr = new USSDStringImpl(s1, dcs, null);
 		asnOS = new AsnOutputStream();
 		ussdStr.encodeAll(asnOS);
 		encodedData = asnOS.toByteArray();
