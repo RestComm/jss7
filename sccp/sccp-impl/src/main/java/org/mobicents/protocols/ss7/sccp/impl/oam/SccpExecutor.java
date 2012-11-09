@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -28,9 +28,9 @@ import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.indicator.AddressIndicator;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
-import org.mobicents.protocols.ss7.sccp.impl.ConcernedSignalingPointCode;
-import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCode;
-import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystem;
+import org.mobicents.protocols.ss7.sccp.impl.ConcernedSignalingPointCodeImpl;
+import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCodeImpl;
+import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystemImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpResource;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.router.LoadSharingAlgorithm;
@@ -157,7 +157,7 @@ public class SccpExecutor implements ShellExecutor {
 				}
 			}
 
-			RemoteSubSystem rsscObj = new RemoteSubSystem(remoteSpc, remoteSs, remoteSsFlag, markProhibitedWhenSpcResuming);
+			RemoteSubSystemImpl rsscObj = new RemoteSubSystemImpl(remoteSpc, remoteSs, remoteSsFlag, markProhibitedWhenSpcResuming);
 			this.sccpResource.addRemoteSsn(remoteSsId, rsscObj);
 			this.sccpResource.store();
 
@@ -187,7 +187,7 @@ public class SccpExecutor implements ShellExecutor {
 				}
 			}
 
-			RemoteSubSystem rsscObj = new RemoteSubSystem(remoteSpc, remoteSs, remoteSsFlag, markProhibitedWhenSpcResuming);
+			RemoteSubSystemImpl rsscObj = new RemoteSubSystemImpl(remoteSpc, remoteSs, remoteSsFlag, markProhibitedWhenSpcResuming);
 			this.sccpResource.addRemoteSsn(remoteSsId, rsscObj);
 			this.sccpResource.store();
 
@@ -207,7 +207,7 @@ public class SccpExecutor implements ShellExecutor {
 		} else if (command.equals("show")) {
 			if (options.length == 4) {
 				int remoteSsId = Integer.parseInt(options[3]);
-				RemoteSubSystem rss = this.sccpResource.getRemoteSsn(remoteSsId);
+				RemoteSubSystemImpl rss = this.sccpResource.getRemoteSsn(remoteSsId);
 				if (rss == null) {
 					return SccpOAMMessage.RSS_DOESNT_EXIST;
 				}
@@ -219,10 +219,10 @@ public class SccpExecutor implements ShellExecutor {
 			}
 
 			StringBuffer sb = new StringBuffer();
-			for (FastMap.Entry<Integer, RemoteSubSystem> e = this.sccpResource.getRemoteSsns().head(), end = this.sccpResource.getRemoteSsns().tail(); (e = e
+			for (FastMap.Entry<Integer, RemoteSubSystemImpl> e = this.sccpResource.getRemoteSsns().head(), end = this.sccpResource.getRemoteSsns().tail(); (e = e
 					.getNext()) != end;) {
 				int key = e.getKey();
-				RemoteSubSystem rss = e.getValue();
+				RemoteSubSystemImpl rss = e.getValue();
 				sb.append("key=");
 				sb.append(key);
 				sb.append("  ");
@@ -263,7 +263,7 @@ public class SccpExecutor implements ShellExecutor {
 			int remoteSpcFlag = Integer.parseInt(options[5]);
 			int mask = Integer.parseInt(options[6]);
 
-			RemoteSignalingPointCode rspcObj = new RemoteSignalingPointCode(remoteSpc, remoteSpcFlag, mask);
+			RemoteSignalingPointCodeImpl rspcObj = new RemoteSignalingPointCodeImpl(remoteSpc, remoteSpcFlag, mask);
 			this.sccpResource.addRemoteSpc(remoteSpcId, rspcObj);
 			this.sccpResource.store();
 
@@ -282,7 +282,7 @@ public class SccpExecutor implements ShellExecutor {
 			int remoteSpcFlag = Integer.parseInt(options[5]);
 			int mask = Integer.parseInt(options[6]);
 
-			RemoteSignalingPointCode rspcObj = new RemoteSignalingPointCode(remoteSpc, remoteSpcFlag, mask);
+			RemoteSignalingPointCodeImpl rspcObj = new RemoteSignalingPointCodeImpl(remoteSpc, remoteSpcFlag, mask);
 			this.sccpResource.addRemoteSpc(remoteSpcId, rspcObj);
 			this.sccpResource.store();
 
@@ -303,7 +303,7 @@ public class SccpExecutor implements ShellExecutor {
 		} else if (command.equals("show")) {
 			if (options.length == 4) {
 				int remoteSpcId = Integer.parseInt(options[3]);
-				RemoteSignalingPointCode rspc = this.sccpResource.getRemoteSpc(remoteSpcId);
+				RemoteSignalingPointCodeImpl rspc = this.sccpResource.getRemoteSpc(remoteSpcId);
 				if (rspc == null) {
 					return SccpOAMMessage.RSPC_DOESNT_EXIST;
 				}
@@ -316,10 +316,10 @@ public class SccpExecutor implements ShellExecutor {
 			}
 
 			StringBuffer sb = new StringBuffer();
-			for (FastMap.Entry<Integer, RemoteSignalingPointCode> e = this.sccpResource.getRemoteSpcs().head(), end = this.sccpResource.getRemoteSpcs().tail(); (e = e
+			for (FastMap.Entry<Integer, RemoteSignalingPointCodeImpl> e = this.sccpResource.getRemoteSpcs().head(), end = this.sccpResource.getRemoteSpcs().tail(); (e = e
 					.getNext()) != end;) {
 				int key = e.getKey();
-				RemoteSignalingPointCode rsp = e.getValue();
+				RemoteSignalingPointCodeImpl rsp = e.getValue();
 				sb.append("key=");
 				sb.append(key);
 				sb.append("  ");
@@ -1177,7 +1177,7 @@ public class SccpExecutor implements ShellExecutor {
 
 			int spc = Integer.parseInt(options[4]);
 
-			ConcernedSignalingPointCode conSpc = new ConcernedSignalingPointCode(spc);
+			ConcernedSignalingPointCodeImpl conSpc = new ConcernedSignalingPointCodeImpl(spc);
 			this.sccpResource.addConcernedSpc(concernedSpcId, conSpc);
 			this.sccpResource.store();
 
@@ -1194,7 +1194,7 @@ public class SccpExecutor implements ShellExecutor {
 
 			int spc = Integer.parseInt(options[4]);
 
-			ConcernedSignalingPointCode conSpc = new ConcernedSignalingPointCode(spc);
+			ConcernedSignalingPointCodeImpl conSpc = new ConcernedSignalingPointCodeImpl(spc);
 			this.sccpResource.addConcernedSpc(concernedSpcId, conSpc);
 			this.sccpResource.store();
 
@@ -1214,7 +1214,7 @@ public class SccpExecutor implements ShellExecutor {
 		} else if (command.equals("show")) {
 			if (options.length == 4) {
 				int concernedSpcId = Integer.parseInt(options[3]);
-				ConcernedSignalingPointCode conSpc = this.sccpResource.getConcernedSpc(concernedSpcId);
+				ConcernedSignalingPointCodeImpl conSpc = this.sccpResource.getConcernedSpc(concernedSpcId);
 				if (conSpc == null) {
 					return SccpOAMMessage.CS_DOESNT_EXIST;
 				}
@@ -1226,10 +1226,10 @@ public class SccpExecutor implements ShellExecutor {
 			}
 
 			StringBuffer sb = new StringBuffer();
-			for (FastMap.Entry<Integer, ConcernedSignalingPointCode> e = this.sccpResource.getConcernedSpcs().head(), end = this.sccpResource
+			for (FastMap.Entry<Integer, ConcernedSignalingPointCodeImpl> e = this.sccpResource.getConcernedSpcs().head(), end = this.sccpResource
 					.getConcernedSpcs().tail(); (e = e.getNext()) != end;) {
 				int key = e.getKey();
-				ConcernedSignalingPointCode ConcSpc = e.getValue();
+				ConcernedSignalingPointCodeImpl ConcSpc = e.getValue();
 				sb.append("key=");
 				sb.append(key);
 				sb.append("  ");

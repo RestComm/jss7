@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -30,12 +30,15 @@ import java.util.Arrays;
 
 import javolution.text.TextBuilder;
 import javolution.util.FastMap;
-import javolution.xml.XMLBinding;
 import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
 import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.sccp.parameter.GT0001;
+import org.mobicents.protocols.ss7.sccp.parameter.GT0010;
+import org.mobicents.protocols.ss7.sccp.parameter.GT0011;
+import org.mobicents.protocols.ss7.sccp.parameter.GT0100;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
@@ -190,7 +193,7 @@ public class Router {
 
 	private final TextBuilder persistFile = TextBuilder.newInstance();
 
-	private static final XMLBinding binding = new XMLBinding();
+	private static final SccpRouterXMLBinding binding = new SccpRouterXMLBinding();
 	private static final String TAB_INDENT = "\t";
 	private static final String CLASS_ATTRIBUTE = "type";
 
@@ -198,11 +201,11 @@ public class Router {
 
 	private final RuleComparator ruleComparator = new RuleComparator();
 	// rule list
-	private FastMap<Integer, Rule> rulesMap = new FastMap<Integer, Rule>();
-	private FastMap<Integer, SccpAddress> primaryAddresses = new FastMap<Integer, SccpAddress>();
-	private FastMap<Integer, SccpAddress> backupAddresses = new FastMap<Integer, SccpAddress>();
-	private FastMap<Integer, LongMessageRule> longMessageRules = new FastMap<Integer, LongMessageRule>();
-	private FastMap<Integer, Mtp3ServiceAccessPoint> saps = new FastMap<Integer, Mtp3ServiceAccessPoint>();
+	private RuleMap<Integer, Rule> rulesMap = new RuleMap<Integer, Rule>();
+	private SccpAddressMap<Integer, SccpAddress> primaryAddresses = new SccpAddressMap<Integer, SccpAddress>();
+	private SccpAddressMap<Integer, SccpAddress> backupAddresses = new SccpAddressMap<Integer, SccpAddress>();
+	private LongMessageRuleMap<Integer, LongMessageRule> longMessageRules = new LongMessageRuleMap<Integer, LongMessageRule>();
+	private Mtp3ServiceAccessPointMap<Integer, Mtp3ServiceAccessPoint> saps = new Mtp3ServiceAccessPointMap<Integer, Mtp3ServiceAccessPoint>();
 
 	private final String name;
 
@@ -211,6 +214,12 @@ public class Router {
 
 		binding.setAlias(Rule.class, RULE);
 		binding.setClassAttribute(CLASS_ATTRIBUTE);
+		binding.setAlias(Mtp3DestinationMap.class, "mtp3DestinationMap");
+		
+		binding.setAlias(GT0001.class, "GT0001");
+		binding.setAlias(GT0010.class, "GT0010");
+		binding.setAlias(GT0011.class, "GT0011");
+		binding.setAlias(GT0100.class, "GT0100");
 	}
 
 	public String getName() {
@@ -229,10 +238,11 @@ public class Router {
 		this.persistFile.clear();
 
 		if (persistDir != null) {
-			this.persistFile.append(persistDir).append(File.separator).append(this.name).append("_").append(PERSIST_FILE_NAME);
+			this.persistFile.append(persistDir).append(File.separator).append(this.name).append("_")
+					.append(PERSIST_FILE_NAME);
 		} else {
-			persistFile.append(System.getProperty(SCCP_ROUTER_PERSIST_DIR_KEY, System.getProperty(USER_DIR_KEY))).append(File.separator).append(this.name)
-					.append("_").append(PERSIST_FILE_NAME);
+			persistFile.append(System.getProperty(SCCP_ROUTER_PERSIST_DIR_KEY, System.getProperty(USER_DIR_KEY)))
+					.append(File.separator).append(this.name).append("_").append(PERSIST_FILE_NAME);
 		}
 
 		logger.info(String.format("SCCP Router configuration file path %s", persistFile.toString()));
@@ -269,7 +279,8 @@ public class Router {
 	}
 
 	public LongMessageRule findLongMessageRule(int dpc) {
-		for (FastMap.Entry<Integer, LongMessageRule> e = this.longMessageRules.head(), end = this.longMessageRules.tail(); (e = e.getNext()) != end;) {
+		for (FastMap.Entry<Integer, LongMessageRule> e = this.longMessageRules.head(), end = this.longMessageRules
+				.tail(); (e = e.getNext()) != end;) {
 			LongMessageRule rule = e.getValue();
 			if (rule.matches(dpc)) {
 				return rule;
@@ -279,7 +290,8 @@ public class Router {
 	}
 
 	public Mtp3ServiceAccessPoint findMtp3ServiceAccessPoint(int dpc, int sls) {
-		for (FastMap.Entry<Integer, Mtp3ServiceAccessPoint> e = this.saps.head(), end = this.saps.tail(); (e = e.getNext()) != end;) {
+		for (FastMap.Entry<Integer, Mtp3ServiceAccessPoint> e = this.saps.head(), end = this.saps.tail(); (e = e
+				.getNext()) != end;) {
 			Mtp3ServiceAccessPoint sap = e.getValue();
 			if (sap.matches(dpc, sls)) {
 				return sap;
@@ -309,7 +321,8 @@ public class Router {
 	}
 
 	public boolean spcIsLocal(int spc) {
-		for (FastMap.Entry<Integer, Mtp3ServiceAccessPoint> e = this.saps.head(), end = this.saps.tail(); (e = e.getNext()) != end;) {
+		for (FastMap.Entry<Integer, Mtp3ServiceAccessPoint> e = this.saps.head(), end = this.saps.tail(); (e = e
+				.getNext()) != end;) {
 			Mtp3ServiceAccessPoint sap = e.getValue();
 			if (sap.getOpc() == spc) {
 				return true;
@@ -350,26 +363,26 @@ public class Router {
 				ruleTemp.setRuleId(ruleId);
 				rulesArray[count++] = ruleTemp;
 			}
-			
-			//add latest rule
+
+			// add latest rule
 			rulesArray[count++] = rule;
 
 			// Sort
 			Arrays.sort(rulesArray, ruleComparator);
 
-			FastMap<Integer, Rule> newRule = new FastMap<Integer, Rule>();
+			RuleMap<Integer, Rule> newRule = new RuleMap<Integer, Rule>();
 			for (int i = 0; i < rulesArray.length; i++) {
-				Rule ruleTemp = rulesArray[i]; 
+				Rule ruleTemp = rulesArray[i];
 				newRule.put(ruleTemp.getRuleId(), ruleTemp);
 			}
-			 this.rulesMap = newRule;
+			this.rulesMap = newRule;
 			this.store();
 		}
 	}
 
 	public void removeRule(int id) {
 		synchronized (this) {
-			FastMap<Integer, Rule> newRule = new FastMap<Integer, Rule>();
+			RuleMap<Integer, Rule> newRule = new RuleMap<Integer, Rule>();
 			newRule.putAll(this.rulesMap);
 			newRule.remove(id);
 			this.rulesMap = newRule;
@@ -379,7 +392,7 @@ public class Router {
 
 	public void addPrimaryAddress(int id, SccpAddress primaryAddress) {
 		synchronized (this) {
-			FastMap<Integer, SccpAddress> newPrimaryAddress = new FastMap<Integer, SccpAddress>();
+			SccpAddressMap<Integer, SccpAddress> newPrimaryAddress = new SccpAddressMap<Integer, SccpAddress>();
 			newPrimaryAddress.putAll(this.primaryAddresses);
 			newPrimaryAddress.put(id, primaryAddress);
 			this.primaryAddresses = newPrimaryAddress;
@@ -389,7 +402,7 @@ public class Router {
 
 	public void removePrimaryAddress(int id) {
 		synchronized (this) {
-			FastMap<Integer, SccpAddress> newPrimaryAddress = new FastMap<Integer, SccpAddress>();
+			SccpAddressMap<Integer, SccpAddress> newPrimaryAddress = new SccpAddressMap<Integer, SccpAddress>();
 			newPrimaryAddress.putAll(this.primaryAddresses);
 			newPrimaryAddress.remove(id);
 			this.primaryAddresses = newPrimaryAddress;
@@ -399,7 +412,7 @@ public class Router {
 
 	public void addBackupAddress(int id, SccpAddress backupAddress) {
 		synchronized (this) {
-			FastMap<Integer, SccpAddress> newBackupAddress = new FastMap<Integer, SccpAddress>();
+			SccpAddressMap<Integer, SccpAddress> newBackupAddress = new SccpAddressMap<Integer, SccpAddress>();
 			newBackupAddress.putAll(this.backupAddresses);
 			newBackupAddress.put(id, backupAddress);
 			this.backupAddresses = newBackupAddress;
@@ -409,7 +422,7 @@ public class Router {
 
 	public void removeBackupAddress(int id) {
 		synchronized (this) {
-			FastMap<Integer, SccpAddress> newBackupAddress = new FastMap<Integer, SccpAddress>();
+			SccpAddressMap<Integer, SccpAddress> newBackupAddress = new SccpAddressMap<Integer, SccpAddress>();
 			newBackupAddress.putAll(this.backupAddresses);
 			newBackupAddress.remove(id);
 			this.backupAddresses = newBackupAddress;
@@ -419,7 +432,7 @@ public class Router {
 
 	public void addLongMessageRule(int id, LongMessageRule longMessageRule) {
 		synchronized (this) {
-			FastMap<Integer, LongMessageRule> newLongMessageRule = new FastMap<Integer, LongMessageRule>();
+			LongMessageRuleMap<Integer, LongMessageRule> newLongMessageRule = new LongMessageRuleMap<Integer, LongMessageRule>();
 			newLongMessageRule.putAll(this.longMessageRules);
 			newLongMessageRule.put(id, longMessageRule);
 			this.longMessageRules = newLongMessageRule;
@@ -429,7 +442,7 @@ public class Router {
 
 	public void removeLongMessageRule(int id) {
 		synchronized (this) {
-			FastMap<Integer, LongMessageRule> newLongMessageRule = new FastMap<Integer, LongMessageRule>();
+			LongMessageRuleMap<Integer, LongMessageRule> newLongMessageRule = new LongMessageRuleMap<Integer, LongMessageRule>();
 			newLongMessageRule.putAll(this.longMessageRules);
 			newLongMessageRule.remove(id);
 			this.longMessageRules = newLongMessageRule;
@@ -439,7 +452,7 @@ public class Router {
 
 	public void addMtp3ServiceAccessPoint(int id, Mtp3ServiceAccessPoint sap) {
 		synchronized (this) {
-			FastMap<Integer, Mtp3ServiceAccessPoint> newSap = new FastMap<Integer, Mtp3ServiceAccessPoint>();
+			Mtp3ServiceAccessPointMap<Integer, Mtp3ServiceAccessPoint> newSap = new Mtp3ServiceAccessPointMap<Integer, Mtp3ServiceAccessPoint>();
 			newSap.putAll(this.saps);
 			newSap.put(id, sap);
 			this.saps = newSap;
@@ -449,7 +462,7 @@ public class Router {
 
 	public void removeMtp3ServiceAccessPoint(int id) {
 		synchronized (this) {
-			FastMap<Integer, Mtp3ServiceAccessPoint> newSap = new FastMap<Integer, Mtp3ServiceAccessPoint>();
+			Mtp3ServiceAccessPointMap<Integer, Mtp3ServiceAccessPoint> newSap = new Mtp3ServiceAccessPointMap<Integer, Mtp3ServiceAccessPoint>();
 			newSap.putAll(this.saps);
 			newSap.remove(id);
 			this.saps = newSap;
@@ -480,16 +493,16 @@ public class Router {
 	public void removeAllResourses() {
 
 		synchronized (this) {
-			if (this.rulesMap.size() == 0 && this.primaryAddresses.size() == 0 && this.backupAddresses.size() == 0 && this.longMessageRules.size() == 0
-					&& this.saps.size() == 0)
+			if (this.rulesMap.size() == 0 && this.primaryAddresses.size() == 0 && this.backupAddresses.size() == 0
+					&& this.longMessageRules.size() == 0 && this.saps.size() == 0)
 				// no resources allocated - nothing to do
 				return;
 
-			rulesMap = new FastMap<Integer, Rule>();
-			primaryAddresses = new FastMap<Integer, SccpAddress>();
-			backupAddresses = new FastMap<Integer, SccpAddress>();
-			longMessageRules = new FastMap<Integer, LongMessageRule>();
-			saps = new FastMap<Integer, Mtp3ServiceAccessPoint>();
+			rulesMap = new RuleMap<Integer, Rule>();
+			primaryAddresses = new SccpAddressMap<Integer, SccpAddress>();
+			backupAddresses = new SccpAddressMap<Integer, SccpAddress>();
+			longMessageRules = new LongMessageRuleMap<Integer, LongMessageRule>();
+			saps = new Mtp3ServiceAccessPointMap<Integer, Mtp3ServiceAccessPoint>();
 
 			// We store the cleared state
 			this.store();
@@ -509,12 +522,12 @@ public class Router {
 			// Enables cross-references.
 			// writer.setReferenceResolver(new XMLReferenceResolver());
 			writer.setIndentation(TAB_INDENT);
-			writer.write(rulesMap, RULE, FastMap.class);
-			writer.write(primaryAddresses, PRIMARY_ADDRESS, FastMap.class);
-			writer.write(backupAddresses, BACKUP_ADDRESS, FastMap.class);
+			writer.write(rulesMap, RULE, RuleMap.class);
+			writer.write(primaryAddresses, PRIMARY_ADDRESS, SccpAddressMap.class);
+			writer.write(backupAddresses, BACKUP_ADDRESS, SccpAddressMap.class);
 
-			writer.write(longMessageRules, LONG_MESSAGE_RULE, FastMap.class);
-			writer.write(saps, MTP3_SERVICE_ACCESS_POINT, FastMap.class);
+			writer.write(longMessageRules, LONG_MESSAGE_RULE, LongMessageRuleMap.class);
+			writer.write(saps, MTP3_SERVICE_ACCESS_POINT, Mtp3ServiceAccessPointMap.class);
 
 			writer.close();
 		} catch (Exception e) {
@@ -534,12 +547,12 @@ public class Router {
 			reader = XMLObjectReader.newInstance(new FileInputStream(persistFile.toString()));
 
 			reader.setBinding(binding);
-			rulesMap = reader.read(RULE, FastMap.class);
-			primaryAddresses = reader.read(PRIMARY_ADDRESS, FastMap.class);
-			backupAddresses = reader.read(BACKUP_ADDRESS, FastMap.class);
+			rulesMap = reader.read(RULE, RuleMap.class);
+			primaryAddresses = reader.read(PRIMARY_ADDRESS, SccpAddressMap.class);
+			backupAddresses = reader.read(BACKUP_ADDRESS, SccpAddressMap.class);
 
-			longMessageRules = reader.read(LONG_MESSAGE_RULE, FastMap.class);
-			saps = reader.read(MTP3_SERVICE_ACCESS_POINT, FastMap.class);
+			longMessageRules = reader.read(LONG_MESSAGE_RULE, LongMessageRuleMap.class);
+			saps = reader.read(MTP3_SERVICE_ACCESS_POINT, Mtp3ServiceAccessPointMap.class);
 		} catch (XMLStreamException ex) {
 			// this.logger.info(
 			// "Error while re-creating Linksets from persisted file", ex);

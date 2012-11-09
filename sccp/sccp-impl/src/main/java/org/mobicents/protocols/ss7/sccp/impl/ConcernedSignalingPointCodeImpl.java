@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -31,15 +31,15 @@ import javolution.xml.stream.XMLStreamException;
  * @author sergey vetyutnev
  * 
  */
-public class ConcernedSignalingPointCode implements XMLSerializable {
+public class ConcernedSignalingPointCodeImpl implements XMLSerializable {
 	private static final String REMOTE_SPC = "remoteSpc";
 
 	private int remoteSpc;
 
-	public ConcernedSignalingPointCode() {
+	public ConcernedSignalingPointCodeImpl() {
 	}
 
-	public ConcernedSignalingPointCode(int remoteSpc) {
+	public ConcernedSignalingPointCodeImpl(int remoteSpc) {
 		this.remoteSpc = remoteSpc;
 	}
 
@@ -54,15 +54,15 @@ public class ConcernedSignalingPointCode implements XMLSerializable {
 		return sb.toString();
 	}
 
-	protected static final XMLFormat<ConcernedSignalingPointCode> XML = new XMLFormat<ConcernedSignalingPointCode>(
-			ConcernedSignalingPointCode.class) {
+	protected static final XMLFormat<ConcernedSignalingPointCodeImpl> XML = new XMLFormat<ConcernedSignalingPointCodeImpl>(
+			ConcernedSignalingPointCodeImpl.class) {
 
-		public void write(ConcernedSignalingPointCode ai, OutputElement xml) throws XMLStreamException {
+		public void write(ConcernedSignalingPointCodeImpl ai, OutputElement xml) throws XMLStreamException {
 			xml.setAttribute(REMOTE_SPC, ai.remoteSpc);
 
 		}
 
-		public void read(InputElement xml, ConcernedSignalingPointCode ai) throws XMLStreamException {
+		public void read(InputElement xml, ConcernedSignalingPointCodeImpl ai) throws XMLStreamException {
 			ai.remoteSpc = xml.getAttribute(REMOTE_SPC).toInt();
 		}
 	};

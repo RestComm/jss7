@@ -254,7 +254,7 @@ public class SccpRoutingControl {
 		}
 
 		// Check if the DPC is prohibited
-		RemoteSignalingPointCode remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpcByPC(translationAddress.getSignalingPointCode());
+		RemoteSignalingPointCodeImpl remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpcByPC(translationAddress.getSignalingPointCode());
 		if (remoteSpc == null) {
 			if (logger.isEnabledFor(Level.WARN)) {
 				logger.warn(String.format("Received SccpMessage=%s for Translation but no %s Remote Signaling Pointcode = %d resource defined ", msg, destName,
@@ -273,7 +273,7 @@ public class SccpRoutingControl {
 
 		if (translationAddress.getAddressIndicator().getRoutingIndicator() == RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN) {
 			if (targetSsn != 1) {
-				RemoteSubSystem remoteSubSystem = this.sccpStackImpl.getSccpResource().getRemoteSsn(translationAddress.getSignalingPointCode(), targetSsn);
+				RemoteSubSystemImpl remoteSubSystem = this.sccpStackImpl.getSccpResource().getRemoteSsn(translationAddress.getSignalingPointCode(), targetSsn);
 				if (remoteSubSystem == null) {
 					if (logger.isEnabledFor(Level.WARN)) {
 						logger.warn(String.format("Received SccpMessage=%s for Translation but no %s Remote SubSystem = %d (dpc=%d) resource defined ", msg,
@@ -508,7 +508,7 @@ public class SccpRoutingControl {
 				// DPC present but its not local pointcode. This message should be Tx to MTP
 
 				// Check if the DPC is not prohibited
-				RemoteSignalingPointCode remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpcByPC(dpc);
+				RemoteSignalingPointCodeImpl remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpcByPC(dpc);
 				if (remoteSpc == null) {
 					if (logger.isEnabledFor(Level.WARN)) {
 						logger.warn(String.format("Received SccpMessage=%s for routing but no Remote Signaling Pointcode = %d resource defined ", msg, dpc));
@@ -531,7 +531,7 @@ public class SccpRoutingControl {
 						// contain this SSN and the routing indicator shall be set
 						// to "Route on SSN"; See 2.2.2.1 point 2 of ITU-T Q.714
 						// If routing based on SSN, check remote SSN is available
-						RemoteSubSystem remoteSsn = this.sccpStackImpl.getSccpResource().getRemoteSsn(dpc, calledPartyAddress.getSubsystemNumber());
+						RemoteSubSystemImpl remoteSsn = this.sccpStackImpl.getSccpResource().getRemoteSsn(dpc, calledPartyAddress.getSubsystemNumber());
 						if (remoteSsn == null) {
 							if (logger.isEnabledFor(Level.WARN)) {
 								logger.warn(String.format("Received SCCPMessage=%s for routing, but no Remote SubSystem = %d resource defined ", msg,

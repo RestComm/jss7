@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,13 +22,12 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.mgmt.ssp;
 
-import org.testng.annotations.*;
-
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
-import org.mobicents.protocols.ss7.sccp.impl.ConcernedSignalingPointCode;
-import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystem;
+import org.mobicents.protocols.ss7.sccp.impl.ConcernedSignalingPointCodeImpl;
+import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystemImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImplProxy;
 import org.mobicents.protocols.ss7.sccp.impl.User;
@@ -37,6 +36,11 @@ import org.mobicents.protocols.ss7.sccp.impl.mgmt.Mtp3PrimitiveMessageType;
 import org.mobicents.protocols.ss7.sccp.impl.mgmt.SccpMgmtMessage;
 import org.mobicents.protocols.ss7.sccp.impl.mgmt.SccpMgmtMessageType;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 /**
  * Test condition when SSN is not available in one stack aka prohibited
@@ -343,7 +347,7 @@ public class SSPTest extends SccpHarness {
 		//this will cause: u1 stack will receive SSP, u2 stack will get SST and message.
 		Thread.sleep(100);
 
-		RemoteSubSystem rss = sccpStack1.getSccpResource().getRemoteSsn(1); 
+		RemoteSubSystemImpl rss = sccpStack1.getSccpResource().getRemoteSsn(1); 
 		u1.send();
 		Thread.sleep(200);
 		assertEquals(((SccpStackImplProxy) sccpStack1).getManagementProxy().getMgmtMessages().size(), 1);
@@ -375,7 +379,7 @@ public class SSPTest extends SccpHarness {
 		sccpStack1.setSstTimerDuration_Min(5000);
 		sccpStack1.setSstTimerDuration_IncreaseFactor(1);
 
-		ConcernedSignalingPointCode cspc = new ConcernedSignalingPointCode(getStack2PC());
+		ConcernedSignalingPointCodeImpl cspc = new ConcernedSignalingPointCodeImpl(getStack2PC());
 		sccpStack1.getSccpResource().addConcernedSpc(1, cspc);
 
 		Thread.sleep(100);

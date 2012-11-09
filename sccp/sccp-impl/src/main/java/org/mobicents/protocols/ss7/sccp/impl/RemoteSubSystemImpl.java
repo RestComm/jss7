@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -32,7 +32,7 @@ import javolution.xml.stream.XMLStreamException;
  * @author amit bhayani
  * 
  */
-public class RemoteSubSystem implements XMLSerializable {
+public class RemoteSubSystemImpl implements XMLSerializable {
 	private static final String REMOTE_SPC = "remoteSpc";
 	private static final String REMOTE_SSN = "remoteSsn";
 	private static final String REMOTE_SSN_FLAG = "remoteSsnFlag";
@@ -45,11 +45,11 @@ public class RemoteSubSystem implements XMLSerializable {
 
 	private boolean remoteSsnProhibited;
 	
-	public RemoteSubSystem(){
+	public RemoteSubSystemImpl(){
 		
 	}
 
-	public RemoteSubSystem(int remoteSpc, int remoteSsn, int remoteSsnFlag, boolean markProhibitedWhenSpcResuming) {
+	public RemoteSubSystemImpl(int remoteSpc, int remoteSsn, int remoteSsnFlag, boolean markProhibitedWhenSpcResuming) {
 		this.remoteSpc = remoteSpc;
 		this.remoteSsn = remoteSsn;
 		this.remoteSsnFlag = remoteSsnFlag;
@@ -106,7 +106,7 @@ public class RemoteSubSystem implements XMLSerializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		RemoteSubSystem other = (RemoteSubSystem) obj;
+		RemoteSubSystemImpl other = (RemoteSubSystemImpl) obj;
 		if (remoteSpc != other.remoteSpc)
 			return false;
 		if (remoteSsn != other.remoteSsn)
@@ -114,9 +114,9 @@ public class RemoteSubSystem implements XMLSerializable {
 		return true;
 	}
 
-	protected static final XMLFormat<RemoteSubSystem> XML = new XMLFormat<RemoteSubSystem>(RemoteSubSystem.class) {
+	protected static final XMLFormat<RemoteSubSystemImpl> XML = new XMLFormat<RemoteSubSystemImpl>(RemoteSubSystemImpl.class) {
 
-		public void write(RemoteSubSystem ai, OutputElement xml) throws XMLStreamException {
+		public void write(RemoteSubSystemImpl ai, OutputElement xml) throws XMLStreamException {
 			xml.setAttribute(REMOTE_SPC, ai.remoteSpc);
 			xml.setAttribute(REMOTE_SSN, ai.remoteSsn);
 			xml.setAttribute(REMOTE_SSN_FLAG, ai.remoteSsnFlag);
@@ -124,7 +124,7 @@ public class RemoteSubSystem implements XMLSerializable {
 
 		}
 
-		public void read(InputElement xml, RemoteSubSystem ai) throws XMLStreamException {
+		public void read(InputElement xml, RemoteSubSystemImpl ai) throws XMLStreamException {
 			ai.remoteSpc = xml.getAttribute(REMOTE_SPC).toInt();
 			ai.remoteSsn = xml.getAttribute(REMOTE_SSN).toInt();
 			ai.remoteSsnFlag = xml.getAttribute(REMOTE_SSN_FLAG).toInt();

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -62,14 +62,14 @@ public class SccpResourceTest {
 	@Test(groups = { "sccpresource","functional.encode"})
 	public void testSerialization() throws Exception {
 
-		RemoteSignalingPointCode rsp1 = new RemoteSignalingPointCode(6034, 0, 0);
-		RemoteSignalingPointCode rsp2 = new RemoteSignalingPointCode(6045, 0, 0);
+		RemoteSignalingPointCodeImpl rsp1 = new RemoteSignalingPointCodeImpl(6034, 0, 0);
+		RemoteSignalingPointCodeImpl rsp2 = new RemoteSignalingPointCodeImpl(6045, 0, 0);
 
-		RemoteSubSystem rss1 = new RemoteSubSystem(6034, 8, 0, false);
-		RemoteSubSystem rss2 = new RemoteSubSystem(6045, 8, 0, false);
+		RemoteSubSystemImpl rss1 = new RemoteSubSystemImpl(6034, 8, 0, false);
+		RemoteSubSystemImpl rss2 = new RemoteSubSystemImpl(6045, 8, 0, false);
 
-		ConcernedSignalingPointCode csp1 = new ConcernedSignalingPointCode(603);
-		ConcernedSignalingPointCode csp2 = new ConcernedSignalingPointCode(604);
+		ConcernedSignalingPointCodeImpl csp1 = new ConcernedSignalingPointCodeImpl(603);
+		ConcernedSignalingPointCodeImpl csp2 = new ConcernedSignalingPointCodeImpl(604);
 
 		resource.addRemoteSpc(1, rsp1);
 		resource.addRemoteSpc(2, rsp2);
@@ -84,16 +84,16 @@ public class SccpResourceTest {
 		resource1.start();
 
 		assertEquals( resource1.getRemoteSpcs().size(),2);
-		RemoteSignalingPointCode rsp1Temp = resource1.getRemoteSpc(1);
+		RemoteSignalingPointCodeImpl rsp1Temp = resource1.getRemoteSpc(1);
 		assertNotNull(rsp1Temp);
 		assertEquals( rsp1Temp.getRemoteSpc(),6034);
 		
 		assertEquals( resource1.getRemoteSsns().size(),2);
-		RemoteSubSystem rss1Temp = resource1.getRemoteSsn(1);
+		RemoteSubSystemImpl rss1Temp = resource1.getRemoteSsn(1);
 		assertEquals( rss1Temp.getRemoteSsn(),8);
 		
 		assertEquals(resource1.getConcernedSpcs().size(), 2);
-		ConcernedSignalingPointCode cspc1Temp = resource1.getConcernedSpc(1);
+		ConcernedSignalingPointCodeImpl cspc1Temp = resource1.getConcernedSpc(1);
 		assertEquals(cspc1Temp.getRemoteSpc(), 603);
 	}
 

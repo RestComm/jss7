@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -251,9 +251,9 @@ public class SccpManagement {
 	
 	private void broadcastChangedSsnState(int affectedSsn, boolean inService, int concernedPointCode) {
 
-		FastMap<Integer, ConcernedSignalingPointCode> lst = this.sccpStackImpl.getSccpResource().getConcernedSpcs();
-		for (FastMap.Entry<Integer, ConcernedSignalingPointCode> e = lst.head(), end = lst.tail(); (e = e.getNext()) != end;) {
-			ConcernedSignalingPointCode concernedSubSystem = e.getValue();
+		FastMap<Integer, ConcernedSignalingPointCodeImpl> lst = this.sccpStackImpl.getSccpResource().getConcernedSpcs();
+		for (FastMap.Entry<Integer, ConcernedSignalingPointCodeImpl> e = lst.head(), end = lst.tail(); (e = e.getNext()) != end;) {
+			ConcernedSignalingPointCodeImpl concernedSubSystem = e.getValue();
 
 			int dpc = concernedSubSystem.getRemoteSpc();
 			
@@ -358,9 +358,9 @@ public class SccpManagement {
 
 	private void prohibitAllSsn(int affectedPc) {
 		FastMap<Integer, SccpListener> lstrs = this.sccpProviderImpl.getAllSccpListeners();
-		FastMap<Integer, RemoteSubSystem> remoteSsns = this.sccpStackImpl.getSccpResource().getRemoteSsns();
-		for (FastMap.Entry<Integer, RemoteSubSystem> e = remoteSsns.head(), end = remoteSsns.tail(); (e = e.getNext()) != end;) {
-			RemoteSubSystem remoteSsn = e.getValue();
+		FastMap<Integer, RemoteSubSystemImpl> remoteSsns = this.sccpStackImpl.getSccpResource().getRemoteSsns();
+		for (FastMap.Entry<Integer, RemoteSubSystemImpl> e = remoteSsns.head(), end = remoteSsns.tail(); (e = e.getNext()) != end;) {
+			RemoteSubSystemImpl remoteSsn = e.getValue();
 			if (remoteSsn.getRemoteSpc() == affectedPc) {
 				if (!remoteSsn.isRemoteSsnProhibited()) {
 					remoteSsn.setRemoteSsnProhibited(true);
@@ -379,9 +379,9 @@ public class SccpManagement {
 	private void allowAllSsn(int affectedPc) {
 
 		FastMap<Integer, SccpListener> lstrs = this.sccpProviderImpl.getAllSccpListeners();
-		FastMap<Integer, RemoteSubSystem> remoteSsns = this.sccpStackImpl.getSccpResource().getRemoteSsns();
-		for (FastMap.Entry<Integer, RemoteSubSystem> e = remoteSsns.head(), end = remoteSsns.tail(); (e = e.getNext()) != end;) {
-			RemoteSubSystem remoteSsn = e.getValue();
+		FastMap<Integer, RemoteSubSystemImpl> remoteSsns = this.sccpStackImpl.getSccpResource().getRemoteSsns();
+		for (FastMap.Entry<Integer, RemoteSubSystemImpl> e = remoteSsns.head(), end = remoteSsns.tail(); (e = e.getNext()) != end;) {
+			RemoteSubSystemImpl remoteSsn = e.getValue();
 			if (remoteSsn.getRemoteSpc() == affectedPc) {
 
 				if (remoteSsn.getMarkProhibitedWhenSpcResuming()) {
@@ -415,7 +415,7 @@ public class SccpManagement {
 
 	private void prohibitRsp(int affectedPc, boolean spcChanging, RemoteSccpStatus remoteSccpStatus) {
 
-		RemoteSignalingPointCode remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpcByPC(affectedPc);
+		RemoteSignalingPointCodeImpl remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpcByPC(affectedPc);
 		if (remoteSpc != null) {
 			if (spcChanging)
 				remoteSpc.setRemoteSpcProhibited(true);
@@ -437,7 +437,7 @@ public class SccpManagement {
 
 	private void allowRsp(int affectedPc, boolean spcChanging, RemoteSccpStatus remoteSccpStatus) {
 
-		RemoteSignalingPointCode remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpcByPC(affectedPc);
+		RemoteSignalingPointCodeImpl remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpcByPC(affectedPc);
 		if (remoteSpc != null) {
 			if (spcChanging)
 				remoteSpc.setRemoteSpcProhibited(false);
@@ -459,9 +459,9 @@ public class SccpManagement {
 	private void prohibitSsn(int affectedPc, int ssn) {
 
 		FastMap<Integer, SccpListener> lstrs = this.sccpProviderImpl.getAllSccpListeners();
-		FastMap<Integer, RemoteSubSystem> remoteSsns = this.sccpStackImpl.getSccpResource().getRemoteSsns();
-		for (FastMap.Entry<Integer, RemoteSubSystem> e = remoteSsns.head(), end = remoteSsns.tail(); (e = e.getNext()) != end;) {
-			RemoteSubSystem remoteSsn = e.getValue();
+		FastMap<Integer, RemoteSubSystemImpl> remoteSsns = this.sccpStackImpl.getSccpResource().getRemoteSsns();
+		for (FastMap.Entry<Integer, RemoteSubSystemImpl> e = remoteSsns.head(), end = remoteSsns.tail(); (e = e.getNext()) != end;) {
+			RemoteSubSystemImpl remoteSsn = e.getValue();
 			if (remoteSsn.getRemoteSpc() == affectedPc && remoteSsn.getRemoteSsn() == ssn) {
 				if (!remoteSsn.isRemoteSsnProhibited()) {
 					remoteSsn.setRemoteSsnProhibited(true);
@@ -481,9 +481,9 @@ public class SccpManagement {
 	private void allowSsn(int affectedPc, int ssn) {
 
 		FastMap<Integer, SccpListener> lstrs = this.sccpProviderImpl.getAllSccpListeners();
-		FastMap<Integer, RemoteSubSystem> remoteSsns = this.sccpStackImpl.getSccpResource().getRemoteSsns();
-		for (FastMap.Entry<Integer, RemoteSubSystem> e = remoteSsns.head(), end = remoteSsns.tail(); (e = e.getNext()) != end;) {
-			RemoteSubSystem remoteSsn = e.getValue();
+		FastMap<Integer, RemoteSubSystemImpl> remoteSsns = this.sccpStackImpl.getSccpResource().getRemoteSsns();
+		for (FastMap.Entry<Integer, RemoteSubSystemImpl> e = remoteSsns.head(), end = remoteSsns.tail(); (e = e.getNext()) != end;) {
+			RemoteSubSystemImpl remoteSsn = e.getValue();
 			if (remoteSsn.getRemoteSpc() == affectedPc && (ssn == 1 || remoteSsn.getRemoteSsn() == ssn)) {
 				if (remoteSsn.isRemoteSsnProhibited()) {
 					remoteSsn.setRemoteSsnProhibited(false);

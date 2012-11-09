@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -89,8 +89,8 @@ public abstract class SccpHarness {
 
 		resource1 = sccpStack1.getSccpResource();
 
-		resource1.addRemoteSpc(1, new RemoteSignalingPointCode(getStack2PC(), 0, 0));
-		resource1.addRemoteSsn(1, new RemoteSubSystem(getStack2PC(), getSSN(), 0, false));
+		resource1.addRemoteSpc(1, new RemoteSignalingPointCodeImpl(getStack2PC(), 0, 0));
+		resource1.addRemoteSsn(1, new RemoteSubSystemImpl(getStack2PC(), getSSN(), 0, false));
 		
 	}
 	protected void createStack2()
@@ -122,8 +122,8 @@ public abstract class SccpHarness {
 		resource2.getRemoteSpcs().clear();
 		resource2.getRemoteSsns().clear();
 
-		resource2.addRemoteSpc(02, new RemoteSignalingPointCode(getStack1PC(), 0, 0));
-		resource2.addRemoteSsn(1, new RemoteSubSystem(getStack1PC(), getSSN(), 0, false));
+		resource2.addRemoteSpc(02, new RemoteSignalingPointCodeImpl(getStack1PC(), 0, 0));
+		resource2.addRemoteSsn(1, new RemoteSubSystemImpl(getStack1PC(), getSSN(), 0, false));
 
 	}
 

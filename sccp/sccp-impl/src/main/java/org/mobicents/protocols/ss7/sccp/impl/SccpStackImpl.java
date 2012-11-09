@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -592,7 +592,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 				int dpc = mtp3Msg.getDpc();
 				int sls = mtp3Msg.getSls();
 
-				RemoteSignalingPointCode remoteSpc = this.getSccpResource().getRemoteSpcByPC(dpc);
+				RemoteSignalingPointCodeImpl remoteSpc = this.getSccpResource().getRemoteSpcByPC(dpc);
 				if (remoteSpc == null) {
 					if (logger.isEnabledFor(Level.WARN)) {
 						logger.warn(String.format("Incoming Mtp3 Message for nonlocal dpc=%d. But RemoteSpc is not found", dpc));

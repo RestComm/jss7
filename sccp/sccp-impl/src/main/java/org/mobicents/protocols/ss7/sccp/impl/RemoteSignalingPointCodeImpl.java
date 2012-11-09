@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -30,7 +30,7 @@ import javolution.xml.stream.XMLStreamException;
  * @author amit bhayani
  * 
  */
-public class RemoteSignalingPointCode implements XMLSerializable {
+public class RemoteSignalingPointCodeImpl implements XMLSerializable {
 	private static final String REMOTE_SPC = "remoteSpc";
 	private static final String REMOTE_SPC_FLAG = "remoteSpcFlag";
 	private static final String MASK = "mask";
@@ -41,14 +41,14 @@ public class RemoteSignalingPointCode implements XMLSerializable {
 	private boolean remoteSpcProhibited;
 	private boolean remoteSccpProhibited;
 	
-	public RemoteSignalingPointCode(){
+	public RemoteSignalingPointCodeImpl(){
 		
 	}
 
 	/**
 	 * 
 	 */
-	public RemoteSignalingPointCode(int remoteSpc, int remoteSpcFlag, int mask) {
+	public RemoteSignalingPointCodeImpl(int remoteSpc, int remoteSpcFlag, int mask) {
 		this.remoteSpc = remoteSpc;
 		this.remoteSpcFlag = remoteSpcFlag;
 		this.mask = mask;
@@ -90,17 +90,17 @@ public class RemoteSignalingPointCode implements XMLSerializable {
 		return sb.toString();
 	}
 
-	protected static final XMLFormat<RemoteSignalingPointCode> XML = new XMLFormat<RemoteSignalingPointCode>(
-			RemoteSignalingPointCode.class) {
+	protected static final XMLFormat<RemoteSignalingPointCodeImpl> XML = new XMLFormat<RemoteSignalingPointCodeImpl>(
+			RemoteSignalingPointCodeImpl.class) {
 
-		public void write(RemoteSignalingPointCode ai, OutputElement xml) throws XMLStreamException {
+		public void write(RemoteSignalingPointCodeImpl ai, OutputElement xml) throws XMLStreamException {
 			xml.setAttribute(REMOTE_SPC, ai.remoteSpc);
 			xml.setAttribute(REMOTE_SPC_FLAG, ai.remoteSpcFlag);
 			xml.setAttribute(MASK, ai.mask);
 
 		}
 
-		public void read(InputElement xml, RemoteSignalingPointCode ai) throws XMLStreamException {
+		public void read(InputElement xml, RemoteSignalingPointCodeImpl ai) throws XMLStreamException {
 			ai.remoteSpc = xml.getAttribute(REMOTE_SPC).toInt();
 			ai.remoteSpcFlag = xml.getAttribute(REMOTE_SPC_FLAG).toInt();
 			ai.mask = xml.getAttribute(MASK).toInt();

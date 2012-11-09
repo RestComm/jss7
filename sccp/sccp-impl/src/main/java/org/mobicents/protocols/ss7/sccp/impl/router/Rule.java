@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -59,7 +59,7 @@ public class Rule implements Serializable {
 
 	private static final String RULETYPE = "ruleType";
 	private static final String LS_ALGO = "loadSharingAlgo";
-	private static final String PATTERN = "pattern";
+	private static final String PATTERN = "patternSccpAddress";
 	private static final String OPEN_BRACKET = "(";
 	private static final String CLOSE_BRACKET = ")";
 	private static final String PRIMARY_ADDRESS = "paddress";
@@ -470,7 +470,7 @@ public class Rule implements Serializable {
 			rule.mask = xml.getAttribute(MASK).toString();
 			rule.primaryAddressId = xml.getAttribute(PRIMARY_ADDRESS).toInt();
 			rule.secondaryAddressId = xml.getAttribute(SECONDARY_ADDRESS).toInt();
-			rule.pattern = xml.get(PATTERN);
+			rule.pattern = xml.get(PATTERN, SccpAddress.class);
 			rule.configure();
 		}
 
@@ -480,7 +480,7 @@ public class Rule implements Serializable {
 			xml.setAttribute(MASK, rule.mask);
 			xml.setAttribute(PRIMARY_ADDRESS, rule.primaryAddressId);
 			xml.setAttribute(SECONDARY_ADDRESS, rule.secondaryAddressId);
-			xml.add(rule.pattern, PATTERN);
+			xml.add(rule.pattern, PATTERN, SccpAddress.class);
 		}
 	};
 

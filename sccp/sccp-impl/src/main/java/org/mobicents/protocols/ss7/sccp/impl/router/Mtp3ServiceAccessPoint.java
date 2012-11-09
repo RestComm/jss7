@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -42,7 +42,7 @@ public class Mtp3ServiceAccessPoint implements XMLSerializable {
 	private int opc;
 	private int ni;
 
-	private FastMap<Integer, Mtp3Destination> dpcList = new FastMap<Integer, Mtp3Destination>();
+	private Mtp3DestinationMap<Integer, Mtp3Destination> dpcList = new Mtp3DestinationMap<Integer, Mtp3Destination>();
 
 	public Mtp3ServiceAccessPoint() {
 	}
@@ -75,7 +75,7 @@ public class Mtp3ServiceAccessPoint implements XMLSerializable {
 
 	public void addMtp3Destination(int destId, Mtp3Destination dest) {
 		synchronized (this) {
-			FastMap<Integer, Mtp3Destination> newDpcList = new FastMap<Integer, Mtp3Destination>();
+			Mtp3DestinationMap<Integer, Mtp3Destination> newDpcList = new Mtp3DestinationMap<Integer, Mtp3Destination>();
 			newDpcList.putAll(this.dpcList);
 			newDpcList.put(destId, dest);
 			this.dpcList = newDpcList;
@@ -84,7 +84,7 @@ public class Mtp3ServiceAccessPoint implements XMLSerializable {
 
 	public void removeMtp3Destination(int destId) {
 		synchronized (this) {
-			FastMap<Integer, Mtp3Destination> newDpcList = new FastMap<Integer, Mtp3Destination>();
+			Mtp3DestinationMap<Integer, Mtp3Destination> newDpcList = new Mtp3DestinationMap<Integer, Mtp3Destination>();
 			newDpcList.putAll(this.dpcList);
 			newDpcList.remove(destId);
 			this.dpcList = newDpcList;

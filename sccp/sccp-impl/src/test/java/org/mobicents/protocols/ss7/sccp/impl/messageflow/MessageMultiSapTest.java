@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -26,8 +26,8 @@ import static org.testng.Assert.*;
 
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.impl.Mtp3UserPartImpl;
-import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCode;
-import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystem;
+import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCodeImpl;
+import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystemImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImplProxy;
 import org.mobicents.protocols.ss7.sccp.impl.User;
@@ -91,8 +91,8 @@ public class MessageMultiSapTest extends SccpHarness {
 		Mtp3Destination dest = new Mtp3Destination(12, 12, 0, 255, 255);
 		sccpStack1.getRouter().addMtp3Destination(2, 1, dest);
 
-		resource1.addRemoteSpc(2, new RemoteSignalingPointCode(12, 0, 0));
-		resource1.addRemoteSsn(2, new RemoteSubSystem(12, getSSN(), 0, false));
+		resource1.addRemoteSpc(2, new RemoteSignalingPointCodeImpl(12, 0, 0));
+		resource1.addRemoteSsn(2, new RemoteSubSystemImpl(12, getSSN(), 0, false));
 	}
 
 	@AfterMethod
@@ -153,8 +153,8 @@ public class MessageMultiSapTest extends SccpHarness {
 		assertEquals(mtp3UserPart11.getMessages().size(), 1);
 
 		// send a UDT message to the absent sap (remoteSpc and remoteSsn are present and not prohibited)
-		resource1.addRemoteSpc(3, new RemoteSignalingPointCode(15, 0, 0));
-		resource1.addRemoteSsn(3, new RemoteSubSystem(15, getSSN(), 0, false));
+		resource1.addRemoteSpc(3, new RemoteSignalingPointCodeImpl(15, 0, 0));
+		resource1.addRemoteSsn(3, new RemoteSubSystemImpl(15, getSSN(), 0, false));
 		SccpAddress a4 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 15, null, 8);
 		message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a4, a1, getDataSrc(), 0, 8, true, null, null);
 		sccpProvider1.send(message);

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -52,43 +52,18 @@ public interface SccpStack {
 	 * @return SCCP provider object.
 	 */
 	public SccpProvider getSccpProvider();
+	
+	/**
+	 * Set the persist directory to store the xml files
+	 * @return
+	 */
+	public String getPersistDir();
 
-//	/**
-//	 * <p>
-//	 * Set the local signaling point for this SCCP instance. The local signaling
-//	 * point will be added as OPC for outgoing MTP3 MSU.
-//	 * </p>
-//	 * <p>
-//	 * For incoming MSU, after translation the point code of the Called Party
-//	 * Address (SCCP Address) will compared with localSpc, if it matches MSU
-//	 * will be consumed
-//	 * </p>
-//	 * 
-//	 * @param localSpc
-//	 */
-//	public void setLocalSpc(int localSpc);
-//
-//	/**
-//	 * Get the local signaling point set for this SCCP instance
-//	 * 
-//	 * @return
-//	 */
-//	public int getLocalSpc();
-//
-//	/**
-//	 * Set the Network Indicator value. This value will be set in Service
-//	 * Information Octet (SIO) for outgoing MTP3 MSU
-//	 * 
-//	 * @param ni
-//	 */
-//	public void setNi(int ni);
-//
-//	/**
-//	 * Get the Network Indicator value.
-//	 * 
-//	 * @return
-//	 */
-//	public int getNi();
+	/**
+	 * Get the persist directory from which to read the xml files
+	 * @param persistDir
+	 */
+	public void setPersistDir(String persistDir);
 
 	/**
 	 * If set, the signaling point code from SCCP called/calling address will be

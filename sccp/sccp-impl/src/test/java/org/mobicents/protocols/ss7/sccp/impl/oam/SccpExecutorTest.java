@@ -38,9 +38,9 @@ import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitiveFactory;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPartListener;
 import org.mobicents.protocols.ss7.mtp.RoutingLabelFormat;
-import org.mobicents.protocols.ss7.sccp.impl.ConcernedSignalingPointCode;
-import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCode;
-import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystem;
+import org.mobicents.protocols.ss7.sccp.impl.ConcernedSignalingPointCodeImpl;
+import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCodeImpl;
+import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystemImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpResource;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.router.LoadSharingAlgorithm;
@@ -618,7 +618,7 @@ public class SccpExecutorTest {
 		String rspCmd = "sccp rsp create 1 11 0 0";
 		String res = this.sccpExecutor.execute(rspCmd.split(" "));
 		assertEquals( this.sccpResource.getRemoteSpcs().size(),1);
-		RemoteSignalingPointCode spc = this.sccpResource.getRemoteSpc(1);
+		RemoteSignalingPointCodeImpl spc = this.sccpResource.getRemoteSpc(1);
 		assertEquals(spc.getRemoteSpc(), 11);
 		
 		rspCmd = "sccp rsp create 1 12 0 0";
@@ -665,7 +665,7 @@ public class SccpExecutorTest {
 		String rspCmd = "sccp rss create 2 11 8 0";
 		String res = this.sccpExecutor.execute(rspCmd.split(" "));
 		assertEquals( this.sccpResource.getRemoteSsns().size(),1);
-		RemoteSubSystem rss = this.sccpResource.getRemoteSsn(2);
+		RemoteSubSystemImpl rss = this.sccpResource.getRemoteSsn(2);
 		assertEquals(rss.getRemoteSpc(), 11);
 		assertEquals(rss.getRemoteSsn(), 8);
 		assertFalse(rss.getMarkProhibitedWhenSpcResuming());
@@ -739,7 +739,7 @@ public class SccpExecutorTest {
 		String rspCmd = "sccp csp create 3 21";
 		String res = this.sccpExecutor.execute(rspCmd.split(" "));
 		assertEquals( this.sccpResource.getConcernedSpcs().size(),1);
-		ConcernedSignalingPointCode cspc = this.sccpResource.getConcernedSpc(3);
+		ConcernedSignalingPointCodeImpl cspc = this.sccpResource.getConcernedSpc(3);
 		assertEquals(cspc.getRemoteSpc(), 21);
 
 		rspCmd = "sccp csp create 3 22";
