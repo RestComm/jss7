@@ -34,8 +34,8 @@ import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.SccpStack;
-import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCode;
-import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystem;
+import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCodeImpl;
+import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystemImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpResource;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3Destination;
@@ -331,8 +331,8 @@ public class SccpMan implements SccpManMBean, Stoppable {
 	@Override
 	public void execute() {
 		if (this.resource != null) {
-			RemoteSignalingPointCode rspc = this.resource.getRemoteSpc(1);
-			RemoteSubSystem rss = this.resource.getRemoteSsn(1);
+			RemoteSignalingPointCodeImpl rspc = this.resource.getRemoteSpc(1);
+			RemoteSubSystemImpl rss = this.resource.getRemoteSsn(1);
 			if (rspc != null) {
 				boolean conn = !rspc.isRemoteSpcProhibited();
 				if (this.isRspcUp != conn) {
@@ -371,8 +371,8 @@ public class SccpMan implements SccpManMBean, Stoppable {
 
 		this.resource = this.sccpStack.getSccpResource();
 
-		this.resource.addRemoteSpc(1, new RemoteSignalingPointCode(dpc, 0, 0));
-		this.resource.addRemoteSsn(1, new RemoteSubSystem(dpc, remoteSsn, 0, false));
+		this.resource.addRemoteSpc(1, new RemoteSignalingPointCodeImpl(dpc, 0, 0));
+		this.resource.addRemoteSsn(1, new RemoteSubSystemImpl(dpc, remoteSsn, 0, false));
 
 		if (this.routeOnGtMode) {
 			this.router = this.sccpStack.getRouter();
