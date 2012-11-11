@@ -49,4 +49,8 @@ public interface MAPErrorMessageCUGReject extends MAPErrorMessage {
 
 	public MAPExtensionContainer getExtensionContainer();
 
+	public void setCUGRejectCause(CUGRejectCause val);
+
+	public void setExtensionContainer(MAPExtensionContainer val);
+
 }

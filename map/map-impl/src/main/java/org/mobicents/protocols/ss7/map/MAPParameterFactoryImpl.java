@@ -156,6 +156,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.UserCSGInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.APN;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.APNOIReplacement;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BearerServiceCode;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BearerServiceCodeValue;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CSGId;
@@ -195,6 +196,9 @@ import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_SMEA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SmsSignalInfo;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponse;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.SSStatus;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.SupplementaryCodeValue;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponse;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
@@ -304,6 +308,7 @@ import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.Tr
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.UserCSGInformationImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.APNImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.APNOIReplacementImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.BasicServiceCodeImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.BearerServiceCodeImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.CSGIdImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.CUGInterlockImpl;
@@ -335,6 +340,8 @@ import org.mobicents.protocols.ss7.map.service.sms.SM_RP_SMEAImpl;
 import org.mobicents.protocols.ss7.map.service.sms.SmsSignalInfoImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.ProcessUnstructuredSSRequestImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.ProcessUnstructuredSSResponseImpl;
+import org.mobicents.protocols.ss7.map.service.supplementary.SSCodeImpl;
+import org.mobicents.protocols.ss7.map.service.supplementary.SSStatusImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.UnstructuredSSNotifyRequestImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.UnstructuredSSNotifyResponseImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.UnstructuredSSRequestImpl;
@@ -1144,6 +1151,31 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 	@Override
 	public QoSSubscribed createQoSSubscribed(byte[] data) {
 		return new QoSSubscribedImpl(data);
+	}
+
+	@Override
+	public SSCode createSSCode(SupplementaryCodeValue value) {
+		return new SSCodeImpl(value);
+	}
+
+	@Override
+	public SSCode createSSCode(int data) {
+		return new SSCodeImpl(data);
+	}
+
+	@Override
+	public SSStatus createSSStatus(boolean qBit, boolean pBit, boolean rBit, boolean aBit) {
+		return new SSStatusImpl(qBit, pBit, rBit, aBit);
+	}
+
+	@Override
+	public BasicServiceCode createBasicServiceCode(TeleserviceCode teleservice) {
+		return new BasicServiceCodeImpl(teleservice);
+	}
+
+	@Override
+	public BasicServiceCode createBasicServiceCode(BearerServiceCode bearerService) {
+		return new BasicServiceCodeImpl(bearerService);
 	}
 }
 

@@ -31,8 +31,9 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.map.api.errors.CUGRejectCause;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorCode;
-import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageBusySubscriber;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageCUGReject;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
@@ -41,35 +42,35 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 * @author sergey vetyutnev
 * 
 */
-public class MAPErrorMessageBusySubscriberImpl extends MAPErrorMessageImpl implements MAPErrorMessageBusySubscriber {
+public class MAPErrorMessageCUGRejectImpl extends MAPErrorMessageImpl implements MAPErrorMessageCUGReject {
 
-	public static final int _tag_ccbs_Possible = 0;
-	public static final int _tag_ccbs_Busy = 1;
-
+	private CUGRejectCause cugRejectCause;
 	private MAPExtensionContainer extensionContainer;
-	private boolean ccbsPossible;
-	private boolean ccbsBusy;
 
-	protected String _PrimitiveName = "MAPErrorMessageBusySubscriber";
+	protected String _PrimitiveName = "MAPErrorMessageCUGReject";
 
-	public MAPErrorMessageBusySubscriberImpl(MAPExtensionContainer extensionContainer, boolean ccbsPossible, boolean ccbsBusy) {
-		super((long) MAPErrorCode.busySubscriber);
+	public MAPErrorMessageCUGRejectImpl(CUGRejectCause cugRejectCause, MAPExtensionContainer extensionContainer) {
+		super((long) MAPErrorCode.cugReject);
 
+		this.cugRejectCause = cugRejectCause;
 		this.extensionContainer = extensionContainer;
-		this.ccbsPossible = ccbsPossible;
-		this.ccbsBusy = ccbsBusy;
 	}
 
-	public MAPErrorMessageBusySubscriberImpl() {
-		super((long) MAPErrorCode.busySubscriber);
+	public MAPErrorMessageCUGRejectImpl() {
+		super((long) MAPErrorCode.cugReject);
 	}
 
-	public boolean isEmBusySubscriber() {
+	public boolean isEmCUGReject() {
 		return true;
 	}
 
-	public MAPErrorMessageBusySubscriber getEmBusySubscriber() {
+	public MAPErrorMessageCUGReject getEmCUGReject() {
 		return this;
+	}
+
+	@Override
+	public CUGRejectCause getCUGRejectCause() {
+		return cugRejectCause;
 	}
 
 	@Override
@@ -78,28 +79,13 @@ public class MAPErrorMessageBusySubscriberImpl extends MAPErrorMessageImpl imple
 	}
 
 	@Override
-	public boolean getCcbsPossible() {
-		return ccbsPossible;
-	}
-
-	@Override
-	public boolean getCcbsBusy() {
-		return ccbsBusy;
+	public void setCUGRejectCause(CUGRejectCause val) {
+		cugRejectCause = val;
 	}
 
 	@Override
 	public void setExtensionContainer(MAPExtensionContainer val) {
-		this.extensionContainer = val;
-	}
-
-	@Override
-	public void setCcbsPossible(boolean val) {
-		this.ccbsPossible = val;
-	}
-
-	@Override
-	public void setCcbsBusy(boolean val) {
-		this.ccbsBusy = val;
+		extensionContainer = val;
 	}
 
 	public int getTag() throws MAPException {
@@ -145,9 +131,8 @@ public class MAPErrorMessageBusySubscriberImpl extends MAPErrorMessageImpl imple
 
 	private void _decode(AsnInputStream localAis, int length) throws MAPParsingComponentException, IOException, AsnException {
 
+		this.cugRejectCause = null;
 		this.extensionContainer = null;
-		this.ccbsPossible = false;
-		this.ccbsBusy = false;
 
 		if (localAis.getTagClass() != Tag.CLASS_UNIVERSAL || localAis.getTag() != Tag.SEQUENCE || localAis.isTagPrimitive())
 			throw new MAPParsingComponentException(
@@ -170,21 +155,9 @@ public class MAPErrorMessageBusySubscriberImpl extends MAPErrorMessageImpl imple
 					((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
 					break;
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-				break;
-
-			case Tag.CLASS_CONTEXT_SPECIFIC:
-				switch (tag) {
-				case _tag_ccbs_Possible:
-					ais.readNull();
-					this.ccbsPossible = true;
-					break;
-				case _tag_ccbs_Busy:
-					ais.readNull();
-					this.ccbsBusy = true;
+				case Tag.ENUMERATED:
+					int i1 = (int)ais.readInteger();
+					this.cugRejectCause = CUGRejectCause.getInstance(i1);
 					break;
 
 				default:
@@ -222,16 +195,14 @@ public class MAPErrorMessageBusySubscriberImpl extends MAPErrorMessageImpl imple
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-		if (this.ccbsPossible == false && this.ccbsBusy == false && this.extensionContainer == null)
+		if (this.cugRejectCause == null && this.extensionContainer == null)
 			return;
 
 		try {
+			if (this.cugRejectCause != null)
+				asnOs.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, this.cugRejectCause.getCode());
 			if (this.extensionContainer != null)
 				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
-			if (this.ccbsPossible)
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _tag_ccbs_Possible);
-			if (this.ccbsBusy)
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _tag_ccbs_Busy);
 
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
@@ -247,12 +218,10 @@ public class MAPErrorMessageBusySubscriberImpl extends MAPErrorMessageImpl imple
 		sb.append(_PrimitiveName);
 		sb.append(" [");
 
+		if (this.cugRejectCause != null)
+			sb.append("cugRejectCause=" + this.cugRejectCause.toString());
 		if (this.extensionContainer != null)
-			sb.append("extensionContainer=" + this.extensionContainer.toString());
-		if (this.ccbsPossible)
-			sb.append(", ccbsPossible");
-		if (this.ccbsBusy)
-			sb.append(", ccbsBusy");
+			sb.append(", extensionContainer=" + this.extensionContainer.toString());
 		sb.append("]");
 		
 		return sb.toString();

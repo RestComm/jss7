@@ -52,4 +52,10 @@ public interface MAPErrorMessageBusySubscriber extends MAPErrorMessage {
 
 	public boolean getCcbsBusy();
 
+	public void setExtensionContainer(MAPExtensionContainer val);
+
+	public void setCcbsPossible(boolean val);
+
+	public void setCcbsBusy(boolean val);
+
 }

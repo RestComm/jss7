@@ -85,8 +85,8 @@ public class MAPErrorMessageAbsentSubscriberImpl extends MAPErrorMessageImpl imp
 	public void setAbsentSubscriberReason(AbsentSubscriberReason absentSubscriberReason) {
 		this.absentSubscriberReason = absentSubscriberReason;
 	}	
-	
-	
+
+
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}

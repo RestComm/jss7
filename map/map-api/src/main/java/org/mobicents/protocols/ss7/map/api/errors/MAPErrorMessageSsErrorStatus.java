@@ -60,4 +60,14 @@ public interface MAPErrorMessageSsErrorStatus extends MAPErrorMessage {
 
 	public boolean getABit();
 
+	public void setData(int val);
+
+	public void setQBit(boolean val);
+
+	public void setPBit(boolean val);
+
+	public void setRBit(boolean val);
+
+	public void setABit(boolean val);
+
 }

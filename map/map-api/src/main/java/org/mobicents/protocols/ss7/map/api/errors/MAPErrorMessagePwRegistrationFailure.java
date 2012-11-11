@@ -44,4 +44,6 @@ public interface MAPErrorMessagePwRegistrationFailure extends MAPErrorMessage {
 
 	public PWRegistrationFailureCause getPWRegistrationFailureCause();
 
+	public void setPWRegistrationFailureCause(PWRegistrationFailureCause val);
+
 }

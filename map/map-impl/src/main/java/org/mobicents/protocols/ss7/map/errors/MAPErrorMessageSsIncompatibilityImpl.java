@@ -32,74 +32,78 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorCode;
-import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageBusySubscriber;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSsIncompatibility;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.SSStatus;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.BasicServiceCodeImpl;
+import org.mobicents.protocols.ss7.map.service.supplementary.SSCodeImpl;
+import org.mobicents.protocols.ss7.map.service.supplementary.SSStatusImpl;
 
 /**
 * 
 * @author sergey vetyutnev
 * 
 */
-public class MAPErrorMessageBusySubscriberImpl extends MAPErrorMessageImpl implements MAPErrorMessageBusySubscriber {
+public class MAPErrorMessageSsIncompatibilityImpl extends MAPErrorMessageImpl implements MAPErrorMessageSsIncompatibility {
 
-	public static final int _tag_ccbs_Possible = 0;
-	public static final int _tag_ccbs_Busy = 1;
+	public static final int _tag_ss_Code = 1;
+	public static final int _tag_ss_Status = 4;
 
-	private MAPExtensionContainer extensionContainer;
-	private boolean ccbsPossible;
-	private boolean ccbsBusy;
+	private SSCode ssCode;
+	private BasicServiceCode basicService;
+	private SSStatus ssStatus;
 
-	protected String _PrimitiveName = "MAPErrorMessageBusySubscriber";
+	protected String _PrimitiveName = "MAPErrorMessageSsIncompatibility";
 
-	public MAPErrorMessageBusySubscriberImpl(MAPExtensionContainer extensionContainer, boolean ccbsPossible, boolean ccbsBusy) {
-		super((long) MAPErrorCode.busySubscriber);
+	public MAPErrorMessageSsIncompatibilityImpl(SSCode ssCode, BasicServiceCode basicService, SSStatus ssStatus) {
+		super((long) MAPErrorCode.ssIncompatibility);
 
-		this.extensionContainer = extensionContainer;
-		this.ccbsPossible = ccbsPossible;
-		this.ccbsBusy = ccbsBusy;
+		this.ssCode = ssCode;
+		this.basicService = basicService;
+		this.ssStatus = ssStatus;
 	}
 
-	public MAPErrorMessageBusySubscriberImpl() {
-		super((long) MAPErrorCode.busySubscriber);
+	public MAPErrorMessageSsIncompatibilityImpl() {
+		super((long) MAPErrorCode.ssIncompatibility);
 	}
 
-	public boolean isEmBusySubscriber() {
+	public boolean isEmSsIncompatibility() {
 		return true;
 	}
 
-	public MAPErrorMessageBusySubscriber getEmBusySubscriber() {
+	public MAPErrorMessageSsIncompatibility getEmSsIncompatibility() {
 		return this;
 	}
 
 	@Override
-	public MAPExtensionContainer getExtensionContainer() {
-		return extensionContainer;
+	public SSCode getSSCode() {
+		return ssCode;
 	}
 
 	@Override
-	public boolean getCcbsPossible() {
-		return ccbsPossible;
+	public BasicServiceCode getBasicService() {
+		return basicService;
 	}
 
 	@Override
-	public boolean getCcbsBusy() {
-		return ccbsBusy;
+	public SSStatus getSSStatus() {
+		return ssStatus;
 	}
 
 	@Override
-	public void setExtensionContainer(MAPExtensionContainer val) {
-		this.extensionContainer = val;
+	public void setSSCode(SSCode val) {
+		ssCode = val;
 	}
 
 	@Override
-	public void setCcbsPossible(boolean val) {
-		this.ccbsPossible = val;
+	public void setBasicService(BasicServiceCode val) {
+		basicService = val;
 	}
 
 	@Override
-	public void setCcbsBusy(boolean val) {
-		this.ccbsBusy = val;
+	public void setSSStatus(SSStatus val) {
+		ssStatus = val;
 	}
 
 	public int getTag() throws MAPException {
@@ -113,6 +117,7 @@ public class MAPErrorMessageBusySubscriberImpl extends MAPErrorMessageImpl imple
 	public boolean getIsPrimitive() {
 		return false;
 	}
+
 
 	@Override
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
@@ -145,9 +150,9 @@ public class MAPErrorMessageBusySubscriberImpl extends MAPErrorMessageImpl imple
 
 	private void _decode(AsnInputStream localAis, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-		this.extensionContainer = null;
-		this.ccbsPossible = false;
-		this.ccbsBusy = false;
+		this.ssCode = null;
+		this.basicService = null;
+		this.ssStatus = null;
 
 		if (localAis.getTagClass() != Tag.CLASS_UNIVERSAL || localAis.getTag() != Tag.SEQUENCE || localAis.isTagPrimitive())
 			throw new MAPParsingComponentException(
@@ -163,28 +168,22 @@ public class MAPErrorMessageBusySubscriberImpl extends MAPErrorMessageImpl imple
 			int tag = ais.readTag();
 
 			switch (ais.getTagClass()) {
-			case Tag.CLASS_UNIVERSAL:
-				switch (tag) {
-				case Tag.SEQUENCE:
-					this.extensionContainer = new MAPExtensionContainerImpl();
-					((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
-					break;
-
-				default:
-					ais.advanceElement();
-					break;
-				}
-				break;
-
 			case Tag.CLASS_CONTEXT_SPECIFIC:
 				switch (tag) {
-				case _tag_ccbs_Possible:
-					ais.readNull();
-					this.ccbsPossible = true;
+				case _tag_ss_Code:
+					this.ssCode = new SSCodeImpl();
+					((SSCodeImpl) this.ssCode).decodeAll(ais);
 					break;
-				case _tag_ccbs_Busy:
-					ais.readNull();
-					this.ccbsBusy = true;
+				case BasicServiceCodeImpl._TAG_bearerService:
+				case BasicServiceCodeImpl._TAG_teleservice:
+//					AsnInputStream ais2 = ais.readSequenceStream();
+//					ais2.readTag();
+					this.basicService = new BasicServiceCodeImpl();
+					((BasicServiceCodeImpl)this.basicService).decodeAll(ais);
+					break;
+				case _tag_ss_Status:
+					this.ssStatus = new SSStatusImpl();
+					((SSStatusImpl) this.ssStatus).decodeAll(ais);
 					break;
 
 				default:
@@ -222,22 +221,17 @@ public class MAPErrorMessageBusySubscriberImpl extends MAPErrorMessageImpl imple
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-		if (this.ccbsPossible == false && this.ccbsBusy == false && this.extensionContainer == null)
+		if (this.ssCode == null && this.basicService == null && this.ssStatus == null)
 			return;
 
-		try {
-			if (this.extensionContainer != null)
-				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
-			if (this.ccbsPossible)
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _tag_ccbs_Possible);
-			if (this.ccbsBusy)
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _tag_ccbs_Busy);
-
-		} catch (IOException e) {
-			throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		if (this.ssCode != null)
+			((SSCodeImpl) this.ssCode).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _tag_ss_Code);
+		if (this.basicService != null) {
+			((BasicServiceCodeImpl) this.basicService).encodeAll(asnOs, ((BasicServiceCodeImpl) this.basicService).getTagClass(),
+					((BasicServiceCodeImpl) this.basicService).getTag());
 		}
+		if (this.ssStatus != null)
+			((SSStatusImpl) this.ssStatus).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _tag_ss_Status);
 	}
 
 	@Override
@@ -247,14 +241,14 @@ public class MAPErrorMessageBusySubscriberImpl extends MAPErrorMessageImpl imple
 		sb.append(_PrimitiveName);
 		sb.append(" [");
 
-		if (this.extensionContainer != null)
-			sb.append("extensionContainer=" + this.extensionContainer.toString());
-		if (this.ccbsPossible)
-			sb.append(", ccbsPossible");
-		if (this.ccbsBusy)
-			sb.append(", ccbsBusy");
+		if (this.ssCode != null)
+			sb.append("ssCode=" + this.ssCode.toString());
+		if (this.basicService != null)
+			sb.append(", basicService=" + this.basicService.toString());
+		if (this.ssStatus != null)
+			sb.append(", ssStatus=" + this.ssStatus.toString());
 		sb.append("]");
-		
+
 		return sb.toString();
 	}
 

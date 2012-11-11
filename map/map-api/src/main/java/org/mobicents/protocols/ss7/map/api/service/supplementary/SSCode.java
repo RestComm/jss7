@@ -44,8 +44,6 @@ public interface SSCode {
 
 	public int getData();
 
-	public int getGroup();
-
-	public int getSpecificService();
+	public SupplementaryCodeValue getSupplementaryCodeValue();
 
 }

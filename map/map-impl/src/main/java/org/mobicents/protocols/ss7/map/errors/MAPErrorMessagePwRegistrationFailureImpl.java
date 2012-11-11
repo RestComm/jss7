@@ -32,86 +32,61 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorCode;
-import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageBusySubscriber;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessagePwRegistrationFailure;
+import org.mobicents.protocols.ss7.map.api.errors.PWRegistrationFailureCause;
 
 /**
 * 
 * @author sergey vetyutnev
 * 
 */
-public class MAPErrorMessageBusySubscriberImpl extends MAPErrorMessageImpl implements MAPErrorMessageBusySubscriber {
+public class MAPErrorMessagePwRegistrationFailureImpl extends MAPErrorMessageImpl implements MAPErrorMessagePwRegistrationFailure {
 
-	public static final int _tag_ccbs_Possible = 0;
-	public static final int _tag_ccbs_Busy = 1;
+	private PWRegistrationFailureCause pwRegistrationFailureCause;
 
-	private MAPExtensionContainer extensionContainer;
-	private boolean ccbsPossible;
-	private boolean ccbsBusy;
+	protected String _PrimitiveName = "MAPErrorMessagePwRegistrationFailure";
 
-	protected String _PrimitiveName = "MAPErrorMessageBusySubscriber";
+	public MAPErrorMessagePwRegistrationFailureImpl(PWRegistrationFailureCause pwRegistrationFailureCause) {
+		super((long) MAPErrorCode.pwRegistrationFailure);
 
-	public MAPErrorMessageBusySubscriberImpl(MAPExtensionContainer extensionContainer, boolean ccbsPossible, boolean ccbsBusy) {
-		super((long) MAPErrorCode.busySubscriber);
-
-		this.extensionContainer = extensionContainer;
-		this.ccbsPossible = ccbsPossible;
-		this.ccbsBusy = ccbsBusy;
+		this.pwRegistrationFailureCause = pwRegistrationFailureCause;
 	}
 
-	public MAPErrorMessageBusySubscriberImpl() {
-		super((long) MAPErrorCode.busySubscriber);
+	public MAPErrorMessagePwRegistrationFailureImpl() {
+		super((long) MAPErrorCode.pwRegistrationFailure);
 	}
 
-	public boolean isEmBusySubscriber() {
+	public boolean isEmPwRegistrationFailure() {
 		return true;
 	}
 
-	public MAPErrorMessageBusySubscriber getEmBusySubscriber() {
+	public MAPErrorMessagePwRegistrationFailure getEmPwRegistrationFailure() {
 		return this;
 	}
 
 	@Override
-	public MAPExtensionContainer getExtensionContainer() {
-		return extensionContainer;
+	public PWRegistrationFailureCause getPWRegistrationFailureCause() {
+		return pwRegistrationFailureCause;
 	}
 
 	@Override
-	public boolean getCcbsPossible() {
-		return ccbsPossible;
+	public void setPWRegistrationFailureCause(PWRegistrationFailureCause val) {
+		pwRegistrationFailureCause = val;
 	}
 
 	@Override
-	public boolean getCcbsBusy() {
-		return ccbsBusy;
-	}
-
-	@Override
-	public void setExtensionContainer(MAPExtensionContainer val) {
-		this.extensionContainer = val;
-	}
-
-	@Override
-	public void setCcbsPossible(boolean val) {
-		this.ccbsPossible = val;
-	}
-
-	@Override
-	public void setCcbsBusy(boolean val) {
-		this.ccbsBusy = val;
-	}
-
 	public int getTag() throws MAPException {
-		return Tag.SEQUENCE;
+		return Tag.ENUMERATED;
 	}
 
+	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
+	@Override
 	public boolean getIsPrimitive() {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -145,59 +120,13 @@ public class MAPErrorMessageBusySubscriberImpl extends MAPErrorMessageImpl imple
 
 	private void _decode(AsnInputStream localAis, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-		this.extensionContainer = null;
-		this.ccbsPossible = false;
-		this.ccbsBusy = false;
-
-		if (localAis.getTagClass() != Tag.CLASS_UNIVERSAL || localAis.getTag() != Tag.SEQUENCE || localAis.isTagPrimitive())
+		if (localAis.getTagClass() != Tag.CLASS_UNIVERSAL || localAis.getTag() != Tag.ENUMERATED || !localAis.isTagPrimitive())
 			throw new MAPParsingComponentException(
 					"Error decoding " + _PrimitiveName + ": bad tag class or tag or parameter is primitive",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
-		AsnInputStream ais = localAis.readSequenceStreamData(length);
-
-		while (true) {
-			if (ais.available() == 0)
-				break;
-
-			int tag = ais.readTag();
-
-			switch (ais.getTagClass()) {
-			case Tag.CLASS_UNIVERSAL:
-				switch (tag) {
-				case Tag.SEQUENCE:
-					this.extensionContainer = new MAPExtensionContainerImpl();
-					((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
-					break;
-
-				default:
-					ais.advanceElement();
-					break;
-				}
-				break;
-
-			case Tag.CLASS_CONTEXT_SPECIFIC:
-				switch (tag) {
-				case _tag_ccbs_Possible:
-					ais.readNull();
-					this.ccbsPossible = true;
-					break;
-				case _tag_ccbs_Busy:
-					ais.readNull();
-					this.ccbsBusy = true;
-					break;
-
-				default:
-					ais.advanceElement();
-					break;
-				}
-				break;
-
-			default:
-				ais.advanceElement();
-				break;
-			}
-		}
+		int i1 = (int) localAis.readIntegerData(length);
+		this.pwRegistrationFailureCause = PWRegistrationFailureCause.getInstance(i1);
 	}
 
 	@Override
@@ -222,21 +151,13 @@ public class MAPErrorMessageBusySubscriberImpl extends MAPErrorMessageImpl imple
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-		if (this.ccbsPossible == false && this.ccbsBusy == false && this.extensionContainer == null)
-			return;
+		if (this.pwRegistrationFailureCause == null)
+			throw new MAPException("Parameter pwRegistrationFailureCause must not be null");
 
 		try {
-			if (this.extensionContainer != null)
-				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
-			if (this.ccbsPossible)
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _tag_ccbs_Possible);
-			if (this.ccbsBusy)
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _tag_ccbs_Busy);
-
+			asnOs.writeIntegerData(this.pwRegistrationFailureCause.getCode());
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 
@@ -247,12 +168,8 @@ public class MAPErrorMessageBusySubscriberImpl extends MAPErrorMessageImpl imple
 		sb.append(_PrimitiveName);
 		sb.append(" [");
 
-		if (this.extensionContainer != null)
-			sb.append("extensionContainer=" + this.extensionContainer.toString());
-		if (this.ccbsPossible)
-			sb.append(", ccbsPossible");
-		if (this.ccbsBusy)
-			sb.append(", ccbsBusy");
+		if (this.pwRegistrationFailureCause != null)
+			sb.append("pwRegistrationFailureCause=" + this.pwRegistrationFailureCause.toString());
 		sb.append("]");
 		
 		return sb.toString();

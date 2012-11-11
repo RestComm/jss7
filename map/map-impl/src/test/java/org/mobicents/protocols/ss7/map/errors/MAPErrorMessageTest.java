@@ -26,31 +26,51 @@ import java.util.Arrays;
 
 import static org.testng.Assert.*;
 
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.*;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.errors.AbsentSubscriberReason;
 import org.mobicents.protocols.ss7.map.api.errors.AdditionalNetworkResource;
+import org.mobicents.protocols.ss7.map.api.errors.AdditionalRoamingNotAllowedCause;
+import org.mobicents.protocols.ss7.map.api.errors.CUGRejectCause;
 import org.mobicents.protocols.ss7.map.api.errors.CallBarringCause;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorCode;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageAbsentSubscriber;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageAbsentSubscriberSM;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageBusySubscriber;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageCUGReject;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageCallBarred;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageFacilityNotSup;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessagePositionMethodFailure;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessagePwRegistrationFailure;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageRoamingNotAllowed;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSMDeliveryFailure;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSsErrorStatus;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSsIncompatibility;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSubscriberBusyForMtSms;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSystemFailure;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageUnauthorizedLCSClient;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageUnknownSubscriber;
+import org.mobicents.protocols.ss7.map.api.errors.PWRegistrationFailureCause;
 import org.mobicents.protocols.ss7.map.api.errors.PositionMethodFailureDiagnostic;
+import org.mobicents.protocols.ss7.map.api.errors.RoamingNotAllowedCause;
 import org.mobicents.protocols.ss7.map.api.errors.SMEnumeratedDeliveryFailureCause;
 import org.mobicents.protocols.ss7.map.api.errors.UnauthorizedLCSClientDiagnostic;
 import org.mobicents.protocols.ss7.map.api.errors.UnknownSubscriberDiagnostic;
 import org.mobicents.protocols.ss7.map.api.primitives.NetworkResource;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TeleserviceCode;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TeleserviceCodeValue;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.SSStatus;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.SupplementaryCodeValue;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.BasicServiceCodeImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.TeleserviceCodeImpl;
+import org.mobicents.protocols.ss7.map.service.supplementary.SSCodeImpl;
+import org.mobicents.protocols.ss7.map.service.supplementary.SSStatusImpl;
 import org.mobicents.protocols.ss7.tcap.asn.ParameterImpl;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
@@ -209,7 +229,64 @@ public class MAPErrorMessageTest   {
 		par.setTag(Tag.SEQUENCE);
 		return par;
 	}
-	
+
+	private Parameter getDataBusySubscriberFull() {
+		Parameter par = new ParameterImpl();
+		par.setData(new byte[] { 48, 39, (byte) 160, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23,
+				24, 25, 26, (byte) 161, 3, 31, 32, 33, (byte) 128, 0, (byte) 129, 0 });
+		par.setPrimitive(false);
+		par.setTagClass(Tag.CLASS_UNIVERSAL);
+		par.setTag(Tag.SEQUENCE);
+		return par;
+	}
+
+	private Parameter getDataCUGRejectFull() {
+		Parameter par = new ParameterImpl();
+		par.setData(new byte[] { 10, 1, 1, 48, 39, (byte) 160, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5,
+				21, 22, 23, 24, 25, 26, (byte) 161, 3, 31, 32, 33 });
+		par.setPrimitive(false);
+		par.setTagClass(Tag.CLASS_UNIVERSAL);
+		par.setTag(Tag.SEQUENCE);
+		return par;
+	}
+
+	private Parameter getDataRoamingNotAllowedFull() {
+		Parameter par = new ParameterImpl();
+		par.setData(new byte[] { 10, 1, 0, 48, 39, (byte) 160, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5,
+				21, 22, 23, 24, 25, 26, (byte) 161, 3, 31, 32, 33, (byte) 128, 1, 0 });
+		par.setPrimitive(false);
+		par.setTagClass(Tag.CLASS_UNIVERSAL);
+		par.setTag(Tag.SEQUENCE);
+		return par;
+	}
+
+	private Parameter getDataSsErrorStatusFull() {
+		Parameter par = new ParameterImpl();
+		par.setData(new byte[] { 6 });
+		par.setPrimitive(true);
+		par.setTagClass(Tag.CLASS_UNIVERSAL);
+		par.setTag(Tag.STRING_OCTET);
+		return par;
+	}
+
+	private Parameter getDataSsIncompatibilityFull() {
+		Parameter par = new ParameterImpl();
+		par.setData(new byte[] { (byte) 129, 1, 35, (byte) 131, 1, 17, (byte) 132, 1, 9 });
+		par.setPrimitive(false);
+		par.setTagClass(Tag.CLASS_UNIVERSAL);
+		par.setTag(Tag.SEQUENCE);
+		return par;
+	}
+
+	private Parameter getDataPwRegistrationFailureFull() {
+		Parameter par = new ParameterImpl();
+		par.setData(new byte[] { 2 });
+		par.setPrimitive(true);
+		par.setTagClass(Tag.CLASS_UNIVERSAL);
+		par.setTag(Tag.ENUMERATED);
+		return par;
+	}
+
 	@Test(groups = { "functional.decode","dialog.message"})
 	public void testDecode() throws Exception {
 
@@ -355,6 +432,68 @@ public class MAPErrorMessageTest   {
 		MAPErrorMessagePositionMethodFailure emPositionMethodFailure = em.getEmPositionMethodFailure();
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(emPositionMethodFailure.getExtensionContainer()));
 		assertEquals( emPositionMethodFailure.getPositionMethodFailureDiagnostic(),PositionMethodFailureDiagnostic.locationProcedureNotCompleted);
+
+		p = getDataBusySubscriberFull();
+		em = (MAPErrorMessageImpl) fact.createMessageFromErrorCode((long) MAPErrorCode.busySubscriber);
+		ais = new AsnInputStream(p.getData(), p.getTagClass(), p.isPrimitive(), p.getTag());
+		em.decodeData(ais, p.getData().length);
+		assertTrue(em.isEmBusySubscriber());
+		MAPErrorMessageBusySubscriber emBusySubscriber = em.getEmBusySubscriber();
+		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(emBusySubscriber.getExtensionContainer()));
+		assertTrue(emBusySubscriber.getCcbsPossible());
+		assertTrue(emBusySubscriber.getCcbsBusy());
+
+		p = getDataCUGRejectFull();
+		em = (MAPErrorMessageImpl) fact.createMessageFromErrorCode((long) MAPErrorCode.cugReject);
+		ais = new AsnInputStream(p.getData(), p.getTagClass(), p.isPrimitive(), p.getTag());
+		em.decodeData(ais, p.getData().length);
+		assertTrue(em.isEmCUGReject());
+		MAPErrorMessageCUGReject emCUGReject = em.getEmCUGReject();
+		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(emCUGReject.getExtensionContainer()));
+		assertEquals(emCUGReject.getCUGRejectCause(), CUGRejectCause.subscriberNotMemberOfCUG);
+
+		p = getDataRoamingNotAllowedFull();
+		em = (MAPErrorMessageImpl) fact.createMessageFromErrorCode((long) MAPErrorCode.roamingNotAllowed);
+		ais = new AsnInputStream(p.getData(), p.getTagClass(), p.isPrimitive(), p.getTag());
+		em.decodeData(ais, p.getData().length);
+		assertTrue(em.isEmRoamingNotAllowed());
+		MAPErrorMessageRoamingNotAllowed emRoamingNotAllowed = em.getEmRoamingNotAllowed();
+		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(emRoamingNotAllowed.getExtensionContainer()));
+		assertEquals(emRoamingNotAllowed.getRoamingNotAllowedCause(), RoamingNotAllowedCause.plmnRoamingNotAllowed);
+		assertEquals(emRoamingNotAllowed.getAdditionalRoamingNotAllowedCause(), AdditionalRoamingNotAllowedCause.supportedRATTypesNotAllowed);
+
+		p = getDataSsErrorStatusFull();
+		em = (MAPErrorMessageImpl) fact.createMessageFromErrorCode((long) MAPErrorCode.ssErrorStatus);
+		ais = new AsnInputStream(p.getData(), p.getTagClass(), p.isPrimitive(), p.getTag());
+		em.decodeData(ais, p.getData().length);
+		assertTrue(em.isEmSsErrorStatus());
+		MAPErrorMessageSsErrorStatus emSsErrorStatus = em.getEmSsErrorStatus();
+		assertFalse(emSsErrorStatus.getQBit());
+		assertTrue(emSsErrorStatus.getPBit());
+		assertTrue(emSsErrorStatus.getRBit());
+		assertFalse(emSsErrorStatus.getABit());
+		assertEquals(emSsErrorStatus.getData(), 6);
+
+		p = getDataSsIncompatibilityFull();
+		em = (MAPErrorMessageImpl) fact.createMessageFromErrorCode((long) MAPErrorCode.ssIncompatibility);
+		ais = new AsnInputStream(p.getData(), p.getTagClass(), p.isPrimitive(), p.getTag());
+		em.decodeData(ais, p.getData().length);
+		assertTrue(em.isEmSsIncompatibility());
+		MAPErrorMessageSsIncompatibility emSsIncompatibility = em.getEmSsIncompatibility();
+		assertEquals(emSsIncompatibility.getSSCode().getSupplementaryCodeValue(), SupplementaryCodeValue.cellBroadcast);
+		assertEquals(emSsIncompatibility.getBasicService().getTeleservice().getTeleserviceCodeValue(), TeleserviceCodeValue.telephony);
+		assertTrue(emSsIncompatibility.getSSStatus().getQBit());
+		assertFalse(emSsIncompatibility.getSSStatus().getPBit());
+		assertFalse(emSsIncompatibility.getSSStatus().getRBit());
+		assertTrue(emSsIncompatibility.getSSStatus().getABit());
+
+		p = getDataPwRegistrationFailureFull();
+		em = (MAPErrorMessageImpl) fact.createMessageFromErrorCode((long) MAPErrorCode.pwRegistrationFailure);
+		ais = new AsnInputStream(p.getData(), p.getTagClass(), p.isPrimitive(), p.getTag());
+		em.decodeData(ais, p.getData().length);
+		assertTrue(em.isEmPwRegistrationFailure());
+		MAPErrorMessagePwRegistrationFailure emPwRegistrationFailure = em.getEmPwRegistrationFailure();
+		assertEquals(emPwRegistrationFailure.getPWRegistrationFailureCause(), PWRegistrationFailureCause.newPasswordsMismatch);
 	}
 
 	@Test(groups = { "functional.encode","dialog.message"})
@@ -518,8 +657,74 @@ public class MAPErrorMessageTest   {
 		p.setPrimitive(em.getIsPrimitive());
 		p.setData(aos.toByteArray());
 		assertParameter( getDataPositionMethodFailureFull(),p);
+
+		em = (MAPErrorMessageImpl) fact.createMAPErrorMessageBusySubscriber(MAPExtensionContainerTest.GetTestExtensionContainer(), true, true);
+		aos = new AsnOutputStream();
+		em.encodeData(aos);
+		p = new ParameterImpl();
+		p.setTagClass(em.getTagClass());
+		p.setTag(em.getTag());
+		p.setPrimitive(em.getIsPrimitive());
+		p.setData(aos.toByteArray());
+		assertParameter( getDataBusySubscriberFull(),p);
+
+		em = (MAPErrorMessageImpl) fact.createMAPErrorMessageCUGReject(CUGRejectCause.subscriberNotMemberOfCUG,
+				MAPExtensionContainerTest.GetTestExtensionContainer());
+		aos = new AsnOutputStream();
+		em.encodeData(aos);
+		p = new ParameterImpl();
+		p.setTagClass(em.getTagClass());
+		p.setTag(em.getTag());
+		p.setPrimitive(em.getIsPrimitive());
+		p.setData(aos.toByteArray());
+		assertParameter( getDataCUGRejectFull(),p);
+
+		em = (MAPErrorMessageImpl) fact.createMAPErrorMessageRoamingNotAllowed(RoamingNotAllowedCause.plmnRoamingNotAllowed,
+				MAPExtensionContainerTest.GetTestExtensionContainer(), AdditionalRoamingNotAllowedCause.supportedRATTypesNotAllowed);
+		aos = new AsnOutputStream();
+		em.encodeData(aos);
+		p = new ParameterImpl();
+		p.setTagClass(em.getTagClass());
+		p.setTag(em.getTag());
+		p.setPrimitive(em.getIsPrimitive());
+		p.setData(aos.toByteArray());
+		assertParameter( getDataRoamingNotAllowedFull(),p);
+
+		em = (MAPErrorMessageImpl) fact.createMAPErrorMessageSsErrorStatus(false, true, true, false);
+		aos = new AsnOutputStream();
+		em.encodeData(aos);
+		p = new ParameterImpl();
+		p.setTagClass(em.getTagClass());
+		p.setTag(em.getTag());
+		p.setPrimitive(em.getIsPrimitive());
+		p.setData(aos.toByteArray());
+		assertParameter( getDataSsErrorStatusFull(),p);
+
+		SSCode ssCode = new SSCodeImpl(SupplementaryCodeValue.cellBroadcast);
+		TeleserviceCode teleservice = new TeleserviceCodeImpl(TeleserviceCodeValue.telephony);
+		BasicServiceCode basicService = new BasicServiceCodeImpl(teleservice);
+		SSStatus ssStatus = new SSStatusImpl(true, false, false, true);
+		em = (MAPErrorMessageImpl) fact.createMAPErrorMessageSsIncompatibility(ssCode, basicService, ssStatus);
+		aos = new AsnOutputStream();
+		em.encodeData(aos);
+		p = new ParameterImpl();
+		p.setTagClass(em.getTagClass());
+		p.setTag(em.getTag());
+		p.setPrimitive(em.getIsPrimitive());
+		p.setData(aos.toByteArray());
+		assertParameter(getDataSsIncompatibilityFull(), p);
+
+		em = (MAPErrorMessageImpl) fact.createMAPErrorMessagePwRegistrationFailure(PWRegistrationFailureCause.newPasswordsMismatch);
+		aos = new AsnOutputStream();
+		em.encodeData(aos);
+		p = new ParameterImpl();
+		p.setTagClass(em.getTagClass());
+		p.setTag(em.getTag());
+		p.setPrimitive(em.getIsPrimitive());
+		p.setData(aos.toByteArray());
+		assertParameter( getDataPwRegistrationFailureFull(),p);
 	}
-	
+
 	private void assertParameter( Parameter p2,Parameter p1) {
 		assertNotNull(p1);
 		assertNotNull(p2);
