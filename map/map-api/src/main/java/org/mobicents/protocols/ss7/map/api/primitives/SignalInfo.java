@@ -22,7 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api.primitives;
 
-/*
+/**
  * SignalInfo ::= OCTET STRING (SIZE (1..maxSignalInfoLength))
  * maxSignalInfoLength INTEGER ::= 200
  * -- This NamedValue represents the theoretical maximum number of octets which is
@@ -31,9 +31,6 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * -- However, the actual maximum size available for an instance of the data
  * -- type may be lower, especially when other information elements
  * -- have to be included in the same component
- */
- 
-/*
  * 
  * @author cristian veliscu
  * 

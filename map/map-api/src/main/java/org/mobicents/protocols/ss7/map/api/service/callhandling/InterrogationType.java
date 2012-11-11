@@ -23,13 +23,10 @@
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
 
-/*
+/**
  * InterrogationType ::= ENUMERATED {
  * basicCall (0),
  * forwarding (1)}
- */
- 
-/*
  * 
  * @author cristian veliscu
  * 

@@ -29,7 +29,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ForwardingOptions;
 
 
-/*
+/**
  *	ForwardingData ::= SEQUENCE {
  *  forwardedToNumber [5] ISDN-AddressString OPTIONAL,
  *  forwardedToSubaddress [4] ISDN-SubaddressString OPTIONAL,

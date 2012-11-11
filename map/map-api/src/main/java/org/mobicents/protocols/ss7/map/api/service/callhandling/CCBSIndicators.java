@@ -24,15 +24,12 @@ package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
-/*
+/**
  * CCBS-Indicators ::= SEQUENCE {
  * ccbs-Possible [0] NULL OPTIONAL,
  * keepCCBS-CallIndicator [1] NULL OPTIONAL,
  * extensionContainer [2] ExtensionContainer OPTIONAL,
  * ...}
- */
- 
-/*
  * 
  * @author cristian veliscu
  * 

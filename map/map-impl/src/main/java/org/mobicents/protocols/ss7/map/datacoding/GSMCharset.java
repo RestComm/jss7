@@ -97,6 +97,43 @@ public class GSMCharset extends Charset {
 		return new GSMCharsetEncoder(this, averageBytesPerChar, maxBytesPerChar);
 	}
 
+	public boolean checkAllCharsCanBeEncoded(String data) {
+		return checkAllCharsCanBeEncoded(data, this.mainTable, this.extensionTable);
+	}
+
+	public static boolean checkAllCharsCanBeEncoded(String data, int[] mainTable, int[] extentionTable) {
+
+		if (data == null)
+			return true;
+
+		if (mainTable == null)
+			return false;
+
+		for (int i1 = 0; i1 < data.length(); i1++) {
+			char c = data.charAt(i1);
+			
+			boolean found = false;
+			for (int i = 0; i < mainTable.length; i++) {
+				if (mainTable[i] == c) {
+					found = true;
+					break;
+				}
+			}
+			if (!found && extentionTable != null) {
+				for (int i = 0; i < extentionTable.length; i++) {
+					if (extentionTable[i] == c) {
+						found = true;
+						break;
+					}
+				}
+			}
+			if (!found)
+				return false;
+		}
+
+		return true;
+	}
+
 	// Look at http://www.unicode.org/Public/MAPPINGS/ETSI/GSM0338.TXT
 	public static final int[] BYTE_TO_CHAR_DefaultAlphabet = { 
 		0x0040, 0x00A3, 0x0024, 0x00A5, 0x00E8, 0x00E9, 0x00F9, 0x00EC, 
