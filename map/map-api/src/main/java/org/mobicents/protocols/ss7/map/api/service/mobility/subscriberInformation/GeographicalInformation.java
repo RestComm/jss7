@@ -41,4 +41,10 @@ public interface GeographicalInformation {
 
 	public byte[] getData();
 
+	public TypeOfShape getTypeOfShape();
+
+	public double getLatitude();
+
+	public double getLongitude();
+
 }

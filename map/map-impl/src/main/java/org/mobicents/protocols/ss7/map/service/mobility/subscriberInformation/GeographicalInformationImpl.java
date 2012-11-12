@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GeographicalInformation;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.TypeOfShape;
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
@@ -43,5 +44,38 @@ public class GeographicalInformationImpl extends OctetStringBase implements Geog
 
 	public byte[] getData() {
 		return data;
+	}
+
+	public static double decodeLatitude(byte[] data, int begin) {
+		int i1 = ((data[begin] & 0xFF) << 16) + ((data[begin + 1] & 0xFF) << 8) + (data[begin + 1] & 0xFF);
+
+		// ..........................
+		
+		return 0;
+	}
+
+	public static void encodeLatitude(byte[] data, int begin, double val) {
+	}
+
+	@Override
+	public TypeOfShape getTypeOfShape() {
+		if (this.data == null || this.data.length != 8)
+			return null;
+
+		return TypeOfShape.getInstance(this.data[0]);
+	}
+
+	@Override
+	public double getLatitude() {
+		if (this.data == null || this.data.length != 8)
+			return 0;
+
+		return decodeLatitude(this.data, 1);
+	}
+
+	@Override
+	public double getLongitude() {
+		// TODO Auto-generated method stub
+		return 0;
 	}	
 }
