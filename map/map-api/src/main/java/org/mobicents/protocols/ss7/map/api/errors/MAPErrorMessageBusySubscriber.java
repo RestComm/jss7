@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -51,5 +51,11 @@ public interface MAPErrorMessageBusySubscriber extends MAPErrorMessage {
 	public boolean getCcbsPossible();
 
 	public boolean getCcbsBusy();
+
+	public void setExtensionContainer(MAPExtensionContainer val);
+
+	public void setCcbsPossible(boolean val);
+
+	public void setCcbsBusy(boolean val);
 
 }

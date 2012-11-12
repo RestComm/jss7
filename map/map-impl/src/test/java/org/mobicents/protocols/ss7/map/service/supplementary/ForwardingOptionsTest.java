@@ -22,24 +22,13 @@
 
 package org.mobicents.protocols.ss7.map.service.supplementary;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 import java.util.Arrays;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
-import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
-import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
-import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
-import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.ForwardingOptions;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ForwardingReason;
-import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.ForwardingOptionsImpl;
-import org.testng.Assert.*;
-import org.testng.*;
 import org.testng.annotations.*;
 
 
@@ -67,7 +56,7 @@ public class ForwardingOptionsTest {
 	public void tearDown() {
 	}
 	
-	@Test(groups = { "functional.decode", "service.callhandling" })
+	@Test(groups = { "functional.decode", "service.supplementary" })
 	public void testDecode() throws Exception {
 		byte[] data1 = new byte[] { 0x4, 0x1, (byte) 0xE4 };
 		byte[] data2 = new byte[] { 0x4, 0x1, (byte) 0x00 };
@@ -135,7 +124,7 @@ public class ForwardingOptionsTest {
 		assertTrue(fo.getForwardingReason() == ForwardingReason.busy);
 	} 
 	
-	@Test(groups = { "functional.encode", "service.callhandling" })
+	@Test(groups = { "functional.encode", "service.supplementary" })
 	public void testEncode() throws Exception {
 		byte[] data1 = new byte[] { 0x4, 0x1, (byte) 0xE4 };
 		byte[] data2 = new byte[] { 0x4, 0x1, (byte) 0x00 };
@@ -188,7 +177,7 @@ public class ForwardingOptionsTest {
 		assertTrue(Arrays.equals(data5, encodedData));
 	}
 	
-	@Test(groups = { "functional.serialize", "service.callhandling" })
+	@Test(groups = { "functional.serialize", "service.supplementary" })
 	public void testSerialization() throws Exception {
 		
 	}

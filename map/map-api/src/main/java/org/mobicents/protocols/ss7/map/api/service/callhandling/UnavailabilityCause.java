@@ -23,7 +23,7 @@
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
 
-/*
+/**
  *	UnavailabilityCause ::= ENUMERATED {
  *  bearerServiceNotProvisioned (1),
  *  teleserviceNotProvisioned (2),
@@ -32,9 +32,6 @@ package org.mobicents.protocols.ss7.map.api.service.callhandling;
  *  callBarred (5),
  *  cug-Reject (6),
  *  ...}
- */
- 
-/*
  * 
  * @author cristian veliscu
  * 

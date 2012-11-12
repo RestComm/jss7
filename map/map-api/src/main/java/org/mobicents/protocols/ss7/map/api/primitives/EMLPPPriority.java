@@ -22,7 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api.primitives;
 
-/* 
+/**
  * EMLPP-Priority ::= INTEGER (0..15)
  * -- The mapping from the values A,B,0,1,2,3,4 to the integer-value is
  * -- specified as follows where A is the highest and 4 is the lowest
@@ -35,7 +35,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * priorityLevel2 EMLPP-Priority ::= 2
  * priorityLevel3 EMLPP-Priority ::= 3
  * priorityLevel4 EMLPP-Priority ::= 4
-  * 
+ * 
  * @author cristian veliscu
  * 
  */

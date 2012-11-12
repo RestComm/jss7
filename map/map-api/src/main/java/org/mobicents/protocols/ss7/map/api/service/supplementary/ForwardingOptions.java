@@ -24,7 +24,7 @@ package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
 
 
-/*
+/**
  *	ForwardingOptions ::= OCTET STRING (SIZE (1))
  *	-- bit 8: notification to forwarding party
  *	-- 0 no notification
@@ -43,9 +43,6 @@ package org.mobicents.protocols.ss7.map.api.service.supplementary;
  *	-- 11 unconditional when used in a SRI Result,
  *	-- or call deflection when used in a RCH Argument
  *	-- bits 21: 00 (unused)
- */
- 
-/*
  * 
  * @author cristian veliscu
  * 

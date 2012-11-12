@@ -23,8 +23,13 @@
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
 
-/*
+/**
  * 
+
+ForwardingReason ::= ENUMERATED {
+	notReachable  (0),
+	busy  (1),
+	noReply  (2)}
 
 	-- bits 43: forwarding reason
 	-- 00 ms not reachable
@@ -33,13 +38,6 @@ package org.mobicents.protocols.ss7.map.api.service.supplementary;
 	-- 11 unconditional when used in a SRI Result,
 	-- or call deflection when used in a RCH Argument
 
- *	ForwardingReason ::= ENUMERATED {
- *  notReachable (0),
- *  busy (1),
- *  noReply (2)}
- */
- 
-/*
  * 
  * @author cristian veliscu
  * 

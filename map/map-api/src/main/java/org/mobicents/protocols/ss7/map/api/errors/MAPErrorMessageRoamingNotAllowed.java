@@ -54,4 +54,10 @@ public interface MAPErrorMessageRoamingNotAllowed extends MAPErrorMessage {
 
 	public AdditionalRoamingNotAllowedCause getAdditionalRoamingNotAllowedCause();
 
+	public void setRoamingNotAllowedCause(RoamingNotAllowedCause val);
+
+	public void setExtensionContainer(MAPExtensionContainer val);
+
+	public void setAdditionalRoamingNotAllowedCause(AdditionalRoamingNotAllowedCause val);
+
 }

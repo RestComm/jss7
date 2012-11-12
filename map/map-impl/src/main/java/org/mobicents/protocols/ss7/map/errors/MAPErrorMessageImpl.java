@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -25,12 +25,18 @@ package org.mobicents.protocols.ss7.map.errors;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageAbsentSubscriber;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageAbsentSubscriberSM;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageBusySubscriber;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageCUGReject;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageCallBarred;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageFacilityNotSup;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageParameterless;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessagePositionMethodFailure;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessagePwRegistrationFailure;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageRoamingNotAllowed;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSMDeliveryFailure;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSsErrorStatus;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSsIncompatibility;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSubscriberBusyForMtSms;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSystemFailure;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageUnauthorizedLCSClient;
@@ -105,6 +111,30 @@ public abstract class MAPErrorMessageImpl implements MAPErrorMessage, MAPAsnPrim
 		return false;
 	}
 
+	public boolean isEmBusySubscriber() {
+		return false;
+	}
+
+	public boolean isEmCUGReject() {
+		return false;
+	}
+
+	public boolean isEmRoamingNotAllowed() {
+		return false;
+	}
+
+	public boolean isEmSsErrorStatus() {
+		return false;
+	}
+
+	public boolean isEmSsIncompatibility() {
+		return false;
+	}
+
+	public boolean isEmPwRegistrationFailure() {
+		return false;
+	}
+
 	
 	public MAPErrorMessageParameterless getEmParameterless() {
 		return null;
@@ -151,6 +181,30 @@ public abstract class MAPErrorMessageImpl implements MAPErrorMessage, MAPAsnPrim
 	}
 
 	public MAPErrorMessagePositionMethodFailure getEmPositionMethodFailure() {
+		return null;
+	}
+
+	public MAPErrorMessageBusySubscriber getEmBusySubscriber() {
+		return null;
+	}
+
+	public MAPErrorMessageCUGReject getEmCUGReject() {
+		return null;
+	}
+
+	public MAPErrorMessageRoamingNotAllowed getEmRoamingNotAllowed() {
+		return null;
+	}
+
+	public MAPErrorMessageSsErrorStatus getEmSsErrorStatus() {
+		return null;
+	}
+
+	public MAPErrorMessageSsIncompatibility getEmSsIncompatibility() {
+		return null;
+	}
+
+	public MAPErrorMessagePwRegistrationFailure getEmPwRegistrationFailure() {
 		return null;
 	}
 

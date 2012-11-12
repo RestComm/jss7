@@ -22,16 +22,13 @@
 
 package org.mobicents.protocols.ss7.map.api.primitives;
 
-/*
+/**
  * ProtocolId ::= ENUMERATED {
  * gsm-0408 (1),
  * gsm-0806 (2),
  * gsm-BSSMAP (3),
  * -- Value 3 is reserved and must not be used
  * ets-300102-1 (4)}
- */
- 
-/*
  * 
  * @author cristian veliscu
  * 

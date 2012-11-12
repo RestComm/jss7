@@ -20,44 +20,57 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.errors;
+package org.mobicents.protocols.ss7.map.service.supplementary;
 
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.SSStatus;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.SupplementaryCodeValue;
+import org.mobicents.protocols.ss7.map.primitives.OctetStringLength1Base;
 
 /**
-*
-
-ss-Incompatibility  ERROR ::= {
-	PARAMETER
-		SS-IncompatibilityCause
-		-- optional
-	CODE	local:20 }
-
-SS-IncompatibilityCause ::= SEQUENCE {
-	ss-Code		[1] SS-Code	OPTIONAL,
-	basicService	BasicServiceCode	OPTIONAL,
-	ss-Status		[4] SS-Status	OPTIONAL,
-	...}
-
-  
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface MAPErrorMessageSsIncompatibility extends MAPErrorMessage {
+public class SSCodeImpl extends OctetStringLength1Base implements SSCode {
 
-	public SSCode getSSCode();
+	public SSCodeImpl() {
+		super("SSCode");
+	}
 
-	public BasicServiceCode getBasicService();
+	public SSCodeImpl(int data) {
+		super("SSCode", data);
+	}
 
-	public SSStatus getSSStatus();
+	public SSCodeImpl(SupplementaryCodeValue value) {
+		super("SSCode", value != null ? value.getCode() : 0);
+	}
 
-	public void setSSCode(SSCode val);
+	@Override
+	public int getData() {
+		return this.data;
+	}
 
-	public void setBasicService(BasicServiceCode val);
+	@Override
+	public SupplementaryCodeValue getSupplementaryCodeValue() {
+		return SupplementaryCodeValue.getInstance(this.data);
+	}
 
-	public void setSSStatus(SSStatus val);
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		SupplementaryCodeValue scv = this.getSupplementaryCodeValue();
+		if (scv != null) {
+			sb.append("SupplementaryCodeValue=" + scv);
+			sb.append(", ");
+		}
+		sb.append("Data=" + this.data);
+		sb.append("]");
+
+		return sb.toString();
+	}
 
 }

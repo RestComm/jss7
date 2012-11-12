@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -25,6 +25,9 @@ package org.mobicents.protocols.ss7.map.api.errors;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NetworkResource;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.SSStatus;
 
 /**
  * The factory of MAP ReturnError messages
@@ -76,6 +79,20 @@ public interface MAPErrorMessageFactory {
 
 	public MAPErrorMessagePositionMethodFailure createMAPErrorMessagePositionMethodFailure(PositionMethodFailureDiagnostic positionMethodFailureDiagnostic,
 			MAPExtensionContainer extensionContainer);
+
+	public MAPErrorMessageBusySubscriber createMAPErrorMessageBusySubscriber(MAPExtensionContainer extensionContainer, boolean ccbsPossible, boolean ccbsBusy);
+
+	public MAPErrorMessageCUGReject createMAPErrorMessageCUGReject(CUGRejectCause cugRejectCause, MAPExtensionContainer extensionContainer);
+
+	public MAPErrorMessageRoamingNotAllowed createMAPErrorMessageRoamingNotAllowed(RoamingNotAllowedCause roamingNotAllowedCause,
+			MAPExtensionContainer extensionContainer, AdditionalRoamingNotAllowedCause additionalRoamingNotAllowedCause);
+
+	public MAPErrorMessageSsErrorStatus createMAPErrorMessageSsErrorStatus(int data);
+
+	public MAPErrorMessageSsErrorStatus createMAPErrorMessageSsErrorStatus(boolean qBit, boolean pBit, boolean rBit, boolean aBit);
+
+	public MAPErrorMessageSsIncompatibility createMAPErrorMessageSsIncompatibility(SSCode ssCode, BasicServiceCode basicService, SSStatus ssStatus);
+
+	public MAPErrorMessagePwRegistrationFailure createMAPErrorMessagePwRegistrationFailure(PWRegistrationFailureCause pwRegistrationFailureCause);
+
 }
-
-
