@@ -22,26 +22,31 @@
 
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
 
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.QoSSubscribed;
-import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.Category;
+import org.mobicents.protocols.ss7.map.primitives.OctetStringLength1Base;
 
 /**
 *
 * @author daniel bichara
 *
 */
-public class QoSSubscribedImpl extends OctetStringBase implements QoSSubscribed {
+public class CategoryImpl extends OctetStringLength1Base implements Category {
+	
+	/**
+	 * Category
+	 * CCITTT Rec Q.767
+	 */
+	public static final int catOrdinary		 	= 0;	// ordinary-calling-subscriber
 
-	public QoSSubscribedImpl() {
-		super(3, 3, "QoSSubscribed");
+	public CategoryImpl() {
+		super("Category");
 	}
 
-	public QoSSubscribedImpl(byte[] data) {
-		super(3, 3, "QoSSubscribed", data);
+	public CategoryImpl(int data) {
+		super("Category", data);
 	}
 
-	public byte[] getData() {
+	public int getData() {
 		return data;
 	}	
-
 }

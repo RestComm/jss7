@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.service.mobility;
 
+import java.util.ArrayList;
+
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.MAPDialogImpl;
 import org.mobicents.protocols.ss7.map.MAPProviderImpl;
@@ -31,12 +33,14 @@ import org.mobicents.protocols.ss7.map.api.MAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.DiameterIdentity;
 import org.mobicents.protocols.ss7.map.api.primitives.GSNAddress;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.NAEAPreferredCI;
 import org.mobicents.protocols.ss7.map.api.primitives.PlmnId;
 import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPDialogMobility;
@@ -49,13 +53,41 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.imei.EquipmentStatus
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.RequestedEquipmentInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIu;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.AgeIndicator;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancellationType;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.IMSIWithLMSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PagingArea;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedFeatures;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.TypeOfUpdate;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VLRCapability;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.AccessRestrictionData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CSAllocationRetentionPriority;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CSGSubscriptionData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.Category;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ChargingCharacteristics;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.EPSSubscriptionData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBearerServiceCode;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtSSInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtTeleserviceCode;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.GPRSSubscriptionData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.LCSInformation;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.LSAInformation;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.MCSSInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.NetworkAccessMode;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ODBData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ODBGeneralData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OfferedCamel4CSIs;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.RegionalSubscriptionResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SGSNCAMELSubscriptionInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SubscriberStatus;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.VlrCamelSubscriptionInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.VoiceBroadcastData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.VoiceGroupCallData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ZoneCode;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.SendAuthenticationInfoRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.SendAuthenticationInfoResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.imei.CheckImeiRequestImpl;
@@ -66,6 +98,8 @@ import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.Updat
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateLocationResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.AnyTimeInterrogationRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.AnyTimeInterrogationResponseImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.InsertSubscriberDataRequestImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.InsertSubscriberDataResponseImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
@@ -523,6 +557,220 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 		return invokeId;
 	}
 
+	
+	
+	
+	
+	
+	
+	
+// TODO: begin
+
+	@Override
+	public Long addInsertSubscriberDataRequest(IMSI imsi, ISDNAddressString msisdn,
+			Category category, SubscriberStatus subscriberStatus, ArrayList<ExtBearerServiceCode> bearerServiceList,
+			ArrayList<ExtTeleserviceCode> teleserviceList, ArrayList<ExtSSInfo> provisionedSS,
+			ODBData odbData, boolean roamingRestrictionDueToUnsupportedFeature,
+			ArrayList<ZoneCode> regionalSubscriptionData, ArrayList<VoiceBroadcastData> vbsSubscriptionData,
+			ArrayList<VoiceGroupCallData> vgcsSubscriptionData, VlrCamelSubscriptionInfo vlrCamelSubscriptionInfo)
+			throws MAPException {
+
+		return this.addInsertSubscriberDataRequest(_Timer_Default, imsi, msisdn,
+				category, subscriberStatus, bearerServiceList, teleserviceList, provisionedSS,
+				odbData, roamingRestrictionDueToUnsupportedFeature, regionalSubscriptionData, vbsSubscriptionData,
+				vgcsSubscriptionData, vlrCamelSubscriptionInfo);
+	}
+
+	@Override
+	public Long addInsertSubscriberDataRequest(long customInvokeTimeout, IMSI imsi, ISDNAddressString msisdn,
+			Category category, SubscriberStatus subscriberStatus, ArrayList<ExtBearerServiceCode> bearerServiceList,
+			ArrayList<ExtTeleserviceCode> teleserviceList, ArrayList<ExtSSInfo> provisionedSS,
+			ODBData odbData, boolean roamingRestrictionDueToUnsupportedFeature,
+			ArrayList<ZoneCode> regionalSubscriptionData, ArrayList<VoiceBroadcastData> vbsSubscriptionData,
+			ArrayList<VoiceGroupCallData> vgcsSubscriptionData, VlrCamelSubscriptionInfo vlrCamelSubscriptionInfo)
+			throws MAPException {
+
+		return this.addInsertSubscriberDataRequest(customInvokeTimeout, imsi, msisdn,
+				category, subscriberStatus, bearerServiceList, teleserviceList, provisionedSS,
+				odbData, roamingRestrictionDueToUnsupportedFeature, regionalSubscriptionData, vbsSubscriptionData,
+				vgcsSubscriptionData, vlrCamelSubscriptionInfo, null, null, null, false,
+				null, null, false, null, null, null, null, null, null, null,
+				null, false, null, null, false, null, null, null, false, false, null);
+	}
+
+	@Override
+	public Long addInsertSubscriberDataRequest(IMSI imsi, ISDNAddressString msisdn,
+			Category category, SubscriberStatus subscriberStatus, ArrayList<ExtBearerServiceCode> bearerServiceList,
+			ArrayList<ExtTeleserviceCode> teleserviceList, ArrayList<ExtSSInfo> provisionedSS,
+			ODBData odbData, boolean roamingRestrictionDueToUnsupportedFeature,
+			ArrayList<ZoneCode> regionalSubscriptionData, ArrayList<VoiceBroadcastData> vbsSubscriptionData,
+			ArrayList<VoiceGroupCallData> vgcsSubscriptionData, VlrCamelSubscriptionInfo vlrCamelSubscriptionInfo,
+			MAPExtensionContainer extensionContainer, NAEAPreferredCI naeaPreferredCI, GPRSSubscriptionData gprsSubscriptionData,
+			boolean roamingRestrictedInSgsnDueToUnsupportedFeature, NetworkAccessMode networkAccessMode,
+			LSAInformation lsaInformation, boolean lmuIndicator, LCSInformation lcsInformation, Integer istAlertTimer,
+			AgeIndicator superChargerSupportedInHLR, MCSSInfo mcSsInfo, CSAllocationRetentionPriority csAllocationRetentionPriority,
+			SGSNCAMELSubscriptionInfo sgsnCamelSubscriptionInfo, ChargingCharacteristics chargingCharacteristics,
+			AccessRestrictionData accessRestrictionData, Boolean icsIndicator, EPSSubscriptionData epsSubscriptionData,
+			ArrayList<CSGSubscriptionData> csgSubscriptionDataList, boolean ueReachabilityRequestIndicator,
+			ISDNAddressString sgsnNumber, DiameterIdentity mmeName, Long subscribedPeriodicRAUTAUtimer,
+			boolean vplmnLIPAAllowed, Boolean mdtUserConsent, Long subscribedPeriodicLAUtimer)
+			throws MAPException {
+
+		return this.addInsertSubscriberDataRequest(_Timer_Default, imsi, msisdn,
+				category, subscriberStatus, bearerServiceList, teleserviceList, provisionedSS,
+				odbData, roamingRestrictionDueToUnsupportedFeature, regionalSubscriptionData, vbsSubscriptionData,
+				vgcsSubscriptionData, vlrCamelSubscriptionInfo, extensionContainer, naeaPreferredCI, gprsSubscriptionData,
+				roamingRestrictedInSgsnDueToUnsupportedFeature, networkAccessMode,
+				lsaInformation, lmuIndicator, lcsInformation, istAlertTimer,
+				superChargerSupportedInHLR, mcSsInfo, csAllocationRetentionPriority,
+				sgsnCamelSubscriptionInfo, chargingCharacteristics, accessRestrictionData, icsIndicator, epsSubscriptionData,
+				csgSubscriptionDataList, ueReachabilityRequestIndicator,
+				sgsnNumber, mmeName, subscribedPeriodicRAUTAUtimer,
+				vplmnLIPAAllowed, mdtUserConsent, subscribedPeriodicLAUtimer);
+	}
+
+	@Override
+	public Long addInsertSubscriberDataRequest(long customInvokeTimeout, IMSI imsi, ISDNAddressString msisdn,
+			Category category, SubscriberStatus subscriberStatus, ArrayList<ExtBearerServiceCode> bearerServiceList,
+			ArrayList<ExtTeleserviceCode> teleserviceList, ArrayList<ExtSSInfo> provisionedSS,
+			ODBData odbData, boolean roamingRestrictionDueToUnsupportedFeature,
+			ArrayList<ZoneCode> regionalSubscriptionData, ArrayList<VoiceBroadcastData> vbsSubscriptionData,
+			ArrayList<VoiceGroupCallData> vgcsSubscriptionData, VlrCamelSubscriptionInfo vlrCamelSubscriptionInfo,
+			MAPExtensionContainer extensionContainer, NAEAPreferredCI naeaPreferredCI, GPRSSubscriptionData gprsSubscriptionData,
+			boolean roamingRestrictedInSgsnDueToUnsupportedFeature, NetworkAccessMode networkAccessMode,
+			LSAInformation lsaInformation, boolean lmuIndicator, LCSInformation lcsInformation, Integer istAlertTimer,
+			AgeIndicator superChargerSupportedInHLR, MCSSInfo mcSsInfo, CSAllocationRetentionPriority csAllocationRetentionPriority,
+			SGSNCAMELSubscriptionInfo sgsnCamelSubscriptionInfo, ChargingCharacteristics chargingCharacteristics,
+			AccessRestrictionData accessRestrictionData, Boolean icsIndicator, EPSSubscriptionData epsSubscriptionData,
+			ArrayList<CSGSubscriptionData> csgSubscriptionDataList, boolean ueReachabilityRequestIndicator,
+			ISDNAddressString sgsnNumber, DiameterIdentity mmeName, Long subscribedPeriodicRAUTAUtimer,
+			boolean vplmnLIPAAllowed, Boolean mdtUserConsent, Long subscribedPeriodicLAUtimer)
+			throws MAPException {
+	
+		if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.subscriberDataMngtContext)
+				|| (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version1
+						&& this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2
+						&& this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)) {
+
+			if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.networkLocUpContext)
+					|| (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version1
+							&& this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2 && 
+							this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
+				throw new MAPException("Bad application context name for SubscriberDataRequest: must be networkLocUpContext or subscriberDataMngtContext_V1, V2 or V3");
+		}
+		
+		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		if (customInvokeTimeout == _Timer_Default) {
+			invoke.setTimeout(_Timer_m);
+		}
+		else {
+			invoke.setTimeout(customInvokeTimeout);
+		}
+
+		// Operation Code
+		OperationCode oc = TcapFactory.createOperationCode();
+		oc.setLocalOperationCode((long) MAPOperationCode.insertSubscriberData);
+		invoke.setOperationCode(oc);
+		
+		InsertSubscriberDataRequestImpl req = new InsertSubscriberDataRequestImpl(this.appCntx.getApplicationContextVersion().getVersion(),
+				imsi, msisdn, category, subscriberStatus, bearerServiceList, teleserviceList, provisionedSS,
+				odbData, roamingRestrictionDueToUnsupportedFeature, regionalSubscriptionData, vbsSubscriptionData,
+				vgcsSubscriptionData, vlrCamelSubscriptionInfo, extensionContainer, naeaPreferredCI, gprsSubscriptionData,
+				roamingRestrictedInSgsnDueToUnsupportedFeature, networkAccessMode,
+				lsaInformation, lmuIndicator, lcsInformation, istAlertTimer,
+				superChargerSupportedInHLR, mcSsInfo, csAllocationRetentionPriority,
+				sgsnCamelSubscriptionInfo, chargingCharacteristics, accessRestrictionData, icsIndicator, epsSubscriptionData,
+				csgSubscriptionDataList, ueReachabilityRequestIndicator,
+				sgsnNumber, mmeName, subscribedPeriodicRAUTAUtimer,
+				vplmnLIPAAllowed, mdtUserConsent, subscribedPeriodicLAUtimer);
+
+		AsnOutputStream aos = new AsnOutputStream();
+		req.encodeData(aos);
+
+		Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+		p.setTagClass(req.getTagClass());
+		p.setPrimitive(req.getIsPrimitive());
+		p.setTag(req.getTag());
+		p.setData(aos.toByteArray());
+		invoke.setParameter(p);
+		
+		Long invokeId;
+		try {
+			invokeId = this.tcapDialog.getNewInvokeId();
+			invoke.setInvokeId(invokeId);
+		} catch (TCAPException e) {
+			throw new MAPException(e.getMessage(), e);
+		}
+
+		this.sendInvokeComponent(invoke);
+
+		return invokeId;
+	}
+
+	@Override
+	public void addInsertSubscriberDataResponse(long invokeId, ArrayList<ExtTeleserviceCode> teleserviceList, 
+			ArrayList<ExtBearerServiceCode> bearerServiceList, ArrayList<SSCode> ssList, ODBGeneralData odbGeneralData,
+			RegionalSubscriptionResponse regionalSubscriptionResponse)
+			throws MAPException {
+		
+		this.addInsertSubscriberDataResponse(invokeId, teleserviceList, 
+				bearerServiceList, ssList, odbGeneralData, regionalSubscriptionResponse,
+				null, null, null, null);
+	}
+
+	@Override
+	public void addInsertSubscriberDataResponse(long invokeId, ArrayList<ExtTeleserviceCode> teleserviceList, 
+			ArrayList<ExtBearerServiceCode> bearerServiceList, ArrayList<SSCode> ssList, ODBGeneralData odbGeneralData,
+			RegionalSubscriptionResponse regionalSubscriptionResponse,
+			SupportedCamelPhases supportedCamelPhases, MAPExtensionContainer extensionContainer,
+			OfferedCamel4CSIs offeredCamel4CSIs, SupportedFeatures supportedFeatures) throws MAPException {
+	
+		if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.subscriberDataMngtContext)
+				|| (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version1
+						&& this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2
+						&& this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)) {
+
+			if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.networkLocUpContext)
+					|| (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version1
+							&& this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2 && 
+							this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
+				throw new MAPException("Bad application context name for SubscriberDataResponse: must be networkLocUpContext or subscriberDataMngtContext_V1, V2 or V3");
+		}
+		
+		ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
+		resultLast.setInvokeId(invokeId);
+		
+		// Operation Code
+		OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+		oc.setLocalOperationCode((long) MAPOperationCode.insertSubscriberData);
+		resultLast.setOperationCode(oc);
+
+		InsertSubscriberDataResponseImpl resp = new InsertSubscriberDataResponseImpl(this.appCntx.getApplicationContextVersion().getVersion(),
+				teleserviceList, bearerServiceList, ssList, odbGeneralData, regionalSubscriptionResponse,
+				supportedCamelPhases, extensionContainer, offeredCamel4CSIs, supportedFeatures);
+		AsnOutputStream aos = new AsnOutputStream();
+		resp.encodeData(aos);
+		
+		Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+		p.setTagClass(resp.getTagClass());
+		p.setPrimitive(resp.getIsPrimitive());
+		p.setTag(resp.getTag());
+		p.setData(aos.toByteArray());
+		resultLast.setParameter(p);
+
+		this.sendReturnResultLastComponent(resultLast);
+	}
+	
+	// TODO: end
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	@Override
 	public Long addCancelLocationRequest(IMSI imsi, IMSIWithLMSI imsiWithLmsi, CancellationType cancellationType, MAPExtensionContainer extensionContainer,
 			TypeOfUpdate typeOfUpdate, boolean mtrfSupportedAndAuthorized, boolean mtrfSupportedAndNotAuthorized, ISDNAddressString newMSCNumber,

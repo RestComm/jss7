@@ -43,6 +43,8 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.U
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.InsertSubscriberDataRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.InsertSubscriberDataResponse;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequest;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreResponse;
 import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageRequest;
@@ -501,6 +503,18 @@ public class EventTestHarness implements MAPDialogListener, MAPServiceSupplement
 	@Override
 	public void onSendRoutingInformationResponse(
 			SendRoutingInformationResponse response) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onInsertSubscriberDataRequest(InsertSubscriberDataRequest request) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onInsertSubscriberDataResponse(InsertSubscriberDataResponse request) {
 		// TODO Auto-generated method stub
 		
 	}
