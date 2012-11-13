@@ -57,7 +57,7 @@ public enum TypeOfShape {
 		this.type = type;
 	}
 	
-	public int getType(){
+	public int getCode(){
 		return this.type;
 	}
 	

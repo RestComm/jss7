@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
+import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GeographicalInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.TypeOfShape;
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
@@ -42,19 +43,90 @@ public class GeographicalInformationImpl extends OctetStringBase implements Geog
 		super(8, 8, "GeographicalInformation", data);
 	}
 
+	public GeographicalInformationImpl(TypeOfShape typeOfShape, double latitude, double longitude) throws MAPException {
+		super(8, 8, "GeographicalInformation");
+
+		if (typeOfShape != TypeOfShape.EllipsoidPointWithUncertaintyCircle) {
+			throw new MAPException("typeOfShape parameter for GeographicalInformation can be only \"ellipsoid point with uncertainty circle\"");
+		}
+
+		this.data = new byte[8];
+
+		this.data[0] = (byte) typeOfShape.getCode();
+
+		encodeLatitude(data, 1, latitude);
+		encodeLongitude(data, 4, longitude);
+
+		// .........................
+	}
+
 	public byte[] getData() {
 		return data;
 	}
+	
+	private static double koef23 = Math.pow(2.0, 23) / 90;
+	private static double koef24 = Math.pow(2.0, 24) / 360;
 
 	public static double decodeLatitude(byte[] data, int begin) {
 		int i1 = ((data[begin] & 0xFF) << 16) + ((data[begin + 1] & 0xFF) << 8) + (data[begin + 1] & 0xFF);
 
-		// ..........................
-		
-		return 0;
+		int sign = 1;
+		if ((i1 & 0x800000) != 0) {
+			sign = -1;
+			i1 = i1 & 0x7FFFFF;
+		}
+
+		return koef23 / i1 * sign;
+	}
+
+	public static double decodeLongitude(byte[] data, int begin) {
+		int i1 = ((data[begin] & 0xFF) << 16) + ((data[begin + 1] & 0xFF) << 8) + (data[begin + 1] & 0xFF);
+
+		int sign = 1;
+		if ((i1 & 0x800000) != 0) {
+			sign = -1;
+			i1 = i1 & 0x7FFFFF;
+		}
+
+		return koef24 / i1 * sign;
 	}
 
 	public static void encodeLatitude(byte[] data, int begin, double val) {
+		boolean negativeSign = false;
+		if (val < 0) {
+			negativeSign = true;
+			val = -val;
+		}
+
+		int res = (int)(koef23 * val);
+		
+		if (res > 0x7FFFFF)
+			res = 0x7FFFFF;
+		if (negativeSign)
+			res |= 0x800000;
+
+		data[begin] = (byte) ((res & 0xFF0000) >> 16);
+		data[begin+1] = (byte) ((res & 0xFF00) >> 8);
+		data[begin+2] = (byte) (res & 0xFF);
+	}
+
+	public static void encodeLongitude(byte[] data, int begin, double val) {
+		boolean negativeSign = false;
+		if (val < 0) {
+			negativeSign = true;
+			val = -val;
+		}
+
+		int res = (int)(koef24 * val);
+
+		if (res > 0x7FFFFF)
+			res = 0x7FFFFF;
+		if (negativeSign)
+			res |= 0x800000;
+
+		data[begin] = (byte) ((res & 0xFF0000) >> 16);
+		data[begin+1] = (byte) ((res & 0xFF00) >> 8);
+		data[begin+2] = (byte) (res & 0xFF);
 	}
 
 	@Override
@@ -75,7 +147,9 @@ public class GeographicalInformationImpl extends OctetStringBase implements Geog
 
 	@Override
 	public double getLongitude() {
-		// TODO Auto-generated method stub
-		return 0;
+		if (this.data == null || this.data.length != 8)
+			return 0;
+
+		return decodeLongitude(this.data, 4);
 	}	
 }
