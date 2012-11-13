@@ -125,5 +125,11 @@ public interface SccpOAMMessage {
 	public static final String PARAMETER_SUCCESSFULLY_SET = "Parameter has been successfully set";
 	
 	public static final String RULETYPE_NOT_SOLI_SEC_ADD_MANDATORY= "If RuleType is not Solitary, specifying Secondar Address is mandatory";
+	
+	public static final String SEC_MISMATCH_PATTERN = "Number of sections in mask doesn't match with number of sections in pattern GlobalTitle digits";
+	
+	public static final String SEC_MISMATCH_PRIMADDRESS = "Number of sections in mask doesn't match with number of sections in primary address GlobalTitle digits";
+	
+	public static final String SEC_MISMATCH_SECADDRESS = "Number of sections in mask doesn't match with number of sections in secondary address GlobalTitle digits";
 
 }

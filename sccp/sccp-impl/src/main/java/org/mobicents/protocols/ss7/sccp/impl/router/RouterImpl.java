@@ -372,15 +372,32 @@ public class RouterImpl implements Router {
 			throw new Exception(SccpOAMMessage.RULE_ALREADY_EXIST);
 		}
 
+		int maskumberOfSecs = (mask.split("/").length - 1);
+		int patternNumberOfSecs = (pattern.getGlobalTitle().getDigits().split("/").length - 1);
+
+		if (maskumberOfSecs != patternNumberOfSecs) {
+			throw new Exception(SccpOAMMessage.SEC_MISMATCH_PATTERN);
+		}
+
 		SccpAddress pAddress = this.getPrimaryAddress(pAddressId);
 		if (pAddress == null) {
 			throw new Exception(String.format(SccpOAMMessage.NO_PRIMARY_ADDRESS, pAddressId));
+		}
+
+		int primAddNumberOfSecs = (pAddress.getGlobalTitle().getDigits().split("/").length - 1);
+		if (maskumberOfSecs != primAddNumberOfSecs) {
+			throw new Exception(SccpOAMMessage.SEC_MISMATCH_PRIMADDRESS);
 		}
 
 		if (sAddressId != -1) {
 			SccpAddress sAddress = this.getBackupAddress(sAddressId);
 			if (sAddress == null) {
 				throw new Exception(String.format(SccpOAMMessage.NO_BACKUP_ADDRESS, sAddressId));
+			}
+
+			int secAddNumberOfSecs = (sAddress.getGlobalTitle().getDigits().split("/").length - 1);
+			if (maskumberOfSecs != secAddNumberOfSecs) {
+				throw new Exception(SccpOAMMessage.SEC_MISMATCH_SECADDRESS);
 			}
 		}
 
@@ -428,10 +445,21 @@ public class RouterImpl implements Router {
 			throw new Exception(SccpOAMMessage.RULE_DOESNT_EXIST);
 		}
 
+		int maskumberOfSecs = (mask.split("/").length - 1);
+		int patternNumberOfSecs = (pattern.getGlobalTitle().getDigits().split("/").length - 1);
+
+		if (maskumberOfSecs != patternNumberOfSecs) {
+			throw new Exception(SccpOAMMessage.SEC_MISMATCH_PATTERN);
+		}
+
 		SccpAddress pAddress = this.getPrimaryAddress(pAddressId);
 
 		if (pAddress == null) {
 			throw new Exception(String.format(SccpOAMMessage.NO_PRIMARY_ADDRESS, pAddressId));
+		}
+		int primAddNumberOfSecs = (pattern.getGlobalTitle().getDigits().split("/").length - 1);
+		if (maskumberOfSecs != primAddNumberOfSecs) {
+			throw new Exception(SccpOAMMessage.SEC_MISMATCH_PRIMADDRESS);
 		}
 
 		if (sAddressId != -1) {
@@ -439,8 +467,12 @@ public class RouterImpl implements Router {
 			if (sAddress == null) {
 				throw new Exception(String.format(SccpOAMMessage.NO_BACKUP_ADDRESS, sAddressId));
 			}
+			int secAddNumberOfSecs = (pattern.getGlobalTitle().getDigits().split("/").length - 1);
+			if (maskumberOfSecs != secAddNumberOfSecs) {
+				throw new Exception(SccpOAMMessage.SEC_MISMATCH_SECADDRESS);
+			}
 		}
-		
+
 		if (sAddressId == -1 && ruleType != RuleType.Solitary) {
 			throw new Exception(SccpOAMMessage.RULETYPE_NOT_SOLI_SEC_ADD_MANDATORY);
 		}

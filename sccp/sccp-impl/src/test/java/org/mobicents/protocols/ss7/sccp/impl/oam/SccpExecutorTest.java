@@ -104,14 +104,6 @@ public class SccpExecutorTest {
 
 	@AfterMethod
 	public void tearDown() {
-//		this.router.getRules().clear();
-//		this.router.getPrimaryAddresses().clear();
-//		this.router.getBackupAddresses().clear();
-//		
-//		this.sccpResource.start();
-//		this.sccpResource.getRemoteSpcs().clear();
-//		this.sccpResource.getRemoteSsns().clear();
-
 		this.sccpStack.stop();
 	}
 
@@ -242,6 +234,35 @@ public class SccpExecutorTest {
 //		assertEquals( result,SccpOAMMessage.RULE_SUCCESSFULLY_ADDED);
 //		assertEquals( this.router.getRules().size(),3);
 
+	}
+	
+	@Test(groups = { "oam","functional.mgmt"})
+	public void testMaskSectionsValidations() {
+		
+		String incorrect_prim_addressCmd = "sccp primary_add create 1 71 6535 8 0 0 12 93707100007";
+		String incorrect_prim_address_deleteCmd = "sccp primary_add delete 1";
+		String correct_prim_addressCmd = "sccp primary_add create 1 71 6535 8 0 0 12 -/-";
+		
+		String incorrectCreateRuleCmd = "sccp rule create 2 R/K 18 0 180 0 1 4 * solitary 1";
+		String correctCreateRuleCmd = "sccp rule create 2 R/K 18 0 180 0 1 4 937/* solitary 1";
+		
+		String incorrect_sec_addressCmd = "sccp backup_add create 1 71 6535 8 0 0 12 93707100007";
+		String correctCreateRuleCmdWithSecId = "sccp rule create 2 R/K 18 0 180 0 1 4 937/* solitary 1 1";
+		
+		
+		String result = this.sccpExecutor.execute(incorrectCreateRuleCmd.split(" "));
+		assertEquals(result, SccpOAMMessage.SEC_MISMATCH_PATTERN);
+		
+		this.sccpExecutor.execute(incorrect_prim_addressCmd.split(" "));
+		result = this.sccpExecutor.execute(correctCreateRuleCmd.split(" "));
+		assertEquals(result, SccpOAMMessage.SEC_MISMATCH_PRIMADDRESS);
+		
+		this.sccpExecutor.execute(incorrect_prim_address_deleteCmd.split(" "));
+		this.sccpExecutor.execute(correct_prim_addressCmd.split(" "));
+		this.sccpExecutor.execute(incorrect_sec_addressCmd.split(" "));
+		result = this.sccpExecutor.execute(correctCreateRuleCmdWithSecId.split(" "));
+		
+		assertEquals(result, SccpOAMMessage.SEC_MISMATCH_SECADDRESS);
 	}
 
 	/**
