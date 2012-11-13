@@ -28,12 +28,28 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
- * TODO add details as described in 3GPP TS 23.032 instead of using rawData
+ *
  * @author amit bhayani
  * @author sergey vetyutnev
  *
  */
 public class GeographicalInformationImpl extends OctetStringBase implements GeographicalInformation {
+
+	private static double koef23 = Math.pow(2.0, 23) / 90;
+	private static double koef24 = Math.pow(2.0, 24) / 360;
+	private static double[] uncertaintyTable = initUncertaintyTable();
+
+	private static double[] initUncertaintyTable() {
+		double[] res = new double[128];
+
+		double c = 10;
+		double x = 0.1;
+		for (int i = 1; i < 128; i++) {
+			res[i] = c * (Math.pow(1 + x, i) - 1);
+		}
+
+		return res;
+	}
 
 	public GeographicalInformationImpl() {
 		super(8, 8, "GeographicalInformation");
@@ -43,7 +59,7 @@ public class GeographicalInformationImpl extends OctetStringBase implements Geog
 		super(8, 8, "GeographicalInformation", data);
 	}
 
-	public GeographicalInformationImpl(TypeOfShape typeOfShape, double latitude, double longitude) throws MAPException {
+	public GeographicalInformationImpl(TypeOfShape typeOfShape, double latitude, double longitude, double uncertainty) throws MAPException {
 		super(8, 8, "GeographicalInformation");
 
 		if (typeOfShape != TypeOfShape.EllipsoidPointWithUncertaintyCircle) {
@@ -56,16 +72,8 @@ public class GeographicalInformationImpl extends OctetStringBase implements Geog
 
 		encodeLatitude(data, 1, latitude);
 		encodeLongitude(data, 4, longitude);
-
-		// .........................
+		data[7] = (byte)encodeUncertainty(uncertainty);
 	}
-
-	public byte[] getData() {
-		return data;
-	}
-	
-	private static double koef23 = Math.pow(2.0, 23) / 90;
-	private static double koef24 = Math.pow(2.0, 24) / 360;
 
 	public static double decodeLatitude(byte[] data, int begin) {
 		int i1 = ((data[begin] & 0xFF) << 16) + ((data[begin + 1] & 0xFF) << 8) + (data[begin + 1] & 0xFF);
@@ -76,7 +84,7 @@ public class GeographicalInformationImpl extends OctetStringBase implements Geog
 			i1 = i1 & 0x7FFFFF;
 		}
 
-		return koef23 / i1 * sign;
+		return i1 / koef23 * sign;
 	}
 
 	public static double decodeLongitude(byte[] data, int begin) {
@@ -88,7 +96,14 @@ public class GeographicalInformationImpl extends OctetStringBase implements Geog
 			i1 = i1 & 0x7FFFFF;
 		}
 
-		return koef24 / i1 * sign;
+		return i1 / koef24 * sign;
+	}
+
+	public static double decodeUncertainty(int data) {
+		if (data < 0 || data > 127)
+			data = 0;
+		double d = uncertaintyTable[data];
+		return d;
 	}
 
 	public static void encodeLatitude(byte[] data, int begin, double val) {
@@ -129,6 +144,20 @@ public class GeographicalInformationImpl extends OctetStringBase implements Geog
 		data[begin+2] = (byte) (res & 0xFF);
 	}
 
+	public static int encodeUncertainty(double val) {
+		for (int i = 0; i < 127; i++) {
+			if (val < uncertaintyTable[i + 1]) {
+				return i;
+			}
+		}
+
+		return 127;
+	}
+
+	public byte[] getData() {
+		return data;
+	}
+
 	@Override
 	public TypeOfShape getTypeOfShape() {
 		if (this.data == null || this.data.length != 8)
@@ -151,5 +180,36 @@ public class GeographicalInformationImpl extends OctetStringBase implements Geog
 			return 0;
 
 		return decodeLongitude(this.data, 4);
+	}
+
+	@Override
+	public double getUncertainty() {
+		if (this.data == null || this.data.length != 8)
+			return 0;
+
+		return decodeUncertainty(this.data[7]);
 	}	
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		sb.append("TypeOfShape=");
+		sb.append(this.getTypeOfShape());
+
+		sb.append(", Latitude=");
+		sb.append(this.getLatitude());
+
+		sb.append(", Longitude=");
+		sb.append(this.getLongitude());
+
+		sb.append(", Uncertainty=");
+		sb.append(this.getUncertainty());
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }

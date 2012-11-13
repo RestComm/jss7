@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.TypeOfShape;
+
 /**
  * 
 
@@ -92,5 +94,69 @@ maxExt-GeographicalInformation  INTEGER ::= 20
 public interface ExtGeographicalInformation {
 
 	public byte[] getData();
+
+	public TypeOfShape getTypeOfShape();
+
+	/**
+	 * @return Latitude value in degrees (-90 ... 90)
+	 */
+	public double getLatitude();
+
+	/**
+	 * @return Longitude value in degrees (-180 ... 180)
+	 */
+	public double getLongitude();
+
+	/**
+	 * @return Uncertainty value in meters
+	 */
+	public double getUncertainty();
+
+	/**
+	 * @return Uncertainty value in meters
+	 */
+	public double getUncertaintySemiMajorAxis();
+
+	/**
+	 * @return Uncertainty value in meters
+	 */
+	public double getUncertaintySemiMinorAxis();
+
+	/**
+	 * @return Angle value in degrees
+	 */
+	public double getAngleOfMajorAxis();
+
+	public int getConfidence();
+
+	/**
+	 * @return Altitude value in meters
+	 */
+	public int getAltitude();
+
+	/**
+	 * @return Uncertainty value in meters
+	 */
+	public double getUncertaintyAltitude();
+
+	/**
+	 * @return Radius value in meters
+	 */
+	public int getInnerRadius();
+
+	/**
+	 * @return Uncertainty value in meters
+	 */
+	public double getUncertaintyRadius();
+
+	/**
+	 * @return Angle value in degrees
+	 */
+	public double getOffsetAngle();
+
+	/**
+	 * @return Angle value in degrees
+	 */
+	public double getIncludedAngle();
 
 }

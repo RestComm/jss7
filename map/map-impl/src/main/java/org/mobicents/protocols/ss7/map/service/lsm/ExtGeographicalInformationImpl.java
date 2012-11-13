@@ -23,7 +23,9 @@
 package org.mobicents.protocols.ss7.map.service.lsm;
 
 import org.mobicents.protocols.ss7.map.api.service.lsm.ExtGeographicalInformation;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.TypeOfShape;
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.GeographicalInformationImpl;
 
 /**
  *
@@ -42,5 +44,165 @@ public class ExtGeographicalInformationImpl extends OctetStringBase implements E
 
 	public byte[] getData() {
 		return data;
+	}
+
+	@Override
+	public TypeOfShape getTypeOfShape() {
+		if (this.data == null || this.data.length < 1)
+			return null;
+
+		return TypeOfShape.getInstance(this.data[1]);
+	}
+
+	@Override
+	public double getLatitude() {
+		if (this.data == null || this.data.length < 7)
+			return 0;
+
+		return GeographicalInformationImpl.decodeLatitude(this.data, 1);
+	}
+
+	@Override
+	public double getLongitude() {
+		if (this.data == null || this.data.length < 7)
+			return 0;
+
+		return GeographicalInformationImpl.decodeLongitude(this.data, 4);
+	}
+
+	@Override
+	public double getUncertainty() {
+		if (this.getTypeOfShape() != TypeOfShape.EllipsoidPointWithUncertaintyCircle || this.data == null || this.data.length != 8)
+			return 0;
+
+		return GeographicalInformationImpl.decodeUncertainty(this.data[7]);
+	}
+
+	@Override
+	public double getUncertaintySemiMajorAxis() {
+		switch (this.getTypeOfShape()) {
+		case EllipsoidPointWithUncertaintyEllipse:
+			if (this.data == null || this.data.length != 11)
+				return 0;
+			return GeographicalInformationImpl.decodeUncertainty(this.data[7]);
+
+		case EllipsoidPointWithAltitudeAndUncertaintyEllipsoid:
+			if (this.data == null || this.data.length != 14)
+				return 0;
+			return GeographicalInformationImpl.decodeUncertainty(this.data[9]);
+		}
+
+		return 0;
+	}
+
+	@Override
+	public double getUncertaintySemiMinorAxis() {
+		switch (this.getTypeOfShape()) {
+		case EllipsoidPointWithUncertaintyEllipse:
+			if (this.data == null || this.data.length != 11)
+				return 0;
+			return GeographicalInformationImpl.decodeUncertainty(this.data[8]);
+
+		case EllipsoidPointWithAltitudeAndUncertaintyEllipsoid:
+			if (this.data == null || this.data.length != 14)
+				return 0;
+			return GeographicalInformationImpl.decodeUncertainty(this.data[10]);
+		}
+
+		return 0;
+	}
+
+	@Override
+	public double getAngleOfMajorAxis() {
+		switch (this.getTypeOfShape()) {
+		case EllipsoidPointWithUncertaintyEllipse:
+			if (this.data == null || this.data.length != 11)
+				return 0;
+			return (data[9] & 0xFF) * 2;
+
+		case EllipsoidPointWithAltitudeAndUncertaintyEllipsoid:
+			if (this.data == null || this.data.length != 14)
+				return 0;
+			return (data[11] & 0xFF) * 2;
+		}
+
+		return 0;
+	}
+
+	@Override
+	public int getConfidence() {
+		switch (this.getTypeOfShape()) {
+		case EllipsoidPointWithUncertaintyEllipse:
+			if (this.data == null || this.data.length != 11)
+				return 0;
+			return this.data[10];
+
+		case EllipsoidPointWithAltitudeAndUncertaintyEllipsoid:
+			if (this.data == null || this.data.length != 14)
+				return 0;
+			return this.data[13];
+
+		case EllipsoidArc:
+			if (this.data == null || this.data.length != 13)
+				return 0;
+			return this.data[12];
+		}
+
+		return 0;
+	}
+
+	@Override
+	public int getAltitude() {
+		if (this.getTypeOfShape() != TypeOfShape.EllipsoidPointWithAltitudeAndUncertaintyEllipsoid || this.data == null || this.data.length != 14)
+			return 0;
+
+		int i1 = ((data[7] & 0xFF) << 8) + (data[8] & 0xFF);
+		int sign = 1;
+		if ((i1 & 0x8000) != 0) {
+			sign = -1;
+			i1 = i1 & 0x7FFF;
+		}
+		return i1 * sign;
+	}
+
+	@Override
+	public double getUncertaintyAltitude() {
+		if (this.getTypeOfShape() != TypeOfShape.EllipsoidPointWithAltitudeAndUncertaintyEllipsoid || this.data == null || this.data.length != 14)
+			return 0;
+
+		return GeographicalInformationImpl.decodeUncertainty(this.data[12]);
+	}
+
+	@Override
+	public int getInnerRadius() {
+		if (this.getTypeOfShape() != TypeOfShape.EllipsoidArc || this.data == null || this.data.length != 13)
+			return 0;
+
+		int i1 = ((data[7] & 0xFF) << 8) + (data[8] & 0xFF);
+		return i1;
+	}
+
+	@Override
+	public double getUncertaintyRadius() {
+		if (this.getTypeOfShape() != TypeOfShape.EllipsoidArc || this.data == null || this.data.length != 13)
+			return 0;
+
+		return GeographicalInformationImpl.decodeUncertainty(this.data[9]);
+	}
+
+	@Override
+	public double getOffsetAngle() {
+		if (this.getTypeOfShape() != TypeOfShape.EllipsoidArc || this.data == null || this.data.length != 13)
+			return 0;
+
+		return (data[10] & 0xFF) * 2;
+	}
+
+	@Override
+	public double getIncludedAngle() {
+		if (this.getTypeOfShape() != TypeOfShape.EllipsoidArc || this.data == null || this.data.length != 13)
+			return 0;
+
+		return (data[11] & 0xFF) * 2;
 	}	
 }

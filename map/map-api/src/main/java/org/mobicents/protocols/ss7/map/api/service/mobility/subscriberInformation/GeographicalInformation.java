@@ -43,8 +43,20 @@ public interface GeographicalInformation {
 
 	public TypeOfShape getTypeOfShape();
 
+	/**
+	 * @return Latitude value in degrees (-90 ... 90)
+	 */
 	public double getLatitude();
 
+	/**
+	 * @return Longitude value in degrees (-180 ... 180)
+	 */
 	public double getLongitude();
 
+	/**
+	 * @return Uncertainty value in meters
+	 */
+	public double getUncertainty();
+
 }
+
