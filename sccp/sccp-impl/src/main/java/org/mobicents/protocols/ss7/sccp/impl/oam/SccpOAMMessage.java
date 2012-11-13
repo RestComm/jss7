@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -123,5 +123,7 @@ public interface SccpOAMMessage {
 	public static final String CS_SUCCESSFULLY_DELETED = "Concerned spc successfully deleted";
 
 	public static final String PARAMETER_SUCCESSFULLY_SET = "Parameter has been successfully set";
+	
+	public static final String RULETYPE_NOT_SOLI_SEC_ADD_MANDATORY= "If RuleType is not Solitary, specifying Secondar Address is mandatory";
 
 }

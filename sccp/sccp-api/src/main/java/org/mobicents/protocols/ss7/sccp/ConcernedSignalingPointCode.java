@@ -19,52 +19,21 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
-package org.mobicents.protocols.ss7.sccp.impl.router;
+package org.mobicents.protocols.ss7.sccp;
 
 /**
- * Class for exception concerning rule.
- * @author baranowb
- *
+ * Concerned signaling point codes define a DPC which will be noticed when local
+ * SSN is registered (SSA messages) or unregistered (SSP messages)
+ * 
+ * @author amit bhayani
+ * 
  */
-public class RuleException extends RuntimeException {
+public interface ConcernedSignalingPointCode {
 
-	private RuleImpl rule;
 	/**
+	 * Point code to which SSA or SSP message is to be sent
 	 * 
+	 * @return
 	 */
-	public RuleException(RuleImpl rule) {
-		this.rule = rule;
-	}
-
-	/**
-	 * @param message
-	 */
-	public RuleException(String message,RuleImpl rule) {
-		super(message);
-		this.rule = rule;
-	}
-
-	/**
-	 * @param cause
-	 */
-	public RuleException(Throwable cause,RuleImpl rule) {
-		super(cause);
-		this.rule = rule;
-	}
-
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public RuleException(String message, Throwable cause,RuleImpl rule) {
-		super(message, cause);
-		this.rule = rule;
-	}
-
-	
-	public String toString() {
-		return "RuleException [rule=" + rule + ", toString()=" + super.toString() + "]";
-	}
-
+	public int getRemoteSpc();
 }

@@ -22,19 +22,14 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.messageflow;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.sccp.LongMessageRuleType;
 import org.mobicents.protocols.ss7.sccp.impl.Mtp3UserPartImpl;
-import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCodeImpl;
-import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystemImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImplProxy;
 import org.mobicents.protocols.ss7.sccp.impl.User;
-import org.mobicents.protocols.ss7.sccp.impl.router.LongMessageRule;
-import org.mobicents.protocols.ss7.sccp.impl.router.LongMessageRuleType;
-import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3Destination;
-import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3ServiceAccessPoint;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.ReturnCauseValue;
@@ -83,16 +78,14 @@ public class MessageMultiSapTest extends SccpHarness {
 	}
 
 	@BeforeMethod
-	public void setUp() throws IllegalStateException {
+	public void setUp() throws Exception {
 		super.setUp();
 		
-		Mtp3ServiceAccessPoint sap = new Mtp3ServiceAccessPoint(2, 11, 2);
-		sccpStack1.getRouter().addMtp3ServiceAccessPoint(2, sap);
-		Mtp3Destination dest = new Mtp3Destination(12, 12, 0, 255, 255);
-		sccpStack1.getRouter().addMtp3Destination(2, 1, dest);
+		sccpStack1.getRouter().addMtp3ServiceAccessPoint(2, 2, 11, 2);
+		sccpStack1.getRouter().addMtp3Destination(2, 1, 12, 12, 0, 255, 255);
 
-		resource1.addRemoteSpc(2, new RemoteSignalingPointCodeImpl(12, 0, 0));
-		resource1.addRemoteSsn(2, new RemoteSubSystemImpl(12, getSSN(), 0, false));
+		resource1.addRemoteSpc(2, 12, 0, 0);
+		resource1.addRemoteSsn(2, 12, getSSN(), 0, false);
 	}
 
 	@AfterMethod
@@ -132,10 +125,8 @@ public class MessageMultiSapTest extends SccpHarness {
 		Thread.sleep(100);
 
 		// send a UDT message to the sap1 (opc=1, dpc=2)
-		LongMessageRule lmr = new LongMessageRule(2, 2, LongMessageRuleType.LongMessagesForbidden);
-		sccpStack1.getRouter().addLongMessageRule(1, lmr);
-		lmr = new LongMessageRule(12, 12, LongMessageRuleType.LongMessagesForbidden);
-		sccpStack1.getRouter().addLongMessageRule(2, lmr);
+		sccpStack1.getRouter().addLongMessageRule(1, 2, 2, LongMessageRuleType.LongMessagesForbidden);
+		sccpStack1.getRouter().addLongMessageRule(2, 12, 12, LongMessageRuleType.LongMessagesForbidden);
 		SccpDataMessage message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a2, a1, getDataSrc(), 0, 8, true, null,
 				null);
 		sccpProvider1.send(message);
@@ -153,8 +144,8 @@ public class MessageMultiSapTest extends SccpHarness {
 		assertEquals(mtp3UserPart11.getMessages().size(), 1);
 
 		// send a UDT message to the absent sap (remoteSpc and remoteSsn are present and not prohibited)
-		resource1.addRemoteSpc(3, new RemoteSignalingPointCodeImpl(15, 0, 0));
-		resource1.addRemoteSsn(3, new RemoteSubSystemImpl(15, getSSN(), 0, false));
+		resource1.addRemoteSpc(3, 15, 0, 0);
+		resource1.addRemoteSsn(3, 15, getSSN(), 0, false);
 		SccpAddress a4 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 15, null, 8);
 		message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a4, a1, getDataSrc(), 0, 8, true, null, null);
 		sccpProvider1.send(message);

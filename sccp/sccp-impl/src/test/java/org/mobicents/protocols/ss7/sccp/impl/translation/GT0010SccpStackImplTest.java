@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,21 +22,23 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.translation;
 
-import org.testng.annotations.*;
-
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertTrue;
 
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
+import org.mobicents.protocols.ss7.sccp.RuleType;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.impl.User;
-import org.mobicents.protocols.ss7.sccp.impl.router.LoadSharingAlgorithm;
-import org.mobicents.protocols.ss7.sccp.impl.router.Rule;
-import org.mobicents.protocols.ss7.sccp.impl.router.RuleType;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0010;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 /**
  * @author amit bhayani
@@ -60,7 +62,7 @@ public class GT0010SccpStackImplTest extends SccpHarness {
 	}
 
 	@BeforeMethod
-	public void setUp() throws IllegalStateException {
+	public void setUp() throws Exception {
 		super.setUp();
 
 	}
@@ -85,22 +87,18 @@ public class GT0010SccpStackImplTest extends SccpHarness {
 		a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, gt1, getSSN());
 		a2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, gt2, getSSN());
 		
-		SccpAddress rule1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0010(0,GT2_pattern_digits), getSSN());
-		SccpAddress rule2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0010(0,GT1_pattern_digits), getSSN());
-		Rule rule1 = new Rule(RuleType.Solitary, LoadSharingAlgorithm.Undefined, rule1SccpAddress, "K/R/K");
-		rule1.setPrimaryAddressId(22);
-		Rule rule2 = new Rule(RuleType.Solitary, LoadSharingAlgorithm.Undefined, rule2SccpAddress, "R/R/R");
-		rule2.setPrimaryAddressId(33);
-		super.router1.addRule(1, rule1);
-		super.router2.addRule(1, rule2);
-		
 		//add addresses to translate
 		SccpAddress primary1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(), GlobalTitle.getInstance("-/-/-"), getSSN());
 		SccpAddress primary2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack1PC(), GlobalTitle.getInstance("-/-/-"), getSSN());
-		
-		
 		super.router1.addPrimaryAddress(22, primary1SccpAddress);
 		super.router2.addPrimaryAddress(33, primary2SccpAddress);
+		
+		SccpAddress rule1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0010(0,GT2_pattern_digits), getSSN());
+		SccpAddress rule2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0010(0,GT1_pattern_digits), getSSN());
+		super.router1.addRule(1, RuleType.Solitary, LoadSharingAlgorithm.Undefined, rule1SccpAddress, "K/R/K", 22, -1);
+		super.router2.addRule(1, RuleType.Solitary, LoadSharingAlgorithm.Undefined, rule2SccpAddress, "R/R/R", 33, -1);
+		
+
 		
 		
 		//now create users, we need to override matchX methods, since our rules do kinky stuff with digits, plus 

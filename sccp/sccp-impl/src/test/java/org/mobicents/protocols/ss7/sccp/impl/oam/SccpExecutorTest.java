@@ -38,19 +38,19 @@ import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitiveFactory;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPartListener;
 import org.mobicents.protocols.ss7.mtp.RoutingLabelFormat;
-import org.mobicents.protocols.ss7.sccp.impl.ConcernedSignalingPointCodeImpl;
-import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCodeImpl;
-import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystemImpl;
-import org.mobicents.protocols.ss7.sccp.impl.SccpResource;
+import org.mobicents.protocols.ss7.sccp.ConcernedSignalingPointCode;
+import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
+import org.mobicents.protocols.ss7.sccp.LongMessageRule;
+import org.mobicents.protocols.ss7.sccp.LongMessageRuleType;
+import org.mobicents.protocols.ss7.sccp.Mtp3Destination;
+import org.mobicents.protocols.ss7.sccp.Mtp3ServiceAccessPoint;
+import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
+import org.mobicents.protocols.ss7.sccp.RemoteSubSystem;
+import org.mobicents.protocols.ss7.sccp.Rule;
+import org.mobicents.protocols.ss7.sccp.RuleType;
+import org.mobicents.protocols.ss7.sccp.SccpResource;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
-import org.mobicents.protocols.ss7.sccp.impl.router.LoadSharingAlgorithm;
-import org.mobicents.protocols.ss7.sccp.impl.router.LongMessageRule;
-import org.mobicents.protocols.ss7.sccp.impl.router.LongMessageRuleType;
-import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3Destination;
-import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3ServiceAccessPoint;
-import org.mobicents.protocols.ss7.sccp.impl.router.Router;
-import org.mobicents.protocols.ss7.sccp.impl.router.Rule;
-import org.mobicents.protocols.ss7.sccp.impl.router.RuleType;
+import org.mobicents.protocols.ss7.sccp.impl.router.RouterImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0100;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.testng.annotations.AfterClass;
@@ -67,7 +67,7 @@ import org.testng.annotations.Test;
  */
 public class SccpExecutorTest {
 
-	private Router router = null;
+	private RouterImpl router = null;
 	private SccpResource sccpResource = null;
 	private SccpStackImpl sccpStack = null;
 
@@ -190,7 +190,7 @@ public class SccpExecutorTest {
 
 		createRuleCmd2 = "sccp rule modify 1 R 71 2 8 0 0 3 123456789 dominant 1";
 		result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
-		assertTrue(result.equals(SccpOAMMessage.INVALID_COMMAND));
+		assertTrue(result.equals(SccpOAMMessage.RULETYPE_NOT_SOLI_SEC_ADD_MANDATORY));
 		assertEquals(this.router.getRules().size(), 4);
 		assertEquals(this.router.getRule(1).getRuleType(), RuleType.Solitary);
 
@@ -618,7 +618,7 @@ public class SccpExecutorTest {
 		String rspCmd = "sccp rsp create 1 11 0 0";
 		String res = this.sccpExecutor.execute(rspCmd.split(" "));
 		assertEquals( this.sccpResource.getRemoteSpcs().size(),1);
-		RemoteSignalingPointCodeImpl spc = this.sccpResource.getRemoteSpc(1);
+		RemoteSignalingPointCode spc = this.sccpResource.getRemoteSpc(1);
 		assertEquals(spc.getRemoteSpc(), 11);
 		
 		rspCmd = "sccp rsp create 1 12 0 0";
@@ -665,7 +665,7 @@ public class SccpExecutorTest {
 		String rspCmd = "sccp rss create 2 11 8 0";
 		String res = this.sccpExecutor.execute(rspCmd.split(" "));
 		assertEquals( this.sccpResource.getRemoteSsns().size(),1);
-		RemoteSubSystemImpl rss = this.sccpResource.getRemoteSsn(2);
+		RemoteSubSystem rss = this.sccpResource.getRemoteSsn(2);
 		assertEquals(rss.getRemoteSpc(), 11);
 		assertEquals(rss.getRemoteSsn(), 8);
 		assertFalse(rss.getMarkProhibitedWhenSpcResuming());
@@ -739,7 +739,7 @@ public class SccpExecutorTest {
 		String rspCmd = "sccp csp create 3 21";
 		String res = this.sccpExecutor.execute(rspCmd.split(" "));
 		assertEquals( this.sccpResource.getConcernedSpcs().size(),1);
-		ConcernedSignalingPointCodeImpl cspc = this.sccpResource.getConcernedSpc(3);
+		ConcernedSignalingPointCode cspc = this.sccpResource.getConcernedSpc(3);
 		assertEquals(cspc.getRemoteSpc(), 21);
 
 		rspCmd = "sccp csp create 3 22";

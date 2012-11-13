@@ -19,52 +19,20 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
-package org.mobicents.protocols.ss7.sccp.impl.router;
+package org.mobicents.protocols.ss7.sccp;
 
 /**
- * Class for exception concerning rule.
- * @author baranowb
- *
+ * 
+ * @author Amit Bhayani
+ * 
  */
-public class RuleException extends RuntimeException {
+public interface LongMessageRule {
+	public LongMessageRuleType getLongMessageRuleType();
 
-	private RuleImpl rule;
-	/**
-	 * 
-	 */
-	public RuleException(RuleImpl rule) {
-		this.rule = rule;
-	}
+	public int getFirstSpc();
 
-	/**
-	 * @param message
-	 */
-	public RuleException(String message,RuleImpl rule) {
-		super(message);
-		this.rule = rule;
-	}
+	public int getLastSpc();
 
-	/**
-	 * @param cause
-	 */
-	public RuleException(Throwable cause,RuleImpl rule) {
-		super(cause);
-		this.rule = rule;
-	}
-
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public RuleException(String message, Throwable cause,RuleImpl rule) {
-		super(message, cause);
-		this.rule = rule;
-	}
-
-	
-	public String toString() {
-		return "RuleException [rule=" + rule + ", toString()=" + super.toString() + "]";
-	}
+	public boolean matches(int dpc);
 
 }

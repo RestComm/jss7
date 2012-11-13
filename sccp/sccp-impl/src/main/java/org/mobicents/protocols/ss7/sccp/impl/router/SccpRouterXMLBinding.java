@@ -69,12 +69,12 @@ public class SccpRouterXMLBinding extends XMLBinding {
 
 		@Override
 		public void write(RuleMap obj, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
-			for (FastMap.Entry<Integer, Rule> e = obj.head(), end = obj.tail(); (e = e.getNext()) != end;) {
+			for (FastMap.Entry<Integer, RuleImpl> e = obj.head(), end = obj.tail(); (e = e.getNext()) != end;) {
 				Integer id = e.getKey();
-				Rule rule = e.getValue();
+				RuleImpl rule = e.getValue();
 
 				xml.add(id, "id", Integer.class);
-				xml.add(rule, "value", Rule.class);
+				xml.add(rule, "value", RuleImpl.class);
 			}
 		}
 
@@ -82,7 +82,7 @@ public class SccpRouterXMLBinding extends XMLBinding {
 		public void read(javolution.xml.XMLFormat.InputElement xml, RuleMap obj) throws XMLStreamException {
 			while (xml.hasNext()) {
 				Integer id = xml.get("id", Integer.class);
-				Rule rule = xml.get("value", Rule.class);
+				RuleImpl rule = xml.get("value", RuleImpl.class);
 				obj.put(id, rule);
 			}
 		}
@@ -119,12 +119,12 @@ public class SccpRouterXMLBinding extends XMLBinding {
 
 		@Override
 		public void write(LongMessageRuleMap obj, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
-			for (FastMap.Entry<Integer, LongMessageRule> e = obj.head(), end = obj.tail(); (e = e.getNext()) != end;) {
+			for (FastMap.Entry<Integer, LongMessageRuleImpl> e = obj.head(), end = obj.tail(); (e = e.getNext()) != end;) {
 				Integer id = e.getKey();
-				LongMessageRule longMessageRule = e.getValue();
+				LongMessageRuleImpl longMessageRule = e.getValue();
 
 				xml.add(id, "id", Integer.class);
-				xml.add(longMessageRule, "value", LongMessageRule.class);
+				xml.add(longMessageRule, "value", LongMessageRuleImpl.class);
 			}
 		}
 
@@ -132,7 +132,7 @@ public class SccpRouterXMLBinding extends XMLBinding {
 		public void read(javolution.xml.XMLFormat.InputElement xml, LongMessageRuleMap obj) throws XMLStreamException {
 			while (xml.hasNext()) {
 				Integer id = xml.get("id", Integer.class);
-				LongMessageRule longMessageRule = xml.get("value", LongMessageRule.class);
+				LongMessageRuleImpl longMessageRule = xml.get("value", LongMessageRuleImpl.class);
 
 				obj.put(id, longMessageRule);
 			}
@@ -146,12 +146,12 @@ public class SccpRouterXMLBinding extends XMLBinding {
 		@Override
 		public void write(Mtp3ServiceAccessPointMap obj, javolution.xml.XMLFormat.OutputElement xml)
 				throws XMLStreamException {
-			for (FastMap.Entry<Integer, Mtp3ServiceAccessPoint> e = obj.head(), end = obj.tail(); (e = e.getNext()) != end;) {
+			for (FastMap.Entry<Integer, Mtp3ServiceAccessPointImpl> e = obj.head(), end = obj.tail(); (e = e.getNext()) != end;) {
 				Integer id = e.getKey();
-				Mtp3ServiceAccessPoint mtp3ServiceAccessPoint = e.getValue();
+				Mtp3ServiceAccessPointImpl mtp3ServiceAccessPoint = e.getValue();
 
 				xml.add(id, "id", Integer.class);
-				xml.add(mtp3ServiceAccessPoint, "value", Mtp3ServiceAccessPoint.class);
+				xml.add(mtp3ServiceAccessPoint, "value", Mtp3ServiceAccessPointImpl.class);
 			}
 		}
 
@@ -160,7 +160,7 @@ public class SccpRouterXMLBinding extends XMLBinding {
 				throws XMLStreamException {
 			while (xml.hasNext()) {
 				Integer id = xml.get("id", Integer.class);
-				Mtp3ServiceAccessPoint mtp3ServiceAccessPoint = xml.get("value", Mtp3ServiceAccessPoint.class);
+				Mtp3ServiceAccessPointImpl mtp3ServiceAccessPoint = xml.get("value", Mtp3ServiceAccessPointImpl.class);
 
 				obj.put(id, mtp3ServiceAccessPoint);
 			}
@@ -173,12 +173,12 @@ public class SccpRouterXMLBinding extends XMLBinding {
 
 		@Override
 		public void write(Mtp3DestinationMap obj, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
-			for (FastMap.Entry<Integer, Mtp3Destination> e = obj.head(), end = obj.tail(); (e = e.getNext()) != end;) {
+			for (FastMap.Entry<Integer, Mtp3DestinationImpl> e = obj.head(), end = obj.tail(); (e = e.getNext()) != end;) {
 				Integer id = e.getKey();
-				Mtp3Destination mtp3Destination = e.getValue();
+				Mtp3DestinationImpl mtp3Destination = e.getValue();
 
 				xml.add(id, "id", Integer.class);
-				xml.add(mtp3Destination, "value", Mtp3Destination.class);
+				xml.add(mtp3Destination, "value", Mtp3DestinationImpl.class);
 			}
 		}
 
@@ -186,7 +186,7 @@ public class SccpRouterXMLBinding extends XMLBinding {
 		public void read(javolution.xml.XMLFormat.InputElement xml, Mtp3DestinationMap obj) throws XMLStreamException {
 			while (xml.hasNext()) {
 				Integer id = xml.get("id", Integer.class);
-				Mtp3Destination mtp3Destination = xml.get("value", Mtp3Destination.class);
+				Mtp3DestinationImpl mtp3Destination = xml.get("value", Mtp3DestinationImpl.class);
 
 				obj.put(id, mtp3Destination);
 			}

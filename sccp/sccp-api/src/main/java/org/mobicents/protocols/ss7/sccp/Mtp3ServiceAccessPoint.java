@@ -19,52 +19,35 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.mobicents.protocols.ss7.sccp;
 
-package org.mobicents.protocols.ss7.sccp.impl.router;
+import java.util.Map;
 
 /**
- * Class for exception concerning rule.
- * @author baranowb
+ * 
+ * @author Amit Bhayani
  *
  */
-public class RuleException extends RuntimeException {
+public interface Mtp3ServiceAccessPoint {
 
-	private RuleImpl rule;
-	/**
-	 * 
-	 */
-	public RuleException(RuleImpl rule) {
-		this.rule = rule;
-	}
+	public int getMtp3Id();
 
-	/**
-	 * @param message
-	 */
-	public RuleException(String message,RuleImpl rule) {
-		super(message);
-		this.rule = rule;
-	}
+	public int getOpc();
 
-	/**
-	 * @param cause
-	 */
-	public RuleException(Throwable cause,RuleImpl rule) {
-		super(cause);
-		this.rule = rule;
-	}
+	public int getNi();
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public RuleException(String message, Throwable cause,RuleImpl rule) {
-		super(message, cause);
-		this.rule = rule;
-	}
+	public Mtp3Destination getMtp3Destination(int destId);
 
-	
-	public String toString() {
-		return "RuleException [rule=" + rule + ", toString()=" + super.toString() + "]";
-	}
+	public Map<Integer, Mtp3Destination> getMtp3Destinations();
+
+	public void addMtp3Destination(int destId, int firstDpc, int lastDpc, int firstSls, int lastSls, int slsMask)
+			throws Exception;
+
+	public void modifyMtp3Destination(int destId, int firstDpc, int lastDpc, int firstSls, int lastSls, int slsMask)
+			throws Exception;
+
+	public void removeMtp3Destination(int destId) throws Exception;
+
+	public boolean matches(int dpc, int sls);
 
 }

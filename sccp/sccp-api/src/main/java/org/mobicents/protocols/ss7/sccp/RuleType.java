@@ -20,51 +20,39 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.sccp.impl.router;
+package org.mobicents.protocols.ss7.sccp;
 
 /**
- * Class for exception concerning rule.
- * @author baranowb
- *
+ * @author amit bhayani
+ * @author sergey vetyutnev
+ * 
  */
-public class RuleException extends RuntimeException {
+public enum RuleType {
+	Solitary("Solitary"), Dominant("Dominant"), Loadshared("Loadshared");
 
-	private RuleImpl rule;
-	/**
-	 * 
-	 */
-	public RuleException(RuleImpl rule) {
-		this.rule = rule;
+	private static final String SOLITARY = "Solitary";
+	private static final String DOMINANT = "Dominant";
+	private static final String LOADSHARED = "Loadshared";
+
+	private final String type;
+
+	private RuleType(String type) {
+		this.type = type;
 	}
 
-	/**
-	 * @param message
-	 */
-	public RuleException(String message,RuleImpl rule) {
-		super(message);
-		this.rule = rule;
-	}
+	public static RuleType getInstance(String type) {
+		if (SOLITARY.equalsIgnoreCase(type)) {
+			return Solitary;
+		} else if (DOMINANT.equalsIgnoreCase(type)) {
+			return Dominant;
+		} else if (LOADSHARED.equalsIgnoreCase(type)) {
+			return Loadshared;
+		}
 
-	/**
-	 * @param cause
-	 */
-	public RuleException(Throwable cause,RuleImpl rule) {
-		super(cause);
-		this.rule = rule;
+		return null;
 	}
-
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public RuleException(String message, Throwable cause,RuleImpl rule) {
-		super(message, cause);
-		this.rule = rule;
-	}
-
 	
-	public String toString() {
-		return "RuleException [rule=" + rule + ", toString()=" + super.toString() + "]";
+	public String getType(){
+		return this.type;
 	}
-
 }

@@ -27,6 +27,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.Arrays;
+import java.util.Map;
 
 import javolution.text.TextBuilder;
 import javolution.util.FastMap;
@@ -35,6 +36,15 @@ import javolution.xml.XMLObjectWriter;
 import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
+import org.mobicents.protocols.ss7.sccp.LongMessageRule;
+import org.mobicents.protocols.ss7.sccp.LongMessageRuleType;
+import org.mobicents.protocols.ss7.sccp.Mtp3ServiceAccessPoint;
+import org.mobicents.protocols.ss7.sccp.Router;
+import org.mobicents.protocols.ss7.sccp.Rule;
+import org.mobicents.protocols.ss7.sccp.RuleType;
+import org.mobicents.protocols.ss7.sccp.SccpStack;
+import org.mobicents.protocols.ss7.sccp.impl.oam.SccpOAMMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0001;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0010;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0011;
@@ -53,7 +63,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * <p>
  * RouterImpl when {@link #start() started} looks for file
  * <tt>sccprouter.xml</tt> containing serialized information of underlying
- * {@link Rule}. Set the directory path by calling
+ * {@link RuleImpl}. Set the directory path by calling
  * {@link #setPersistDir(String)} to direct RouterImpl to look at specified
  * directory for underlying serialized file.
  * </p>
@@ -178,8 +188,8 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * @author amit bhayani
  * @author kulikov
  */
-public class Router {
-	private static final Logger logger = Logger.getLogger(Router.class);
+public class RouterImpl implements Router {
+	private static final Logger logger = Logger.getLogger(RouterImpl.class);
 
 	private static final String SCCP_ROUTER_PERSIST_DIR_KEY = "sccprouter.persist.dir";
 	private static final String USER_DIR_KEY = "user.dir";
@@ -208,14 +218,16 @@ public class Router {
 	private Mtp3ServiceAccessPointMap<Integer, Mtp3ServiceAccessPoint> saps = new Mtp3ServiceAccessPointMap<Integer, Mtp3ServiceAccessPoint>();
 
 	private final String name;
+	private final SccpStack sccpStack;
 
-	public Router(String name) {
+	public RouterImpl(String name, SccpStack sccpStack) {
 		this.name = name;
+		this.sccpStack = sccpStack;
 
-		binding.setAlias(Rule.class, RULE);
+		binding.setAlias(RuleImpl.class, RULE);
 		binding.setClassAttribute(CLASS_ATTRIBUTE);
 		binding.setAlias(Mtp3DestinationMap.class, "mtp3DestinationMap");
-		
+
 		binding.setAlias(GT0001.class, "GT0001");
 		binding.setAlias(GT0010.class, "GT0010");
 		binding.setAlias(GT0011.class, "GT0011");
@@ -331,37 +343,65 @@ public class Router {
 		return false;
 	}
 
-	public FastMap<Integer, Rule> getRules() {
-		return rulesMap;
+	public Map<Integer, Rule> getRules() {
+		return rulesMap.unmodifiable();
 	}
 
-	public FastMap<Integer, SccpAddress> getPrimaryAddresses() {
-		return primaryAddresses;
+	public Map<Integer, SccpAddress> getPrimaryAddresses() {
+		return primaryAddresses.unmodifiable();
 	}
 
-	public FastMap<Integer, SccpAddress> getBackupAddresses() {
-		return backupAddresses;
+	public Map<Integer, SccpAddress> getBackupAddresses() {
+		return backupAddresses.unmodifiable();
 	}
 
-	public FastMap<Integer, LongMessageRule> getLongMessageRules() {
-		return longMessageRules;
+	public Map<Integer, LongMessageRule> getLongMessageRules() {
+		return longMessageRules.unmodifiable();
 	}
 
-	public FastMap<Integer, Mtp3ServiceAccessPoint> getMtp3ServiceAccessPoints() {
-		return saps;
+	public Map<Integer, Mtp3ServiceAccessPoint> getMtp3ServiceAccessPoints() {
+		return saps.unmodifiable();
 	}
 
-	public void addRule(int id, Rule rule) {
+	public void addRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, SccpAddress pattern, String mask,
+			int pAddressId, int sAddressId) throws Exception {
+
+		Rule ruleTmp = this.getRule(id);
+
+		if (ruleTmp != null) {
+			throw new Exception(SccpOAMMessage.RULE_ALREADY_EXIST);
+		}
+
+		SccpAddress pAddress = this.getPrimaryAddress(pAddressId);
+		if (pAddress == null) {
+			throw new Exception(String.format(SccpOAMMessage.NO_PRIMARY_ADDRESS, pAddressId));
+		}
+
+		if (sAddressId != -1) {
+			SccpAddress sAddress = this.getBackupAddress(sAddressId);
+			if (sAddress == null) {
+				throw new Exception(String.format(SccpOAMMessage.NO_BACKUP_ADDRESS, sAddressId));
+			}
+		}
+
+		if (sAddressId == -1 && ruleType != RuleType.Solitary) {
+			throw new Exception(SccpOAMMessage.RULETYPE_NOT_SOLI_SEC_ADD_MANDATORY);
+		}
+
 		synchronized (this) {
+			RuleImpl rule = new RuleImpl(ruleType, algo, pattern, mask);
+			rule.setPrimaryAddressId(pAddressId);
+			rule.setSecondaryAddressId(sAddressId);
+
 			rule.setRuleId(id);
-			Rule[] rulesArray = new Rule[(this.rulesMap.size() + 1)];
+			RuleImpl[] rulesArray = new RuleImpl[(this.rulesMap.size() + 1)];
 			int count = 0;
 
 			for (FastMap.Entry<Integer, Rule> e = this.rulesMap.head(), end = this.rulesMap.tail(); (e = e.getNext()) != end;) {
 				Integer ruleId = e.getKey();
-				Rule ruleTemp = e.getValue();
-				ruleTemp.setRuleId(ruleId);
-				rulesArray[count++] = ruleTemp;
+				RuleImpl ruleTemp1 = (RuleImpl) e.getValue();
+				ruleTemp1.setRuleId(ruleId);
+				rulesArray[count++] = ruleTemp1;
 			}
 
 			// add latest rule
@@ -372,7 +412,7 @@ public class Router {
 
 			RuleMap<Integer, Rule> newRule = new RuleMap<Integer, Rule>();
 			for (int i = 0; i < rulesArray.length; i++) {
-				Rule ruleTemp = rulesArray[i];
+				RuleImpl ruleTemp = rulesArray[i];
 				newRule.put(ruleTemp.getRuleId(), ruleTemp);
 			}
 			this.rulesMap = newRule;
@@ -380,7 +420,68 @@ public class Router {
 		}
 	}
 
-	public void removeRule(int id) {
+	public void modifyRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, SccpAddress pattern, String mask,
+			int pAddressId, int sAddressId) throws Exception {
+		Rule ruleTmp = this.getRule(id);
+
+		if (ruleTmp == null) {
+			throw new Exception(SccpOAMMessage.RULE_DOESNT_EXIST);
+		}
+
+		SccpAddress pAddress = this.getPrimaryAddress(pAddressId);
+
+		if (pAddress == null) {
+			throw new Exception(String.format(SccpOAMMessage.NO_PRIMARY_ADDRESS, pAddressId));
+		}
+
+		if (sAddressId != -1) {
+			SccpAddress sAddress = this.getBackupAddress(sAddressId);
+			if (sAddress == null) {
+				throw new Exception(String.format(SccpOAMMessage.NO_BACKUP_ADDRESS, sAddressId));
+			}
+		}
+		
+		if (sAddressId == -1 && ruleType != RuleType.Solitary) {
+			throw new Exception(SccpOAMMessage.RULETYPE_NOT_SOLI_SEC_ADD_MANDATORY);
+		}
+		synchronized (this) {
+			RuleImpl rule = new RuleImpl(ruleType, algo, pattern, mask);
+			rule.setPrimaryAddressId(pAddressId);
+			rule.setSecondaryAddressId(sAddressId);
+
+			rule.setRuleId(id);
+			RuleImpl[] rulesArray = new RuleImpl[(this.rulesMap.size() + 1)];
+			int count = 0;
+
+			for (FastMap.Entry<Integer, Rule> e = this.rulesMap.head(), end = this.rulesMap.tail(); (e = e.getNext()) != end;) {
+				Integer ruleId = e.getKey();
+				RuleImpl ruleTemp1 = (RuleImpl) e.getValue();
+				ruleTemp1.setRuleId(ruleId);
+				rulesArray[count++] = ruleTemp1;
+			}
+
+			// add latest rule
+			rulesArray[count++] = rule;
+
+			// Sort
+			Arrays.sort(rulesArray, ruleComparator);
+
+			RuleMap<Integer, Rule> newRule = new RuleMap<Integer, Rule>();
+			for (int i = 0; i < rulesArray.length; i++) {
+				RuleImpl ruleTemp = rulesArray[i];
+				newRule.put(ruleTemp.getRuleId(), ruleTemp);
+			}
+			this.rulesMap = newRule;
+			this.store();
+		}
+	}
+
+	public void removeRule(int id) throws Exception {
+
+		if (this.getRule(id) == null) {
+			throw new Exception(SccpOAMMessage.RULE_DOESNT_EXIST);
+		}
+
 		synchronized (this) {
 			RuleMap<Integer, Rule> newRule = new RuleMap<Integer, Rule>();
 			newRule.putAll(this.rulesMap);
@@ -390,17 +491,40 @@ public class Router {
 		}
 	}
 
-	public void addPrimaryAddress(int id, SccpAddress primaryAddress) {
+	public void addPrimaryAddress(int primAddressId, SccpAddress primaryAddress) throws Exception {
+
+		if (this.getPrimaryAddress(primAddressId) != null) {
+			throw new Exception(SccpOAMMessage.ADDRESS_ALREADY_EXIST);
+		}
+
 		synchronized (this) {
 			SccpAddressMap<Integer, SccpAddress> newPrimaryAddress = new SccpAddressMap<Integer, SccpAddress>();
 			newPrimaryAddress.putAll(this.primaryAddresses);
-			newPrimaryAddress.put(id, primaryAddress);
+			newPrimaryAddress.put(primAddressId, primaryAddress);
 			this.primaryAddresses = newPrimaryAddress;
 			this.store();
 		}
 	}
 
-	public void removePrimaryAddress(int id) {
+	public void modifyPrimaryAddress(int primAddressId, SccpAddress primaryAddress) throws Exception {
+		if (this.getPrimaryAddress(primAddressId) == null) {
+			throw new Exception(SccpOAMMessage.ADDRESS_DOESNT_EXIST);
+		}
+
+		synchronized (this) {
+			SccpAddressMap<Integer, SccpAddress> newPrimaryAddress = new SccpAddressMap<Integer, SccpAddress>();
+			newPrimaryAddress.putAll(this.primaryAddresses);
+			newPrimaryAddress.put(primAddressId, primaryAddress);
+			this.primaryAddresses = newPrimaryAddress;
+			this.store();
+		}
+	}
+
+	public void removePrimaryAddress(int id) throws Exception {
+		if (this.getPrimaryAddress(id) == null) {
+			throw new Exception(SccpOAMMessage.ADDRESS_DOESNT_EXIST);
+		}
+
 		synchronized (this) {
 			SccpAddressMap<Integer, SccpAddress> newPrimaryAddress = new SccpAddressMap<Integer, SccpAddress>();
 			newPrimaryAddress.putAll(this.primaryAddresses);
@@ -410,7 +534,12 @@ public class Router {
 		}
 	}
 
-	public void addBackupAddress(int id, SccpAddress backupAddress) {
+	public void addBackupAddress(int id, SccpAddress backupAddress) throws Exception {
+
+		if (this.getBackupAddress(id) != null) {
+			throw new Exception(SccpOAMMessage.ADDRESS_ALREADY_EXIST);
+		}
+
 		synchronized (this) {
 			SccpAddressMap<Integer, SccpAddress> newBackupAddress = new SccpAddressMap<Integer, SccpAddress>();
 			newBackupAddress.putAll(this.backupAddresses);
@@ -420,7 +549,26 @@ public class Router {
 		}
 	}
 
-	public void removeBackupAddress(int id) {
+	public void modifyBackupAddress(int id, SccpAddress backupAddress) throws Exception {
+		if (this.getBackupAddress(id) == null) {
+			throw new Exception(SccpOAMMessage.ADDRESS_DOESNT_EXIST);
+		}
+
+		synchronized (this) {
+			SccpAddressMap<Integer, SccpAddress> newBackupAddress = new SccpAddressMap<Integer, SccpAddress>();
+			newBackupAddress.putAll(this.backupAddresses);
+			newBackupAddress.put(id, backupAddress);
+			this.backupAddresses = newBackupAddress;
+			this.store();
+		}
+	}
+
+	public void removeBackupAddress(int id) throws Exception {
+
+		if (this.getBackupAddress(id) == null) {
+			throw new Exception(SccpOAMMessage.ADDRESS_DOESNT_EXIST);
+		}
+
 		synchronized (this) {
 			SccpAddressMap<Integer, SccpAddress> newBackupAddress = new SccpAddressMap<Integer, SccpAddress>();
 			newBackupAddress.putAll(this.backupAddresses);
@@ -430,7 +578,13 @@ public class Router {
 		}
 	}
 
-	public void addLongMessageRule(int id, LongMessageRule longMessageRule) {
+	public void addLongMessageRule(int id, int firstSpc, int lastSpc, LongMessageRuleType ruleType) throws Exception {
+		if (this.getLongMessageRule(id) != null) {
+			throw new Exception(SccpOAMMessage.LMR_ALREADY_EXIST);
+		}
+
+		LongMessageRuleImpl longMessageRule = new LongMessageRuleImpl(firstSpc, lastSpc, ruleType);
+
 		synchronized (this) {
 			LongMessageRuleMap<Integer, LongMessageRule> newLongMessageRule = new LongMessageRuleMap<Integer, LongMessageRule>();
 			newLongMessageRule.putAll(this.longMessageRules);
@@ -440,7 +594,28 @@ public class Router {
 		}
 	}
 
-	public void removeLongMessageRule(int id) {
+	public void modifyLongMessageRule(int id, int firstSpc, int lastSpc, LongMessageRuleType ruleType) throws Exception {
+		if (this.getLongMessageRule(id) == null) {
+			throw new Exception(SccpOAMMessage.LMR_DOESNT_EXIST);
+		}
+
+		LongMessageRuleImpl longMessageRule = new LongMessageRuleImpl(firstSpc, lastSpc, ruleType);
+
+		synchronized (this) {
+			LongMessageRuleMap<Integer, LongMessageRule> newLongMessageRule = new LongMessageRuleMap<Integer, LongMessageRule>();
+			newLongMessageRule.putAll(this.longMessageRules);
+			newLongMessageRule.put(id, longMessageRule);
+			this.longMessageRules = newLongMessageRule;
+			this.store();
+		}
+	}
+
+	public void removeLongMessageRule(int id) throws Exception {
+
+		if (this.getLongMessageRule(id) == null) {
+			throw new Exception(SccpOAMMessage.LMR_DOESNT_EXIST);
+		}
+
 		synchronized (this) {
 			LongMessageRuleMap<Integer, LongMessageRule> newLongMessageRule = new LongMessageRuleMap<Integer, LongMessageRule>();
 			newLongMessageRule.putAll(this.longMessageRules);
@@ -450,7 +625,50 @@ public class Router {
 		}
 	}
 
-	public void addMtp3ServiceAccessPoint(int id, Mtp3ServiceAccessPoint sap) {
+	public void addMtp3Destination(int sapId, int destId, int firstDpc, int lastDpc, int firstSls, int lastSls,
+			int slsMask) throws Exception {
+		Mtp3ServiceAccessPoint sap = this.getMtp3ServiceAccessPoint(sapId);
+		if (sap == null) {
+			throw new Exception(SccpOAMMessage.SAP_DOESNT_EXIST);
+		}
+		// TODO Synchronize??
+		sap.addMtp3Destination(destId, firstDpc, lastDpc, firstSls, lastSls, slsMask);
+		this.store();
+	}
+
+	public void modifyMtp3Destination(int sapId, int destId, int firstDpc, int lastDpc, int firstSls, int lastSls,
+			int slsMask) throws Exception {
+		Mtp3ServiceAccessPoint sap = this.getMtp3ServiceAccessPoint(sapId);
+
+		if (sap == null) {
+			throw new Exception(SccpOAMMessage.SAP_DOESNT_EXIST);
+		}
+		// TODO Synchronize??
+		sap.modifyMtp3Destination(destId, firstDpc, lastDpc, firstSls, lastSls, slsMask);
+		this.store();
+	}
+
+	public void removeMtp3Destination(int sapId, int destId) throws Exception {
+		Mtp3ServiceAccessPoint sap = this.getMtp3ServiceAccessPoint(sapId);
+
+		if (sap == null) {
+			throw new Exception(SccpOAMMessage.SAP_DOESNT_EXIST);
+		}
+
+		sap.removeMtp3Destination(destId);
+	}
+
+	public void addMtp3ServiceAccessPoint(int id, int mtp3Id, int opc, int ni) throws Exception {
+
+		if (this.getMtp3ServiceAccessPoint(id) != null) {
+			throw new Exception(SccpOAMMessage.SAP_ALREADY_EXIST);
+		}
+
+		if (this.sccpStack.getMtp3UserPart(mtp3Id) == null) {
+			throw new Exception(SccpOAMMessage.MUP_DOESNT_EXIST);
+		}
+
+		Mtp3ServiceAccessPointImpl sap = new Mtp3ServiceAccessPointImpl(mtp3Id, opc, ni);
 		synchronized (this) {
 			Mtp3ServiceAccessPointMap<Integer, Mtp3ServiceAccessPoint> newSap = new Mtp3ServiceAccessPointMap<Integer, Mtp3ServiceAccessPoint>();
 			newSap.putAll(this.saps);
@@ -460,32 +678,36 @@ public class Router {
 		}
 	}
 
-	public void removeMtp3ServiceAccessPoint(int id) {
+	public void modifyMtp3ServiceAccessPoint(int id, int mtp3Id, int opc, int ni) throws Exception {
+		if (this.getMtp3ServiceAccessPoint(id) == null) {
+			throw new Exception(SccpOAMMessage.SAP_DOESNT_EXIST);
+		}
+
+		if (this.sccpStack.getMtp3UserPart(mtp3Id) == null) {
+			throw new Exception(SccpOAMMessage.MUP_DOESNT_EXIST);
+		}
+
+		Mtp3ServiceAccessPointImpl sap = new Mtp3ServiceAccessPointImpl(mtp3Id, opc, ni);
 		synchronized (this) {
 			Mtp3ServiceAccessPointMap<Integer, Mtp3ServiceAccessPoint> newSap = new Mtp3ServiceAccessPointMap<Integer, Mtp3ServiceAccessPoint>();
 			newSap.putAll(this.saps);
-			newSap.remove(id);
+			newSap.put(id, sap);
 			this.saps = newSap;
 			this.store();
 		}
 	}
 
-	public void addMtp3Destination(int sapId, int dpcId, Mtp3Destination dest) {
-		synchronized (this) {
-			Mtp3ServiceAccessPoint sap = this.getMtp3ServiceAccessPoint(sapId);
-			if (sap != null) {
-				sap.addMtp3Destination(dpcId, dest);
-			}
-			this.store();
-		}
-	}
+	public void removeMtp3ServiceAccessPoint(int id) throws Exception {
 
-	public void removeMtp3Destination(int sapId, int dpcId) {
+		if (this.getMtp3ServiceAccessPoint(id) == null) {
+			throw new Exception(SccpOAMMessage.SAP_DOESNT_EXIST);
+		}
+
 		synchronized (this) {
-			Mtp3ServiceAccessPoint sap = this.getMtp3ServiceAccessPoint(sapId);
-			if (sap != null) {
-				sap.removeMtp3Destination(dpcId);
-			}
+			Mtp3ServiceAccessPointMap<Integer, Mtp3ServiceAccessPoint> newSap = new Mtp3ServiceAccessPointMap<Integer, Mtp3ServiceAccessPoint>();
+			newSap.putAll(this.saps);
+			newSap.remove(id);
+			this.saps = newSap;
 			this.store();
 		}
 	}

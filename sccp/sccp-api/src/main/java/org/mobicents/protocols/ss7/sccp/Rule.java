@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,40 +19,31 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.mobicents.protocols.ss7.sccp;
 
-package org.mobicents.protocols.ss7.sccp.impl.router;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
- * @author amit bhayani
- * @author sergey vetyutnev
  * 
+ * @author Amit Bhayani
+ *
  */
-public enum RuleType {
-	Solitary("Solitary"), Dominant("Dominant"), Loadshared("Loadshared");
-
-	private static final String SOLITARY = "Solitary";
-	private static final String DOMINANT = "Dominant";
-	private static final String LOADSHARED = "Loadshared";
-
-	private final String type;
-
-	private RuleType(String type) {
-		this.type = type;
-	}
-
-	public static RuleType getInstance(String type) {
-		if (SOLITARY.equalsIgnoreCase(type)) {
-			return Solitary;
-		} else if (DOMINANT.equalsIgnoreCase(type)) {
-			return Dominant;
-		} else if (LOADSHARED.equalsIgnoreCase(type)) {
-			return Loadshared;
-		}
-
-		return null;
-	}
+public interface Rule {
 	
-	public String getType(){
-		return this.type;
-	}
+	public String getMask();
+	
+	public RuleType getRuleType();
+	
+	public LoadSharingAlgorithm getLoadSharingAlgorithm();
+	
+	public SccpAddress getPattern();
+	
+	public int getPrimaryAddressId();
+	
+	public int getSecondaryAddressId();
+	
+	public boolean matches(SccpAddress address);
+	
+	public SccpAddress translate(SccpAddress address, SccpAddress ruleAddress);
+
 }
