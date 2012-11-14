@@ -4,9 +4,9 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.mobicents</groupId>
-		<artifactId>mobicents-parent</artifactId>
-		<version>2.22</version>
+		<artifactId>map-parent</artifactId>
+		<groupId>org.mobicents.protocols.ss7.map</groupId>
+		<version>2.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>map-load</artifactId>
@@ -15,23 +15,6 @@
 	<packaging>jar</packaging>
 
 	<properties>
-		<mobicents.tools.mavenplugin.eclipse.version>
-			1.0.0.BETA2
-		</mobicents.tools.mavenplugin.eclipse.version>
-		<concurrent.version>1.3.4</concurrent.version>
-		<log4j.version>1.2.14</log4j.version>
-		<junit.version>3.8.1</junit.version>
-		<testng.version>6.2</testng.version>
-		<javolution.version>5.5.1</javolution.version>
-		<compiler.plugin.version>2.0.2</compiler.plugin.version>
-		<compile.source>1.5</compile.source>
-		<!-- mobicents but not strictly ss7 -->
-		<asn.version>2.0.0-SNAPSHOT</asn.version>
-		<stream.version>1.0.0.CR1</stream.version>
-		<ss7.version>2.0.0-SNAPSHOT</ss7.version>
-		<sctp.version>1.0.0-SNAPSHOT</sctp.version>
-		<commons.version>1.0.0-SNAPSHOT</commons.version>
-		<!-- data -->
 		<assemble.dir>${pom.build.directory}/load</assemble.dir>
 	</properties>
 
@@ -55,27 +38,22 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.congestion</groupId>
 			<artifactId>congestion</artifactId>
-			<version>${ss7.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.map</groupId>
 			<artifactId>map-api</artifactId>
-			<version>${ss7.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.map</groupId>
 			<artifactId>map-impl</artifactId>
-			<version>${ss7.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
 			<artifactId>sccp-api</artifactId>
-			<version>${ss7.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
 			<artifactId>sccp-impl</artifactId>
-			<version>${ss7.version}</version>
 		</dependency>
 
 		<dependency>
@@ -87,44 +65,36 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
 			<artifactId>tcap-impl</artifactId>
-			<version>${ss7.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
 			<artifactId>tcap-api</artifactId>
-			<version>${ss7.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
 			<artifactId>mtp-api</artifactId>
-			<version>${ss7.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
 			<artifactId>mtp</artifactId>
-			<version>${ss7.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
 			<artifactId>m3ua-api</artifactId>
-			<version>${ss7.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
 			<artifactId>m3ua-impl</artifactId>
-			<version>${ss7.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.isup</groupId>
 			<artifactId>isup-api</artifactId>
-			<version>${ss7.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.isup</groupId>
 			<artifactId>isup-impl</artifactId>
-			<version>${ss7.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.stream</groupId>
@@ -134,7 +104,6 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 			<artifactId>mobicents-dialogic</artifactId>
-			<version>${ss7.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.commons</groupId>
@@ -153,15 +122,6 @@
 			<version>${log4j.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<!-- Not managed deps <dependency> <groupId>org.mobicents.external.opencsv</groupId> 
-			<artifactId>opencsv</artifactId> </dependency> -->
-		<dependency>
 			<groupId>javolution</groupId>
 			<artifactId>javolution</artifactId>
 			<version>${javolution.version}</version>
@@ -169,46 +129,6 @@
 	</dependencies>
 
 	<profiles>
-		<profile>
-			<id>default</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<build>
-				<finalName>${pom.artifactId}</finalName>
-				<plugins>
-					<plugin>
-						<artifactId>maven-eclipse-plugin</artifactId>
-						<groupId>org.mobicents.tools</groupId>
-						<version>
-					${mobicents.tools.mavenplugin.eclipse.version}
-						</version>
-						<inherited>false</inherited>
-						<configuration>
-							<classpathExcludes>
-								<exclude>xml-apis:xml-apis</exclude>
-								<exclude>jtidy:jtidy</exclude>
-							</classpathExcludes>
-							<resolveTransitiveDependencies>
-								true
-							</resolveTransitiveDependencies>
-							<eclipseProjectName>
-								mobicents-map-load
-							</eclipseProjectName>
-						</configuration>
-					</plugin>
-					<plugin>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<configuration>
-							<source>1.5</source>
-							<target>1.5</target>
-						</configuration>
-					</plugin>
-
-				</plugins>
-			</build>
-
-		</profile>
 		<profile>
 			<id>assemble</id>
 			<activation>

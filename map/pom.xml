@@ -18,6 +18,7 @@
 	<modules>
 		<module>map-api</module>
 		<module>map-impl</module>
+		<module>load</module>
 	</modules>
 
 	<build>
