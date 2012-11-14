@@ -369,7 +369,7 @@ ASSOCIATION SCTP name=Assoc2 started=false peerIp=192.168.56.1 peerPort=2905 ser
                         id="shell_m3ua_as_side_create">
                         <title>Create AS</title>
                         <para>Application Server (AS) can be created by issuing command with following structure:</para>
-                        <programlisting>m3ua as create &lt;as-name&gt; &lt;AS | SGW | IPSP&gt; mode &lt;SE | DE&gt; ipspType &lt;client | server&gt; rc &lt;routing-context&gt; traffic-mode &lt;traffic mode&gt; &lt;network-appearance&gt;</programlisting>
+                        <programlisting>m3ua as create &lt;as-name&gt; &lt;AS | SGW | IPSP&gt; mode &lt;SE | DE&gt; ipspType &lt;client | server&gt; rc &lt;routing-context&gt; traffic-mode &lt;traffic mode&gt; min-asp &lt;minimum asp active for TrafficModeType.Loadshare&gt; network-appearance &lt;network appearance&gt;</programlisting>
                         <para>Where:</para>
                         <variablelist>
                                 <varlistentry>
@@ -419,6 +419,14 @@ ASSOCIATION SCTP name=Assoc2 started=false peerIp=192.168.56.1 peerPort=2905 ser
                                         <listitem>
                                                 <para>
                                                         Traffic mode for ASP's. By default its loadshare. Mobicents M3UA only supports loadshare and override, broadcast is not supported.
+                                                </para>
+                                        </listitem>
+                                </varlistentry>
+                                <varlistentry>
+                                        <term>min-asp</term>
+                                        <listitem>
+                                                <para>
+                                                        minumum asp active for traffic mode 'loadshare' before the payload starts flowing. This is an optional parameter and if not specified the default value is 1. Also if traffic-mode is not 'loadshare' setting this value has no effect
                                                 </para>
                                         </listitem>
                                 </varlistentry>
