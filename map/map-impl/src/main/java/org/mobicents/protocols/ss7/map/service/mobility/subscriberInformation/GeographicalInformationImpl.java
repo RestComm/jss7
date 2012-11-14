@@ -68,7 +68,7 @@ public class GeographicalInformationImpl extends OctetStringBase implements Geog
 
 		this.data = new byte[8];
 
-		this.data[0] = (byte) typeOfShape.getCode();
+		this.data[0] = (byte) (typeOfShape.getCode() << 4);
 
 		encodeLatitude(data, 1, latitude);
 		encodeLongitude(data, 4, longitude);
@@ -163,7 +163,7 @@ public class GeographicalInformationImpl extends OctetStringBase implements Geog
 		if (this.data == null || this.data.length != 8)
 			return null;
 
-		return TypeOfShape.getInstance(this.data[0]);
+		return TypeOfShape.getInstance((this.data[0] & 0xFF) >> 4);
 	}
 
 	@Override

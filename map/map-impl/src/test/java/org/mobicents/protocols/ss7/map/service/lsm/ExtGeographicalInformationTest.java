@@ -48,11 +48,11 @@ public class ExtGeographicalInformationTest {
 	}
 
 	private byte[] getEncodedData_EllipsoidPointWithAltitudeAndUncertaintyEllipsoid() {
-		return new byte[] { 4, 14, 9, -35, 39, -46, 22, 65, -3, -128, 17, 18, 41, 14, 14, 29 };
+		return new byte[] { 4, 14, (byte) 144, -35, 39, -46, 22, 65, -3, -128, 17, 18, 41, 14, 14, 29 };
 	}
 
 	private byte[] getEncodedData_EllipsoidArc() {
-		return new byte[] { 4, 13, 10, 1, 108, 22, 121, -48, 54, 23, 112, 9, 11, 12, 39 };
+		return new byte[] { 4, 13, (byte) 160, 1, 108, 22, 121, -48, 54, 23, 112, 9, 11, 12, 39 };
 	}
 
 	private byte[] getEncodedData_EllipsoidPoint() {

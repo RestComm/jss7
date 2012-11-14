@@ -53,7 +53,7 @@ public class GeodeticInformationImpl extends OctetStringBase implements Geodetic
 		this.data = new byte[10];
 
 		this.data[0] = (byte)screeningAndPresentationIndicators;
-		this.data[1] = (byte) typeOfShape.getCode();
+		this.data[1] = (byte) (typeOfShape.getCode() << 4);
 
 		GeographicalInformationImpl.encodeLatitude(data, 2, latitude);
 		GeographicalInformationImpl.encodeLongitude(data, 5, longitude);
@@ -78,7 +78,7 @@ public class GeodeticInformationImpl extends OctetStringBase implements Geodetic
 		if (this.data == null || this.data.length != 10)
 			return null;
 
-		return TypeOfShape.getInstance(this.data[1]);
+		return TypeOfShape.getInstance((this.data[1] & 0xFF) >> 4);
 	}
 
 	@Override

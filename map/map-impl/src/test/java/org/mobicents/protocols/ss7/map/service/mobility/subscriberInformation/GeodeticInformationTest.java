@@ -40,7 +40,7 @@ import org.testng.annotations.Test;
 public class GeodeticInformationTest {
 
 	private byte[] getEncodedData() {
-		return new byte[] { 4, 10, 3, 1, 30, -109, -23, 121, -103, -103, 0, 11 };
+		return new byte[] { 4, 10, 3, 16, 30, -109, -23, 121, -103, -103, 0, 11 };
 	}
 
 	@Test(groups = { "functional.decode","subscriberInformation"})

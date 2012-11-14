@@ -63,6 +63,11 @@ public class ExtGeographicalInformationImpl extends OctetStringBase implements E
 	protected void initData(TypeOfShape typeOfShape, double latitude, double longitude, double uncertainty, double uncertaintySemiMajorAxis,
 			double uncertaintySemiMinorAxis, double angleOfMajorAxis, int confidence, int altitude, double uncertaintyAltitude, int innerRadius,
 			double uncertaintyRadius, double offsetAngle, double includedAngle) throws MAPException {
+
+		if (typeOfShape == null) {
+			throw new MAPException("typeOfShape parameter is null");
+		}
+		
 		switch (typeOfShape) {
 		case EllipsoidPointWithUncertaintyCircle:
 			this.initData(8, typeOfShape, latitude, longitude);
@@ -118,13 +123,13 @@ public class ExtGeographicalInformationImpl extends OctetStringBase implements E
 			break;
 		
 		default:
-			throw new MAPException("typeOfShape parameter is null or has bad value");
+			throw new MAPException("typeOfShape parameter has bad value");
 		}
 	}
 
 	private void initData(int len, TypeOfShape typeOfShape, double latitude, double longitude) {
 		this.data = new byte[len];
-		this.data[0] = (byte) typeOfShape.getCode();
+		this.data[0] = (byte) (typeOfShape.getCode() << 4);
 		GeographicalInformationImpl.encodeLatitude(data, 1, latitude);
 		GeographicalInformationImpl.encodeLongitude(data, 4, longitude);
 	}
@@ -138,7 +143,7 @@ public class ExtGeographicalInformationImpl extends OctetStringBase implements E
 		if (this.data == null || this.data.length < 1)
 			return null;
 
-		return TypeOfShape.getInstance(this.data[0]);
+		return TypeOfShape.getInstance((this.data[0] & 0xFF) >> 4);
 	}
 
 	@Override
