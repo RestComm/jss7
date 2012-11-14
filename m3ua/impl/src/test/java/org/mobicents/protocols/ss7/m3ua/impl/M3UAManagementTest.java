@@ -95,7 +95,7 @@ public class M3UAManagementTest {
 
 		RoutingContext rc = factory.createRoutingContext(new long[] { 1 });
 		NetworkAppearance na = factory.createNetworkAppearance(12l);
-		AsImpl as1 = (AsImpl)this.m3uaMgmt.createAs("AS1", Functionality.AS, ExchangeType.SE, null, rc, null, na);
+		AsImpl as1 = (AsImpl)this.m3uaMgmt.createAs("AS1", Functionality.AS, ExchangeType.SE, null, rc, null, 1, na);
 
 		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl)this.m3uaMgmt.createAspFactory("ASP1", "ASPAssoc1");
 

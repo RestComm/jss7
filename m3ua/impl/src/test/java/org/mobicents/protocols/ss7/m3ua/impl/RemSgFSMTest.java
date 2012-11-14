@@ -151,7 +151,7 @@ public class RemSgFSMTest {
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
 		AsImpl asImpl = (AsImpl) this.clientM3UAMgmt.createAs("testas", Functionality.AS, ExchangeType.SE, null, rc,
-				null, null);
+				null, 1, null);
 		// Check if M3UAManagementEventListener received event
 		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AsCreated, System
 				.currentTimeMillis(), new Object[] { asImpl }, m3uaManagementEventsSeq++)));
@@ -325,7 +325,7 @@ public class RemSgFSMTest {
 		this.transportManagement.addAssociation(null, 0, null, 0, "testAssoc1");
 
 		AsImpl asImpl = (AsImpl) this.clientM3UAMgmt.createAs("testas", Functionality.AS, ExchangeType.SE, null, null,
-				null, null);
+				null, 1, null);
 		// Check if M3UAManagementEventListener received event
 		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AsCreated, System
 				.currentTimeMillis(), new Object[] { asImpl }, m3uaManagementEventsSeq++)));
@@ -477,7 +477,7 @@ public class RemSgFSMTest {
 		RoutingContext rc1 = parmFactory.createRoutingContext(new long[] { 100 });
 
 		AsImpl remAs1 = (AsImpl) this.clientM3UAMgmt.createAs("testas1", Functionality.AS, ExchangeType.SE, null, rc1,
-				null, null);
+				null, 1, null);
 		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AsCreated, System
 				.currentTimeMillis(), new Object[] { remAs1 }, m3uaManagementEventsSeq++)));
 
@@ -485,7 +485,7 @@ public class RemSgFSMTest {
 		RoutingContext rc2 = parmFactory.createRoutingContext(new long[] { 200 });
 
 		AsImpl remAs2 = (AsImpl) clientM3UAMgmt.createAs("testas2", Functionality.AS, ExchangeType.SE, null, rc2, null,
-				null);
+				1, null);
 		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AsCreated, System
 				.currentTimeMillis(), new Object[] { remAs2 }, m3uaManagementEventsSeq++)));
 
@@ -754,7 +754,7 @@ public class RemSgFSMTest {
 
 		// As remAs = rsgw.createAppServer("testas", rc, rKey, trModType);
 		AsImpl remAs = (AsImpl) this.clientM3UAMgmt.createAs("testas", Functionality.AS, ExchangeType.SE, null, rc,
-				null, null);
+				null, 1, null);
 		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AsCreated, System
 				.currentTimeMillis(), new Object[] { remAs }, m3uaManagementEventsSeq++)));
 
@@ -953,7 +953,7 @@ public class RemSgFSMTest {
 
 		// As as = rsgw.createAppServer("testas", rc, rKey, trModType);
 		AsImpl asImpl = (AsImpl) this.clientM3UAMgmt.createAs("testas", Functionality.AS, ExchangeType.SE, null, rc,
-				null, null);
+				null, 1, null);
 		FSM asPeerFSM = asImpl.getPeerFSM();
 
 		AspFactoryImpl localAspFactory = (AspFactoryImpl) clientM3UAMgmt.createAspFactory("testasp", "testAssoc");

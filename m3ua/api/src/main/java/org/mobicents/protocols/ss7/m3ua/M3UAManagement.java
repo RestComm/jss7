@@ -57,7 +57,8 @@ public interface M3UAManagement {
 	public List<AspFactory> getAspfactories();
 
 	public As createAs(String asName, Functionality functionality, ExchangeType exchangeType, IPSPType ipspType,
-			RoutingContext rc, TrafficModeType trafficMode, NetworkAppearance na) throws Exception;
+			RoutingContext rc, TrafficModeType trafficMode, int minAspActiveForLoadbalance, NetworkAppearance na)
+			throws Exception;
 
 	public As destroyAs(String asName) throws Exception;
 
@@ -80,8 +81,8 @@ public interface M3UAManagement {
 	public void removeRoute(int dpc, int opc, int si, String asName) throws Exception;
 
 	public void removeAllResourses() throws Exception;
-	
+
 	public void addM3UAManagementEventListener(M3UAManagementEventListener m3uaManagementEventListener);
-	
+
 	public void removeM3UAManagementEventListener(M3UAManagementEventListener m3uaManagementEventListener);
 }

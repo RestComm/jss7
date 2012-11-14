@@ -140,7 +140,7 @@ public class IPSPClientFSMTest {
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
 		// As as = rsgw.createAppServer("testas", rc, rKey, trModType);
-		AsImpl asImpl = (AsImpl)this.clientM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, null, rc, null, null);
+		AsImpl asImpl = (AsImpl)this.clientM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, null, rc, null, 1, null);
 
 		AspFactoryImpl localAspFactory = (AspFactoryImpl)this.clientM3UAMgmt.createAspFactory("testasp", "testAssoc1");
 		localAspFactory.start();
@@ -250,7 +250,7 @@ public class IPSPClientFSMTest {
 		this.transportManagement.addAssociation(null, 0, null, 0, "testAssoc1");
 
 		// As as = rsgw.createAppServer("testas", rc, rKey, trModType);
-		AsImpl asImpl = (AsImpl)this.clientM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, null, null, null, null);
+		AsImpl asImpl = (AsImpl)this.clientM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, null, null, null, 1, null);
 
 		AspFactoryImpl localAspFactory = (AspFactoryImpl)this.clientM3UAMgmt.createAspFactory("testasp", "testAssoc1");
 		localAspFactory.start();
@@ -340,7 +340,7 @@ public class IPSPClientFSMTest {
 
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
-		AsImpl asImpl = (AsImpl)this.clientM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, null, rc, null, null);
+		AsImpl asImpl = (AsImpl)this.clientM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, null, rc, null, 1, null);
 		FSM asPeerFSM = asImpl.getPeerFSM();
 
 		AspFactoryImpl localAspFactory = (AspFactoryImpl)clientM3UAMgmt.createAspFactory("testasp", "testAssoc");
@@ -474,7 +474,7 @@ public class IPSPClientFSMTest {
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
 		// As as = rsgw.createAppServer("testas", rc, rKey, trModType);
-		AsImpl asImpl = (AsImpl)this.clientM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.DE, null, rc, null, null);
+		AsImpl asImpl = (AsImpl)this.clientM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.DE, null, rc, null, 1, null);
 
 		AspFactoryImpl localAspFactory = (AspFactoryImpl)this.clientM3UAMgmt.createAspFactory("testasp", "testAssoc1");
 		localAspFactory.start();

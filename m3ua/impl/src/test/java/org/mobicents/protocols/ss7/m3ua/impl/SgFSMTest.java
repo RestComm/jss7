@@ -151,7 +151,7 @@ public class SgFSMTest {
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
 		// As remAs = sgw.createAppServer("testas", rc, rKey, trModType);
-		AsImpl remAs = (AsImpl) serverM3UAMgmt.createAs("testas", Functionality.SGW, ExchangeType.SE, null, rc, null,
+		AsImpl remAs = (AsImpl) serverM3UAMgmt.createAs("testas", Functionality.SGW, ExchangeType.SE, null, rc, null, 1,
 				null);
 
 		// Check if M3UAManagementEventListener received event
@@ -296,7 +296,7 @@ public class SgFSMTest {
 				"testAssoc1");
 
 		AsImpl remAs = (AsImpl) serverM3UAMgmt.createAs("testas", Functionality.SGW, ExchangeType.SE, null, null, null,
-				null);
+				1, null);
 
 		// Check if M3UAManagementEventListener received event
 		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AsCreated, System
@@ -442,7 +442,7 @@ public class SgFSMTest {
 
 		// As remAs1 = sgw.createAppServer("testas1", rc1, rKey1, trModType1);
 		AsImpl remAs1 = (AsImpl) serverM3UAMgmt.createAs("testas1", Functionality.SGW, ExchangeType.SE, null, rc1,
-				null, null);
+				null, 1, null);
 
 		// Check if M3UAManagementEventListener received event
 		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AsCreated, System
@@ -455,7 +455,7 @@ public class SgFSMTest {
 
 		// As remAs2 = sgw.createAppServer("testas2", rc2, rKey2, trModType2);
 		AsImpl remAs2 = (AsImpl) serverM3UAMgmt.createAs("testas2", Functionality.SGW, ExchangeType.SE, null, rc2,
-				null, null);
+				null, 1, null);
 
 		// Check if M3UAManagementEventListener received event
 		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AsCreated, System
@@ -636,7 +636,7 @@ public class SgFSMTest {
 
 		// As remAs = sgw.createAppServer("testas", rc, rKey, trModType);
 		AsImpl remAs = (AsImpl) serverM3UAMgmt.createAs("testas", Functionality.SGW, ExchangeType.SE, null, rc,
-				overrideMode, null);
+				overrideMode, 1, null);
 		// Check if M3UAManagementEventListener received event
 		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AsCreated, System
 				.currentTimeMillis(), new Object[] { remAs }, m3uaManagementEventsSeq++)));
@@ -862,7 +862,7 @@ public class SgFSMTest {
 
 		// As remAs = sgw.createAppServer("testas", rc, rKey, trModType);
 		AsImpl remAs = (AsImpl) serverM3UAMgmt.createAs("testas", Functionality.SGW, ExchangeType.SE, null, rc,
-				trModType, null);
+				trModType, 1, null);
 		// Check if M3UAManagementEventListener received event
 		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AsCreated, System
 				.currentTimeMillis(), new Object[] { remAs }, m3uaManagementEventsSeq++)));
@@ -1095,7 +1095,7 @@ public class SgFSMTest {
 		// As remAs = sgw.createAppServer("testas", rc, rKey, trModType);
 
 		AsImpl remAs = (AsImpl) serverM3UAMgmt.createAs("testas", Functionality.SGW, ExchangeType.SE, null, rc,
-				trModType, null);
+				trModType, 1, null);
 		// AspFactory aspFactory = sgw.createAspFactory("testasp", "127.0.0.1",
 		// 2777);
 		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
@@ -1176,7 +1176,7 @@ public class SgFSMTest {
 		RoutingKey rKey = parmFactory.createRoutingKey(lRkId, rc, null, null, dpc, servInds, null);
 
 		AsImpl remAs = (AsImpl) serverM3UAMgmt.createAs("testas", Functionality.SGW, ExchangeType.SE, null, rc,
-				trModType, null);
+				trModType, 1, null);
 		// Check if M3UAManagementEventListener received event
 		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AsCreated, System
 				.currentTimeMillis(), new Object[] { remAs }, m3uaManagementEventsSeq++)));

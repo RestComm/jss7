@@ -70,14 +70,15 @@ public class M3UAShellExecutor implements ShellExecutor {
 
 	/**
 	 * m3ua as create <as-name> <AS | SGW | IPSP> mode <SE | DE> ipspType <
-	 * client | server > rc <routing-context> traffic-mode <traffic mode>
+	 * client | server > rc <routing-context> traffic-mode <traffic mode> min-asp 
+	 * <minimum asp active for TrafficModeType.Loadshare>
 	 * network-appearance <network appearance>
 	 * 
 	 * @param args
 	 * @return
 	 */
 	private String createAs(String[] args) throws Exception {
-		if (args.length < 5 || args.length > 15) {
+		if (args.length < 5 || args.length > 17) {
 			return M3UAOAMMessages.INVALID_COMMAND;
 		}
 
@@ -99,6 +100,7 @@ public class M3UAShellExecutor implements ShellExecutor {
 		}
 
 		int count = 5;
+		int minAspActiveForLoadbalance = 1;
 
 		while (count < args.length) {
 			String key = args[count++];
@@ -120,12 +122,14 @@ public class M3UAShellExecutor implements ShellExecutor {
 				trafficModeType = getTrafficModeType(args[count++]);
 			} else if (key.equals("network-appearance")) {
 				na = parameterFactory.createNetworkAppearance(Long.parseLong(args[count++]));
+			} else if(key.equals("min-asp")){
+				minAspActiveForLoadbalance = Integer.parseInt(args[count++]);
 			} else {
 				return M3UAOAMMessages.INVALID_COMMAND;
 			}
 		}
 
-		As asImpl = this.m3uaManagement.createAs(asName, functionlaity, exchangeType, ipspType, rc, trafficModeType, na);
+		As asImpl = this.m3uaManagement.createAs(asName, functionlaity, exchangeType, ipspType, rc, trafficModeType, minAspActiveForLoadbalance, na);
 		return String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, asImpl.getName());
 	}
 

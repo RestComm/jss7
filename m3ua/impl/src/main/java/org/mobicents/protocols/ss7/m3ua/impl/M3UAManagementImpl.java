@@ -294,8 +294,9 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 	 * </p>
 	 * <p>
 	 * Command is m3ua as create <as-name> <AS | SGW | IPSP> mode <SE | DE>
-	 * ipspType < client | server > rc <routing-context> traffic-mode <traffic
-	 * mode>
+	 * ipspType <client | server > rc <routing-context> traffic-mode <traffic
+	 * mode> min-asp <minimum asp active for TrafficModeType.Loadshare>
+	 * network-appearance <network appearance>
 	 * </p>
 	 * <p>
 	 * where mode is optional, by default SE. ipspType should be specified if
@@ -308,7 +309,8 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 	 * @throws Exception
 	 */
 	public As createAs(String asName, Functionality functionality, ExchangeType exchangeType, IPSPType ipspType,
-			RoutingContext rc, TrafficModeType trafficMode, NetworkAppearance na) throws Exception {
+			RoutingContext rc, TrafficModeType trafficMode, int minAspActiveForLoadbalance, NetworkAppearance na)
+			throws Exception {
 
 		As as = this.getAs(asName);
 		if (as != null) {
@@ -325,7 +327,7 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 			ipspType = IPSPType.CLIENT;
 		}
 
-		as = new AsImpl(asName, rc, trafficMode, functionality, exchangeType, ipspType, na);
+		as = new AsImpl(asName, rc, trafficMode, minAspActiveForLoadbalance, functionality, exchangeType, ipspType, na);
 		((AsImpl) as).setM3UAManagement(this);
 		FSM localFSM = ((AsImpl) as).getLocalFSM();
 		this.m3uaScheduler.execute(localFSM);
