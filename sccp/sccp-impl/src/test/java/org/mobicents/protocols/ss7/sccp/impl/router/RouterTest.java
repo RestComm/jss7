@@ -41,6 +41,7 @@ import org.mobicents.protocols.ss7.sccp.LongMessageRule;
 import org.mobicents.protocols.ss7.sccp.LongMessageRuleType;
 import org.mobicents.protocols.ss7.sccp.Mtp3Destination;
 import org.mobicents.protocols.ss7.sccp.Mtp3ServiceAccessPoint;
+import org.mobicents.protocols.ss7.sccp.Router;
 import org.mobicents.protocols.ss7.sccp.Rule;
 import org.mobicents.protocols.ss7.sccp.RuleType;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
@@ -432,6 +433,48 @@ public class RouterTest {
 
 		@Override
 		public String getName() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public int getSstTimerDuration_Min() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public int getSstTimerDuration_Max() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public double getSstTimerDuration_IncreaseFactor() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public int getZMarginXudtMessage() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public int getMaxDataMessage() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public int getReassemblyTimerDelay() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public Router getRouter() {
 			// TODO Auto-generated method stub
 			return null;
 		}

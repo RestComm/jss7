@@ -24,9 +24,9 @@ package org.mobicents.protocols.ss7.sccp.impl;
 
 import java.io.FileOutputStream;
 
+import org.mobicents.protocols.ss7.sccp.Router;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.SccpResource;
-import org.mobicents.protocols.ss7.sccp.impl.router.RouterImpl;
 
 /**
  * @author amit bhayani
@@ -46,8 +46,8 @@ public abstract class SccpHarness {
 	protected Mtp3UserPartImpl mtp3UserPart1 = new Mtp3UserPartImpl();
 	protected Mtp3UserPartImpl mtp3UserPart2 = new Mtp3UserPartImpl();
 
-	protected RouterImpl router1 = null;
-	protected RouterImpl router2 = null;
+	protected Router router1 = null;
+	protected Router router2 = null;
 
 	protected SccpResource resource1 = null;
 	protected SccpResource resource2 = null;

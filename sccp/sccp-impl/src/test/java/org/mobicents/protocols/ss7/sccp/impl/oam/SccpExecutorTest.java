@@ -46,11 +46,11 @@ import org.mobicents.protocols.ss7.sccp.Mtp3Destination;
 import org.mobicents.protocols.ss7.sccp.Mtp3ServiceAccessPoint;
 import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.RemoteSubSystem;
+import org.mobicents.protocols.ss7.sccp.Router;
 import org.mobicents.protocols.ss7.sccp.Rule;
 import org.mobicents.protocols.ss7.sccp.RuleType;
 import org.mobicents.protocols.ss7.sccp.SccpResource;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
-import org.mobicents.protocols.ss7.sccp.impl.router.RouterImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0100;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.testng.annotations.AfterClass;
@@ -67,7 +67,7 @@ import org.testng.annotations.Test;
  */
 public class SccpExecutorTest {
 
-	private RouterImpl router = null;
+	private Router router = null;
 	private SccpResource sccpResource = null;
 	private SccpStackImpl sccpStack = null;
 

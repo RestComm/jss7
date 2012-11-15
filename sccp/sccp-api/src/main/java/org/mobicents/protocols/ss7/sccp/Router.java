@@ -39,6 +39,8 @@ public interface Router {
 	public void modifyPrimaryAddress(int primAddressId, SccpAddress primaryAddress) throws Exception;
 
 	public Map<Integer, SccpAddress> getPrimaryAddresses();
+	
+	public SccpAddress getPrimaryAddress(int id);
 
 	public void addBackupAddress(int id, SccpAddress backupAddress) throws Exception;
 
@@ -47,6 +49,8 @@ public interface Router {
 	public void removeBackupAddress(int id) throws Exception;
 
 	public Map<Integer, SccpAddress> getBackupAddresses();
+	
+	public SccpAddress getBackupAddress(int id);
 
 	public void addMtp3ServiceAccessPoint(int id, int mtp3Id, int opc, int ni) throws Exception;
 
@@ -81,6 +85,8 @@ public interface Router {
 
 	public void modifyRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, SccpAddress pattern, String mask,
 			int pAddressId, int sAddressId) throws Exception;
+	
+	public Rule getRule(int id);
 
 	public void removeRule(int id) throws Exception;
 

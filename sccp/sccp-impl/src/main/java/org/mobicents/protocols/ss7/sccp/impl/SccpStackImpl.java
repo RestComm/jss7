@@ -47,6 +47,7 @@ import org.mobicents.protocols.ss7.sccp.LongMessageRule;
 import org.mobicents.protocols.ss7.sccp.LongMessageRuleType;
 import org.mobicents.protocols.ss7.sccp.Mtp3ServiceAccessPoint;
 import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
+import org.mobicents.protocols.ss7.sccp.Router;
 import org.mobicents.protocols.ss7.sccp.Rule;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.SccpResource;
@@ -377,7 +378,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		
 	}
 
-	public RouterImpl getRouter() {
+	public Router getRouter() {
 		return this.router;
 	}
 

@@ -36,11 +36,11 @@ import org.mobicents.protocols.ss7.sccp.Mtp3Destination;
 import org.mobicents.protocols.ss7.sccp.Mtp3ServiceAccessPoint;
 import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.RemoteSubSystem;
+import org.mobicents.protocols.ss7.sccp.Router;
 import org.mobicents.protocols.ss7.sccp.Rule;
 import org.mobicents.protocols.ss7.sccp.RuleType;
 import org.mobicents.protocols.ss7.sccp.SccpResource;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
-import org.mobicents.protocols.ss7.sccp.impl.router.RouterImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.ss7.management.console.ShellExecutor;
@@ -54,7 +54,7 @@ public class SccpExecutor implements ShellExecutor {
 
 	private static final Logger logger = Logger.getLogger(SccpExecutor.class);
 
-	private RouterImpl router = null;
+	private Router router = null;
 	private SccpResource sccpResource = null;
 	private SccpStackImpl sccpStack = null;
 

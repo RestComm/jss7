@@ -94,8 +94,22 @@ public interface SccpStack {
 
 	public SccpResource getSccpResource();
 
+	public int getSstTimerDuration_Min();
+	
+	public int getSstTimerDuration_Max();
+	
+	public double getSstTimerDuration_IncreaseFactor();
+	
+	public int getZMarginXudtMessage();
+	
+	public int getMaxDataMessage();
+	
+	public int getReassemblyTimerDelay();
+	
 	public Map<Integer, Mtp3UserPart> getMtp3UserParts();
 
 	public Mtp3UserPart getMtp3UserPart(int id);
+	
+	public Router getRouter();
 
 }
