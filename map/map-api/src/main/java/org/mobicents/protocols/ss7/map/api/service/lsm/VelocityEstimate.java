@@ -63,4 +63,32 @@ public interface VelocityEstimate {
 
 	public byte[] getData();
 
+	public VelocityType getVelocityType();
+
+	/**
+	 * @return speed in 1 kilometer per hour
+	 */
+	public int getHorizontalSpeed();
+
+	/**
+	 * @return speed in degrees measured clockwise from North
+	 */
+	public int getBearing();
+
+	/**
+	 * @return speed in 1 kilometer per hour. Positive value means upward speed, negative means downward speed
+	 */
+	public int getVerticalSpeed();
+
+	/**
+	 * @return Uncertainty speed in 1 kilometer per hour
+	 */
+	public int getUncertaintyHorizontalSpeed();
+
+	/**
+	 * @return Uncertainty speed in 1 kilometer per hour
+	 */
+	public int getUncertaintyVerticalSpeed();
+
 }
+

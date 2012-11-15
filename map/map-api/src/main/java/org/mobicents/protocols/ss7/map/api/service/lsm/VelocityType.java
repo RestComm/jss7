@@ -20,43 +20,49 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
+package org.mobicents.protocols.ss7.map.api.service.lsm;
 
 /**
 *
-GeographicalInformation ::= OCTET STRING (SIZE (8))
---	Refers to geographical Information defined in 3GPP TS 23.032.
---	Only the description of an ellipsoid point with uncertainty circle
---	as specified in 3GPP TS 23.032 is allowed to be used
---	The internal structure according to 3GPP TS 23.032 is as follows:
---		Type of shape (ellipsoid point with uncertainty circle)	1 octet
---		Degrees of Latitude				3 octets
---		Degrees of Longitude				3 octets
---		Uncertainty code				1 octet
+
+0 0 0 0	Horizontal Velocity
+0 0 0 1	Horizontal with Vertical Velocity
+0 0 1 0	Horizontal Velocity with Uncertainty
+0 0 1 1	Horizontal with Vertical Velocity and Uncertainty
+
 * 
 * @author sergey vetyutnev
 * 
 */
-public interface GeographicalInformation {
+public enum VelocityType {
+	HorizontalVelocity(0),
+	HorizontalWithVerticalVelocity(1),
+	HorizontalVelocityWithUncertainty(2),
+	HorizontalWithVerticalVelocityAndUncertainty(3);
 
-	public byte[] getData();
+	private final int type;
+	
+	private VelocityType(int type){
+		this.type = type;
+	}
+	
+	public int getCode(){
+		return this.type;
+	}
+	
+	public static VelocityType getInstance(int type){
+		switch(type){
+		case 0:
+			return HorizontalVelocity;
+		case 1:
+			return HorizontalWithVerticalVelocity;
+		case 2:
+			return HorizontalVelocityWithUncertainty;
+		case 3:
+			return HorizontalWithVerticalVelocityAndUncertainty;
 
-	public TypeOfShape getTypeOfShape();
-
-	/**
-	 * @return Latitude value in degrees (-90 ... 90)
-	 */
-	public double getLatitude();
-
-	/**
-	 * @return Longitude value in degrees (-180 ... 180)
-	 */
-	public double getLongitude();
-
-	/**
-	 * @return Uncertainty value in meters
-	 */
-	public double getUncertainty();
-
+		default:
+				return null;
+		}
+	}
 }
-

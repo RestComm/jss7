@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,61 +22,55 @@
 
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import java.util.Arrays;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.TypeOfShape;
 import org.testng.annotations.Test;
 
 /**
- * 
- * @author sergey vetyutnev
- *
- */
-public class GPRSMSClassTest {
+*
+* @author sergey vetyutnev
+*
+*/
+public class GeodeticInformationTest {
 
 	private byte[] getEncodedData() {
-		return new byte[] { 48, 11, -128, 3, 1, 2, 3, -127, 4, 11, 22, 33, 44 };
-	}
-
-	private byte[] getEncodedDataNetworkCapability() {
-		return new byte[] { 1, 2, 3 };
-	}
-
-	private byte[] getEncodedDataRadioAccessCapability() {
-		return new byte[] { 11, 22, 33, 44 };
+		return new byte[] { 4, 10, 3, 16, 30, -109, -23, 121, -103, -103, 0, 11 };
 	}
 
 	@Test(groups = { "functional.decode","subscriberInformation"})
 	public void testDecode() throws Exception {
-		
+
 		byte[] rawData = getEncodedData();
-		
+
 		AsnInputStream asn = new AsnInputStream(rawData);
 
 		int tag = asn.readTag();
-		GPRSMSClassImpl impl = new GPRSMSClassImpl();
-		
-		// TODO: fix a test
-		
-//		impl.decodeAll(asn);
-//		assertEquals(tag, Tag.SEQUENCE);
-//
-//		assertTrue(Arrays.equals(impl.getMSNetworkCapability().getData(), this.getEncodedDataNetworkCapability()));
-//		assertTrue(Arrays.equals(impl.getMSRadioAccessCapability().getData(), this.getEncodedDataRadioAccessCapability()));
+		GeodeticInformationImpl impl = new GeodeticInformationImpl();
+		impl.decodeAll(asn);
+
+		assertEquals(impl.getScreeningAndPresentationIndicators(), 3);
+		assertEquals(impl.getTypeOfShape(), TypeOfShape.EllipsoidPointWithUncertaintyCircle);
+		assertTrue(Math.abs(impl.getLatitude() - 21.5) < 0.01);
+		assertTrue(Math.abs(impl.getLongitude() - 171) < 0.01);
+		assertTrue(Math.abs(impl.getUncertainty() - 0) < 0.01);
+		assertEquals(impl.getConfidence(), 11);
 	}
-	
+
 	@Test(groups = { "functional.encode","subscriberInformation"})
 	public void testEncode() throws Exception {
 
-		MSNetworkCapabilityImpl nc = new MSNetworkCapabilityImpl(this.getEncodedDataNetworkCapability());
-		MSRadioAccessCapabilityImpl rac = new MSRadioAccessCapabilityImpl(this.getEncodedDataRadioAccessCapability());
-		GPRSMSClassImpl impl = new GPRSMSClassImpl(nc, rac);
+		GeodeticInformationImpl impl = new GeodeticInformationImpl(3, TypeOfShape.EllipsoidPointWithUncertaintyCircle, 21.5, 171, 0, 11);
 		AsnOutputStream asnOS = new AsnOutputStream();
 		impl.encodeAll(asnOS);
 		byte[] encodedData = asnOS.toByteArray();
-		byte[] rawData = getEncodedData();		
-		assertTrue( Arrays.equals(rawData,encodedData));
+		byte[] rawData = getEncodedData();
+		assertTrue(Arrays.equals(rawData, encodedData));
 	}
-}
 
+}
