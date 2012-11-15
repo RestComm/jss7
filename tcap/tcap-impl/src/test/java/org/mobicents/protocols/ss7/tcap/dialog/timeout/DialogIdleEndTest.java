@@ -89,7 +89,7 @@ public class DialogIdleEndTest extends SccpHarness {
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@BeforeMethod
-	public void setUp() throws Exception {
+	public void setUp() {
 		System.out.println("setUp");
 		super.setUp();
 

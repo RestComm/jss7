@@ -527,7 +527,13 @@ public class SccpExecutor implements ShellExecutor {
 				return SccpOAMMessage.INVALID_COMMAND;
 			}
 			s1 = options[15].toLowerCase();
-			if (s1.equals("bit3")) {
+			if (s1.equals("bit0")) {
+				algo = LoadSharingAlgorithm.Bit0;
+			} else if (s1.equals("bit1")) {
+				algo = LoadSharingAlgorithm.Bit1;
+			} else if (s1.equals("bit2")) {
+				algo = LoadSharingAlgorithm.Bit2;
+			} else if (s1.equals("bit3")) {
 				algo = LoadSharingAlgorithm.Bit3;
 			} else if (s1.equals("bit4")) {
 				algo = LoadSharingAlgorithm.Bit4;

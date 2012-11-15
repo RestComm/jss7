@@ -616,11 +616,32 @@ sccp rule create &lt;id&gt; &lt;mask&gt; &lt;address-indicator&gt; &lt;point-cod
 								<tbody>
 									<row>
 										<entry>
-											bit4
-										</entry>													
+											bit0
+										</entry>														
 										<entry>
-											<para>if( (SLS &amp; 0x10) == 0 ) &lt;route to primary&gt; else &lt;route to backup&gt;</para>  
-											<para>This algorithm is the best if all traffic is local (mobisents stack) originated</para>  
+											<para>if( (SLS &amp; 0x01) == 0 ) &lt;route to primary&gt; else &lt;route to backup&gt;</para>  
+											<para>This algorithm can be used if not all traffic is local (mobisents stack) originated.
+											But only 8 links in the both linksets is acceptable.</para>  
+										</entry>
+									</row>
+									<row>
+										<entry>
+											bit1
+										</entry>														
+										<entry>
+											<para>if( (SLS &amp; 0x02) == 0 ) &lt;route to primary&gt; else &lt;route to backup&gt;</para>  
+											<para>This algorithm can be used if not all traffic is local (mobisents stack) originated.
+											But only 8 links in the both linksets is acceptable.</para>  
+										</entry>
+									</row>
+									<row>
+										<entry>
+											bit2
+										</entry>														
+										<entry>
+											<para>if( (SLS &amp; 0x04) == 0 ) &lt;route to primary&gt; else &lt;route to backup&gt;</para>  
+											<para>This algorithm can be used if not all traffic is local (mobisents stack) originated.
+											But only 8 links in the both linksets is acceptable.</para>  
 										</entry>
 									</row>
 									<row>
@@ -631,6 +652,15 @@ sccp rule create &lt;id&gt; &lt;mask&gt; &lt;address-indicator&gt; &lt;point-cod
 											<para>if( (SLS &amp; 0x08) == 0 ) &lt;route to primary&gt; else &lt;route to backup&gt;</para>  
 											<para>This algorithm can be used if not all traffic is local (mobisents stack) originated.
 											But only 8 links in the both linksets is acceptable.</para>  
+										</entry>
+									</row>
+									<row>
+										<entry>
+											bit4
+										</entry>													
+										<entry>
+											<para>if( (SLS &amp; 0x10) == 0 ) &lt;route to primary&gt; else &lt;route to backup&gt;</para>  
+											<para>This algorithm is the best if all traffic is local (mobisents stack) originated</para>  
 										</entry>
 									</row>
 								</tbody>

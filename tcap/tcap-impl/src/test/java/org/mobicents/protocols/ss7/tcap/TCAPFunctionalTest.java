@@ -61,7 +61,7 @@ public class TCAPFunctionalTest extends SccpHarness {
     }
     
 	@BeforeClass
-	public void setUpClass() throws Exception {
+	public void setUpClass() {
 		this.sccpStack1Name = "TCAPFunctionalTestSccpStack1";
 		this.sccpStack2Name = "TCAPFunctionalTestSccpStack2";
 		System.out.println("setUpClass");
@@ -76,7 +76,7 @@ public class TCAPFunctionalTest extends SccpHarness {
      * @see junit.framework.TestCase#setUp()
      */
 	@BeforeMethod
-	public void setUp() throws Exception {
+	public void setUp() {
 		System.out.println("setUp");
         super.setUp();
        
