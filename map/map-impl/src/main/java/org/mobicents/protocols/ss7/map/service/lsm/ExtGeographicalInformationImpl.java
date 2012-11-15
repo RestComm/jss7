@@ -67,7 +67,7 @@ public class ExtGeographicalInformationImpl extends OctetStringBase implements E
 		if (typeOfShape == null) {
 			throw new MAPException("typeOfShape parameter is null");
 		}
-		
+
 		switch (typeOfShape) {
 		case EllipsoidPointWithUncertaintyCircle:
 			this.initData(8, typeOfShape, latitude, longitude);

@@ -504,8 +504,11 @@ public interface MAPParameterFactory {
 	public EUtranCgi createEUtranCgi(byte[] data);
 	public TEID createTEID(byte[] data);
 	public GPRSMSClass createGPRSMSClass(MSNetworkCapability mSNetworkCapability, MSRadioAccessCapability mSRadioAccessCapability);
-	public GeodeticInformation createGeodeticInformation(byte[] data);
 	public GeographicalInformation createGeographicalInformation(byte[] data);
+	public GeographicalInformation createGeographicalInformation(double latitude, double longitude, double uncertainty) throws MAPException;
+	public GeodeticInformation createGeodeticInformation(byte[] data);
+	public GeodeticInformation createGeodeticInformation(int screeningAndPresentationIndicators, double latitude, double longitude, double uncertainty,
+			int confidence) throws MAPException;
 	public LocationInformationEPS createLocationInformationEPS(EUtranCgi eUtranCellGlobalIdentity, TAId trackingAreaIdentity,
 			MAPExtensionContainer extensionContainer, GeographicalInformation geographicalInformation, GeodeticInformation geodeticInformation,
 			boolean currentLocationRetrieved, Integer ageOfLocationInformation, DiameterIdentity mmeName);
@@ -529,6 +532,17 @@ public interface MAPParameterFactory {
 			ArrayList<PDPContextInfo> pdpContextInfoList);	
 
 	public AddGeographicalInformation createAddGeographicalInformation(byte[] data);
+	public AddGeographicalInformation createAddGeographicalInformation_EllipsoidPointWithUncertaintyCircle(double latitude, double longitude, double uncertainty)
+			throws MAPException;
+	public AddGeographicalInformation createAddGeographicalInformation_EllipsoidPointWithUncertaintyEllipse(double latitude, double longitude,
+			double uncertaintySemiMajorAxis, double uncertaintySemiMinorAxis, double angleOfMajorAxis, int confidence) throws MAPException;
+	public AddGeographicalInformation createAddGeographicalInformation_EllipsoidPointWithAltitudeAndUncertaintyEllipsoid(double latitude, double longitude,
+			double uncertaintySemiMajorAxis, double uncertaintySemiMinorAxis, double angleOfMajorAxis, int confidence, int altitude, double uncertaintyAltitude)
+			throws MAPException;
+	public AddGeographicalInformation createAddGeographicalInformation_EllipsoidArc(double latitude, double longitude, int innerRadius,
+			double uncertaintyRadius, double offsetAngle, double includedAngle, int confidence) throws MAPException;
+	public AddGeographicalInformation createAddGeographicalInformation_EllipsoidPoint(double latitude, double longitude) throws MAPException;
+
 	public AdditionalNumber createAdditionalNumberMscNumber(ISDNAddressString mSCNumber);
 	public AdditionalNumber createAdditionalNumberSgsnNumber(ISDNAddressString sGSNNumber);
 	public AreaDefinition createAreaDefinition(ArrayList<Area> areaList);
@@ -540,7 +554,19 @@ public interface MAPParameterFactory {
 			boolean beingInsideArea);
 	public DeferredmtlrData createDeferredmtlrData(DeferredLocationEventType deferredLocationEventType, TerminationCause terminationCause,
 			LCSLocationInfo lcsLocationInfo);
+	
 	public ExtGeographicalInformation createExtGeographicalInformation(byte[] data);
+	public ExtGeographicalInformation createExtGeographicalInformation_EllipsoidPointWithUncertaintyCircle(double latitude, double longitude, double uncertainty)
+			throws MAPException;
+	public ExtGeographicalInformation createExtGeographicalInformation_EllipsoidPointWithUncertaintyEllipse(double latitude, double longitude,
+			double uncertaintySemiMajorAxis, double uncertaintySemiMinorAxis, double angleOfMajorAxis, int confidence) throws MAPException;
+	public ExtGeographicalInformation createExtGeographicalInformation_EllipsoidPointWithAltitudeAndUncertaintyEllipsoid(double latitude, double longitude,
+			double uncertaintySemiMajorAxis, double uncertaintySemiMinorAxis, double angleOfMajorAxis, int confidence, int altitude, double uncertaintyAltitude)
+			throws MAPException;
+	public ExtGeographicalInformation createExtGeographicalInformation_EllipsoidArc(double latitude, double longitude, int innerRadius,
+			double uncertaintyRadius, double offsetAngle, double includedAngle, int confidence) throws MAPException;
+	public ExtGeographicalInformation createExtGeographicalInformation_EllipsoidPoint(double latitude, double longitude) throws MAPException;
+
 	public GeranGANSSpositioningData createGeranGANSSpositioningData(byte[] data);
 	public LCSClientID createLCSClientID(LCSClientType lcsClientType, LCSClientExternalID lcsClientExternalID, LCSClientInternalID lcsClientInternalID,
 			LCSClientName lcsClientName, AddressString lcsClientDialedByMS, APN lcsAPN, LCSRequestorID lcsRequestorID);
@@ -570,7 +596,14 @@ public interface MAPParameterFactory {
 			boolean ellipsoidPointWithAltitudeAndUncertaintyElipsoid, boolean ellipsoidArc);
 	public UtranGANSSpositioningData createUtranGANSSpositioningData(byte[] data);
 	public UtranPositioningDataInfo createUtranPositioningDataInfo(byte[] data);
+
 	public VelocityEstimate createVelocityEstimate(byte[] data);
+	public VelocityEstimate createVelocityEstimate_HorizontalVelocity(int horizontalSpeed, int bearing) throws MAPException;
+	public VelocityEstimate createVelocityEstimate_HorizontalWithVerticalVelocity(int horizontalSpeed, int bearing, int verticalSpeed) throws MAPException;
+	public VelocityEstimate createVelocityEstimate_HorizontalVelocityWithUncertainty(int horizontalSpeed, int bearing, int uncertaintyHorizontalSpeed)
+			throws MAPException;
+	public VelocityEstimate createVelocityEstimate_HorizontalWithVerticalVelocityAndUncertainty(int horizontalSpeed, int bearing, int verticalSpeed,
+			int uncertaintyHorizontalSpeed, int uncertaintyVerticalSpeed) throws MAPException;
 
 	public ExtBasicServiceCode createExtBasicServiceCode(ExtBearerServiceCode extBearerServiceCode);
 	public ExtBasicServiceCode createExtBasicServiceCode(ExtTeleserviceCode extTeleserviceCode);
@@ -606,7 +639,7 @@ public interface MAPParameterFactory {
 	public SSStatus createSSStatus(boolean qBit, boolean pBit, boolean rBit, boolean aBit);
 	public BasicServiceCode createBasicServiceCode(TeleserviceCode teleservice);
 	public BasicServiceCode createBasicServiceCode(BearerServiceCode bearerService);
-
+	
 	public Problem createProblemGeneral(GeneralProblemType prob);
 	public Problem createProblemInvoke(InvokeProblemType prob);
 	public Problem createProblemResult(ReturnResultProblemType prob);

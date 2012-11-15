@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -98,6 +98,7 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.TerminationCause;
 import org.mobicents.protocols.ss7.map.api.service.lsm.UtranGANSSpositioningData;
 import org.mobicents.protocols.ss7.map.api.service.lsm.UtranPositioningDataInfo;
 import org.mobicents.protocols.ss7.map.api.service.lsm.VelocityEstimate;
+import org.mobicents.protocols.ss7.map.api.service.lsm.VelocityType;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationQuintuplet;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationSetList;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationTriplet;
@@ -153,6 +154,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.TAId;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.TEID;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.TransactionId;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.TypeOfShape;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.UserCSGInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.APN;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.APNOIReplacement;
@@ -357,6 +359,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
 /**
  * 
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public class MAPParameterFactoryImpl implements MAPParameterFactory {
@@ -1176,6 +1179,109 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 	@Override
 	public BasicServiceCode createBasicServiceCode(BearerServiceCode bearerService) {
 		return new BasicServiceCodeImpl(bearerService);
+	}
+
+	@Override
+	public GeographicalInformation createGeographicalInformation(double latitude, double longitude, double uncertainty) throws MAPException {
+		return new GeographicalInformationImpl(TypeOfShape.EllipsoidPointWithUncertaintyCircle, latitude, longitude, uncertainty);
+	}
+
+	@Override
+	public GeodeticInformation createGeodeticInformation(int screeningAndPresentationIndicators, double latitude, double longitude, double uncertainty,
+			int confidence) throws MAPException {
+		return new GeodeticInformationImpl(screeningAndPresentationIndicators, TypeOfShape.EllipsoidPointWithUncertaintyCircle, latitude, longitude,
+				uncertainty, confidence);
+	}
+
+	@Override
+	public ExtGeographicalInformation createExtGeographicalInformation_EllipsoidPointWithUncertaintyCircle(double latitude, double longitude, double uncertainty)
+			throws MAPException {
+		return new ExtGeographicalInformationImpl(TypeOfShape.EllipsoidPointWithUncertaintyCircle, latitude, longitude, uncertainty, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0);
+	}
+
+	@Override
+	public ExtGeographicalInformation createExtGeographicalInformation_EllipsoidPointWithUncertaintyEllipse(double latitude, double longitude,
+			double uncertaintySemiMajorAxis, double uncertaintySemiMinorAxis, double angleOfMajorAxis, int confidence) throws MAPException {
+		return new ExtGeographicalInformationImpl(TypeOfShape.EllipsoidPointWithUncertaintyEllipse, latitude, longitude, 0, uncertaintySemiMajorAxis,
+				uncertaintySemiMinorAxis, angleOfMajorAxis, confidence, 0, 0, 0, 0, 0, 0);
+	}
+
+	@Override
+	public ExtGeographicalInformation createExtGeographicalInformation_EllipsoidPointWithAltitudeAndUncertaintyEllipsoid(double latitude, double longitude,
+			double uncertaintySemiMajorAxis, double uncertaintySemiMinorAxis, double angleOfMajorAxis, int confidence, int altitude, double uncertaintyAltitude)
+			throws MAPException {
+		return new ExtGeographicalInformationImpl(TypeOfShape.EllipsoidPointWithAltitudeAndUncertaintyEllipsoid, latitude, longitude, 0,
+				uncertaintySemiMajorAxis, uncertaintySemiMinorAxis, angleOfMajorAxis, confidence, altitude, uncertaintyAltitude, 0, 0, 0, 0);
+	}
+
+	@Override
+	public ExtGeographicalInformation createExtGeographicalInformation_EllipsoidArc(double latitude, double longitude, int innerRadius,
+			double uncertaintyRadius, double offsetAngle, double includedAngle, int confidence) throws MAPException {
+		return new ExtGeographicalInformationImpl(TypeOfShape.EllipsoidArc, latitude, longitude, 0, 0, 0, 0, confidence, 0, 0, innerRadius, uncertaintyRadius,
+				offsetAngle, includedAngle);
+	}
+
+	@Override
+	public ExtGeographicalInformation createExtGeographicalInformation_EllipsoidPoint(double latitude, double longitude) throws MAPException {
+		return new ExtGeographicalInformationImpl(TypeOfShape.EllipsoidPoint, latitude, longitude, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+	}
+
+	@Override
+	public AddGeographicalInformation createAddGeographicalInformation_EllipsoidPointWithUncertaintyCircle(double latitude, double longitude, double uncertainty)
+			throws MAPException {
+		return new AddGeographicalInformationImpl(TypeOfShape.EllipsoidPointWithUncertaintyCircle, latitude, longitude, uncertainty, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0);
+	}
+
+	@Override
+	public AddGeographicalInformation createAddGeographicalInformation_EllipsoidPointWithUncertaintyEllipse(double latitude, double longitude,
+			double uncertaintySemiMajorAxis, double uncertaintySemiMinorAxis, double angleOfMajorAxis, int confidence) throws MAPException {
+		return new AddGeographicalInformationImpl(TypeOfShape.EllipsoidPointWithUncertaintyEllipse, latitude, longitude, 0, uncertaintySemiMajorAxis,
+				uncertaintySemiMinorAxis, angleOfMajorAxis, confidence, 0, 0, 0, 0, 0, 0);
+	}
+
+	@Override
+	public AddGeographicalInformation createAddGeographicalInformation_EllipsoidPointWithAltitudeAndUncertaintyEllipsoid(double latitude, double longitude,
+			double uncertaintySemiMajorAxis, double uncertaintySemiMinorAxis, double angleOfMajorAxis, int confidence, int altitude, double uncertaintyAltitude)
+			throws MAPException {
+		return new AddGeographicalInformationImpl(TypeOfShape.EllipsoidPointWithAltitudeAndUncertaintyEllipsoid, latitude, longitude, 0,
+				uncertaintySemiMajorAxis, uncertaintySemiMinorAxis, angleOfMajorAxis, confidence, altitude, uncertaintyAltitude, 0, 0, 0, 0);
+	}
+
+	@Override
+	public AddGeographicalInformation createAddGeographicalInformation_EllipsoidArc(double latitude, double longitude, int innerRadius,
+			double uncertaintyRadius, double offsetAngle, double includedAngle, int confidence) throws MAPException {
+		return new AddGeographicalInformationImpl(TypeOfShape.EllipsoidArc, latitude, longitude, 0, 0, 0, 0, confidence, 0, 0, innerRadius, uncertaintyRadius,
+				offsetAngle, includedAngle);
+	}
+
+	@Override
+	public AddGeographicalInformation createAddGeographicalInformation_EllipsoidPoint(double latitude, double longitude) throws MAPException {
+		return new AddGeographicalInformationImpl(TypeOfShape.EllipsoidPoint, latitude, longitude, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+	}
+
+	@Override
+	public VelocityEstimate createVelocityEstimate_HorizontalVelocity(int horizontalSpeed, int bearing) throws MAPException {
+		return new VelocityEstimateImpl(VelocityType.HorizontalVelocity, horizontalSpeed, bearing, 0, 0, 0);
+	}
+
+	@Override
+	public VelocityEstimate createVelocityEstimate_HorizontalWithVerticalVelocity(int horizontalSpeed, int bearing, int verticalSpeed) throws MAPException {
+		return new VelocityEstimateImpl(VelocityType.HorizontalWithVerticalVelocity, horizontalSpeed, bearing, verticalSpeed, 0, 0);
+	}
+
+	@Override
+	public VelocityEstimate createVelocityEstimate_HorizontalVelocityWithUncertainty(int horizontalSpeed, int bearing, int uncertaintyHorizontalSpeed)
+			throws MAPException {
+		return new VelocityEstimateImpl(VelocityType.HorizontalVelocityWithUncertainty, horizontalSpeed, bearing, 0, uncertaintyHorizontalSpeed, 0);
+	}
+
+	@Override
+	public VelocityEstimate createVelocityEstimate_HorizontalWithVerticalVelocityAndUncertainty(int horizontalSpeed, int bearing, int verticalSpeed,
+			int uncertaintyHorizontalSpeed, int uncertaintyVerticalSpeed) throws MAPException {
+		return new VelocityEstimateImpl(VelocityType.HorizontalWithVerticalVelocityAndUncertainty, horizontalSpeed, bearing, verticalSpeed,
+				uncertaintyHorizontalSpeed, uncertaintyVerticalSpeed);
 	}
 }
 

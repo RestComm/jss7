@@ -25,7 +25,6 @@ package org.mobicents.protocols.ss7.map.service.lsm;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.service.lsm.VelocityEstimate;
 import org.mobicents.protocols.ss7.map.api.service.lsm.VelocityType;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.TypeOfShape;
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
@@ -79,7 +78,7 @@ public class VelocityEstimateImpl extends OctetStringBase implements VelocityEst
 	private void initData(int len, VelocityType velocityType, int horizontalSpeed, int bearing, int verticalSpeed) {
 		this.data = new byte[len];
 
-		this.data[0] = (byte) ((velocityType.getCode() << 4) + (verticalSpeed < 0 ? 0x02 : 0) + (bearing & 0x0100) >> 8);
+		this.data[0] = (byte) ((velocityType.getCode() << 4) | (verticalSpeed < 0 ? 0x02 : 0) | (bearing & 0x0100) >> 8);
 		this.data[1] = (byte) (bearing & 0xFF);
 		this.data[2] = (byte) ((horizontalSpeed & 0xFF00) >> 8);
 		this.data[3] = (byte) (horizontalSpeed & 0xFF);
@@ -91,7 +90,7 @@ public class VelocityEstimateImpl extends OctetStringBase implements VelocityEst
 
 	@Override
 	public VelocityType getVelocityType() {
-		if (this.data == null || this.data.length > 0)
+		if (this.data == null || this.data.length < 1)
 			return null;
 
 		return VelocityType.getInstance((this.data[0] & 0xF0) >> 4);
@@ -99,32 +98,104 @@ public class VelocityEstimateImpl extends OctetStringBase implements VelocityEst
 
 	@Override
 	public int getHorizontalSpeed() {
-		// TODO Auto-generated method stub
-		return 0;
+		if (this.data == null || this.data.length < 4)
+			return 0;
+
+		int res = ((data[2] & 0xFF) << 8) + (data[3] & 0xFF);
+		return res;
 	}
 
 	@Override
 	public int getBearing() {
-		// TODO Auto-generated method stub
-		return 0;
+		if (this.data == null || this.data.length < 4)
+			return 0;
+
+		int res = ((data[0] & 0x01) << 8) + (data[1] & 0xFF);
+		return res;
 	}
 
 	@Override
 	public int getVerticalSpeed() {
-		// TODO Auto-generated method stub
+		VelocityType velocityType = this.getVelocityType();
+		if (velocityType == null)
+			return 0;
+
+		switch (velocityType) {
+		case HorizontalWithVerticalVelocity:
+		case HorizontalWithVerticalVelocityAndUncertainty:
+			int res = (data[4] & 0xFF);
+			return res;
+		}
+
 		return 0;
 	}
 
 	@Override
 	public int getUncertaintyHorizontalSpeed() {
-		// TODO Auto-generated method stub
+		VelocityType velocityType = this.getVelocityType();
+		if (velocityType == null)
+			return 0;
+
+		switch (velocityType) {
+		case HorizontalVelocityWithUncertainty:
+			int res = (data[4] & 0xFF);
+			return res;
+		case HorizontalWithVerticalVelocityAndUncertainty:
+			res = (data[5] & 0xFF);
+			return res;
+		}
+
 		return 0;
 	}
 
 	@Override
 	public int getUncertaintyVerticalSpeed() {
-		// TODO Auto-generated method stub
+		VelocityType velocityType = this.getVelocityType();
+		if (velocityType == null)
+			return 0;
+
+		switch (velocityType) {
+		case HorizontalWithVerticalVelocityAndUncertainty:
+			int res = (data[6] & 0xFF);
+			return res;
+		}
+
 		return 0;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		sb.append("VelocityType=");
+		sb.append(this.getVelocityType());
+
+		sb.append(", HorizontalSpeed=");
+		sb.append(this.getHorizontalSpeed());
+
+		sb.append(", Bearing=");
+		sb.append(this.getBearing());
+
+		VelocityType velocityType = this.getVelocityType();
+		if (velocityType == VelocityType.HorizontalWithVerticalVelocity || velocityType == VelocityType.HorizontalWithVerticalVelocityAndUncertainty) {
+			sb.append(", VerticalSpeed=");
+			sb.append(this.getVerticalSpeed());
+		}
+
+		if (velocityType == VelocityType.HorizontalVelocityWithUncertainty || velocityType == VelocityType.HorizontalWithVerticalVelocityAndUncertainty) {
+			sb.append(", UncertaintyHorizontalSpeed=");
+			sb.append(this.getUncertaintyHorizontalSpeed());
+		}
+
+		if (velocityType == VelocityType.HorizontalWithVerticalVelocityAndUncertainty) {
+			sb.append(", UncertaintyVerticalSpeed=");
+			sb.append(this.getUncertaintyVerticalSpeed());
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }
