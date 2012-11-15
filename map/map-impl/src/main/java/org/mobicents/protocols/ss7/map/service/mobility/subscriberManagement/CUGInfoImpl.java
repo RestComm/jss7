@@ -36,9 +36,8 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGFeature;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGSubscription;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
-import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
+import org.mobicents.protocols.ss7.map.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.CUGFeatureImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.CUGSubscriptionImpl;
 
@@ -46,9 +45,7 @@ import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.CUG
  * @author daniel bichara
  * 
  */
-public class CUGInfoImpl implements CUGInfo, MAPAsnPrimitive {
-
-	public static final String _PrimitiveName = "CUGInfo";
+public class CUGInfoImpl extends SequenceBase implements CUGInfo {
 
 	private static final int _TAG_extensionContainer = 0;
 
@@ -57,7 +54,7 @@ public class CUGInfoImpl implements CUGInfo, MAPAsnPrimitive {
 	private MAPExtensionContainer extensionContainer = null;
 
 	public CUGInfoImpl() {
-		
+		super("CUGInfo");
 	}
 
 	/**
@@ -65,11 +62,13 @@ public class CUGInfoImpl implements CUGInfo, MAPAsnPrimitive {
 	 */
 	public CUGInfoImpl(ArrayList<CUGSubscription> cugSubscriptionList, ArrayList<CUGFeature> cugFeatureList,
 		MAPExtensionContainer extensionContainer) {
+		super("CUGInfo");
 
 		this.cugSubscriptionList = cugSubscriptionList;
 		this.cugFeatureList = cugFeatureList;
 		this.extensionContainer = extensionContainer;
 	}
+
 	public ArrayList<CUGSubscription> getCUGSubscriptionList() {
 		return this.cugSubscriptionList;
 	}
@@ -82,76 +81,7 @@ public class CUGInfoImpl implements CUGInfo, MAPAsnPrimitive {
 		return this.extensionContainer;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTag()
-	 */
-	public int getTag() throws MAPException {
-		return Tag.SEQUENCE;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTagClass()
-	 */
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getIsPrimitive
-	 * ()
-	 */
-	public boolean getIsPrimitive() {
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeAll(
-	 * org.mobicents.protocols.asn.AsnInputStream)
-	 */
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeData
-	 * (org.mobicents.protocols.asn.AsnInputStream, int)
-	 */
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+	protected void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 		CUGSubscription subscriptionItem = null;
 		CUGFeature featureItem = null;
 		this.cugSubscriptionList = null;
@@ -240,35 +170,6 @@ public class CUGInfoImpl implements CUGInfo, MAPAsnPrimitive {
 		if (this.cugFeatureList.size() > 32) {
 			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter cugFeatureList size must be from 1 to 32, found: "
 					+ this.cugFeatureList.size(), MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
-	 * org.mobicents.protocols.asn.AsnOutputStream)
-	 */
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
-	 * org.mobicents.protocols.asn.AsnOutputStream, int, int)
-	 */
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 

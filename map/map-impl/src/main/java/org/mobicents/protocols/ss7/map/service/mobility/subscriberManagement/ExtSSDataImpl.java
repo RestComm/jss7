@@ -38,8 +38,8 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtSSStatus;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SSSubscriptionOption;
-import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
+import org.mobicents.protocols.ss7.map.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtBasicServiceCodeImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtSSStatusImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.SSCodeImpl;
@@ -49,9 +49,7 @@ import org.mobicents.protocols.ss7.map.service.supplementary.SSSubscriptionOptio
  * @author daniel bichara
  * 
  */
-public class ExtSSDataImpl implements ExtSSData, MAPAsnPrimitive {
-
-	public static final String _PrimitiveName = "ExtSSData";
+public class ExtSSDataImpl extends SequenceBase implements ExtSSData {
 
 	private static final int _TAG_ss_Status = 4;
 	private static final int _TAG_extensionContainer = 5;
@@ -63,7 +61,7 @@ public class ExtSSDataImpl implements ExtSSData, MAPAsnPrimitive {
 	private MAPExtensionContainer extensionContainer = null;
 
 	public ExtSSDataImpl() {
-		
+		super("ExtSSData");
 	}
 
 	/**
@@ -72,6 +70,7 @@ public class ExtSSDataImpl implements ExtSSData, MAPAsnPrimitive {
 	public ExtSSDataImpl(SSCode ssCode, ExtSSStatus ssStatus,
 			SSSubscriptionOption ssSubscriptionOption, ArrayList<ExtBasicServiceCode> basicServiceGroupList,
 		MAPExtensionContainer extensionContainer) {
+		super("ExtSSData");
 
 		this.ssCode = ssCode;
 		this.ssStatus = ssStatus;
@@ -100,76 +99,7 @@ public class ExtSSDataImpl implements ExtSSData, MAPAsnPrimitive {
 		return this.extensionContainer;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTag()
-	 */
-	public int getTag() throws MAPException {
-		return Tag.SEQUENCE;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTagClass()
-	 */
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getIsPrimitive
-	 * ()
-	 */
-	public boolean getIsPrimitive() {
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeAll(
-	 * org.mobicents.protocols.asn.AsnInputStream)
-	 */
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeData
-	 * (org.mobicents.protocols.asn.AsnInputStream, int)
-	 */
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+	protected void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 		ExtBasicServiceCode serviceItem = null;
 		this.ssCode = null;
 		this.ssStatus = null;
@@ -240,35 +170,6 @@ public class ExtSSDataImpl implements ExtSSData, MAPAsnPrimitive {
 		if (this.basicServiceGroupList != null && this.basicServiceGroupList.size() > 32) {
 			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter basicServiceGroupList size must be from 1 to 32, found: "
 					+ this.basicServiceGroupList.size(), MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
-	 * org.mobicents.protocols.asn.AsnOutputStream)
-	 */
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
-	 * org.mobicents.protocols.asn.AsnOutputStream, int, int)
-	 */
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 

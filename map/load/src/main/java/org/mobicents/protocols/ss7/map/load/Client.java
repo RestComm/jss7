@@ -30,9 +30,6 @@ import org.mobicents.protocols.ss7.m3ua.Asp;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.IPSPType;
-import org.mobicents.protocols.ss7.m3ua.M3UAManagement;
-//import org.mobicents.protocols.ss7.m3ua.impl.Asp;
-//import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement;
 import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
@@ -67,14 +64,9 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSN
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
 import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
-import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCode;
-import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystem;
 import org.mobicents.protocols.ss7.sccp.impl.SccpResource;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
-import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3Destination;
-import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3ServiceAccessPoint;
 import org.mobicents.protocols.ss7.tcap.TCAPStackImpl;
-import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
@@ -152,7 +144,7 @@ public class Client extends TestHarness {
 		// m3ua as create rc <rc> <ras-name>
 		RoutingContext rc = factory.createRoutingContext(new long[] { 100l });
 		TrafficModeType trafficModeType = factory.createTrafficModeType(TrafficModeType.Loadshare);
-		this.clientM3UAMgmt.createAs("AS1", Functionality.AS, ExchangeType.SE, IPSPType.CLIENT, rc, trafficModeType, null);
+		this.clientM3UAMgmt.createAs("AS1", Functionality.AS, ExchangeType.SE, IPSPType.CLIENT, rc, trafficModeType, 1, null);
 
 		// Step 2 : Create ASP
 		this.clientM3UAMgmt.createAspFactory("ASP1", CLIENT_ASSOCIATION_NAME);
@@ -165,22 +157,18 @@ public class Client extends TestHarness {
 
 	}
 
-	private void initSCCP() {
+	private void initSCCP() throws Exception {
 		this.sccpStack = new SccpStackImpl("MapLoadClientSccpStack");
 		this.sccpStack.setMtp3UserPart(1, this.clientM3UAMgmt);
 
 		this.sccpStack.start();
 		this.sccpStack.removeAllResourses();
 
-		RemoteSignalingPointCode rspc = new RemoteSignalingPointCode(SERVET_SPC, 0, 0);
-		RemoteSubSystem rss = new RemoteSubSystem(SERVET_SPC, SSN, 0, false);
-		this.sccpStack.getSccpResource().addRemoteSpc(0, rspc);
-		this.sccpStack.getSccpResource().addRemoteSsn(0, rss);
+		this.sccpStack.getSccpResource().addRemoteSpc(0, SERVET_SPC, 0, 0);
+		this.sccpStack.getSccpResource().addRemoteSsn(0, SERVET_SPC, SSN, 0, false);
 
-		Mtp3ServiceAccessPoint sap = new Mtp3ServiceAccessPoint(1, CLIENT_SPC, NETWORK_INDICATOR);
-		Mtp3Destination dest = new Mtp3Destination(SERVET_SPC, SERVET_SPC, 0, 255, 255);
-		this.sccpStack.getRouter().addMtp3ServiceAccessPoint(1, sap);
-		this.sccpStack.getRouter().addMtp3Destination(1, 1, dest);
+		this.sccpStack.getRouter().addMtp3ServiceAccessPoint(1, 1, CLIENT_SPC, NETWORK_INDICATOR);
+		this.sccpStack.getRouter().addMtp3Destination(1, 1, SERVET_SPC, SERVET_SPC, 0, 255, 255);
 	}
 	
 	private void initTCAP(){

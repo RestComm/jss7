@@ -133,6 +133,10 @@ public class PDPContextImpl extends SequenceBase implements PDPContext {
 		this.pdpContextId = pdpContextId;
 	}
 
+	public PDPContextImpl() {
+		super("PDPContext");
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -32,38 +32,39 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGInterlock;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGSubscription;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.IntraCUGOptions;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
+import org.mobicents.protocols.ss7.map.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtBasicServiceCodeImpl;
 
 /**
  * @author daniel bichara
  * 
  */
-public class CUGSubscriptionImpl implements CUGSubscription, MAPAsnPrimitive {
-
-	public static final String _PrimitiveName = "CUGSubscription";
+public class CUGSubscriptionImpl extends SequenceBase implements CUGSubscription, MAPAsnPrimitive {
 
 	private static final int _TAG_extensionContainer = 0;
 
 	private Integer cugIndex = null;
-	private byte[] cugInterlock = null;
-	private byte[] intraCugOptions = null;
+	private CUGInterlock cugInterlock = null;
+	private IntraCUGOptions intraCugOptions = null;
 	private ExtBasicServiceCode basicService = null;
 	private MAPExtensionContainer extensionContainer = null;
 
 	public CUGSubscriptionImpl() {
-		
+		super("CUGSubscription");
 	}
 
 	/**
 	 * 
 	 */
-	public CUGSubscriptionImpl(Integer cugIndex, byte[] cugInterlock,
-			byte[] intraCugOptions, ExtBasicServiceCode basicService, 
-		MAPExtensionContainer extensionContainer) {
+	public CUGSubscriptionImpl(Integer cugIndex, CUGInterlock cugInterlock, IntraCUGOptions intraCugOptions, ExtBasicServiceCode basicService,
+			MAPExtensionContainer extensionContainer) {
+		super("CUGSubscription");
 
 		this.cugIndex = cugIndex;
 		this.cugInterlock = cugInterlock;
@@ -76,13 +77,13 @@ public class CUGSubscriptionImpl implements CUGSubscription, MAPAsnPrimitive {
 		return (int)this.cugIndex;
 	}
 
-	public byte[] getCugInterlock() {
+	public CUGInterlock getCugInterlock() {
 		return this.cugInterlock;
 	}
 
 	// TODO: implement IntraCUGOptions
 	//public IntraCUGOptions getIntraCugOptions();
-	public byte[] getIntraCugOptions() {
+	public IntraCUGOptions getIntraCugOptions() {
 		return this.intraCugOptions;
 	}
 
@@ -94,77 +95,7 @@ public class CUGSubscriptionImpl implements CUGSubscription, MAPAsnPrimitive {
 		return this.extensionContainer;
 	}
 
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTag()
-	 */
-	public int getTag() throws MAPException {
-		return Tag.SEQUENCE;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTagClass()
-	 */
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getIsPrimitive
-	 * ()
-	 */
-	public boolean getIsPrimitive() {
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeAll(
-	 * org.mobicents.protocols.asn.AsnInputStream)
-	 */
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeData
-	 * (org.mobicents.protocols.asn.AsnInputStream, int)
-	 */
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+	protected void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 		this.cugIndex = null;
 		this.cugInterlock = null;
 		this.intraCugOptions = null;
@@ -189,12 +120,14 @@ public class CUGSubscriptionImpl implements CUGSubscription, MAPAsnPrimitive {
 			case 1:
 				if (!ais.isTagPrimitive() || tag != Tag.STRING_OCTET)
 					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".cugInterlock: bad tag or tag class or not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-				this.cugInterlock = ais.readOctetString();
+				this.cugInterlock = new CUGInterlockImpl();
+				((CUGInterlockImpl) this.cugInterlock).decodeAll(ais);
 				break;
 			case 2:
 				if (!ais.isTagPrimitive())
 					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".intraCugOptions: bad tag or tag class or not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-				this.intraCugOptions = ais.readOctetString();
+				int i1 = (int) ais.readInteger();
+				this.intraCugOptions = IntraCUGOptions.getInstance(i1);
 				break;
 			default:
 				if (tag == _TAG_extensionContainer) {
@@ -224,35 +157,6 @@ public class CUGSubscriptionImpl implements CUGSubscription, MAPAsnPrimitive {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
-	 * org.mobicents.protocols.asn.AsnOutputStream)
-	 */
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
-	 * org.mobicents.protocols.asn.AsnOutputStream, int, int)
-	 */
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeData
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
@@ -271,9 +175,9 @@ public class CUGSubscriptionImpl implements CUGSubscription, MAPAsnPrimitive {
 
 			asnOs.writeInteger(this.cugIndex);
 
-			asnOs.writeOctetString(this.cugInterlock);
+			((CUGInterlockImpl) this.cugInterlock).encodeAll(asnOs);
 
-			asnOs.writeOctetString(this.intraCugOptions);
+			asnOs.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, this.intraCugOptions.getCode());
 
 			if (this.basicService != null)
 				((ExtBasicServiceCodeImpl) this.basicService).encodeAll(asnOs);

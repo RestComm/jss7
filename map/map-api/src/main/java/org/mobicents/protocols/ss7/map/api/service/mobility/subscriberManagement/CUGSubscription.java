@@ -46,7 +46,7 @@ public interface CUGSubscription {
 
 	public int getCUGIndex();
 
-	public byte[] getCugInterlock();
+	public CUGInterlock getCugInterlock();
 
 	public IntraCUGOptions getIntraCugOptions();
 
