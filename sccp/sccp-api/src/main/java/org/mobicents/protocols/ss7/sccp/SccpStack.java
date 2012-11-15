@@ -49,6 +49,12 @@ public interface SccpStack {
 	 * @throws org.mobicents.protocols.StartFailedException
 	 */
 	public void stop();
+	
+	/**
+	 * Returns the name of this stack
+	 * @return
+	 */
+	public String getName();
 
 	/**
 	 * Exposes SCCP provider object to SCCP user.

@@ -430,6 +430,12 @@ public class RouterTest {
 			return this.mtp3UserParts.get(id);
 		}
 
+		@Override
+		public String getName() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
 	}
 
 	private class Mtp3UserPartImpl implements Mtp3UserPart {
