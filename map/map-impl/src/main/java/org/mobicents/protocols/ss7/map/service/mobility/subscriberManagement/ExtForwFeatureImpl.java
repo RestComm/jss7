@@ -50,6 +50,7 @@ import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Ext
 
 /**
  * @author daniel bichara
+ * @author sergey vetyutnev
  * 
  */
 public class ExtForwFeatureImpl extends SequenceBase implements ExtForwFeature {
@@ -138,44 +139,48 @@ public class ExtForwFeatureImpl extends SequenceBase implements ExtForwFeature {
 
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 
-		int num = 0;
 		while (true) {
 			if (ais.available() == 0)
 				break;
 
 			int tag = ais.readTag();
 
-			if (num == 0 && tag != _TAG_ss_Status) {
-				if (!ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".basicService: bad tag or tag class or not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-				this.basicService = new ExtBasicServiceCodeImpl();
-				((ExtBasicServiceCodeImpl) this.basicService).decodeAll(ais);
-			} else {
+			switch (ais.getTagClass()) {
+			case Tag.CLASS_CONTEXT_SPECIFIC:
 				switch (tag) {
+				case ExtBasicServiceCodeImpl._ID_ext_BearerService:
+				case ExtBasicServiceCodeImpl._ID_ext_Teleservice:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+								+ ".basicService: is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+					this.basicService = new ExtBasicServiceCodeImpl();
+					((ExtBasicServiceCodeImpl) this.basicService).decodeAll(ais);
+					break;
+
 				case _TAG_ss_Status:
 					if (!ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".ssStatus: bad tag or tag class or not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".ssStatus: is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
 					this.ssStatus = new ExtSSStatusImpl();
 					((ExtSSStatusImpl) this.ssStatus).decodeAll(ais);
 					break;
 
 				case _TAG_forwardedToNumber:
 					if (!ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".forwardedToNumber: bad tag or tag class or not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".forwardedToNumber: is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
 					this.forwardedToNumber = new ISDNAddressStringImpl();
 					((ISDNAddressStringImpl) this.forwardedToNumber).decodeAll(ais);
 					break;
 
 				case _TAG_forwardedToSubaddress:
 					if (!ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".forwardedToSubaddress: bad tag or tag class or not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".forwardedToSubaddress: is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
 					this.forwardedToSubaddress = new ISDNSubaddressStringImpl();
 					((ISDNSubaddressStringImpl) this.forwardedToSubaddress).decodeAll(ais);
 					break;
 
 				case _TAG_forwardingOptions:
 					if (!ais.isTagPrimitive()) {
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".forwardingOptions: bad tag or tag class or not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".forwardingOptions: is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
 					}
 					this.forwardingOptions = new ExtForwOptionsImpl();
 					((ExtForwOptionsImpl) this.forwardingOptions).decodeAll(ais);
@@ -183,29 +188,35 @@ public class ExtForwFeatureImpl extends SequenceBase implements ExtForwFeature {
 
 				case _TAG_noReplyConditionTime:
 					if (!ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".noReplyConditionTime: bad tag or tag class or not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".noReplyConditionTime: is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
 					this.noReplyConditionTime = (int) ais.readInteger();
 					break;
 
 				case _TAG_extensionContainer:
+					if (ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
 					this.extensionContainer = new MAPExtensionContainerImpl();
 					((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
 					break;
 
 				case _TAG_longForwardedToNumber:
 					if (!ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".longForwardedToNumber: bad tag or tag class or not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".longForwardedToNumber: is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
 					this.longForwardedToNumber = new FTNAddressStringImpl();
 					((FTNAddressStringImpl) this.longForwardedToNumber).decodeAll(ais);
 					break;
-
+					
 				default:
 					ais.advanceElement();
 					break;
-
+				
 				}
+				break;
+
+			default:
+				ais.advanceElement();
+				break;
 			}
-			num++;
 		}
 
 		if (this.ssStatus == null)
@@ -241,7 +252,7 @@ public class ExtForwFeatureImpl extends SequenceBase implements ExtForwFeature {
 				((ExtForwOptionsImpl) this.forwardingOptions).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_forwardingOptions);
 
 			if (this.noReplyConditionTime != null)
-				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_noReplyConditionTime, (int) this.noReplyConditionTime);
+				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_noReplyConditionTime, this.noReplyConditionTime);
 
 			if (this.extensionContainer != null)
 				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_extensionContainer);

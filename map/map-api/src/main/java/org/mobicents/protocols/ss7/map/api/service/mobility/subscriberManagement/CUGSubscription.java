@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.util.ArrayList;
+
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
@@ -34,6 +36,9 @@ CUG-Subscription ::= SEQUENCE {
 	basicServiceGroupList	Ext-BasicServiceGroupList	OPTIONAL,
 	extensionContainer	[0] ExtensionContainer	OPTIONAL,
 	...}
+
+CUG-Index ::= INTEGER (0..32767)
+	-- The internal structure is defined in ETS 300 138.
 
 Ext-BasicServiceGroupList ::= SEQUENCE SIZE (1..32) OF Ext-BasicServiceCode
 
@@ -50,7 +55,7 @@ public interface CUGSubscription {
 
 	public IntraCUGOptions getIntraCugOptions();
 
-	public ExtBasicServiceCode getBasicServiceGroupList();
+	public ArrayList<ExtBasicServiceCode> getBasicServiceGroupList();
 
 	public MAPExtensionContainer getExtensionContainer();
 

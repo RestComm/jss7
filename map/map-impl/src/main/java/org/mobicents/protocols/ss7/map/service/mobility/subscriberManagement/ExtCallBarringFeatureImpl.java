@@ -42,6 +42,7 @@ import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Ext
 
 /**
  * @author daniel bichara
+ * @author sergey vetyutnev
  * 
  */
 public class ExtCallBarringFeatureImpl extends SequenceBase implements ExtCallBarringFeature {
@@ -87,32 +88,55 @@ public class ExtCallBarringFeatureImpl extends SequenceBase implements ExtCallBa
 
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 
-		int num = 0;
 		while (true) {
 			if (ais.available() == 0)
 				break;
 
 			int tag = ais.readTag();
 
-			if (num == 0 && tag != _TAG_ss_Status) {
-				if (!ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".basicService: bad tag or tag class or not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-				this.basicService = new ExtBasicServiceCodeImpl();
-				((ExtBasicServiceCodeImpl) this.basicService).decodeAll(ais);
-			} else {
-				if (num > 0 && tag != _TAG_ss_Status) {
-					this.extensionContainer = new MAPExtensionContainerImpl();
-					((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
-				} else {
-					if (tag == _TAG_ss_Status) {
-						if (!ais.isTagPrimitive())
-							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".ssStatus: bad tag or tag class or not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-						this.ssStatus = new ExtSSStatusImpl();
-						((ExtSSStatusImpl) this.ssStatus).decodeAll(ais);
-					}
+			switch (ais.getTagClass()) {
+			case Tag.CLASS_CONTEXT_SPECIFIC:
+				switch (tag) {
+				case ExtBasicServiceCodeImpl._ID_ext_BearerService:
+				case ExtBasicServiceCodeImpl._ID_ext_Teleservice:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+								+ ".basicService: is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+					this.basicService = new ExtBasicServiceCodeImpl();
+					((ExtBasicServiceCodeImpl) this.basicService).decodeAll(ais);
+					break;
+				case _TAG_ss_Status:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".ssStatus: is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.ssStatus = new ExtSSStatusImpl();
+					((ExtSSStatusImpl) this.ssStatus).decodeAll(ais);
+					break;
+				default:
+					ais.advanceElement();
+					break;
 				}
+				break;
+
+			case Tag.CLASS_UNIVERSAL:
+				switch (tag) {
+				case Tag.SEQUENCE:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+								+ ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+					this.extensionContainer = new MAPExtensionContainerImpl();
+					((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);						
+					break;
+				default:
+					ais.advanceElement();
+					break;
+				}
+				break;
+			
+			default:
+				ais.advanceElement();
+				break;
 			}
-			num++;
 		}
 
 		if (this.ssStatus == null)

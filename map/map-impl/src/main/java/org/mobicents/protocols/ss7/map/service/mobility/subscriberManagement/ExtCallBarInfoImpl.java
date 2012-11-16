@@ -43,6 +43,7 @@ import org.mobicents.protocols.ss7.map.service.supplementary.SSCodeImpl;
 
 /**
  * @author daniel bichara
+ * @author sergey vetyutnev
  * 
  */
 public class ExtCallBarInfoImpl extends SequenceBase implements ExtCallBarInfo {
@@ -96,17 +97,20 @@ public class ExtCallBarInfoImpl extends SequenceBase implements ExtCallBarInfo {
 
 			switch (num) {
 			case 0:	// ssCode
-				if (!ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".ssCode: bad tag or tag class or not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+				if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || tag != Tag.STRING_OCTET || !ais.isTagPrimitive())
+					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".ssCode: bad tag or tag class or not primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.ssCode = new SSCodeImpl();
 				((SSCodeImpl) this.ssCode).decodeAll(ais);
 				break;
+
 			case 1:	// callBarringFeatureList
-				if (ais.isTagPrimitive())
+				if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || tag != Tag.SEQUENCE || ais.isTagPrimitive())
 					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-							+ ".forwardingFeatureList: Parameter is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+							+ ".callBarringFeatureList: bad tag or tag class or is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
 
 				AsnInputStream ais2 = ais.readSequenceStream();
+				this.callBarringFeatureList = new ArrayList<ExtCallBarringFeature>();
 				while (true) {
 					if (ais2.available() == 0)
 						break;
@@ -114,35 +118,57 @@ public class ExtCallBarInfoImpl extends SequenceBase implements ExtCallBarInfo {
 					int tag2 = ais2.readTag();
 					if (tag2 != Tag.SEQUENCE || ais2.getTagClass() != Tag.CLASS_UNIVERSAL || ais2.isTagPrimitive())
 						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-								+ ": bad callBarringFeatureList tag or tagClass or is primitive ", MAPParsingComponentExceptionReason.MistypedParameter);
+								+ ": bad callBarringFeature tag or tagClass or is primitive ", MAPParsingComponentExceptionReason.MistypedParameter);
 
 					featureItem = new ExtCallBarringFeatureImpl();
 					((ExtCallBarringFeatureImpl) featureItem).decodeAll(ais2);
-					if (this.callBarringFeatureList == null)
-						this.callBarringFeatureList = new ArrayList<ExtCallBarringFeature>();
 					this.callBarringFeatureList.add(featureItem);
 				}
+
+				if (this.callBarringFeatureList.size() < 1 || this.callBarringFeatureList.size() > 32) {
+					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+							+ ": Parameter callBarringFeatureList size must be from 1 to 32, found: " + this.callBarringFeatureList.size(),
+							MAPParsingComponentExceptionReason.MistypedParameter);
+				}
 				break;
-			case 2:	// extensionContainer
-					this.extensionContainer = new MAPExtensionContainerImpl();
-					((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
-					break;
+
 			default:
-				ais.advanceElement();
-				break;
+				switch (ais.getTagClass()) {
+				case Tag.CLASS_CONTEXT_SPECIFIC:
+					switch (tag) {
+					default:
+						ais.advanceElement();
+						break;
+					}
+					break;
+
+				case Tag.CLASS_UNIVERSAL:
+					switch (tag) {
+					case Tag.SEQUENCE:
+						if (ais.isTagPrimitive())
+							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: Parameter is primitive",
+									MAPParsingComponentExceptionReason.MistypedParameter);
+						this.extensionContainer = new MAPExtensionContainerImpl();
+						((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+						break;
+					default:
+						ais.advanceElement();
+						break;
+					}
+					break;
+				
+				default:
+					ais.advanceElement();
+					break;
+				}
 			}
 			num++;
 		}
 
-		if (this.ssCode == null)
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": ssCode required.", MAPParsingComponentExceptionReason.MistypedParameter);
-
-		if (this.callBarringFeatureList == null)
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": callBarringFeatureList required.", MAPParsingComponentExceptionReason.MistypedParameter);
-
-		if (this.callBarringFeatureList.size() > 32) {
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter callBarringFeatureList size must be from 1 to 32, found: "
-					+ this.callBarringFeatureList.size(), MAPParsingComponentExceptionReason.MistypedParameter);
+		if (num < 2) {
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+					+ ": ssCode and callBarringFeatureList required, found only mandatory parameters: " + num,
+					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -170,7 +196,7 @@ public class ExtCallBarInfoImpl extends SequenceBase implements ExtCallBarInfo {
 
 			((SSCodeImpl) this.ssCode).encodeAll(asnOs);
 
-			asnOs.writeTag(Tag.CLASS_UNIVERSAL, true, Tag.SEQUENCE);
+			asnOs.writeTag(Tag.CLASS_UNIVERSAL, false, Tag.SEQUENCE);
 			int pos = asnOs.StartContentDefiniteLength();
 			for (ExtCallBarringFeature featureItem: this.callBarringFeatureList) {
 				((ExtCallBarringFeatureImpl) featureItem).encodeAll(asnOs);
@@ -197,9 +223,16 @@ public class ExtCallBarInfoImpl extends SequenceBase implements ExtCallBarInfo {
 		}
 
 		if (this.callBarringFeatureList != null) {
-			sb.append("callBarringFeatureList=");
-			sb.append(this.callBarringFeatureList.toString());
-			sb.append(", ");
+			sb.append("callBarringFeatureList=[");
+			boolean firstItem = true;
+			for (ExtCallBarringFeature be : this.callBarringFeatureList) {
+				if (firstItem)
+					firstItem = false;
+				else
+					sb.append(", ");
+				sb.append(be.toString());
+			}
+			sb.append("]");
 		}
 
 		if (this.extensionContainer != null) {

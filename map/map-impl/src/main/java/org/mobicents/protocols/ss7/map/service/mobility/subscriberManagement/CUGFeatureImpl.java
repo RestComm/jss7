@@ -41,6 +41,7 @@ import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Ext
 
 /**
  * @author daniel bichara
+ * @author sergey vetyutnev
  * 
  */
 public class CUGFeatureImpl extends SequenceBase implements CUGFeature {
@@ -91,34 +92,61 @@ public class CUGFeatureImpl extends SequenceBase implements CUGFeature {
 
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 
-		int num = 0;
 		while (true) {
 			if (ais.available() == 0)
 				break;
 
 			int tag = ais.readTag();
 
-			if (num == 0 && tag != Tag.INTEGER) {
-				if (!ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".basicService: bad tag or tag class or not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-				this.basicService = new ExtBasicServiceCodeImpl();
-				((ExtBasicServiceCodeImpl) this.basicService).decodeAll(ais);
-			} else {
-				if (tag == Tag.INTEGER) {
+			switch (ais.getTagClass()) {
+			case Tag.CLASS_CONTEXT_SPECIFIC:
+				switch (tag) {
+				case ExtBasicServiceCodeImpl._ID_ext_BearerService:
+				case ExtBasicServiceCodeImpl._ID_ext_Teleservice:
 					if (!ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".preferentialCugIndicator: bad tag or tag class or not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-					this.preferentialCugIndicator = (int) ais.readInteger();
-				} else {
-					if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC) {
-						this.interCugRestrictions = new InterCUGRestrictionsImpl();
-						((InterCUGRestrictionsImpl) this.interCugRestrictions).decodeAll(ais);						
-					} else {
-						this.extensionContainer = new MAPExtensionContainerImpl();
-						((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);						
-					}
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+								+ ".basicService: is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+					this.basicService = new ExtBasicServiceCodeImpl();
+					((ExtBasicServiceCodeImpl) this.basicService).decodeAll(ais);
+					break;
+				default:
+					ais.advanceElement();
+					break;
 				}
+				break;
+
+			case Tag.CLASS_UNIVERSAL:
+				switch (tag) {
+				case Tag.INTEGER:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+								+ ".preferentialCugIndicator: is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+					this.preferentialCugIndicator = (int) ais.readInteger();
+					break;
+				case Tag.STRING_OCTET:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+								+ ".interCugRestrictions: is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+					this.interCugRestrictions = new InterCUGRestrictionsImpl();
+					((InterCUGRestrictionsImpl) this.interCugRestrictions).decodeAll(ais);						
+					break;
+				case Tag.SEQUENCE:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+								+ ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+					this.extensionContainer = new MAPExtensionContainerImpl();
+					((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);						
+					break;
+				default:
+					ais.advanceElement();
+					break;
+				}
+				break;
+			
+			default:
+				ais.advanceElement();
+				break;
 			}
-			num++;
 		}
 
 		if (this.interCugRestrictions == null)
@@ -145,8 +173,7 @@ public class CUGFeatureImpl extends SequenceBase implements CUGFeature {
 			if (this.preferentialCugIndicator != null)
 				asnOs.writeInteger(this.preferentialCugIndicator);
 
-			if (this.interCugRestrictions != null)
-				((InterCUGRestrictionsImpl) this.interCugRestrictions).encodeAll(asnOs);
+			((InterCUGRestrictionsImpl) this.interCugRestrictions).encodeAll(asnOs);
 
 			if (this.extensionContainer != null)
 				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);

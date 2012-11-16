@@ -43,6 +43,7 @@ import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.CUG
 
 /**
  * @author daniel bichara
+ * @author sergey vetyutnev
  * 
  */
 public class CUGInfoImpl extends SequenceBase implements CUGInfo {
@@ -99,10 +100,11 @@ public class CUGInfoImpl extends SequenceBase implements CUGInfo {
 
 			switch (num) {
 			case 0:	// cugSubscriptionList
-				if (ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-							+ ".cugSubscriptionList: Parameter is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+				if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || tag != Tag.SEQUENCE || ais.isTagPrimitive())
+					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".cugSubscriptionList: Bad tag class, tag or parameter is primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
 
+				this.cugSubscriptionList = new ArrayList<CUGSubscription>();
 				AsnInputStream ais2a = ais.readSequenceStream();
 				while (true) {
 					if (ais2a.available() == 0)
@@ -115,39 +117,58 @@ public class CUGInfoImpl extends SequenceBase implements CUGInfo {
 
 					subscriptionItem = new CUGSubscriptionImpl();
 					((CUGSubscriptionImpl) subscriptionItem).decodeAll(ais2a);
-					if (this.cugSubscriptionList == null)
-						this.cugSubscriptionList = new ArrayList<CUGSubscription>();
 					this.cugSubscriptionList.add(subscriptionItem);
 				}
 				break;
-			case 1:	// cugFeatureList
-				if (ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-							+ ".cugFeatureList: Parameter is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
 
-				AsnInputStream ais2 = ais.readSequenceStream();
-				while (true) {
-					if (ais2.available() == 0)
-						break;
-
-					int tag2 = ais2.readTag();
-					if (tag2 != Tag.SEQUENCE || ais2.getTagClass() != Tag.CLASS_UNIVERSAL || ais2.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-								+ ": bad cugFeatureList tag or tagClass or is primitive ", MAPParsingComponentExceptionReason.MistypedParameter);
-
-					featureItem = new CUGFeatureImpl();
-					((CUGFeatureImpl) featureItem).decodeAll(ais2);
-					if (this.cugFeatureList == null)
-						this.cugFeatureList = new ArrayList<CUGFeature>();
-					this.cugFeatureList.add(featureItem);
-				}
-				break;
 			default:
-				switch (tag) {
-				case _TAG_extensionContainer:
-					this.extensionContainer = new MAPExtensionContainerImpl();
-					((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+				switch (ais.getTagClass()) {
+				case Tag.CLASS_CONTEXT_SPECIFIC:
+					switch (tag) {
+					case _TAG_extensionContainer:
+						if (ais.isTagPrimitive())
+							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive",
+									MAPParsingComponentExceptionReason.MistypedParameter);
+						this.extensionContainer = new MAPExtensionContainerImpl();
+						((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+						break;
+					
+					default:
+						ais.advanceElement();
+						break;
+					}
 					break;
+
+				case Tag.CLASS_UNIVERSAL:
+					switch (tag) {
+					case Tag.SEQUENCE: // cugFeatureList
+						if (ais.isTagPrimitive())
+							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+									+ ".cugFeatureList: Parameter is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+
+						this.cugFeatureList = new ArrayList<CUGFeature>();
+						AsnInputStream ais2 = ais.readSequenceStream();
+						while (true) {
+							if (ais2.available() == 0)
+								break;
+
+							int tag2 = ais2.readTag();
+							if (tag2 != Tag.SEQUENCE || ais2.getTagClass() != Tag.CLASS_UNIVERSAL || ais2.isTagPrimitive())
+								throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+										+ ": bad cugFeatureList tag or tagClass or is primitive ", MAPParsingComponentExceptionReason.MistypedParameter);
+
+							featureItem = new CUGFeatureImpl();
+							((CUGFeatureImpl) featureItem).decodeAll(ais2);
+							this.cugFeatureList.add(featureItem);
+						}
+						break;
+					
+					default:
+						ais.advanceElement();
+						break;
+					}
+					break;
+				
 				default:
 					ais.advanceElement();
 					break;
@@ -159,15 +180,15 @@ public class CUGInfoImpl extends SequenceBase implements CUGInfo {
 		if (this.cugSubscriptionList == null)
 			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": cugSubscriptionList required.", MAPParsingComponentExceptionReason.MistypedParameter);
 
-		if (this.cugFeatureList == null)
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": cugFeatureList required.", MAPParsingComponentExceptionReason.MistypedParameter);
+//		if (this.cugFeatureList == null)
+//			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": cugFeatureList required.", MAPParsingComponentExceptionReason.MistypedParameter);
 
 		if (this.cugSubscriptionList.size() > 10) {
 			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter cugSubscriptionList size must be from 0 to 10, found: "
 					+ this.cugSubscriptionList.size(), MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 
-		if (this.cugFeatureList.size() > 32) {
+		if (this.cugFeatureList.size() < 1 || this.cugFeatureList.size() > 32) {
 			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter cugFeatureList size must be from 1 to 32, found: "
 					+ this.cugFeatureList.size(), MAPParsingComponentExceptionReason.MistypedParameter);
 		}
@@ -184,35 +205,35 @@ public class CUGInfoImpl extends SequenceBase implements CUGInfo {
 
 		if (this.cugSubscriptionList == null)
 			throw new MAPException("Error while encoding " + _PrimitiveName + ": cugSubscriptionList required.");
-
-		if (this.cugFeatureList == null)
-			throw new MAPException("Error while encoding " + _PrimitiveName + ": cugFeatureList required.");
-
 		if (this.cugSubscriptionList.size() > 10) {
 			throw new MAPException("Error while encoding " + _PrimitiveName + ": Parameter cugSubscriptionList size must be from 0 to 10, found: "
 					+ this.cugSubscriptionList.size());
 		}
 
-		if (this.cugFeatureList.size() < 1 || this.cugFeatureList.size() > 32) {
-			throw new MAPException("Error while encoding " + _PrimitiveName + ": Parameter cugFeatureList size must be from 1 to 32, found: "
-					+ this.cugFeatureList.size());
+		if (this.cugFeatureList != null) {
+			if (this.cugFeatureList.size() < 1 || this.cugFeatureList.size() > 32) {
+				throw new MAPException("Error while encoding " + _PrimitiveName + ": Parameter cugFeatureList size must be from 1 to 32, found: "
+						+ this.cugFeatureList.size());
+			}
 		}
 
 		try {
 
-			asnOs.writeTag(Tag.CLASS_UNIVERSAL, true, Tag.SEQUENCE);
+			asnOs.writeTag(Tag.CLASS_UNIVERSAL, false, Tag.SEQUENCE);
 			int posa = asnOs.StartContentDefiniteLength();
 			for (CUGSubscription subscriptionItem: this.cugSubscriptionList) {
 				((CUGSubscriptionImpl) subscriptionItem).encodeAll(asnOs);
 			}
 			asnOs.FinalizeContent(posa);
 
-			asnOs.writeTag(Tag.CLASS_UNIVERSAL, true, Tag.SEQUENCE);
-			int posb = asnOs.StartContentDefiniteLength();
-			for (CUGFeature featureItem: this.cugFeatureList) {
-				((CUGFeatureImpl) featureItem).encodeAll(asnOs);
+			if (this.cugFeatureList != null) {
+				asnOs.writeTag(Tag.CLASS_UNIVERSAL, false, Tag.SEQUENCE);
+				int posb = asnOs.StartContentDefiniteLength();
+				for (CUGFeature featureItem : this.cugFeatureList) {
+					((CUGFeatureImpl) featureItem).encodeAll(asnOs);
+				}
+				asnOs.FinalizeContent(posb);
 			}
-			asnOs.FinalizeContent(posb);
 
 			if (this.extensionContainer != null)
 				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_extensionContainer);
@@ -228,15 +249,29 @@ public class CUGInfoImpl extends SequenceBase implements CUGInfo {
 		sb.append(_PrimitiveName + " [");
 
 		if (this.cugSubscriptionList != null) {
-			sb.append("cugSubscriptionList=");
-			sb.append(this.cugSubscriptionList.toString());
-			sb.append(", ");
+			sb.append("cugSubscriptionList=[");
+			boolean firstItem = true;
+			for (CUGSubscription be : this.cugSubscriptionList) {
+				if (firstItem)
+					firstItem = false;
+				else
+					sb.append(", ");
+				sb.append(be.toString());
+			}
+			sb.append("]");
 		}
 
 		if (this.cugFeatureList != null) {
-			sb.append("cugFeatureList=");
-			sb.append(this.cugFeatureList.toString());
-			sb.append(", ");
+			sb.append("cugFeatureList=[");
+			boolean firstItem = true;
+			for (CUGFeature be : this.cugFeatureList) {
+				if (firstItem)
+					firstItem = false;
+				else
+					sb.append(", ");
+				sb.append(be.toString());
+			}
+			sb.append("]");
 		}
 
 		if (this.extensionContainer != null) {
