@@ -156,7 +156,7 @@ public class CAPFunctionalTest extends SccpHarness {
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@BeforeMethod
-	public void setUp() {
+	public void setUp() throws Exception {
 		// this.setupLog4j();
 		System.out.println("setUpTest");
 		

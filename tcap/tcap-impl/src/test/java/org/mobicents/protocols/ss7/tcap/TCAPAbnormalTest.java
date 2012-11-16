@@ -80,7 +80,7 @@ public class TCAPAbnormalTest extends SccpHarness {
      * @see junit.framework.TestCase#setUp()
      */
 	@BeforeMethod
-	public void setUp() {
+	public void setUp() throws Exception {
 		System.out.println("setUp");
         super.setUp();
        
