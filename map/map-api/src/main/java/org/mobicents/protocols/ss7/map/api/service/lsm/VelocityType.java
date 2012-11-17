@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,39 +20,49 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.sccp.impl.router;
+package org.mobicents.protocols.ss7.map.api.service.lsm;
 
 /**
- * @author amit bhayani
- * @author sergey vetyutnev
- * 
- */
-public enum RuleType {
-	Solitary("Solitary"), Dominant("Dominant"), Loadshared("Loadshared");
+*
 
-	private static final String SOLITARY = "Solitary";
-	private static final String DOMINANT = "Dominant";
-	private static final String LOADSHARED = "Loadshared";
+0 0 0 0	Horizontal Velocity
+0 0 0 1	Horizontal with Vertical Velocity
+0 0 1 0	Horizontal Velocity with Uncertainty
+0 0 1 1	Horizontal with Vertical Velocity and Uncertainty
 
-	private final String type;
+* 
+* @author sergey vetyutnev
+* 
+*/
+public enum VelocityType {
+	HorizontalVelocity(0),
+	HorizontalWithVerticalVelocity(1),
+	HorizontalVelocityWithUncertainty(2),
+	HorizontalWithVerticalVelocityAndUncertainty(3);
 
-	private RuleType(String type) {
+	private final int type;
+	
+	private VelocityType(int type){
 		this.type = type;
 	}
-
-	public static RuleType getInstance(String type) {
-		if (SOLITARY.equalsIgnoreCase(type)) {
-			return Solitary;
-		} else if (DOMINANT.equalsIgnoreCase(type)) {
-			return Dominant;
-		} else if (LOADSHARED.equalsIgnoreCase(type)) {
-			return Loadshared;
-		}
-
-		return null;
+	
+	public int getCode(){
+		return this.type;
 	}
 	
-	public String getType(){
-		return this.type;
+	public static VelocityType getInstance(int type){
+		switch(type){
+		case 0:
+			return HorizontalVelocity;
+		case 1:
+			return HorizontalWithVerticalVelocity;
+		case 2:
+			return HorizontalVelocityWithUncertainty;
+		case 3:
+			return HorizontalWithVerticalVelocityAndUncertainty;
+
+		default:
+				return null;
+		}
 	}
 }

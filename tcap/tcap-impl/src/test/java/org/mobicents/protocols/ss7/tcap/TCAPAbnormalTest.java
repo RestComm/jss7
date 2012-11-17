@@ -27,7 +27,6 @@ import static org.testng.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
@@ -36,9 +35,7 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.TRPseudoState;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
-import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -68,7 +65,7 @@ public class TCAPAbnormalTest extends SccpHarness {
     }
     
 	@BeforeClass
-	public void setUpClass() throws Exception {
+	public void setUpClass() {
 		this.sccpStack1Name = "TCAPFunctionalTestSccpStack1";
 		this.sccpStack2Name = "TCAPFunctionalTestSccpStack2";
 		System.out.println("setUpClass");
@@ -83,7 +80,7 @@ public class TCAPAbnormalTest extends SccpHarness {
      * @see junit.framework.TestCase#setUp()
      */
 	@BeforeMethod
-	public void setUp() throws IllegalStateException {
+	public void setUp() {
 		System.out.println("setUp");
         super.setUp();
        

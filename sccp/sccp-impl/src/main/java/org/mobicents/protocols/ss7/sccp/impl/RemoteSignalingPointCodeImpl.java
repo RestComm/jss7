@@ -26,11 +26,13 @@ import javolution.xml.XMLFormat;
 import javolution.xml.XMLSerializable;
 import javolution.xml.stream.XMLStreamException;
 
+import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
+
 /**
  * @author amit bhayani
  * 
  */
-public class RemoteSignalingPointCodeImpl implements XMLSerializable {
+public class RemoteSignalingPointCodeImpl implements XMLSerializable, RemoteSignalingPointCode {
 	private static final String REMOTE_SPC = "remoteSpc";
 	private static final String REMOTE_SPC_FLAG = "remoteSpcFlag";
 	private static final String MASK = "mask";
@@ -74,12 +76,33 @@ public class RemoteSignalingPointCodeImpl implements XMLSerializable {
 		return remoteSccpProhibited;
 	}
 
-	public void setRemoteSpcProhibited(boolean remoteSpcProhibited) {
+	protected void setRemoteSpcProhibited(boolean remoteSpcProhibited) {
 		this.remoteSpcProhibited = remoteSpcProhibited;
 	}
 
-	public void setRemoteSccpProhibited(boolean remoteSccpProhibited) {
+	protected void setRemoteSccpProhibited(boolean remoteSccpProhibited) {
 		this.remoteSccpProhibited = remoteSccpProhibited;
+	}
+
+	/**
+	 * @param remoteSpc the remoteSpc to set
+	 */
+	protected void setRemoteSpc(int remoteSpc) {
+		this.remoteSpc = remoteSpc;
+	}
+
+	/**
+	 * @param remoteSpcFlag the remoteSpcFlag to set
+	 */
+	protected void setRemoteSpcFlag(int remoteSpcFlag) {
+		this.remoteSpcFlag = remoteSpcFlag;
+	}
+
+	/**
+	 * @param mask the mask to set
+	 */
+	protected void setMask(int mask) {
+		this.mask = mask;
 	}
 
 	@Override

@@ -31,6 +31,14 @@ import org.mobicents.protocols.ss7.mtp.Mtp3;
 import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitiveFactory;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
+import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
+import org.mobicents.protocols.ss7.sccp.LongMessageRule;
+import org.mobicents.protocols.ss7.sccp.LongMessageRuleType;
+import org.mobicents.protocols.ss7.sccp.Mtp3ServiceAccessPoint;
+import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
+import org.mobicents.protocols.ss7.sccp.RemoteSubSystem;
+import org.mobicents.protocols.ss7.sccp.Rule;
+import org.mobicents.protocols.ss7.sccp.RuleType;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.impl.message.EncodingResultData;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
@@ -39,12 +47,6 @@ import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpNoticeMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl;
-import org.mobicents.protocols.ss7.sccp.impl.router.LoadSharingAlgorithm;
-import org.mobicents.protocols.ss7.sccp.impl.router.LongMessageRule;
-import org.mobicents.protocols.ss7.sccp.impl.router.LongMessageRuleType;
-import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3ServiceAccessPoint;
-import org.mobicents.protocols.ss7.sccp.impl.router.Rule;
-import org.mobicents.protocols.ss7.sccp.impl.router.RuleType;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
@@ -254,7 +256,7 @@ public class SccpRoutingControl {
 		}
 
 		// Check if the DPC is prohibited
-		RemoteSignalingPointCodeImpl remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpcByPC(translationAddress.getSignalingPointCode());
+		RemoteSignalingPointCode remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpcByPC(translationAddress.getSignalingPointCode());
 		if (remoteSpc == null) {
 			if (logger.isEnabledFor(Level.WARN)) {
 				logger.warn(String.format("Received SccpMessage=%s for Translation but no %s Remote Signaling Pointcode = %d resource defined ", msg, destName,
@@ -273,7 +275,7 @@ public class SccpRoutingControl {
 
 		if (translationAddress.getAddressIndicator().getRoutingIndicator() == RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN) {
 			if (targetSsn != 1) {
-				RemoteSubSystemImpl remoteSubSystem = this.sccpStackImpl.getSccpResource().getRemoteSsn(translationAddress.getSignalingPointCode(), targetSsn);
+				RemoteSubSystem remoteSubSystem = this.sccpStackImpl.getSccpResource().getRemoteSsn(translationAddress.getSignalingPointCode(), targetSsn);
 				if (remoteSubSystem == null) {
 					if (logger.isEnabledFor(Level.WARN)) {
 						logger.warn(String.format("Received SccpMessage=%s for Translation but no %s Remote SubSystem = %d (dpc=%d) resource defined ", msg,
@@ -508,7 +510,7 @@ public class SccpRoutingControl {
 				// DPC present but its not local pointcode. This message should be Tx to MTP
 
 				// Check if the DPC is not prohibited
-				RemoteSignalingPointCodeImpl remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpcByPC(dpc);
+				RemoteSignalingPointCode remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpcByPC(dpc);
 				if (remoteSpc == null) {
 					if (logger.isEnabledFor(Level.WARN)) {
 						logger.warn(String.format("Received SccpMessage=%s for routing but no Remote Signaling Pointcode = %d resource defined ", msg, dpc));
@@ -531,7 +533,7 @@ public class SccpRoutingControl {
 						// contain this SSN and the routing indicator shall be set
 						// to "Route on SSN"; See 2.2.2.1 point 2 of ITU-T Q.714
 						// If routing based on SSN, check remote SSN is available
-						RemoteSubSystemImpl remoteSsn = this.sccpStackImpl.getSccpResource().getRemoteSsn(dpc, calledPartyAddress.getSubsystemNumber());
+						RemoteSubSystem remoteSsn = this.sccpStackImpl.getSccpResource().getRemoteSsn(dpc, calledPartyAddress.getSubsystemNumber());
 						if (remoteSsn == null) {
 							if (logger.isEnabledFor(Level.WARN)) {
 								logger.warn(String.format("Received SCCPMessage=%s for routing, but no Remote SubSystem = %d resource defined ", msg,

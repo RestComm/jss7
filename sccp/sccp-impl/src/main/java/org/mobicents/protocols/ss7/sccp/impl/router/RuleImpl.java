@@ -30,6 +30,9 @@ import javolution.xml.stream.XMLStreamException;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
+import org.mobicents.protocols.ss7.sccp.Rule;
+import org.mobicents.protocols.ss7.sccp.RuleType;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0001;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0010;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0011;
@@ -42,7 +45,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * @author kulikov
  * @author sergey vetyutnev
  */
-public class Rule implements Serializable {
+public class RuleImpl implements Rule, Serializable {
 
 	private static final String WILD_CARD_ALL = "*";
 	private static final String WILD_CARD_SINGLE = "?";
@@ -51,7 +54,7 @@ public class Rule implements Serializable {
 	private static final String MASK_REPLACE = "R";
 	private static final String MASK_IGNORE = "-";
 
-	private static final Logger logger = Logger.getLogger(Rule.class);
+	private static final Logger logger = Logger.getLogger(RuleImpl.class);
 	/**
 	 * 
 	 */
@@ -85,7 +88,7 @@ public class Rule implements Serializable {
 
 	private String[] maskPattern = null;
 
-	public Rule() {
+	public RuleImpl() {
 
 	}
 
@@ -101,13 +104,20 @@ public class Rule implements Serializable {
 	 * @param mtpInfo
 	 *            MTP routing info
 	 */
-	public Rule(RuleType ruleType, LoadSharingAlgorithm loadSharingAlgo, SccpAddress pattern, String mask) {
+	public RuleImpl(RuleType ruleType, LoadSharingAlgorithm loadSharingAlgo, SccpAddress pattern, String mask) {
 		this.ruleType = ruleType;
 		this.pattern = pattern;
 		this.mask = mask;
 		this.setLoadSharingAlgorithm(loadSharingAlgo);
 
 		configure();
+	}
+
+	/**
+	 * @return the mask
+	 */
+	public String getMask() {
+		return mask;
 	}
 
 	/**
@@ -462,9 +472,9 @@ public class Rule implements Serializable {
 	/**
 	 * XML Serialization/Deserialization
 	 */
-	protected static final XMLFormat<Rule> RULE_XML = new XMLFormat<Rule>(Rule.class) {
+	protected static final XMLFormat<RuleImpl> RULE_XML = new XMLFormat<RuleImpl>(RuleImpl.class) {
 
-		public void read(javolution.xml.XMLFormat.InputElement xml, Rule rule) throws XMLStreamException {
+		public void read(javolution.xml.XMLFormat.InputElement xml, RuleImpl rule) throws XMLStreamException {
 			rule.ruleType = RuleType.getInstance(xml.getAttribute(RULETYPE, RuleType.Solitary.getType()));
 			rule.loadSharingAlgo = LoadSharingAlgorithm.getInstance(xml.getAttribute(LS_ALGO, LoadSharingAlgorithm.Undefined.getAlgo()));
 			rule.mask = xml.getAttribute(MASK).toString();
@@ -474,7 +484,7 @@ public class Rule implements Serializable {
 			rule.configure();
 		}
 
-		public void write(Rule rule, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+		public void write(RuleImpl rule, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
 			xml.setAttribute(RULETYPE, rule.ruleType.toString());
 			xml.setAttribute(LS_ALGO, rule.loadSharingAlgo.toString());
 			xml.setAttribute(MASK, rule.mask);

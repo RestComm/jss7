@@ -123,11 +123,13 @@ public class AsImpl implements XMLSerializable, As {
 
 	}
 
-	public AsImpl(String name, RoutingContext rc, TrafficModeType trMode, Functionality functionality,
-			ExchangeType exchangeType, IPSPType ipspType, NetworkAppearance networkAppearance) {
+	public AsImpl(String name, RoutingContext rc, TrafficModeType trMode, int minAspActiveForLoadbalance,
+			Functionality functionality, ExchangeType exchangeType, IPSPType ipspType,
+			NetworkAppearance networkAppearance) {
 		this.name = name;
 		this.rc = rc;
 		this.trMode = trMode;
+		this.minAspActiveForLb = minAspActiveForLoadbalance;
 		this.functionality = functionality;
 		this.exchangeType = exchangeType;
 		this.ipspType = ipspType;

@@ -84,7 +84,7 @@ public class DialogIdleTest extends SccpHarness {
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@BeforeMethod
-	public void setUp() throws IllegalStateException {
+	public void setUp() {
 		System.out.println("setUp");
 		super.setUp();
 

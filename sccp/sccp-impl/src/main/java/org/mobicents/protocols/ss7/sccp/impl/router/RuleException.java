@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -29,18 +29,18 @@ package org.mobicents.protocols.ss7.sccp.impl.router;
  */
 public class RuleException extends RuntimeException {
 
-	private Rule rule;
+	private RuleImpl rule;
 	/**
 	 * 
 	 */
-	public RuleException(Rule rule) {
+	public RuleException(RuleImpl rule) {
 		this.rule = rule;
 	}
 
 	/**
 	 * @param message
 	 */
-	public RuleException(String message,Rule rule) {
+	public RuleException(String message,RuleImpl rule) {
 		super(message);
 		this.rule = rule;
 	}
@@ -48,7 +48,7 @@ public class RuleException extends RuntimeException {
 	/**
 	 * @param cause
 	 */
-	public RuleException(Throwable cause,Rule rule) {
+	public RuleException(Throwable cause,RuleImpl rule) {
 		super(cause);
 		this.rule = rule;
 	}
@@ -57,7 +57,7 @@ public class RuleException extends RuntimeException {
 	 * @param message
 	 * @param cause
 	 */
-	public RuleException(String message, Throwable cause,Rule rule) {
+	public RuleException(String message, Throwable cause,RuleImpl rule) {
 		super(message, cause);
 		this.rule = rule;
 	}

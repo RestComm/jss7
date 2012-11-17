@@ -137,17 +137,17 @@ public class IPSPServerFSMTest {
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
 		// As remAs = sgw.createAppServer("testas", rc, rKey, trModType);
-		AsImpl remAs = (AsImpl)serverM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, IPSPType.SERVER, rc, null,
-				null);
+		AsImpl remAs = (AsImpl) serverM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, IPSPType.SERVER,
+				rc, null, 1, null);
 		FSM asLocalFSM = remAs.getLocalFSM();
 
-		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl)serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
+		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
 
 		AspImpl remAsp = serverM3UAMgmt.assignAspToAs("testas", "testasp");
-		
+
 		// Create Route
 		this.serverM3UAMgmt.addRoute(2, -1, -1, "testas");
-		
+
 		FSM aspPeerFSM = remAsp.getPeerFSM();
 
 		// Check for Communication UP
@@ -175,16 +175,16 @@ public class IPSPServerFSMTest {
 				-1, -1));
 		// also the AS should be ACTIVE now
 		assertEquals(AsState.ACTIVE, this.getAsState(asLocalFSM));
-		
+
 		// Check if MTP3 RESUME received
-		//lets wait for 2second to receive the MTP3 primitive before giving up 
+		// lets wait for 2second to receive the MTP3 primitive before giving up
 		semaphore.tryAcquire(2000, TimeUnit.MILLISECONDS);
-		
+
 		Mtp3Primitive mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
 		assertNotNull(mtp3Primitive);
 		assertEquals(Mtp3Primitive.RESUME, mtp3Primitive.getType());
 		assertEquals(2, mtp3Primitive.getAffectedDpc());
-		//No more MTP3 Primitive or message
+		// No more MTP3 Primitive or message
 		assertNull(this.mtp3UserPartListener.rxMtp3PrimitivePoll());
 		assertNull(this.mtp3UserPartListener.rxMtp3TransferPrimitivePoll());
 
@@ -209,18 +209,19 @@ public class IPSPServerFSMTest {
 		assertEquals(AspState.DOWN, this.getAspState(aspPeerFSM));
 		assertTrue(validateMessage(testAssociation, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN_ACK, -1,
 				-1));
-		
+
 		// also the AS is PENDING
 		assertEquals(AsState.PENDING, this.getAsState(asLocalFSM));
-		
-		//lets wait for 3 seconds to receive the MTP3 primitive before giving up. We know Pending timeout is 2 secs
+
+		// lets wait for 3 seconds to receive the MTP3 primitive before giving
+		// up. We know Pending timeout is 2 secs
 		semaphore.tryAcquire(3000, TimeUnit.MILLISECONDS);
 
 		mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
 		assertNotNull(mtp3Primitive);
 		assertEquals(Mtp3Primitive.PAUSE, mtp3Primitive.getType());
 		assertEquals(2, mtp3Primitive.getAffectedDpc());
-		//No more MTP3 Primitive or message
+		// No more MTP3 Primitive or message
 		assertNull(this.mtp3UserPartListener.rxMtp3PrimitivePoll());
 		assertNull(this.mtp3UserPartListener.rxMtp3TransferPrimitivePoll());
 
@@ -234,17 +235,17 @@ public class IPSPServerFSMTest {
 		TestAssociation testAssociation = (TestAssociation) this.transportManagement.addAssociation(null, 0, null, 0,
 				"testAssoc1");
 
-		AsImpl remAs = (AsImpl)serverM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, IPSPType.SERVER, null, null,
-				null);
+		AsImpl remAs = (AsImpl) serverM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, IPSPType.SERVER,
+				null, null, 1, null);
 		FSM asLocalFSM = remAs.getLocalFSM();
 
-		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl)serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
+		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
 
 		AspImpl remAsp = serverM3UAMgmt.assignAspToAs("testas", "testasp");
-		
+
 		// Create Route
 		this.serverM3UAMgmt.addRoute(2, -1, -1, "testas");
-		
+
 		FSM aspPeerFSM = remAsp.getPeerFSM();
 
 		// Check for Communication UP
@@ -270,16 +271,16 @@ public class IPSPServerFSMTest {
 				-1, -1));
 		// also the AS should be ACTIVE now
 		assertEquals(AsState.ACTIVE, this.getAsState(asLocalFSM));
-		
+
 		// Check if MTP3 RESUME received
-		//lets wait for 2second to receive the MTP3 primitive before giving up 
+		// lets wait for 2second to receive the MTP3 primitive before giving up
 		semaphore.tryAcquire(2000, TimeUnit.MILLISECONDS);
-		
+
 		Mtp3Primitive mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
 		assertNotNull(mtp3Primitive);
 		assertEquals(Mtp3Primitive.RESUME, mtp3Primitive.getType());
 		assertEquals(2, mtp3Primitive.getAffectedDpc());
-		//No more MTP3 Primitive or message
+		// No more MTP3 Primitive or message
 		assertNull(this.mtp3UserPartListener.rxMtp3PrimitivePoll());
 		assertNull(this.mtp3UserPartListener.rxMtp3TransferPrimitivePoll());
 
@@ -302,18 +303,19 @@ public class IPSPServerFSMTest {
 		assertEquals(AspState.DOWN, this.getAspState(aspPeerFSM));
 		assertTrue(validateMessage(testAssociation, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN_ACK, -1,
 				-1));
-		
+
 		// also the AS is PENDING
 		assertEquals(AsState.PENDING, this.getAsState(asLocalFSM));
-		
-		//lets wait for 3 seconds to receive the MTP3 primitive before giving up. We know Pending timeout is 2 secs
+
+		// lets wait for 3 seconds to receive the MTP3 primitive before giving
+		// up. We know Pending timeout is 2 secs
 		semaphore.tryAcquire(3000, TimeUnit.MILLISECONDS);
-		
+
 		mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
 		assertNotNull(mtp3Primitive);
 		assertEquals(Mtp3Primitive.PAUSE, mtp3Primitive.getType());
 		assertEquals(2, mtp3Primitive.getAffectedDpc());
-		//No more MTP3 Primitive or message
+		// No more MTP3 Primitive or message
 		assertNull(this.mtp3UserPartListener.rxMtp3PrimitivePoll());
 		assertNull(this.mtp3UserPartListener.rxMtp3TransferPrimitivePoll());
 
@@ -335,16 +337,16 @@ public class IPSPServerFSMTest {
 
 		// As remAs = sgw.createAppServer("testas", rc, rKey, trModType);
 
-		AsImpl remAs = (AsImpl)serverM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, IPSPType.SERVER, rc,
-				trModType, null);
+		AsImpl remAs = (AsImpl) serverM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, IPSPType.SERVER,
+				rc, trModType, 1, null);
 
-		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl)serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
+		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
 
 		AspImpl remAsp = serverM3UAMgmt.assignAspToAs("testas", "testasp");
-		
+
 		// Create Route
 		this.serverM3UAMgmt.addRoute(2, -1, -1, "testas");
-		
+
 		FSM aspPeerFSM = remAsp.getPeerFSM();
 
 		FSM asLocalFSM = remAs.getLocalFSM();
@@ -372,16 +374,16 @@ public class IPSPServerFSMTest {
 				-1, -1));
 		// also the AS should be ACTIVE now
 		assertEquals(AsState.ACTIVE, this.getAsState(asLocalFSM));
-		
+
 		// Check if MTP3 RESUME received
-		//lets wait for 2second to receive the MTP3 primitive before giving up 
+		// lets wait for 2second to receive the MTP3 primitive before giving up
 		semaphore.tryAcquire(2000, TimeUnit.MILLISECONDS);
-		
+
 		Mtp3Primitive mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
 		assertNotNull(mtp3Primitive);
 		assertEquals(Mtp3Primitive.RESUME, mtp3Primitive.getType());
 		assertEquals(2, mtp3Primitive.getAffectedDpc());
-		//No more MTP3 Primitive or message
+		// No more MTP3 Primitive or message
 		assertNull(this.mtp3UserPartListener.rxMtp3PrimitivePoll());
 		assertNull(this.mtp3UserPartListener.rxMtp3TransferPrimitivePoll());
 
@@ -399,14 +401,15 @@ public class IPSPServerFSMTest {
 		// also the AS should be PENDING now
 		assertEquals(AsState.PENDING, this.getAsState(asLocalFSM));
 
-		//lets wait for 3 seconds to receive the MTP3 primitive before giving up. We know Pending timeout is 2 secs
+		// lets wait for 3 seconds to receive the MTP3 primitive before giving
+		// up. We know Pending timeout is 2 secs
 		semaphore.tryAcquire(3000, TimeUnit.MILLISECONDS);
-		
+
 		mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
 		assertNotNull(mtp3Primitive);
 		assertEquals(Mtp3Primitive.PAUSE, mtp3Primitive.getType());
 		assertEquals(2, mtp3Primitive.getAffectedDpc());
-		//No more MTP3 Primitive or message
+		// No more MTP3 Primitive or message
 		assertNull(this.mtp3UserPartListener.rxMtp3PrimitivePoll());
 		assertNull(this.mtp3UserPartListener.rxMtp3TransferPrimitivePoll());
 
@@ -425,17 +428,17 @@ public class IPSPServerFSMTest {
 
 		TrafficModeType trModType = parmFactory.createTrafficModeType(TrafficModeType.Override);
 
-		AsImpl remAs = (AsImpl)serverM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, IPSPType.SERVER, rc,
-				trModType, null);
+		AsImpl remAs = (AsImpl) serverM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, IPSPType.SERVER,
+				rc, trModType, 1, null);
 		FSM asLocalFSM = remAs.getLocalFSM();
 
-		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl)serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
+		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
 
 		AspImpl remAsp = serverM3UAMgmt.assignAspToAs("testas", "testasp");
-		
+
 		// Create Route
 		this.serverM3UAMgmt.addRoute(2, -1, -1, "testas");
-		
+
 		FSM aspPeerFSM = remAsp.getPeerFSM();
 
 		// Check for Communication UP
@@ -461,16 +464,16 @@ public class IPSPServerFSMTest {
 				-1, -1));
 		// also the AS should be ACTIVE now
 		assertEquals(AsState.ACTIVE, this.getAsState(asLocalFSM));
-		
+
 		// Check if MTP3 RESUME received
-		//lets wait for 2second to receive the MTP3 primitive before giving up 
+		// lets wait for 2second to receive the MTP3 primitive before giving up
 		semaphore.tryAcquire(2000, TimeUnit.MILLISECONDS);
-		
+
 		Mtp3Primitive mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
 		assertNotNull(mtp3Primitive);
 		assertEquals(Mtp3Primitive.RESUME, mtp3Primitive.getType());
 		assertEquals(2, mtp3Primitive.getAffectedDpc());
-		//No more MTP3 Primitive or message
+		// No more MTP3 Primitive or message
 		assertNull(this.mtp3UserPartListener.rxMtp3PrimitivePoll());
 		assertNull(this.mtp3UserPartListener.rxMtp3TransferPrimitivePoll());
 
@@ -509,8 +512,8 @@ public class IPSPServerFSMTest {
 		assertNotNull(payLoadTemp);
 		assertEquals(MessageClass.TRANSFER_MESSAGES, payLoadTemp.getMessageClass());
 		assertEquals(MessageType.PAYLOAD, payLoadTemp.getMessageType());
-		
-		//No more MTP3 Primitive or message
+
+		// No more MTP3 Primitive or message
 		assertNull(this.mtp3UserPartListener.rxMtp3PrimitivePoll());
 		assertNull(this.mtp3UserPartListener.rxMtp3TransferPrimitivePoll());
 
@@ -635,7 +638,7 @@ public class IPSPServerFSMTest {
 		}
 
 		public void signalCommUp() {
-			this.associationListener.onCommunicationUp(this,1,1);
+			this.associationListener.onCommunicationUp(this, 1, 1);
 		}
 
 		public void signalCommLost() {
@@ -660,7 +663,9 @@ public class IPSPServerFSMTest {
 			return null;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.mobicents.protocols.api.Association#isConnected()
 		 */
 		@Override
@@ -672,19 +677,19 @@ public class IPSPServerFSMTest {
 		@Override
 		public void acceptAnonymousAssociation(AssociationListener arg0) throws Exception {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void rejectAnonymousAssociation() {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void stopAnonymousAssociation() throws Exception {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 	}
@@ -825,14 +830,15 @@ public class IPSPServerFSMTest {
 		}
 
 		@Override
-		public Association addAssociation(String arg0, int arg1, String arg2, int arg3, String arg4, IpChannelType arg5, String[] extraHostAddresses)
-				throws Exception {
+		public Association addAssociation(String arg0, int arg1, String arg2, int arg3, String arg4,
+				IpChannelType arg5, String[] extraHostAddresses) throws Exception {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
-		public Server addServer(String arg0, String arg1, int arg2, IpChannelType arg3, String[] extraHostAddresses) throws Exception {
+		public Server addServer(String arg0, String arg1, int arg2, IpChannelType arg3, String[] extraHostAddresses)
+				throws Exception {
 			// TODO Auto-generated method stub
 			return null;
 		}
@@ -853,11 +859,12 @@ public class IPSPServerFSMTest {
 		@Override
 		public void addManagementEventListener(ManagementEventListener arg0) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
-		public Server addServer(String arg0, String arg1, int arg2, IpChannelType arg3, boolean arg4, int arg5, String[] arg6) throws Exception {
+		public Server addServer(String arg0, String arg1, int arg2, IpChannelType arg3, boolean arg4, int arg5,
+				String[] arg6) throws Exception {
 			// TODO Auto-generated method stub
 			return null;
 		}
@@ -871,16 +878,18 @@ public class IPSPServerFSMTest {
 		@Override
 		public void removeManagementEventListener(ManagementEventListener arg0) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void setServerListener(ServerListener arg0) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.mobicents.protocols.api.Management#isStarted()
 		 */
 		@Override
@@ -890,7 +899,7 @@ public class IPSPServerFSMTest {
 		}
 
 	}
-	
+
 	class Mtp3UserPartListenerimpl implements Mtp3UserPartListener {
 		private LinkedList<Mtp3Primitive> mtp3Primitives = new LinkedList<Mtp3Primitive>();
 		private LinkedList<Mtp3TransferPrimitive> mtp3TransferPrimitives = new LinkedList<Mtp3TransferPrimitive>();

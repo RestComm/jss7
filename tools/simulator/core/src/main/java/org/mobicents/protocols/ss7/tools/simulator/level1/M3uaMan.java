@@ -548,7 +548,7 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 		RoutingContext rc = factory.createRoutingContext(new long[] { this.routingConext });
 		TrafficModeType trafficModeType = factory.createTrafficModeType(TrafficModeType.Loadshare);
 		NetworkAppearance na = factory.createNetworkAppearance(this.networkAppearance);
-		localAs = m3uaMgmt.createAs("testas", this.m3uaFunctionality, this.m3uaExchangeType, this.m3uaIPSPType, rc, trafficModeType, na);
+		localAs = m3uaMgmt.createAs("testas", this.m3uaFunctionality, this.m3uaExchangeType, this.m3uaIPSPType, rc, trafficModeType, 1, na);
 
 		// 2. Create ASP
 		localAspFactory = m3uaMgmt.createAspFactory("testasp", assName);

@@ -598,7 +598,7 @@ public class PDPContextImpl extends SequenceBase implements PDPContext {
 			throw new MAPException("AsnException when encoding PDPContext : " + e.getMessage(), e);
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

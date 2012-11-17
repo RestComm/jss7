@@ -4,7 +4,8 @@ Name
 SYNOPSIS
 	m3ua as create <as-name> <AS | SGW | IPSP> mode <SE | DE> 
 	ipspType <client | server> rc <routing- context> traffic-mode <traffic mode> 
-	<network-appearance>
+	min-asp <minimum asp active for TrafficModeType.Loadshare>
+	network-appearance <network appearance value> 
 
 DESCRIPTION
 	This command is used to create a new Application Server. 
@@ -59,6 +60,14 @@ PARAMETERS
 
 					This is an optional parameter and if not specified
 					the default mode is 'loadshare'.
+					
+	<min-asp>			-	You may choose to specify the minumum asp 
+					active for traffic mode 'loadshare' before the  
+					payload starts flowing.
+
+					This is an optional parameter and if not specified
+					the default value is 1. Also if traffic-mode is not 	
+					'loadshare' setting this value has no effect.				
 	
 	<network-appearance>	-	This is a M3UA local reference (typically an 
 					integer) shared by SG and AS. This value together 
@@ -76,11 +85,12 @@ EXAMPLES
 	of type IPSP (Server), Double Exchange mode. The Routing Context is 1 and 
 	traffic-mode is 'loadshare'.  
 
-	m3ua as create AS2 AS mode SE rc 100 traffic-mode loadshare network-appearance 12 
+	m3ua as create AS2 AS mode SE rc 100 traffic-mode loadshare 2 network-appearance 12 
 	
 	The above command will create a new M3UA Application Server identified as AS2, 
 	of type AS, Single Exchange mode. The Routing Context is 100, 
-	traffic-mode is 'loadshare' and the network-appearance value is 12.  
+	traffic-mode is 'loadshare' and minimun asp to be active for payload transfer is 2. 
+	The network-appearance value is 12.  
 
 SEE ALSO
 	m3ua as destroy, m3ua as show, m3ua asp create, m3ua asp destroy, m3ua asp show, 

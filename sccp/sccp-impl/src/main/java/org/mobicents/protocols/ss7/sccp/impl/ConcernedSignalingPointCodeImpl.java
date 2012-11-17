@@ -26,12 +26,15 @@ import javolution.xml.XMLFormat;
 import javolution.xml.XMLSerializable;
 import javolution.xml.stream.XMLStreamException;
 
+import org.mobicents.protocols.ss7.sccp.ConcernedSignalingPointCode;
+
 /**
  * 
  * @author sergey vetyutnev
+ * @author Amit Bhayani
  * 
  */
-public class ConcernedSignalingPointCodeImpl implements XMLSerializable {
+public class ConcernedSignalingPointCodeImpl implements ConcernedSignalingPointCode, XMLSerializable {
 	private static final String REMOTE_SPC = "remoteSpc";
 
 	private int remoteSpc;
@@ -45,6 +48,13 @@ public class ConcernedSignalingPointCodeImpl implements XMLSerializable {
 
 	public int getRemoteSpc() {
 		return remoteSpc;
+	}
+
+	/**
+	 * @param remoteSpc the remoteSpc to set
+	 */
+	protected void setRemoteSpc(int remoteSpc) {
+		this.remoteSpc = remoteSpc;
 	}
 
 	@Override

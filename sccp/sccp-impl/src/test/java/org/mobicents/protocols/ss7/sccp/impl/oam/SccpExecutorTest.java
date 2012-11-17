@@ -38,19 +38,19 @@ import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitiveFactory;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPartListener;
 import org.mobicents.protocols.ss7.mtp.RoutingLabelFormat;
-import org.mobicents.protocols.ss7.sccp.impl.ConcernedSignalingPointCodeImpl;
-import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCodeImpl;
-import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystemImpl;
-import org.mobicents.protocols.ss7.sccp.impl.SccpResource;
+import org.mobicents.protocols.ss7.sccp.ConcernedSignalingPointCode;
+import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
+import org.mobicents.protocols.ss7.sccp.LongMessageRule;
+import org.mobicents.protocols.ss7.sccp.LongMessageRuleType;
+import org.mobicents.protocols.ss7.sccp.Mtp3Destination;
+import org.mobicents.protocols.ss7.sccp.Mtp3ServiceAccessPoint;
+import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
+import org.mobicents.protocols.ss7.sccp.RemoteSubSystem;
+import org.mobicents.protocols.ss7.sccp.Router;
+import org.mobicents.protocols.ss7.sccp.Rule;
+import org.mobicents.protocols.ss7.sccp.RuleType;
+import org.mobicents.protocols.ss7.sccp.SccpResource;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
-import org.mobicents.protocols.ss7.sccp.impl.router.LoadSharingAlgorithm;
-import org.mobicents.protocols.ss7.sccp.impl.router.LongMessageRule;
-import org.mobicents.protocols.ss7.sccp.impl.router.LongMessageRuleType;
-import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3Destination;
-import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3ServiceAccessPoint;
-import org.mobicents.protocols.ss7.sccp.impl.router.Router;
-import org.mobicents.protocols.ss7.sccp.impl.router.Rule;
-import org.mobicents.protocols.ss7.sccp.impl.router.RuleType;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0100;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.testng.annotations.AfterClass;
@@ -104,14 +104,6 @@ public class SccpExecutorTest {
 
 	@AfterMethod
 	public void tearDown() {
-//		this.router.getRules().clear();
-//		this.router.getPrimaryAddresses().clear();
-//		this.router.getBackupAddresses().clear();
-//		
-//		this.sccpResource.start();
-//		this.sccpResource.getRemoteSpcs().clear();
-//		this.sccpResource.getRemoteSsns().clear();
-
 		this.sccpStack.stop();
 	}
 
@@ -190,7 +182,7 @@ public class SccpExecutorTest {
 
 		createRuleCmd2 = "sccp rule modify 1 R 71 2 8 0 0 3 123456789 dominant 1";
 		result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
-		assertTrue(result.equals(SccpOAMMessage.INVALID_COMMAND));
+		assertTrue(result.equals(SccpOAMMessage.RULETYPE_NOT_SOLI_SEC_ADD_MANDATORY));
 		assertEquals(this.router.getRules().size(), 4);
 		assertEquals(this.router.getRule(1).getRuleType(), RuleType.Solitary);
 
@@ -242,6 +234,35 @@ public class SccpExecutorTest {
 //		assertEquals( result,SccpOAMMessage.RULE_SUCCESSFULLY_ADDED);
 //		assertEquals( this.router.getRules().size(),3);
 
+	}
+	
+	@Test(groups = { "oam","functional.mgmt"})
+	public void testMaskSectionsValidations() {
+		
+		String incorrect_prim_addressCmd = "sccp primary_add create 1 71 6535 8 0 0 12 93707100007";
+		String incorrect_prim_address_deleteCmd = "sccp primary_add delete 1";
+		String correct_prim_addressCmd = "sccp primary_add create 1 71 6535 8 0 0 12 -/-";
+		
+		String incorrectCreateRuleCmd = "sccp rule create 2 R/K 18 0 180 0 1 4 * solitary 1";
+		String correctCreateRuleCmd = "sccp rule create 2 R/K 18 0 180 0 1 4 937/* solitary 1";
+		
+		String incorrect_sec_addressCmd = "sccp backup_add create 1 71 6535 8 0 0 12 93707100007";
+		String correctCreateRuleCmdWithSecId = "sccp rule create 2 R/K 18 0 180 0 1 4 937/* solitary 1 1";
+		
+		
+		String result = this.sccpExecutor.execute(incorrectCreateRuleCmd.split(" "));
+		assertEquals(result, SccpOAMMessage.SEC_MISMATCH_PATTERN);
+		
+		this.sccpExecutor.execute(incorrect_prim_addressCmd.split(" "));
+		result = this.sccpExecutor.execute(correctCreateRuleCmd.split(" "));
+		assertEquals(result, SccpOAMMessage.SEC_MISMATCH_PRIMADDRESS);
+		
+		this.sccpExecutor.execute(incorrect_prim_address_deleteCmd.split(" "));
+		this.sccpExecutor.execute(correct_prim_addressCmd.split(" "));
+		this.sccpExecutor.execute(incorrect_sec_addressCmd.split(" "));
+		result = this.sccpExecutor.execute(correctCreateRuleCmdWithSecId.split(" "));
+		
+		assertEquals(result, SccpOAMMessage.SEC_MISMATCH_SECADDRESS);
 	}
 
 	/**
@@ -618,7 +639,7 @@ public class SccpExecutorTest {
 		String rspCmd = "sccp rsp create 1 11 0 0";
 		String res = this.sccpExecutor.execute(rspCmd.split(" "));
 		assertEquals( this.sccpResource.getRemoteSpcs().size(),1);
-		RemoteSignalingPointCodeImpl spc = this.sccpResource.getRemoteSpc(1);
+		RemoteSignalingPointCode spc = this.sccpResource.getRemoteSpc(1);
 		assertEquals(spc.getRemoteSpc(), 11);
 		
 		rspCmd = "sccp rsp create 1 12 0 0";
@@ -665,7 +686,7 @@ public class SccpExecutorTest {
 		String rspCmd = "sccp rss create 2 11 8 0";
 		String res = this.sccpExecutor.execute(rspCmd.split(" "));
 		assertEquals( this.sccpResource.getRemoteSsns().size(),1);
-		RemoteSubSystemImpl rss = this.sccpResource.getRemoteSsn(2);
+		RemoteSubSystem rss = this.sccpResource.getRemoteSsn(2);
 		assertEquals(rss.getRemoteSpc(), 11);
 		assertEquals(rss.getRemoteSsn(), 8);
 		assertFalse(rss.getMarkProhibitedWhenSpcResuming());
@@ -739,7 +760,7 @@ public class SccpExecutorTest {
 		String rspCmd = "sccp csp create 3 21";
 		String res = this.sccpExecutor.execute(rspCmd.split(" "));
 		assertEquals( this.sccpResource.getConcernedSpcs().size(),1);
-		ConcernedSignalingPointCodeImpl cspc = this.sccpResource.getConcernedSpc(3);
+		ConcernedSignalingPointCode cspc = this.sccpResource.getConcernedSpc(3);
 		assertEquals(cspc.getRemoteSpc(), 21);
 
 		rspCmd = "sccp csp create 3 22";

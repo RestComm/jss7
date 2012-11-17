@@ -26,7 +26,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
-import org.mobicents.protocols.ss7.sccp.impl.ConcernedSignalingPointCodeImpl;
 import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystemImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImplProxy;
@@ -79,10 +78,8 @@ public class SSPTest extends SccpHarness {
 	}
 
 	@BeforeMethod
-	public void setUp() throws IllegalStateException {
-		
+	public void setUp() throws Exception {
 		super.setUp();
-
 	}
 
 	@AfterMethod
@@ -347,7 +344,7 @@ public class SSPTest extends SccpHarness {
 		//this will cause: u1 stack will receive SSP, u2 stack will get SST and message.
 		Thread.sleep(100);
 
-		RemoteSubSystemImpl rss = sccpStack1.getSccpResource().getRemoteSsn(1); 
+		RemoteSubSystemImpl rss = (RemoteSubSystemImpl)sccpStack1.getSccpResource().getRemoteSsn(1); 
 		u1.send();
 		Thread.sleep(200);
 		assertEquals(((SccpStackImplProxy) sccpStack1).getManagementProxy().getMgmtMessages().size(), 1);
@@ -379,8 +376,7 @@ public class SSPTest extends SccpHarness {
 		sccpStack1.setSstTimerDuration_Min(5000);
 		sccpStack1.setSstTimerDuration_IncreaseFactor(1);
 
-		ConcernedSignalingPointCodeImpl cspc = new ConcernedSignalingPointCodeImpl(getStack2PC());
-		sccpStack1.getSccpResource().addConcernedSpc(1, cspc);
+		sccpStack1.getSccpResource().addConcernedSpc(1, getStack2PC());
 
 		Thread.sleep(100);
 

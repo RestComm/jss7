@@ -22,6 +22,10 @@
 
 package org.mobicents.protocols.ss7.sccp;
 
+import java.util.Map;
+
+import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
+
 /**
  * @author amit bhayani
  * @author baranowb
@@ -45,6 +49,12 @@ public interface SccpStack {
 	 * @throws org.mobicents.protocols.StartFailedException
 	 */
 	public void stop();
+	
+	/**
+	 * Returns the name of this stack
+	 * @return
+	 */
+	public String getName();
 
 	/**
 	 * Exposes SCCP provider object to SCCP user.
@@ -52,15 +62,17 @@ public interface SccpStack {
 	 * @return SCCP provider object.
 	 */
 	public SccpProvider getSccpProvider();
-	
+
 	/**
 	 * Set the persist directory to store the xml files
+	 * 
 	 * @return
 	 */
 	public String getPersistDir();
 
 	/**
 	 * Get the persist directory from which to read the xml files
+	 * 
 	 * @param persistDir
 	 */
 	public void setPersistDir(String persistDir);
@@ -75,8 +87,29 @@ public interface SccpStack {
 
 	/**
 	 * Get the remove siganling point code flag
+	 * 
 	 * @return
 	 */
 	public boolean isRemoveSpc();
+
+	public SccpResource getSccpResource();
+
+	public int getSstTimerDuration_Min();
+	
+	public int getSstTimerDuration_Max();
+	
+	public double getSstTimerDuration_IncreaseFactor();
+	
+	public int getZMarginXudtMessage();
+	
+	public int getMaxDataMessage();
+	
+	public int getReassemblyTimerDelay();
+	
+	public Map<Integer, Mtp3UserPart> getMtp3UserParts();
+
+	public Mtp3UserPart getMtp3UserPart(int id);
+	
+	public Router getRouter();
 
 }

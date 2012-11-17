@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -31,7 +31,7 @@ import org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpRoutingControl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
-import org.mobicents.protocols.ss7.sccp.impl.router.Router;
+import org.mobicents.protocols.ss7.sccp.impl.router.RouterImpl;
 
 /**
  * @author baranowb
@@ -62,11 +62,11 @@ public class SccpStackImplProxy extends SccpStackImpl {
 		super.sccpManagement.setSccpRoutingControl(sccpRoutingControl);
 		super.sccpRoutingControl.setSccpManagement(sccpManagement);
 
-		this.router = new Router(this.getName());
+		this.router = new RouterImpl(this.getName(), this);
 		this.router.setPersistDir(this.getPersistDir());
 		this.router.start();
 
-		this.sccpResource = new SccpResource(this.getName());
+		this.sccpResource = new SccpResourceImpl(this.getName());
 		this.sccpResource.setPersistDir(this.getPersistDir());
 		this.sccpResource.start();
 

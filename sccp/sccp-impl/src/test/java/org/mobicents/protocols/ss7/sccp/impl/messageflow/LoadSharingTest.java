@@ -22,20 +22,15 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.messageflow;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
+import org.mobicents.protocols.ss7.sccp.RuleType;
 import org.mobicents.protocols.ss7.sccp.impl.Mtp3UserPartImpl;
-import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCodeImpl;
-import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystemImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImplProxy;
 import org.mobicents.protocols.ss7.sccp.impl.User;
-import org.mobicents.protocols.ss7.sccp.impl.router.LoadSharingAlgorithm;
-import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3Destination;
-import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3ServiceAccessPoint;
-import org.mobicents.protocols.ss7.sccp.impl.router.Rule;
-import org.mobicents.protocols.ss7.sccp.impl.router.RuleType;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -83,16 +78,14 @@ public class LoadSharingTest extends SccpHarness {
 	}
 
 	@BeforeMethod
-	public void setUp() throws IllegalStateException {
+	public void setUp() throws Exception {
 		super.setUp();
 		
-		Mtp3ServiceAccessPoint sap = new Mtp3ServiceAccessPoint(2, 11, 2);
-		sccpStack1.getRouter().addMtp3ServiceAccessPoint(2, sap);
-		Mtp3Destination dest = new Mtp3Destination(12, 12, 0, 255, 255);
-		sccpStack1.getRouter().addMtp3Destination(2, 1, dest);
+		sccpStack1.getRouter().addMtp3ServiceAccessPoint(2, 2, 11, 2);
+		sccpStack1.getRouter().addMtp3Destination(2, 1, 12, 12, 0, 255, 255);
 
-		resource1.addRemoteSpc(2, new RemoteSignalingPointCodeImpl(12, 0, 0));
-		resource1.addRemoteSsn(2, new RemoteSubSystemImpl(12, getSSN(), 0, false));
+		resource1.addRemoteSpc(2, 12, 0, 0);
+		resource1.addRemoteSsn(2, 12, getSSN(), 0, false);
 	}
 
 	@AfterMethod
@@ -130,9 +123,7 @@ public class LoadSharingTest extends SccpHarness {
 		SccpAddress pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
 		// pattern2 - with default ssn value
 		SccpAddress pattern2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "222222"), 0);
-		Rule rule = new Rule(RuleType.Solitary, LoadSharingAlgorithm.Undefined, pattern, "K");
-		rule.setPrimaryAddressId(1);
-		sccpStack1.getRouter().addRule(1, rule);
+		sccpStack1.getRouter().addRule(1, RuleType.Solitary, LoadSharingAlgorithm.Undefined, pattern, "K", 1, -1);
 
 		// Primary and backup are available
 		SccpAddress a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
@@ -182,10 +173,8 @@ public class LoadSharingTest extends SccpHarness {
 		Thread.sleep(100);
 
 		// ---- Dominant case
-		rule = new Rule(RuleType.Dominant, LoadSharingAlgorithm.Undefined, pattern, "K");
-		rule.setPrimaryAddressId(1);
-		rule.setSecondaryAddressId(1);
-		sccpStack1.getRouter().addRule(1, rule);
+		sccpStack1.getRouter().removeRule(1);
+		sccpStack1.getRouter().addRule(1, RuleType.Dominant, LoadSharingAlgorithm.Undefined, pattern, "K", 1, 1);
 
 		// Primary and backup are available
 		a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
@@ -235,15 +224,10 @@ public class LoadSharingTest extends SccpHarness {
 		Thread.sleep(100);
 
 		// ---- Loadshared case
-		rule = new Rule(RuleType.Loadshared, LoadSharingAlgorithm.Bit4, pattern, "K");
-		rule.setPrimaryAddressId(1);
-		rule.setSecondaryAddressId(1);
-		sccpStack1.getRouter().addRule(1, rule);
+		sccpStack1.getRouter().removeRule(1);
+		sccpStack1.getRouter().addRule(1, RuleType.Loadshared, LoadSharingAlgorithm.Bit4, pattern, "K", 1, 1);
 		// rule which primaryAddress ssn==0 (getting ssn from origin CalledPartyAddress)
-		rule = new Rule(RuleType.Loadshared, LoadSharingAlgorithm.Bit4, pattern2, "K");
-		rule.setPrimaryAddressId(2);
-		rule.setSecondaryAddressId(1);
-		sccpStack1.getRouter().addRule(2, rule);
+		sccpStack1.getRouter().addRule(2, RuleType.Loadshared, LoadSharingAlgorithm.Bit4, pattern2, "K", 2, 1);
 
 		// Primary and backup are available
 		//   - class 1 (route by sls): sls = 0xEF: primary route (sls & 0x10 rule)
