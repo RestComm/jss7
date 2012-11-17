@@ -93,8 +93,8 @@ public class NodalInterworkingFunction extends Task implements Layer4,Mtp3UserPa
 		return m3UAManagement;
 	}
 
-	public void setM3UAManagement(M3UAManagementImpl m3UAManagement) {
-		this.m3UAManagement = m3UAManagement;
+	public void setM3UAManagement(M3UAManagement m3UAManagement) {
+		this.m3UAManagement = (M3UAManagementImpl)m3UAManagement;
 		this.m3UAManagement.addMtp3UserPartListener(this);
 		this.mtp3TransferPrimitiveFactory = this.m3UAManagement.getMtp3TransferPrimitiveFactory();
 	}
