@@ -47,6 +47,7 @@ import org.mobicents.protocols.ss7.map.service.supplementary.SSSubscriptionOptio
 
 /**
  * @author daniel bichara
+ * @author sergey vetyutnev
  * 
  */
 public class ExtSSDataImpl extends SequenceBase implements ExtSSData {
@@ -116,48 +117,80 @@ public class ExtSSDataImpl extends SequenceBase implements ExtSSData {
 
 			int tag = ais.readTag();
 
-			switch (tag) {
-			case _TAG_ss_Status:
-				if (!ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".ssStatus: bad tag or tag class or not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+			switch (num) {
+			case 0:	// ssCode
+				if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || tag != Tag.STRING_OCTET || !ais.isTagPrimitive())
+					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".ssCode: bad tag or tag class or not primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
+				this.ssCode = new SSCodeImpl();
+				((ExtSSStatusImpl) this.ssCode).decodeAll(ais);
+				break;
+			
+			case 1:	// ss-Status
+				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || tag != _TAG_ss_Status || !ais.isTagPrimitive())
+					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + "._TAG_ss_Status: bad tag or tag class or not primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.ssStatus = new ExtSSStatusImpl();
 				((ExtSSStatusImpl) this.ssStatus).decodeAll(ais);
 				break;
-			case _TAG_extensionContainer:
-				this.extensionContainer = new MAPExtensionContainerImpl();
-				((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
-				break;
-			default:
-				if (num == 0) {
-					if (!ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".ssCode: bad tag or tag class or not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-					this.ssCode = new SSCodeImpl();
-					((SSCodeImpl) this.ssCode).decodeAll(ais);
-				} else {
-					if(tag == Tag.BOOLEAN) {	// ssSubscriptionOption
-						this.ssSubscriptionOption = new SSSubscriptionOptionImpl();
-						((SSSubscriptionOptionImpl) this.ssSubscriptionOption).decodeAll(ais);
 
-					} else {	// basicServiceGroupList
+			default:
+				switch (ais.getTagClass()) {
+				case Tag.CLASS_CONTEXT_SPECIFIC:
+					switch (tag) {
+					case SSSubscriptionOptionImpl._TAG_overrideCategory:
+					case SSSubscriptionOptionImpl._TAG_cliRestrictionOption:
+						this.ssSubscriptionOption = new SSSubscriptionOptionImpl();
+						((SSSubscriptionOptionImpl) this.ssSubscriptionOption).decodeAll(ais);						
+						break;
+
+					case _TAG_extensionContainer:
+						if (ais.isTagPrimitive())
+							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive",
+									MAPParsingComponentExceptionReason.MistypedParameter);
+						this.extensionContainer = new MAPExtensionContainerImpl();
+						((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+						break;
+
+					default:
+						ais.advanceElement();
+						break;
+					}
+					break;
+
+				case Tag.CLASS_UNIVERSAL: // basicServiceGroupList
+					switch (tag) {
+					case Tag.SEQUENCE:
 						AsnInputStream ais2 = ais.readSequenceStream();
+						this.basicServiceGroupList = new ArrayList<ExtBasicServiceCode>();
 						while (true) {
 							if (ais2.available() == 0)
 								break;
 
-							int tag2 = ais2.readTag();
-							if (tag2 != Tag.SEQUENCE || ais2.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais2.isTagPrimitive())
-								throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-										+ ": bad basicServiceGroupList tag or tagClass or is primitive ", MAPParsingComponentExceptionReason.MistypedParameter);
-
+							ais2.readTag();
 							serviceItem = new ExtBasicServiceCodeImpl();
 							((ExtBasicServiceCodeImpl) serviceItem).decodeAll(ais2);
-							if (this.basicServiceGroupList == null)
-								this.basicServiceGroupList = new ArrayList<ExtBasicServiceCode>();
 							this.basicServiceGroupList.add(serviceItem);
 						}
+						if (this.basicServiceGroupList.size() < 1 && this.basicServiceGroupList.size() > 32) {
+							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+									+ ": Parameter basicServiceGroupList size must be from 1 to 32, found: " + this.basicServiceGroupList.size(),
+									MAPParsingComponentExceptionReason.MistypedParameter);
+						}
+						break;
+					default:
+						ais.advanceElement();
+						break;
 					}
+					break;
+				
+				default:
+					ais.advanceElement();
+					break;
 				}
+				break;
 			}
+
 			num++;
 		}
 
@@ -167,10 +200,6 @@ public class ExtSSDataImpl extends SequenceBase implements ExtSSData {
 		if (this.ssStatus == null)
 			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": ssStatus required.", MAPParsingComponentExceptionReason.MistypedParameter);
 
-		if (this.basicServiceGroupList != null && this.basicServiceGroupList.size() > 32) {
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter basicServiceGroupList size must be from 1 to 32, found: "
-					+ this.basicServiceGroupList.size(), MAPParsingComponentExceptionReason.MistypedParameter);
-		}
 	}
 
 	/*
@@ -188,7 +217,7 @@ public class ExtSSDataImpl extends SequenceBase implements ExtSSData {
 		if (this.ssStatus == null)
 			throw new MAPException("Error while encoding " + _PrimitiveName + ": ssStatus required.");
 
-		if (this.basicServiceGroupList != null && this.basicServiceGroupList.size() > 32) {
+		if (this.basicServiceGroupList != null && (this.basicServiceGroupList.size() < 1 || this.basicServiceGroupList.size() > 32)) {
 			throw new MAPException("Error while encoding " + _PrimitiveName + ": Parameter basicServiceGroupList size must be from 1 to 32, found: "
 					+ this.basicServiceGroupList.size());
 		}
@@ -200,7 +229,7 @@ public class ExtSSDataImpl extends SequenceBase implements ExtSSData {
 			((ExtSSStatusImpl) this.ssStatus).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_ss_Status);
 
 			if (this.ssSubscriptionOption != null) {
-				((SSSubscriptionOptionImpl) this.ssSubscriptionOption).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, Tag.BOOLEAN);
+				((SSSubscriptionOptionImpl) this.ssSubscriptionOption).encodeAll(asnOs);
 			}
 
 			if (this.basicServiceGroupList != null) {
@@ -244,9 +273,16 @@ public class ExtSSDataImpl extends SequenceBase implements ExtSSData {
 		}
 
 		if (this.basicServiceGroupList != null) {
-			sb.append("basicServiceGroupList=");
-			sb.append(this.basicServiceGroupList.toString());
-			sb.append(", ");
+			sb.append("basicServiceGroupList=[");
+			boolean firstItem = true;
+			for (ExtBasicServiceCode be : this.basicServiceGroupList) {
+				if (firstItem)
+					firstItem = false;
+				else
+					sb.append(", ");
+				sb.append(be.toString());
+			}
+			sb.append("]");
 		}
 
 		if (this.extensionContainer != null) {

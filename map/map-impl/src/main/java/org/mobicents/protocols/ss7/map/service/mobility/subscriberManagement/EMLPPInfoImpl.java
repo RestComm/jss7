@@ -26,6 +26,7 @@ import java.io.IOException;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
@@ -92,24 +93,41 @@ public class EMLPPInfoImpl extends SequenceBase implements EMLPPInfo {
 					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".maximumentitledPriority: bad tag or tag class or not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
 				this.maximumentitledPriority = (int) ais.readInteger();
 				break;
+			
 			case 1:	// defaultPriority
 				if (!ais.isTagPrimitive())
 					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".defaultPriority: bad tag or tag class or not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
 				this.defaultPriority = (int) ais.readInteger();
 				break;
-			case 2:	// extensionContainer
-					this.extensionContainer = new MAPExtensionContainerImpl();
-					((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
-					break;
+
 			default:
-				ais.advanceElement();
-				break;
+				switch (ais.getTagClass()) {
+				case Tag.CLASS_UNIVERSAL:
+					switch (tag) {
+					case Tag.SEQUENCE:
+						if (!ais.isTagPrimitive())
+							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+									+ ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+						this.extensionContainer = new MAPExtensionContainerImpl();
+						((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);						
+						break;
+					default:
+						ais.advanceElement();
+						break;
+					}
+					break;
+				
+				default:
+					ais.advanceElement();
+					break;
+				}
 			}
 			num++;
 		}
 
 		if (num < 2)
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": maximumentitledPriority and defaultPriority required.", MAPParsingComponentExceptionReason.MistypedParameter);
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+					+ ": maximumentitledPriority and defaultPriority required but not found.", MAPParsingComponentExceptionReason.MistypedParameter);
 
 		if (this.maximumentitledPriority < 0 || this.maximumentitledPriority > 15)
 			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".maximumentitledPriority: must be from 0 to 15, found:" + this.maximumentitledPriority, MAPParsingComponentExceptionReason.MistypedParameter);
@@ -163,6 +181,7 @@ public class EMLPPInfoImpl extends SequenceBase implements EMLPPInfo {
 		if (this.extensionContainer != null) {
 			sb.append("extensionContainer=");
 			sb.append(this.extensionContainer.toString());
+			sb.append(", ");
 		}
 
 		sb.append("]");

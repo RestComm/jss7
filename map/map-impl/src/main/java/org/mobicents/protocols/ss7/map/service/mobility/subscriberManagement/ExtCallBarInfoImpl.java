@@ -161,6 +161,7 @@ public class ExtCallBarInfoImpl extends SequenceBase implements ExtCallBarInfo {
 					ais.advanceElement();
 					break;
 				}
+				break;
 			}
 			num++;
 		}

@@ -44,8 +44,8 @@ public class SSSubscriptionOptionImpl implements SSSubscriptionOption, MAPAsnPri
 
 	public static final String _PrimitiveName = "SSSubscriptionOption";
 
-	private static final int _TAG_cliRestrictionOption = 2;
-	private static final int _TAG_overrideCategory = 1;
+	public static final int _TAG_cliRestrictionOption = 2;
+	public static final int _TAG_overrideCategory = 1;
 
 	private CliRestrictionOption cliRestrictionOption = null;
 	private OverrideCategory overrideCategory = null;
@@ -54,13 +54,13 @@ public class SSSubscriptionOptionImpl implements SSSubscriptionOption, MAPAsnPri
 		
 	}
 
-	/**
-	 * 
-	 */
-	public SSSubscriptionOptionImpl(CliRestrictionOption cliRestrictionOption, 
-			OverrideCategory overrideCategory) {
+	public SSSubscriptionOptionImpl(CliRestrictionOption cliRestrictionOption) {
 
 		this.cliRestrictionOption = cliRestrictionOption;
+	}
+
+	public SSSubscriptionOptionImpl(OverrideCategory overrideCategory) {
+
 		this.overrideCategory = overrideCategory;
 	}
 
@@ -78,7 +78,13 @@ public class SSSubscriptionOptionImpl implements SSSubscriptionOption, MAPAsnPri
 	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTag()
 	 */
 	public int getTag() throws MAPException {
-		return Tag.SEQUENCE;
+		if (cliRestrictionOption != null) {
+			return _TAG_cliRestrictionOption;
+		} else if (overrideCategory != null) {
+			return _TAG_overrideCategory;
+		} else {
+			throw new MAPException("No of choices are supplied");
+		}
 	}
 
 	/*
@@ -88,7 +94,7 @@ public class SSSubscriptionOptionImpl implements SSSubscriptionOption, MAPAsnPri
 	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTagClass()
 	 */
 	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
+		return Tag.CLASS_CONTEXT_SPECIFIC;
 	}
 
 	/*
@@ -99,7 +105,7 @@ public class SSSubscriptionOptionImpl implements SSSubscriptionOption, MAPAsnPri
 	 * ()
 	 */
 	public boolean getIsPrimitive() {
-		return false;
+		return true;
 	}
 
 	/*
@@ -111,8 +117,8 @@ public class SSSubscriptionOptionImpl implements SSSubscriptionOption, MAPAsnPri
 	 */
 	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 		try {
-			// It is a CHOICE, ignore length
-			this._decode(ansIS, 0);
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
 		} catch (IOException e) {
 			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
@@ -131,8 +137,7 @@ public class SSSubscriptionOptionImpl implements SSSubscriptionOption, MAPAsnPri
 	 */
 	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 		try {
-			// It is a CHOICE, ignore length
-			this._decode(ansIS, 0);
+			this._decode(ansIS, length);
 		} catch (IOException e) {
 			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
@@ -142,23 +147,25 @@ public class SSSubscriptionOptionImpl implements SSSubscriptionOption, MAPAsnPri
 		}
 	}
 
-	private void _decode(AsnInputStream ais, int l) throws MAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream ais, int length) throws MAPParsingComponentException, IOException, AsnException {
 		this.cliRestrictionOption = null;
 		this.overrideCategory = null;
 
-		int tag = ais.readTag();
-		// don't read length here. readInteger below will do it.
+		if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag class or is not primitive: TagClass=" + ais.getTagClass(),
+					MAPParsingComponentExceptionReason.MistypedParameter);
 		
-		switch(tag) {
+		switch(ais.getTag()) {
 		case _TAG_cliRestrictionOption:
-			this.cliRestrictionOption = CliRestrictionOption.getInstance((int) ais.readInteger());
-			return;
+			this.cliRestrictionOption = CliRestrictionOption.getInstance((int) ais.readIntegerData(length));
+			break;
 		case _TAG_overrideCategory:
-			this.overrideCategory = OverrideCategory.getInstance((int) ais.readInteger());
-			return;
-		}
+			this.overrideCategory = OverrideCategory.getInstance((int) ais.readIntegerData(length));
+			break;
 
-		throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": missing cliRestrictionOption and overrideCategory.", MAPParsingComponentExceptionReason.MistypedParameter);
+		default:
+			throw new MAPParsingComponentException("Error while " + _PrimitiveName + ": bad tag: " + ais.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+		}
 	}
 
 	/*
@@ -180,8 +187,14 @@ public class SSSubscriptionOptionImpl implements SSSubscriptionOption, MAPAsnPri
 	 * org.mobicents.protocols.asn.AsnOutputStream, int, int)
 	 */
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		// It is a CHOICE, ignore tagClass and tag
-		this.encodeData(asnOs);
+		try {
+			asnOs.writeTag(tagClass, true, tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 	}
 
 	/*
@@ -193,21 +206,21 @@ public class SSSubscriptionOptionImpl implements SSSubscriptionOption, MAPAsnPri
 	 */
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-
 		if (this.cliRestrictionOption == null && this.overrideCategory == null)
 			throw new MAPException("Error while encoding " + _PrimitiveName + ": missing cliRestrictionOption and overrideCategory.");
+
+		if (this.cliRestrictionOption != null && this.overrideCategory != null)
+			throw new MAPException("Error while encoding " + _PrimitiveName + ": both cliRestrictionOption and overrideCategory are defined.");
 
 		try {
 
 			if (this.cliRestrictionOption != null) {
-				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_cliRestrictionOption, this.cliRestrictionOption.getCode());
+				asnOs.writeIntegerData(this.cliRestrictionOption.getCode());
 			} else {
-				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_overrideCategory, this.overrideCategory.getCode());
+				asnOs.writeIntegerData(this.overrideCategory.getCode());
 			}
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 

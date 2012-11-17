@@ -178,6 +178,7 @@ public class CUGSubscriptionImpl extends SequenceBase implements CUGSubscription
 									MAPParsingComponentExceptionReason.MistypedParameter);
 						}
 						break;
+					
 					default:
 						ais.advanceElement();
 						break;
@@ -245,7 +246,6 @@ public class CUGSubscriptionImpl extends SequenceBase implements CUGSubscription
 			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
-
 
 	@Override
 	public String toString() {

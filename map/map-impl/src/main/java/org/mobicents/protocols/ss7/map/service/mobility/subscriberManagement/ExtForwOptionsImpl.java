@@ -29,11 +29,15 @@ import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 /**
 *
 * @author daniel bichara
+* @author sergey vetyutnev
 *
 */
 public class ExtForwOptionsImpl extends OctetStringBase implements ExtForwOptions {
 
-	ExtForwOptionsForwardingReason extForwOptionsForwardingReason = null;
+	private static int _MASK_NotificationToForwardingParty = 0x80;
+	private static int _MASK_RedirectingPresentation = 0x40;
+	private static int _MASK_NotificationToCallingParty = 0x20;
+	private static int _MASK_ForwardingReason = 0x0C;
 
 	public ExtForwOptionsImpl() {
 		super(1, 5, "ExtForwOptions");
@@ -41,8 +45,29 @@ public class ExtForwOptionsImpl extends OctetStringBase implements ExtForwOption
 
 	public ExtForwOptionsImpl(byte[] data) {
 		super(1, 5, "ExtForwOptions", data);
-		// Bits 3&4
-		extForwOptionsForwardingReason = ExtForwOptionsForwardingReason.getInstance((int)(data[0]&0xC)-8);
+	}
+
+	public ExtForwOptionsImpl(boolean notificationToForwardingParty, boolean redirectingPresentation, boolean notificationToCallingParty,
+			ExtForwOptionsForwardingReason extForwOptionsForwardingReason) {
+		super(1, 5, "ExtForwOptions");
+
+		this.data = new byte[1];
+
+		if (notificationToForwardingParty) {
+			this.data[0] |= _MASK_NotificationToForwardingParty;
+		}
+
+		if (redirectingPresentation) {
+			this.data[0] |= _MASK_RedirectingPresentation;
+		}
+
+		if (notificationToCallingParty) {
+			this.data[0] |= _MASK_NotificationToCallingParty;
+		}
+
+		if (extForwOptionsForwardingReason != null) {
+			this.data[0] |= (extForwOptionsForwardingReason.getCode() << 2);
+		}
 	}
 
 	public byte[] getData() {
@@ -54,7 +79,10 @@ public class ExtForwOptionsImpl extends OctetStringBase implements ExtForwOption
 		 	--	0  no notification
 			--	1  notification
 		*/
-		return ((data[0]&0x80) > 0?true:false);
+		if (this.data == null || this.data.length < 1)
+			return false;
+		
+		return ((data[0]&_MASK_NotificationToForwardingParty) != 0?true:false);
 	}
 
 	public boolean getRedirectingPresentation() {
@@ -62,7 +90,10 @@ public class ExtForwOptionsImpl extends OctetStringBase implements ExtForwOption
 			--	0 no presentation  
 			--	1  presentation
 		*/
-		return ((data[0]&0x40) > 0?true:false);
+		if (this.data == null || this.data.length < 1)
+			return false;
+		
+		return ((data[0]&_MASK_RedirectingPresentation) > 0?true:false);
 	}
 
 	public boolean getNotificationToCallingParty() {
@@ -70,14 +101,38 @@ public class ExtForwOptionsImpl extends OctetStringBase implements ExtForwOption
 			--	0  no notification
 			--	1  notification
 		*/
-		return ((data[0]&0x20) > 0?true:false);
+		if (this.data == null || this.data.length < 1)
+			return false;
+		
+		return ((data[0]&_MASK_NotificationToCallingParty) > 0?true:false);
 	}
 
 	public ExtForwOptionsForwardingReason getExtForwOptionsForwardingReason() {
-		if (extForwOptionsForwardingReason == null && data != null && data.length > 0) {
-			// Bits 3&4
-			extForwOptionsForwardingReason = ExtForwOptionsForwardingReason.getInstance((int)(data[0]&0xC)-8);
+		if (this.data == null || this.data.length < 1)
+			return null;
+
+		return ExtForwOptionsForwardingReason.getInstance((int) ((data[0] & _MASK_ForwardingReason) >> 2));
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName + " [");
+
+		if (this.getNotificationToForwardingParty()) {
+			sb.append("notificationToForwardingParty, ");
 		}
-		return extForwOptionsForwardingReason;
+		if (this.getRedirectingPresentation()) {
+			sb.append("redirectingPresentation, ");
+		}
+		if (this.getNotificationToCallingParty()) {
+			sb.append("notificationToCallingParty, ");
+		}
+		sb.append("ExtForwOptionsForwardingReason=");
+		sb.append(getExtForwOptionsForwardingReason());
+
+		sb.append("]");
+
+		return sb.toString();
 	}
 }

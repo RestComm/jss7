@@ -33,6 +33,7 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtForwInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtForwFeature;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
@@ -98,17 +99,20 @@ public class ExtForwInfoImpl extends SequenceBase implements ExtForwInfo {
 
 			switch (num) {
 			case 0:	// ssCode
-				if (!ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".ssCode: bad tag or tag class or not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+				if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || tag != Tag.STRING_OCTET || !ais.isTagPrimitive())
+					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".ssCode: bad tag or tag class or not primitive",
+							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.ssCode = new SSCodeImpl();
 				((ExtSSStatusImpl) this.ssCode).decodeAll(ais);
 				break;
+			
 			case 1:	// forwardingFeatureList
-				if (ais.isTagPrimitive())
+				if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || tag != Tag.SEQUENCE || ais.isTagPrimitive())
 					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
 							+ ".forwardingFeatureList: Parameter is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
 
 				AsnInputStream ais2 = ais.readSequenceStream();
+				this.forwardingFeatureList = new ArrayList<ExtForwFeature>();
 				while (true) {
 					if (ais2.available() == 0)
 						break;
@@ -116,39 +120,48 @@ public class ExtForwInfoImpl extends SequenceBase implements ExtForwInfo {
 					int tag2 = ais2.readTag();
 					if (tag2 != Tag.SEQUENCE || ais2.getTagClass() != Tag.CLASS_UNIVERSAL || ais2.isTagPrimitive())
 						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-								+ ": bad forwardingFeatureList tag or tagClass or is primitive ", MAPParsingComponentExceptionReason.MistypedParameter);
+								+ ": bad forwardingFeature tag or tagClass or is primitive ", MAPParsingComponentExceptionReason.MistypedParameter);
 
 					featureItem = new ExtForwFeatureImpl();
 					((ExtForwFeatureImpl) featureItem).decodeAll(ais2);
-					if (this.forwardingFeatureList == null)
-						this.forwardingFeatureList = new ArrayList<ExtForwFeature>();
 					this.forwardingFeatureList.add(featureItem);
 				}
+
+				if (this.forwardingFeatureList.size() > 1 || this.forwardingFeatureList.size() > 32) {
+					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter forwardingFeatureList size must be from 1 to 32, found: "
+							+ this.forwardingFeatureList.size(), MAPParsingComponentExceptionReason.MistypedParameter);
+				}
 				break;
+			
 			default:
-				switch (tag) {
-				case _TAG_extensionContainer:
-					this.extensionContainer = new MAPExtensionContainerImpl();
-					((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+				switch (ais.getTagClass()) {
+				case Tag.CLASS_CONTEXT_SPECIFIC:
+					switch (tag) {
+					case _TAG_extensionContainer:
+						if (ais.isTagPrimitive())
+							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+									+ ".extensionContainer: is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+						this.extensionContainer = new MAPExtensionContainerImpl();
+						((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+						break;
+					default:
+						ais.advanceElement();
+						break;
+					}
 					break;
+				
 				default:
 					ais.advanceElement();
 					break;
 				}
+				break;
 			}
 			num++;
 		}
 
-		if (this.ssCode == null)
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": ssCode required.", MAPParsingComponentExceptionReason.MistypedParameter);
-
-		if (this.forwardingFeatureList == null)
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": forwardingFeatureList required.", MAPParsingComponentExceptionReason.MistypedParameter);
-
-		if (this.forwardingFeatureList.size() > 32) {
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter forwardingFeatureList size must be from 1 to 32, found: "
-					+ this.forwardingFeatureList.size(), MAPParsingComponentExceptionReason.MistypedParameter);
-		}
+		if (num < 2)
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": ssCode, forwardingFeatureList are required but not found.",
+					MAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
 	/*
@@ -202,9 +215,16 @@ public class ExtForwInfoImpl extends SequenceBase implements ExtForwInfo {
 		}
 
 		if (this.forwardingFeatureList != null) {
-			sb.append("forwardingFeatureList=");
-			sb.append(this.forwardingFeatureList.toString());
-			sb.append(", ");
+			sb.append("forwardingFeatureList=[");
+			boolean firstItem = true;
+			for (ExtForwFeature be : this.forwardingFeatureList) {
+				if (firstItem)
+					firstItem = false;
+				else
+					sb.append(", ");
+				sb.append(be.toString());
+			}
+			sb.append("]");
 		}
 
 		if (this.extensionContainer != null) {

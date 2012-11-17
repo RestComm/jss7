@@ -95,12 +95,11 @@ public class GPRSSubscriptionDataImpl extends SequenceBase implements GPRSSubscr
 	protected void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 		PDPContext pdpContext = null;
 		this.completeDataListIncluded = false;
-		this.gprsDataList = new ArrayList<PDPContext>();
+		this.gprsDataList = null;
 		this.extensionContainer = null;
 		this.apnOiReplacement = null;
 
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		int num = 0;
 		while (true) {
 			if (ais.available() == 0) {
 				break;
@@ -108,24 +107,15 @@ public class GPRSSubscriptionDataImpl extends SequenceBase implements GPRSSubscr
 			
 			int tag = ais.readTag(); 
 
-			if (num == 0 && ais.getTagClass() == Tag.CLASS_UNIVERSAL && tag == Tag.NULL)
-			{
-				// segmentationProhibited
-				if (!ais.isTagPrimitive())
-					throw new MAPParsingComponentException(
-							"Error while decoding " + _PrimitiveName + ".completeDataListInclude: Parameter is not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				ais.readNull();
-				this.completeDataListIncluded = true;
-
-			} else {
-
+			switch (ais.getTagClass()) {
+			case Tag.CLASS_CONTEXT_SPECIFIC:
 				switch (tag) {
 				case _TAG_gprsDataList:
 					if (ais.isTagPrimitive())
 						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
 								+ ".gprsDataList: parameter is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
 					AsnInputStream ais2 = ais.readSequenceStream();
+					this.gprsDataList = new ArrayList<PDPContext>();
 					while (true) {
 						if (ais2.available() == 0)
 							break;
@@ -133,11 +123,15 @@ public class GPRSSubscriptionDataImpl extends SequenceBase implements GPRSSubscr
 						int tag2 = ais2.readTag();
 						if (tag2 != Tag.SEQUENCE || ais2.getTagClass() != Tag.CLASS_UNIVERSAL || ais2.isTagPrimitive())
 							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-									+ ": bad gprsDataList tag or tagClass or is primitive ", MAPParsingComponentExceptionReason.MistypedParameter);
+									+ ": bad gprsDataList element tag or tagClass or is primitive ", MAPParsingComponentExceptionReason.MistypedParameter);
 
 						pdpContext = new PDPContextImpl();
 						((PDPContextImpl) pdpContext).decodeAll(ais2);
 						this.gprsDataList.add(pdpContext);
+					}
+					if (this.gprsDataList.size() > 50 || this.gprsDataList.size() < 1){
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter gprsDataList size must be from 1 to 50, found: "
+								+ this.gprsDataList.size(), MAPParsingComponentExceptionReason.MistypedParameter);
 					}
 					break;
 				case _TAG_extContainer:
@@ -148,9 +142,9 @@ public class GPRSSubscriptionDataImpl extends SequenceBase implements GPRSSubscr
 					((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
 					break;
 				case _TAG_apnOiReplacement:
-					if (!ais.isTagPrimitive() || tag != Tag.STRING_OCTET)
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-								+ ".apnOiReplacement: bad tag or tag class or not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".apnOiReplacement: is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
 					this.apnOiReplacement = new APNOIReplacementImpl();
 					((APNOIReplacementImpl) this.apnOiReplacement).decodeAll(ais);
 					break;
@@ -158,24 +152,38 @@ public class GPRSSubscriptionDataImpl extends SequenceBase implements GPRSSubscr
 					ais.advanceElement();
 					break;
 				}
+				break;
+
+			case Tag.CLASS_UNIVERSAL:
+				switch (tag) {
+				case Tag.NULL:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+								+ ".completeDataListIncluded: Parameter is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+					ais.readNull();
+					this.completeDataListIncluded = true;
+					break;
+				default:
+					ais.advanceElement();
+					break;
+				}
+				break;
+			
+			default:
+				ais.advanceElement();
+				break;
 			}
-
-			num++;
 		}
-		
-		if (num == 0)
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Needs at least 1 parameter, found "
-					+ num, MAPParsingComponentExceptionReason.MistypedParameter);
 
-		if (this.gprsDataList == null || this.gprsDataList.size() > 50 || this.gprsDataList.size() < 1){
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter gprsDataList size must be from 1 to 50, found: "
-					+ this.gprsDataList.size(), MAPParsingComponentExceptionReason.MistypedParameter);
+		if (this.gprsDataList == null) {
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": gprsDataList parameter is mandatory but not found",
+					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.gprsDataList == null || this.gprsDataList.size() > 50 || this.gprsDataList.size() < 1)
-			throw new MAPException("gprsDataList size must be from 1 to 50, found: " + this.gprsDataList.size());
+			throw new MAPException("gprsDataList size must not be null and must be from 1 to 50, found: " + this.gprsDataList.size());
 
 		if (this.completeDataListIncluded) {
 			try {
@@ -210,10 +218,21 @@ public class GPRSSubscriptionDataImpl extends SequenceBase implements GPRSSubscr
 		StringBuilder sb = new StringBuilder();
 		sb.append("GPRSSubscriptionData [");
 
-		if (this.gprsDataList != null && this.gprsDataList.size() >= 1) {
-			sb.append("gprsDataList=");
-			sb.append(this.gprsDataList.toString());
-			sb.append(", ");
+		if (this.getCompleteDataListIncluded()) {
+			sb.append("completeDataListIncluded, ");
+		}
+
+		if (this.gprsDataList != null) {
+			sb.append("gprsDataList=[");
+			boolean firstItem = true;
+			for (PDPContext be : this.gprsDataList) {
+				if (firstItem)
+					firstItem = false;
+				else
+					sb.append(", ");
+				sb.append(be.toString());
+			}
+			sb.append("], ");
 		}
 
 		if (this.extensionContainer != null) {
@@ -227,9 +246,6 @@ public class GPRSSubscriptionDataImpl extends SequenceBase implements GPRSSubscr
 			sb.append(this.apnOiReplacement.toString());
 			sb.append(", ");
 		}
-
-		sb.append("completeDataListInclude=");
-		sb.append((this.completeDataListIncluded?"true":"false"));
 
 		sb.append("]");
 
