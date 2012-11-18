@@ -20,22 +20,28 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
+package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
+
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.AgeIndicator;
+import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
- * 
+*
+* @author sergey vetyutnev
+*
+*/
+public class AgeIndicatorImpl extends OctetStringBase implements AgeIndicator {
 
-ZoneCode ::= OCTET STRING (SIZE (2))
-	-- internal structure is defined in TS 3GPP TS 23.003 [17]
+	public AgeIndicatorImpl() {
+		super(1, 6, "AgeIndicator");
+	}
 
- * 
- * @author sergey vetyutnev
- * 
- */
-public interface ZoneCode {
+	public AgeIndicatorImpl(byte[] data) {
+		super(1, 6, "AgeIndicator", data);
+	}
 
-	public byte[] getData();
-
-	public int getValue();
+	public byte[] getData() {
+		return data;
+	}
 
 }

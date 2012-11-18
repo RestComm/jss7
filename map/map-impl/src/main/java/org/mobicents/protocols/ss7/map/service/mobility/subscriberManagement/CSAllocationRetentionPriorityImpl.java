@@ -20,22 +20,28 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
+package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
+
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CSAllocationRetentionPriority;
+import org.mobicents.protocols.ss7.map.primitives.OctetStringLength1Base;
 
 /**
- * 
+*
+* @author sergey vetyutnev
+*
+*/
+public class CSAllocationRetentionPriorityImpl extends OctetStringLength1Base implements CSAllocationRetentionPriority {
 
-ZoneCode ::= OCTET STRING (SIZE (2))
-	-- internal structure is defined in TS 3GPP TS 23.003 [17]
+	public CSAllocationRetentionPriorityImpl() {
+		super("CSAllocationRetentionPriority");
+	}
 
- * 
- * @author sergey vetyutnev
- * 
- */
-public interface ZoneCode {
+	public CSAllocationRetentionPriorityImpl(int data) {
+		super("CSAllocationRetentionPriority", data);
+	}
 
-	public byte[] getData();
-
-	public int getValue();
+	public int getData() {
+		return data;
+	}
 
 }

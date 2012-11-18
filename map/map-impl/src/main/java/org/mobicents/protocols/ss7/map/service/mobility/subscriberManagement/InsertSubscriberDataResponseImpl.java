@@ -47,31 +47,31 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
 import org.mobicents.protocols.ss7.map.service.mobility.MobilityMessageImpl;
+import org.mobicents.protocols.ss7.map.service.supplementary.SSCodeImpl;
 
 /**
  * @author daniel bichara
+ * @author sergey vetyutnev
  * 
  */
 public class InsertSubscriberDataResponseImpl extends MobilityMessageImpl implements InsertSubscriberDataResponse {
 
 	public static final String _PrimitiveName = "InsertSubscriberDataResponse";
 
-	// MAP V2 & V3:
+	// MAP V1 & V2 & V3:
 	protected static final int _TAG_teleserviceList = 1;
+	protected static final int _TAG_bearerServiceList = 2;
+	protected static final int _TAG_SS_List = 3;
+	protected static final int _TAG_odb_GeneralData = 4;
+
+	// MAP V2 & V3:
+	protected static final int _TAG_regionalSubscriptionResponse = 5;
 
 	// MAP V3:
+	protected static final int _TAG_supportedCamelPhases = 6;
 	protected static final int _TAG_extContainer = 7;
-
-	// TODO MAP V2 & V3:
-	//protected static final int _TAG_bearerServiceList = 2;
-	//protected static final int _TAG_SS-List = 3;
-	//protected static final int _TAG_odb-GeneralData = 4;
-	//protected static final int _TAG_regionalSubscriptionData = 5;
-
-	// TODO MAP V3:
-	//protected static final int _TAG_supportedCamelPhases = 6;
-	//protected static final int _TAG_offeredCamel4CSIs = 8;
-	//protected static final int _TAG_supportedFeatures = 9;
+	protected static final int _TAG_offeredCamel4CSIs = 8;
+	protected static final int _TAG_supportedFeatures = 9;
 
 	private ArrayList<ExtTeleserviceCode> teleserviceList = null;
 	private ArrayList<ExtBearerServiceCode> bearerServiceList = null;
@@ -121,163 +121,6 @@ public class InsertSubscriberDataResponseImpl extends MobilityMessageImpl implem
 			this.extensionContainer = extensionContainer;
 			this.offeredCamel4CSIs = offeredCamel4CSIs;
 			this.supportedFeatures = supportedFeatures;
-		}
-	}
-
-	public long getMapProtocolVersion() {
-		return this.mapProtocolVersion;
-	}
-
-	@Override
-	public int getTag() throws MAPException {
-		if (this.mapProtocolVersion >= 2) {
-			return Tag.SEQUENCE;
-		} else {
-			return Tag.STRING_OCTET;
-		}
-	}
-
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
-
-	@Override
-	public boolean getIsPrimitive() {
-		if (this.mapProtocolVersion >= 2) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
-		ExtTeleserviceCode teleserviceItem = null;
-		this.teleserviceList = new ArrayList<ExtTeleserviceCode>();
-		this.extensionContainer = null;
-		
-		if (mapProtocolVersion >= 2) {
-			AsnInputStream ais = ansIS.readSequenceStreamData(length);
-			int num = 0;
-			while (true) {
-				if (ais.available() == 0) {
-					break;
-				}
-				
-				int tag = ais.readTag(); 
-
-				switch (tag) {
-				case _TAG_teleserviceList:	// teleserviceList
-					if (ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-								+ ".teleserviceList: Parameter is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-
-					AsnInputStream ais2 = ais.readSequenceStream();
-					while (true) {
-						if (ais2.available() == 0)
-							break;
-
-						int tag2 = ais2.readTag();
-						if (tag2 != Tag.SEQUENCE || ais2.getTagClass() != Tag.CLASS_UNIVERSAL || ais2.isTagPrimitive())
-							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-									+ ": bad teleserviceCode tag or tagClass or is primitive ", MAPParsingComponentExceptionReason.MistypedParameter);
-
-						teleserviceItem = new ExtTeleserviceCodeImpl();
-						((ExtTeleserviceCodeImpl) teleserviceItem).decodeAll(ais2);
-						this.teleserviceList.add(teleserviceItem);
-					}
-					break;
-				case _TAG_extContainer:	// extensionContainer
-					if (ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-								+ ".extensionContainer: Parameter extensionContainer is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-					this.extensionContainer = new MAPExtensionContainerImpl();
-					((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
-					break;
-				default:
-					ais.advanceElement();
-					break;
-				}
-				
-				num++;
-			}
-			
-			if (num == 0)
-				throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Needs at least 1 parameter, found "
-						+ num, MAPParsingComponentExceptionReason.MistypedParameter);
-
-			if (this.teleserviceList.size() > 20){
-				throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter teleserviceList size must be from 1 to 20, found: "
-						+ this.teleserviceList.size(), MAPParsingComponentExceptionReason.MistypedParameter);
-			}
-		}
-	}
-
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
-
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
-
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {		
-		if (this.teleserviceList != null && this.teleserviceList.size() > 20) {
-			throw new MAPException("teleserviceList size must be from 1 to 20, found: " + this.teleserviceList.size());
-		}
-		if (mapProtocolVersion >= 2) {
-			if (this.teleserviceList != null && this.teleserviceList.size() >= 1) {
-				try {
-					asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG_teleserviceList);
-					int pos = asnOs.StartContentDefiniteLength();
-					for (ExtTeleserviceCode teleserviceItem: this.teleserviceList) {
-						((ExtTeleserviceCodeImpl) teleserviceItem).encodeAll(asnOs);
-					}
-					asnOs.FinalizeContent(pos);
-				} catch (AsnException e) {
-					throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-				}
-			}
-			if (mapProtocolVersion >= 3) {
-				if (this.extensionContainer != null)
-					((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_extContainer);			
-			}
 		}
 	}
 	
@@ -335,6 +178,324 @@ public class InsertSubscriberDataResponseImpl extends MobilityMessageImpl implem
 	public SupportedFeatures getSupportedFeatures() {
 		return this.supportedFeatures;
 	}
+
+	public long getMapProtocolVersion() {
+		return this.mapProtocolVersion;
+	}
+
+	@Override
+	public int getTag() throws MAPException {
+		return Tag.SEQUENCE;
+	}
+
+	@Override
+	public int getTagClass() {
+		return Tag.CLASS_UNIVERSAL;
+	}
+
+	@Override
+	public boolean getIsPrimitive() {
+		return false;
+	}
+
+	@Override
+	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+		try {
+			int length = ansIS.readLength();
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+		try {
+			this._decode(ansIS, length);
+		} catch (IOException e) {
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (AsnException e) {
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+	}
+
+	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+		ExtTeleserviceCode teleserviceItem = null;
+
+		this.teleserviceList = null;
+		this.extensionContainer = null;
+		this.bearerServiceList = null;
+		this.ssList = null;
+		this.odbGeneralData = null;
+		this.regionalSubscriptionResponse = null;
+		this.supportedCamelPhases = null;
+		this.offeredCamel4CSIs = null;
+		this.supportedFeatures = null;
+
+		AsnInputStream ais = ansIS.readSequenceStreamData(length);
+		int num = 0;
+		while (true) {
+			if (ais.available() == 0) {
+				break;
+			}
+
+			int tag = ais.readTag();
+
+			switch (ais.getTagClass()) {
+			case Tag.CLASS_CONTEXT_SPECIFIC:
+				switch (tag) {
+				case _TAG_teleserviceList: // teleserviceList
+					if (ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".teleserviceList: Parameter is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+
+					AsnInputStream ais2 = ais.readSequenceStream();
+					this.teleserviceList = new ArrayList<ExtTeleserviceCode>();
+					while (true) {
+						if (ais2.available() == 0)
+							break;
+
+						int tag2 = ais2.readTag();
+						if (tag2 != Tag.STRING_OCTET || ais2.getTagClass() != Tag.CLASS_UNIVERSAL || !ais2.isTagPrimitive())
+							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+									+ ": bad teleserviceCode element tag or tagClass or is not primitive ",
+									MAPParsingComponentExceptionReason.MistypedParameter);
+
+						teleserviceItem = new ExtTeleserviceCodeImpl();
+						((ExtTeleserviceCodeImpl) teleserviceItem).decodeAll(ais2);
+						this.teleserviceList.add(teleserviceItem);
+					}
+					if (this.teleserviceList.size() < 1 || this.teleserviceList.size() > 20) {
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+								+ ": Parameter teleserviceList size must be from 1 to 20, found: " + this.teleserviceList.size(),
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					break;
+				case _TAG_bearerServiceList: // bearerServiceList
+					if (ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".bearerServiceList: Parameter is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+
+					ais2 = ais.readSequenceStream();
+					this.bearerServiceList = new ArrayList<ExtBearerServiceCode>();
+					while (true) {
+						if (ais2.available() == 0)
+							break;
+
+						int tag2 = ais2.readTag();
+						if (tag2 != Tag.STRING_OCTET || ais2.getTagClass() != Tag.CLASS_UNIVERSAL || !ais2.isTagPrimitive())
+							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+									+ ": bad bearerServiceList element tag or tagClass or is not primitive ",
+									MAPParsingComponentExceptionReason.MistypedParameter);
+
+						ExtBearerServiceCode extBearerServiceCode = new ExtBearerServiceCodeImpl();
+						((ExtBearerServiceCodeImpl) extBearerServiceCode).decodeAll(ais2);
+						this.bearerServiceList.add(extBearerServiceCode);
+					}
+					if (this.bearerServiceList.size() < 1 || this.bearerServiceList.size() > 50) {
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+								+ ": Parameter bearerServiceList size must be from 1 to 50, found: " + this.bearerServiceList.size(),
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					break;
+				case _TAG_SS_List:
+					if (ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".ssList: Parameter is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+
+					ais2 = ais.readSequenceStream();
+					this.ssList = new ArrayList<SSCode>();
+					while (true) {
+						if (ais2.available() == 0)
+							break;
+
+						int tag2 = ais2.readTag();
+						if (tag2 != Tag.STRING_OCTET || ais2.getTagClass() != Tag.CLASS_UNIVERSAL || !ais2.isTagPrimitive())
+							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+									+ ": bad ssListList element tag or tagClass or is not primitive ",
+									MAPParsingComponentExceptionReason.MistypedParameter);
+
+						SSCode ssCode = new SSCodeImpl();
+						((SSCodeImpl) ssCode).decodeAll(ais2);
+						this.ssList.add(ssCode);
+					}
+					if (this.ssList.size() < 1 || this.ssList.size() > 30) {
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+								+ ": Parameter ssList size must be from 1 to 30, found: " + this.ssList.size(),
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					break;
+
+				case _TAG_odb_GeneralData:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+								+ ".odbGeneralData: Parameter odbGeneralData is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+					// TODO: implement it
+//					this.odbGeneralData = new ODBGeneralDataImpl();
+//					((ODBGeneralDataImpl) this.odbGeneralData).decodeAll(ais);
+					break;
+				case _TAG_regionalSubscriptionResponse:
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".regionalSubscriptionResponse: is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.regionalSubscriptionResponse = RegionalSubscriptionResponse.getInstance((int) ais.readInteger());
+					break;
+
+				case _TAG_supportedCamelPhases:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+								+ ".supportedCamelPhases: Parameter supportedCamelPhases is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+					this.supportedCamelPhases = new SupportedCamelPhasesImpl();
+					((SupportedCamelPhasesImpl) this.supportedCamelPhases).decodeAll(ais);
+					break;
+
+				case _TAG_extContainer:
+					if (ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+								+ ".extensionContainer: Parameter extensionContainer is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+					this.extensionContainer = new MAPExtensionContainerImpl();
+					((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+					break;
+
+				case _TAG_offeredCamel4CSIs:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+								+ ".offeredCamel4CSIs: Parameter offeredCamel4CSIs is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+					this.offeredCamel4CSIs = new OfferedCamel4CSIsImpl();
+					((OfferedCamel4CSIsImpl) this.offeredCamel4CSIs).decodeAll(ais);
+					break;
+
+				case _TAG_supportedFeatures:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+								+ ".supportedFeatures: Parameter supportedFeatures is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+					// TODO: implement it
+//					this.supportedFeatures = new SupportedFeaturesImpl();
+//					((SupportedFeaturesImpl) this.supportedFeatures).decodeAll(ais);
+					break;
+
+				default:
+					ais.advanceElement();
+					break;
+				}
+				break;
+
+			default:
+				ais.advanceElement();
+				break;
+			}			
+
+			num++;
+		}
+
+		if (num == 0)
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Needs at least 1 parameter, found " + num,
+					MAPParsingComponentExceptionReason.MistypedParameter);
+	}
+
+	@Override
+	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+	}
+
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+		try {
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+			int pos = asnOs.StartContentDefiniteLength();
+			this.encodeData(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws MAPException {		
+		if (this.teleserviceList != null && (this.teleserviceList.size() < 1 || this.teleserviceList.size() > 20)) {
+			throw new MAPException("teleserviceList size must be from 1 to 20, found: " + this.teleserviceList.size());
+		}
+		if (this.bearerServiceList != null && (this.bearerServiceList.size() < 1 || this.bearerServiceList.size() > 50)) {
+			throw new MAPException("bearerServiceList size must be from 1 to 50, found: " + this.bearerServiceList.size());
+		}
+		if (this.ssList != null && (this.ssList.size() < 1 || this.ssList.size() > 30)) {
+			throw new MAPException("ssList size must be from 1 to 30, found: " + this.ssList.size());
+		}
+
+		if (this.teleserviceList != null) {
+			try {
+				asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG_teleserviceList);
+				int pos = asnOs.StartContentDefiniteLength();
+				for (ExtTeleserviceCode teleserviceItem : this.teleserviceList) {
+					((ExtTeleserviceCodeImpl) teleserviceItem).encodeAll(asnOs);
+				}
+				asnOs.FinalizeContent(pos);
+			} catch (AsnException e) {
+				throw new MAPException("AsnException when encoding " + _PrimitiveName + ".teleserviceList: " + e.getMessage(), e);
+			}
+		}
+		if (this.bearerServiceList != null) {
+			try {
+				asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG_bearerServiceList);
+				int pos = asnOs.StartContentDefiniteLength();
+				for (ExtBearerServiceCode item : this.bearerServiceList) {
+					((ExtBearerServiceCodeImpl) item).encodeAll(asnOs);
+				}
+				asnOs.FinalizeContent(pos);
+			} catch (AsnException e) {
+				throw new MAPException("AsnException when encoding " + _PrimitiveName + ".bearerServiceList: " + e.getMessage(), e);
+			}
+		}
+		if (this.ssList != null) {
+			try {
+				asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG_SS_List);
+				int pos = asnOs.StartContentDefiniteLength();
+				for (SSCode item : this.ssList) {
+					((SSCodeImpl) item).encodeAll(asnOs);
+				}
+				asnOs.FinalizeContent(pos);
+			} catch (AsnException e) {
+				throw new MAPException("AsnException when encoding " + _PrimitiveName + ".ssList: " + e.getMessage(), e);
+			}
+		}
+		if (this.odbGeneralData != null) {
+			// TODO: implement it
+//			((ODBGeneralDataImpl) this.odbGeneralData).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_odb_GeneralData);
+		}
+
+		if (mapProtocolVersion >= 2) {
+			if (this.regionalSubscriptionResponse != null) {
+				try {
+					asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_regionalSubscriptionResponse, this.regionalSubscriptionResponse.getCode());
+				} catch (IOException e) {
+					throw new MAPException("IOException while encoding " + _PrimitiveName + " parameter regionalSubscriptionResponse", e);
+				} catch (AsnException e) {
+					throw new MAPException("IOException while encoding " + _PrimitiveName + " parameter regionalSubscriptionResponse", e);
+				}
+			}
+		}
+
+		if (mapProtocolVersion >= 3) {
+			if (this.supportedCamelPhases != null) {
+				((SupportedCamelPhasesImpl) this.supportedCamelPhases).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_supportedCamelPhases);
+			}
+			if (this.extensionContainer != null)
+				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_extContainer);
+			if (this.offeredCamel4CSIs != null) {
+				((OfferedCamel4CSIsImpl) this.offeredCamel4CSIs).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_offeredCamel4CSIs);
+			}
+			if (this.supportedFeatures != null) {
+				// TODO: implement it
+//				((SupportedFeaturesImpl) this.supportedFeatures).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_supportedFeatures);
+			}
+		}
+	}
 	
 	@Override
 	public String toString() {
@@ -342,9 +503,60 @@ public class InsertSubscriberDataResponseImpl extends MobilityMessageImpl implem
 		sb.append(_PrimitiveName);
 		sb.append(" [");
 
-		if (this.teleserviceList != null && this.teleserviceList.size() >= 1) {
-			sb.append("teleserviceList=");
-			sb.append(this.teleserviceList.toString());
+		if (this.teleserviceList != null) {
+			sb.append("teleserviceList=[");
+			boolean firstItem = true;
+			for (ExtTeleserviceCode be : this.teleserviceList) {
+				if (firstItem)
+					firstItem = false;
+				else
+					sb.append(", ");
+				sb.append(be.toString());
+			}
+			sb.append("], ");
+		}
+
+		if (this.bearerServiceList != null) {
+			sb.append("bearerServiceList=[");
+			boolean firstItem = true;
+			for (ExtBearerServiceCode be : this.bearerServiceList) {
+				if (firstItem)
+					firstItem = false;
+				else
+					sb.append(", ");
+				sb.append(be.toString());
+			}
+			sb.append("], ");
+		}
+
+		if (this.ssList != null) {
+			sb.append("ssList=[");
+			boolean firstItem = true;
+			for (SSCode be : this.ssList) {
+				if (firstItem)
+					firstItem = false;
+				else
+					sb.append(", ");
+				sb.append(be.toString());
+			}
+			sb.append("], ");
+		}
+
+		if (this.odbGeneralData != null) {
+			sb.append("odbGeneralData=");
+			sb.append(odbGeneralData.toString());
+			sb.append(", ");
+		}
+
+		if (this.regionalSubscriptionResponse != null) {
+			sb.append("regionalSubscriptionResponse=");
+			sb.append(regionalSubscriptionResponse.toString());
+			sb.append(", ");
+		}
+
+		if (this.supportedCamelPhases != null) {
+			sb.append("supportedCamelPhases=");
+			sb.append(supportedCamelPhases.toString());
 			sb.append(", ");
 		}
 
@@ -353,7 +565,19 @@ public class InsertSubscriberDataResponseImpl extends MobilityMessageImpl implem
 			sb.append(extensionContainer.toString());
 			sb.append(", ");
 		}
-		
+
+		if (this.offeredCamel4CSIs != null) {
+			sb.append("offeredCamel4CSIs=");
+			sb.append(offeredCamel4CSIs.toString());
+			sb.append(", ");
+		}
+
+		if (this.supportedFeatures != null) {
+			sb.append("supportedFeatures=");
+			sb.append(supportedFeatures.toString());
+			sb.append(", ");
+		}
+
 		sb.append("mapProtocolVersion=");
 		sb.append(mapProtocolVersion);
 

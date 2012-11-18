@@ -55,9 +55,9 @@ InsertSubscriberDataRes ::= SEQUENCE {
 	-- regionalSubscriptionResponse must be absent in version 1
 	...}
 
-BearerServiceList ::= SEQUENCE SIZE (1..50) OF Ext-BearerServiceCode
-
 TeleserviceList ::= SEQUENCE SIZE (1..20) OF Ext-TeleserviceCode
+
+BearerServiceList ::= SEQUENCE SIZE (1..50) OF Ext-BearerServiceCode
 
 SS-List ::= SEQUENCE SIZE (1..30) OF SS-Code
 
