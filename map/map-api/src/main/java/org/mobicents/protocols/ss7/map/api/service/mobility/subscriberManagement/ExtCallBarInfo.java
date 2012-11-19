@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.util.ArrayList;
+
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
 
@@ -45,7 +47,7 @@ public interface ExtCallBarInfo {
 
 	public SSCode getSsCode();
 
-	public ExtCallBarringFeature getCallBarringFeatureList();
+	public ArrayList<ExtCallBarringFeature> getCallBarringFeatureList();
 
 	public MAPExtensionContainer getExtensionContainer();
 

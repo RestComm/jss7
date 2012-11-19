@@ -20,43 +20,45 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
+package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
 
-import java.util.ArrayList;
-
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ZoneCode;
+import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
- * 
+*
+* @author sergey vetyutnev
+*
+*/
+public class ZoneCodeImpl extends OctetStringBase implements ZoneCode {
 
-CUG-Subscription ::= SEQUENCE {
-	cug-Index	CUG-Index,
-	cug-Interlock	CUG-Interlock,
-	intraCUG-Options	IntraCUG-Options,
-	basicServiceGroupList	Ext-BasicServiceGroupList	OPTIONAL,
-	extensionContainer	[0] ExtensionContainer	OPTIONAL,
-	...}
+	public ZoneCodeImpl() {
+		super(2, 2, "ZoneCode");
+	}
 
-CUG-Index ::= INTEGER (0..32767)
-	-- The internal structure is defined in ETS 300 138.
+	public ZoneCodeImpl(byte[] data) {
+		super(2, 2, "ZoneCode", data);
+	}
 
-Ext-BasicServiceGroupList ::= SEQUENCE SIZE (1..32) OF Ext-BasicServiceCode
+	public ZoneCodeImpl(int value) {
+		super(2, 2, "ZoneCode");
 
- * 
- * 
- * @author sergey vetyutnev
- * 
- */
-public interface CUGSubscription {
+		this.data = new byte[2];
+		this.data[0] = (byte) ((value & 0xFF00) >> 8);
+		this.data[1] = (byte) (value & 0xFF);
+	}
 
-	public int getCUGIndex();
+	public byte[] getData() {
+		return data;
+	}
 
-	public CUGInterlock getCugInterlock();
+	@Override
+	public int getValue() {
+		if (this.data == null || this.data.length != 2)
+			return 0;
 
-	public IntraCUGOptions getIntraCugOptions();
-
-	public ArrayList<ExtBasicServiceCode> getBasicServiceGroupList();
-
-	public MAPExtensionContainer getExtensionContainer();
+		int res = ((this.data[0] & 0xFF) << 8) | (this.data[1] & 0xFF);
+		return res;
+	}	
 
 }

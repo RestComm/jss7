@@ -54,6 +54,8 @@ import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.Updat
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateLocationResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.AnyTimeInterrogationRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.AnyTimeInterrogationResponseImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.InsertSubscriberDataRequestImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.InsertSubscriberDataResponseImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
@@ -169,7 +171,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
 			}
 
-		// -- Subscriber Information services
+			// -- Subscriber Information services
 		case anyTimeEnquiryContext:
 			if (vers >= 3 && vers <= 3) {
 				return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
@@ -181,8 +183,21 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 			} else {
 				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
 			}
+
+			// -- Subscriber Management services
+		case subscriberDataMngtContext:
+			if (vers >= 1 && vers <= 3) {
+				return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
+			} else if (vers > 3) {
+				long[] altOid = dialogApplicationContext.getOID();
+				altOid[7] = 3;
+				ApplicationContextName alt = TcapFactory.createApplicationContextName(altOid);
+				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect, alt);
+			} else {
+				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
+			}
 		}
-		
+
 		return new ServingCheckDataImpl(ServingCheckResult.AC_NotServing);
 	}
 
@@ -201,12 +216,15 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 		// -- Authentication management services
 		case MAPOperationCode.sendParameters:
 			return MAPApplicationContext.getInstance(MAPApplicationContextName.infoRetrievalContext, MAPApplicationContextVersion.version1);
-		
+
 		// -- IMEI services
 		case MAPOperationCode.checkIMEI:
 			return MAPApplicationContext.getInstance(MAPApplicationContextName.equipmentMngtContext, MAPApplicationContextVersion.version1);
-		
-		
+
+		// -- Subscriber Management services
+		case MAPOperationCode.insertSubscriberData:
+			return MAPApplicationContext.getInstance(MAPApplicationContextName.subscriberDataMngtContext, MAPApplicationContextVersion.version1);
+
 		}
 
 		return null;
@@ -282,6 +300,17 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 					this.processCheckImeiResponse(parameter, mapDialogMobilityImpl, invokeId);
 			}
 			break;
+
+		// -- Subscriber management services
+		case MAPOperationCode.insertSubscriberData:
+			if (acn == MAPApplicationContextName.subscriberDataMngtContext) {
+				if (compType == ComponentType.Invoke)
+					this.processInsertSubscriberDataRequest(parameter, mapDialogMobilityImpl, invokeId);
+				else
+					this.processInsertSubscriberDataResponse(parameter, mapDialogMobilityImpl, invokeId);
+			}
+			break;
+
 		default:
 			new MAPParsingComponentException("", MAPParsingComponentExceptionReason.UnrecognizedOperation);
 		}
@@ -665,7 +694,67 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 			}
 		}
 	}
+
+	// - Subscriber management services
+	private void processInsertSubscriberDataRequest(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId) 
+			throws MAPParsingComponentException {
+		
+		if (parameter == null)
+			throw new MAPParsingComponentException("Error while decoding InsertSubscriberDataRequest: Parameter is mandatory but not found",
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		
+		long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
+		
+		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+			throw new MAPParsingComponentException(
+					"Error while decoding InsertSubscriberDataRequest: Bad tag or tagClass or parameter is primitive, received tag="
+							+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+		
+		byte[] buf = parameter.getData();
+		AsnInputStream ais = new AsnInputStream(buf);
+		
+		InsertSubscriberDataRequestImpl ind = new InsertSubscriberDataRequestImpl(version);
+		ind.decodeData(ais, buf.length);
+		ind.setInvokeId(invokeId);
+		ind.setMAPDialog(mapDialogImpl);
+
+		for (MAPServiceListener serLis : this.serviceListeners) {
+			try {
+				((MAPServiceMobilityListener) serLis).onInsertSubscriberDataRequest(ind);
+			} catch (Exception e) {
+				loger.error("Error processing processInsertSubscriberDataRequest: " + e.getMessage(), e);
+			}
+		}
+	}
 	
-	
+	private void processInsertSubscriberDataResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId) 
+			throws MAPParsingComponentException {
+
+		long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
+		InsertSubscriberDataResponseImpl ind = new InsertSubscriberDataResponseImpl(version);
+
+		if (parameter != null) {
+			if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+				throw new MAPParsingComponentException(
+						"Error while decoding InsertSubscriberDataResponse: Bad tag or tagClass or parameter is primitive, received tag="
+								+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+
+			byte[] buf = parameter.getData();
+			AsnInputStream ais = new AsnInputStream(buf);
+			ind.decodeData(ais, buf.length);
+		}
+
+		ind.setInvokeId(invokeId);
+		ind.setMAPDialog(mapDialogImpl);
+
+		for (MAPServiceListener serLis : this.serviceListeners) {
+			try {
+				((MAPServiceMobilityListener) serLis).onInsertSubscriberDataResponse(ind);
+			} catch (Exception e) {
+				loger.error("Error processing processInsertSubscriberDataResponse: " + e.getMessage(), e);
+			}
+		}
+	}
+
 }
 

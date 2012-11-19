@@ -20,43 +20,28 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
+package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
 
-import java.util.ArrayList;
-
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.AgeIndicator;
+import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
- * 
+*
+* @author sergey vetyutnev
+*
+*/
+public class AgeIndicatorImpl extends OctetStringBase implements AgeIndicator {
 
-CUG-Subscription ::= SEQUENCE {
-	cug-Index	CUG-Index,
-	cug-Interlock	CUG-Interlock,
-	intraCUG-Options	IntraCUG-Options,
-	basicServiceGroupList	Ext-BasicServiceGroupList	OPTIONAL,
-	extensionContainer	[0] ExtensionContainer	OPTIONAL,
-	...}
+	public AgeIndicatorImpl() {
+		super(1, 6, "AgeIndicator");
+	}
 
-CUG-Index ::= INTEGER (0..32767)
-	-- The internal structure is defined in ETS 300 138.
+	public AgeIndicatorImpl(byte[] data) {
+		super(1, 6, "AgeIndicator", data);
+	}
 
-Ext-BasicServiceGroupList ::= SEQUENCE SIZE (1..32) OF Ext-BasicServiceCode
-
- * 
- * 
- * @author sergey vetyutnev
- * 
- */
-public interface CUGSubscription {
-
-	public int getCUGIndex();
-
-	public CUGInterlock getCugInterlock();
-
-	public IntraCUGOptions getIntraCugOptions();
-
-	public ArrayList<ExtBasicServiceCode> getBasicServiceGroupList();
-
-	public MAPExtensionContainer getExtensionContainer();
+	public byte[] getData() {
+		return data;
+	}
 
 }

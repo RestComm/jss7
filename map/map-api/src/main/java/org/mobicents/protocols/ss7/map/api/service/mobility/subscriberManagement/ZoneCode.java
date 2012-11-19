@@ -36,4 +36,6 @@ public interface ZoneCode {
 
 	public byte[] getData();
 
+	public int getValue();
+
 }

@@ -33,6 +33,8 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.U
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.InsertSubscriberDataRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.InsertSubscriberDataResponse;
 
 /**
  * 
@@ -50,11 +52,15 @@ public interface MAPServiceMobilityListener extends MAPServiceListener {
 	// -- Authentication management services
 	public void onSendAuthenticationInfoRequest(SendAuthenticationInfoRequest ind);
 	public void onSendAuthenticationInfoResponse(SendAuthenticationInfoResponse ind);
-	
+
 	// -- Subscriber Information services
 	public void onAnyTimeInterrogationRequest(AnyTimeInterrogationRequest request);
 	public void onAnyTimeInterrogationResponse(AnyTimeInterrogationResponse response);
-	
+
+	// -- Subscriber Management services
+	public void onInsertSubscriberDataRequest(InsertSubscriberDataRequest request);
+	public void onInsertSubscriberDataResponse(InsertSubscriberDataResponse request);
+
 	// -- International mobile equipment identities management services
 	public void onCheckImeiRequest(CheckImeiRequest request);
 	public void onCheckImeiResponse(CheckImeiResponse response);

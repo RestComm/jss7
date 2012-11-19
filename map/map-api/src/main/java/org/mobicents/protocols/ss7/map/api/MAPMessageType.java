@@ -41,6 +41,8 @@ public enum MAPMessageType {
 	checkIMEI_Response,
 	cancelLocation_Request,
 	cancelLocation_Response,
+	insertSubscriberData_Request,
+	insertSubscriberData_Response,
 	
 	// -- supplementary
 	processUnstructuredSSRequest_Request,

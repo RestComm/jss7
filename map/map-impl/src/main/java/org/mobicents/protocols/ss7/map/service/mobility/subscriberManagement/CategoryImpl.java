@@ -20,43 +20,33 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
+package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
 
-import java.util.ArrayList;
-
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.Category;
+import org.mobicents.protocols.ss7.map.primitives.OctetStringLength1Base;
 
 /**
- * 
+*
+* @author daniel bichara
+*
+*/
+public class CategoryImpl extends OctetStringLength1Base implements Category {
+	
+	/**
+	 * Category
+	 * CCITTT Rec Q.767
+	 */
+	public static final int catOrdinary		 	= 0;	// ordinary-calling-subscriber
 
-CUG-Subscription ::= SEQUENCE {
-	cug-Index	CUG-Index,
-	cug-Interlock	CUG-Interlock,
-	intraCUG-Options	IntraCUG-Options,
-	basicServiceGroupList	Ext-BasicServiceGroupList	OPTIONAL,
-	extensionContainer	[0] ExtensionContainer	OPTIONAL,
-	...}
+	public CategoryImpl() {
+		super("Category");
+	}
 
-CUG-Index ::= INTEGER (0..32767)
-	-- The internal structure is defined in ETS 300 138.
+	public CategoryImpl(int data) {
+		super("Category", data);
+	}
 
-Ext-BasicServiceGroupList ::= SEQUENCE SIZE (1..32) OF Ext-BasicServiceCode
-
- * 
- * 
- * @author sergey vetyutnev
- * 
- */
-public interface CUGSubscription {
-
-	public int getCUGIndex();
-
-	public CUGInterlock getCugInterlock();
-
-	public IntraCUGOptions getIntraCugOptions();
-
-	public ArrayList<ExtBasicServiceCode> getBasicServiceGroupList();
-
-	public MAPExtensionContainer getExtensionContainer();
-
+	public int getData() {
+		return data;
+	}	
 }

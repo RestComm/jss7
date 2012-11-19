@@ -27,7 +27,7 @@ import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
 *
-* @author sergey vetyutnev
+* @author daniel bichara
 *
 */
 public class QoSSubscribedImpl extends OctetStringBase implements QoSSubscribed {
