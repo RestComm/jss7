@@ -29,7 +29,13 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VLRCapability;
 
 /**
- * 
+ * <p>
+ * The VLR uses MAP RD when it needs to reload its subscription data. The RD procedure
+ * is not triggered by subscriber action, such as registration in MSC. The handling of the
+ * RD procedure is similar to the handling of the location update procedure. That is, the
+ * VLR indicates to HLR which CAMEL capability is supported in the VLR, so the HLR
+ * can decide whether it can send CAMEL data to the VLR for that subscriber
+ * </p>
  
 MAP V2-3:
 
