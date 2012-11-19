@@ -14,7 +14,7 @@
 		<!-- shell -->
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.management</groupId>
-			<artifactId>shell</artifactId>
+			<artifactId>shell-server-api</artifactId>
 			<version>${pom.version}</version>
 		</dependency>
 		<!-- non mobicents -->
