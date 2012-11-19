@@ -557,14 +557,6 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 		return invokeId;
 	}
 
-	
-	
-	
-	
-	
-	
-	
-// TODO: begin
 
 	@Override
 	public Long addInsertSubscriberDataRequest(IMSI imsi, ISDNAddressString msisdn,
@@ -646,19 +638,25 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 			ISDNAddressString sgsnNumber, DiameterIdentity mmeName, Long subscribedPeriodicRAUTAUtimer,
 			boolean vplmnLIPAAllowed, Boolean mdtUserConsent, Long subscribedPeriodicLAUtimer)
 			throws MAPException {
-	
-		if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.subscriberDataMngtContext)
-				|| (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version1
-						&& this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2
-						&& this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)) {
 
-			if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.networkLocUpContext)
-					|| (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version1
-							&& this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2 && 
-							this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
-				throw new MAPException("Bad application context name for SubscriberDataRequest: must be networkLocUpContext or subscriberDataMngtContext_V1, V2 or V3");
-		}
-		
+		boolean isSubscriberDataMngtContext = false;
+		boolean isNetworkLocUpContext = false;
+		boolean isGprsLocationUpdateContext = false;
+		if ((this.appCntx.getApplicationContextName() == MAPApplicationContextName.subscriberDataMngtContext)
+				&& (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version1
+						|| this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version3))
+			isSubscriberDataMngtContext = true;
+		if ((this.appCntx.getApplicationContextName() == MAPApplicationContextName.networkLocUpContext)
+				&& (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version1
+						|| this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version3))
+			isNetworkLocUpContext = true;
+		if ((this.appCntx.getApplicationContextName() == MAPApplicationContextName.gprsLocationUpdateContext)
+				&& (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version3))
+			isGprsLocationUpdateContext = true;
+		if (isSubscriberDataMngtContext == false && isNetworkLocUpContext == false && isGprsLocationUpdateContext == false)
+			throw new MAPException("Bad application context name for InsertSubscriberDataRequest: must be networkLocUpContext_V1, V2 or V3 or "
+					+ "subscriberDataMngtContext_V1, V2 or V3 or gprsLocationUpdateContext_V3");
+
 		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
 		if (customInvokeTimeout == _Timer_Default) {
 			invoke.setTimeout(_Timer_m);
@@ -707,6 +705,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 		return invokeId;
 	}
 
+
 	@Override
 	public void addInsertSubscriberDataResponse(long invokeId, ArrayList<ExtTeleserviceCode> teleserviceList, 
 			ArrayList<ExtBearerServiceCode> bearerServiceList, ArrayList<SSCode> ssList, ODBGeneralData odbGeneralData,
@@ -724,52 +723,51 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 			RegionalSubscriptionResponse regionalSubscriptionResponse,
 			SupportedCamelPhases supportedCamelPhases, MAPExtensionContainer extensionContainer,
 			OfferedCamel4CSIs offeredCamel4CSIs, SupportedFeatures supportedFeatures) throws MAPException {
-	
-		if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.subscriberDataMngtContext)
-				|| (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version1
-						&& this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2
-						&& this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)) {
 
-			if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.networkLocUpContext)
-					|| (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version1
-							&& this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2 && 
-							this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
-				throw new MAPException("Bad application context name for SubscriberDataResponse: must be networkLocUpContext or subscriberDataMngtContext_V1, V2 or V3");
-		}
-		
+		boolean isSubscriberDataMngtContext = false;
+		boolean isNetworkLocUpContext = false;
+		boolean isGprsLocationUpdateContext = false;
+		if ((this.appCntx.getApplicationContextName() == MAPApplicationContextName.subscriberDataMngtContext)
+				&& (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version1
+						|| this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version3))
+			isSubscriberDataMngtContext = true;
+		if ((this.appCntx.getApplicationContextName() == MAPApplicationContextName.networkLocUpContext)
+				&& (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version1
+						|| this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version3))
+			isNetworkLocUpContext = true;
+		if ((this.appCntx.getApplicationContextName() == MAPApplicationContextName.gprsLocationUpdateContext)
+				&& (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version3))
+			isGprsLocationUpdateContext = true;
+		if (isSubscriberDataMngtContext == false && isNetworkLocUpContext == false && isGprsLocationUpdateContext == false)
+			throw new MAPException("Bad application context name for InsertSubscriberDataResponse: must be networkLocUpContext_V1, V2 or V3 or "
+					+ "subscriberDataMngtContext_V1, V2 or V3 or gprsLocationUpdateContext_V3");
+
 		ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
 		resultLast.setInvokeId(invokeId);
-		
+
 		// Operation Code
 		OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
 		oc.setLocalOperationCode((long) MAPOperationCode.insertSubscriberData);
 		resultLast.setOperationCode(oc);
 
-		InsertSubscriberDataResponseImpl resp = new InsertSubscriberDataResponseImpl(this.appCntx.getApplicationContextVersion().getVersion(),
-				teleserviceList, bearerServiceList, ssList, odbGeneralData, regionalSubscriptionResponse,
-				supportedCamelPhases, extensionContainer, offeredCamel4CSIs, supportedFeatures);
-		AsnOutputStream aos = new AsnOutputStream();
-		resp.encodeData(aos);
-		
-		Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-		p.setTagClass(resp.getTagClass());
-		p.setPrimitive(resp.getIsPrimitive());
-		p.setTag(resp.getTag());
-		p.setData(aos.toByteArray());
-		resultLast.setParameter(p);
+		if (teleserviceList != null || bearerServiceList != null || ssList != null || odbGeneralData != null || regionalSubscriptionResponse != null
+				|| supportedCamelPhases != null || extensionContainer != null || offeredCamel4CSIs != null || supportedFeatures != null) {
+			InsertSubscriberDataResponseImpl resp = new InsertSubscriberDataResponseImpl(this.appCntx.getApplicationContextVersion().getVersion(),
+					teleserviceList, bearerServiceList, ssList, odbGeneralData, regionalSubscriptionResponse, supportedCamelPhases, extensionContainer,
+					offeredCamel4CSIs, supportedFeatures);
+			AsnOutputStream aos = new AsnOutputStream();
+			resp.encodeData(aos);
 
+			Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+			p.setTagClass(resp.getTagClass());
+			p.setPrimitive(resp.getIsPrimitive());
+			p.setTag(resp.getTag());
+			p.setData(aos.toByteArray());
+			resultLast.setParameter(p);
+		}
+		
 		this.sendReturnResultLastComponent(resultLast);
 	}
-	
-	// TODO: end
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	@Override
 	public Long addCancelLocationRequest(IMSI imsi, IMSIWithLMSI imsiWithLmsi, CancellationType cancellationType, MAPExtensionContainer extensionContainer,

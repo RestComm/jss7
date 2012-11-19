@@ -171,7 +171,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
 			}
 
-		// -- Subscriber Information services
+			// -- Subscriber Information services
 		case anyTimeEnquiryContext:
 			if (vers >= 3 && vers <= 3) {
 				return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
@@ -183,8 +183,21 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 			} else {
 				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
 			}
+
+			// -- Subscriber Management services
+		case subscriberDataMngtContext:
+			if (vers >= 1 && vers <= 3) {
+				return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
+			} else if (vers > 3) {
+				long[] altOid = dialogApplicationContext.getOID();
+				altOid[7] = 3;
+				ApplicationContextName alt = TcapFactory.createApplicationContextName(altOid);
+				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect, alt);
+			} else {
+				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
+			}
 		}
-		
+
 		return new ServingCheckDataImpl(ServingCheckResult.AC_NotServing);
 	}
 
@@ -203,12 +216,15 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 		// -- Authentication management services
 		case MAPOperationCode.sendParameters:
 			return MAPApplicationContext.getInstance(MAPApplicationContextName.infoRetrievalContext, MAPApplicationContextVersion.version1);
-		
+
 		// -- IMEI services
 		case MAPOperationCode.checkIMEI:
 			return MAPApplicationContext.getInstance(MAPApplicationContextName.equipmentMngtContext, MAPApplicationContextVersion.version1);
-		
-		
+
+		// -- Subscriber Management services
+		case MAPOperationCode.insertSubscriberData:
+			return MAPApplicationContext.getInstance(MAPApplicationContextName.subscriberDataMngtContext, MAPApplicationContextVersion.version1);
+
 		}
 
 		return null;
@@ -698,8 +714,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 		AsnInputStream ais = new AsnInputStream(buf);
 		
 		InsertSubscriberDataRequestImpl ind = new InsertSubscriberDataRequestImpl(version);
-		ind.decodeData(ais, parameter.getEncodingLength());
-		
+		ind.decodeData(ais, buf.length);
 		ind.setInvokeId(invokeId);
 		ind.setMAPDialog(mapDialogImpl);
 
@@ -714,23 +729,21 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 	
 	private void processInsertSubscriberDataResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId) 
 			throws MAPParsingComponentException {
-		
-		if (parameter == null)
-			throw new MAPParsingComponentException("Error while decoding InsertSubscriberDataResponse: Parameter is mandatory but not found",
-					MAPParsingComponentExceptionReason.MistypedParameter);
 
 		long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
-		
-		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
-			throw new MAPParsingComponentException(
-					"Error while decoding InsertSubscriberDataResponse: Bad tag or tagClass or parameter is primitive, received tag="
-							+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
-
-		byte[] buf = parameter.getData();
-		AsnInputStream ais = new AsnInputStream(buf);
-		
 		InsertSubscriberDataResponseImpl ind = new InsertSubscriberDataResponseImpl(version);
-		ind.decodeData(ais, buf.length);
+
+		if (parameter != null) {
+			if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+				throw new MAPParsingComponentException(
+						"Error while decoding InsertSubscriberDataResponse: Bad tag or tagClass or parameter is primitive, received tag="
+								+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+
+			byte[] buf = parameter.getData();
+			AsnInputStream ais = new AsnInputStream(buf);
+			ind.decodeData(ais, buf.length);
+		}
+
 		ind.setInvokeId(invokeId);
 		ind.setMAPDialog(mapDialogImpl);
 
