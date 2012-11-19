@@ -1759,5 +1759,17 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void onInsertSubscriberDataRequest(InsertSubscriberDataRequest request) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onInsertSubscriberDataResponse(InsertSubscriberDataResponse request) {
+		// TODO Auto-generated method stub
+		
+	}
 }
 
