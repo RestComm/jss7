@@ -1,0 +1,30 @@
+Name
+	sccp primary_add delete
+
+SYNOPSIS
+	sccp primary_add delete <id>
+
+DESCRIPTION
+	This command is used to remove a previously defined primary address.
+
+PARAMETERS
+
+	Standard Parameters
+                                             
+	<id>		-	The identifier of the address that is being deleted.
+
+EXAMPLES
+	sccp primary_add delete 1 
+
+	The above command will delete the primary address identified by the number '1'.
+
+SEE ALSO
+	sccp sap create, sccp sap modify, sccp sap delete, sccp sap show, 
+	sccp dest create, sccp dest modify, sccp dest delete, sccp dest show, 
+	sccp rule create, sccp rule modify, sccp rule delete, sccp rule show, 
+	sccp primary_add create, sccp primary_add modify, sccp primary_add show, 
+	sccp backup_add create, sccp backup_add modify, sccp backup_add delete,
+	sccp backup_add show, sccp rsp create, sccp rsp modify, sccp rsp delete, 
+	sccp rsp show, sccp rss create, sccp rss modify, sccp rss delete, sccp rss show, 
+	sccp lmr create, sccp lmr modify, sccp lmr delete, sccp lmr show, sccp csp create, 
+	sccp csp modify, sccp csp delete, sccp csp show, sccp get, sccp set

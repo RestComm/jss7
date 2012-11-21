@@ -1,115 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">
+%BOOK_ENTITIES;
+]>
 
 <chapter id="simulator">
 
 	<title>SS7 Simulator</title>
 
 	<para>
-		SS7 Simulator is an application for testing SS7 stack and displaying its functionality.
-		It is also a good example of how to use this stack. 
+		SS7 Simulator is an application for testing the &THIS.PLATFORM; &THIS.APPLICATION; and understanding its functionality. The test cases will allow you to conduct various test scenarios and explore the Stack. The Simulator is also a good example of how to use this Stack.  
 	</para>
 
-	<para>
-		SS7 Simulator contains three layers of SS7 stack components and one testing task layer which presents the concrete testing task. 
-	</para>
 
-	<para>
-		Layer 1 presents MTP-3 corresponded stack. It can be one of:
-			<itemizedlist> 
-				<listitem>
-					<para>
-						M3UA
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						DialogicCard
-					</para>
-				</listitem>
-					<listitem>
-					<para>
-						DahdiCard (not yet implemented)
-					</para>
-				</listitem>				
-			</itemizedlist>
-	</para>
-
-	<para>
-		Layer 2 presents :
-			<itemizedlist> 
-				<listitem>
-					<para>
-						SCCP
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						ISUP (not yet implemented)
-					</para>
-				</listitem>
-			</itemizedlist>
-	</para>
-
-	<para>
-		Layer 3 presents :
-			<itemizedlist> 
-				<listitem>
-					<para>
-						TCAP+MAP
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						TCAP+CAP (not yet implemented)
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						TCAP+INAP (not yet implemented)
-					</para>
-				</listitem>
-			</itemizedlist>
-	</para>
-
-	<para>
-		Testing task layer can present one of the following testing task:
-			<itemizedlist> 
-				<listitem>
-					<para>
-						USSD client test
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						USSD server test
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						SMCS SMS delivering test (not yet implemented)
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Dialogic MTU interconnection test (not yet implemented)
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Dialogic MTR interconnection test (not yet implemented)
-					</para>
-				</listitem>
-			</itemizedlist>
-	</para>
-
-	<para>
-		A user can select for testing layers that he needs.
-		Some layers demand correct low layers. For example TCAP+MAP layer demands SCCP as layer 2.
-		Each layer can be separately configured depending on user testing tasks.
-		Configuring of layers covers only major options (does not cover all possible SS7 stack options). 
-	</para>
 	
 	<section id="simulator_configuring">
 		<title>SS7 Simulator configuring 
@@ -334,6 +238,171 @@
 
 	</section>
 
+	
+	<section id="simulator_configuring_layers">
+		<title>Configuring Simulator layers 
+		</title>
+
+	<para>
+		Some remarks of configuring the Mobicents stack for Simulator is described in this chapter.
+	</para>
+
+
+	<section id="simulator_configuring_layers_sccp">
+		<title>SCCP 
+		</title>
+
+	<para>
+		SCCP layer supports processing messages in two modes:		
+			<itemizedlist> 
+				<listitem>
+					<para>
+						Route on DPC and SSN mode
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Route on GlobalTitle mode
+					</para>
+				</listitem>
+			</itemizedlist>
+	</para>
+
+	<para>
+		For both modes we need to set the following options:
+			<itemizedlist> 
+				<listitem>
+					<para>
+						Remote SPC
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Local SPC
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Network indicator
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Remote SSN
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Local SSN
+					</para>
+				</listitem>
+			</itemizedlist>
+	</para>
+
+	<para>
+		When starting SCCP layer creates:
+			<itemizedlist> 
+				<listitem>
+					<para>
+						Mtp3ServiceAccessPoint (using Local SPC and Network indicator)
+						with the single Mtp3Destination (Remote SPC, all SLS's)
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						RemoteSpc (using Remote SPC)
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						RemoteSsn (using Remote SPC and Remote SSN)
+					</para>
+				</listitem>
+			</itemizedlist>
+	</para>
+
+	<para>
+		For "Route on GlobalTitle" mode there are following extra options:
+			<itemizedlist> 
+				<listitem>
+					<para>
+						GlobalTitle type ("Nature of address indicator only", "Translation type only",
+						"Translation type, numbering plan and encoding scheme",
+						"Translation type, numbering plan, encoding scheme and NOA ind"),
+						the last choice is default
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						AddressNature
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						NumberingPlan
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Translation type
+						(those four options are used both for CalledPartyAddress, CallingPartyAddress and routing rules)
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						CallingPartyAddress digits
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Extra local addresses (used for routing rules). We can define here several addresses
+						separated by comma. "?" and "*" characters can also be used here.
+					</para>
+				</listitem>
+			</itemizedlist>
+	</para>
+
+	<para>
+		If "Route on GlobalTitle" mode is used, several rules for routing are created when SCCP layer starting.
+		Addresses that are equal CallingPartyAddress or Extra local addresses are routed to the local
+		SCCP user. All other addresses are routed to the Remote SPC/Remote SSN.
+	</para>
+
+	<para>
+		SCCP layer provide creating CalledPartyAddress and CallingPartyAddress
+		for upper layers and test cases. When "Route on DPC and SSN" mode these are 
+		ROUTING_BASED_ON_DPC_AND_SSN with no GlobalTitle, pc=Local SPC (for CallingPartyAddress)
+		or Remote SSN (for CalledPartyAddress), SSN=Local SSN and Remote SSN accordingly.
+	</para>
+
+	<para>
+		When "Route on GlobalTitle" mode ROUTING_BASED_ON_GT is used:
+			<itemizedlist> 
+				<listitem>
+					<para>
+						CallingPartyAddress is created based on CallingPartyAddress digits and Local SSN.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						CalledPartyAddress is created using digits and SSN that are supplied by upper levels or test cases.
+					</para>
+				</listitem>
+			</itemizedlist>
+	</para>
+
+	<figure>
+  		<title>SCCP settings form</title>
+  		<mediaobject>
+    		<imageobject>
+      			<imagedata fileref="images/Simulator-Example9.png" format="PNG" align="center"/>
+    		</imageobject>
+  		</mediaobject>
+	</figure>
+	</section>
+
+	</section>
+
 	</section>
 
 
@@ -344,6 +413,48 @@
 	<para>
 		Several test cases are implemened now. 
 	</para>
+
+	<section id="simulator_test_ussdserver">
+		<title>USSD Server 
+		</title>
+
+	<para>
+		UssdServer test can work in manual and automatic modes.
+		In the manual mode a user manually inserts the response message value and sends ProcessUnstructuredSs response (or UnstructuredSs request) to the Ussd client.
+		In the automatic mode UssdServer automatically sends a predefined message as an ProcessUnstructuredSs response ("Auto sending ProcessUnstructuredSsResponse" option)
+		or automatically sends a predefined message as an UnstructuredSs request and then 
+		sends a predefined message ProcessUnstructuredSs response ("Auto sending Unstructured_SS_Request then after response sending ProcessUnstructuredSsResponse" option).
+		Use "Auto sending ProcessUnstructuredSsResponse" option for UssdServer if UssdClient is used for a load test ("Auto sending ProcessUnstructuredSSRequest").
+		For load tests we recommend to check the option "One notification for 100 dialogs" for preventing too many notifications when load testing. 
+	</para>
+
+	<para>
+		UssdServer test can perform followng tasks:
+			<itemizedlist> 
+				<listitem>
+					<para>
+						Sending a ProcessUnstructiredSs response / UnstructiredSs request in automatic or manual modes.
+						Ussd Client must initiate a dialog using ProcessUnstructiredSs request.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Manually sending an UnstructuredSsNotify. 
+					</para>
+				</listitem>
+			</itemizedlist>
+	</para>
+
+	<figure>
+  		<title>Ussd Server option form</title>
+  		<mediaobject>
+    		<imageobject>
+      			<imagedata fileref="images/Simulator-Example8.png" format="PNG" align="center"/>
+    		</imageobject>
+  		</mediaobject>
+	</figure>
+
+	</section>
 
 
 	<section id="simulator_test_ussdclient">
@@ -405,45 +516,201 @@
 	</section>
 
 
-	<section id="simulator_test_ussdserver">
-		<title>USSD Server 
+	<section id="simulator_test_smsserver">
+		<title>SMS Server 
 		</title>
 
 	<para>
-		UssdServer test can work in manual and automatic modes.
-		In the manual mode a user manually inserts the response message value and sends ProcessUnstructuredSs response (or UnstructuredSs request) to the Ussd client.
-		In the automatic mode UssdServer automatically sends a predefined message as an ProcessUnstructuredSs response ("Auto sending ProcessUnstructuredSsResponse" option)
-		or automatically sends a predefined message as an UnstructuredSs request and then 
-		sends a predefined message ProcessUnstructuredSs response ("Auto sending Unstructured_SS_Request then after response sending ProcessUnstructuredSsResponse" option).
-		Use "Auto sending ProcessUnstructuredSsResponse" option for UssdServer if UssdClient is used for a load test ("Auto sending ProcessUnstructuredSSRequest").
-		For load tests we recommend to check the option "One notification for 100 dialogs" for preventing too many notifications when load testing. 
-	</para>
-
-	<para>
-		UssdServer test can perform followng tasks:
+		SMS Server simulates the behavior of SMSC, it can:
 			<itemizedlist> 
 				<listitem>
 					<para>
-						Sending a ProcessUnstructiredSs response / UnstructiredSs request in automatic or manual modes.
-						Ussd Client must initiate a dialog using ProcessUnstructiredSs request.
+						Send sendRoutingInfoForSM to the HLR and receive the response
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						Manually sending an UnstructuredSsNotify. 
+						Send mt-forwardSM to the VLR and receive the response 
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Send sendRoutingInfoForSM to the HLR, receive the response and send mt-forwardSM using data from the first request 
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Receive mo-forwardSM request from VLR and display the received message 
+					</para>
+				</listitem>
+			</itemizedlist>
+	</para>
+
+	<para>
+		We need to set the following options to SMS server:
+			<itemizedlist> 
+				<listitem>
+					<para>
+						AddressNature and NumberingPlan for AddressString creation
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						TypeOfNumber and NumberingPlanIdentification SMS tpdu addresses
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						MAP protocol version (1, 2 or 3) (version 3 is default) 
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Character set for SMS message encoding (GSM7 or UCS2)
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Origination Service center address string (this address must be equal the SCCP layer CallingPartyAddress digits) 
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						HLR and VLR SSN values (default values are 8 and 6) 
+					</para>
+				</listitem>
+			</itemizedlist>
+	</para>
+
+	<para>
+		Remark: if you want to use SMS Server and SMS Client for sending SMS to each other: set HLR SSN at SMS Server the equal value that VLR SSN (8 in our case)
+	</para>
+
+	<figure>
+  		<title>SMS client settings form</title>
+  		<mediaobject>
+    		<imageobject>
+      			<imagedata fileref="images/Simulator-Example11.png" format="PNG" align="center"/>
+    		</imageobject>
+  		</mediaobject>
+	</figure>
+
+	<para>
+		After starting SMS server you can:
+			<itemizedlist> 
+				<listitem>
+					<para>
+						For sending sendRoutingInfoForSM ("Send SRIForSM" button) we should set "Destination ISDN number"
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						For sending sendRoutingInfoForSM and then mt-forwardSM ("Send SRIForSM + MtForwardSM" button) we should set
+						"Message text", "Destination ISDN number" and "Origination ISDN number"
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						For sending mt-forwardSM only ("Send MtForwardSM" button) we should set
+						"Message text", "IMSI", "VLR number" and "Origination ISDN number" 
+					</para>
+				</listitem>
+			</itemizedlist>
+	</para>
+
+	</section>
+
+	<section id="simulator_test_smsclient">
+		<title>SMS Client 
+		</title>
+
+	<para>
+		SMS Client simulates the behavior of HLR or VLR, it can:
+			<itemizedlist> 
+				<listitem>
+					<para>
+						Receive sendRoutingInfoForSM from SMSC and send as a response predefined IMSI and VLR number
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Receive mt-forwardSM from SMSC and display the received message
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Send mo-forwardSM to the SMSC 
+					</para>
+				</listitem>
+			</itemizedlist>
+	</para>
+
+	<para>
+		We need to set the following options to SMS client:
+			<itemizedlist> 
+				<listitem>
+					<para>
+						AddressNature and NumberingPlan for AddressString creation
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						TypeOfNumber and NumberingPlanIdentification SMS tpdu addresses
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						MAP protocol version (1, 2 or 3) (version 3 is default) 
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Character set for SMS message encoding (GSM7 or UCS2) 
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Destination Service center address string (this address must be equal the SCCP layer CallingPartyAddress digits)
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						SMSC SSN value (default value is 8) 
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						IMSI and VLR addresses values that will be used when responding on sendRoutingInfoForSM 
 					</para>
 				</listitem>
 			</itemizedlist>
 	</para>
 
 	<figure>
-  		<title>Ussd Server option form</title>
+  		<title>SMS client settings form</title>
   		<mediaobject>
     		<imageobject>
-      			<imagedata fileref="images/Simulator-Example8.png" format="PNG" align="center"/>
+      			<imagedata fileref="images/Simulator-Example10.png" format="PNG" align="center"/>
     		</imageobject>
   		</mediaobject>
 	</figure>
+
+	<para>
+		After starting SMS client you can:
+			<itemizedlist> 
+				<listitem>
+					<para>
+						For sending mo-forwardSM ("Send MoForwardSM" button) we should set
+						"Message text", "Destination ISDN number" and "Origination ISDN number"
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						When recieving sendRoutingInfoForSM client automatically generate a response with preconfigured IMSI and VLR address 						
+					</para>
+				</listitem>
+			</itemizedlist>
+	</para>
 
 	</section>
 

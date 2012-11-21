@@ -43,7 +43,7 @@ public class RSCTest extends DoubleTimers {
 	 */
 
 	protected long getSmallerT() {
-		return ISUPTimeoutEvent.T16_DEFAULT + 3000;
+		return ISUPTimeoutEvent.T16_DEFAULT;
 	}
 
 	/*
@@ -101,23 +101,5 @@ public class RSCTest extends DoubleTimers {
 		cic.setCIC(1);
 		rlc.setCircuitIdentificationCode(cic);
 		return rlc; // asnwer to RSC is... RLC :P
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.isup.impl.stack.EventTestHarness#
-	 * getSpecificConfig()
-	 */
-
-	protected Properties getSpecificConfig() {
-		// ensure proper values;
-		Properties p = new Properties();
-		p.put("t16", getSmallerT() + "");
-		p.put("t17", getBiggerT() + "");
-		p.put("ni", "2");
-		p.put("localspc", "2");
-		return p;
-	}
-
+	}	
 }

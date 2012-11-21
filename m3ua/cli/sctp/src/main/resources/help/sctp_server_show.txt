@@ -1,0 +1,18 @@
+Name
+	sctp server show
+
+SYNOPSIS
+	sctp server show
+
+DESCRIPTION
+	This command is used to view the details of all SCTP Server instances created. 
+	The information displayed will include the socket type (SCTP or TCP), name of the 
+	Server, state (whether started=false or true), the IP address and port that the 
+	Server is bound to. For multi-home SCTP Servers it will display all the 
+	IP addresses that are configured.
+
+SEE ALSO
+	sctp, sctp server create, sctp server destroy, sctp server start, 
+	sctp server stop, sctp association create, sctp association destroy, 
+	sctp association show
+

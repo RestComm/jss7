@@ -42,4 +42,8 @@ public interface PlmnId {
 
 	public byte[] getData();
 
+	public int getMcc();
+
+	public int getMnc();
+
 }

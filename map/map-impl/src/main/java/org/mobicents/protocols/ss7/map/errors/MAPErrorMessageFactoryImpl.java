@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,7 +22,11 @@
 
 package org.mobicents.protocols.ss7.map.errors;
 
+import org.mobicents.protocols.ss7.map.api.errors.AdditionalRoamingNotAllowedCause;
+import org.mobicents.protocols.ss7.map.api.errors.CUGRejectCause;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageBusySubscriber;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageCUGReject;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageFactory;
 import org.mobicents.protocols.ss7.map.api.errors.AbsentSubscriberReason;
 import org.mobicents.protocols.ss7.map.api.errors.AdditionalNetworkResource;
@@ -35,17 +39,26 @@ import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageExtensionContai
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageFacilityNotSup;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageParameterless;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessagePositionMethodFailure;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessagePwRegistrationFailure;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageRoamingNotAllowed;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSMDeliveryFailure;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSsErrorStatus;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSsIncompatibility;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSubscriberBusyForMtSms;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSystemFailure;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageUnauthorizedLCSClient;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageUnknownSubscriber;
-import org.mobicents.protocols.ss7.map.api.errors.NetworkResource;
+import org.mobicents.protocols.ss7.map.api.errors.PWRegistrationFailureCause;
 import org.mobicents.protocols.ss7.map.api.errors.PositionMethodFailureDiagnostic;
+import org.mobicents.protocols.ss7.map.api.errors.RoamingNotAllowedCause;
 import org.mobicents.protocols.ss7.map.api.errors.SMEnumeratedDeliveryFailureCause;
 import org.mobicents.protocols.ss7.map.api.errors.UnauthorizedLCSClientDiagnostic;
 import org.mobicents.protocols.ss7.map.api.errors.UnknownSubscriberDiagnostic;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.NetworkResource;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.SSStatus;
 
 /**
  * The factory of MAP ReturnError messages
@@ -74,6 +87,26 @@ public class MAPErrorMessageFactoryImpl implements MAPErrorMessageFactory {
 		case MAPErrorCode.unauthorizedRequestingNetwork:
 		case MAPErrorCode.resourceLimitation:
 		case MAPErrorCode.unknownOrUnreachableLCSClient:
+		case MAPErrorCode.incompatibleTerminal:
+		case MAPErrorCode.noRoamingNumberAvailable:
+		case MAPErrorCode.noSubscriberReply:
+		case MAPErrorCode.forwardingFailed:
+		case MAPErrorCode.orNotAllowed:
+		case MAPErrorCode.forwardingViolation:
+		case MAPErrorCode.numberChanged:
+		case MAPErrorCode.unknownMSC:
+		case MAPErrorCode.unknownEquipment:
+		case MAPErrorCode.bearerServiceNotProvisioned:
+		case MAPErrorCode.mmEventNotSupported:
+		case MAPErrorCode.illegalSSOperation:
+		case MAPErrorCode.ssNotAvailable:
+		case MAPErrorCode.ssSubscriptionViolation:
+		case MAPErrorCode.unknownAlphabet:
+		case MAPErrorCode.ussdBusy:
+		case MAPErrorCode.negativePWCheck:
+		case MAPErrorCode.numberOfPWAttemptsViolation:
+		case MAPErrorCode.shortTermDenial:
+		case MAPErrorCode.longTermDenial:
 			return new MAPErrorMessageExtensionContainerImpl(errorCode);
 
 		case MAPErrorCode.smDeliveryFailure:
@@ -105,7 +138,25 @@ public class MAPErrorMessageFactoryImpl implements MAPErrorMessageFactory {
 
 		case MAPErrorCode.positionMethodFailure:
 			return new MAPErrorMessagePositionMethodFailureImpl();
-			
+
+		case MAPErrorCode.busySubscriber:
+			return new MAPErrorMessageBusySubscriberImpl();
+
+		case MAPErrorCode.cugReject:
+			return new MAPErrorMessageCUGRejectImpl();
+
+		case MAPErrorCode.roamingNotAllowed:
+			return new MAPErrorMessageRoamingNotAllowedImpl();
+
+		case MAPErrorCode.ssErrorStatus:
+			return new MAPErrorMessageSsErrorStatusImpl();
+
+		case MAPErrorCode.ssIncompatibility:
+			return new MAPErrorMessageSsIncompatibilityImpl();
+
+		case MAPErrorCode.pwRegistrationFailure:
+			return new MAPErrorMessagePwRegistrationFailureImpl();
+
 		default:
 			return new MAPErrorMessageParameterlessImpl(errorCode);
 		}
@@ -171,4 +222,34 @@ public class MAPErrorMessageFactoryImpl implements MAPErrorMessageFactory {
 			MAPExtensionContainer extensionContainer) {
 		return new MAPErrorMessagePositionMethodFailureImpl(positionMethodFailureDiagnostic, extensionContainer);
 	}
+
+	public MAPErrorMessageBusySubscriber createMAPErrorMessageBusySubscriber(MAPExtensionContainer extensionContainer, boolean ccbsPossible, boolean ccbsBusy) {
+		return new MAPErrorMessageBusySubscriberImpl(extensionContainer, ccbsPossible, ccbsBusy);
+	}
+
+	public MAPErrorMessageCUGReject createMAPErrorMessageCUGReject(CUGRejectCause cugRejectCause, MAPExtensionContainer extensionContainer) {
+		return new MAPErrorMessageCUGRejectImpl(cugRejectCause, extensionContainer);
+	}
+
+	public MAPErrorMessageRoamingNotAllowed createMAPErrorMessageRoamingNotAllowed(RoamingNotAllowedCause roamingNotAllowedCause,
+			MAPExtensionContainer extensionContainer, AdditionalRoamingNotAllowedCause additionalRoamingNotAllowedCause) {
+		return new MAPErrorMessageRoamingNotAllowedImpl(roamingNotAllowedCause, extensionContainer, additionalRoamingNotAllowedCause);
+	}
+
+	public MAPErrorMessageSsErrorStatus createMAPErrorMessageSsErrorStatus(int data) {
+		return new MAPErrorMessageSsErrorStatusImpl(data);
+	}
+
+	public MAPErrorMessageSsErrorStatus createMAPErrorMessageSsErrorStatus(boolean qBit, boolean pBit, boolean rBit, boolean aBit) {
+		return new MAPErrorMessageSsErrorStatusImpl(qBit, pBit, rBit, aBit);
+	}
+
+	public MAPErrorMessageSsIncompatibility createMAPErrorMessageSsIncompatibility(SSCode ssCode, BasicServiceCode basicService, SSStatus ssStatus) {
+		return new MAPErrorMessageSsIncompatibilityImpl(ssCode, basicService, ssStatus);
+	}
+
+	public MAPErrorMessagePwRegistrationFailure createMAPErrorMessagePwRegistrationFailure(PWRegistrationFailureCause pwRegistrationFailureCause) {
+		return new MAPErrorMessagePwRegistrationFailureImpl(pwRegistrationFailureCause);
+	}
+
 }

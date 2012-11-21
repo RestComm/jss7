@@ -7,6 +7,7 @@ import org.mobicents.protocols.ss7.map.api.MAPMessage;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.MAPStack;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
@@ -26,6 +27,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSN
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponse;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
@@ -66,22 +68,20 @@ public class UssdServerExample implements MAPDialogListener, MAPServiceSupplemen
 	public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest ind) {
 
 		USSDString ussdString = ind.getUSSDString();
-		String request = ussdString.getString();
-
-		// processing USSD request
-		String response = "Your balans is 100$";
-
-		// The dataCodingScheme is still byte, as I am not exactly getting how
-		// to encode/decode this.
-		byte ussdDataCodingScheme = 0x0f;
-		USSDString ussdResponse = paramFact.createUSSDString(response, null);
-
 		try {
+			String request = ussdString.getString(null);
+
+			// processing USSD request
+			String response = "Your balans is 100$";
+
+			CBSDataCodingScheme ussdDataCodingScheme = new CBSDataCodingSchemeImpl(0x0f);
+			USSDString ussdResponse = paramFact.createUSSDString(response, null, null);
+
 			currentMapDialog.addProcessUnstructuredSSResponse(ind.getInvokeId(), ussdDataCodingScheme, ussdResponse);
-		} catch (MAPException e) {
+		} catch (MAPException e1) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
+			e1.printStackTrace();
+		}
 	}
 
 	public void onDialogDelimiter(MAPDialog mapDialog) {

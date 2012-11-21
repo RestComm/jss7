@@ -10,6 +10,7 @@ import org.mobicents.protocols.ss7.map.api.MAPMessage;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.MAPStack;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
@@ -31,6 +32,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSN
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponse;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
@@ -76,13 +78,11 @@ public class UssdClientExample implements MAPDialogListener, MAPServiceSupplemen
 				MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext, MAPApplicationContextVersion.version2), origAddress,
 				destReference, remoteAddress, destReference);
 
-		// The dataCodingScheme is still byte, as I am not exactly getting how
-		// to encode/decode this.
-		byte ussdDataCodingScheme = 0x0f;
+		CBSDataCodingScheme ussdDataCodingScheme = new CBSDataCodingSchemeImpl(0x0f);
 		// The Charset is null, here we let system use default Charset (UTF-7 as
 		// explained in GSM 03.38. However if MAP User wants, it can set its own
 		// impl of Charset
-		USSDString ussdString = paramFact.createUSSDString(ussdMessage, null);
+		USSDString ussdString = paramFact.createUSSDString(ussdMessage, null, null);
 
 		currentMapDialog.addProcessUnstructuredSSRequest(ussdDataCodingScheme, ussdString, alertingPattern, msisdn);
 		// This will initiate the TC-BEGIN with INVOKE component
@@ -92,8 +92,13 @@ public class UssdClientExample implements MAPDialogListener, MAPServiceSupplemen
 	public void onProcessUnstructuredSSResponse(ProcessUnstructuredSSResponse ind) {
 		if (currentMapDialog == ind.getMAPDialog()) {
 			USSDString ussdString = ind.getUSSDString();
-			String response = ussdString.getString();
-			// processing USSD response
+			try {
+				String response = ussdString.getString(null);
+				// processing USSD response
+			} catch (MAPException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 

@@ -68,6 +68,7 @@
 			<listitem><para>Shell Management Client</para></listitem>
 			<listitem><para>SS7 Service Elements</para></listitem>
 			<listitem><para>Signaling Gateway</para></listitem>
+			<listitem><para>SS7 Simulator</para></listitem>
 		</itemizedlist>
 	</para>
 		
@@ -105,10 +106,44 @@
 	<section
 		id="design_overview_ss7_service">
 		<title>SS7 Service Elements</title>
-				<para>SS7 Service creates an instance of &THIS.PLATFORM; MAP Stack and binds the instance to JNDI name <literal>java:/mobicents/ss7/map</literal>. SS7 Service is a JMX based service deployed in JBoss Application Server. It hides the underlying details like whether Level 4 and above are connected to the &THIS.PLATFORM; Signaling Gateway via <literal>M3UA</literal> or if connected to the SS7 Hardware installed in the same machine as Level 4.</para>
+				<para>SS7 Service creates an instance of higher layer of the &THIS.PLATFORM; Stack and binds the instance to JNDI. SS7 Service is a JMX based service deployed in JBoss Application Server. It hides the underlying details like whether Level 4 and above are connected to peer via <literal>M3UA</literal> or if connected to the SS7 Hardware installed in the same machine as Level 4.
+				</para>
+				<para>Following services are bound:</para>
+				<table frame="all" pgwide="1">
+					<title>SS7 Services</title>
+					<tgroup colsep="1" cols="3">
+						<colspec colnum="1" colname="c0" colwidth="3*" />
+						<colspec colnum="2" colname="c3" colwidth="3*" />
+						<colspec colnum="3" colname="c6" colwidth="3*" />
+						<thead>
+							<row>
+								<entry>Stack Name</entry>
+								<entry>JNDI Name</entry>
+								<entry>Comments</entry>
+							</row>
+						</thead>
+						<tbody>
+							<row>
+								<entry>MAP</entry>
+								<entry>java:/mobicents/ss7/map</entry>
+								<entry>Exposes MAP Stack via JNDI</entry>
+							</row>
+							<row>
+								<entry>CAP</entry>
+								<entry>java:/mobicents/ss7/cap</entry>
+								<entry>Exposes CAP Stack via JNDI</entry>
+							</row>
+							<row>
+								<entry>ISUP</entry>
+								<entry>java:/mobicents/ss7/isup</entry>
+								<entry>Exposes ISUP stack via JNDI</entry>
+							</row>
+						</tbody>						
+					</tgroup>
+				</table>
 
 		<para>
-			The figure below depicts the elements that are deployed as part of SS7 Service.
+			The figure below depicts the elements that are deployed as part of the SS7 MAP Service.
 		</para>
 
 		<mediaobject
@@ -130,7 +165,7 @@
 			<varlistentry>
 				<term>Expose protocol access points:</term>
 				<listitem>
-					<para>Access points allow users to access lower layer protocols like <literal>MAP</literal> and interact with the <literal>SS7</literal> network through such protocols.</para>
+					<para>Access points allow users to access lower layer protocols like <literal>MAP</literal> and interact with the SS7 network through such protocols.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
@@ -177,15 +212,18 @@
 			<title>&THIS.PLATFORM; M3UA Stack</title>
 	
 			<para>
-				<literal>M3UA</literal> is a client-server protocol supporting the transport of any SS7 MTP3-User signalling (e.g. <literal>ISUP</literal> and <literal>SCCP</literal> messages) over IP. <literal>M3UA</literal> is defined
+				<literal>M3UA</literal> is a client-server protocol supporting the transport of any SS7 MTP3-User signaling (e.g. <literal>ISUP</literal> and <literal>SCCP</literal> messages) over IP. <literal>M3UA</literal> is defined
 				by the IETF SIGTRAN working group in RFC 4666. 
 				&THIS.PLATFORM; M3UA Stack can be used on the Application Server side or on the Signaling Gateway side or can also be used in peer-to-peer mode IPSP. 
+			</para>
+			<para>
+				<literal>M3UA</literal> uses the  &THIS.PLATFORM; SCTP (Stream Control Transmission Protocol) Stack.
 			</para>
 		
 			<note>
 				<title>Note</title>
 				<para>
-					&THIS.PLATFORM; M3UA Stack uses Java SCTP layer which is only available from JDK 7 onwards.
+					&THIS.PLATFORM; SCTP Stack uses Java SCTP layer which is only available from JDK 7 onwards.
 				</para>
 			</note>
 					
@@ -238,15 +276,81 @@
 					</caption>
 				</mediaobject>
 				<para>
-					&THIS.PLATFORM; M3UA Stack used on the SG side will share common point code with a set of M3UA Application Server. 
-					M3UA stack on SG side can be configured as Loadbalance or Override traffic mode. It doesn't support Broadcast traffic mode. 
-					See Section <xref linkend="configuring_sgw"/> for configuring M3UA Stack as SG. &THIS.PLATFORM; M3UA Stack used on SG side 
-					doesn't support routing key management messages. The Routing Key should be provisioned statically using the management console.
+					&THIS.PLATFORM; M3UA Stack used on the SG side will share a common point code with a set of M3UA Application Servers. 
+					You can configure the M3UA stack on SG side in one of the two traffic modes: Loadbalance or Override. Broadcast traffic mode is not supported. Refer to <xref linkend="configuring_sgw"/> for instructions on configuring M3UA Stack as SG. &THIS.PLATFORM; M3UA Stack used on SG side doesn't support routing key management messages. The Routing Key should be provisioned statically using the management console.
 				</para>	
 			</section>	
+			<section id="mobicents_ipsp_m3ua">
+				<title>&THIS.PLATFORM; M3UA Stack as IPSP</title>			
+				<para>
+					An IPSP is essentially the same as an ASP, except that it uses M3UA in a point-to-point fashion.  Conceptually, an IPSP does not use the services of a Signalling Gateway node.
+				</para>
+			</section>
 		</section>
 		</section>
-		
+		<section id="design_ss7_simulator">
+			<title>SS7 Simulator</title>
+
+			<para>&THIS.PLATFORM; &THIS.APPLICATION; comes with a Simulator that will help you to understand the functionality of the Stack. The Simulator may be used as an application for testing the SS7 Stack or as an example of how to use this Stack. You can run several instances of the Simulator in a single machine and each instance can have its own configuration. In addition, the Simulator offers you the flexibility to run it locally or remotely. You must remember to configure all layers before running tests with the Simulator.</para>
+<para>
+The Simulator contains three layers of SS7 stack components and one testing task layer which presents the concrete testing task. You can select from these layers as required, however some layers demand corresponding lower layers. For example, the <literal>TCAP+MAP</literal> layer demands <literal>SCCP</literal> as layer 2. Depending on your testing goals, you can configure each of these layers separately but the configuration options are limited and do not cover all possible SS7 Stack options. 
+	</para>	
+<section id="simulator_layers">
+		<title>Simulator Layers</title>
+	<para>
+	<variablelist>
+				<varlistentry>
+					<term>Layer 1 [MTP3]</term>
+					<listitem>
+						<para>
+							<itemizedlist>
+								<listitem><para>M3UA</para></listitem>
+								<listitem><para>DialogicCard</para></listitem>
+								<listitem><para>DahdiCard [yet to be implemented]</para></listitem>
+							</itemizedlist>
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Layer 2</term>
+					<listitem>
+						<para>
+							<itemizedlist>
+								<listitem><para>SCCP</para></listitem>
+								<listitem><para>ISUP [yet to be implemented]</para></listitem>
+							</itemizedlist>
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Layer 3</term>
+					<listitem>
+						<para>
+							<itemizedlist>
+								<listitem><para>TCAP + MAP</para></listitem>
+								<listitem><para>TCAP + CAP [yet to be implemented]</para></listitem>
+								<listitem><para>TCAP + INAP [yet to be implemented]</para></listitem>
+							</itemizedlist>
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Testing Task Layer</term>
+					<listitem>
+						<para>
+							<itemizedlist>
+								<listitem><para>USSD client test</para></listitem>
+								<listitem><para>USSD server test</para></listitem>
+								<listitem><para>SMS server test</para></listitem>
+								<listitem><para>SMS client test</para></listitem>
+							</itemizedlist>
+						</para>
+					</listitem>
+				</varlistentry>
+	</variablelist>
+</para>
+</section>
+		</section>	
 		
 	 </section>	 
 	 

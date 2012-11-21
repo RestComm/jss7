@@ -31,9 +31,11 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientName;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSFormatIndicator;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
 
@@ -47,7 +49,9 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 	private static final int _TAG_NAME_STRING = 2;
 	private static final int _TAG_LCS_FORMAT_INDICATOR = 3;
 
-	private byte dataCodingScheme = 0;
+	public static final String _PrimitiveName = "LCSClientName";
+
+	private CBSDataCodingScheme dataCodingScheme;
 	private USSDString nameString;
 	private LCSFormatIndicator lcsFormatIndicator;
 
@@ -63,7 +67,7 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 	 * @param nameString
 	 * @param lcsFormatIndicator
 	 */
-	public LCSClientNameImpl(byte dataCodingScheme, USSDString nameString, LCSFormatIndicator lcsFormatIndicator) {
+	public LCSClientNameImpl(CBSDataCodingScheme dataCodingScheme, USSDString nameString, LCSFormatIndicator lcsFormatIndicator) {
 		super();
 		this.dataCodingScheme = dataCodingScheme;
 		this.nameString = nameString;
@@ -76,7 +80,7 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientName#
 	 * getDataCodingScheme()
 	 */
-	public byte getDataCodingScheme() {
+	public CBSDataCodingScheme getDataCodingScheme() {
 		return this.dataCodingScheme;
 	}
 
@@ -145,10 +149,10 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding LCSClientName: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding LCSClientName: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -164,15 +168,19 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding LCSClientName: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding LCSClientName: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
 	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+
+		this.dataCodingScheme = null;
+		this.nameString = null;
+		this.lcsFormatIndicator = null;
 
 		AsnInputStream ais = asnIS.readSequenceStreamData(length);
 
@@ -186,7 +194,7 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 		}
 
 		int length1 = ais.readLength();
-		this.dataCodingScheme = ais.readOctetStringData(length1)[0];
+		this.dataCodingScheme = new CBSDataCodingSchemeImpl(ais.readOctetStringData(length1)[0]);
 
 		tag = ais.readTag();
 
@@ -197,7 +205,7 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 
-		this.nameString = new USSDStringImpl();
+		this.nameString = new USSDStringImpl(this.dataCodingScheme);
 		((USSDStringImpl)this.nameString).decodeAll(ais);
 
 		while (true) {
@@ -218,10 +226,6 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 				break;
 
 			default:
-				// throw new
-				// MAPParsingComponentException("Decoding LCSClientExternalID failed. Expected externalAddress [0] or extensionContainer [1] but found "
-				// + p.getTag(),
-				// MAPParsingComponentExceptionReason.MistypedParameter);
 				ais.advanceElement();
 			}
 		}
@@ -235,7 +239,7 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	/*
@@ -247,12 +251,12 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 	 */
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
-			asnOs.writeTag(tagClass, false, tag);
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding LCSClientName", e);
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + "", e);
 		}
 	}
 
@@ -269,7 +273,7 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 			throw new MAPException("nameString must not be null");
 
 		try {
-			asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_DATA_CODING_SCHEME, new byte[] { this.dataCodingScheme });
+			asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_DATA_CODING_SCHEME, new byte[] { (byte)this.dataCodingScheme.getCode() });
 
 			((USSDStringImpl)this.nameString).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_NAME_STRING);
 
@@ -287,7 +291,7 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + dataCodingScheme;
+		result = prime * result + dataCodingScheme.getCode();
 		result = prime * result + ((lcsFormatIndicator == null) ? 0 : lcsFormatIndicator.hashCode());
 		result = prime * result + ((nameString == null) ? 0 : nameString.hashCode());
 		return result;
@@ -302,7 +306,7 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 		if (getClass() != obj.getClass())
 			return false;
 		LCSClientNameImpl other = (LCSClientNameImpl) obj;
-		if (dataCodingScheme != other.dataCodingScheme)
+		if (dataCodingScheme.getCode() != other.dataCodingScheme.getCode())
 			return false;
 		if (lcsFormatIndicator != other.lcsFormatIndicator)
 			return false;
@@ -314,4 +318,26 @@ public class LCSClientNameImpl implements LCSClientName, MAPAsnPrimitive {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		sb.append("dataCodingScheme=");
+		sb.append(this.dataCodingScheme);
+
+		if (this.nameString != null) {
+			sb.append(", nameString=");
+			sb.append(this.nameString.toString());
+		}
+		if (this.lcsFormatIndicator != null) {
+			sb.append(", lcsFormatIndicator=");
+			sb.append(this.lcsFormatIndicator.toString());
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }

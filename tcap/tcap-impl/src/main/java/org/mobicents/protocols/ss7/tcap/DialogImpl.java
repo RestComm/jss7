@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -70,6 +70,7 @@ import org.mobicents.protocols.ss7.tcap.asn.TCEndMessageImpl;
 import org.mobicents.protocols.ss7.tcap.asn.TCUniMessageImpl;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
+import org.mobicents.protocols.ss7.tcap.asn.Utils;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
@@ -103,6 +104,8 @@ public class DialogImpl implements Dialog {
 	
 	private static final Logger logger = Logger.getLogger(DialogImpl.class);
 	
+	private Object userObject;
+	
 	// lock... ech
 	protected ReentrantLock dialogLock = new ReentrantLock();
 	
@@ -116,7 +119,7 @@ public class DialogImpl implements Dialog {
 
 	private Long localTransactionIdObject;
 	private long localTransactionId;
-	private long remoteTransactionId;
+	private byte[] remoteTransactionId;
 
 	private SccpAddress localAddress;
 	private SccpAddress remoteAddress;
@@ -185,6 +188,15 @@ public class DialogImpl implements Dialog {
 	}
 
 	public void release() {
+		for(int i=0; i<this.operationsSent.length;i++){
+			InvokeImpl invokeImpl = this.operationsSent[i];
+			if(invokeImpl != null){
+				invokeImpl.setState(OperationState.Idle);
+				//TODO whether to call operationTimedOut or not is still not clear 
+				//operationTimedOut(invokeImpl);
+			}
+		}
+		
 		this.setState(TRPseudoState.Expunged);
 	}
 
@@ -389,7 +401,7 @@ public class DialogImpl implements Dialog {
 			}
 
 			// now comps
-			tcbm.setOriginatingTransactionId(this.localTransactionId);
+			tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId));
 			if (this.scheduledComponentList.size() > 0) {
 				Component[] componentsToSend = new Component[this.scheduledComponentList.size()];
 				this.prepareComponents(componentsToSend);
@@ -402,7 +414,7 @@ public class DialogImpl implements Dialog {
 				this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress, this.localAddress, this.seqControl);
 				this.setState(TRPseudoState.InitialSent);
 				this.scheduledComponentList.clear();
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				// FIXME: remove freshly added invokes to free invoke ID??
 				if (logger.isEnabledFor(Level.ERROR)) {
 					logger.error("Failed to send message: ", e);
@@ -456,7 +468,7 @@ public class DialogImpl implements Dialog {
 
 				}
 
-				tcbm.setOriginatingTransactionId(this.localTransactionId);
+				tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId));
 				tcbm.setDestinationTransactionId(this.remoteTransactionId);
 				if (this.scheduledComponentList.size() > 0) {
 					Component[] componentsToSend = new Component[this.scheduledComponentList.size()];
@@ -488,7 +500,7 @@ public class DialogImpl implements Dialog {
 				// in this we ignore acn and passed args(except qos)
 				TCContinueMessageImpl tcbm = (TCContinueMessageImpl) TcapFactory.createTCContinueMessage();
 
-				tcbm.setOriginatingTransactionId(this.localTransactionId);
+				tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId));
 				tcbm.setDestinationTransactionId(this.remoteTransactionId);
 				if (this.scheduledComponentList.size() > 0) {
 					Component[] componentsToSend = new Component[this.scheduledComponentList.size()];
@@ -701,7 +713,8 @@ public class DialogImpl implements Dialog {
 			if (this.state == TRPseudoState.InitialReceived || this.state == TRPseudoState.InitialSent || this.state == TRPseudoState.Active) {
 				// allowed
 				DialogPortion dp = null;
-				if (event.getUserInformation() != null) { // User information can be absent in TCAP V1
+				if (event.getUserInformation() != null || event.getDialogServiceUserType() != null) { 
+					// User information can be absent in TCAP V1
 
 					dp = TcapFactory.createDialogPortion();
 					dp.setUnidirectional(false);
@@ -863,7 +876,7 @@ public class DialogImpl implements Dialog {
 		}
 
 		// now comps
-		tcbm.setOriginatingTransactionId(this.localTransactionId);
+		tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId));
 		if (this.scheduledComponentList.size() > 0) {
 			Component[] componentsToSend = new Component[this.scheduledComponentList.size()];
 			for (int index = 0; index < this.scheduledComponentList.size(); index++) {
@@ -911,7 +924,7 @@ public class DialogImpl implements Dialog {
 
 		}
 
-		tcbm.setOriginatingTransactionId(this.localTransactionId);
+		tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId));
 		tcbm.setDestinationTransactionId(this.remoteTransactionId);
 		if (this.scheduledComponentList.size() > 0) {
 			Component[] componentsToSend = new Component[this.scheduledComponentList.size()];
@@ -1060,7 +1073,7 @@ public class DialogImpl implements Dialog {
 	 * @param remoteTransactionId
 	 *            the remoteTransactionId to set
 	 */
-	void setRemoteTransactionId(Long remoteTransactionId) {
+	void setRemoteTransactionId(byte[] remoteTransactionId) {
 		this.remoteTransactionId = remoteTransactionId;
 	}
 
@@ -1760,6 +1773,14 @@ public class DialogImpl implements Dialog {
 		return this.state;
 	}
 
+	public Object getUserObject() {
+		return this.userObject;
+	}
+
+	public void setUserObject(Object userObject) {
+		this.userObject = userObject;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

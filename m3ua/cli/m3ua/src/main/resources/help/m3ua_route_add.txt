@@ -1,0 +1,33 @@
+Name
+	m3ua route add
+
+SYNOPSIS
+	m3ua route add <as-name> <dpc> <opc> <si>
+
+DESCRIPTION
+	This command is used to configure an AS to route message, i.e. configure the 
+	destination point code that the message will be routed to. You must ensure that 
+	the AS is created prior to executing this command.
+
+PARAMETERS
+
+	Standard Parameters
+
+	<as-name>		-	Name of the AS assigned to route message for 
+					this dpc.
+
+	<dpc>			-	Destination Point Code.
+
+	<opc>			-	Originating Point Code.
+
+	<si>			-	Service Indicator.
+
+EXAMPLES
+	m3ua route add AS1 2 -1 -1
+	
+SEE ALSO
+	m3ua, m3ua as create, m3ua as destroy, m3ua as show, m3ua asp create,
+	m3ua asp destroy, m3ua asp show, m3ua asp start, m3ua asp stop, m3ua as add, 
+	m3ua as remove, m3ua route remove, m3ua route show.
+
+

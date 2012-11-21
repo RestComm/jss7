@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.primitives;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
@@ -32,7 +34,7 @@ import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
  * @author sergey vetyutnev
  * 
  */
-public interface CAPAsnPrimitive {
+public interface CAPAsnPrimitive extends Serializable {
 
 	public int getTag() throws CAPException;
 

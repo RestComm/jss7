@@ -31,8 +31,10 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSCodeword;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
 
@@ -45,8 +47,10 @@ public class LCSCodewordImpl implements LCSCodeword, MAPAsnPrimitive {
 	private static final int _TAG_DATA_CODING_SCHEME = 0;
 	private static final int _TAG_LCS_CODE_WORD_STRING = 1;
 
-	private byte dataCodingScheme;
-	private USSDString lcsCodewordString = null;
+	public static final String _PrimitiveName = "LCSCodeword";
+
+	private CBSDataCodingScheme dataCodingScheme;
+	private USSDString lcsCodewordString;
 
 	/**
 	 * 
@@ -60,7 +64,7 @@ public class LCSCodewordImpl implements LCSCodeword, MAPAsnPrimitive {
 	 * @param dataCodingScheme
 	 * @param lcsCodewordString
 	 */
-	public LCSCodewordImpl(byte dataCodingScheme, USSDString lcsCodewordString) {
+	public LCSCodewordImpl(CBSDataCodingScheme dataCodingScheme, USSDString lcsCodewordString) {
 		super();
 		this.dataCodingScheme = dataCodingScheme;
 		this.lcsCodewordString = lcsCodewordString;
@@ -72,7 +76,7 @@ public class LCSCodewordImpl implements LCSCodeword, MAPAsnPrimitive {
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.LCSCodeword#
 	 * getDataCodingScheme()
 	 */
-	public byte getDataCodingScheme() {
+	public CBSDataCodingScheme getDataCodingScheme() {
 		return this.dataCodingScheme;
 	}
 
@@ -130,10 +134,10 @@ public class LCSCodewordImpl implements LCSCodeword, MAPAsnPrimitive {
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding LCSClientName: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding LCSClientName: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -149,15 +153,18 @@ public class LCSCodewordImpl implements LCSCodeword, MAPAsnPrimitive {
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding LCSCodeword: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding LCSCodeword: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
 	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+
+		this.dataCodingScheme = null;
+		this.lcsCodewordString = null;
 
 		AsnInputStream ais = asnIS.readSequenceStreamData(length);
 
@@ -171,7 +178,7 @@ public class LCSCodewordImpl implements LCSCodeword, MAPAsnPrimitive {
 		}
 
 		int length1 = ais.readLength();
-		this.dataCodingScheme = ais.readOctetStringData(length1)[0];
+		this.dataCodingScheme = new CBSDataCodingSchemeImpl(ais.readOctetStringData(length1)[0]);
 
 		tag = ais.readTag();
 
@@ -182,7 +189,7 @@ public class LCSCodewordImpl implements LCSCodeword, MAPAsnPrimitive {
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 
-		this.lcsCodewordString = new USSDStringImpl();
+		this.lcsCodewordString = new USSDStringImpl(this.dataCodingScheme);
 		((USSDStringImpl)this.lcsCodewordString).decodeAll(ais);
 		
 
@@ -205,7 +212,7 @@ public class LCSCodewordImpl implements LCSCodeword, MAPAsnPrimitive {
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	/*
@@ -217,12 +224,12 @@ public class LCSCodewordImpl implements LCSCodeword, MAPAsnPrimitive {
 	 */
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
-			asnOs.writeTag(tagClass, false, tag);
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding LCSClientName", e);
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 
@@ -239,7 +246,7 @@ public class LCSCodewordImpl implements LCSCodeword, MAPAsnPrimitive {
 			throw new MAPException("lcsCodewordString must not be null");
 
 		try {
-			asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_DATA_CODING_SCHEME, new byte[] { this.dataCodingScheme });
+			asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_DATA_CODING_SCHEME, new byte[] { (byte)this.dataCodingScheme.getCode() });
 
 			((USSDStringImpl)this.lcsCodewordString).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LCS_CODE_WORD_STRING);
 		} catch (IOException e) {
@@ -253,7 +260,7 @@ public class LCSCodewordImpl implements LCSCodeword, MAPAsnPrimitive {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + dataCodingScheme;
+		result = prime * result + dataCodingScheme.getCode();
 		result = prime * result + ((lcsCodewordString == null) ? 0 : lcsCodewordString.hashCode());
 		return result;
 	}
@@ -267,7 +274,7 @@ public class LCSCodewordImpl implements LCSCodeword, MAPAsnPrimitive {
 		if (getClass() != obj.getClass())
 			return false;
 		LCSCodewordImpl other = (LCSCodewordImpl) obj;
-		if (dataCodingScheme != other.dataCodingScheme)
+		if (dataCodingScheme.getCode() != other.dataCodingScheme.getCode())
 			return false;
 		if (lcsCodewordString == null) {
 			if (other.lcsCodewordString != null)
@@ -277,4 +284,22 @@ public class LCSCodewordImpl implements LCSCodeword, MAPAsnPrimitive {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		sb.append("dataCodingScheme=");
+		sb.append(this.dataCodingScheme);
+
+		if (this.lcsCodewordString != null) {
+			sb.append(", lcsCodewordString=");
+			sb.append(this.lcsCodewordString.toString());
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }

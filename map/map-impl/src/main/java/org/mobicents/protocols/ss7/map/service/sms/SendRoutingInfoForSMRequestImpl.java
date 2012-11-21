@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -36,12 +36,14 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TeleserviceCode;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_MTI;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_SMEA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SendRoutingInfoForSMRequest;
 import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.TeleserviceCodeImpl;
 
 /**
  * 
@@ -53,10 +55,13 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
 	protected static final int _TAG_msisdn = 0; 
 	protected static final int _TAG_sm_RP_PRI = 1; 
 	protected static final int _TAG_serviceCentreAddress = 2; 
+	protected static final int _TAG_teleservice = 5;
 	protected static final int _TAG_extensionContainer = 6; 
 	protected static final int _TAG_gprsSupportIndicator = 7; 
 	protected static final int _TAG_sm_RP_MTI = 8; 
 	protected static final int _TAG_sm_RP_SMEA = 9; 
+
+	protected String _PrimitiveName = "SendRoutingInfoForSMRequest";
 
 	private ISDNAddressString msisdn;
 	private boolean sm_RP_PRI;
@@ -65,13 +70,14 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
 	private boolean gprsSupportIndicator;
 	private SM_RP_MTI sM_RP_MTI;
 	private SM_RP_SMEAImpl sM_RP_SMEA;
+	private TeleserviceCode teleservice;
 
 	
 	public SendRoutingInfoForSMRequestImpl() {
 	}
 
 	public SendRoutingInfoForSMRequestImpl(ISDNAddressString msisdn, boolean sm_RP_PRI, AddressString serviceCentreAddress,
-			MAPExtensionContainer extensionContainer, boolean gprsSupportIndicator, SM_RP_MTI sM_RP_MTI, SM_RP_SMEA sM_RP_SMEA) {
+			MAPExtensionContainer extensionContainer, boolean gprsSupportIndicator, SM_RP_MTI sM_RP_MTI, SM_RP_SMEA sM_RP_SMEA, TeleserviceCode teleservice) {
 		this.msisdn = msisdn;
 		this.sm_RP_PRI = sm_RP_PRI;
 		this.serviceCentreAddress = serviceCentreAddress;
@@ -79,6 +85,7 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
 		this.gprsSupportIndicator = gprsSupportIndicator;
 		this.sM_RP_MTI = sM_RP_MTI;
 		this.sM_RP_SMEA = (SM_RP_SMEAImpl)sM_RP_SMEA;
+		this.teleservice = teleservice;
 	}
 
 	public MAPMessageType getMessageType() {
@@ -117,7 +124,11 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
 		return this.sM_RP_SMEA;
 	}
 
-	
+	public TeleserviceCode getTeleservice() {
+		return this.teleservice;
+	}
+
+
 	public int getTag() throws MAPException {
 		return Tag.SEQUENCE;
 	}
@@ -137,10 +148,10 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding sendRoutingInfoForSMRequest: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding sendRoutingInfoForSMRequest: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -150,10 +161,10 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding sendRoutingInfoForSMRequest: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding sendRoutingInfoForSMRequest: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -167,6 +178,7 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
 		this.gprsSupportIndicator = false;
 		this.sM_RP_MTI = null;
 		this.sM_RP_SMEA = null;
+		this.teleservice = null;
 		
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 		int num = 0;
@@ -180,7 +192,7 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
 			case 0:
 				// msisdn
 				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive() || tag != _TAG_msisdn)
-					throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMRequest.msisdn: Parameter 0 bad tag or tag class or not primitive",
+					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".msisdn: Parameter 0 bad tag or tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.msisdn = new ISDNAddressStringImpl();
 				((ISDNAddressStringImpl)this.msisdn).decodeAll(ais);
@@ -189,7 +201,7 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
 			case 1:
 				// sm-RP-PRI
 				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive() || tag != _TAG_sm_RP_PRI)
-					throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMRequest.sm-RP-PRI: Parameter 1 bad tag class or tag or not primitive",
+					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".sm-RP-PRI: Parameter 1 bad tag class or tag or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.sm_RP_PRI = ais.readBoolean();
 				break;
@@ -197,7 +209,7 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
 			case 2:
 				// serviceCentreAddress
 				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive() || tag != _TAG_serviceCentreAddress)
-					throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMRequest.serviceCentreAddress: Parameter 2 bad tag class or tag or not primitive",
+					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".serviceCentreAddress: Parameter 2 bad tag class or tag or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.serviceCentreAddress = new ISDNAddressStringImpl();
 				((AddressStringImpl)this.serviceCentreAddress).decodeAll(ais);
@@ -209,7 +221,7 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
 					switch (tag) {
 					case _TAG_extensionContainer:
 						if (ais.isTagPrimitive())
-								throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMRequest.extensionContainer: Parameter extensionContainer is primitive",
+								throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: Parameter extensionContainer is primitive",
 										MAPParsingComponentExceptionReason.MistypedParameter);
 						this.extensionContainer = new MAPExtensionContainerImpl();
 						((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
@@ -218,7 +230,7 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
 					case _TAG_gprsSupportIndicator:
 						if (!ais.isTagPrimitive())
 							throw new MAPParsingComponentException(
-									"Error while decoding sendRoutingInfoForSMRequest.gprsSupportIndicator: Parameter gprsSupportIndicator is not primitive",
+									"Error while decoding " + _PrimitiveName + ".gprsSupportIndicator: Parameter gprsSupportIndicator is not primitive",
 									MAPParsingComponentExceptionReason.MistypedParameter);
 						ais.readNull();
 						this.gprsSupportIndicator = true;
@@ -227,7 +239,7 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
 					case _TAG_sm_RP_MTI:
 						if (!ais.isTagPrimitive())
 							throw new MAPParsingComponentException(
-									"Error while decoding sendRoutingInfoForSMRequest.sM_RP_MTI: Parameter sM_RP_MTI is not primitive",
+									"Error while decoding " + _PrimitiveName + ".sM_RP_MTI: Parameter sM_RP_MTI is not primitive",
 									MAPParsingComponentExceptionReason.MistypedParameter);
 						int i1 = (int)ais.readInteger();
 						this.sM_RP_MTI = SM_RP_MTI.getInstance(i1);
@@ -236,10 +248,19 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
 					case _TAG_sm_RP_SMEA:
 						if (!ais.isTagPrimitive())
 							throw new MAPParsingComponentException(
-									"Error while decoding sendRoutingInfoForSMRequest.sM_RP_SMEA: Parameter sM_RP_SMEA is not primitive",
+									"Error while decoding " + _PrimitiveName + ".sM_RP_SMEA: Parameter sM_RP_SMEA is not primitive",
 									MAPParsingComponentExceptionReason.MistypedParameter);
 						this.sM_RP_SMEA = new SM_RP_SMEAImpl();
 						this.sM_RP_SMEA.decodeAll(ais);
+						break;
+
+					case _TAG_teleservice:
+						if (!ais.isTagPrimitive())
+							throw new MAPParsingComponentException(
+									"Error while decoding " + _PrimitiveName + "._TAG_teleservice: Parameter _TAG_teleservice is not primitive",
+									MAPParsingComponentExceptionReason.MistypedParameter);
+						this.teleservice = new TeleserviceCodeImpl();
+						((TeleserviceCodeImpl)this.teleservice).decodeAll(ais);
 						break;
 
 					default:
@@ -258,7 +279,7 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
 		}
 
 		if (num < 3)
-			throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForSMRequest: Needs at least 3 mandatory parameters, found " + num,
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Needs at least 3 mandatory parameters, found " + num,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
@@ -275,7 +296,7 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding sendRoutingInfoForSMRequest: " + e.getMessage(), e);
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 
@@ -297,11 +318,13 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
 				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_sm_RP_MTI, this.sM_RP_MTI.getCode());
 			if (this.sM_RP_SMEA != null)
 				this.sM_RP_SMEA.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_sm_RP_SMEA);
+			if (this.teleservice != null)
+				((TeleserviceCodeImpl) this.teleservice).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_teleservice);
 			
 		} catch (IOException e) {
-			throw new MAPException("IOException when encoding sendRoutingInfoForSMRequest: " + e.getMessage(), e);
+			throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding sendRoutingInfoForSMRequest: " + e.getMessage(), e);
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 	
@@ -318,8 +341,8 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
 			sb.append(", msisdn=");
 			sb.append(this.msisdn.toString());
 		}
-		sb.append(", sm_RP_PRI=");
-		sb.append(((Boolean)this.sm_RP_PRI).toString());
+		if (this.sm_RP_PRI)
+			sb.append(", sm_RP_PRI");
 		if (this.serviceCentreAddress != null) {
 			sb.append(", serviceCentreAddress=");
 			sb.append(this.serviceCentreAddress.toString());
@@ -338,6 +361,10 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
 		if (this.sM_RP_SMEA != null) {
 			sb.append(", sM_RP_SMEA=");
 			sb.append(this.sM_RP_SMEA.toString());
+		}
+		if (this.teleservice != null) {
+			sb.append(", teleservice=");
+			sb.append(this.teleservice.toString());
 		}
 
 		sb.append("]");

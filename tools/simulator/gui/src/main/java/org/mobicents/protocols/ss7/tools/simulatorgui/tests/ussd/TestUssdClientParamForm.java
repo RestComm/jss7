@@ -113,8 +113,8 @@ public class TestUssdClientParamForm extends JDialog {
 		cbNumberingPlan.setBounds(156, 78, 294, 20);
 		panel_1.add(cbNumberingPlan);
 		
-		JLabel lblDataCodingScheme = new JLabel("Data coding scheme");
-		lblDataCodingScheme.setBounds(10, 153, 149, 14);
+		JLabel lblDataCodingScheme = new JLabel("Data coding scheme (15-GSM7, 72-UCS2)");
+		lblDataCodingScheme.setBounds(10, 153, 299, 14);
 		panel.add(lblDataCodingScheme);
 		
 		JLabel lblNewLabel_1 = new JLabel("Alerting pattern value (-1 means does not use AlertingPattern)");

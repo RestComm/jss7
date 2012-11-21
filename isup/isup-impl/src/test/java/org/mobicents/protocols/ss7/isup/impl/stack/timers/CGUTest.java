@@ -46,7 +46,7 @@ public class CGUTest extends DoubleTimers {
 	 */
 	
 	protected long getSmallerT() {
-		return ISUPTimeoutEvent.T20_DEFAULT + 3000;
+		return ISUPTimeoutEvent.T20_DEFAULT;
 	}
 
 	/*
@@ -129,23 +129,5 @@ public class CGUTest extends DoubleTimers {
 		cgua.setSupervisionType(cgsvmt);
 		
 		return cgua;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.isup.impl.stack.EventTestHarness#
-	 * getSpecificConfig()
-	 */
-	
-	protected Properties getSpecificConfig() {
-		// ensure proper values;
-		Properties p = new Properties();
-		p.put("t20", getSmallerT()+"");
-		p.put("t21" ,  getBiggerT()+"");
-		p.put("ni", "2");
-		p.put("localspc", "2");
-		return p;
-	}
-
+	}	
 }

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -28,12 +28,21 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
  * 
- * RoutingInfoForSM-Res ::= SEQUENCE {
- *	imsi			IMSI,
- *	locationInfoWithLMSI	[0] LocationInfoWithLMSI,
- *	extensionContainer	[4] ExtensionContainer	OPTIONAL,
- *	...}
- *
+
+MAP V3:
+RoutingInfoForSM-Res ::= SEQUENCE {
+	imsi					IMSI,
+	locationInfoWithLMSI	[0] LocationInfoWithLMSI,
+	extensionContainer		[4] ExtensionContainer	OPTIONAL,
+	...}
+
+MAP V2:
+RoutingInfoForSM-Res::= SEQUENCE {
+	imsi 					IMSI,
+	locationInfoWithLMSI 	[0] LocationInfoWithLMSI,
+	mwd-Set 				[2] BOOLEAN OPTIONAL,
+	-- mwd-Set must be absent in version greater 1
+	...}
  *
  * 
  * @author sergey vetyutnev
@@ -46,5 +55,8 @@ public interface SendRoutingInfoForSMResponse extends SmsMessage {
 	public LocationInfoWithLMSI getLocationInfoWithLMSI();
 
 	public MAPExtensionContainer getExtensionContainer();
+
+	// for MAP V1 only
+	public Boolean getMwdSet();
 
 }

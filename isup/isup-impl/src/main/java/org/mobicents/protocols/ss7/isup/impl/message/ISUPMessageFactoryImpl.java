@@ -109,6 +109,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.ClosedUserGroupInterlo
 import org.mobicents.protocols.ss7.isup.message.parameter.ConferenceTreatmentIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.ConnectedNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.ConnectionRequest;
+import org.mobicents.protocols.ss7.isup.message.parameter.ContinuityIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.DisplayInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.EchoControlInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.EventInformation;
@@ -376,7 +377,9 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	 */
 	public ContinuityMessage createCOT() {
 
-		ContinuityMessage msg = new ContinuityMessageImpl();
+		ContinuityMessage msg = new ContinuityMessageImpl(_COT_HOLDER.mandatoryCodes,
+				_COT_HOLDER.mandatoryVariableCodes, _COT_HOLDER.optionalCodes, _COT_HOLDER.mandatoryCodeToIndex,
+				_COT_HOLDER.mandatoryVariableCodeToIndex, _COT_HOLDER.optionalCodeToIndex);
 
 		return msg;
 	}
@@ -1136,6 +1139,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 	// CON
 	private static final MessageIndexingPlaceHolder _CON_HOLDER;
 	// FIXME: COT
+	private static final MessageIndexingPlaceHolder _COT_HOLDER;	
 	// CCR
 	private static final MessageIndexingPlaceHolder _CCR_HOLDER;
 	// FIXME: FAC
@@ -1768,7 +1772,29 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
 		optionalCodeToIndex = new HashMap<Integer, Integer>();
 		_CON_HOLDER = CON_HOLDER;
 		
-		// FIXME: COT
+		// COT
+		mandatoryCodes.add(ContinuityIndicators._PARAMETER_CODE);
+
+		mandatoryCodeToIndex.put(ContinuityIndicators._PARAMETER_CODE,ContinuityMessageImpl._INDEX_F_ContinuityIndicators);
+
+		MessageIndexingPlaceHolder COT_HOLDER = new MessageIndexingPlaceHolder();
+		COT_HOLDER.commandCode = ContinuityMessage.MESSAGE_CODE;
+		COT_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
+		COT_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
+		COT_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
+		COT_HOLDER.mandatoryCodeToIndex = Collections.unmodifiableMap(mandatoryCodeToIndex);
+		COT_HOLDER.mandatoryVariableCodeToIndex = Collections.unmodifiableMap(mandatoryVariableCodeToIndex);
+		COT_HOLDER.optionalCodeToIndex = Collections.unmodifiableMap(optionalCodeToIndex);
+
+		mandatoryCodes = new HashSet<Integer>();
+		mandatoryVariableCodes = new HashSet<Integer>();
+		optionalCodes = new HashSet<Integer>();
+		mandatoryCodeToIndex = new HashMap<Integer, Integer>();
+		mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
+		optionalCodeToIndex = new HashMap<Integer, Integer>();
+		// _commandCode2CommandIndexes.put(RLC_HOLDER.commandCode, RLC_HOLDER);
+		_COT_HOLDER = COT_HOLDER;
+				
 		// CCR
 		MessageIndexingPlaceHolder CCR_HOLDER = new MessageIndexingPlaceHolder();
 		CCR_HOLDER.commandCode = ContinuityCheckRequestMessage.MESSAGE_CODE;

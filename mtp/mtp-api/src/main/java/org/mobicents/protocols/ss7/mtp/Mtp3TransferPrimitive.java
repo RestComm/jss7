@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,22 +24,22 @@ package org.mobicents.protocols.ss7.mtp;
 
 /**
  * @author sergey vetyutnev
+ * @author amit bhayani
  * 
  */
 public class Mtp3TransferPrimitive {
 
-	protected int si; // service indicator
-	protected int ni; // network indicator
-	protected int mp; // message priority
-	protected int opc;
-	protected int dpc;
-	protected int sls;
-	protected byte[] data;
+	protected final int si; // service indicator
+	protected final int ni; // network indicator
+	protected final int mp; // message priority
+	protected final int opc;
+	protected final int dpc;
+	protected final int sls;
+	protected final byte[] data;
 
-	public Mtp3TransferPrimitive() {
-	}
+	private final RoutingLabelFormat pointCodeFormat;
 
-	public Mtp3TransferPrimitive(int si, int ni, int mp, int opc, int dpc, int sls, byte[] data) {
+	protected Mtp3TransferPrimitive(int si, int ni, int mp, int opc, int dpc, int sls, byte[] data, RoutingLabelFormat pointCodeFormat) {
 		this.si = si;
 		this.ni = ni;
 		this.mp = mp;
@@ -47,8 +47,10 @@ public class Mtp3TransferPrimitive {
 		this.dpc = dpc;
 		this.sls = sls;
 		this.data = data;
+
+		this.pointCodeFormat = pointCodeFormat;
 	}
-	
+
 	public int getSi() {
 		return this.si;
 	}
@@ -77,78 +79,60 @@ public class Mtp3TransferPrimitive {
 		return this.data;
 	}
 
-	public void setSi(int si) {
-		this.si = si;
-	}
-
-	public void setNi(int ni) {
-		this.ni = ni;
-	}
-
-	public void setMp(int mp) {
-		this.mp = mp;
-	}
-
-	public void setOpc( int opc ) {
-		this.opc = opc;
-	}
-
-	public void setDpc( int dpc ) {
-		this.dpc = dpc;
-	}
-
-	public void setSls( int sls ) {
-		this.sls = sls;
-	}
-
-	public void setData(byte[] data) {
-		this.data = data;
-	}
-
-
-	public void decodeMtp3(byte[] msg) {
-
-		// sio
-		int sio = msg[0];
-		this.si = sio & 0x0F;
-		int ssi = (sio & 0xF0) >> 4;
-		this.ni = ssi >> 2;
-		this.mp = ssi & 0x03;
-
-		// routing label
-		byte b1 = msg[1];
-		byte b2 = msg[2];
-		byte b3 = msg[3];
-		byte b4 = msg[4];
-		this.dpc = ((b2 & 0x3f) << 8) | (b1 & 0xff);
-		this.opc = ((b4 & 0x0f) << 10) | ((b3 & 0xff) << 2) | ((b2 & 0xc0) >> 6);
-		this.sls = ((b4 & 0xf0) >> 4);
-
-		// msu data
-		this.data = new byte[msg.length - 5];
-		System.arraycopy(msg, 5, this.data, 0, this.data.length);
-	}
-
 	public byte[] encodeMtp3() {
 
-		byte[] res = new byte[this.data.length + 5];
+		byte[] res = null;
+		int ssi = 0;
 
-		// sio
-		int ssi = (this.ni & 0x03) << 2 | (this.mp & 0x03);
-		res[0] = (byte) (((ssi & 0x0F) << 4) | (this.si & 0x0F));
-		
-		// routing label
-		res[1] = (byte) dpc;
-		res[2] = (byte) (((dpc >> 8) & 0x3F) | ((this.opc & 0x03) << 6));
-		res[3] = (byte) (this.opc >> 2);
-		res[4] = (byte) (((this.opc >> 10) & 0x0F) | ((sls & 0x0F) << 4));
+		switch (this.pointCodeFormat) {
+		case ITU:
 
-		// msu data
-		System.arraycopy(this.data, 0, res, 5, this.data.length);
+			res = new byte[this.data.length + 5];
+
+			// sio
+			ssi = (this.ni & 0x03) << 2 | (this.mp & 0x03);
+			res[0] = (byte) (((ssi & 0x0F) << 4) | (this.si & 0x0F));
+
+			// routing label
+			res[1] = (byte) this.dpc;
+			res[2] = (byte) (((this.dpc >> 8) & 0x3F) | ((this.opc & 0x03) << 6));
+			res[3] = (byte) (this.opc >> 2);
+			res[4] = (byte) (((this.opc >> 10) & 0x0F) | ((this.sls & 0x0F) << 4));
+
+			// msu data
+			System.arraycopy(this.data, 0, res, 5, this.data.length);
+
+			break;
+
+		case ANSI_Sls8Bit:
+			res = new byte[this.data.length + 8];
+
+			// sio
+			ssi = (this.ni & 0x03) << 2 | (this.mp & 0x03);
+			res[0] = (byte) (((ssi & 0x0F) << 4) | (this.si & 0x0F));
+
+			res[1] = (byte) this.dpc;
+			res[2] = (byte) (this.dpc >> 8);
+			res[3] = (byte) (this.dpc >> 16);
+
+			res[4] = (byte) this.opc;
+			res[5] = (byte) (this.opc >> 8);
+			res[6] = (byte) (this.opc >> 16);
+
+			res[7] = (byte) this.sls;
+
+			// msu data
+			System.arraycopy(this.data, 0, res, 8, this.data.length);
+
+			break;
+		default:
+			// We don't support rest
+			break;
+		}
 
 		return res;
 	}
-	
+
 	@Override
 	public String toString() {
 
@@ -164,7 +148,7 @@ public class Mtp3TransferPrimitive {
 			sb.append(", MsgLen=");
 			sb.append(this.data.length);
 		}
-		
+
 		sb.append(", NI=");
 		switch (this.ni) {
 		case 0:
@@ -230,5 +214,3 @@ public class Mtp3TransferPrimitive {
 		return sb.toString();
 	}
 }
-
-

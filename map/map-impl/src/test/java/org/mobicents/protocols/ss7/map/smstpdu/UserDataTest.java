@@ -30,9 +30,9 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Map;
 
-import org.mobicents.protocols.ss7.map.GSMCharset;
 import org.mobicents.protocols.ss7.map.api.smstpdu.DataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.smstpdu.UserDataHeader;
+import org.mobicents.protocols.ss7.map.datacoding.GSMCharset;
 import org.mobicents.protocols.ss7.map.smstpdu.DataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.UserDataHeaderImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.UserDataImpl;

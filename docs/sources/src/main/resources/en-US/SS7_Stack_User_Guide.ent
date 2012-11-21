@@ -15,7 +15,8 @@ If this final separator is missing, then the documentation will be wrong. -->
 <!ENTITY HOLDER "TeleSTax Inc">
 <!ENTITY AUTHOR.EMAIL.AMIT "${author.email.amit}">
 <!ENTITY AUTHOR.EMAIL.BARTOSZ "${author.email.bartosz}">
-<!ENTITY AUTHOR.EMAIL.OLEG "${author.email.oleg}">
+<!ENTITY AUTHOR.EMAIL.VINU "${author.email.vinu}">
+<!ENTITY AUTHOR.EMAIL.SERGEY "${author.email.sergey}">
 <!ENTITY THIS.APPLICATION "${docs.application.name}">
 <!ENTITY THIS.APPLICATION.DIRNAME "${docs.application.dirname}"> 
 <!ENTITY THIS.ISSUE_TRACKER_URL "${THIS.ISSUE_TRACKER_URL}">

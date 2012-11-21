@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -25,12 +25,9 @@ package org.mobicents.protocols.ss7.isup.impl.stack.timers;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.mobicents.protocols.ss7.isup.ISUPEvent;
 import org.mobicents.protocols.ss7.isup.ISUPListener;
@@ -44,9 +41,11 @@ import org.mobicents.protocols.ss7.isup.impl.message.AbstractISUPMessage;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
 import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
-import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitiveFactory;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPartBaseImpl;
-
+import org.mobicents.protocols.ss7.scheduler.Clock;
+import org.mobicents.protocols.ss7.scheduler.DefaultClock;
+import org.mobicents.protocols.ss7.scheduler.Scheduler;
 /**
  * @author baranowb
  * 
@@ -56,6 +55,9 @@ public abstract class EventTestHarness /*extends TestCase*/ implements ISUPListe
 	protected ISUPStack stack;
 	protected ISUPProvider provider;
 
+	protected Clock clock;
+	protected Scheduler scheduler;
+	
 	protected TimerTestMtp3UserPart userPart;
 
 	// events received by by this listener
@@ -63,21 +65,28 @@ public abstract class EventTestHarness /*extends TestCase*/ implements ISUPListe
 	// events sent to remote ISUP peer.
 	protected List<EventReceived> remoteEventsReceived;
 	
+	protected static final int dpc=1;
+	protected static final int localSpc=2;
+	protected static final int ni=2;
+	
 	public void setUp() throws Exception {
-		
+		clock = new DefaultClock();
+		scheduler = new Scheduler();
+        scheduler.setClock(clock);
+        scheduler.start();
+        
 		this.userPart = new TimerTestMtp3UserPart();
 		this.userPart.start();
-		this.stack = new ISUPStackImpl();
-		this.stack.configure(getSpecificConfig());
+		this.stack = new ISUPStackImpl(scheduler,localSpc,ni);		
 		this.provider = this.stack.getIsupProvider();
 		this.provider.addListener(this);
 		this.stack.setMtp3UserPart(this.userPart);
 		CircuitManagerImpl cm = new CircuitManagerImpl();
-		cm.addCircuit(1, 1);
+		cm.addCircuit(1, dpc);
 		this.stack.setCircuitManager(cm);
 		this.stack.start();
 		localEventsReceived = new ArrayList<EventTestHarness.EventReceived>();
-		remoteEventsReceived = new ArrayList<EventTestHarness.EventReceived>();
+		remoteEventsReceived = new ArrayList<EventTestHarness.EventReceived>();		
 	}
 
 	
@@ -99,7 +108,7 @@ public abstract class EventTestHarness /*extends TestCase*/ implements ISUPListe
 					doStringCompare(remoteEventsReceived, expectedRemoteEventsReceived));
 		}
 		
-		for (int index = 0; index < expectedLocalEvents.size(); index++) {
+		for (int index = 0; index < expectedLocalEvents.size(); index++) {			
 			assertEquals(localEventsReceived.get(index),expectedLocalEvents.get(index), "Local received event does not match, index[" + index + "]");
 		}
 
@@ -163,7 +172,8 @@ public abstract class EventTestHarness /*extends TestCase*/ implements ISUPListe
 //			byte[] msg = bout.toByteArray();
 
 //			this.userPart.toRead.add(msg);
-			Mtp3TransferPrimitive mtpMsg = new Mtp3TransferPrimitive(si, ni, 0, opc, dpc, sls, message);
+			Mtp3TransferPrimitiveFactory factory = stack.getMtp3UserPart().getMtp3TransferPrimitiveFactory();
+			Mtp3TransferPrimitive mtpMsg = factory.createMtp3TransferPrimitive(si, ni, 0, opc, dpc, sls, message);
 			this.userPart.sendTransferMessageToLocalUser(mtpMsg, mtpMsg.getSls());
 			
 		} catch (Exception e) {
@@ -192,13 +202,6 @@ public abstract class EventTestHarness /*extends TestCase*/ implements ISUPListe
 
 	
 	
-	/**
-	 * callback method, it returns specific configuration properties for stack
-	 * 
-	 * @return
-	 */
-	protected abstract Properties getSpecificConfig();
-
 	protected class EventReceived {
 		private long tstamp;
 
@@ -318,7 +321,7 @@ public abstract class EventTestHarness /*extends TestCase*/ implements ISUPListe
 			AbstractISUPMessage msg = (AbstractISUPMessage) provider.getMessageFactory().createCommand(commandCode);
 			try {
 				msg.decode(payload, provider.getParameterFactory());
-				MessageEventReceived event = new MessageEventReceived(tstamp, new ISUPEvent(provider, msg));
+				MessageEventReceived event = new MessageEventReceived(tstamp, new ISUPEvent(provider, msg , dpc));
 				remoteEventsReceived.add(event);
 			} catch (ParameterException e) {
 				e.printStackTrace();

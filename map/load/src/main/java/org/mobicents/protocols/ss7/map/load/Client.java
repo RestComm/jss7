@@ -26,11 +26,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.sctp.ManagementImpl;
+import org.mobicents.protocols.ss7.m3ua.Asp;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.IPSPType;
-import org.mobicents.protocols.ss7.m3ua.impl.Asp;
-import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement;
+import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 import org.mobicents.protocols.ss7.map.MAPStackImpl;
@@ -41,6 +41,7 @@ import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPMessage;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
@@ -62,12 +63,11 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSN
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponse;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
-import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCode;
-import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystem;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpResource;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
-import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3Destination;
-import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3ServiceAccessPoint;
+import org.mobicents.protocols.ss7.tcap.TCAPStackImpl;
+import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 
@@ -78,6 +78,9 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 public class Client extends TestHarness {
 
 	private static Logger logger = Logger.getLogger(Client.class);
+	
+	//TCAP
+	private TCAPStack tcapStack;
 
 	// MAP
 	private MAPStackImpl mapStack;
@@ -88,7 +91,7 @@ public class Client extends TestHarness {
 	private SccpResource sccpResource;
 
 	// M3UA
-	private M3UAManagement clientM3UAMgmt;
+	private M3UAManagementImpl clientM3UAMgmt;
 
 	// SCTP
 	private ManagementImpl sctpManagement;
@@ -109,7 +112,10 @@ public class Client extends TestHarness {
 
 		// Initialize SCCP
 		this.initSCCP();
-
+		
+		//Initialize TCAP
+		this.initTCAP();
+		
 		// Initialize MAP
 		this.initMAP();
 
@@ -130,7 +136,7 @@ public class Client extends TestHarness {
 	}
 
 	private void initM3UA() throws Exception {
-		this.clientM3UAMgmt = new M3UAManagement("Client");
+		this.clientM3UAMgmt = new M3UAManagementImpl("Client");
 		this.clientM3UAMgmt.setTransportManagement(this.sctpManagement);
 		this.clientM3UAMgmt.start();
 		this.clientM3UAMgmt.removeAllResourses();
@@ -138,7 +144,7 @@ public class Client extends TestHarness {
 		// m3ua as create rc <rc> <ras-name>
 		RoutingContext rc = factory.createRoutingContext(new long[] { 100l });
 		TrafficModeType trafficModeType = factory.createTrafficModeType(TrafficModeType.Loadshare);
-		this.clientM3UAMgmt.createAs("AS1", Functionality.AS, ExchangeType.SE, IPSPType.CLIENT, rc, trafficModeType, null);
+		this.clientM3UAMgmt.createAs("AS1", Functionality.AS, ExchangeType.SE, IPSPType.CLIENT, rc, trafficModeType, 1, null);
 
 		// Step 2 : Create ASP
 		this.clientM3UAMgmt.createAspFactory("ASP1", CLIENT_ASSOCIATION_NAME);
@@ -151,29 +157,34 @@ public class Client extends TestHarness {
 
 	}
 
-	private void initSCCP() {
+	private void initSCCP() throws Exception {
 		this.sccpStack = new SccpStackImpl("MapLoadClientSccpStack");
 		this.sccpStack.setMtp3UserPart(1, this.clientM3UAMgmt);
 
 		this.sccpStack.start();
 		this.sccpStack.removeAllResourses();
 
-		RemoteSignalingPointCode rspc = new RemoteSignalingPointCode(SERVET_SPC, 0, 0);
-		RemoteSubSystem rss = new RemoteSubSystem(SERVET_SPC, SSN, 0, false);
-		this.sccpStack.getSccpResource().addRemoteSpc(0, rspc);
-		this.sccpStack.getSccpResource().addRemoteSsn(0, rss);
+		this.sccpStack.getSccpResource().addRemoteSpc(0, SERVET_SPC, 0, 0);
+		this.sccpStack.getSccpResource().addRemoteSsn(0, SERVET_SPC, SSN, 0, false);
 
-		Mtp3ServiceAccessPoint sap = new Mtp3ServiceAccessPoint(1, CLIENT_SPC, NETWORK_INDICATOR);
-		Mtp3Destination dest = new Mtp3Destination(SERVET_SPC, SERVET_SPC, 0, 255, 255);
-		this.sccpStack.getRouter().addMtp3ServiceAccessPoint(1, sap);
-		this.sccpStack.getRouter().addMtp3Destination(1, 1, dest);
+		this.sccpStack.getRouter().addMtp3ServiceAccessPoint(1, 1, CLIENT_SPC, NETWORK_INDICATOR);
+		this.sccpStack.getRouter().addMtp3Destination(1, 1, SERVET_SPC, SERVET_SPC, 0, 255, 255);
+	}
+	
+	private void initTCAP(){
+		this.tcapStack = new TCAPStackImpl(this.sccpStack.getSccpProvider(), SSN);
+		this.tcapStack.setDialogIdleTimeout(60000);
+		this.tcapStack.setInvokeTimeout(30000);
+		this.tcapStack.setMaxDialogs(2000);
+		this.tcapStack.start();
 	}
 
 	private void initMAP() {
 
 		System.out.println("initMAP");
 
-		this.mapStack = new MAPStackImpl(this.sccpStack.getSccpProvider(), SSN);
+		//this.mapStack = new MAPStackImpl(this.sccpStack.getSccpProvider(), SSN);
+		this.mapStack = new MAPStackImpl(this.tcapStack.getProvider());
 		this.mapProvider = this.mapStack.getMAPProvider();
 
 		System.out.println("this.mapProvider = " + this.mapProvider);
@@ -184,8 +195,6 @@ public class Client extends TestHarness {
 		this.mapProvider.getMAPServiceSupplementary().acivate();
 
 		this.mapStack.start();
-
-		this.mapStack.getMAPProvider().getMAPServiceSupplementary().acivate();
 	}
 
 	private void initiateUSSD() throws MAPException {
@@ -197,13 +206,13 @@ public class Client extends TestHarness {
 				MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext, MAPApplicationContextVersion.version2),
 				SCCP_CLIENT_ADDRESS, null, SCCP_SERVER_ADDRESS, null);
 
-		byte ussdDataCodingScheme = 0x0f;
+		CBSDataCodingScheme ussdDataCodingScheme = new CBSDataCodingSchemeImpl(0x0f);
 
 		// USSD String: *125*+31628839999#
 		// The Charset is null, here we let system use default Charset (UTF-7 as
 		// explained in GSM 03.38. However if MAP User wants, it can set its own
 		// impl of Charset
-		USSDString ussdString = this.mapProvider.getMAPParameterFactory().createUSSDString("*125*+31628839999#", null);
+		USSDString ussdString = this.mapProvider.getMAPParameterFactory().createUSSDString("*125*+31628839999#", null, null);
 
 		ISDNAddressString msisdn = this.mapProvider.getMAPParameterFactory().createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN,
 				"31628838002");
@@ -221,9 +230,54 @@ public class Client extends TestHarness {
 		int noOfCalls = Integer.parseInt(args[0]);
 		int noOfConcurrentCalls = Integer.parseInt(args[1]);
 		IpChannelType ipChannelType = IpChannelType.SCTP;
-		if (args.length >= 3 && args[2].toLowerCase().equals("tcp"))
+		if (args.length >= 3 && args[2].toLowerCase().equals("tcp")){
 			ipChannelType = IpChannelType.TCP;
+		} else {
+			ipChannelType = IpChannelType.SCTP;
+		}
+		
+		if (args.length >= 4  ){
+			TestHarness.CLIENT_IP = args[3];
+		} 
+		
+		if (args.length >=  5 ){
+			TestHarness.CLIENT_PORT = Integer.parseInt(args[4]);
+		} 
+		
+		if (args.length >= 6  ){
+			TestHarness.SERVER_IP = args[5];
+		} 
+		
+		if (args.length >=  7 ){
+			TestHarness.SERVER_PORT = Integer.parseInt(args[6]);
+		} 
 
+		if (args.length >=  8 ){
+			TestHarness.CLIENT_SPC = Integer.parseInt(args[7]);
+		}
+		
+		if (args.length >=  9 ){
+			TestHarness.SERVET_SPC = Integer.parseInt(args[8]);
+		}
+		
+		if (args.length >=  10 ){
+			TestHarness.NETWORK_INDICATOR = Integer.parseInt(args[9]);
+		}
+		
+		if (args.length >=  11 ){
+			TestHarness.SERVICE_INIDCATOR = Integer.parseInt(args[10]);
+		}
+		
+		if (args.length >=  12 ){
+			TestHarness.SSN = Integer.parseInt(args[11]);
+		}
+		
+		if (args.length >=  13 ){
+			TestHarness.ROUTING_CONTEXT = Integer.parseInt(args[12]);
+		}		
+		
+		
+		
 		// logger.info("Number of calls to be completed = " + noOfCalls +
 		// " Number of concurrent calls to be maintained = " +
 		// noOfConcurrentCalls);
@@ -372,9 +426,9 @@ public class Client extends TestHarness {
 		MAPDialogSupplementary mapDialog = unstrReqInd.getMAPDialog();
 
 		try {
-			byte ussdDataCodingScheme = 0x0f;
+			CBSDataCodingScheme ussdDataCodingScheme = new CBSDataCodingSchemeImpl(0x0f);
 
-			USSDString ussdString = this.mapProvider.getMAPParameterFactory().createUSSDString("1", null);
+			USSDString ussdString = this.mapProvider.getMAPParameterFactory().createUSSDString("1", null, null);
 
 			AddressString msisdn = this.mapProvider.getMAPParameterFactory().createAddressString(AddressNature.international_number, NumberingPlan.ISDN,
 					"31628838002");

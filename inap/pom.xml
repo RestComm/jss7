@@ -41,7 +41,7 @@
 						true
 					</resolveTransitiveDependencies>
 					<eclipseProjectName>
-						mobicents-inap-stack
+						inap
 					</eclipseProjectName>
 				</configuration>
 			</plugin>

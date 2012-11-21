@@ -1,0 +1,28 @@
+Name
+	sctp server stop
+
+SYNOPSIS
+	sctp server stop <sever-name> 
+
+DESCRIPTION
+	This command is used to stop an existing SCTP Server instance. Upon executing this
+	command, the underlying SCTP server socket is closed and all resources are 
+	released.
+
+PARAMETERS
+
+	Standard Parameters
+
+	<server-name>		-	Name of the Server instance to be stopped.
+
+EXAMPLES
+	sctp server stop TestServer
+	
+	The above command will stop the currently running Server instance identified by
+	the name TestServer, close the underlying socket and release all resources.
+
+SEE ALSO
+	sctp, sctp server create, sctp server destroy, sctp server start, 
+	sctp server show, sctp association create, sctp association destroy, 
+	sctp association show
+

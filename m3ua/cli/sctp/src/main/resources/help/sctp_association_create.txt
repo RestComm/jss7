@@ -1,0 +1,99 @@
+Name
+	sctp association create
+
+SYNOPSIS
+	sctp association create <assoc-name> <CLIENT | SERVER> <server-name> <peer-ip> 
+	<peer-port> <host- ip> <host-port> <socket-type>
+
+DESCRIPTION
+	This command is used to create a new SCTP (Client side or Server side) 
+	association. 
+
+PARAMETERS
+
+	Standard Parameters
+
+	<assoc-name>		-	Name of the new Association created. This must be 
+					unique and takes any String value.
+
+	<CLIENT | SERVER>	-	Specify if this association is client side or 
+					server side. If it is client side, it will 
+					initiate the connection to peer. If it is server 
+					side, it will wait for peer to initiate the
+					connection. The connection request will be 
+					accepted from peer-ip: peer:port.
+
+	<peer-ip>		-	In a client side association, the server IP 
+					address to which the client is connecting to.
+
+					In a server side association, the client IP 
+					address from which connections will be accepted.
+	
+	<peer-port>		-	In a client side association, the server Port 
+					to which the client is connecting to.
+
+					In a server side association, the client port from 
+					which connections will be accepted.
+
+	<host-ip>		-	In a client side association, the local IP address
+					to which the socket will bind to. 
+			
+					For SCTP multi-home support, you can pass multiple
+					IP addresses as comma separated values. The 
+					Association will bind to the primary IP address 
+					and when it becomes unavailable, it will 
+					automatically fall back to secondary address. 
+					If the socket-type is TCP, these comma separated 
+					values will be ignored and the Assocation will 
+					always bind to the primary IP address (the first
+					value in the comma separated list). This is 
+					required only for a client side Association. 
+					
+					For a server side association, even if you specify
+					these values it will be ignored.
+	
+	<host-port>		-	In a client side association, the local port to
+					which the socket will bind to. This is 
+					required only for a client side Association.
+					
+					For a server side association, even if you specify
+					these values it will be ignored.
+
+	<server-name>		-	In a server-side association, the server-name must
+					be passed to associate with the Server identified 
+					by that name. You must ensure that the Server 
+					identified by server-name has already been created 
+					using the sctp server create command. 
+
+					In a client-side association, this is not required 
+					and you should not pass this parameter.
+
+	Optional Parameters
+	
+	<socket-type>		-	If you do not specify the socket-type as "TCP", 
+					by default it will be SCTP. If it is a
+					SERVER SCTP Association, the socket-type must 
+					match with the one specified while creating the
+					Server.
+
+EXAMPLES
+	sctp association create Assoc1 CLIENT 
+	192.168.56.101 2905 192.168.56.1,192.168.56.1 2905
+	
+	The above command will create a new CLIENT SCTP Association identified as Assoc1. 
+	The client side will initiate the connection. It will bind the 
+	host-ip 192.168.56.1 and host-port 2905 to the Server IP 192.168.56.101 and 
+	port 2905.
+
+	sctp association create Assoc2 SERVER TestServer 192.168.56.1 2905
+
+	The above command will create a new SERVER SCTP association with the Server 
+	identified as TestServer and accept connections from peer whose IP address is
+	192.168.56.1 and port 2905.
+
+SEE ALSO
+	sctp, sctp server create, sctp server destroy, sctp server start, 
+	sctp server stop, sctp server show, sctp association destroy, 
+	sctp association show
+
+

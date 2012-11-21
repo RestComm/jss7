@@ -1,0 +1,31 @@
+Name
+	sccp lmr delete
+
+SYNOPSIS
+	sccp lmr delete <id>
+
+DESCRIPTION
+	This command is used to delete a Long Message Rule.
+
+PARAMETERS
+
+	Standard Parameters
+                                             
+	<id>		-	The identifier of the Long Message Rule that is being
+				deleted.
+
+EXAMPLES
+	sccp lmr delete 1 
+
+	The above command will delete the Long Message Rule identified by the number '1'.
+
+SEE ALSO
+	sccp sap create, sccp sap modify, sccp dest delete, sccp sap show,
+	sccp dest create, sccp dest modify, sccp dest delete, sccp dest show, 
+	sccp rule create, sccp rule modify, sccp rule delete, sccp rule show,
+	sccp primary_add create, sccp primary_add modify, sccp primary_add delete, 
+	sccp primary_add show, sccp backup_add create, sccp backup_add modify,
+	sccp backup_add delete, sccp backup_add show, sccp rsp create, sccp rsp modify, 
+	sccp rsp delete, sccp rsp show, sccp rss create, sccp rss modify, sccp rss delete, 
+	sccp rss show, sccp lmr create, sccp lmr modify, sccp lmr show, sccp csp create,
+	sccp csp modify, sccp csp delete, sccp csp show, sccp get, sccp set

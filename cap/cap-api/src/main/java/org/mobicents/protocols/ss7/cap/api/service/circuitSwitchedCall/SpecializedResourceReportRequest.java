@@ -30,8 +30,7 @@ specializedResourceReport OPERATION ::= {
  RETURN RESULT FALSE 
  ALWAYS RESPONDS FALSE 
  CODE   opcode-specializedResourceReport} 
--- Direction: gsmSRF -> gsmSCF, Timer: T  
-srr 
+-- Direction: gsmSRF -> gsmSCF, Timer: Tsrr 
 -- This operation is used as the response to a PlayAnnouncement operation when the announcement  
 -- completed report indication is set. 
 
@@ -50,9 +49,9 @@ SpecializedResourceReportArg ::= CHOICE {
 */
 public interface SpecializedResourceReportRequest extends CircuitSwitchedCallMessage {
 
-	public boolean IsAllAnnouncementsComplete();
+	public boolean getAllAnnouncementsComplete();
 
-	public boolean IsFirstAnnouncementStarted();
+	public boolean getFirstAnnouncementStarted();
 
 }
 

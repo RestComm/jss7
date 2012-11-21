@@ -6,9 +6,9 @@
 	<section id="shell_linkset">
 		<title>Linkset Management</title>
 		<para>
-			Linksets are managed by
+			You can manage Linksets using the
 			<literal>linkset</literal>
-			command. It allows to perform following:
+			command. It allows you to perform the following operations:
 		</para>
 		<itemizedlist>
 			<listitem>

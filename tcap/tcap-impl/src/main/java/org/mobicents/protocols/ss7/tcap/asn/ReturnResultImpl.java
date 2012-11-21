@@ -168,7 +168,7 @@ public class ReturnResultImpl implements ReturnResult {
 			this.operationCode = TcapFactory.createOperationCode(tag, sequenceStream);
 
 			tag = sequenceStream.readTag();
-			this.parameter = TcapFactory.createParameter(tag, sequenceStream);
+			this.parameter = TcapFactory.createParameter(tag, sequenceStream, true);
 
 		} catch (IOException e) {
 			throw new ParseException("IOException while decoding ReturnResult: " + e.getMessage(), e);

@@ -1,0 +1,98 @@
+Name
+	m3ua as create
+
+SYNOPSIS
+	m3ua as create <as-name> <AS | SGW | IPSP> mode <SE | DE> 
+	ipspType <client | server> rc <routing- context> traffic-mode <traffic mode> 
+	min-asp <minimum asp active for TrafficModeType.Loadshare>
+	network-appearance <network appearance value> 
+
+DESCRIPTION
+	This command is used to create a new Application Server. 
+
+PARAMETERS
+
+	Standard Parameters
+
+	<as-name>		-	Name of the new Server created. This must be 
+					unique and takes any String value.
+
+	<AS | SGW | IPSP>	-	The type of the new Server is specified using this
+					parameter. The three possible values are 
+					AS (Application Server), SGW (Signaling Gateway) 
+					and IPSP.
+
+	<SE | DE>		-	You must specify if Single Exchange or 
+					Double Exchange of ASPSM (ASP State Maintenance)
+					and ASPTM (ASP Traffic Maintenance) messages 
+					should be performed. 
+
+	<client | server>	-	This is required if the newly created AS is of
+					type IPSP. You must specify is if it is of type 
+					Client or Server. 
+
+	Optional Parameters
+	
+	<routing-context>	-	This refers to the Routing Context configured for 
+					M3UA Stack on SGW. This parameter is optional. 
+
+					However for an ASP (Application Server Process) 
+					assigned to this AS to be configured to process 
+					signaling traffic related to more than one AS over
+					a single SCTP Association, it is mandatory to 
+					specify a routing-context for the AS. If an ASP is
+					configured to always process signaling traffic 
+					from one AS, irrespective of whether the received
+					messages have routing context set or not, it will 
+					always be delivered to AS for further processing. 
+
+					However if an ASP is configured to process 
+					signaling traffic related to more than one AS over
+					a single SCTP Association and if a signaling 
+					message is received without RC, then the ASP will 
+					drop the message and send back an Error message.
+					A respective log4j error will also be logged.
+
+	<traffic-mode>		-	You may choose to specify the traffic mode for 
+					ASPs. At the moment jSS7 M3UA supports only 
+					2 modes: loadshare and override. Broadcast mode is
+					not supported. 
+
+					This is an optional parameter and if not specified
+					the default mode is 'loadshare'.
+					
+	<min-asp>			-	You may choose to specify the minumum asp 
+					active for traffic mode 'loadshare' before the  
+					payload starts flowing.
+
+					This is an optional parameter and if not specified
+					the default value is 1. Also if traffic-mode is not 	
+					'loadshare' setting this value has no effect.				
+	
+	<network-appearance>	-	This is a M3UA local reference (typically an 
+					integer) shared by SG and AS. This value together 
+					with a Signaling Point Code, uniquely identifies a
+					SS7 node by indicating the specific SS7 network to
+					which it belongs. It can be used to distinguish 
+					between signalling traffic, associated with 
+					different networks, being sent between the SG and 
+					the ASP over a common SCTP association. 
+
+EXAMPLES
+	m3ua as create AS1 IPSP mode DE ipspType server rc 1 traffic-mode loadshare 
+
+	The above command will create a new M3UA Application Server identified as AS1, 
+	of type IPSP (Server), Double Exchange mode. The Routing Context is 1 and 
+	traffic-mode is 'loadshare'.  
+
+	m3ua as create AS2 AS mode SE rc 100 traffic-mode loadshare 2 network-appearance 12 
+	
+	The above command will create a new M3UA Application Server identified as AS2, 
+	of type AS, Single Exchange mode. The Routing Context is 100, 
+	traffic-mode is 'loadshare' and minimun asp to be active for payload transfer is 2. 
+	The network-appearance value is 12.  
+
+SEE ALSO
+	m3ua as destroy, m3ua as show, m3ua asp create, m3ua asp destroy, m3ua asp show, 
+	m3ua asp start, m3ua asp stop, m3ua as add, m3ua as remove, m3ua route add, 
+	m3ua route remove, m3ua route show.

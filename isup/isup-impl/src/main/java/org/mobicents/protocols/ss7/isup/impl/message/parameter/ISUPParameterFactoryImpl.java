@@ -187,9 +187,9 @@ public class ISUPParameterFactoryImpl implements ISUPParameterFactory {
 		return new ConnectionRequestImpl();
 	}
 
-	public ContinuitiyIndicators createContinuitiyIndicators() {
+	public ContinuityIndicators createContinuityIndicators() {
 		
-		return new ContinuitiyIndicatorsImpl();
+		return new ContinuityIndicatorsImpl();
 	}
 
 	public CorrelationID createCorrelationID() {

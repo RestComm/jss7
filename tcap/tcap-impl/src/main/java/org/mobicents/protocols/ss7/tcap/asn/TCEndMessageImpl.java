@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,9 +20,6 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * 
- */
 package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.IOException;
@@ -45,7 +42,7 @@ public class TCEndMessageImpl implements TCEndMessage {
 
 	private static final String _OCTET_STRING_ENCODE = "US-ASCII";
 	// mandatory
-	private long destinationTransactionId;
+	private byte[] destinationTransactionId;
 	// opt
 	private DialogPortion dp;
 	// opt
@@ -80,7 +77,7 @@ public class TCEndMessageImpl implements TCEndMessage {
 	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage#
 	 * getOriginatingTransactionId()
 	 */
-	public long getDestinationTransactionId() {
+	public byte[] getDestinationTransactionId() {
 		          
 		return this.destinationTransactionId;
 	}
@@ -115,7 +112,7 @@ public class TCEndMessageImpl implements TCEndMessage {
 	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage#
 	 * setOriginatingTransactionId(java.lang.String)
 	 */
-	public void setDestinationTransactionId(long t) {
+	public void setDestinationTransactionId(byte[] t) {
 		this.destinationTransactionId = t;
 
 	}
@@ -134,7 +131,8 @@ public class TCEndMessageImpl implements TCEndMessage {
 			int tag = localAis.readTag();
 			if (tag != _TAG_DTX || localAis.getTagClass() != Tag.CLASS_APPLICATION)
 				throw new ParseException("Error decoding TC-End: Expected DestinationTransactionId, found tag: " + tag);
-			this.destinationTransactionId = Utils.readTransactionId(localAis);
+//			this.destinationTransactionId = Utils.readTransactionId(localAis);
+			this.destinationTransactionId = localAis.readOctetString();
 
 			while (true) {
 				if (localAis.available() == 0)
@@ -196,7 +194,8 @@ public class TCEndMessageImpl implements TCEndMessage {
 			aos.writeTag(Tag.CLASS_APPLICATION, false, _TAG);
 			int pos = aos.StartContentDefiniteLength();
 
-			Utils.writeTransactionId(aos, this.destinationTransactionId, Tag.CLASS_APPLICATION, _TAG_DTX);
+//			Utils.writeTransactionId(aos, this.destinationTransactionId, Tag.CLASS_APPLICATION, _TAG_DTX);
+			aos.writeOctetString(Tag.CLASS_APPLICATION, _TAG_DTX, this.destinationTransactionId);
 
 			if (this.dp != null)
 				this.dp.encode(aos);

@@ -54,27 +54,27 @@ public class SpecializedResourceReportRequestTest {
 
 		byte[] data = this.getData1();
 		AsnInputStream ais = new AsnInputStream(data);
-		SpecializedResourceReportRequestImpl elem = new SpecializedResourceReportRequestImpl(true);
 		int tag = ais.readTag();
+		SpecializedResourceReportRequestImpl elem = new SpecializedResourceReportRequestImpl(true);
 		elem.decodeAll(ais);
-		assertTrue(elem.IsAllAnnouncementsComplete());
-		assertFalse(elem.IsFirstAnnouncementStarted());
+		assertTrue(elem.getAllAnnouncementsComplete());
+		assertFalse(elem.getFirstAnnouncementStarted());
 
 		data = this.getData2();
 		ais = new AsnInputStream(data);
-		elem = new SpecializedResourceReportRequestImpl(true);
 		tag = ais.readTag();
+		elem = new SpecializedResourceReportRequestImpl(true);
 		elem.decodeAll(ais);
-		assertFalse(elem.IsAllAnnouncementsComplete());
-		assertTrue(elem.IsFirstAnnouncementStarted());
+		assertFalse(elem.getAllAnnouncementsComplete());
+		assertTrue(elem.getFirstAnnouncementStarted());
 
 		data = this.getData3();
 		ais = new AsnInputStream(data);
 		elem = new SpecializedResourceReportRequestImpl(false);
 		tag = ais.readTag();
 		elem.decodeAll(ais);
-		assertFalse(elem.IsAllAnnouncementsComplete());
-		assertFalse(elem.IsFirstAnnouncementStarted());
+		assertFalse(elem.getAllAnnouncementsComplete());
+		assertFalse(elem.getFirstAnnouncementStarted());
 	}
 
 	@Test(groups = { "functional.encode","circuitSwitchedCall.primitive"})

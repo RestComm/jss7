@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -27,18 +27,19 @@ import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 
-import org.mobicents.protocols.ss7.map.GSMCharset;
-import org.mobicents.protocols.ss7.map.GSMCharsetDecoder;
-import org.mobicents.protocols.ss7.map.GSMCharsetDecodingData;
-import org.mobicents.protocols.ss7.map.GSMCharsetEncoder;
-import org.mobicents.protocols.ss7.map.GSMCharsetEncodingData;
 import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.datacoding.NationalLanguageIdentifier;
 import org.mobicents.protocols.ss7.map.api.smstpdu.ConcatenatedMessage;
 import org.mobicents.protocols.ss7.map.api.smstpdu.DataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.smstpdu.Gsm7NationalLanguageIdentifier;
 import org.mobicents.protocols.ss7.map.api.smstpdu.UserData;
 import org.mobicents.protocols.ss7.map.api.smstpdu.UserDataHeader;
 import org.mobicents.protocols.ss7.map.api.smstpdu.UserDataHeaderElement;
+import org.mobicents.protocols.ss7.map.datacoding.GSMCharset;
+import org.mobicents.protocols.ss7.map.datacoding.GSMCharsetDecoder;
+import org.mobicents.protocols.ss7.map.datacoding.GSMCharsetDecodingData;
+import org.mobicents.protocols.ss7.map.datacoding.GSMCharsetEncoder;
+import org.mobicents.protocols.ss7.map.datacoding.GSMCharsetEncodingData;
 
 /**
  * 
@@ -143,15 +144,18 @@ public class UserDataImpl implements UserData {
 				Charset cSet = gsm7Charset;
 				Gsm7NationalLanguageIdentifier nationalLanguageLockingShift = null;
 				Gsm7NationalLanguageIdentifier nationalLanguageSingleShift = null;
+				NationalLanguageIdentifier nationalLanguageLockingShiftIdentifier = null;
+				NationalLanguageIdentifier nationalLanguageSingleShiftIdentifier = null;
 				if (this.decodedUserDataHeader != null) {
 					nationalLanguageLockingShift = this.decodedUserDataHeader.getNationalLanguageLockingShift();
 					nationalLanguageSingleShift = this.decodedUserDataHeader.getNationalLanguageSingleShift();
+					if (nationalLanguageLockingShift != null)
+						nationalLanguageLockingShiftIdentifier = nationalLanguageLockingShift.getNationalLanguageIdentifier();
+					if (nationalLanguageSingleShift != null)
+						nationalLanguageSingleShiftIdentifier = nationalLanguageSingleShift.getNationalLanguageIdentifier();
 				}
 				if (nationalLanguageLockingShift != null || nationalLanguageSingleShift != null) {
-					// TODO: if nationalLanguageLockingShift or
-					// nationalLanguageSingleShift are present set cSet to the
-					// National Language GSM7 charset
-					// cSet = .........;
+					cSet = new GSMCharset("GSM", new String[] {}, nationalLanguageLockingShiftIdentifier, nationalLanguageSingleShiftIdentifier);
 				}
 
 				GSMCharsetEncoder encoder = (GSMCharsetEncoder) cSet.newEncoder();
@@ -240,15 +244,18 @@ public class UserDataImpl implements UserData {
 				GSMCharset cSet = gsm7Charset;
 				Gsm7NationalLanguageIdentifier nationalLanguageLockingShift = null;
 				Gsm7NationalLanguageIdentifier nationalLanguageSingleShift = null;
+				NationalLanguageIdentifier nationalLanguageLockingShiftIdentifier = null;
+				NationalLanguageIdentifier nationalLanguageSingleShiftIdentifier = null;
 				if (this.decodedUserDataHeader != null) {
 					nationalLanguageLockingShift = this.decodedUserDataHeader.getNationalLanguageLockingShift();
 					nationalLanguageSingleShift = this.decodedUserDataHeader.getNationalLanguageSingleShift();
+					if (nationalLanguageLockingShift != null)
+						nationalLanguageLockingShiftIdentifier = nationalLanguageLockingShift.getNationalLanguageIdentifier();
+					if (nationalLanguageSingleShift != null)
+						nationalLanguageSingleShiftIdentifier = nationalLanguageSingleShift.getNationalLanguageIdentifier();
 				}
 				if (nationalLanguageLockingShift != null || nationalLanguageSingleShift != null) {
-					// TODO: if nationalLanguageLockingShift or
-					// nationalLanguageSingleShift are present set cSet to the
-					// National Language GSM7 charset
-					// cSet = .........;
+					cSet = new GSMCharset("GSM", new String[] {}, nationalLanguageLockingShiftIdentifier, nationalLanguageSingleShiftIdentifier);
 				}
 
 				GSMCharsetDecoder decoder = (GSMCharsetDecoder) cSet.newDecoder();

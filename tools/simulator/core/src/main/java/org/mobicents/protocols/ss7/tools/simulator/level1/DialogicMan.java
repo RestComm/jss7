@@ -24,6 +24,8 @@ package org.mobicents.protocols.ss7.tools.simulator.level1;
 
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
+
+import org.apache.log4j.Level;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
@@ -98,10 +100,10 @@ public class DialogicMan implements DialogicManMBean, Stoppable {
 		try {
 			this.initDialogic(this.sourceModuleId, this.destinationModuleId);
 			this.isStarted = true;
-			this.testerHost.sendNotif(SOURCE_NAME, "Dialogic has been started", "", true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Dialogic has been started", "", Level.INFO);
 			return true;
 		} catch (Throwable e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when starting DialogicMan", e, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when starting DialogicMan", e, Level.ERROR);
 			return false;
 		}
 	}
@@ -110,9 +112,9 @@ public class DialogicMan implements DialogicManMBean, Stoppable {
 		try {
 			this.isStarted = false;
 			this.stopDialogic();
-			this.testerHost.sendNotif(SOURCE_NAME, "Dialogic has been stopped", "", true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Dialogic has been stopped", "", Level.INFO);
 		} catch (Throwable e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when stopping DialogicMan", e, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when stopping DialogicMan", e, Level.ERROR);
 		}
 	}
 
@@ -125,6 +127,9 @@ public class DialogicMan implements DialogicManMBean, Stoppable {
 		this.dialogic = new DialogicMtp3UserPart();
 		this.dialogic.setSourceModuleId(sourceModuleId);
 		this.dialogic.setDestinationModuleId(destinationModuleId);
+		
+		// set 8 threads for delivering messages
+		this.dialogic.setDeliveryMessageThreadCount(8);
 
 		this.dialogic.start();
 	}

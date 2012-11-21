@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,14 +19,14 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.m3ua.Asp;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSMState;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
 
 /**
@@ -38,23 +38,23 @@ public class THLocalAsInactToDwn implements TransitionHandler {
 
 	private static final Logger logger = Logger.getLogger(THLocalAsInactToDwn.class);
 
-	private As as = null;
+	private AsImpl asImpl = null;
 	private FSM fsm;
 
-	public THLocalAsInactToDwn(As as, FSM fsm) {
-		this.as = as;
+	public THLocalAsInactToDwn(AsImpl asImpl, FSM fsm) {
+		this.asImpl = asImpl;
 		this.fsm = fsm;
 	}
 
 	int inactCount = 0;
 
-	public boolean process(State state) {
+	public boolean process(FSMState state) {
 		inactCount = 0;
 
 		try {
-			for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n
+			for (FastList.Node<Asp> n = this.asImpl.appServerProcs.head(), end = this.asImpl.appServerProcs.tail(); (n = n
 					.getNext()) != end;) {
-				Asp remAspImpl = n.getValue();
+				AspImpl remAspImpl = (AspImpl)n.getValue();
 
 				FSM aspPeerFSM = remAspImpl.getPeerFSM();
 				AspState aspState = AspState.getState(aspPeerFSM.getState().getName());

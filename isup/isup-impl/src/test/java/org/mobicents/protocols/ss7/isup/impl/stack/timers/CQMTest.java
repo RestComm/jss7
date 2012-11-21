@@ -107,21 +107,5 @@ public class CQMTest extends SingleTimers {
 		ci.setCircuitState(state);
 		ans.setCircuitStateIndicator(ci);
 		return ans;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.isup.impl.stack.timers.EventTestHarness#
-	 * getSpecificConfig()
-	 */
-
-	protected Properties getSpecificConfig() {
-		Properties p = new Properties();
-		p.put("t28", getT() + "");
-		p.put("ni", "2");
-		p.put("localspc", "2");
-		return p;
-	}
-
+	}	
 }

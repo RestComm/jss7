@@ -1,0 +1,28 @@
+Name
+	m3ua as destroy
+
+SYNOPSIS
+	m3ua as destroy <as-name> 
+
+DESCRIPTION
+	This command is used to delete an existing M3UA Application Server instance 
+	identified by the name 'as-name'. You must ensure that all ASPs are unassigned and 
+	the AS state is 'INACTIVE' prior to destroying the AS.
+
+PARAMETERS
+
+	Standard Parameters
+
+	<as-name>		-	Name of the AS instance to be deleted.
+
+EXAMPLES
+	m3ua as destroy AS1
+
+	The above command will destroy the AS identified by the name AS1. 
+
+SEE ALSO
+	m3ua, m3ua as create, m3ua as show, m3ua asp create, m3ua asp destroy, 
+	m3ua asp show, m3ua asp start, m3ua asp stop, m3ua as add, m3ua as remove, 
+	m3ua route add, m3ua route remove, m3ua route show.
+
+

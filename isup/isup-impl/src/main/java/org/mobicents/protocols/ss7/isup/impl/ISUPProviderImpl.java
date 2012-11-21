@@ -26,8 +26,10 @@
 package org.mobicents.protocols.ss7.isup.impl;
 
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -49,6 +51,7 @@ import org.mobicents.protocols.ss7.isup.impl.message.parameter.ISUPParameterFact
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 
+import org.mobicents.protocols.ss7.scheduler.Scheduler;
 /**
  * @author baranowb
  * 
@@ -57,160 +60,22 @@ public class ISUPProviderImpl implements ISUPProvider {
 
 	private static final Logger logger = Logger.getLogger(ISUPProviderImpl.class);
 
-	protected final List<ISUPListener> listeners = new FastList<ISUPListener>();
-	protected ScheduledExecutorService executors[]; // assign executor to
-													// circuit?
-	protected ISUPStackImpl stack;
-	protected ISUPMessageFactory messageFactory;
-	protected ISUPParameterFactory parameterFactory;
-	protected final FastMap<Integer, Circuit> cic2Circuit = new FastMap<Integer, Circuit>();
-	protected int ni, localSpc;
-	public ISUPProviderImpl(ISUPStackImpl isupStackImpl, Properties props) {
-		this.stack = isupStackImpl;
-		this.T1Timeout = Long.parseLong(props.getProperty(T1, this.T1Timeout + ""));
-		this.T5Timeout = Long.parseLong(props.getProperty(T5, this.T5Timeout + ""));
-		this.T7Timeout = Long.parseLong(props.getProperty(T7, this.T7Timeout + ""));
-		this.T12Timeout = Long.parseLong(props.getProperty(T12, this.T12Timeout + ""));
-		this.T13Timeout = Long.parseLong(props.getProperty(T13, this.T13Timeout + ""));
-		this.T14Timeout = Long.parseLong(props.getProperty(T14, this.T14Timeout + ""));
-		this.T15Timeout = Long.parseLong(props.getProperty(T15, this.T15Timeout + ""));
-		this.T16Timeout = Long.parseLong(props.getProperty(T16, this.T16Timeout + ""));
-		this.T17Timeout = Long.parseLong(props.getProperty(T17, this.T17Timeout + ""));
-		this.T18Timeout = Long.parseLong(props.getProperty(T18, this.T18Timeout + ""));
-		this.T19Timeout = Long.parseLong(props.getProperty(T19, this.T19Timeout + ""));
-		this.T20Timeout = Long.parseLong(props.getProperty(T20, this.T20Timeout + ""));
-		this.T21Timeout = Long.parseLong(props.getProperty(T21, this.T21Timeout + ""));
-		this.T22Timeout = Long.parseLong(props.getProperty(T22, this.T22Timeout + ""));
-		this.T23Timeout = Long.parseLong(props.getProperty(T23, this.T23Timeout + ""));
-		// this.T28Timeout = Long.parseLong(props.getProperty(T28,
-		// this.T28Timeout + ""));
-		this.T33Timeout = Long.parseLong(props.getProperty(T33, this.T33Timeout + ""));
-		
-		if(!props.containsKey(NI))
-		{
-			throw new IllegalArgumentException("No definition of local NI!("+NI+")");
-		}else
-		{
-			this.ni = Integer.parseInt(props.getProperty(NI));
-		}
-		
-		if(!props.containsKey(LOCAL_SPC))
-		{
-			throw new IllegalArgumentException("No definition of localSPC!("+LOCAL_SPC+")");
-		}else
-		{
-			this.localSpc = Integer.parseInt(props.getProperty(LOCAL_SPC));
-		}
-		
-		// check bounds for timers.... trick might be that... for
-		// national/internationl those are different... ech
-		if (this.T1Timeout < 5000 || this.T1Timeout > 60000) {
-			if (logger.isEnabledFor(Level.WARN)) {
-				logger.warn("Wrong value of T1 timeout: " + this.T1Timeout + ", using default value.");
-			}
-			this.T1Timeout = ISUPTimeoutEvent.T1_DEFAULT;
-		}
+	protected final transient List<ISUPListener> listeners = new FastList<ISUPListener>();
 
-		if (this.T5Timeout < 5 * 60 * 1000 || this.T5Timeout > 15 * 60 * 1000) {
-			if (logger.isEnabledFor(Level.WARN)) {
-				logger.warn("Wrong value of T5 timeout: " + this.T5Timeout + ", using default value.");
-			}
-			this.T5Timeout = ISUPTimeoutEvent.T5_DEFAULT;
-		}
-
-		if (this.T7Timeout < 20 * 1000 || this.T7Timeout > 30 * 1000) {
-			if (logger.isEnabledFor(Level.WARN)) {
-				logger.warn("Wrong value of T7 timeout: " + this.T7Timeout + ", using default value.");
-			}
-			this.T7Timeout = ISUPTimeoutEvent.T7_DEFAULT;
-		}
-
-		if (this.T12Timeout < 15 * 1000 || this.T12Timeout > 60 * 1000) {
-			if (logger.isEnabledFor(Level.WARN)) {
-				logger.warn("Wrong value of T12 timeout: " + this.T12Timeout + ", using default value.");
-			}
-			this.T12Timeout = ISUPTimeoutEvent.T12_DEFAULT;
-		}
-		if (this.T13Timeout < 5 * 60 * 1000 || this.T13Timeout > 15 * 60 * 1000) {
-			if (logger.isEnabledFor(Level.WARN)) {
-				logger.warn("Wrong value of T13 timeout: " + this.T13Timeout + ", using default value.");
-			}
-			//this.T13Timeout = ISUPTimeoutEvent.T13_DEFAULT;
-		}
-
-		if (this.T14Timeout < 15 * 1000 || this.T14Timeout > 60 * 1000) {
-			if (logger.isEnabledFor(Level.WARN)) {
-				logger.warn("Wrong value of T14 timeout: " + this.T14Timeout + ", using default value.");
-			}
-			this.T14Timeout = ISUPTimeoutEvent.T14_DEFAULT;
-		}
-		if (this.T15Timeout < 5 * 60 * 1000 || this.T15Timeout > 15 * 60 * 1000) {
-			if (logger.isEnabledFor(Level.WARN)) {
-				logger.warn("Wrong value of T15 timeout: " + this.T15Timeout + ", using default value.");
-			}
-			this.T15Timeout = ISUPTimeoutEvent.T15_DEFAULT;
-		}
-
-		if (this.T16Timeout < 15 * 1000 || this.T16Timeout > 60 * 1000) {
-			if (logger.isEnabledFor(Level.WARN)) {
-				logger.warn("Wrong value of T16 timeout: " + this.T16Timeout + ", using default value.");
-			}
-			this.T16Timeout = ISUPTimeoutEvent.T16_DEFAULT;
-		}
-		if (this.T17Timeout < 5 * 60 * 1000 || this.T17Timeout > 15 * 60 * 1000) {
-			if (logger.isEnabledFor(Level.WARN)) {
-				logger.warn("Wrong value of T17 timeout: " + this.T17Timeout + ", using default value.");
-			}
-			this.T17Timeout = ISUPTimeoutEvent.T17_DEFAULT;
-		}
-
-		if (this.T18Timeout < 15 * 1000 || this.T18Timeout > 60 * 1000) {
-			if (logger.isEnabledFor(Level.WARN)) {
-				logger.warn("Wrong value of T18 timeout: " + this.T18Timeout + ", using default value.");
-			}
-			this.T18Timeout = ISUPTimeoutEvent.T18_DEFAULT;
-		}
-		if (this.T19Timeout < 5 * 60 * 1000 || this.T19Timeout > 15 * 60 * 1000) {
-			if (logger.isEnabledFor(Level.WARN)) {
-				logger.warn("Wrong value of T19 timeout: " + this.T19Timeout + ", using default value.");
-			}
-			this.T19Timeout = ISUPTimeoutEvent.T19_DEFAULT;
-		}
-
-		if (this.T20Timeout < 15 * 1000 || this.T20Timeout > 60 * 1000) {
-			if (logger.isEnabledFor(Level.WARN)) {
-				logger.warn("Wrong value of T20 timeout: " + this.T20Timeout + ", using default value.");
-			}
-			this.T20Timeout = ISUPTimeoutEvent.T20_DEFAULT;
-		}
-		if (this.T21Timeout < 5 * 60 * 1000 || this.T21Timeout > 15 * 60 * 1000) {
-			if (logger.isEnabledFor(Level.WARN)) {
-				logger.warn("Wrong value of T21 timeout: " + this.T21Timeout + ", using default value.");
-			}
-			this.T21Timeout = ISUPTimeoutEvent.T21_DEFAULT;
-		}
-
-		if (this.T22Timeout < 15 * 1000 || this.T22Timeout > 60 * 1000) {
-			if (logger.isEnabledFor(Level.WARN)) {
-				logger.warn("Wrong value of T22 timeout: " + this.T22Timeout + ", using default value.");
-			}
-			this.T22Timeout = ISUPTimeoutEvent.T22_DEFAULT;
-		}
-		if (this.T23Timeout < 5 * 60 * 1000 || this.T23Timeout > 15 * 60 * 1000) {
-			if (logger.isEnabledFor(Level.WARN)) {
-				logger.warn("Wrong value of T23 timeout: " + this.T23Timeout + ", using default value.");
-			}
-			this.T23Timeout = ISUPTimeoutEvent.T23_DEFAULT;
-		}
-
-		if (this.T33Timeout < 12 * 1000 || this.T33Timeout > 15 * 60 * 1000) {
-			if (logger.isEnabledFor(Level.WARN)) {
-				logger.warn("Wrong value of T33 timeout: " + this.T33Timeout + ", using default value.");
-			}
-			this.T33Timeout = ISUPTimeoutEvent.T33_DEFAULT;
-		}
-		
+	protected transient ISUPStackImpl stack;
+	protected transient ISUPMessageFactory messageFactory;
+	protected transient ISUPParameterFactory parameterFactory;
+	private transient Scheduler scheduler;
 	
+	protected final transient ConcurrentHashMap<Long,Circuit> cic2Circuit = new ConcurrentHashMap<Long,Circuit>();
+	protected int ni, localSpc;
+	public ISUPProviderImpl(ISUPStackImpl isupStackImpl,Scheduler scheduler, int ni, int localSpc) {
+		this.stack = isupStackImpl;
+		this.scheduler=scheduler;
+		
+		this.ni=ni;
+		this.localSpc=localSpc;
+		
 		this.parameterFactory = new ISUPParameterFactoryImpl();
 		this.messageFactory = new ISUPMessageFactoryImpl(this.parameterFactory);
 	}
@@ -286,90 +151,88 @@ public class ISUPProviderImpl implements ISUPProvider {
 	 * .protocols.ss7.isup.message.ISUPMessage)
 	 */
 
-	public void sendMessage(ISUPMessage msg) throws ParameterException, IOException {
+	public void sendMessage(ISUPMessage msg,int dpc) throws ParameterException, IOException {
 		if (!msg.hasAllMandatoryParameters()) {
 			throw new ParameterException("Message does not have all required parameters!");
 		}
-		getCircuit(msg).send(msg);
+		getCircuit(msg,dpc).send(msg);
 	}
 
-	public boolean cancelTimer(int cic, int timerId) {
-		if (this.cic2Circuit.containsKey(cic)) {
-			Circuit c = this.cic2Circuit.get(cic);
+	public boolean cancelTimer(int cic,int dpc, int timerId) {
+		long channelID=this.stack.getCircuitManager().getChannelID(cic,dpc);
+		if (this.cic2Circuit.containsKey(channelID)) {
+			Circuit c = this.cic2Circuit.get(channelID);
 			return c.cancelTimer(timerId);
-		} else {
-			return false;
+		}
+
+		return false;
+	}
+
+	public void cancelAllTimers(int cic, int dpc)
+	{
+		long channelID=this.stack.getCircuitManager().getChannelID(cic,dpc);
+		if (this.cic2Circuit.containsKey(channelID)) {
+			Circuit c = this.cic2Circuit.get(channelID);
+			c.onStop();
 		}
 	}
-
+	
 	// ---------------------- non interface methods ----------------
 
 	public void start() {
 		CircuitManager cm = this.stack.getCircuitManager(); 
-		int[] cics = cm.getCircuits();
+		long[] channelIDs = cm.getChannelIDs();		
 		this.cic2Circuit.clear();
-		this.executors = new ScheduledExecutorService[5];
-		for (int index = 0; index < this.executors.length; index++) {
-			this.executors[index] = Executors.newScheduledThreadPool(1);
-		}
-		for(int cic:cics)
-		{
-			Circuit c = new Circuit(cic, cm.getDpc(cic),this);
-			this.cic2Circuit.put(cic, c);
-		}
 		
+		for(long channelID:channelIDs)
+		{
+			Circuit c = new Circuit(cm.getCIC(channelID), cm.getDPC(channelID),this, scheduler);
+			cic2Circuit.put(channelID, c);
+		}	
 	}
 
-	public void stop() {
-		for (FastMap.Entry<Integer, Circuit> e = this.cic2Circuit.head(), end = this.cic2Circuit
-                .tail(); (e = e.getNext()) != end;) {
+	public void stop() {		
+		Enumeration<Long> keys=cic2Circuit.keys();
+		while(keys.hasMoreElements()) {
 			try{
-				e.getValue().onStop();
-			}catch(Exception ex)
-			{
+				cic2Circuit.remove(keys.nextElement()).onStop();
+			}
+			catch(Exception ex) {
 				ex.printStackTrace();
 			}
-		}
-		for (int index = 0; index < this.executors.length; index++) {
-			this.executors[index].shutdown();
-		}
-		executors = null;
+		}		
 	}
 
 	// --------- private methods and class defs.
-
-	/**
-	 * @param message
-	 */
-	void receive(ISUPMessage message) {
-		Circuit c = getCircuit(message);
-		c.receive(message);
-
-	}
-
 	/**
 	 * @param message
 	 * @return
 	 */
-	private Circuit getCircuit(ISUPMessage message) {
+	void receive(ISUPMessage message, int dpc) {
+		Circuit c = getCircuit(message,dpc);
+        if(c!=null)
+        	c.receive(message);
+	}
+
+	private Circuit getCircuit(ISUPMessage message, int dpc) {
 		Circuit c = null;
 		int cic = message.getCircuitIdentificationCode().getCIC();
-		if (!this.stack.getCircuitManager().isCircuitPresent(cic)) {
-			if (this.cic2Circuit.containsKey(cic)) {
-				this.cic2Circuit.remove(cic).onStop();
+		long channelID=this.stack.getCircuitManager().getChannelID(cic,dpc);
+		if (!this.stack.getCircuitManager().isCircuitPresent(cic,dpc)) {			
+			if (this.cic2Circuit.containsKey(channelID)) {
+				this.cic2Circuit.remove(channelID);
 			}
-			throw new IllegalArgumentException("Curcuit not defined, no route definition present!");
-
+			
+			//what for do we need to throw this error , lets simply add a circuit and return it , we have all parameters anyway
+			//throw new IllegalArgumentException("Curcuit not defined, no route definition present!");
+			this.stack.getCircuitManager().addCircuit(cic,dpc);
+			c = new Circuit(cic, dpc,this, scheduler);
+			cic2Circuit.put(channelID, c);			
 		} else {
-			c = this.cic2Circuit.get(message.getCircuitIdentificationCode().getCIC());
+			c = this.cic2Circuit.get(channelID);
 		}
 		return c;
-	}
-
-	ScheduledExecutorService getExecutor(int cic) {
-		int index = cic % this.executors.length;
-		return this.executors[index];
-	}
+	}	
 
 	void send(Mtp3TransferPrimitive encoded) throws IOException {
 		this.stack.send(encoded);
@@ -406,26 +269,6 @@ public class ISUPProviderImpl implements ISUPProvider {
 		}
 	}
 	
-	protected static final String NI = "ni";
-	protected static final String LOCAL_SPC = "localspc";
-
-	protected final static String T1 = "t1";
-	protected final static String T5 = "t5";
-	protected final static String T7 = "t7";
-	protected final static String T12 = "t12";
-	protected final static String T13 = "t13";
-	protected final static String T14 = "t14";
-	protected final static String T15 = "t15";
-	protected final static String T16 = "t16";
-	protected final static String T17 = "t17";
-	protected final static String T18 = "t18";
-	protected final static String T19 = "t19";
-	protected final static String T20 = "t20";
-	protected final static String T21 = "t21";
-	protected final static String T22 = "t22";
-	protected final static String T23 = "t23";
-	// protected final static String T28 = "t28";
-	protected final static String T33 = "t33";
 	private long T1Timeout = ISUPTimeoutEvent.T1_DEFAULT;
 	private long T5Timeout = ISUPTimeoutEvent.T5_DEFAULT;
 	private long T7Timeout = ISUPTimeoutEvent.T7_DEFAULT;

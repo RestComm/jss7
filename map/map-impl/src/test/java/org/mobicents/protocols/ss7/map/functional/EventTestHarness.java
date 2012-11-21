@@ -20,13 +20,31 @@ import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.MAPServiceCallHandlingListener;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.ProvideRoamingNumberRequest;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.ProvideRoamingNumberResponse;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.SendRoutingInformationRequest;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.SendRoutingInformationResponse;
+import org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsmListener;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationRequest;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationResponse;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SendRoutingInfoForLCSRequest;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SendRoutingInfoForLCSResponse;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberLocationReportRequest;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberLocationReportResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobilityListener;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancelLocationRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancelLocationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.InsertSubscriberDataRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.InsertSubscriberDataResponse;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequest;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreResponse;
 import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageRequest;
@@ -56,7 +74,8 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
  * @author amit bhayani
  *
  */
-public class EventTestHarness implements MAPDialogListener, MAPServiceSupplementaryListener, MAPServiceSmsListener, MAPServiceMobilityListener {
+public class EventTestHarness implements MAPDialogListener, MAPServiceSupplementaryListener, MAPServiceSmsListener, MAPServiceMobilityListener,
+		MAPServiceLsmListener ,MAPServiceCallHandlingListener{
 	
 	private Logger logger = null;
 
@@ -373,11 +392,129 @@ public class EventTestHarness implements MAPDialogListener, MAPServiceSupplement
 	}
 
 	public void onAnyTimeInterrogationRequest(AnyTimeInterrogationRequest request) {
+		this.logger.debug("onAnyTimeInterrogationRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.AnyTimeInterrogation, request,
+				sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	public void onAnyTimeInterrogationResponse(AnyTimeInterrogationResponse response) {
+		this.logger.debug("onAnyTimeInterrogationResponse");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.AnyTimeInterrogationResp, response, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onCheckImeiRequest(CheckImeiRequest request) {
+		this.logger.debug("onCheckImeiRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.CheckImei, request, sequence++);
+		this.observerdEvents.add(te);
+		
+	}
+
+	@Override
+	public void onCheckImeiResponse(CheckImeiResponse response) {
+		this.logger.debug("onCheckImeiResponse");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.CheckImeiResp, response, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onProvideSubscriberLocationRequest(ProvideSubscriberLocationRequest request) {
+		this.logger.debug("onProvideSubscriberLocationRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.ProvideSubscriberLocation, request, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onProvideSubscriberLocationResponse(ProvideSubscriberLocationResponse response) {
+		this.logger.debug("onProvideSubscriberLocationResponse");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.ProvideSubscriberLocationResp, response, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onSubscriberLocationReportRequest(SubscriberLocationReportRequest request) {
+		this.logger.debug("onSubscriberLocationReportRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.SubscriberLocationReport, request, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onSubscriberLocationReportResponse(SubscriberLocationReportResponse response) {
+		this.logger.debug("onSubscriberLocationReportResponse");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.SubscriberLocationReportResp, response, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onSendRoutingInfoForLCSRequest(SendRoutingInfoForLCSRequest request) {
+		this.logger.debug("onSendRoutingInforForLCSRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.SendRoutingInfoForLCS, request, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onSendRoutingInfoForLCSResponse(SendRoutingInfoForLCSResponse response) {
+		this.logger.debug("onSendRoutingInforForLCSResponse");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.SendRoutingInfoForLCSResp, response, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onCancelLocationRequest(CancelLocationRequest request) {
+		this.logger.debug("onCancelLocationRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.CancelLocation, request, sequence++);
+		this.observerdEvents.add(te);
+		
+	}
+
+	@Override
+	public void onCancelLocationResponse(CancelLocationResponse response) {
+		this.logger.debug("onCancelLocationResponse");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.CancelLocationResp, response, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onProvideRoamingNumberRequest(
+			ProvideRoamingNumberRequest request) {
+		this.logger.debug("onProvideRoamingNumberRequest");
+	    TestEvent te = TestEvent.createReceivedEvent(EventType.ProvideRoamingNumber, request, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onProvideRoamingNumberResponse(
+			ProvideRoamingNumberResponse response) {
+		this.logger.debug("onProvideRoamingNumberResponse");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.ProvideRoamingNumberResp, response, sequence++);
+		this.observerdEvents.add(te);
+		
+	}
+
+	@Override
+	public void onSendRoutingInformationRequest(
+			SendRoutingInformationRequest request) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void onAnyTimeInterrogationResponse(AnyTimeInterrogationResponse response) {
+	@Override
+	public void onSendRoutingInformationResponse(
+			SendRoutingInformationResponse response) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onInsertSubscriberDataRequest(InsertSubscriberDataRequest request) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onInsertSubscriberDataResponse(InsertSubscriberDataResponse request) {
 		// TODO Auto-generated method stub
 		
 	}

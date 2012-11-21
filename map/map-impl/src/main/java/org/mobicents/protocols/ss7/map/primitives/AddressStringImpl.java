@@ -44,7 +44,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
  * @author sergey vetyutnev
  * 
  */
-public class AddressStringImpl extends TbcdString implements AddressString {
+public class AddressStringImpl implements AddressString, MAPAsnPrimitive {
 	
 	private static final String NAI = "nai";
 	private static final String NPI = "npi";
@@ -147,7 +147,7 @@ public class AddressStringImpl extends TbcdString implements AddressString {
 
 		this.numberingPlan = NumberingPlan.getInstance(numbPlanInd);
 
-		this.address = this.decodeString(ansIS, length - 1);
+		this.address = TbcdString.decodeString(ansIS, length - 1);
 	}
 
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
@@ -194,7 +194,7 @@ public class AddressStringImpl extends TbcdString implements AddressString {
 
 		asnOs.write(nature);
 
-		this.encodeString(asnOs, this.address);
+		TbcdString.encodeString(asnOs, this.address);
 	}
 
 	@Override

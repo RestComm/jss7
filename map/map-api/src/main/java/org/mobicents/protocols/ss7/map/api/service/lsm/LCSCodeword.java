@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
 
 import java.io.Serializable;
 
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 
 /**
@@ -31,6 +32,8 @@ import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
  *   dataCodingScheme [0] USSD-DataCodingScheme,
  *   lcsCodewordString [1] LCSCodewordString,
  *   ...}
+ * 
+ * LCSCodewordString ::= USSD-String (SIZE (1..20))
  * 
  * @author amit bhayani
  *
@@ -45,7 +48,7 @@ public interface LCSCodeword extends Serializable {
 	 *
 	 * @return
 	 */
-	public byte getDataCodingScheme();
+	public CBSDataCodingScheme getDataCodingScheme();
 	
 	/**
 	 * LCSCodewordString ::= USSD-String (SIZE (1..maxLCSCodewordStringLength))

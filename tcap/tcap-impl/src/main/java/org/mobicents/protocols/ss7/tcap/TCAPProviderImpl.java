@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -78,6 +78,7 @@ import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCEndIndicationImpl;
 import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCPAbortIndicationImpl;
 import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCUniIndicationImpl;
 import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCUserAbortIndicationImpl;
+import org.mobicents.protocols.ss7.tcap.asn.Utils;
 
 /**
  * @author amit bhayani
@@ -89,22 +90,22 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
 	private static final Logger logger = Logger.getLogger(TCAPProviderImpl.class); // listenres
 
-	private List<TCListener> tcListeners = new CopyOnWriteArrayList<TCListener>();
-	protected ScheduledExecutorService _EXECUTOR;
+	private transient List<TCListener> tcListeners = new CopyOnWriteArrayList<TCListener>();
+	protected transient ScheduledExecutorService _EXECUTOR;
 	// boundry for Uni directional dialogs :), tx id is always encoded
 	// on 4 octets, so this is its max value
 	//private static final long _4_OCTETS_LONG_FILL = 4294967295l;
-	private ComponentPrimitiveFactory componentPrimitiveFactory;
-	private DialogPrimitiveFactory dialogPrimitiveFactory;
-	private SccpProvider sccpProvider;
+	private transient ComponentPrimitiveFactory componentPrimitiveFactory;
+	private transient DialogPrimitiveFactory dialogPrimitiveFactory;
+	private transient SccpProvider sccpProvider;
 
-	private MessageFactory messageFactory;
-	private ParameterFactory parameterFactory;
+	private transient MessageFactory messageFactory;
+	private transient ParameterFactory parameterFactory;
  
-	private TCAPStackImpl stack; // originating TX id ~=Dialog, its direct
+	private transient TCAPStackImpl stack; // originating TX id ~=Dialog, its direct
 									// mapping, but not described
 	// explicitly...
-	private Map<Long, DialogImpl> dialogs = new HashMap<Long, DialogImpl>();
+	private transient Map<Long, DialogImpl> dialogs = new HashMap<Long, DialogImpl>();
 	
 	private int seqControl = 0;
 	private int ssn;
@@ -157,8 +158,10 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 			throw new TCAPException("Current dialog count exceeds its maximum value");
 
 		while (true) {
-			if (++this.curDialogId > Integer.MAX_VALUE)
-				this.curDialogId = 1;
+			if (this.curDialogId < this.stack.getDialogIdRangeStart())
+				this.curDialogId = this.stack.getDialogIdRangeStart() - 1;
+			if (++this.curDialogId > this.stack.getDialogIdRangeEnd())
+				this.curDialogId = this.stack.getDialogIdRangeStart();
 			Long id = this.curDialogId;
 			if (!this.dialogs.containsKey(id))
 				return id;
@@ -409,6 +412,18 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
 	void start() {
 		logger.info("Starting TCAP Provider");
+
+		if (stack.getDialogIdRangeStart() >= stack.getDialogIdRangeEnd())
+			throw new IllegalArgumentException("Range start value cannot be equal/greater than Range end value");
+		if (stack.getDialogIdRangeStart() < 1)
+			throw new IllegalArgumentException("Range start value must be greater or equal 1");
+		if (stack.getDialogIdRangeEnd() > Integer.MAX_VALUE)
+			throw new IllegalArgumentException("Range end value must be less or equal " + Integer.MAX_VALUE);
+		if (stack.getDialogIdRangeEnd() - stack.getDialogIdRangeStart() < 10000)
+			throw new IllegalArgumentException("Range \"end - start\" must has at least 10000 possible dialogs");
+		if (stack.getDialogIdRangeEnd() - stack.getDialogIdRangeStart() <= stack.maxDialogs)
+			throw new IllegalArgumentException("MaxDialog must be less than DialogIdRange");
+
 		this._EXECUTOR = Executors.newScheduledThreadPool(4);		
 		this.sccpProvider.registerSccpListener(ssn, this);
 		logger.info("Registered SCCP listener with address " + ssn);
@@ -420,7 +435,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
 	}
 
-	protected void sendProviderAbort(PAbortCauseType pAbortCause, long remoteTransactionId, SccpAddress remoteAddress, SccpAddress localAddress, int seqControl) {
+	protected void sendProviderAbort(PAbortCauseType pAbortCause, byte[] remoteTransactionId, SccpAddress remoteAddress, SccpAddress localAddress, int seqControl) {
 
 		TCAbortMessageImpl msg = (TCAbortMessageImpl) TcapFactory.createTCAbortMessage();
 		msg.setDestinationTransactionId(remoteTransactionId);
@@ -437,7 +452,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 		}
 	}
 
-	protected void sendProviderAbort(DialogServiceProviderType pt, long remoteTransactionId, SccpAddress remoteAddress, SccpAddress localAddress,
+	protected void sendProviderAbort(DialogServiceProviderType pt, byte[] remoteTransactionId, SccpAddress remoteAddress, SccpAddress localAddress,
 			int seqControl, ApplicationContextName acn) {
 
 		DialogPortion dp = TcapFactory.createDialogPortion();
@@ -516,7 +531,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 					return;
 				}
 
-				Long dialogId = tcm.getDestinationTransactionId();
+				long dialogId = Utils.decodeTransactionId(tcm.getDestinationTransactionId());
 				DialogImpl di = this.dialogs.get(dialogId);
 				if (di == null) {
 					logger.error("No dialog/transaction for id: " + dialogId);
@@ -578,7 +593,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 					return;
 				}
 
-				dialogId = teb.getDestinationTransactionId();
+				dialogId = Utils.decodeTransactionId(teb.getDestinationTransactionId());
 				di = this.dialogs.get(dialogId);
 				if (di == null) {
 					logger.error("No dialog/transaction for id: " + dialogId);
@@ -597,7 +612,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 					return;
 				}
 
-				dialogId = tub.getDestinationTransactionId();
+				dialogId = Utils.decodeTransactionId(tub.getDestinationTransactionId());
 				di = this.dialogs.get(dialogId);
 				if (di == null) {
 					logger.error("No dialog/transaction for id: " + dialogId);
@@ -618,10 +633,10 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 				tcUnidentified.decode(ais);
 
 				if (tcUnidentified.getOriginatingTransactionId() != null) {
-					long otid = tcUnidentified.getOriginatingTransactionId();
+					byte[] otid = tcUnidentified.getOriginatingTransactionId();
 
 					if (tcUnidentified.getDestinationTransactionId() != null) {
-						Long dtid = tcUnidentified.getDestinationTransactionId();
+						Long dtid = Utils.decodeTransactionId(tcUnidentified.getDestinationTransactionId());
 						di = this.dialogs.get(dtid);
 						if (di == null) {
 							this.sendProviderAbort(PAbortCauseType.UnrecognizedMessageType, otid, remoteAddress, localAddress, message.getSls());
@@ -655,7 +670,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 			tcUnidentified.decode(ais);
 
 			if (tcUnidentified.getOriginatingTransactionId() != null) {
-				long otid = tcUnidentified.getOriginatingTransactionId();
+				long otid = Utils.decodeTransactionId(tcUnidentified.getOriginatingTransactionId());
 				dialog = this.dialogs.get(otid);
 			}
 		} catch (Exception e) {

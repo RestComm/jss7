@@ -28,22 +28,26 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.Properties;
+//import java.util.logging.Level;
+
 import javax.management.Notification;
 import javax.management.NotificationBroadcasterSupport;
 import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.lf5.LogLevel;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.sccp.SccpStack;
-import org.mobicents.protocols.ss7.sccp.impl.router.Router;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
 import org.mobicents.protocols.ss7.tools.simulator.level1.DialogicMan;
 import org.mobicents.protocols.ss7.tools.simulator.level1.M3uaMan;
 import org.mobicents.protocols.ss7.tools.simulator.level2.SccpMan;
 import org.mobicents.protocols.ss7.tools.simulator.level3.MapMan;
+import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsClientMan;
+import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsServerMan;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientMan;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerMan;
-
 import javolution.text.TextBuilder;
 import javolution.xml.XMLBinding;
 import javolution.xml.XMLObjectReader;
@@ -55,7 +59,7 @@ import javolution.xml.XMLObjectWriter;
  * 
  */
 public class TesterHost extends NotificationBroadcasterSupport implements TesterHostMBean, Stoppable {
-	private static final Logger logger = Logger.getLogger(Router.class);
+	private static final Logger logger = Logger.getLogger(TesterHost.class);
 
 	private static final String TESTER_HOST_PERSIST_DIR_KEY = "testerhost.persist.dir";
 	private static final String USER_DIR_KEY = "user.dir";
@@ -76,6 +80,8 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 	private static final String MAP = "map";
 	private static final String TEST_USSD_CLIENT = "testUssdClient";
 	private static final String TEST_USSD_SERVER = "testUssdServer";
+	private static final String TEST_SMS_CLIENT = "testSmsClient";
+	private static final String TEST_SMS_SERVER = "testSmsServer";
 
 	private final String appName;
 	private String persistDir = null;
@@ -105,6 +111,8 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 	MapMan map;
 	TestUssdClientMan testUssdClientMan;
 	TestUssdServerMan testUssdServerMan;
+	TestSmsClientMan testSmsClientMan;
+	TestSmsServerMan testSmsServerMan;
 	
 	// testers
 
@@ -128,6 +136,12 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
 		this.testUssdServerMan = new TestUssdServerMan(appName);
 		this.testUssdServerMan.setTesterHost(this);
+
+		this.testSmsClientMan = new TestSmsClientMan(appName);
+		this.testSmsClientMan.setTesterHost(this);
+
+		this.testSmsServerMan = new TestSmsServerMan(appName);
+		this.testSmsServerMan.setTesterHost(this);
 		
 		this.setupLog4j(appName);
 
@@ -145,7 +159,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 		try {
 			this.load();
 		} catch (FileNotFoundException e) {
-			this.sendNotif(SOURCE_NAME, "Failed to load the Host state in file", e, true);
+			this.sendNotif(SOURCE_NAME, "Failed to load the Host state in file", e, Level.WARN);
 		}
 	}
 
@@ -173,12 +187,20 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 		return this.testUssdServerMan;
 	}
 
+	public TestSmsClientMan getTestSmsClientMan() {
+		return this.testSmsClientMan;
+	}
+
+	public TestSmsServerMan getTestSmsServerMan() {
+		return this.testSmsServerMan;
+	}
+
 	private void setupLog4j(String appName) {
 
 //		InputStream inStreamLog4j = getClass().getResourceAsStream("/log4j.properties");
 
-		String propFileName = appName + ".log4.properties";
-		File f = new File(propFileName);
+		String propFileName = appName + ".log4j.properties";
+		File f = new File("./" + propFileName);
 		if (f.exists()) {
 
 			try {
@@ -195,12 +217,12 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			BasicConfigurator.configure();
 		}
 
-//		logger.setLevel(Level.WARN);
+//		logger.setLevel(Level.TRACE); 
 		logger.debug("log4j configured");
 
 	}
 
-	public void sendNotif(String source, String msg, Throwable e, boolean showInConsole) {
+	public void sendNotif(String source, String msg, Throwable e, Level logLevel) {
 		StringBuilder sb = new StringBuilder();
 		for (StackTraceElement st : e.getStackTrace()) {
 			if (sb.length() > 0)
@@ -209,22 +231,24 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 		}
 		this.doSendNotif(source, msg + " - " + e.toString(), sb.toString());
 
-		if (showInConsole) {
-			logger.error(msg, e);
-		} else {
-			logger.debug(msg, e);
-		}
+		logger.log(logLevel, msg, e);
+//		if (showInConsole) {
+//			logger.error(msg, e);
+//		} else {
+//			logger.debug(msg, e);
+//		}
 	}
 
-	public void sendNotif(String source, String msg, String userData, boolean showInConsole) {
+	public void sendNotif(String source, String msg, String userData, Level logLevel) {
 
 		this.doSendNotif(source, msg, userData);
 
-		if (showInConsole) {
-			logger.warn(msg);
-		} else {
-			logger.debug(msg);
-		}
+		logger.log(logLevel, msg);
+//		if (showInConsole) {
+//			logger.warn(msg);
+//		} else {
+//			logger.debug(msg);
+//		}
 	}
 
 	synchronized private void doSendNotif(String source, String msg, String userData) {
@@ -367,11 +391,11 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
 		default:
 			// TODO: implement others test tasks ...
-			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L1." + this.instance_L1.toString() + " has not been implemented yet", "", true);
+			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L1." + this.instance_L1.toString() + " has not been implemented yet", "", Level.WARN);
 			break;
 		}
 		if (!started) {
-			this.sendNotif(TesterHost.SOURCE_NAME, "Layer 1 has not started", "", true);
+			this.sendNotif(TesterHost.SOURCE_NAME, "Layer 1 has not started", "", Level.WARN);
 			this.stop();
 			return;
 		}
@@ -382,7 +406,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 		switch(this.instance_L2.intValue()){
 		case Instance_L2.VAL_SCCP:
 			if (mtp3UserPart == null) {
-				this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing SCCP: No Mtp3UserPart is defined at L1", "", true);
+				this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing SCCP: No Mtp3UserPart is defined at L1", "", Level.WARN);
 			} else {
 				this.instance_L2_B = this.sccp;
 				this.sccp.setMtp3UserPart(mtp3UserPart);
@@ -392,16 +416,16 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			break;
 		case Instance_L2.VAL_ISUP:
 			// TODO Implement L2 = ISUP
-			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L2.VAL_ISUP has not been implemented yet", "", true);
+			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L2.VAL_ISUP has not been implemented yet", "", Level.WARN);
 			break;
 
 		default:
 			// TODO: implement others test tasks ...
-			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L2." + this.instance_L2.toString() + " has not been implemented yet", "", true);
+			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L2." + this.instance_L2.toString() + " has not been implemented yet", "", Level.WARN);
 			break;
 		}
 		if (!started) {
-			this.sendNotif(TesterHost.SOURCE_NAME, "Layer 2 has not started", "", true);
+			this.sendNotif(TesterHost.SOURCE_NAME, "Layer 2 has not started", "", Level.WARN);
 			this.stop();
 			return;
 		}
@@ -412,7 +436,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 		switch(this.instance_L3.intValue()){
 		case Instance_L3.VAL_MAP:
 			if (sccpStack == null) {
-				this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing TCAP+MAP: No SccpStack is defined at L2", "", true);
+				this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing TCAP+MAP: No SccpStack is defined at L2", "", Level.WARN);
 			} else {
 				this.instance_L3_B = this.map;
 				this.map.setSccpStack(sccpStack);
@@ -422,20 +446,20 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			break;
 		case Instance_L3.VAL_CAP:
 			// TODO: implement CAP .......
-			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L3.VAL_CAP has not been implemented yet", "", true);
+			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L3.VAL_CAP has not been implemented yet", "", Level.WARN);
 			break;
 		case Instance_L3.VAL_INAP:
 			// TODO: implement INAP .......
-			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L3.VAL_INAP has not been implemented yet", "", true);
+			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L3.VAL_INAP has not been implemented yet", "", Level.WARN);
 			break;
 
 		default:
 			// TODO: implement others test tasks ...
-			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L3." + this.instance_L3.toString() + " has not been implemented yet", "", true);
+			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L3." + this.instance_L3.toString() + " has not been implemented yet", "", Level.WARN);
 			break;
 		}
 		if (!started) {
-			this.sendNotif(TesterHost.SOURCE_NAME, "Layer 3 has not started", "", true);
+			this.sendNotif(TesterHost.SOURCE_NAME, "Layer 3 has not started", "", Level.WARN);
 			this.stop();
 			return;
 		}
@@ -445,7 +469,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 		switch(this.instance_TestTask.intValue()){
 		case Instance_TestTask.VAL_USSD_TEST_CLIENT:
 			if (curMap == null) {
-				this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing USSD_TEST_CLIENT: No MAP stack is defined at L3", "", true);
+				this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing USSD_TEST_CLIENT: No MAP stack is defined at L3", "", Level.WARN);
 			} else {
 				this.instance_TestTask_B = this.testUssdClientMan;
 				this.testUssdClientMan.setMapMan(curMap);
@@ -455,7 +479,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
 		case Instance_TestTask.VAL_USSD_TEST_SERVER:
 			if (curMap == null) {
-				this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing USSD_TEST_SERVER: No MAP stack is defined at L3", "", true);
+				this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing USSD_TEST_SERVER: No MAP stack is defined at L3", "", Level.WARN);
 			} else {
 				this.instance_TestTask_B = this.testUssdServerMan;
 				this.testUssdServerMan.setMapMan(curMap);
@@ -463,13 +487,33 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			}
 			break;
 
+		case Instance_TestTask.VAL_SMS_TEST_CLIENT:
+			if (curMap == null) {
+				this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing SMS_TEST_CLIENT: No MAP stack is defined at L3", "", Level.WARN);
+			} else {
+				this.instance_TestTask_B = this.testSmsClientMan;
+				this.testSmsClientMan.setMapMan(curMap);
+				started = this.testSmsClientMan.start();
+			}
+			break;
+
+		case Instance_TestTask.VAL_SMS_TEST_SERVER:
+			if (curMap == null) {
+				this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing SMS_TEST_SERVER: No MAP stack is defined at L3", "", Level.WARN);
+			} else {
+				this.instance_TestTask_B = this.testSmsServerMan;
+				this.testSmsServerMan.setMapMan(curMap);
+				started = this.testSmsServerMan.start();
+			}
+			break;
+
 		default:
 			// TODO: implement others test tasks ...
-			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_TestTask." + this.instance_TestTask.toString() + " has not been implemented yet", "", true);
+			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_TestTask." + this.instance_TestTask.toString() + " has not been implemented yet", "", Level.WARN);
 			break;
 		}
 		if (!started) {
-			this.sendNotif(TesterHost.SOURCE_NAME, "Testing task has not started", "", true);
+			this.sendNotif(TesterHost.SOURCE_NAME, "Testing task has not started", "", Level.WARN);
 			this.stop();
 			return;
 		}
@@ -600,13 +644,15 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			writer.write(this.map, MAP, MapMan.class);
 			writer.write(this.testUssdClientMan, TEST_USSD_CLIENT, TestUssdClientMan.class);
 			writer.write(this.testUssdServerMan, TEST_USSD_SERVER, TestUssdServerMan.class);
+			writer.write(this.testSmsClientMan, TEST_SMS_CLIENT, TestSmsClientMan.class);
+			writer.write(this.testSmsServerMan, TEST_SMS_SERVER, TestSmsServerMan.class);
 
 //			writer.write(remoteSpcs, REMOTE_SPC, FastMap.class);
 //			writer.write(concernedSpcs, CONCERNED_SPC, FastMap.class);
 
 			writer.close();
 		} catch (Exception e) {
-			this.sendNotif(SOURCE_NAME, "Error while persisting the Host state in file", e, true);
+			this.sendNotif(SOURCE_NAME, "Error while persisting the Host state in file", e, Level.ERROR);
 		}
 	}
 
@@ -616,7 +662,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 		try {
 			File fn = new File(persistFile.toString());
 			if (!fn.exists()) {
-				this.sendNotif(SOURCE_NAME, "Error while reading the Host state from file: file not found: " + persistFile.toString(), "", true);
+				this.sendNotif(SOURCE_NAME, "Error while reading the Host state from file: file not found: " + persistFile.toString(), "", Level.WARN);
 				return;
 			}
 			
@@ -659,6 +705,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			this.sccp.setNumberingPlan(_sccp.getNumberingPlan());
 			this.sccp.setTranslationType(_sccp.getTranslationType());
 			this.sccp.setCallingPartyAddressDigits(_sccp.getCallingPartyAddressDigits());
+			this.sccp.setExtraLocalAddressDigits(_sccp.getExtraLocalAddressDigits());
 
 			MapMan _tcap = reader.read(MAP, MapMan.class);
 			this.map.setLocalSsn(_tcap.getLocalSsn());
@@ -693,11 +740,34 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			this.testUssdServerMan.setAutoUnstructured_SS_RequestString(_TestUssdServerMan.getAutoUnstructured_SS_RequestString());
 			this.testUssdServerMan.setOneNotificationFor100Dialogs(_TestUssdServerMan.isOneNotificationFor100Dialogs());
 
+			TestSmsClientMan _TestSmsClientMan = reader.read(TEST_SMS_CLIENT, TestSmsClientMan.class);
+			this.testSmsClientMan.setAddressNature(_TestSmsClientMan.getAddressNature());
+			this.testSmsClientMan.setNumberingPlan(_TestSmsClientMan.getNumberingPlan());
+			this.testSmsClientMan.setServiceCenterAddress(_TestSmsClientMan.getServiceCenterAddress());
+			this.testSmsClientMan.setMapProtocolVersion(_TestSmsClientMan.getMapProtocolVersion());
+			this.testSmsClientMan.setSRIResponseImsi(_TestSmsClientMan.getSRIResponseImsi());
+			this.testSmsClientMan.setSRIResponseVlr(_TestSmsClientMan.getSRIResponseVlr());
+			this.testSmsClientMan.setSmscSsn(_TestSmsClientMan.getSmscSsn());
+			this.testSmsClientMan.setTypeOfNumber(_TestSmsClientMan.getTypeOfNumber());
+			this.testSmsClientMan.setNumberingPlanIdentification(_TestSmsClientMan.getNumberingPlanIdentification());
+			this.testSmsClientMan.setSmsCodingType(_TestSmsClientMan.getSmsCodingType());
+
+			TestSmsServerMan _TestSmsServerMan = reader.read(TEST_SMS_SERVER, TestSmsServerMan.class);
+			this.testSmsServerMan.setAddressNature(_TestSmsServerMan.getAddressNature());
+			this.testSmsServerMan.setNumberingPlan(_TestSmsServerMan.getNumberingPlan());
+			this.testSmsServerMan.setServiceCenterAddress(_TestSmsServerMan.getServiceCenterAddress());
+			this.testSmsServerMan.setMapProtocolVersion(_TestSmsServerMan.getMapProtocolVersion());
+			this.testSmsServerMan.setHlrSsn(_TestSmsServerMan.getHlrSsn());
+			this.testSmsServerMan.setVlrSsn(_TestSmsServerMan.getVlrSsn());
+			this.testSmsServerMan.setTypeOfNumber(_TestSmsServerMan.getTypeOfNumber());
+			this.testSmsServerMan.setNumberingPlanIdentification(_TestSmsServerMan.getNumberingPlanIdentification());
+			this.testSmsServerMan.setSmsCodingType(_TestSmsServerMan.getSmsCodingType());
+
 //			remoteSsns = reader.read(REMOTE_SSN, FastMap.class);
 //			remoteSpcs = reader.read(REMOTE_SPC, FastMap.class);
 //			concernedSpcs = reader.read(CONCERNED_SPC, FastMap.class);
 		} catch (Exception ex) {
-			this.sendNotif(SOURCE_NAME, "Error while reading the Host state from file", ex, true);
+			this.sendNotif(SOURCE_NAME, "Error while reading the Host state from file", ex, Level.WARN	);
 		}
 	}
 }

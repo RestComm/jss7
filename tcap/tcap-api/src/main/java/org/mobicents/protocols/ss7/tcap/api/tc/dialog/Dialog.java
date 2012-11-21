@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -225,5 +225,21 @@ public interface Dialog {
 	 * @return
 	 */
 	public int getDataLength(TCUniRequest event) throws TCAPSendException;
+	
+	/**
+	 * Getting from the Dialog a user-defined object to save relating to the
+	 * Dialog information
+	 * 
+	 * @return
+	 */
+	public Object getUserObject();
+
+	/**
+	 * Store in the Dialog a user-defined object to save relating to the
+	 * Dialog information
+	 * 
+	 * @param userObject
+	 */
+	public void setUserObject(Object userObject);
 
 }

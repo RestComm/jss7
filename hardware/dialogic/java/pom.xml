@@ -26,8 +26,9 @@
 			<artifactId>mtp-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.management</groupId>
+			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 			<artifactId>linkset</artifactId>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>

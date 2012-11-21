@@ -1,0 +1,18 @@
+Name
+	m3ua as show
+
+SYNOPSIS
+	m3ua as show
+
+DESCRIPTION
+	This command is used to view the details of all configured Application Servers. 
+	The information displayed will include the configured 
+	functionality (AS or IPSP or SGW), mode (SE or DE), IPSP type (if applicable), 
+	routing context, traffic mode and network appearance values. 
+
+SEE ALSO
+	m3ua, m3ua as create, m3ua as destroy, m3ua asp create, m3ua asp destroy, 
+	m3ua asp show, m3ua asp start, m3ua asp stop, m3ua as add, m3ua as remove, 
+	m3ua route add, m3ua route remove, m3ua route show.
+
+

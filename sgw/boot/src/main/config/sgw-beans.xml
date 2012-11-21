@@ -15,7 +15,14 @@
 		<property name="connectDelay">30000</property>
 	</bean>
 
-	<bean name="Mtp3UserPart" class="org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement">
+	<bean name="SCTPShellExecutor"
+		class="org.mobicents.protocols.ss7.m3ua.impl.oam.SCTPShellExecutor">
+		<property name="sctpManagement">
+			<inject bean="SCTPManagement" />
+		</property>
+	</bean>
+	
+	<bean name="Mtp3UserPart" class="org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl">
 		<constructor>
 			<parameter>Mtp3UserPart</parameter>
 		</constructor>
@@ -29,9 +36,6 @@
 		class="org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAShellExecutor">
 		<property name="m3uaManagement">
 			<inject bean="Mtp3UserPart" />
-		</property>
-		<property name="sctpManagement">
-			<inject bean="SCTPManagement" />
 		</property>
 	</bean>
 
@@ -74,22 +78,22 @@
 		<uncallback method="removeFactory" />
 	</bean>
 
-	<bean name="ShellExecutor" class="org.mobicents.ss7.sgw.ShellExecutor">
+	<bean name="ShellExecutor" class="org.mobicents.ss7.management.console.ShellServer">
 		<constructor>
 			<parameter>
 				<inject bean="Scheduler" />
 			</parameter>
+			<parameter>
+				<list class="javolution.util.FastList" elementClass="org.mobicents.ss7.management.console.ShellExecutor">
+					<inject bean="M3UAShellExecutor" />
+					<inject bean="SCTPShellExecutor" />
+					<inject bean="LinksetExecutor" />
+				</list>
+			</parameter>
 		</constructor>
 
-
 		<property name="address">${sgw.bind.address}</property>
-		<property name="port">3436</property>
-		<property name="linksetExecutor">
-			<inject bean="LinksetExecutor" />
-		</property>
-		<property name="m3UAShellExecutor">
-			<inject bean="M3UAShellExecutor" />
-		</property>
+		<property name="port">3435</property>
 	</bean>
 
 	<bean name="NodalInterworkingFunction" class="org.mobicents.ss7.sgw.NodalInterworkingFunction">
@@ -112,10 +116,6 @@
 
 		<property name="scheduler">
 			<inject bean="Scheduler" />
-		</property>
-
-		<property name="shellExecutor">
-			<inject bean="ShellExecutor" />
 		</property>
 
 		<property name="nodalInterworkingFunction">

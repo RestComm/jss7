@@ -61,8 +61,11 @@ import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.MAPServiceCallHandling;
 import org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsm;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobility;
+import org.mobicents.protocols.ss7.map.api.service.oam.MAPServiceOam;
+import org.mobicents.protocols.ss7.map.api.service.pdpContextActivation.MAPServicePdpContextActivation;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSms;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementary;
 import org.mobicents.protocols.ss7.map.dialog.MAPAcceptInfoImpl;
@@ -73,10 +76,14 @@ import org.mobicents.protocols.ss7.map.dialog.MAPRefuseInfoImpl;
 import org.mobicents.protocols.ss7.map.dialog.MAPUserAbortInfoImpl;
 import org.mobicents.protocols.ss7.map.errors.MAPErrorMessageFactoryImpl;
 import org.mobicents.protocols.ss7.map.errors.MAPErrorMessageImpl;
+import org.mobicents.protocols.ss7.map.service.callhandling.MAPServiceCallHandlingImpl;
 import org.mobicents.protocols.ss7.map.service.lsm.MAPServiceLsmImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.MAPServiceMobilityImpl;
+import org.mobicents.protocols.ss7.map.service.oam.MAPServiceOamImpl;
+import org.mobicents.protocols.ss7.map.service.pdpContextActivation.MAPServicePdpContextActivationImpl;
 import org.mobicents.protocols.ss7.map.service.sms.MAPServiceSmsImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.MAPServiceSupplementaryImpl;
+import org.mobicents.protocols.ss7.tcap.api.MessageType;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.TCListener;
@@ -144,10 +151,13 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 	private final transient MAPErrorMessageFactory mapErrorMessageFactory = new MAPErrorMessageFactoryImpl();
 
 	protected transient Set<MAPServiceBase> mapServices = new HashSet<MAPServiceBase>();
+	private final transient MAPServiceMobility mapServiceMobility = new MAPServiceMobilityImpl(this);
+	private final transient MAPServiceCallHandling mapServiceCallHandling = new MAPServiceCallHandlingImpl(this);
+	private final transient MAPServiceOam mapServiceOam = new MAPServiceOamImpl(this);
+	private final transient MAPServicePdpContextActivation mapServicePdpContextActivation = new MAPServicePdpContextActivationImpl(this);
 	private final transient MAPServiceSupplementary mapServiceSupplementary = new MAPServiceSupplementaryImpl(this);
 	private final transient MAPServiceSms mapServiceSms = new MAPServiceSmsImpl(this);
 	private final transient MAPServiceLsm mapServiceLsm = new MAPServiceLsmImpl(this);
-	private final transient MAPServiceMobility mapServiceMobility = new MAPServiceMobilityImpl(this);
 
 	/**
 	 * public common methods
@@ -156,14 +166,33 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 	public MAPProviderImpl(TCAPProvider tcapProvider) {
 		this.tcapProvider = tcapProvider;
 
+		this.mapServices.add(this.mapServiceMobility);
+		this.mapServices.add(this.mapServiceCallHandling);
+		this.mapServices.add(this.mapServiceOam);
+		this.mapServices.add(this.mapServicePdpContextActivation);
 		this.mapServices.add(this.mapServiceSupplementary);
 		this.mapServices.add(this.mapServiceSms);
 		this.mapServices.add(this.mapServiceLsm);
-		this.mapServices.add(this.mapServiceMobility);
 	}
 
 	public TCAPProvider getTCAPProvider() {
 		return this.tcapProvider;
+	}
+
+	public MAPServiceMobility getMAPServiceMobility() {
+		return this.mapServiceMobility;
+	}
+	
+	public MAPServiceCallHandling getMAPServiceCallHandling() {
+		return this.mapServiceCallHandling;
+	}
+
+	public MAPServiceOam getMAPServiceOam() {
+		return this.mapServiceOam;
+	}
+
+	public MAPServicePdpContextActivation getMAPServicePdpContextActivation() {
+		return this.mapServicePdpContextActivation;
 	}
 
 	public MAPServiceSupplementary getMAPServiceSupplementary() {
@@ -178,9 +207,6 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		return this.mapServiceLsm;
 	}
 
-	public MAPServiceMobility getMAPServiceMobility() {
-		return this.mapServiceMobility;
-	}
 
 	public void addMAPDialogListener(MAPDialogListener mapDialogListener) {
 		this.dialogListeners.add(mapDialogListener);
@@ -566,17 +592,24 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		MAPDialogImpl mapDialogImpl = ((MAPServiceBaseImpl) perfSer).createNewDialogIncoming(mapAppCtx, tcBeginIndication.getDialog());
 		synchronized (mapDialogImpl) {
 			this.addDialog(mapDialogImpl);
+			mapDialogImpl.tcapMessageType = MessageType.Begin;
+			mapDialogImpl.receivedOrigReference = origReference;
+			mapDialogImpl.receivedDestReference = destReference;
+			mapDialogImpl.receivedExtensionContainer = extensionContainer;
 
 			mapDialogImpl.setState(MAPDialogState.INITIAL_RECEIVED);
+
+			mapDialogImpl.delayedAreaState = MAPDialogImpl.DelayedAreaState.No;
 
 			if (eriStyle) {
 				this.deliverDialogRequestEri(mapDialogImpl, destReference, origReference, eriImsi, eriVlrNo);
 			} else {
 				this.deliverDialogRequest(mapDialogImpl, destReference, origReference, extensionContainer);
 			}
-			if (mapDialogImpl.getState() == MAPDialogState.EXPUNGED)
+			if (mapDialogImpl.getState() == MAPDialogState.EXPUNGED) {
 				// The Dialog was aborter or refused
 				return;
+			}
 
 			// Now let us decode the Components
 			if (comps != null) {
@@ -584,7 +617,33 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			}
 
 			this.deliverDialogDelimiter(mapDialogImpl);
+
+			finishComponentProcessingState(mapDialogImpl);
 		}
+	}
+
+	private void finishComponentProcessingState(MAPDialogImpl mapDialogImpl) {
+
+		if (mapDialogImpl.getState() == MAPDialogState.EXPUNGED)
+			return;
+
+		try {
+			switch (mapDialogImpl.delayedAreaState) {
+			case Continue:
+				mapDialogImpl.send();
+				break;
+			case End:
+				mapDialogImpl.close(false);
+				break;
+			case PrearrangedEnd:
+				mapDialogImpl.close(true);
+				break;
+			}
+		} catch (MAPException e) {
+			loger.error("Error while finishComponentProcessingState, delayedAreaState=" + mapDialogImpl.delayedAreaState, e);
+		}
+
+		mapDialogImpl.delayedAreaState = null;
 	}
 
 	public void onTCContinue(TCContinueIndication tcContinueIndication) {
@@ -603,6 +662,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			}
 			return;
 		}
+		mapDialogImpl.tcapMessageType = MessageType.Continue;
 
 		synchronized (mapDialogImpl) {
 			// Checking the received ApplicationContextName :
@@ -638,7 +698,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 						this.deliverDialogProviderAbort(mapDialogImpl, MAPAbortProviderReason.AbnormalMAPDialogue, MAPAbortSource.MAPProblem, null);
 						mapDialogImpl.setState(MAPDialogState.EXPUNGED);
-
+						
 						return;
 					}
 				} else {
@@ -701,13 +761,19 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 					}
 				}
 
+				mapDialogImpl.delayedAreaState = MAPDialogImpl.DelayedAreaState.No;
+
 				// Fire MAPAcceptInfo
 				mapDialogImpl.setState(MAPDialogState.ACTIVE);
 				this.deliverDialogAccept(mapDialogImpl, extensionContainer);
 
-				if (mapDialogImpl.getState() == MAPDialogState.EXPUNGED)
+				if (mapDialogImpl.getState() == MAPDialogState.EXPUNGED) {
 					// The Dialog was aborter
+					finishComponentProcessingState(mapDialogImpl);
 					return;
+				}
+			} else {
+				mapDialogImpl.delayedAreaState = MAPDialogImpl.DelayedAreaState.No;
 			}
 
 			// Now let us decode the Components
@@ -722,6 +788,8 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			}
 
 			this.deliverDialogDelimiter(mapDialogImpl);
+
+			finishComponentProcessingState(mapDialogImpl);
 		}
 	}
 
@@ -735,6 +803,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			loger.error("MAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
 			return;
 		}
+		mapDialogImpl.tcapMessageType = MessageType.End;
 
 		synchronized (mapDialogImpl) {
 			if (mapDialogImpl.getState() == MAPDialogState.INITIAL_SENT) {
@@ -777,10 +846,10 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 					if (mapAcn == null || !mapAcn.equals(mapDialogImpl.getApplicationContext())) {
 						loger.error(String.format("Received first TC-END. MAPDialog=%s. But MAPApplicationContext=%s", mapDialogImpl, mapAcn));
-
+						
 						this.deliverDialogProviderAbort(mapDialogImpl, MAPAbortProviderReason.AbnormalMAPDialogue, MAPAbortSource.MAPProblem, null);
 						mapDialogImpl.setState(MAPDialogState.EXPUNGED);
-
+						
 						return;
 					}
 				}
@@ -842,9 +911,10 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				}
 
 				this.deliverDialogAccept(mapDialogImpl, extensionContainer);
-				if (mapDialogImpl.getState() == MAPDialogState.EXPUNGED)
+				if (mapDialogImpl.getState() == MAPDialogState.EXPUNGED) {
 					// The Dialog was aborter
 					return;
+				}
 			}
 
 			// Now let us decode the Components
@@ -854,7 +924,9 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			}
 
 			this.deliverDialogClose(mapDialogImpl);
+
 			mapDialogImpl.setState(MAPDialogState.EXPUNGED);
+
 		}
 	}
 
@@ -916,6 +988,8 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			loger.error("MAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
 			return;
 		}
+
+		mapDialogImpl.tcapMessageType = MessageType.Abort;
 
 		synchronized (mapDialogImpl) {
 			PAbortCauseType pAbortCause = tcPAbortIndication.getPAbortCause();
@@ -983,6 +1057,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			loger.error("MAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
 			return;
 		}
+		mapDialogImpl.tcapMessageType = MessageType.Abort;
 
 		synchronized (mapDialogImpl) {
 			// Trying to parse an userInfo APDU if it exists

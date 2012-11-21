@@ -80,6 +80,17 @@
 			<jvmarg value="-XX:+PrintGCDetails" />
 			<jvmarg value="-XX:+PrintGCTimeStamps" />
 			-->
+			<arg value="sctp" /> <!-- socket type -->
+			<arg value="127.0.0.1" /> <!-- Client IP -->
+			<arg value="2345" /> <!-- Client Port -->
+			<arg value="127.0.0.1" /> <!-- Server Ip -->
+			<arg value="3434" /> <!-- Server Port -->
+			<arg value="1" /> <!-- Client PC -->
+			<arg value="2" /> <!-- Server PC -->
+			<arg value="2" /> <!-- NI -->
+			<arg value="3" /> <!-- SI -->
+			<arg value="8" /> <!-- SSN -->
+			<arg value="100" /> <!-- RC -->			
 		</java>
 	</target>
 	<target name="client" description="run the Load Test Client">
@@ -90,6 +101,17 @@
 			<jvmarg value="-Dlog.file.name=log4j-client.log" />
 			<arg value="10000000" />
 			<arg value="10" />
+			<arg value="sctp" /> <!-- socket type -->
+			<arg value="127.0.0.1" /> <!-- Client IP -->
+			<arg value="2345" /> <!-- Client Port -->
+			<arg value="127.0.0.1" /> <!-- Server Ip -->
+			<arg value="3434" /> <!-- Server Port -->
+			<arg value="1" /> <!-- Client PC -->
+			<arg value="2" /> <!-- Server PC -->
+			<arg value="2" /> <!-- NI -->
+			<arg value="3" /> <!-- SI -->
+			<arg value="8" /> <!-- SSN -->
+			<arg value="100" /> <!-- RC -->
 		</java>
 	</target>
 	<!-- -->

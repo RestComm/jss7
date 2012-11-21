@@ -1,46 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">
+%BOOK_ENTITIES;
+]>
 
 <chapter
 	id="shell">
 	<title>Shell Command Line</title>
-	<section>
-		<title>Introduction</title>
-		<para>&THIS.PLATFORM; &THIS.APPLICATION;
-			provides Shell client to manage configuration of &THIS.APPLICATION; Services. This chapter describes how to install and start client. Also it describes available
-			commands and provides examples.
-			To see examples of specific flow, to perform certain tasks, please refer to sections in chapter devoted to
-			<literal>Linksets</literal>, <literal>SCCP</literal> or <literal>M3UA</literal>
-			
-			. <!-- TODO add XREF -->
-		</para>
-	</section>
-	<section
+	
+<para>
+				  <literal>Shell</literal> is a Command Line Interface (CLI) tool that will allow you to manage different aspects of &THIS.PLATFORM; &THIS.APPLICATION; in an interactive manner. 
+					It connects to different instances of &THIS.PLATFORM; &THIS.APPLICATION; which manages <literal>Linksets</literal>,
+					<literal>SCCP</literal> resource, routing and <literal>M3UA</literal>.
+					Usually <literal>Shell</literal> will be invoked from a remote machine(remote to <literal>Linksets</literal> and application protocols).
+
+				</para>
+	
+	<section id="running_shell">
+			<title>Running the Shell</title>	
+<section
 		id="shell_start">
-		<title>Starting</title>
+		<title>Start the Shell Client</title>
 		<para>
 			Shell client can be started with following command from
 			<filename>$JBOSS_HOME/bin</filename>
 			:
 		</para>
-		<programlisting>[$] ./ss7-run.sh</programlisting>
+		<programlisting>[$] ./ss7-cli.sh</programlisting>
 		<para>Once console starts, it will print following information:</para>
 		<screen>
 =========================================================================
 
-Mobicents SS7: release.version=1.0.0-SNAPSHOT
+telscale SS7: release.version=2.0.0
 This is free software, with components licensed under the GNU General Public License
-version 2 and other licenses. For further details visit http://mobicents.org
+version 2 and other licenses. For further details visit http://telscale.org
 =========================================================================
 
-mobicents>
+telscale>
 		</screen>
+
+
+
 
 		<para>
 			The
-			<literal>ss7-run</literal>
-			script supports following options
+			<literal>ss7-cli</literal>
+			script supports the following options
 		</para>
 
 		<screen><![CDATA[
@@ -50,16 +56,18 @@ Valid Options
 -h           This help screen
 ]]>
 		</screen>
-
-		<para>Shell needs to connect to managed instance. Command to connect has following structure:</para>
+</section>
+<section id="connect_shell">
+		<title>Connect to Managed Instance</title>
+		<para>Shell needs to connect to a managed instance. The command to connect has following structure:</para>
 		<programlisting>
-ss7 connect &lt;IP&gt; &lt;PORT&gt; </programlisting>
+connect &lt;IP&gt; &lt;PORT&gt; </programlisting>
 		<example>
-			<title>Connec to remote machine</title>
+			<title>Connect to remote machine</title>
 			<screen>
-mobicents>ss7 connect 10.65.208.215 3435
+telscale>connect 10.65.208.215 3435
 
-mobicents(10.65.208.215:3435)>
+telscale(10.65.208.215:3435)>
 			</screen>
 		</example>
 		<note>
@@ -68,20 +76,85 @@ mobicents(10.65.208.215:3435)>
 				<literal>127.0.0.1:3435</literal>
 			</para>
 		</note>
-
+   </section>	
+   <section id="disconnect_shell">
+		<title>Disconnect</title>
 		<para>Command to disconnect has following structure:</para>
 		<programlisting>ss7 discconnect </programlisting>
 		<example>
 			<title>Disconnect</title>
 			<screen>
-mobicents(10.65.208.215:3435)>ss7 disconnect
+telscale(10.65.208.215:3435)>ss7 disconnect
 
 Bye
-mobicents>
+telscale>
 			</screen>
 		</example>
 	</section>
 
+
+	
+		</section>
+	<section id="commands_help">
+		<title>Command-line Completion</title>
+		<para>
+			&THIS.PLATFORM; &THIS.APPLICATION; Shell supports Command-line completion (Tab Completion) allowing you to type the first (or first few) character(s) of the comand and press tab to fill in the rest of the command. As soon as you enter the CLI (by executing the <filename>ss7-cli.sh</filename> script) you can make use of this feature to view all possible commands. 
+		</para>
+		<para>
+When you first enter CLI and press the "tab" key, CLI will display all operations permitted in that context. Once you connect to a managed instance and while staying connected if you press the "tab" key it will display all other commands allowed.
+		</para>
+<programlisting>
+telscale> [tab key press]
+history  connect  exit     
+telscale>connect 10.65.208.215 3435
+telscale(10.65.208.215:3435)> [tab key press]
+sctp        linkset     m3ua        sccp        history     disconnect 
+</programlisting>
+		<para>
+If you enter the first few characters of a command and press "tab", CLI will automatically fill in the rest of the command or display all possible commands if there is more than one command beginning with the characters entered by you.
+		</para>
+<programlisting>
+telscale(10.65.208.215:3435)>sctp [tab key press]
+server       association  --help       
+telscale(10.65.208.215:3435)>sctp 
+</programlisting>
+		<para>
+In addition, help files are also available for every command using the --help option. The help files provide details of the command including possible parameters and examples of usage if applicable. 
+		</para>
+<programlisting>
+telscale(10.65.208.215:3435)>sctp --help
+Name
+	sctp
+	Manage M3UA - SCTP
+
+SYNOPSIS
+	sctp server [create | destroy | start | stop | show]  [parameters]
+
+	sctp association [create | destroy | show]  [parameters]
+         
+	parameters 
+		Command Line parameters.
+
+DESCRIPTION
+	This command is used to manage M3UA - SCTP. You can create, destroy, start and 
+	stop a SCTP Server and view the Server configuration using the sctp server 
+	command. You can create, destroy and view SCTP Associations using the 
+	sctp association command.
+
+SEE ALSO
+	sctp server create, sctp server destroy, sctp server start, sctp server stop, 
+	sctp server show, sctp association create, sctp association destroy,
+	sctp association show
+
+telscale(10.65.208.215:3435)>
+</programlisting>
+	</section>
+<para> The sections below describe the available Shell
+			commands and provide examples of usage.
+			To see examples of specific flow or to perform certain tasks, please refer to corresponding sections devoted to
+			<literal>Linksets</literal>, <literal>SCCP</literal> or <literal>M3UA</literal>
+			
+		</para>
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Section-Shell_Linkset.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Section-Shell_Sccp.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Section-Shell_M3UA.xml" />

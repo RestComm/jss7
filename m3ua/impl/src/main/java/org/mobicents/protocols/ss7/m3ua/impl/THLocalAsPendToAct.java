@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,15 +19,15 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.m3ua.Asp;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSMState;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
 import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
 import org.mobicents.protocols.ss7.m3ua.message.MessageType;
@@ -40,7 +40,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
  * Transition's the {@link RemAsImpl} from
  * {@link org.mobicents.protocols.ss7.m3ua.impl.AsState#PENDING} to
  * {@link org.mobicents.protocols.ss7.m3ua.impl.AsState#ACTIVE}. Send's
- * AS_ACTIVE notification to all {@link Asp} within this As that are
+ * AS_ACTIVE notification to all {@link AspImpl} within this As that are
  * {@link AspState#ACTIVE}
  * </p>
  * 
@@ -55,31 +55,31 @@ public class THLocalAsPendToAct implements TransitionHandler {
 
 	private static final Logger logger = Logger.getLogger(THLocalAsPendToAct.class);
 
-	private As as = null;
+	private AsImpl asImpl = null;
 	private FSM fsm;
 
-	public THLocalAsPendToAct(As as, FSM fsm) {
-		this.as = as;
+	public THLocalAsPendToAct(AsImpl asImpl, FSM fsm) {
+		this.asImpl = asImpl;
 		this.fsm = fsm;
 	}
 
-	public boolean process(State state) {
+	public boolean process(FSMState state) {
 
-		if (this.as.getTrafficModeType().getMode() == TrafficModeType.Broadcast) {
+		if (this.asImpl.getTrafficModeType().getMode() == TrafficModeType.Broadcast) {
 			// We don't handle this
 			return false;
 		}
 
 		try {
 
-			if (as.getFunctionality() != Functionality.IPSP) {
+			if (asImpl.getFunctionality() != Functionality.IPSP) {
 				// Send Notify only for ASP or SGW
 
 				// Iterate through ASP's and send AS_ACTIVE to ASP's who
 				// are INACTIVE or ACTIVE
-				for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n
+				for (FastList.Node<Asp> n = this.asImpl.appServerProcs.head(), end = this.asImpl.appServerProcs.tail(); (n = n
 						.getNext()) != end;) {
-					Asp remAspImpl = n.getValue();
+					AspImpl remAspImpl = (AspImpl)n.getValue();
 
 					FSM aspPeerFSM = remAspImpl.getPeerFSM();
 					AspState aspState = AspState.getState(aspPeerFSM.getState().getName());
@@ -92,8 +92,8 @@ public class THLocalAsPendToAct implements TransitionHandler {
 			}
 
 			// Send the PayloadData (if any) from pending queue to other side
-			Asp causeAsp = (Asp) this.fsm.getAttribute(As.ATTRIBUTE_ASP);
-			this.as.sendPendingPayloadData(causeAsp);
+			AspImpl causeAsp = (AspImpl) this.fsm.getAttribute(AsImpl.ATTRIBUTE_ASP);
+			this.asImpl.sendPendingPayloadData(causeAsp);
 
 			return true;
 		} catch (Exception e) {
@@ -103,10 +103,10 @@ public class THLocalAsPendToAct implements TransitionHandler {
 		return false;
 	}
 
-	private Notify createNotify(Asp remAsp) {
-		Notify msg = (Notify) this.as.getMessageFactory().createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
+	private Notify createNotify(AspImpl remAsp) {
+		Notify msg = (Notify) this.asImpl.getMessageFactory().createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
 
-		Status status = this.as.getParameterFactory()
+		Status status = this.asImpl.getParameterFactory()
 				.createStatus(Status.STATUS_AS_State_Change, Status.INFO_AS_ACTIVE);
 		msg.setStatus(status);
 
@@ -114,8 +114,8 @@ public class THLocalAsPendToAct implements TransitionHandler {
 			msg.setASPIdentifier(remAsp.getASPIdentifier());
 		}
 
-		if (this.as.getRoutingContext() != null) {
-			msg.setRoutingContext(this.as.getRoutingContext());
+		if (this.asImpl.getRoutingContext() != null) {
+			msg.setRoutingContext(this.asImpl.getRoutingContext());
 		}
 
 		return msg;

@@ -23,7 +23,6 @@
 package org.mobicents.protocols.ss7.map.service.lsm;
 
 import java.io.IOException;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -33,25 +32,26 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSPrivacyCheck;
 import org.mobicents.protocols.ss7.map.api.service.lsm.PrivacyCheckRelatedAction;
-import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
+import org.mobicents.protocols.ss7.map.primitives.SequenceBase;
 
 /**
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
-public class LCSPrivacyCheckImpl implements LCSPrivacyCheck, MAPAsnPrimitive {
+public class LCSPrivacyCheckImpl extends SequenceBase implements LCSPrivacyCheck {
 
 	private static final int _TAG_CALL_SESSION_UNRELATED = 0;
 	private static final int _TAG_CALL_SESSION_RELATED = 1;
 
-	private PrivacyCheckRelatedAction callSessionUnrelated = null;
-	private PrivacyCheckRelatedAction callSessionRelated = null;
+	private PrivacyCheckRelatedAction callSessionUnrelated;
+	private PrivacyCheckRelatedAction callSessionRelated;
 
 	/**
 	 * 
 	 */
 	public LCSPrivacyCheckImpl() {
-		super();
+		super("LCSPrivacyCheck");
 	}
 
 	/**
@@ -59,7 +59,8 @@ public class LCSPrivacyCheckImpl implements LCSPrivacyCheck, MAPAsnPrimitive {
 	 * @param callSessionRelated
 	 */
 	public LCSPrivacyCheckImpl(PrivacyCheckRelatedAction callSessionUnrelated, PrivacyCheckRelatedAction callSessionRelated) {
-		super();
+		super("LCSPrivacyCheck");
+
 		this.callSessionUnrelated = callSessionUnrelated;
 		this.callSessionRelated = callSessionRelated;
 	}
@@ -84,78 +85,10 @@ public class LCSPrivacyCheckImpl implements LCSPrivacyCheck, MAPAsnPrimitive {
 		return this.callSessionRelated;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
-	 */
-	public int getTag() throws MAPException {
-		return Tag.SEQUENCE;
-	}
+	protected void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass
-	 * ()
-	 */
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive
-	 * ()
-	 */
-	public boolean getIsPrimitive() {
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll
-	 * (org.mobicents.protocols.asn.AsnInputStream)
-	 */
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding SM_RP_DA: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding SM_RP_DA: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData
-	 * (org.mobicents.protocols.asn.AsnInputStream, int)
-	 */
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding SM_RP_DA: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding SM_RP_DA: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+		this.callSessionUnrelated = null;
+		this.callSessionRelated = null;
 
 		AsnInputStream ais = asnIS.readSequenceStreamData(length);
 
@@ -168,8 +101,7 @@ public class LCSPrivacyCheckImpl implements LCSPrivacyCheck, MAPAsnPrimitive {
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 
-		int length1 = ais.readLength();
-		int action = (int) ais.readIntegerData(length1);
+		int action = (int) ais.readInteger();
 		this.callSessionUnrelated = PrivacyCheckRelatedAction.getPrivacyCheckRelatedAction(action);
 
 		while (true) {
@@ -177,51 +109,25 @@ public class LCSPrivacyCheckImpl implements LCSPrivacyCheck, MAPAsnPrimitive {
 				break;
 
 			tag = ais.readTag();
-			switch (tag) {
-			case _TAG_CALL_SESSION_RELATED:
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Error while decoding LCSPrivacyCheck: Parameter 1 [callSessionRelated [1] PrivacyCheckRelatedAction] bad tag class, tag or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
+
+			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+				switch (tag) {
+				case _TAG_CALL_SESSION_RELATED:
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding LCSPrivacyCheck: Parameter 1 [callSessionRelated [1] PrivacyCheckRelatedAction] is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					action = (int) ais.readInteger();
+					this.callSessionRelated = PrivacyCheckRelatedAction.getPrivacyCheckRelatedAction(action);
+					break;
+				default:
+					ais.advanceElement();
+					break;
 				}
-				length1 = ais.readLength();
-				action = (int) ais.readIntegerData(length1);
-				this.callSessionRelated = PrivacyCheckRelatedAction.getPrivacyCheckRelatedAction(action);
-				break;
-			default:
-				// Do we care?
+			} else {
 				ais.advanceElement();
-				break;
 			}
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
-	 * (org.mobicents.protocols.asn.AsnOutputStream)
-	 */
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
-	 * (org.mobicents.protocols.asn.AsnOutputStream, int, int)
-	 */
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		try {
-			asnOs.writeTag(tagClass, false, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding InformServiceCentreRequest: " + e.getMessage(), e);
 		}
 	}
 
@@ -240,18 +146,18 @@ public class LCSPrivacyCheckImpl implements LCSPrivacyCheck, MAPAsnPrimitive {
 		try {
 			asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_CALL_SESSION_UNRELATED, this.callSessionUnrelated.getAction());
 		} catch (IOException e) {
-			throw new MAPException("IOException when encoding parameter callSessionUnrelated", e);
+			throw new MAPException("IOException when encoding parameter LCSPrivacyCheck.callSessionUnrelated", e);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding parameter callSessionUnrelated", e);
+			throw new MAPException("AsnException when encoding parameter LCSPrivacyCheck.callSessionUnrelated", e);
 		}
 
 		if (this.callSessionRelated != null) {
 			try {
 				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_CALL_SESSION_RELATED, this.callSessionRelated.getAction());
 			} catch (IOException e) {
-				throw new MAPException("IOException when encoding parameter callSessionRelated", e);
+				throw new MAPException("IOException when encoding parameter LCSPrivacyCheck.callSessionRelated", e);
 			} catch (AsnException e) {
-				throw new MAPException("AsnException when encoding parameter callSessionRelated", e);
+				throw new MAPException("AsnException when encoding parameter LCSPrivacyCheck.callSessionRelated", e);
 			}
 		}
 	}
@@ -281,4 +187,23 @@ public class LCSPrivacyCheckImpl implements LCSPrivacyCheck, MAPAsnPrimitive {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		if (this.callSessionUnrelated != null) {
+			sb.append("callSessionUnrelated=");
+			sb.append(this.callSessionUnrelated);
+		}
+		if (this.callSessionRelated != null) {
+			sb.append(", callSessionRelated=");
+			sb.append(this.callSessionRelated.toString());
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }

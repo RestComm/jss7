@@ -47,6 +47,8 @@ import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPartListener;
 
+import org.mobicents.protocols.ss7.scheduler.Scheduler;
+
 /**
  * Start time:12:14:57 2009-09-04<br>
  * Project: mobicents-isup-stack<br>
@@ -72,8 +74,16 @@ public class ISUPStackImpl implements ISUPStack, Mtp3UserPartListener {
 	private ISUPMessageFactory messageFactory;
 	private ISUPParameterFactory parameterFactory;
 
-	public ISUPStackImpl() {
+	private Scheduler scheduler;
+	
+	public ISUPStackImpl(Scheduler scheduler,int localSpc,int ni) {
 		super();
+		this.scheduler=scheduler;		
+		this.provider = new ISUPProviderImpl(this, scheduler , ni, localSpc);
+		this.parameterFactory = this.provider.getParameterFactory();
+		this.messageFactory = this.provider.getMessageFactory();
+		
+		this.state = State.CONFIGURED;
 	}
 
 	public ISUPProvider getIsupProvider() {
@@ -130,16 +140,14 @@ public class ISUPStackImpl implements ISUPStack, Mtp3UserPartListener {
 	/**
      *
      */
-	public void configure(Properties props) {
+	/*public void configure(Properties props) {
 		if (state != State.IDLE) {
 			throw new IllegalStateException("Stack already been configured or is already running!");
 		}
 
-		this.provider = new ISUPProviderImpl(this, props);
-		this.parameterFactory = this.provider.getParameterFactory();
-		this.messageFactory = this.provider.getMessageFactory();
+		
 		this.state = State.CONFIGURED;
-	}
+	}*/
 
 	public Mtp3UserPart getMtp3UserPart() {
 		return mtp3UserPart;
@@ -235,7 +243,8 @@ public class ISUPStackImpl implements ISUPStack, Mtp3UserPartListener {
 			e.printStackTrace();
 		}
 		msg.setSls(mtpMsg.getSls()); // store SLS...
-		provider.receive(msg);
+		//should take here OPC or DPC????? since come in different direction looks like opc
+		provider.receive(msg, mtpMsg.getOpc());
 	}
 
 	// private class MtpStreamHandler implements Runnable {

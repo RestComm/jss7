@@ -34,6 +34,8 @@ import javax.naming.ConfigurationException;
 
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 
+import org.mobicents.protocols.ss7.scheduler.Scheduler;
+
 /**
  * Start time:09:07:18 2009-08-30<br>
  * Project: mobicents-isup-stack<br>
@@ -57,12 +59,6 @@ public interface ISUPStack {
 	 * @throws StartFailedException - if start failed for some other reason.
 	 */
 	public void start() throws IllegalStateException;
-	/**
-	 * Configure this stack and its resources, like MTP.
-	 * @param props
-	 * @throws ConfigurationException
-	 */
-	public void configure(Properties props);
 	
 	public Mtp3UserPart getMtp3UserPart();
 

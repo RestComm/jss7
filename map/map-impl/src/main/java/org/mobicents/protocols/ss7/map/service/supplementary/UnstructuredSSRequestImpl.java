@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -36,10 +36,12 @@ import org.mobicents.protocols.ss7.map.api.MAPMessageType;
 import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.map.primitives.AlertingPatternImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
@@ -67,7 +69,7 @@ public class UnstructuredSSRequestImpl extends SupplementaryMessageImpl implemen
 		super();
 	}
 
-	public UnstructuredSSRequestImpl(byte ussdDataCodingSch, USSDString ussdString,
+	public UnstructuredSSRequestImpl(CBSDataCodingScheme ussdDataCodingSch, USSDString ussdString,
 			AlertingPattern alertingPattern, ISDNAddressString msisdnAddressString) {
 		super(ussdDataCodingSch, ussdString);
 		this.alertingPattern = alertingPattern;
@@ -155,7 +157,7 @@ public class UnstructuredSSRequestImpl extends SupplementaryMessageImpl implemen
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
 		int length1 = ais.readLength();
-		this.ussdDataCodingSch = ais.readOctetStringData(length1)[0];
+		this.ussdDataCodingSch = new CBSDataCodingSchemeImpl(ais.readOctetStringData(length1)[0]);
 
 		tag = ais.readTag();
 
@@ -165,7 +167,7 @@ public class UnstructuredSSRequestImpl extends SupplementaryMessageImpl implemen
 					"Error while decoding UnstructuredSSRequestIndication: Parameter ussd-String bad tag class or not primitive",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 
-		this.ussdString = new USSDStringImpl();
+		this.ussdString = new USSDStringImpl(this.ussdDataCodingSch);
 		((USSDStringImpl) this.ussdString).decodeAll(ais);
 
 		while (true) {
@@ -222,7 +224,7 @@ public class UnstructuredSSRequestImpl extends SupplementaryMessageImpl implemen
 			throw new MAPException("ussdString must not be null");
 
 		try {
-			asnOs.writeOctetString(new byte[] { this.ussdDataCodingSch });
+			asnOs.writeOctetString(new byte[] { (byte)this.ussdDataCodingSch.getCode() });
 
 			((USSDStringImpl) this.ussdString).encodeAll(asnOs);
 

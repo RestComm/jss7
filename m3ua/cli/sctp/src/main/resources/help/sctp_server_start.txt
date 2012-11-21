@@ -1,0 +1,28 @@
+Name
+	sctp server start
+
+SYNOPSIS
+	sctp server start <sever-name> 
+
+DESCRIPTION
+	This command is used to start an existing SCTP Server instance. Upon executing 
+	this command, the underlying SCTP server socket is bound to the IP: Port 
+	configured for this Server instance at the time of creation using the 
+	"sctp server create" command.
+
+PARAMETERS
+
+	Standard Parameters
+
+	<server-name>		-	Name of the Server instance to be started.
+
+EXAMPLES
+	sctp server start TestServer
+	
+	The above command will start the previously created Server instance identified 
+	by the name TestServer and bind the underlying socket to the IP address and port 
+	configured for TestServer at the time of creation.
+
+SEE ALSO
+	sctp, sctp server create, sctp server destroy, sctp server stop, sctp server show,
+	sctp association create, sctp association destroy, sctp association show

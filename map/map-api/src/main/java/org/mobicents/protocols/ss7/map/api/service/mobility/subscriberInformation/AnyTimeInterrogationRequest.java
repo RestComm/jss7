@@ -19,6 +19,7 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
+
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
@@ -27,6 +28,23 @@ import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**	
+ * 
+
+MAP V3:
+
+anyTimeInterrogation  OPERATION ::= {				--Timer m
+	ARGUMENT
+		AnyTimeInterrogationArg
+	RESULT
+		AnyTimeInterrogationRes
+	ERRORS {
+		systemFailure | 
+		ati-NotAllowed |
+		dataMissing |
+		unexpectedDataValue |
+		unknownSubscriber}
+	CODE	local:71 }
+
  * 
  * AnyTimeInterrogationArg ::= SEQUENCE {
  *		subscriberIdentity		[0] SubscriberIdentity,
@@ -39,12 +57,12 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
  *
  */
 public interface AnyTimeInterrogationRequest extends MobilityMessage {
-	
+
 	public SubscriberIdentity getSubscriberIdentity();
 	
 	public RequestedInfo getRequestedInfo();
 	
 	public ISDNAddressString getGsmSCFAddress();
-	
+
 	public MAPExtensionContainer getExtensionContainer();
 }

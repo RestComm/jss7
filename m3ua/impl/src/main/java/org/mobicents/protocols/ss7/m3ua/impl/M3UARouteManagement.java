@@ -1,3 +1,24 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import java.util.Arrays;
@@ -6,12 +27,14 @@ import javolution.util.FastList;
 import javolution.util.FastSet;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.m3ua.As;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.IPSPType;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAOAMMessages;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
+import org.mobicents.protocols.ss7.mtp.RoutingLabelFormat;
 
 /**
  * <p>
@@ -20,21 +43,22 @@ import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
  * <p>
  * The DPC, OPC and SI of Message Signaling unit (MSU) transfered by M3UA-User
  * to M3UA layer for routing is checked against configured key. If found, the
- * corresponding {@link As} is checked for state and if ACTIVE, message will be
- * delivered via this {@link As}. If multiple {@link As} are configured and
- * at-least 2 or more are ACTIVE, then depending on {@link TrafficModeType}
- * configured load-sharing is achieved by using SLS from received MSU.
+ * corresponding {@link AsImpl} is checked for state and if ACTIVE, message will
+ * be delivered via this {@link AsImpl}. If multiple {@link AsImpl} are
+ * configured and at-least 2 or more are ACTIVE, then depending on
+ * {@link TrafficModeType} configured load-sharing is achieved by using SLS from
+ * received MSU.
  * </p>
  * <p>
- * For any given key (combination of DPC, OPC and SI) maximum {@link As} can be
- * configured which acts as route for these key combination.
+ * For any given key (combination of DPC, OPC and SI) maximum {@link AsImpl} can
+ * be configured which acts as route for these key combination.
  * </p>
  * <p>
- * Same {@link As} can serve multiple key combinations.
+ * Same {@link AsImpl} can serve multiple key combinations.
  * </p>
  * <p>
- * MTP3 Primitive RESUME is delivered to M3UA-User when {@link As} becomes
- * ACTIVE and PAUSE is delivered when {@link As} becomes INACTIVE
+ * MTP3 Primitive RESUME is delivered to M3UA-User when {@link AsImpl} becomes
+ * ACTIVE and PAUSE is delivered when {@link AsImpl} becomes INACTIVE
  * </p>
  * 
  * @author amit bhayani
@@ -47,12 +71,18 @@ public class M3UARouteManagement {
 	private static final String KEY_SEPARATOR = ":";
 	private static final int WILDCARD = -1;
 
-	private M3UAManagement m3uaManagement = null;
+	private static final int BIT_ONE = 0x01;
+
+	private M3UAManagementImpl m3uaManagement = null;
+
+	private final int msbMask;
+	private final int lsbMask;
+	private int asSlsShiftPlaces = 0x00;
 
 	/**
 	 * persists key vs corresponding As that servers for this key
 	 */
-	protected RouteMap<String, As[]> route = new RouteMap<String, As[]>();
+	protected RouteMap<String, AsImpl[]> route = new RouteMap<String, AsImpl[]>();
 
 	/**
 	 * Persists DPC vs As's serving this DPC. Used for notifying M3UA-user of
@@ -64,8 +94,31 @@ public class M3UARouteManagement {
 
 	// Stores the Set of AS that can route traffic (irrespective of OPC or NI)
 	// for given DPC
-	protected M3UARouteManagement(M3UAManagement m3uaManagement) {
+	protected M3UARouteManagement(M3UAManagementImpl m3uaManagement) {
 		this.m3uaManagement = m3uaManagement;
+
+		RoutingLabelFormat routingLabelFormat = this.m3uaManagement.getRoutingLabelFormat();
+		this.msbMask = routingLabelFormat.getSlsMsbMask();
+		this.lsbMask = routingLabelFormat.getSlsLsbMask();
+		
+		if (this.m3uaManagement.isUseLsbForLinksetSelection()) {
+			this.asSlsShiftPlaces = 0x00;
+		} else {			
+			switch (routingLabelFormat.getMaxSls()) {
+			case 256:
+				this.asSlsShiftPlaces = 0x07;
+				break;
+			case 32:
+				this.asSlsShiftPlaces = 0x04;
+				break;
+			case 16:
+				this.asSlsShiftPlaces = 0x03;
+				break;
+			default:
+				this.asSlsShiftPlaces = 0x03;
+				break;
+			}
+		}
 	}
 
 	/**
@@ -73,17 +126,17 @@ public class M3UARouteManagement {
 	 * from xml file.
 	 */
 	protected void reset() {
-		for (RouteMap.Entry<String, As[]> e = this.route.head(), end = this.route.tail(); (e = e.getNext()) != end;) {
+		for (RouteMap.Entry<String, AsImpl[]> e = this.route.head(), end = this.route.tail(); (e = e.getNext()) != end;) {
 			String key = e.getKey();
-			As[] asList = e.getValue();
+			AsImpl[] asList = e.getValue();
 
 			try {
 				String[] keys = key.split(KEY_SEPARATOR);
 				int dpc = Integer.parseInt(keys[0]);
 				for (count = 0; count < asList.length; count++) {
-					As as = asList[count];
-					if (as != null) {
-						this.addAsToDPC(dpc, as);
+					AsImpl asImpl = asList[count];
+					if (asImpl != null) {
+						this.addAsToDPC(dpc, asImpl);
 					}
 				}
 			} catch (Exception ex) {
@@ -93,68 +146,68 @@ public class M3UARouteManagement {
 	}
 
 	/**
-	 * Creates key (combination of dpc:opc:si) and adds instance of {@link As}
-	 * represented by asName as route for this key
+	 * Creates key (combination of dpc:opc:si) and adds instance of
+	 * {@link AsImpl} represented by asName as route for this key
 	 * 
 	 * @param dpc
 	 * @param opc
 	 * @param si
 	 * @param asName
 	 * @throws Exception
-	 *             If corresponding {@link As} doesn't exist or {@link As}
-	 *             already added
+	 *             If corresponding {@link AsImpl} doesn't exist or
+	 *             {@link AsImpl} already added
 	 */
 	protected void addRoute(int dpc, int opc, int si, String asName) throws Exception {
-		As as = null;
+		AsImpl asImpl = null;
 		for (FastList.Node<As> n = this.m3uaManagement.appServers.head(), end = this.m3uaManagement.appServers.tail(); (n = n
 				.getNext()) != end;) {
 			if (n.getValue().getName().compareTo(asName) == 0) {
-				as = n.getValue();
+				asImpl = (AsImpl) n.getValue();
 				break;
 			}
 		}
 
-		if (as == null) {
+		if (asImpl == null) {
 			throw new Exception(String.format(M3UAOAMMessages.NO_AS_FOUND, asName));
 		}
 
 		String key = (new StringBuffer().append(dpc).append(KEY_SEPARATOR).append(opc).append(KEY_SEPARATOR).append(si))
 				.toString();
 
-		As[] asArray = route.get(key);
+		AsImpl[] asArray = route.get(key);
 
 		if (asArray != null) {
 			// check is this As is already added
 			for (int count = 0; count < asArray.length; count++) {
-				As asTemp = asArray[count];
-				if (asTemp != null && as.equals(asTemp)) {
-					throw new Exception(String.format("As=%s already added for dpc=%d opc=%d si=%d", as.getName(), dpc,
-							opc, si));
+				AsImpl asTemp = asArray[count];
+				if (asTemp != null && asImpl.equals(asTemp)) {
+					throw new Exception(String.format("As=%s already added for dpc=%d opc=%d si=%d", asImpl.getName(),
+							dpc, opc, si));
 				}
 			}
 		} else {
-			asArray = new As[this.m3uaManagement.maxAsForRoute];
+			asArray = new AsImpl[this.m3uaManagement.maxAsForRoute];
 			route.put(key, asArray);
 		}
 
 		// Add to first empty slot
 		for (int count = 0; count < asArray.length; count++) {
 			if (asArray[count] == null) {
-				asArray[count] = as;
+				asArray[count] = asImpl;
 				this.m3uaManagement.store();
 
-				this.addAsToDPC(dpc, as);
+				this.addAsToDPC(dpc, asImpl);
 				return;
 			}
 
 		}
 
 		throw new Exception(String.format("dpc=%d opc=%d si=%d combination already has maximum possible As",
-				as.getName(), dpc, opc, si));
+				asImpl.getName(), dpc, opc, si));
 	}
 
 	/**
-	 * Removes the {@link As} from key (combination of DPC:OPC:Si)
+	 * Removes the {@link AsImpl} from key (combination of DPC:OPC:Si)
 	 * 
 	 * @param dpc
 	 * @param opc
@@ -165,51 +218,52 @@ public class M3UARouteManagement {
 	 * 
 	 */
 	protected void removeRoute(int dpc, int opc, int si, String asName) throws Exception {
-		As as = null;
+		AsImpl asImpl = null;
 		for (FastList.Node<As> n = this.m3uaManagement.appServers.head(), end = this.m3uaManagement.appServers.tail(); (n = n
 				.getNext()) != end;) {
 			if (n.getValue().getName().compareTo(asName) == 0) {
-				as = n.getValue();
+				asImpl = (AsImpl) n.getValue();
 				break;
 			}
 		}
 
-		if (as == null) {
+		if (asImpl == null) {
 			throw new Exception(String.format(M3UAOAMMessages.NO_AS_FOUND, asName));
 		}
 
 		String key = (new StringBuffer().append(dpc).append(KEY_SEPARATOR).append(opc).append(KEY_SEPARATOR).append(si))
 				.toString();
 
-		As[] asArray = route.get(key);
+		AsImpl[] asArray = route.get(key);
 
 		if (asArray == null) {
-			throw new Exception(String.format("No AS=%s configured  for dpc=%d opc=%d si=%d", as.getName(), dpc, opc,
-					si));
+			throw new Exception(String.format("No AS=%s configured  for dpc=%d opc=%d si=%d", asImpl.getName(), dpc,
+					opc, si));
 		}
 
 		for (int count = 0; count < asArray.length; count++) {
-			As asTemp = asArray[count];
-			if (asTemp != null && as.equals(asTemp)) {
+			AsImpl asTemp = asArray[count];
+			if (asTemp != null && asImpl.equals(asTemp)) {
 				asArray[count] = null;
 				this.m3uaManagement.store();
 
-				this.removeAsFromDPC(dpc, as);
+				this.removeAsFromDPC(dpc, asImpl);
 				return;
 			}
 		}
 
-		throw new Exception(String.format("No AS=%s configured  for dpc=%d opc=%d si=%d", as.getName(), dpc, opc, si));
+		throw new Exception(String.format("No AS=%s configured  for dpc=%d opc=%d si=%d", asImpl.getName(), dpc, opc,
+				si));
 	}
 
 	/**
 	 * <p>
-	 * Get {@link As} that is serving key (combination DPC:OPC:SI). It can
-	 * return null if no key configured or all the {@link As} are INACTIVE
+	 * Get {@link AsImpl} that is serving key (combination DPC:OPC:SI). It can
+	 * return null if no key configured or all the {@link AsImpl} are INACTIVE
 	 * </p>
 	 * <p>
-	 * If two or more {@link As} are active and {@link TrafficModeType}
-	 * configured is load-shared, load is configured between each {@link As}
+	 * If two or more {@link AsImpl} are active and {@link TrafficModeType}
+	 * configured is load-shared, load is configured between each {@link AsImpl}
 	 * depending on SLS
 	 * </p>
 	 * 
@@ -219,12 +273,12 @@ public class M3UARouteManagement {
 	 * @param sls
 	 * @return
 	 */
-	protected As getAsForRoute(int dpc, int opc, int si, int sls) {
+	protected AsImpl getAsForRoute(int dpc, int opc, int si, int sls) {
 		// TODO : Loadsharing needs to be implemented
 
 		String key = (new StringBuffer().append(dpc).append(KEY_SEPARATOR).append(opc).append(KEY_SEPARATOR).append(si))
 				.toString();
-		As[] asArray = route.get(key);
+		AsImpl[] asArray = route.get(key);
 
 		if (asArray == null) {
 			key = (new StringBuffer().append(dpc).append(KEY_SEPARATOR).append(opc).append(KEY_SEPARATOR)
@@ -244,34 +298,58 @@ public class M3UARouteManagement {
 			return null;
 		}
 
-		for (int count = 0; count < asArray.length; count++) {
-			As as = asArray[count];
+		int count = 0;
 
-			FSM fsm = null;
-			if (as != null) {
-				if (as.getFunctionality() == Functionality.AS
-						|| (as.getFunctionality() == Functionality.SGW && as.getExchangeType() == ExchangeType.DE)
-						|| (as.getFunctionality() == Functionality.IPSP && as.getExchangeType() == ExchangeType.DE)
-						|| (as.getFunctionality() == Functionality.IPSP && as.getExchangeType() == ExchangeType.SE && as
-								.getIpspType() == IPSPType.CLIENT)) {
-					fsm = as.getPeerFSM();
-				} else {
-					fsm = as.getLocalFSM();
-				}
+		if (this.m3uaManagement.isUseLsbForLinksetSelection()) {
+			count = (sls & this.lsbMask);
+		} else {
+			count = (sls & this.msbMask);
+		}
 
-				AsState asState = AsState.getState(fsm.getState().getName());
+		count = (count >> this.asSlsShiftPlaces);
+		
+		// First attempt
+		AsImpl asImpl = asArray[count];
+		if (this.isAsActive(asImpl)) {
+			return asImpl;
+		}
 
-				if (asState == AsState.ACTIVE) {
-					return as;
-				}
-
-			}// if (as != null)
-		}// for
+		// Second Attempt
+		if (count == BIT_ONE) {
+			count = 0;
+		} else {
+			count = BIT_ONE;
+		}
+		
+		asImpl = asArray[count];
+		if (this.isAsActive(asImpl)) {
+			return asImpl;
+		}
 
 		return null;
 	}
 
-	private void addAsToDPC(int dpc, As as) {
+	private boolean isAsActive(AsImpl asImpl) {
+		FSM fsm = null;
+		if (asImpl != null) {
+			if (asImpl.getFunctionality() == Functionality.AS
+					|| (asImpl.getFunctionality() == Functionality.SGW && asImpl.getExchangeType() == ExchangeType.DE)
+					|| (asImpl.getFunctionality() == Functionality.IPSP && asImpl.getExchangeType() == ExchangeType.DE)
+					|| (asImpl.getFunctionality() == Functionality.IPSP && asImpl.getExchangeType() == ExchangeType.SE && asImpl
+							.getIpspType() == IPSPType.CLIENT)) {
+				fsm = asImpl.getPeerFSM();
+			} else {
+				fsm = asImpl.getLocalFSM();
+			}
+
+			AsState asState = AsState.getState(fsm.getState().getName());
+
+			return (asState == AsState.ACTIVE);
+		}// if (as != null)
+		return false;
+	}
+
+	private void addAsToDPC(int dpc, AsImpl asImpl) {
 		RouteRow row = null;
 		for (FastSet.Record r = routeTable.head(), end = routeTable.tail(); (r = r.getNext()) != end;) {
 			RouteRow value = routeTable.valueOf(r);
@@ -286,23 +364,23 @@ public class M3UARouteManagement {
 			this.routeTable.add(row);
 		}
 
-		row.addServedByAs(as);
+		row.addServedByAs(asImpl);
 
 	}
 
-	private void removeAsFromDPC(int dpc, As as) {
+	private void removeAsFromDPC(int dpc, AsImpl asImpl) {
 
 		// Now decide if we should remove As from RouteRow? If the same As is
 		// assigned as route for different key combination we shouldn't remove
 		// it from RouteRow
-		for (RouteMap.Entry<String, As[]> e = this.route.head(), end = this.route.tail(); (e = e.getNext()) != end;) {
+		for (RouteMap.Entry<String, AsImpl[]> e = this.route.head(), end = this.route.tail(); (e = e.getNext()) != end;) {
 			String key = e.getKey();
 			String[] keys = key.split(KEY_SEPARATOR);
 			if (keys[0].equals(Integer.toString(dpc))) {
-				As[] asList = e.getValue();
+				AsImpl[] asList = e.getValue();
 				for (count = 0; count < asList.length; count++) {
-					As asTemp = asList[count];
-					if (asTemp != null && asTemp.equals(as)) {
+					AsImpl asTemp = asList[count];
+					if (asTemp != null && asTemp.equals(asImpl)) {
 						return;
 					}
 				}
@@ -320,9 +398,9 @@ public class M3UARouteManagement {
 		}
 
 		if (row == null) {
-			logger.error(String.format("Removing route As=%s from DPC=%d failed. No RouteRow found!", as, dpc));
+			logger.error(String.format("Removing route As=%s from DPC=%d failed. No RouteRow found!", asImpl, dpc));
 		} else {
-			row.removeServedByAs(as);
+			row.removeServedByAs(asImpl);
 			if (row.servedByAsSize() == 0) {
 				this.routeTable.remove(row);
 			}

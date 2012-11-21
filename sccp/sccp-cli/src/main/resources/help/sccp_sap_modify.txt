@@ -1,0 +1,43 @@
+Name
+	sccp sap modify
+
+SYNOPSIS
+	sccp sap modify <id> <mtp3-id> <opc> <ni>
+
+DESCRIPTION
+	This command is used to modify a previously defined Service Access Point.
+
+PARAMETERS
+
+	Standard Parameters
+
+	<id>		-	The id of the SAP whose values are being modified.
+
+	<mtp3-id>	-	Mtp3UserPart index - used as an index of 'mtp3UserPart' 
+				property of the SccpStack Bean. For each Mtp3UserPart, a
+				sap must be configured.
+
+	<opc>		-	MTP Point code of the local signaling point. Takes an
+				Integer Value.
+
+	<ni>		-	Network indicator that forms part of the Service
+				Information Octet (SIO).
+
+
+EXAMPLES
+	sccp sap modify 1 2 102 2
+	
+	The above command will modify the values of the Service Access Point identified 
+	by the number '1'. The new values for 'mtp3-id', 'opc' and 'ni' are 2, 102 and 2 
+	respectively.
+
+SEE ALSO
+	sccp sap create, sccp sap delete, sccp sap show, sccp dest create, 
+	sccp dest modify, sccp dest delete, sccp dest show, sccp rule create, 
+	sccp rule modify, sccp rule delete, sccp rule show, sccp primary_add create, 
+	sccp primary_add modify, sccp primary_add delete, sccp primary_add show, 
+	sccp backup_add create, sccp backup_add modify, sccp backup_add delete, 
+	sccp backup_add show, sccp rsp create, sccp rsp modify, sccp rsp delete,
+	sccp rsp show, sccp rss create, sccp rss modify, sccp rss delete, sccp rss show, 
+	sccp lmr create, sccp lmr modify, sccp lmr delete, sccp lmr show, sccp csp create,
+	sccp csp modify, sccp csp delete, sccp csp show, sccp get, sccp set

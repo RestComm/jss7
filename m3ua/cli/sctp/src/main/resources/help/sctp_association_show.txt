@@ -1,0 +1,24 @@
+Name
+	sctp association show
+
+SYNOPSIS
+	sctp association show
+
+DESCRIPTION
+	This command is used to view the details of all SCTP Associations created. 
+	The information displayed will include the Association type (SERVER or CLIENT), 
+	name of the Association, state (whether started=false or true). For a CLIENT 
+	Association it will also display the host-ip, host-port and peer-ip, peer-port 
+	values.
+
+	For multi-home SCTP, it will display all the IP addresses that are configured. 
+	For a SERVER Association, it will display the configured peer-ip and peer-port 
+	values.
+
+SEE ALSO
+	sctp, sctp server create, sctp server destroy, sctp server start,
+	sctp server stop, sctp server show, sctp association create,
+	sctp association destroy
+
+
+

@@ -26,6 +26,8 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
+
+import org.apache.log4j.Level;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContextVersion;
@@ -34,17 +36,9 @@ import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPMessage;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
-import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
-import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
@@ -57,12 +51,12 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSN
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponse;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.map.primitives.AlertingPatternImpl;
-import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
+import org.mobicents.protocols.ss7.tools.simulator.common.TesterBase;
 import org.mobicents.protocols.ss7.tools.simulator.level3.MapMan;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
 
@@ -71,7 +65,7 @@ import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
  * @author sergey vetyutnev
  * 
  */
-public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAPDialogListener, MAPServiceSupplementaryListener {
+public class TestUssdServerMan extends TesterBase implements TestUssdServerManMBean, Stoppable, MAPDialogListener, MAPServiceSupplementaryListener {
 
 	public static String SOURCE_NAME = "TestUssdServer";
 
@@ -96,7 +90,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 	private boolean oneNotificationFor100Dialogs = false;
 
 	private final String name;
-	private TesterHost testerHost;
+//	private TesterHost testerHost;
 	private MapMan mapMan;
 
 	private int countProcUnstReq = 0;
@@ -114,10 +108,12 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 
 
 	public TestUssdServerMan() {
+		super(SOURCE_NAME);
 		this.name = "???";
 	}
 
 	public TestUssdServerMan(String name) {
+		super(SOURCE_NAME);
 		this.name = name;
 	}
 
@@ -169,7 +165,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 
 	@Override
 	public void setMsisdnNumberingPlan(NumberingPlanType val) {
-		msisdnNumberingPlan = msisdnNumberingPlan.getInstance(val.intValue());
+		msisdnNumberingPlan = NumberingPlan.getInstance(val.intValue());
 		this.testerHost.markStore();
 	}
 
@@ -306,7 +302,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 		mapProvider.getMAPServiceSupplementary().acivate();
 		mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
 		mapProvider.addMAPDialogListener(this);
-		this.testerHost.sendNotif(SOURCE_NAME, "USSD Server has been started", "", true);
+		this.testerHost.sendNotif(SOURCE_NAME, "USSD Server has been started", "", Level.INFO);
 		isStarted = true;
 
 		return true;
@@ -320,7 +316,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 		mapProvider.getMAPServiceSupplementary().deactivate();
 		mapProvider.getMAPServiceSupplementary().removeMAPServiceListener(this);
 		mapProvider.removeMAPDialogListener(this);
-		this.testerHost.sendNotif(SOURCE_NAME, "USSD Server has been stopped", "", true);
+		this.testerHost.sendNotif(SOURCE_NAME, "USSD Server has been stopped", "", Level.INFO);
 	}
 
 	@Override
@@ -419,12 +415,18 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 
 		MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
 
-		USSDString ussdString = mapProvider.getMAPParameterFactory().createUSSDString(msg);
+		USSDString ussdString = null;
+		try {
+			ussdString = mapProvider.getMAPParameterFactory().createUSSDString(msg, new CBSDataCodingSchemeImpl(this.dataCodingScheme), null);
+		} catch (MAPException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		try {
-			curDialog.addProcessUnstructuredSSResponse(invokeId, (byte) this.dataCodingScheme, ussdString);
+			curDialog.addProcessUnstructuredSSResponse(invokeId, new CBSDataCodingSchemeImpl(this.dataCodingScheme), ussdString);
 		} catch (MAPException e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking addProcessUnstructuredSSResponse() : " + e.getMessage(), e, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking addProcessUnstructuredSSResponse() : " + e.getMessage(), e, Level.ERROR);
 			return "Exception when sending ProcessUnstructuredSSResponse: " + e.toString();
 		}
 
@@ -438,11 +440,11 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 			int i1 = countProcUnstResp / 100;
 			if (countProcUnstRespNot < i1) {
 				countProcUnstRespNot = i1;
-				this.testerHost.sendNotif(SOURCE_NAME, "Sent: procUnstrSsResp: " + (countProcUnstRespNot * 100) + " messages sent", "", true);
+				this.testerHost.sendNotif(SOURCE_NAME, "Sent: procUnstrSsResp: " + (countProcUnstRespNot * 100) + " messages sent", "", Level.DEBUG);
 			}
 		} else {
 			String uData = this.createUssdMessageData(curDialog.getDialogId(), this.dataCodingScheme, null, null);
-			this.testerHost.sendNotif(SOURCE_NAME, "Sent: procUnstrSsResp: " + msg, uData, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Sent: procUnstrSsResp: " + msg, uData, Level.DEBUG);
 		}
 
 		return "ProcessUnstructuredSSResponse has been sent";
@@ -452,7 +454,13 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 
 		MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
 
-		USSDString ussdString = mapProvider.getMAPParameterFactory().createUSSDString(msg);
+		USSDString ussdString = null;
+		try {
+			ussdString = mapProvider.getMAPParameterFactory().createUSSDString(msg, new CBSDataCodingSchemeImpl(this.dataCodingScheme), null);
+		} catch (MAPException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		ISDNAddressString msisdn = null;
 		if (this.msisdnAddress != null && !this.msisdnAddress.equals("")) {
 			msisdn = mapProvider.getMAPParameterFactory().createISDNAddressString(this.msisdnAddressNature, this.msisdnNumberingPlan, this.msisdnAddress);
@@ -462,9 +470,9 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 			alPattern = new AlertingPatternImpl(new byte[] { (byte) this.alertingPattern });
 
 		try {
-			curDialog.addUnstructuredSSRequest((byte) this.dataCodingScheme, ussdString, alPattern, msisdn);
+			curDialog.addUnstructuredSSRequest(new CBSDataCodingSchemeImpl(this.dataCodingScheme), ussdString, alPattern, msisdn);
 		} catch (MAPException e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking addUnstructuredSSRequest() : " + e.getMessage(), e, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking addUnstructuredSSRequest() : " + e.getMessage(), e, Level.ERROR);
 			return "Exception when sending UnstructuredSSRequest: " + e.toString();
 		}
 
@@ -475,7 +483,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 		}
 		this.countUnstReq++;
 		String uData = this.createUssdMessageData(curDialog.getDialogId(), this.dataCodingScheme, null, null);
-		this.testerHost.sendNotif(SOURCE_NAME, "Sent: unstrSsReq: " + msg, uData, true);
+		this.testerHost.sendNotif(SOURCE_NAME, "Sent: unstrSsReq: " + msg, uData, Level.DEBUG);
 
 		return "UnstructuredSSRequest has been sent";
 	}
@@ -503,7 +511,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 		try {
 			curDialog.close(false);
 		} catch (Exception e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking close() : " + e.getMessage(), e, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking close() : " + e.getMessage(), e, Level.ERROR);
 		}
 
 		return res;			
@@ -527,7 +535,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 		try {
 			curDialog.send();
 		} catch (Exception e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking send() : " + e.getMessage(), e, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking send() : " + e.getMessage(), e, Level.ERROR);
 		}
 
 		return res;			
@@ -542,7 +550,13 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 		if (msg == null || msg.equals(""))
 			return "USSD message is empty";
 
-		USSDString ussdString = mapProvider.getMAPParameterFactory().createUSSDString(msg);
+		USSDString ussdString = null;
+		try {
+			ussdString = mapProvider.getMAPParameterFactory().createUSSDString(msg, new CBSDataCodingSchemeImpl(this.dataCodingScheme), null);
+		} catch (MAPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		MAPApplicationContext mapUssdAppContext = MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext,
 				MAPApplicationContextVersion.version2);
 
@@ -558,13 +572,13 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 		try {
 			MAPDialogSupplementary dlg = mapProvider.getMAPServiceSupplementary().createNewDialog(mapUssdAppContext, this.mapMan.createOrigAddress(),
 					this.mapMan.createOrigReference(), this.mapMan.createDestAddress(), this.mapMan.createDestReference());
-			dlg.addUnstructuredSSNotifyRequest((byte) this.dataCodingScheme, ussdString, alPattern, msisdn);
+			dlg.addUnstructuredSSNotifyRequest(new CBSDataCodingSchemeImpl(this.dataCodingScheme), ussdString, alPattern, msisdn);
 
 			dlg.send();
 
 			this.countUnstNotifReq++;
 			String uData = this.createUssdMessageData(dlg.getDialogId(), this.dataCodingScheme, msisdn, alPattern);
-			this.testerHost.sendNotif(SOURCE_NAME, "Sent: unstrSsNotify: " + msg, uData, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Sent: unstrSsNotify: " + msg, uData, Level.DEBUG);
 
 			return "UnstructuredSSNotify has been sent";
 		} catch (MAPException ex) {
@@ -572,29 +586,6 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 		}		
 	}
 
-	
-	@Override
-	public void onErrorComponent(MAPDialog mapDialog, Long invokeId, MAPErrorMessage mapErrorMessage) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void onProviderErrorComponent(MAPDialog mapDialog, Long invokeId, MAPProviderError providerError) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onInvokeTimeout(MAPDialog mapDialog, Long invokeId) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public void onMAPMessage(MAPMessage mapMessage) {
@@ -614,7 +605,12 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 			ind.getMAPDialog().setUserObject(dd);
 		}
 
-		dd.currentRequestDef += "procUnstrSsReq=\"" + ind.getUSSDString().getString() + "\";";
+		try {
+			dd.currentRequestDef += "procUnstrSsReq=\"" + ind.getUSSDString().getString(null) + "\";";
+		} catch (MAPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		String pref = "PendingDialog: ";
 		if (this.currentDialog == ind.getMAPDialog() || this.getProcessSsRequestAction().intValue() != ProcessSsRequestAction.VAL_MANUAL_RESPONSE) {
 			this.currentRequestDef = dd.currentRequestDef;
@@ -622,9 +618,14 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 		}
 		this.countProcUnstReq++;
 		if (!this.oneNotificationFor100Dialogs) {
-			String uData = this.createUssdMessageData(ind.getMAPDialog().getDialogId(), ind.getUSSDDataCodingScheme(), ind.getMSISDNAddressString(),
+			String uData = this.createUssdMessageData(ind.getMAPDialog().getDialogId(), ind.getDataCodingScheme().getCode(), ind.getMSISDNAddressString(),
 					ind.getAlertingPattern());
-			this.sendRcvdNotice("Rcvd: procUnstrSsReq: " + ind.getUSSDString().getString(), pref, uData);
+			try {
+				this.sendRcvdNotice("Rcvd: procUnstrSsReq: " + ind.getUSSDString().getString(null), pref, uData);
+			} catch (MAPException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		switch (this.getProcessSsRequestAction().intValue()) {
@@ -654,7 +655,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 	}
 
 	private void sendRcvdNotice(String msg, String pref, String uData) {
-		this.testerHost.sendNotif(SOURCE_NAME, pref + msg, uData, true);
+		this.testerHost.sendNotif(SOURCE_NAME, pref + msg, uData, Level.DEBUG);
 	}
 
 	@Override
@@ -677,13 +678,23 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 		if (dd == null)
 			return;
 
-		dd.currentRequestDef += "unstrSsResp=\"" + ind.getUSSDString().getString() + "\";";
+		try {
+			dd.currentRequestDef += "unstrSsResp=\"" + ind.getUSSDString().getString(null) + "\";";
+		} catch (MAPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if (this.currentDialog == ind.getMAPDialog())
 			currentRequestDef = dd.currentRequestDef;
 		String pref = "CurDialog: ";
 		this.countUnstResp++;
-		String uData = this.createUssdMessageData(ind.getMAPDialog().getDialogId(), ind.getUSSDDataCodingScheme(), null, null);
-		this.sendRcvdNotice("Rcvd: unstrSsResp: " + ind.getUSSDString().getString(), pref, uData);
+		String uData = this.createUssdMessageData(ind.getMAPDialog().getDialogId(), ind.getDataCodingScheme().getCode(), null, null);
+		try {
+			this.sendRcvdNotice("Rcvd: unstrSsResp: " + ind.getUSSDString().getString(null), pref, uData);
+		} catch (MAPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		switch (this.getProcessSsRequestAction().intValue()) {
 		case ProcessSsRequestAction.VAL_MANUAL_RESPONSE: {
@@ -727,7 +738,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 				mapDialog.send();
 			}
 		} catch (Exception e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking send() : " + e.getMessage(), e, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking send() : " + e.getMessage(), e, Level.ERROR);
 		}
 		try {
 			if (needSendClose) {
@@ -735,7 +746,7 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 				mapDialog.close(false);
 			}
 		} catch (Exception e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking close() : " + e.getMessage(), e, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking close() : " + e.getMessage(), e, Level.ERROR);
 		}
 	}
 
@@ -758,50 +769,6 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 	}
 
 	@Override
-	public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, AddressString origReference, IMSI eriImsi, AddressString eriVlrNo) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onDialogAccept(MAPDialog mapDialog, MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
-			ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason, MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason, MAPAbortSource abortSource,
-			MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onDialogClose(MAPDialog mapDialog) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onDialogNotice(MAPDialog mapDialog, MAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void onDialogRelease(MAPDialog mapDialog) {
 		if (this.currentDialog == mapDialog)
 			this.doRemoveDialog();
@@ -813,12 +780,6 @@ public class TestUssdServerMan implements TestUssdServerManMBean, Stoppable, MAP
 				}
 			}
 		}
-	}
-
-	@Override
-	public void onDialogTimeout(MAPDialog mapDialog) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	private class DialogData {

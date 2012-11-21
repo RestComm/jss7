@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -41,4 +41,22 @@ public interface GeographicalInformation {
 
 	public byte[] getData();
 
+	public TypeOfShape getTypeOfShape();
+
+	/**
+	 * @return Latitude value in degrees (-90 ... 90)
+	 */
+	public double getLatitude();
+
+	/**
+	 * @return Longitude value in degrees (-180 ... 180)
+	 */
+	public double getLongitude();
+
+	/**
+	 * @return Uncertainty value in meters
+	 */
+	public double getUncertainty();
+
 }
+

@@ -128,7 +128,7 @@ public class Selector implements StreamSelector {
 
     public FastList<SelectorKey> selectNow(int ops, int timeout)
             throws IOException {
-    	int count = doPoll(fds, ops, 20);
+    	int count = doPoll(fds, ops, 1);
         selected.clear();
         for (int i = 0; i < count; i++) {
             for (FastList.Node<Mtp1> n = registered.head(), end = registered

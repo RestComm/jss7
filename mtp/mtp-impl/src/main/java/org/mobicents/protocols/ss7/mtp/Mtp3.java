@@ -69,8 +69,7 @@ public class Mtp3 implements Runnable {
     /**
      * Local byte[], in which we forge messages.
      */
-    private byte[] localFrame = new byte[279]; 
-    private byte[][] localBuffers;
+    private byte[] localFrame = new byte[279];     
     /** List of signaling channels wrapped with MTP2*/
     private List<Mtp2> links = new ArrayList();
     
@@ -89,7 +88,6 @@ public class Mtp3 implements Runnable {
     protected String name;
     private StreamSelector selector;
     
-    private MTPScheduler executor = new MTPScheduler();
     private Scheduler scheduler;
     
     private static final Logger logger = Logger.getLogger(Mtp3.class);
@@ -102,12 +100,7 @@ public class Mtp3 implements Runnable {
             selector = SelectorProvider.getSelector("org.mobicents.ss7.hardware.dahdi.Selector");
         } catch (Exception e) {
             e.printStackTrace();
-        }
-        this.localBuffers = new byte[300][];
-        for(int i=0;i<300;i++)
-        {
-        	this.localBuffers[i] = new byte[i];
-        }
+        }        
     }
 
     public void setScheduler(Scheduler scheduler)
@@ -363,7 +356,7 @@ public class Mtp3 implements Runnable {
                 	//                          | --------------------- SIF ------------------------ |
                 	//FSN   BSN   LEN    SIO    DPC/OPC,SLS    HEADING     LEN
                 	//b1    b0    0e     01     01 80 00 00    21          70    01 02 03 04 05 06 0f  CRC CRC
-                	byte[] messageBuffer = fetchBuffer(rxFrame.len-5); //-5 = FSN(1) + BSN(1) + LEN(1) +2xCRC(1)
+                	byte[] messageBuffer = new byte[rxFrame.len-5]; //-5 = FSN(1) + BSN(1) + LEN(1) +2xCRC(1)
                     System.arraycopy(rxFrame.frame, 3, messageBuffer, 0, rxFrame.len-5);
                     //messageBuffer[0] = (byte) sio;
                     try {
@@ -379,7 +372,7 @@ public class Mtp3 implements Runnable {
                     
                 }
                 if (mtp3Listener != null) {
-                	byte[] messageBuffer = fetchBuffer(rxFrame.len-5);
+                	byte[] messageBuffer =  new byte[rxFrame.len-5];
                 	 System.arraycopy(rxFrame.frame, 3, messageBuffer, 0, rxFrame.len-5);
                      //messageBuffer[0] = (byte) sio;
                     try {
@@ -544,9 +537,7 @@ public class Mtp3 implements Runnable {
 	 * @param i
 	 * @return
 	 */
-	private byte[] fetchBuffer(int size) {
-		return this.localBuffers[size];
-	}
+	
     protected class SLTMTest extends Task {
 
         private Mtp2 link;

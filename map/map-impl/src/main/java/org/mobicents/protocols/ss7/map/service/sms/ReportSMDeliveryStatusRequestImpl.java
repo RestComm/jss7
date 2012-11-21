@@ -56,6 +56,8 @@ public class ReportSMDeliveryStatusRequestImpl extends SmsMessageImpl implements
 	protected static final int _TAG_AdditionalSMDeliveryOutcome = 4; 
 	protected static final int _TAG_AdditionalAbsentSubscriberDiagnosticSM = 5; 
 
+	protected String _PrimitiveName = "ReportSMDeliveryStatusRequest";
+
 	private ISDNAddressString msisdn;
 	private AddressString serviceCentreAddress;
 	private SMDeliveryOutcome sMDeliveryOutcome;
@@ -151,10 +153,10 @@ public class ReportSMDeliveryStatusRequestImpl extends SmsMessageImpl implements
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding ReportSMDeliveryStatusRequest: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding ReportSMDeliveryStatusRequest: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -164,10 +166,10 @@ public class ReportSMDeliveryStatusRequestImpl extends SmsMessageImpl implements
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding ReportSMDeliveryStatusRequest: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding ReportSMDeliveryStatusRequest: " + e.getMessage(), e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -196,7 +198,7 @@ public class ReportSMDeliveryStatusRequestImpl extends SmsMessageImpl implements
 			case 0:
 				// msisdn
 				if (tag != Tag.STRING_OCTET || ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding ReportSMDeliveryStatusRequest.msisdn: Parameter bad tag or tag class or not primitive",
+					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".msisdn: Parameter bad tag or tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.msisdn = new ISDNAddressStringImpl();
 				((ISDNAddressStringImpl)this.msisdn).decodeAll(ais);
@@ -205,7 +207,7 @@ public class ReportSMDeliveryStatusRequestImpl extends SmsMessageImpl implements
 			case 1:
 				// serviceCentreAddress
 				if (tag != Tag.STRING_OCTET || ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding ReportSMDeliveryStatusRequest.serviceCentreAddress: Parameter bad tag or tag class or not primitive",
+					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".serviceCentreAddress: Parameter bad tag or tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.serviceCentreAddress = new AddressStringImpl();
 				((AddressStringImpl)this.serviceCentreAddress).decodeAll(ais);
@@ -214,7 +216,7 @@ public class ReportSMDeliveryStatusRequestImpl extends SmsMessageImpl implements
 			case 2:
 				// sMDeliveryOutcome
 				if (tag != Tag.ENUMERATED || ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding ReportSMDeliveryStatusRequest.sMDeliveryOutcome: Parameter bad tag or tag class or not primitive",
+					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".sMDeliveryOutcome: Parameter bad tag or tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				int i1 = (int)ais.readInteger();
 				this.sMDeliveryOutcome = SMDeliveryOutcome.getInstance(i1);
@@ -228,7 +230,7 @@ public class ReportSMDeliveryStatusRequestImpl extends SmsMessageImpl implements
 						// absentSubscriberDiagnosticSM
 						if (!ais.isTagPrimitive())
 							throw new MAPParsingComponentException(
-									"Error while decoding reportSMDeliveryStatusRequest: Parameter absentSubscriberDiagnosticSM is not primitive",
+									"Error while decoding " + _PrimitiveName + ": Parameter absentSubscriberDiagnosticSM is not primitive",
 									MAPParsingComponentExceptionReason.MistypedParameter);
 						this.absentSubscriberDiagnosticSM = (int)ais.readInteger();
 						break;
@@ -237,7 +239,7 @@ public class ReportSMDeliveryStatusRequestImpl extends SmsMessageImpl implements
 						// extensionContainer
 						if (ais.isTagPrimitive())
 							throw new MAPParsingComponentException(
-									"Error while decoding reportSMDeliveryStatusRequest: Parameter extensionContainer is primitive",
+									"Error while decoding " + _PrimitiveName + ": Parameter extensionContainer is primitive",
 									MAPParsingComponentExceptionReason.MistypedParameter);
 						this.extensionContainer = new MAPExtensionContainerImpl();
 						((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
@@ -247,7 +249,7 @@ public class ReportSMDeliveryStatusRequestImpl extends SmsMessageImpl implements
 						// gprsSupportIndicator
 						if (!ais.isTagPrimitive())
 							throw new MAPParsingComponentException(
-									"Error while decoding reportSMDeliveryStatusRequest: Parameter gprsSupportIndicator is not primitive",
+									"Error while decoding " + _PrimitiveName + ": Parameter gprsSupportIndicator is not primitive",
 									MAPParsingComponentExceptionReason.MistypedParameter);
 						ais.readNull();
 						this.gprsSupportIndicator = true;
@@ -257,7 +259,7 @@ public class ReportSMDeliveryStatusRequestImpl extends SmsMessageImpl implements
 						// deliveryOutcomeIndicator
 						if (!ais.isTagPrimitive())
 							throw new MAPParsingComponentException(
-									"Error while decoding reportSMDeliveryStatusRequest: Parameter deliveryOutcomeIndicator is not primitive",
+									"Error while decoding " + _PrimitiveName + ": Parameter deliveryOutcomeIndicator is not primitive",
 									MAPParsingComponentExceptionReason.MistypedParameter);
 						ais.readNull();
 						this.deliveryOutcomeIndicator = true;
@@ -267,7 +269,7 @@ public class ReportSMDeliveryStatusRequestImpl extends SmsMessageImpl implements
 						// additionalSMDeliveryOutcome
 						if (!ais.isTagPrimitive())
 							throw new MAPParsingComponentException(
-									"Error while decoding reportSMDeliveryStatusRequest: Parameter additionalSMDeliveryOutcome is not primitive",
+									"Error while decoding " + _PrimitiveName + ": Parameter additionalSMDeliveryOutcome is not primitive",
 									MAPParsingComponentExceptionReason.MistypedParameter);
 						i1 = (int) ais.readInteger();
 						this.additionalSMDeliveryOutcome = SMDeliveryOutcome.getInstance(i1);
@@ -277,7 +279,7 @@ public class ReportSMDeliveryStatusRequestImpl extends SmsMessageImpl implements
 						// additionalAbsentSubscriberDiagnosticSM
 						if (!ais.isTagPrimitive())
 							throw new MAPParsingComponentException(
-									"Error while decoding reportSMDeliveryStatusRequest: Parameter additionalAbsentSubscriberDiagnosticSM is not primitive",
+									"Error while decoding " + _PrimitiveName + ": Parameter additionalAbsentSubscriberDiagnosticSM is not primitive",
 									MAPParsingComponentExceptionReason.MistypedParameter);
 						this.additionalAbsentSubscriberDiagnosticSM = (int)ais.readInteger();
 						break;
@@ -298,7 +300,7 @@ public class ReportSMDeliveryStatusRequestImpl extends SmsMessageImpl implements
 		}
 
 		if (num < 3 && this.mapProtocolVersion >= 2 || num < 2 && this.mapProtocolVersion == 1)
-			throw new MAPParsingComponentException("Error while decoding reportSMDeliveryStatusRequest: Needs at least 3 mandatory parameters, found " + num,
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Needs at least 3 mandatory parameters, found " + num,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
@@ -315,7 +317,7 @@ public class ReportSMDeliveryStatusRequestImpl extends SmsMessageImpl implements
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding reportSMDeliveryStatusRequest: " + e.getMessage(), e);
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 
@@ -348,16 +350,17 @@ public class ReportSMDeliveryStatusRequestImpl extends SmsMessageImpl implements
 			if (this.additionalAbsentSubscriberDiagnosticSM != null)
 				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_AdditionalAbsentSubscriberDiagnosticSM, this.additionalAbsentSubscriberDiagnosticSM);
 		} catch (IOException e) {
-			throw new MAPException("IOException when encoding mtForwardShortMessageRequest: " + e.getMessage(), e);
+			throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding mtForwardShortMessageRequest: " + e.getMessage(), e);
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("ReportSMDeliveryStatusRequest [");
+		sb.append(_PrimitiveName);
+		sb.append(" [");
 		
 		if(this.getMAPDialog() != null){
 			sb.append("DialogId=").append(this.getMAPDialog().getDialogId());

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -25,7 +25,7 @@ package org.mobicents.protocols.ss7.map.service.sms;
 import java.util.Arrays;
 
 import static org.testng.Assert.*;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.*;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -60,6 +60,10 @@ public class SendRoutingInfoForSMResponseTest  {
 				23, 24, 25, 26, -95, 3, 31, 32, 33 };
 	}
 	
+	private byte[] getEncodedData1() {
+		return new byte[] { 48, 22, 4, 7, 82, 0, 17, 17, 17, 17, 17, -96, 8, -127, 6, -111, -105, -103, 25, 17, 17, -126, 1, 0 };
+	}
+	
 	@Test(groups = { "functional.decode","service.sms"})
 	public void testDecode() throws Exception {
 		
@@ -84,6 +88,7 @@ public class SendRoutingInfoForSMResponseTest  {
 		assertEquals( nnn.getAddress(),"12032100295");
 		LMSI lmsi = li.getLMSI();
 		assertTrue(Arrays.equals(new byte[] { 0, 3, 98, 49 }, lmsi.getData()));
+		assertNull(ind.getMwdSet());
 
 		
 		rawData = getEncodedDataFull();
@@ -113,6 +118,31 @@ public class SendRoutingInfoForSMResponseTest  {
 		assertEquals( an.getNumberingPlan(),NumberingPlan.land_mobile);
 		assertEquals( an.getAddress(),"99999999");
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(ind.getExtensionContainer()));
+		assertNull(ind.getMwdSet());
+
+
+		rawData = getEncodedData1();
+		asn = new AsnInputStream(rawData);
+
+		tag = asn.readTag();
+		ind = new SendRoutingInfoForSMResponseImpl();
+		ind.decodeAll(asn);
+
+		assertEquals( tag,Tag.SEQUENCE);
+		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
+
+		imsi = ind.getIMSI();
+		assertEquals( imsi.getData(),"25001111111111");
+		li = ind.getLocationInfoWithLMSI();
+		nnn = li.getNetworkNodeNumber();
+		assertEquals( nnn.getAddressNature(),AddressNature.international_number);
+		assertEquals( nnn.getNumberingPlan(),NumberingPlan.ISDN);
+		assertEquals( nnn.getAddress(),"7999911111");
+		assertNull(li.getLMSI());
+		assertNull( li.getAdditionalNumberType());
+		assertNull( li.getAdditionalNumber());
+		assertNull(ind.getExtensionContainer());
+		assertFalse(ind.getMwdSet());
 	}
 
 	@Test(groups = { "functional.encode","service.sms"})
@@ -123,7 +153,7 @@ public class SendRoutingInfoForSMResponseTest  {
 		LMSI lmsi = new LMSIImpl(new byte[] { 0, 3, 98, 49 });
 
 		LocationInfoWithLMSI li = new LocationInfoWithLMSIImpl(nnn, lmsi, null, null, null);
-		SendRoutingInfoForSMResponseImpl ind = new SendRoutingInfoForSMResponseImpl(imsi, li, null);
+		SendRoutingInfoForSMResponseImpl ind = new SendRoutingInfoForSMResponseImpl(imsi, li, null, null);
 		
 		AsnOutputStream asnOS = new AsnOutputStream();
 		ind.encodeAll(asnOS);
@@ -138,13 +168,26 @@ public class SendRoutingInfoForSMResponseTest  {
 		lmsi = new LMSIImpl(new byte[] { 0, 2, 1, 0 });
 		ISDNAddressString additionalNumber = new ISDNAddressStringImpl(AddressNature.national_significant_number, NumberingPlan.land_mobile, "99999999");
 		li = new LocationInfoWithLMSIImpl(nnn, lmsi, MAPExtensionContainerTest.GetTestExtensionContainer(), AdditionalNumberType.sgsn, additionalNumber);
-		ind = new SendRoutingInfoForSMResponseImpl(imsi, li, MAPExtensionContainerTest.GetTestExtensionContainer());
+		ind = new SendRoutingInfoForSMResponseImpl(imsi, li, MAPExtensionContainerTest.GetTestExtensionContainer(), null);
 		
 		asnOS = new AsnOutputStream();
 		ind.encodeAll(asnOS);
 		
 		encodedData = asnOS.toByteArray();
 		rawData = getEncodedDataFull();		
+		assertTrue( Arrays.equals(rawData,encodedData));
+
+		
+		imsi = new IMSIImpl("25001111111111");
+		nnn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "7999911111");
+		li = new LocationInfoWithLMSIImpl(nnn, null, null, null, null);
+		ind = new SendRoutingInfoForSMResponseImpl(imsi, li, null, false);
+		
+		asnOS = new AsnOutputStream();
+		ind.encodeAll(asnOS);
+		
+		encodedData = asnOS.toByteArray();
+		rawData = getEncodedData1();		
 		assertTrue( Arrays.equals(rawData,encodedData));
 	}
 

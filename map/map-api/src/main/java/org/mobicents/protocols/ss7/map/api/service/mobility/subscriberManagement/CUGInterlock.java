@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -23,14 +23,20 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
 /**
-*
-CUG-Interlock ::= OCTET STRING (SIZE (4))
-* 
-* @author sergey vetyutnev
-* 
-*/
-public interface CUGInterlock {
-	
-	public byte[] getData();
 
+CUG-Interlock ::= OCTET STRING (SIZE (4))
+
+CUG interlock code: this is a means of identifying closed user group membership within the network. At
+the calling side, if a closed user group match exists, the CUG index identifying a closed user group maps to
+the closed user group interlock code for that closed user group. If a closed user group match exists at the
+called side the closed user group interlock code identifying a closed user group maps to the CUG index
+representing that closed user group. Closed user group interlock code is not an access concept, but is
+used for clarity during the descriptions of signalling procedures and flows.
+
+ *
+ * @author cristian veliscu
+ *
+ */
+public interface CUGInterlock {
+	public byte[] getData(); 
 }

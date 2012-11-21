@@ -55,7 +55,7 @@ public class InvokeImpl implements Invoke {
 	private long invokeTimeout = TCAPStackImpl._EMPTY_INVOKE_TIMEOUT;
 	private OperationState state = OperationState.Idle;
 	private Future timerFuture;
-	private OperationTimerTask operationTimerTask = new OperationTimerTask();
+	private OperationTimerTask operationTimerTask = new OperationTimerTask(this);
 	private TCAPProviderImpl provider;
 	private DialogImpl dialog;
 
@@ -224,7 +224,7 @@ public class InvokeImpl implements Invoke {
 			if (localAis.available() == 0)
 				return;
 			tag = localAis.readTag();
-			this.parameter = TcapFactory.createParameter(tag, localAis);
+			this.parameter = TcapFactory.createParameter(tag, localAis, true);
 
 		} catch (IOException e) {
 			throw new ParseException("IOException while decoding Invoke: " + e.getMessage(), e);
@@ -411,6 +411,10 @@ public class InvokeImpl implements Invoke {
 	private class OperationTimerTask implements Runnable {
 		InvokeImpl invoke;
 
+		OperationTimerTask(InvokeImpl invoke) {
+			this.invoke = invoke;
+		}
+
 		public void run() {
 	
 				// op failed, we must delete it from dialog and notify!
@@ -418,8 +422,6 @@ public class InvokeImpl implements Invoke {
 				setState(OperationState.Idle);
 				// TC-L-CANCEL
 				((DialogImpl) invoke.dialog).operationTimedOut(invoke);
-	
-
 		}
 
 	}

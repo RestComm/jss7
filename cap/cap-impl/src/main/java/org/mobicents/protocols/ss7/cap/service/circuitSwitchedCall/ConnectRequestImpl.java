@@ -365,7 +365,7 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
 							break;
 
 						int tag2 = ais2.readTag();
-						if (ais2.getTagClass() != Tag.CLASS_UNIVERSAL && tag2 != Tag.STRING_OCTET)
+						if (ais2.getTagClass() != Tag.CLASS_UNIVERSAL || tag2 != Tag.STRING_OCTET)
 							throw new CAPParsingComponentException("Error when decoding " + _PrimitiveName
 									+ " genericNumbers parameter SET must consist of OCTET_STRING elements",
 									CAPParsingComponentExceptionReason.MistypedParameter);

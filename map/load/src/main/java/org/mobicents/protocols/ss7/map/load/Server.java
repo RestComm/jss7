@@ -24,13 +24,13 @@ package org.mobicents.protocols.ss7.map.load;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.sctp.ManagementImpl;
+import org.mobicents.protocols.ss7.m3ua.As;
+import org.mobicents.protocols.ss7.m3ua.Asp;
+import org.mobicents.protocols.ss7.m3ua.AspFactory;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.IPSPType;
-import org.mobicents.protocols.ss7.m3ua.impl.As;
-import org.mobicents.protocols.ss7.m3ua.impl.Asp;
-import org.mobicents.protocols.ss7.m3ua.impl.AspFactory;
-import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement;
+import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 import org.mobicents.protocols.ss7.map.MAPStackImpl;
@@ -38,6 +38,7 @@ import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPMessage;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
@@ -59,12 +60,9 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSN
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponse;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
-import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCode;
-import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystem;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpResource;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
-import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3Destination;
-import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3ServiceAccessPoint;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 
@@ -85,7 +83,7 @@ public class Server extends TestHarness {
 	private SccpResource sccpResource;
 
 	// M3UA
-	private M3UAManagement serverM3UAMgmt;
+	private M3UAManagementImpl serverM3UAMgmt;
 
 	// SCTP
 	private ManagementImpl sctpManagement;
@@ -125,7 +123,7 @@ public class Server extends TestHarness {
 	}
 
 	private void initM3UA() throws Exception {
-		this.serverM3UAMgmt = new M3UAManagement("Server");
+		this.serverM3UAMgmt = new M3UAManagementImpl("Server");
 		this.serverM3UAMgmt.setTransportManagement(this.sctpManagement);
 		this.serverM3UAMgmt.start();
 		this.serverM3UAMgmt.removeAllResourses();
@@ -134,7 +132,7 @@ public class Server extends TestHarness {
 
 		RoutingContext rc = factory.createRoutingContext(new long[] { 100l });
 		TrafficModeType trafficModeType = factory.createTrafficModeType(TrafficModeType.Loadshare);
-		As as = this.serverM3UAMgmt.createAs("RAS1", Functionality.SGW, ExchangeType.SE, IPSPType.CLIENT, rc, trafficModeType, null);
+		As as = this.serverM3UAMgmt.createAs("RAS1", Functionality.SGW, ExchangeType.SE, IPSPType.CLIENT, rc, trafficModeType, 1, null);
 
 		// Step 2 : Create ASP
 		AspFactory aspFactor = this.serverM3UAMgmt.createAspFactory("RASP1", SERVER_ASSOCIATION_NAME);
@@ -146,22 +144,18 @@ public class Server extends TestHarness {
 		this.serverM3UAMgmt.addRoute(CLIENT_SPC, -1, -1, "RAS1");
 	}
 
-	private void initSCCP() {
+	private void initSCCP() throws Exception {
 		this.sccpStack = new SccpStackImpl("MapLoadServerSccpStack");
 		this.sccpStack.setMtp3UserPart(1, this.serverM3UAMgmt);
 
 		this.sccpStack.start();
 		this.sccpStack.removeAllResourses();
 
-		RemoteSignalingPointCode rspc = new RemoteSignalingPointCode(CLIENT_SPC, 0, 0);
-		RemoteSubSystem rss = new RemoteSubSystem(CLIENT_SPC, SSN, 0, false);
-		this.sccpStack.getSccpResource().addRemoteSpc(0, rspc);
-		this.sccpStack.getSccpResource().addRemoteSsn(0, rss);
+		this.sccpStack.getSccpResource().addRemoteSpc(0, CLIENT_SPC, 0, 0);
+		this.sccpStack.getSccpResource().addRemoteSsn(0, CLIENT_SPC, SSN, 0, false);
 
-		Mtp3ServiceAccessPoint sap = new Mtp3ServiceAccessPoint(1, SERVET_SPC, NETWORK_INDICATOR);
-		Mtp3Destination dest = new Mtp3Destination(CLIENT_SPC, CLIENT_SPC, 0, 255, 255);
-		this.sccpStack.getRouter().addMtp3ServiceAccessPoint(1, sap);
-		this.sccpStack.getRouter().addMtp3Destination(1, 1, dest);
+		this.sccpStack.getRouter().addMtp3ServiceAccessPoint(1, 1, SERVET_SPC, NETWORK_INDICATOR);
+		this.sccpStack.getRouter().addMtp3Destination(1, 1, CLIENT_SPC, CLIENT_SPC, 0, 255, 255);
 	}
 
 	private void initMAP() {
@@ -353,7 +347,7 @@ public class Server extends TestHarness {
 
 			USSDString ussdStrObj = this.mapProvider.getMAPParameterFactory().createUSSDString(
 					"USSD String : Hello World <CR> 1. Balance <CR> 2. Texts Remaining");
-			byte ussdDataCodingScheme = (byte) 0x0F;
+			CBSDataCodingScheme ussdDataCodingScheme = new CBSDataCodingSchemeImpl(0x0F);
 			MAPDialogSupplementary dialog = procUnstrReqInd.getMAPDialog();
 
 			dialog.setUserObject(invokeId);
@@ -416,7 +410,7 @@ public class Server extends TestHarness {
 		}
 		try {
 			USSDString ussdStrObj = this.mapProvider.getMAPParameterFactory().createUSSDString("Your balance is 500");
-			byte ussdDataCodingScheme = (byte) 0x0F;
+			CBSDataCodingScheme ussdDataCodingScheme = new CBSDataCodingSchemeImpl(0x0F);
 			MAPDialogSupplementary dialog = unstrResInd.getMAPDialog();
 
 			AddressString msisdn = this.mapProvider.getMAPParameterFactory().createAddressString(AddressNature.international_number, NumberingPlan.ISDN,
@@ -507,8 +501,51 @@ public class Server extends TestHarness {
 
 	public static void main(String args[]) {
 		IpChannelType ipChannelType = IpChannelType.SCTP;
-		if (args.length >= 1 && args[0].toLowerCase().equals("tcp"))
+		if (args.length >= 1 && args[0].toLowerCase().equals("tcp")){
 			ipChannelType = IpChannelType.TCP;
+		} else {
+			ipChannelType = IpChannelType.SCTP;
+		}
+		
+		if (args.length >= 2  ){
+			TestHarness.CLIENT_IP = args[1];
+		} 
+		
+		if (args.length >=  3 ){
+			TestHarness.CLIENT_PORT = Integer.parseInt(args[2]);
+		} 
+		
+		if (args.length >= 4  ){
+			TestHarness.SERVER_IP = args[3];
+		} 
+		
+		if (args.length >=  5 ){
+			TestHarness.SERVER_PORT = Integer.parseInt(args[4]);
+		} 
+
+		if (args.length >=  6 ){
+			TestHarness.CLIENT_SPC = Integer.parseInt(args[5]);
+		}
+		
+		if (args.length >=  7 ){
+			TestHarness.SERVET_SPC = Integer.parseInt(args[6]);
+		}
+		
+		if (args.length >=  8 ){
+			TestHarness.NETWORK_INDICATOR = Integer.parseInt(args[7]);
+		}
+		
+		if (args.length >=  9 ){
+			TestHarness.SERVICE_INIDCATOR = Integer.parseInt(args[8]);
+		}
+		
+		if (args.length >=  10 ){
+			TestHarness.SSN = Integer.parseInt(args[9]);
+		}
+		
+		if (args.length >=  11 ){
+			TestHarness.ROUTING_CONTEXT = Integer.parseInt(args[10]);
+		}
 
 		final Server server = new Server();
 		try {

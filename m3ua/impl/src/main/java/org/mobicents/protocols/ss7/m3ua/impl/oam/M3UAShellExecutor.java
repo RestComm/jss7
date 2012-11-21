@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -23,18 +23,19 @@
 package org.mobicents.protocols.ss7.m3ua.impl.oam;
 
 import java.util.Arrays;
+import java.util.List;
 
-import javolution.util.FastList;
 import javolution.util.FastMap;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.api.Management;
+import org.mobicents.protocols.ss7.m3ua.As;
+import org.mobicents.protocols.ss7.m3ua.AspFactory;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.IPSPType;
-import org.mobicents.protocols.ss7.m3ua.impl.As;
-import org.mobicents.protocols.ss7.m3ua.impl.AspFactory;
-import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement;
+import org.mobicents.protocols.ss7.m3ua.impl.AsImpl;
+import org.mobicents.protocols.ss7.m3ua.impl.AspFactoryImpl;
+import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.parameter.NetworkAppearance;
 import org.mobicents.protocols.ss7.m3ua.parameter.ParameterFactory;
@@ -51,42 +52,33 @@ public class M3UAShellExecutor implements ShellExecutor {
 
 	private static final Logger logger = Logger.getLogger(M3UAShellExecutor.class);
 
-	private M3UAManagement m3uaManagement;
+	private M3UAManagementImpl m3uaManagement;
 
 	protected ParameterFactory parameterFactory = new ParameterFactoryImpl();
-
-	private SCTPShellExecutor sctpShellExecutor = new SCTPShellExecutor();
 
 	public M3UAShellExecutor() {
 
 	}
 
-	public M3UAManagement getM3uaManagement() {
+	public M3UAManagementImpl getM3uaManagement() {
 		return m3uaManagement;
 	}
 
-	public void setM3uaManagement(M3UAManagement m3uaManagement) {
+	public void setM3uaManagement(M3UAManagementImpl m3uaManagement) {
 		this.m3uaManagement = m3uaManagement;
-	}
-
-	public Management getSctpManagement() {
-		return this.sctpShellExecutor.getSctpManagement();
-	}
-
-	public void setSctpManagement(Management sctpManagement) {
-		this.sctpShellExecutor.setSctpManagement(sctpManagement);
 	}
 
 	/**
 	 * m3ua as create <as-name> <AS | SGW | IPSP> mode <SE | DE> ipspType <
-	 * client | server > rc <routing-context> traffic-mode <traffic mode>
+	 * client | server > rc <routing-context> traffic-mode <traffic mode> min-asp 
+	 * <minimum asp active for TrafficModeType.Loadshare>
 	 * network-appearance <network appearance>
 	 * 
 	 * @param args
 	 * @return
 	 */
 	private String createAs(String[] args) throws Exception {
-		if (args.length < 5 || args.length > 15) {
+		if (args.length < 5 || args.length > 17) {
 			return M3UAOAMMessages.INVALID_COMMAND;
 		}
 
@@ -108,6 +100,7 @@ public class M3UAShellExecutor implements ShellExecutor {
 		}
 
 		int count = 5;
+		int minAspActiveForLoadbalance = 1;
 
 		while (count < args.length) {
 			String key = args[count++];
@@ -129,13 +122,15 @@ public class M3UAShellExecutor implements ShellExecutor {
 				trafficModeType = getTrafficModeType(args[count++]);
 			} else if (key.equals("network-appearance")) {
 				na = parameterFactory.createNetworkAppearance(Long.parseLong(args[count++]));
+			} else if(key.equals("min-asp")){
+				minAspActiveForLoadbalance = Integer.parseInt(args[count++]);
 			} else {
 				return M3UAOAMMessages.INVALID_COMMAND;
 			}
 		}
 
-		As as = this.m3uaManagement.createAs(asName, functionlaity, exchangeType, ipspType, rc, trafficModeType, na);
-		return String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, as.getName());
+		As asImpl = this.m3uaManagement.createAs(asName, functionlaity, exchangeType, ipspType, rc, trafficModeType, minAspActiveForLoadbalance, na);
+		return String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, asImpl.getName());
 	}
 
 	/**
@@ -155,7 +150,7 @@ public class M3UAShellExecutor implements ShellExecutor {
 			return M3UAOAMMessages.INVALID_COMMAND;
 		}
 
-		As as = this.m3uaManagement.destroyAs(asName);
+		AsImpl asImpl = this.m3uaManagement.destroyAs(asName);
 
 		return String.format(M3UAOAMMessages.DESTROY_AS_SUCESSFULL, asName);
 	}
@@ -220,38 +215,38 @@ public class M3UAShellExecutor implements ShellExecutor {
 	}
 
 	private String showAspFactories() {
-		FastList<AspFactory> aspfactories = this.m3uaManagement.getAspfactories();
+		List<AspFactory> aspfactories = this.m3uaManagement.getAspfactories();
 		if (aspfactories.size() == 0) {
 			return M3UAOAMMessages.NO_ASP_DEFINED_YET;
 		}
 		StringBuffer sb = new StringBuffer();
-		for (FastList.Node<AspFactory> n = aspfactories.head(), end = aspfactories.tail(); (n = n.getNext()) != end;) {
-			AspFactory aspFactory = n.getValue();
+		for (AspFactory aspFactory : aspfactories) {
+			AspFactoryImpl aspFactoryImpl = (AspFactoryImpl)aspFactory;
 			sb.append(M3UAOAMMessages.NEW_LINE);
-			aspFactory.show(sb);
+			aspFactoryImpl.show(sb);
 			sb.append(M3UAOAMMessages.NEW_LINE);
 		}
 		return sb.toString();
 	}
 
 	private String showRoutes() {
-		FastMap<String, As[]> route = this.m3uaManagement.getRoute();
+		FastMap<String, AsImpl[]> route = this.m3uaManagement.getRoute();
 
 		if (route.size() == 0) {
 			return M3UAOAMMessages.NO_ROUTE_DEFINED_YET;
 		}
 		StringBuffer sb = new StringBuffer();
-		for (FastMap.Entry<String, As[]> e = route.head(), end = route.tail(); (e = e.getNext()) != end;) {
+		for (FastMap.Entry<String, AsImpl[]> e = route.head(), end = route.tail(); (e = e.getNext()) != end;) {
 			String key = e.getKey();
-			As[] asList = e.getValue();
+			AsImpl[] asList = e.getValue();
 
 			sb.append(M3UAOAMMessages.NEW_LINE);
 			sb.append(key);
 			sb.append(M3UAOAMMessages.TAB);
 			for (int i = 0; i < asList.length; i++) {
-				As as = asList[i];
-				if (as != null) {
-					sb.append(as.getName());
+				AsImpl asImpl = asList[i];
+				if (asImpl != null) {
+					sb.append(asImpl.getName());
 					sb.append(M3UAOAMMessages.COMMA);
 				}
 			}
@@ -261,15 +256,15 @@ public class M3UAShellExecutor implements ShellExecutor {
 	}
 
 	private String showAs() {
-		FastList<As> appServers = this.m3uaManagement.getAppServers();
+		List<As> appServers = this.m3uaManagement.getAppServers();
 		if (appServers.size() == 0) {
 			return M3UAOAMMessages.NO_AS_DEFINED_YET;
 		}
 		StringBuffer sb = new StringBuffer();
-		for (FastList.Node<As> n = appServers.head(), end = appServers.tail(); (n = n.getNext()) != end;) {
-			As as = n.getValue();
+		for (As as : appServers) {
+			AsImpl asImpl = (AsImpl)as;
 			sb.append(M3UAOAMMessages.NEW_LINE);
-			as.show(sb);
+			asImpl.show(sb);
 			sb.append(M3UAOAMMessages.NEW_LINE);
 		}
 		return sb.toString();
@@ -307,7 +302,7 @@ public class M3UAShellExecutor implements ShellExecutor {
 				return M3UAOAMMessages.INVALID_COMMAND;
 			} else if (args[1].equals("asp")) {
 
-				if (args.length > 5) {
+				if (args.length < 3 || args.length > 7) {
 					return M3UAOAMMessages.INVALID_COMMAND;
 				}
 
@@ -329,7 +324,26 @@ public class M3UAShellExecutor implements ShellExecutor {
 						return M3UAOAMMessages.INVALID_COMMAND;
 					}
 
-					AspFactory factory = this.m3uaManagement.createAspFactory(aspname, assocName);
+					AspFactory factory = null;
+					if (args.length == 5) {
+						factory = this.m3uaManagement.createAspFactory(aspname, assocName);
+					} else {
+						int count = 5;
+						while (count < args.length) {
+							String key = args[count++];
+							if (key == null) {
+								return M3UAOAMMessages.INVALID_COMMAND;
+							}
+
+							if (key.equals("aspid")) {
+								long aspid = Long.parseLong(args[count++]);
+								factory = this.m3uaManagement.createAspFactory(aspname, assocName, aspid);
+							} else {
+								return M3UAOAMMessages.INVALID_COMMAND;
+							}
+						}
+
+					}
 					return String.format(M3UAOAMMessages.CREATE_ASP_SUCESSFULL, factory.getName());
 				} else if (raspCmd.equals("destroy")) {
 					if (args.length < 4) {
@@ -440,10 +454,20 @@ public class M3UAShellExecutor implements ShellExecutor {
 	public String execute(String[] args) {
 		if (args[0].equals("m3ua")) {
 			return this.executeM3UA(args);
-		} else if (args[0].equals("sctp")) {
-			return this.sctpShellExecutor.execute(args);
 		}
 		return M3UAOAMMessages.INVALID_COMMAND;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.ss7.management.console.ShellExecutor#handles(java.lang.
+	 * String)
+	 */
+	@Override
+	public boolean handles(String command) {
+		return (command.startsWith("m3ua"));
 	}
 
 }

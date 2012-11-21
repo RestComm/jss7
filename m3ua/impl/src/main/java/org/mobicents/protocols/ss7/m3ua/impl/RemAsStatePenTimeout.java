@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,18 +19,18 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import javolution.util.FastList;
 import javolution.util.FastSet;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.m3ua.Asp;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.StateEventHandler;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSMState;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSMStateEventHandler;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.UnknownTransitionException;
 import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
 import org.mobicents.protocols.ss7.m3ua.message.MessageType;
@@ -38,22 +38,22 @@ import org.mobicents.protocols.ss7.m3ua.message.mgmt.Notify;
 import org.mobicents.protocols.ss7.m3ua.parameter.Status;
 
 /**
- * {@link RemAsStatePenTimeout#onEvent(State)} is called when the pending timer
+ * {@link RemAsStatePenTimeout#onEvent(FSMState)} is called when the pending timer
  * T(r) expires.
  * 
  * @author amit bhayani
  * 
  */
-public class RemAsStatePenTimeout implements StateEventHandler {
+public class RemAsStatePenTimeout implements FSMStateEventHandler {
 
-	private As as;
+	private AsImpl asImpl;
 	private FSM fsm;
 	private static final Logger logger = Logger.getLogger(RemAsStatePenTimeout.class);
 
 	boolean inactive = false;
 
-	public RemAsStatePenTimeout(As as, FSM fsm) {
-		this.as = as;
+	public RemAsStatePenTimeout(AsImpl asImpl, FSM fsm) {
+		this.asImpl = asImpl;
 		this.fsm = fsm;
 	}
 
@@ -72,16 +72,16 @@ public class RemAsStatePenTimeout implements StateEventHandler {
 	 * one ASP is in ASP-INACTIVE; otherwise, it will move to AS-DOWN state.
 	 * </p>
 	 */
-	public void onEvent(State state) {
+	public void onEvent(FSMState state) {
 		this.inactive = false;
 
 		// Clear the Pending Queue for this As
-		this.as.clearPendingQueue();
+		this.asImpl.clearPendingQueue();
 
 		// check if there are any ASP's who are INACTIVE, transition to
 		// INACTIVE else DOWN
-		for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n.getNext()) != end;) {
-			Asp remAspImpl = n.getValue();
+		for (FastList.Node<Asp> n = this.asImpl.appServerProcs.head(), end = this.asImpl.appServerProcs.tail(); (n = n.getNext()) != end;) {
+			AspImpl remAspImpl = (AspImpl)n.getValue();
 			
 			FSM aspPeerFSM = remAspImpl.getPeerFSM();
 			AspState aspState = AspState.getState(aspPeerFSM.getState().getName());
@@ -94,7 +94,7 @@ public class RemAsStatePenTimeout implements StateEventHandler {
 						inactive = true;
 					}
 					
-					if(this.as.getFunctionality() != Functionality.IPSP){
+					if(this.asImpl.getFunctionality() != Functionality.IPSP){
 						Notify msg = createNotify(remAspImpl);
 						remAspImpl.getAspFactory().write(msg);
 					}
@@ -117,24 +117,24 @@ public class RemAsStatePenTimeout implements StateEventHandler {
 		}
 		
 		//We want to pass MTP3 PAUSE only for SE. If its DE the peer transition handler will take care of MTP3 PAUSE
-		if(as.getExchangeType() == ExchangeType.SE){
-			FastSet<AsStateListener> asStateListeners = this.as.getAsStateListeners();
+		if(asImpl.getExchangeType() == ExchangeType.SE){
+			FastSet<AsStateListener> asStateListeners = this.asImpl.getAsStateListeners();
 			for (FastSet.Record r = asStateListeners.head(), end = asStateListeners.tail(); (r = r.getNext()) != end;) {
 				AsStateListener asAsStateListener = asStateListeners.valueOf(r);
 				try {
-					asAsStateListener.onAsInActive(this.as);
+					asAsStateListener.onAsInActive(this.asImpl);
 				} catch (Exception e) {
 					logger.error(String.format("Error while calling AsStateListener=%s onAsInActive method for As=%s",
-							asAsStateListener, this.as));
+							asAsStateListener, this.asImpl));
 				}
 			}
 		}
 	}
 
-	private Notify createNotify(Asp remAsp) {
-		Notify msg = (Notify) this.as.getMessageFactory().createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
+	private Notify createNotify(AspImpl remAsp) {
+		Notify msg = (Notify) this.asImpl.getMessageFactory().createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
 
-		Status status = this.as.getParameterFactory().createStatus(Status.STATUS_AS_State_Change,
+		Status status = this.asImpl.getParameterFactory().createStatus(Status.STATUS_AS_State_Change,
 				Status.INFO_AS_INACTIVE);
 		msg.setStatus(status);
 
@@ -142,7 +142,7 @@ public class RemAsStatePenTimeout implements StateEventHandler {
 			msg.setASPIdentifier(remAsp.getASPIdentifier());
 		}
 
-		msg.setRoutingContext(this.as.getRoutingContext());
+		msg.setRoutingContext(this.asImpl.getRoutingContext());
 
 		return msg;
 	}

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -42,8 +42,8 @@ public class TCUnidentifiedMessage implements Encodable {
 	public static final int _TAG_DTX = 0x09;
 
 	// mandatory
-	private Long originatingTransactionId;
-	private Long destinationTransactionId;
+	private byte[] originatingTransactionId;
+	private byte[] destinationTransactionId;
 
 	/**
 	 * 
@@ -51,11 +51,11 @@ public class TCUnidentifiedMessage implements Encodable {
 	public TCUnidentifiedMessage() {
 	}
 
-	public Long getOriginatingTransactionId() {
+	public byte[] getOriginatingTransactionId() {
 		return originatingTransactionId;
 	}
 
-	public Long getDestinationTransactionId() {
+	public byte[] getDestinationTransactionId() {
 		return destinationTransactionId;
 	}
 
@@ -72,7 +72,8 @@ public class TCUnidentifiedMessage implements Encodable {
 				return;
 			}
 
-			this.originatingTransactionId = Utils.readTransactionId(localAis);
+//			this.originatingTransactionId = Utils.readTransactionId(localAis);
+			this.originatingTransactionId = localAis.readOctetString();
 
 			if (localAis.available() > 0) {
 				tag = localAis.readTag();
@@ -81,7 +82,8 @@ public class TCUnidentifiedMessage implements Encodable {
 					return;
 				}
 
-				this.destinationTransactionId = Utils.readTransactionId(localAis);
+//				this.destinationTransactionId = Utils.readTransactionId(localAis);
+				this.destinationTransactionId = localAis.readOctetString();
 			}
 
 		} catch (IOException e) {

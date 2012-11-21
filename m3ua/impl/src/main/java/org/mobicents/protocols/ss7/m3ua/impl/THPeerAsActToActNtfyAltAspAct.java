@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,12 +19,11 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSMState;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.UnknownTransitionException;
 
@@ -40,16 +39,16 @@ public class THPeerAsActToActNtfyAltAspAct implements TransitionHandler {
 
 	private static final Logger logger = Logger.getLogger(THPeerAsActToActNtfyAltAspAct.class);
 
-	private As as = null;
+	private AsImpl asImpl = null;
 	private FSM fsm;
 
-	public THPeerAsActToActNtfyAltAspAct(As as, FSM fsm) {
-		this.as = as;
+	public THPeerAsActToActNtfyAltAspAct(AsImpl asImpl, FSM fsm) {
+		this.asImpl = asImpl;
 		this.fsm = fsm;
 	}
 
-	public boolean process(State state) {
-		Asp causeAsp = (Asp) this.fsm.getAttribute(As.ATTRIBUTE_ASP);
+	public boolean process(FSMState state) {
+		AspImpl causeAsp = (AspImpl) this.fsm.getAttribute(AsImpl.ATTRIBUTE_ASP);
 
 		try {
 			FSM aspLocalFSM = causeAsp.getLocalFSM();

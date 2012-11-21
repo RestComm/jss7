@@ -25,10 +25,16 @@ package org.mobicents.protocols.ss7.map.api.service.mobility;
 import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancelLocationRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancelLocationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.InsertSubscriberDataRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.InsertSubscriberDataResponse;
 
 /**
  * 
@@ -40,13 +46,23 @@ public interface MAPServiceMobilityListener extends MAPServiceListener {
 	// -- Location Management Service
 	public void onUpdateLocationRequest(UpdateLocationRequest ind);
 	public void onUpdateLocationResponse(UpdateLocationResponse ind);
+	public void onCancelLocationRequest(CancelLocationRequest request);
+	public void onCancelLocationResponse(CancelLocationResponse response);
 
 	// -- Authentication management services
 	public void onSendAuthenticationInfoRequest(SendAuthenticationInfoRequest ind);
 	public void onSendAuthenticationInfoResponse(SendAuthenticationInfoResponse ind);
-	
+
 	// -- Subscriber Information services
 	public void onAnyTimeInterrogationRequest(AnyTimeInterrogationRequest request);
 	public void onAnyTimeInterrogationResponse(AnyTimeInterrogationResponse response);
+
+	// -- Subscriber Management services
+	public void onInsertSubscriberDataRequest(InsertSubscriberDataRequest request);
+	public void onInsertSubscriberDataResponse(InsertSubscriberDataResponse request);
+
+	// -- International mobile equipment identities management services
+	public void onCheckImeiRequest(CheckImeiRequest request);
+	public void onCheckImeiResponse(CheckImeiResponse response);
 
 }

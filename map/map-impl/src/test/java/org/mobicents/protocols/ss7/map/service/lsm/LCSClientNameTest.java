@@ -40,6 +40,8 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSFormatIndicator;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
@@ -70,10 +72,18 @@ public class LCSClientNameTest {
 	public void tearDown() {
 	}
 
+	public byte[] getData() {
+		return new byte[] { 0x30, 0x13, (byte) 0x80, 0x01, 0x0f, (byte) 0x82, 0x0e, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65, 0x6e, 0x72,
+				(byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
+	}
+
+	public byte[] getDataFull() {
+		return new byte[] { 48, 22, -128, 1, 15, -126, 14, 110, 114, -5, 28, -122, -61, 101, 110, 114, -5, 28, -122, -61, 101, -125, 1, 2 };
+	}
+	
 	@Test(groups = { "functional.decode","service.lsm"})
 	public void testDecode() throws Exception {
-		byte[] data = new byte[] { 0x30, 0x13, (byte) 0x80, 0x01, 0x0f, (byte) 0x82, 0x0e, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65, 0x6e, 0x72,
-				(byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
+		byte[] data = getData();
 
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
@@ -81,24 +91,49 @@ public class LCSClientNameTest {
 		LCSClientNameImpl lcsClientName = new LCSClientNameImpl();
 		lcsClientName.decodeAll(asn);
 
-		assertEquals( lcsClientName.getDataCodingScheme(),(byte) 0x0f);
+		assertEquals(lcsClientName.getDataCodingScheme().getCode(), 0x0f);
 		assertNotNull(lcsClientName.getNameString());
-		assertEquals( lcsClientName.getNameString().getString(),"ndmgapp2ndmgapp2");
+		assertTrue(lcsClientName.getNameString().getString(null).equals("ndmgapp2ndmgapp2"));
 
 		assertNull(lcsClientName.getLCSFormatIndicator());
+
+	
+		data = getDataFull();
+
+		asn = new AsnInputStream(data);
+		tag = asn.readTag();
+
+		lcsClientName = new LCSClientNameImpl();
+		lcsClientName.decodeAll(asn);
+
+		assertEquals(lcsClientName.getDataCodingScheme().getCode(), 0x0f);
+		assertNotNull(lcsClientName.getNameString());
+		assertTrue(lcsClientName.getNameString().getString(null).equals("ndmgapp2ndmgapp2"));
+
+		assertEquals(lcsClientName.getLCSFormatIndicator(), LCSFormatIndicator.msisdn);
 	}
 
 	@Test(groups = { "functional.encode","service.lsm"})
 	public void testEncode() throws Exception {
-		byte[] data = new byte[] { 0x30, 0x13, (byte) 0x80, 0x01, 0x0f, (byte) 0x82, 0x0e, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65, 0x6e, 0x72,
-				(byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
+		byte[] data = getData();
 
 		USSDString nameString = MAPParameterFactory.createUSSDString("ndmgapp2ndmgapp2");
-		LCSClientNameImpl lcsClientName = new LCSClientNameImpl((byte) 0x0f, nameString, null);
+		LCSClientNameImpl lcsClientName = new LCSClientNameImpl(new CBSDataCodingSchemeImpl(0x0f), nameString, null);
 		AsnOutputStream asnOS = new AsnOutputStream();
 		lcsClientName.encodeAll(asnOS, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 		
 		byte[] encodedData = asnOS.toByteArray();
+
+		assertTrue( Arrays.equals(data,encodedData));
+
+	
+		data = getDataFull();
+
+		lcsClientName = new LCSClientNameImpl(new CBSDataCodingSchemeImpl(0x0f), nameString, LCSFormatIndicator.msisdn);
+		asnOS = new AsnOutputStream();
+		lcsClientName.encodeAll(asnOS, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+		
+		encodedData = asnOS.toByteArray();
 
 		assertTrue( Arrays.equals(data,encodedData));
 	}
@@ -106,7 +141,7 @@ public class LCSClientNameTest {
 	@Test(groups = { "functional.serialize", "service.lsm" })
 	public void testSerialization() throws Exception {
 		USSDString nameString = MAPParameterFactory.createUSSDString("ndmgapp2ndmgapp2");
-		LCSClientNameImpl original = new LCSClientNameImpl((byte) 0x0f, nameString, null);
+		LCSClientNameImpl original = new LCSClientNameImpl(new CBSDataCodingSchemeImpl(0x0f), nameString, null);
 
 		// serialize
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -122,8 +157,8 @@ public class LCSClientNameTest {
 		LCSClientNameImpl copy = (LCSClientNameImpl) o;
 		
 		//test result
-		assertEquals(copy.getDataCodingScheme(), original.getDataCodingScheme());
-		assertEquals(copy.getNameString().getString(), original.getNameString().getString());
+		assertEquals(copy.getDataCodingScheme().getCode(), original.getDataCodingScheme().getCode());
+		assertEquals(copy.getNameString().getString(null), original.getNameString().getString(null));
 		assertEquals(copy.getLCSFormatIndicator(), original.getLCSFormatIndicator());
 	}
 }

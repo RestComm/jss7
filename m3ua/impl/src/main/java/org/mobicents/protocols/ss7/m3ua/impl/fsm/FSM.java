@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -39,23 +39,23 @@ public class FSM extends M3UATask {
     private String name;
 
     // first and last states in fsm
-    protected State start;
-    protected State end;
+    protected FSMState start;
+    protected FSMState end;
 
     // intermediate states
-    private FastMap<String, State> states = new FastMap<String, State>();
+    private FastMap<String, FSMState> states = new FastMap<String, FSMState>();
 
-    protected State currentState;
+    protected FSMState currentState;
 
     private FastMap attributes = new FastMap();
 
-    private State oldState;
+    private FSMState oldState;
 
     public FSM(String name) {
         this.name = name;
     }
 
-    public State getState() {
+    public FSMState getState() {
         return currentState;
     }
 
@@ -72,8 +72,8 @@ public class FSM extends M3UATask {
         this.end = states.get(name);
     }
 
-    public State createState(String name) {
-        State s = new State(this, name);
+    public FSMState createState(String name) {
+        FSMState s = new FSMState(this, name);
         states.put(name, s);
         return s;
     }

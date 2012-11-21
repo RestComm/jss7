@@ -22,7 +22,6 @@
 package org.mobicents.protocols.ss7.map.service.supplementary;
 
 import static org.testng.Assert.*;
-import org.testng.*;
 import org.testng.annotations.*;
 
 import java.util.Arrays;
@@ -30,7 +29,9 @@ import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
 
 /**
@@ -67,13 +68,13 @@ public class UnstructuredSSRequestTest {
 
 		UnstructuredSSRequestImpl addNum = new UnstructuredSSRequestImpl();
 		addNum.decodeAll(asn);
-		byte dataCodingScheme = addNum.getUSSDDataCodingScheme();
-		assertEquals( dataCodingScheme,(byte) 0x0f);
+		CBSDataCodingScheme dataCodingScheme = addNum.getDataCodingScheme();
+		assertEquals( dataCodingScheme.getCode(), 0x0f);
 
 		USSDString ussdString = addNum.getUSSDString();
 		assertNotNull(ussdString);
 
-		assertEquals( ussdString.getString(),"USSD String : Hello World <CR> 1. Balance <CR> 2. Texts Remaining");
+		assertEquals( ussdString.getString(null),"USSD String : Hello World <CR> 1. Balance <CR> 2. Texts Remaining");
 
 	}
 
@@ -85,8 +86,8 @@ public class UnstructuredSSRequestTest {
 				0x28, (byte) 0xf5, (byte) 0x81, 0x64, 0x2e, 0x10, (byte) 0xb5, (byte) 0x8c, (byte) 0xa7, (byte) 0xcf, 0x41, (byte) 0xd2, 0x72, 0x3b,
 				(byte) 0x9c, 0x76, (byte) 0xa7, (byte) 0xdd, 0x67 };
 
-		USSDString ussdStr = new USSDStringImpl("USSD String : Hello World <CR> 1. Balance <CR> 2. Texts Remaining", null);
-		UnstructuredSSRequestImpl addNum = new UnstructuredSSRequestImpl((byte) 0x0f, ussdStr, null, null);
+		USSDString ussdStr = new USSDStringImpl("USSD String : Hello World <CR> 1. Balance <CR> 2. Texts Remaining", null, null);
+		UnstructuredSSRequestImpl addNum = new UnstructuredSSRequestImpl(new CBSDataCodingSchemeImpl(0x0f), ussdStr, null, null);
 
 		AsnOutputStream asnOS = new AsnOutputStream();
 		addNum.encodeAll(asnOS);

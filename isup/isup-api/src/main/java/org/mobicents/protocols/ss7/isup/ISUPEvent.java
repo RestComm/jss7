@@ -32,22 +32,28 @@ import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
  *
  */
 public class ISUPEvent extends EventObject{
-
 	
 	protected final ISUPMessage message;
+	private int dpc;
 	
 	/**
 	 * @param message
 	 * @param circuit
 	 */
-	public ISUPEvent(Object source,ISUPMessage message) {
+	public ISUPEvent(Object source,ISUPMessage message,int dpc) {
 		super(source);
 		this.message = message;
-	
+		this.dpc=dpc;
 	}
+	
 	public ISUPMessage getMessage() {
 		return message;
 	}
+	
+	public int getDpc() {
+		return dpc;
+	}
+	
 	@Override
 	public String toString() {
 		return "ISUPEvent [messageCode=" + message.getMessageType().getCode() + "]";

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -25,8 +25,10 @@ package org.mobicents.ss7.hardware.dahdi;
 import java.io.IOException;
 
 import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitiveFactory;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPartListener;
+import org.mobicents.protocols.ss7.mtp.RoutingLabelFormat;
 
 /**
  *
@@ -58,5 +60,46 @@ public class DahdiMtp3UserPart implements Mtp3UserPart {
 		// TODO Auto-generated method stub
 		
 	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#getMtp3TransferPrimitiveFactory()
+	 */
+	@Override
+	public Mtp3TransferPrimitiveFactory getMtp3TransferPrimitiveFactory() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#getRoutingLabelFormat()
+	 */
+	@Override
+	public RoutingLabelFormat getRoutingLabelFormat() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.protocols.ss7.mtp.Mtp3UserPart#setRoutingLabelFormat(org.mobicents.protocols.ss7.mtp.RoutingLabelFormat)
+	 */
+	@Override
+	public void setRoutingLabelFormat(RoutingLabelFormat arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean isUseLsbForLinksetSelection() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setUseLsbForLinksetSelection(boolean arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
 
 }

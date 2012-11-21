@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,11 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.functional;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.fail;
+import static org.testng.Assert.*;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -38,6 +34,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.BitSetStrictLength;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.map.MAPProviderImpl;
 import org.mobicents.protocols.ss7.map.MAPStackImpl;
@@ -48,6 +45,7 @@ import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPStack;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
@@ -62,12 +60,34 @@ import org.mobicents.protocols.ss7.map.api.errors.SMEnumeratedDeliveryFailureCau
 import org.mobicents.protocols.ss7.map.api.primitives.AdditionalNumberType;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
+import org.mobicents.protocols.ss7.map.api.primitives.EMLPPPriority;
+import org.mobicents.protocols.ss7.map.api.primitives.ExtExternalSignalInfo;
+import org.mobicents.protocols.ss7.map.api.primitives.ExternalSignalInfo;
+import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.CallReferenceNumber;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.MAPDialogCallHandling;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.ProvideRoamingNumberRequest;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.ProvideRoamingNumberResponse;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ExtGeographicalInformation;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSEvent;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSLocationInfo;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LocationEstimateType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.MAPDialogLsm;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationRequest;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationResponse;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SendRoutingInfoForLCSRequest;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SendRoutingInfoForLCSResponse;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberLocationReportRequest;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberLocationReportResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPDialogMobility;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationSetList;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationTriplet;
@@ -75,9 +95,29 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.Reque
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.TripletList;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.EquipmentStatus;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIu;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIuA;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIuB;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancelLocationRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancelLocationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancellationType;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.IMSIWithLMSI;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PagingArea;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.TypeOfUpdate;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberState;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberStateChoice;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OfferedCamel4CSIs;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequest;
 import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageRequest;
 import org.mobicents.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
@@ -105,12 +145,16 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSR
 import org.mobicents.protocols.ss7.map.api.smstpdu.NumberingPlanIdentification;
 import org.mobicents.protocols.ss7.map.api.smstpdu.SmsSubmitTpdu;
 import org.mobicents.protocols.ss7.map.api.smstpdu.TypeOfNumber;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
+import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.TripletListTest;
+import org.mobicents.protocols.ss7.map.service.mobility.imei.CheckImeiRequestImpl;
 import org.mobicents.protocols.ss7.map.service.sms.SmsSignalInfoImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.ProcessUnstructuredSSResponseImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.api.MessageType;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.comp.GeneralProblemType;
@@ -141,7 +185,7 @@ public class MAPFunctionalTest extends SccpHarness {
 	protected static final String USSD_FINAL_RESPONSE = "Thank you";
 
 	private static final int _TCAP_DIALOG_RELEASE_TIMEOUT = 0;
-	private static final int _WAIT_TIMEOUT = _TCAP_DIALOG_RELEASE_TIMEOUT + 200;
+	private static final int _WAIT_TIMEOUT = _TCAP_DIALOG_RELEASE_TIMEOUT + 500;
 
 	private MAPStackImpl stack1;
 	private MAPStackImpl stack2;
@@ -165,7 +209,7 @@ public class MAPFunctionalTest extends SccpHarness {
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@BeforeMethod
-	public void setUp() {
+	public void setUp() throws Exception {
 		// this.setupLog4j();
 		System.out.println("setUpTest");
 
@@ -242,18 +286,18 @@ public class MAPFunctionalTest extends SccpHarness {
 			public void onUnstructuredSSRequest(UnstructuredSSRequest unstrReqInd) {
 				super.onUnstructuredSSRequest(unstrReqInd);
 
-				String ussdString = unstrReqInd.getUSSDString().getString();
-				AddressString msisdn = unstrReqInd.getMSISDNAddressString();
-				this.debug("Received UnstructuredSSRequestIndication " + ussdString);
-
-				assertEquals(MAPFunctionalTest.USSD_MENU, ussdString);
-
-				MAPDialogSupplementary mapDialog = unstrReqInd.getMAPDialog();
-				Long invokeId = unstrReqInd.getInvokeId();
-
-				USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_RESPONSE);
 				try {
-					mapDialog.addUnstructuredSSResponse(invokeId, (byte) 0x0F, ussdStringObj);
+					String ussdString = unstrReqInd.getUSSDString().getString(null);
+					AddressString msisdn = unstrReqInd.getMSISDNAddressString();
+					this.debug("Received UnstructuredSSRequestIndication " + ussdString);
+
+					assertEquals(MAPFunctionalTest.USSD_MENU, ussdString);
+
+					MAPDialogSupplementary mapDialog = unstrReqInd.getMAPDialog();
+					Long invokeId = unstrReqInd.getInvokeId();
+
+					USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_RESPONSE);
+					mapDialog.addUnstructuredSSResponse(invokeId, new CBSDataCodingSchemeImpl(0x0f), ussdStringObj);
 				} catch (MAPException e) {
 					this.error("Erro while trying to send UnstructuredSSResponse", e);
 					fail("Erro while trying to add UnstructuredSSResponse");
@@ -290,16 +334,16 @@ public class MAPFunctionalTest extends SccpHarness {
 			@Override
 			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
-				String ussdString = procUnstrReqInd.getUSSDString().getString();
-				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
-				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
-				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
-				MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
-				processUnstructuredSSRequestInvokeId = procUnstrReqInd.getInvokeId();
-				this.debug("InvokeId =  " + processUnstructuredSSRequestInvokeId);
-				USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_MENU);
 				try {
-					mapDialog.addUnstructuredSSRequest((byte) 0x0F, ussdStringObj, null, null);
+					String ussdString = procUnstrReqInd.getUSSDString().getString(null);
+					AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+					this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+					assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+					MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
+					processUnstructuredSSRequestInvokeId = procUnstrReqInd.getInvokeId();
+					this.debug("InvokeId =  " + processUnstructuredSSRequestInvokeId);
+					USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_MENU);
+					mapDialog.addUnstructuredSSRequest(new CBSDataCodingSchemeImpl(0x0f), ussdStringObj, null, null);
 				} catch (MAPException e) {
 					this.error("Error while trying to send UnstructuredSSRequest", e);
 					fail("Erro while trying to add UnstructuredSSRequest");
@@ -309,13 +353,13 @@ public class MAPFunctionalTest extends SccpHarness {
 			@Override
 			public void onUnstructuredSSResponse(UnstructuredSSResponse unstrResInd) {
 				super.onUnstructuredSSResponse(unstrResInd);
-				String ussdString = unstrResInd.getUSSDString().getString();
-				logger.debug("Received UnstructuredSSResponse " + ussdString);
-				assertEquals(MAPFunctionalTest.USSD_RESPONSE, ussdString);
-				MAPDialogSupplementary mapDialog = unstrResInd.getMAPDialog();
-				USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_FINAL_RESPONSE);
 				try {
-					mapDialog.addProcessUnstructuredSSResponse(processUnstructuredSSRequestInvokeId, (byte) 0x0F, ussdStringObj);
+					String ussdString = unstrResInd.getUSSDString().getString(null);
+					logger.debug("Received UnstructuredSSResponse " + ussdString);
+					assertEquals(MAPFunctionalTest.USSD_RESPONSE, ussdString);
+					MAPDialogSupplementary mapDialog = unstrResInd.getMAPDialog();
+					USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_FINAL_RESPONSE);
+					mapDialog.addProcessUnstructuredSSResponse(processUnstructuredSSRequestInvokeId, new CBSDataCodingSchemeImpl(0x0f), ussdStringObj);
 				} catch (MAPException e) {
 					logger.error(e);
 					fail("Erro while trying to add ProcessUnstructuredSSResponse");
@@ -428,18 +472,18 @@ public class MAPFunctionalTest extends SccpHarness {
 			public void onUnstructuredSSRequest(UnstructuredSSRequest unstrReqInd) {
 				super.onUnstructuredSSRequest(unstrReqInd);
 
-				String ussdString = unstrReqInd.getUSSDString().getString();
-				AddressString msisdn = unstrReqInd.getMSISDNAddressString();
-				this.debug("Received UnstructuredSSRequestIndication " + ussdString);
-
-				assertEquals(MAPFunctionalTest.USSD_MENU, ussdString);
-
-				MAPDialogSupplementary mapDialog = unstrReqInd.getMAPDialog();
-				Long invokeId = unstrReqInd.getInvokeId();
-
-				USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_RESPONSE);
 				try {
-					mapDialog.addUnstructuredSSResponse(invokeId, (byte) 0x0F, ussdStringObj);
+					String ussdString = unstrReqInd.getUSSDString().getString(null);
+					AddressString msisdn = unstrReqInd.getMSISDNAddressString();
+					this.debug("Received UnstructuredSSRequestIndication " + ussdString);
+
+					assertEquals(MAPFunctionalTest.USSD_MENU, ussdString);
+
+					MAPDialogSupplementary mapDialog = unstrReqInd.getMAPDialog();
+					Long invokeId = unstrReqInd.getInvokeId();
+
+					USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_RESPONSE);
+					mapDialog.addUnstructuredSSResponse(invokeId, new CBSDataCodingSchemeImpl(0x0f), ussdStringObj);
 				} catch (MAPException e) {
 					this.error("Erro while trying to send UnstructuredSSResponse", e);
 					fail("Erro while trying to add UnstructuredSSResponse");
@@ -476,16 +520,16 @@ public class MAPFunctionalTest extends SccpHarness {
 			@Override
 			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
-				String ussdString = procUnstrReqInd.getUSSDString().getString();
-				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
-				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
-				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
-				MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
-				processUnstructuredSSRequestInvokeId = procUnstrReqInd.getInvokeId();
-				this.debug("InvokeId =  " + processUnstructuredSSRequestInvokeId);
-				USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_MENU);
 				try {
-					mapDialog.addUnstructuredSSRequest((byte) 0x0F, ussdStringObj, null, null);
+					String ussdString = procUnstrReqInd.getUSSDString().getString(null);
+					AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+					this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+					assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+					MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
+					processUnstructuredSSRequestInvokeId = procUnstrReqInd.getInvokeId();
+					this.debug("InvokeId =  " + processUnstructuredSSRequestInvokeId);
+					USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_MENU);
+					mapDialog.addUnstructuredSSRequest(new CBSDataCodingSchemeImpl(0x0f), ussdStringObj, null, null);
 				} catch (MAPException e) {
 					this.error("Error while trying to send UnstructuredSSRequest", e);
 					fail("Erro while trying to add UnstructuredSSRequest");
@@ -495,13 +539,13 @@ public class MAPFunctionalTest extends SccpHarness {
 			@Override
 			public void onUnstructuredSSResponse(UnstructuredSSResponse unstrResInd) {
 				super.onUnstructuredSSResponse(unstrResInd);
-				String ussdString = unstrResInd.getUSSDString().getString();
-				logger.debug("Received UnstructuredSSResponse " + ussdString);
-				assertEquals(MAPFunctionalTest.USSD_RESPONSE, ussdString);
-				MAPDialogSupplementary mapDialog = unstrResInd.getMAPDialog();
-				USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_FINAL_RESPONSE);
 				try {
-					mapDialog.addProcessUnstructuredSSResponse(processUnstructuredSSRequestInvokeId, (byte) 0x0F, ussdStringObj);
+					String ussdString = unstrResInd.getUSSDString().getString(null);
+					logger.debug("Received UnstructuredSSResponse " + ussdString);
+					assertEquals(MAPFunctionalTest.USSD_RESPONSE, ussdString);
+					MAPDialogSupplementary mapDialog = unstrResInd.getMAPDialog();
+					USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_FINAL_RESPONSE);
+					mapDialog.addProcessUnstructuredSSResponse(processUnstructuredSSRequestInvokeId, new CBSDataCodingSchemeImpl(0x0f), ussdStringObj);
 				} catch (MAPException e) {
 					logger.error(e);
 					fail("Erro while trying to add ProcessUnstructuredSSResponse");
@@ -601,6 +645,8 @@ public class MAPFunctionalTest extends SccpHarness {
 				super.onDialogReject(mapDialog, refuseReason, providerError, alternativeApplicationContext, extensionContainer);
 				assertEquals(refuseReason, MAPRefuseReason.InvalidDestinationReference);
 				assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+
+				assertEquals(mapDialog.getTCAPMessageType(), MessageType.Abort);
 			}
 		};
 
@@ -608,10 +654,16 @@ public class MAPFunctionalTest extends SccpHarness {
 			@Override
 			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
-				String ussdString = procUnstrReqInd.getUSSDString().getString();
-				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
-				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
-				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+				String ussdString;
+				try {
+					ussdString = procUnstrReqInd.getUSSDString().getString(null);
+					AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+					this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+					assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+				} catch (MAPException e) {
+					this.error("Error while trying to parse ussdString", e);
+					fail("Erro while trying to parse ussdString");
+				}
 
 			}
 
@@ -687,6 +739,7 @@ public class MAPFunctionalTest extends SccpHarness {
 				assertEquals(refuseReason, MAPRefuseReason.ApplicationContextNotSupported);
 				assertNotNull(alternativeApplicationContext);
 				assertTrue(Arrays.equals(alternativeApplicationContext.getOid(), new long[] { 1, 2, 3 }));
+				assertEquals(mapDialog.getTCAPMessageType(), MessageType.Abort);
 			}
 		};
 
@@ -732,11 +785,17 @@ public class MAPFunctionalTest extends SccpHarness {
 			public void onUnstructuredSSRequest(UnstructuredSSRequest unstrReqInd) {
 				super.onUnstructuredSSRequest(unstrReqInd);
 
-				String ussdString = unstrReqInd.getUSSDString().getString();
-				AddressString msisdn = unstrReqInd.getMSISDNAddressString();
-				this.debug("Received UnstructuredSSRequestIndication " + ussdString);
+				String ussdString;
+				try {
+					ussdString = unstrReqInd.getUSSDString().getString(null);
+					AddressString msisdn = unstrReqInd.getMSISDNAddressString();
+					this.debug("Received UnstructuredSSRequestIndication " + ussdString);
 
-				assertEquals(MAPFunctionalTest.USSD_MENU, ussdString);
+					assertEquals(MAPFunctionalTest.USSD_MENU, ussdString);
+				} catch (MAPException e) {
+					this.error("Error while trying to parse ussdString", e);
+					fail("Error while trying to parse ussdString");
+				}
 			}
 
 			@Override
@@ -760,14 +819,14 @@ public class MAPFunctionalTest extends SccpHarness {
 			@Override
 			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
-				String ussdString = procUnstrReqInd.getUSSDString().getString();
-				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
-				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
-				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
-				MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
-				USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_MENU);
 				try {
-					mapDialog.addUnstructuredSSRequest((byte) 0x0F, ussdStringObj, null, null);
+					String ussdString = procUnstrReqInd.getUSSDString().getString(null);
+					AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+					this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+					assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+					MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
+					USSDString ussdStringObj = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_MENU);
+					mapDialog.addUnstructuredSSRequest(new CBSDataCodingSchemeImpl(0x0f), ussdStringObj, null, null);
 					this.observerdEvents.add(TestEvent.createSentEvent(EventType.UnstructuredSSRequestIndication, null, sequence++));
 					mapDialog.send();
 				} catch (MAPException e) {
@@ -782,6 +841,7 @@ public class MAPFunctionalTest extends SccpHarness {
 				assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
 				assertTrue(userReason.isProcedureCancellationReason());
 				assertEquals(ProcedureCancellationReason.handoverCancellation, userReason.getProcedureCancellationReason());
+				assertEquals(mapDialog.getTCAPMessageType(), MessageType.Abort);
 			}
 
 		};
@@ -855,6 +915,7 @@ public class MAPFunctionalTest extends SccpHarness {
 				this.debug("Received DialogProviderAbort " + abortProviderReason.toString());
 				assertEquals(abortProviderReason, MAPAbortProviderReason.InvalidPDU);
 				assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+				assertEquals(mapDialog.getTCAPMessageType(), MessageType.Abort);
 			}
 
 		};
@@ -922,10 +983,16 @@ public class MAPFunctionalTest extends SccpHarness {
 			@Override
 			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
-				String ussdString = procUnstrReqInd.getUSSDString().getString();
-				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
-				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
-				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+				String ussdString;
+				try {
+					ussdString = procUnstrReqInd.getUSSDString().getString(null);
+					AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+					this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+					assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+				} catch (MAPException e) {
+					this.error("Error while trying to parse ussdString", e);
+					fail("Error while trying to parse ussdString");
+				}
 			}
 
 			@Override
@@ -1015,13 +1082,13 @@ public class MAPFunctionalTest extends SccpHarness {
 			@Override
 			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
-				String ussdString = procUnstrReqInd.getUSSDString().getString();
-				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
-				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
-				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
-				MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
-				MAPErrorMessage msg = this.mapErrorMessageFactory.createMAPErrorMessageSystemFailure(2, null, null, null);
 				try {
+					String ussdString = procUnstrReqInd.getUSSDString().getString(null);
+					AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+					this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+					assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+					MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
+					MAPErrorMessage msg = this.mapErrorMessageFactory.createMAPErrorMessageSystemFailure(2, null, null, null);
 					mapDialog.sendErrorComponent(procUnstrReqInd.getInvokeId(), msg);
 				} catch (MAPException e) {
 					this.error("Error while trying to add Error Component", e);
@@ -1114,14 +1181,14 @@ public class MAPFunctionalTest extends SccpHarness {
 			@Override
 			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
-				String ussdString = procUnstrReqInd.getUSSDString().getString();
-				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
-				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
-				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
-				MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
-				MAPErrorMessage msg = this.mapErrorMessageFactory.createMAPErrorMessageSMDeliveryFailure(SMEnumeratedDeliveryFailureCause.scCongestion, null,
-						null);
 				try {
+					String ussdString = procUnstrReqInd.getUSSDString().getString(null);
+					AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+					this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+					assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+					MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
+					MAPErrorMessage msg = this.mapErrorMessageFactory.createMAPErrorMessageSMDeliveryFailure(SMEnumeratedDeliveryFailureCause.scCongestion, null,
+							null);
 					mapDialog.sendErrorComponent(procUnstrReqInd.getInvokeId(), msg);
 				} catch (MAPException e) {
 					this.error("Error while trying to add Error Component", e);
@@ -1214,10 +1281,16 @@ public class MAPFunctionalTest extends SccpHarness {
 			@Override
 			public void onProcessUnstructuredSSResponse(ProcessUnstructuredSSResponse procUnstrResponse) {
 				super.onProcessUnstructuredSSResponse(procUnstrResponse);
-				String ussdString = procUnstrResponse.getUSSDString().getString();
-				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
-				responseReceived++;
-				assertEquals(ussdString, "Your balance is 500");
+				String ussdString;
+				try {
+					ussdString = procUnstrResponse.getUSSDString().getString(null);
+					this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+					responseReceived++;
+					assertEquals(ussdString, "Your balance is 500");
+				} catch (MAPException e) {
+					this.error("Error while trying to parse ussdString", e);
+					fail("Error while trying to parse ussdString");
+				}
 
 			}
 
@@ -1236,10 +1309,16 @@ public class MAPFunctionalTest extends SccpHarness {
 			@Override
 			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
-				String ussdString = procUnstrReqInd.getUSSDString().getString();
-				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
-				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
-				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+				String ussdString;
+				try {
+					ussdString = procUnstrReqInd.getUSSDString().getString(null);
+					AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+					this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+					assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+				} catch (MAPException e1) {
+					this.error("Error while trying to parse ussdString", e1);
+					fail("Error while trying to parse ussdString");
+				}
 
 				MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
 
@@ -1253,11 +1332,12 @@ public class MAPFunctionalTest extends SccpHarness {
 				oc.setLocalOperationCode((long) MAPOperationCode.processUnstructuredSS_Request);
 				returnResult.setOperationCode(oc);
 
-				USSDString ussdStrObj = this.mapProvider.getMAPParameterFactory().createUSSDString("Your balance is 500");
-				byte ussdDataCodingScheme = (byte) 0x0F;
-				ProcessUnstructuredSSResponseImpl req = new ProcessUnstructuredSSResponseImpl(ussdDataCodingScheme, ussdStrObj);
-				AsnOutputStream aos = new AsnOutputStream();
 				try {
+					CBSDataCodingScheme ussdDataCodingScheme = new CBSDataCodingSchemeImpl(0x0f);
+					USSDString ussdStrObj = this.mapProvider.getMAPParameterFactory().createUSSDString("Your balance is 500", ussdDataCodingScheme, null);
+					ProcessUnstructuredSSResponseImpl req = new ProcessUnstructuredSSResponseImpl(ussdDataCodingScheme, ussdStrObj);
+					AsnOutputStream aos = new AsnOutputStream();
+
 					req.encodeData(aos);
 
 					Parameter p = ((MAPProviderImpl) this.mapProvider).getTCAPProvider().getComponentPrimitiveFactory().createParameter();
@@ -1285,7 +1365,7 @@ public class MAPFunctionalTest extends SccpHarness {
 					} else {
 						this.observerdEvents.add(TestEvent.createSentEvent(EventType.ProcessUnstructuredSSResponseIndication, null, sequence++));
 						USSDString ussdStrObj = this.mapProvider.getMAPParameterFactory().createUSSDString("Your balance is 500");
-						byte ussdDataCodingScheme = (byte) 0x0F;
+						CBSDataCodingScheme ussdDataCodingScheme = new CBSDataCodingSchemeImpl(0x0f);
 						((MAPDialogSupplementary) mapDialog).addProcessUnstructuredSSResponse(this.processUnstructuredSSRequestInvokeId, ussdDataCodingScheme,
 								ussdStrObj);
 
@@ -1384,14 +1464,15 @@ public class MAPFunctionalTest extends SccpHarness {
 			@Override
 			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
-				String ussdString = procUnstrReqInd.getUSSDString().getString();
-				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
-				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
-				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
-				MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
-
-				Problem problem = this.mapProvider.getMAPParameterFactory().createProblemInvoke(InvokeProblemType.DuplicateInvokeID);
 				try {
+					String ussdString = procUnstrReqInd.getUSSDString().getString(null);
+					AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+					this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+					assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+					MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
+
+					Problem problem = this.mapProvider.getMAPParameterFactory().createProblemInvoke(InvokeProblemType.DuplicateInvokeID);
+
 					mapDialog.sendRejectComponent(procUnstrReqInd.getInvokeId(), problem);
 				} catch (MAPException e) {
 					this.error("Error while trying to send Duplicate InvokeId Component", e);
@@ -1485,14 +1566,15 @@ public class MAPFunctionalTest extends SccpHarness {
 			@Override
 			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
-				String ussdString = procUnstrReqInd.getUSSDString().getString();
-				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
-				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
-				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
-				MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
-				MAPErrorMessage msg = this.mapErrorMessageFactory.createMAPErrorMessageSMDeliveryFailure(SMEnumeratedDeliveryFailureCause.scCongestion, null,
-						null);
 				try {
+					String ussdString = procUnstrReqInd.getUSSDString().getString(null);
+					AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+					this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+					assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+					MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
+					MAPErrorMessage msg = this.mapErrorMessageFactory.createMAPErrorMessageSMDeliveryFailure(SMEnumeratedDeliveryFailureCause.scCongestion, null,
+							null);
+
 					mapDialog.sendErrorComponent(procUnstrReqInd.getInvokeId(), msg);
 				} catch (MAPException e) {
 					this.error("Error while trying to add Error Component", e);
@@ -1584,14 +1666,15 @@ public class MAPFunctionalTest extends SccpHarness {
 			@Override
 			public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 				super.onProcessUnstructuredSSRequest(procUnstrReqInd);
-				String ussdString = procUnstrReqInd.getUSSDString().getString();
-				AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
-				this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
-				assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
-				MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
-
-				Problem problem = this.mapProvider.getMAPParameterFactory().createProblemGeneral(GeneralProblemType.MistypedComponent);
 				try {
+					String ussdString = procUnstrReqInd.getUSSDString().getString(null);
+					AddressString msisdn = procUnstrReqInd.getMSISDNAddressString();
+					this.debug("Received ProcessUnstructuredSSRequest " + ussdString);
+					assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
+					MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
+
+					Problem problem = this.mapProvider.getMAPParameterFactory().createProblemGeneral(GeneralProblemType.MistypedComponent);
+
 					mapDialog.sendRejectComponent(null, problem);
 				} catch (MAPException e) {
 					this.error("Error while trying to add Duplicate InvokeId Component", e);
@@ -1850,6 +1933,7 @@ public class MAPFunctionalTest extends SccpHarness {
 				super.onDialogReject(mapDialog, refuseReason, providerError, alternativeApplicationContext, extensionContainer);
 				assertNotNull(refuseReason);
 				assertEquals(refuseReason, MAPRefuseReason.PotentialVersionIncompatibility);
+				assertEquals(mapDialog.getTCAPMessageType(), MessageType.Abort);
 			}
 		};
 
@@ -1890,6 +1974,7 @@ public class MAPFunctionalTest extends SccpHarness {
 				super.onDialogReject(mapDialog, refuseReason, providerError, alternativeApplicationContext, extensionContainer);
 				assertNotNull(refuseReason);
 				assertEquals(refuseReason, MAPRefuseReason.PotentialVersionIncompatibility);
+				assertEquals(mapDialog.getTCAPMessageType(), MessageType.Abort);
 			}
 		};
 
@@ -1973,6 +2058,7 @@ public class MAPFunctionalTest extends SccpHarness {
 				super.onDialogProviderAbort(mapDialog, abortProviderReason, abortSource, extensionContainer);
 				
 				Assert.assertEquals(abortProviderReason, MAPAbortProviderReason.AbnormalMAPDialogue);
+				assertEquals(mapDialog.getTCAPMessageType(), MessageType.Abort);
 			}
 
 			@Override
@@ -2697,7 +2783,7 @@ public class MAPFunctionalTest extends SccpHarness {
 
 				try {
 					d.addSendRoutingInfoForSMResponse(sendRoutingInfoForSMInd.getInvokeId(), imsi, locationInfoWithLMSI,
-							MAPExtensionContainerTest.GetTestExtensionContainer());
+							MAPExtensionContainerTest.GetTestExtensionContainer(), null);
 					d.addInformServiceCentreRequest(storedMSISDN, mwStatus, MAPExtensionContainerTest.GetTestExtensionContainer(),
 							absentSubscriberDiagnosticSM, additionalAbsentSubscriberDiagnosticSM);
 				} catch (MAPException e) {
@@ -3407,9 +3493,1527 @@ public class MAPFunctionalTest extends SccpHarness {
 
 	}
 
+	/**
+	 * TC-BEGIN + anyTimeInterrogationRequest
+	 * TC-END + anyTimeInterrogationResponse
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testAnyTimeInterrogation() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onAnyTimeInterrogationResponse(AnyTimeInterrogationResponse ind) {
+				super.onAnyTimeInterrogationResponse(ind);
+
+				SubscriberInfo si = ind.getSubscriberInfo();
+				SubscriberState ss = si.getSubscriberState();
+				Assert.assertEquals(ss.getSubscriberStateChoice(), SubscriberStateChoice.camelBusy);
+				Assert.assertNull(ss.getNotReachableReason());
+				Assert.assertNull(si.getLocationInformation());
+				Assert.assertNull(si.getExtensionContainer());
+				Assert.assertNull(si.getGPRSMSClass());
+				Assert.assertNull(si.getIMEI());
+				Assert.assertNull(si.getLocationInformationGPRS());
+				Assert.assertNull(si.getMNPInfoRes());
+				Assert.assertNull(si.getMSClassmark2());
+				Assert.assertNull(si.getPSSubscriberState());
+				Assert.assertNull(ind.getExtensionContainer());
+			}
+
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onAnyTimeInterrogationRequest(AnyTimeInterrogationRequest ind) {
+				super.onAnyTimeInterrogationRequest(ind);
+
+				MAPDialogMobility d = ind.getMAPDialog();
+				SubscriberIdentity subscriberIdentity = ind.getSubscriberIdentity();
+				Assert.assertTrue(subscriberIdentity.getIMSI().getData().equals("33334444"));
+				RequestedInfo requestedInfo = ind.getRequestedInfo();
+				Assert.assertTrue(requestedInfo.getLocationInformation());
+				Assert.assertTrue(requestedInfo.getSubscriberState());
+				Assert.assertFalse(requestedInfo.getCurrentLocation());
+				Assert.assertNull(requestedInfo.getRequestedDomain());
+				Assert.assertFalse(requestedInfo.getImei());
+				Assert.assertFalse(requestedInfo.getMsClassmark());
+				ISDNAddressString gsmSCFAddress = ind.getGsmSCFAddress();
+				Assert.assertTrue(gsmSCFAddress.getAddress().equals("11112222"));
+				Assert.assertEquals(gsmSCFAddress.getAddressNature(), AddressNature.international_number);
+				Assert.assertEquals(gsmSCFAddress.getNumberingPlan(), NumberingPlan.ISDN);
+
+
+				SubscriberState ss = this.mapParameterFactory.createSubscriberState(SubscriberStateChoice.camelBusy, null);
+				SubscriberInfo si = this.mapParameterFactory.createSubscriberInfo(null, ss, null, null, null, null, null, null, null);
+
+				try {
+					d.addAnyTimeInterrogationResponse(ind.getInvokeId(), si, null);
+				} catch (MAPException e) {
+					this.error("Error while adding AnyTimeInterrogationResponse", e);
+					fail("Error while adding AnyTimeInterrogationResponse");
+				}
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.AnyTimeInterrogationResp, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending the empty AnyTimeInterrogationResponse", e);
+					fail("Error while sending the empty AnyTimeInterrogationResponse");
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.AnyTimeInterrogation, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.AnyTimeInterrogationResp, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.AnyTimeInterrogation, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.AnyTimeInterrogationResp, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendAnyTimeInterrogation();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	/**
+	 * TC-BEGIN + provideSubscriberLocationRequest
+	 * TC-END + provideSubscriberLocationResponse
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testProvideSubscriberLocation() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onProvideSubscriberLocationResponse(ProvideSubscriberLocationResponse ind) {
+				super.onProvideSubscriberLocationResponse(ind);
+
+				Assert.assertTrue(Arrays.equals(ind.getLocationEstimate().getData(), new byte[] { 50 }));
+				Assert.assertEquals((int) ind.getAgeOfLocationEstimate(), 6);
+			}
+
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onProvideSubscriberLocationRequest(ProvideSubscriberLocationRequest ind) {
+				super.onProvideSubscriberLocationRequest(ind);
+
+				MAPDialogLsm d = ind.getMAPDialog();
+
+				Assert.assertEquals(ind.getLocationType().getLocationEstimateType(), LocationEstimateType.cancelDeferredLocation);
+				Assert.assertTrue(ind.getMlcNumber().getAddress().equals("11112222"));
+
+
+				ExtGeographicalInformation locationEstimate = this.mapParameterFactory.createExtGeographicalInformation(new byte[] { 50 });
+
+				try {
+					d.addProvideSubscriberLocationResponse(ind.getInvokeId(), locationEstimate, null, null, 6, null, null, false, null, false, null, null,
+							false, null, null, null);
+				} catch (MAPException e) {
+					this.error("Error while adding ProvideSubscriberLocationResponse", e);
+					fail("Error while adding ProvideSubscriberLocationResponse");
+				}
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.ProvideSubscriberLocationResp, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending close()", e);
+					fail("Error while sending close()");
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.ProvideSubscriberLocation, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ProvideSubscriberLocationResp, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ProvideSubscriberLocation, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ProvideSubscriberLocationResp, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendProvideSubscriberLocation();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	/**
+	 * TC-BEGIN + subscriberLocationReportRequest
+	 * TC-END + subscriberLocationReportResponse
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testSubscriberLocationReport() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onSubscriberLocationReportResponse(SubscriberLocationReportResponse ind) {
+				super.onSubscriberLocationReportResponse(ind);
+
+				Assert.assertTrue(ind.getNaESRD().getAddress().equals("11114444"));
+			}
+
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onSubscriberLocationReportRequest(SubscriberLocationReportRequest ind) {
+				super.onSubscriberLocationReportRequest(ind);
+
+				MAPDialogLsm d = ind.getMAPDialog();
+
+				Assert.assertEquals(ind.getLCSEvent(), LCSEvent.emergencyCallOrigination);
+				Assert.assertEquals(ind.getLCSClientID().getLCSClientType(), LCSClientType.plmnOperatorServices);
+				Assert.assertTrue(ind.getLCSLocationInfo().getNetworkNodeNumber().getAddress().equals("11113333"));
+
+
+				ISDNAddressString naEsrd = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "11114444");
+
+				try {
+					d.addSubscriberLocationReportResponse(ind.getInvokeId(), naEsrd, null, null);
+				} catch (MAPException e) {
+					this.error("Error while adding SubscriberLocationReportResponse", e);
+					fail("Error while adding SubscriberLocationReportResponse");
+				}
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.SubscriberLocationReportResp, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending close()", e);
+					fail("Error while sending close()");
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.SubscriberLocationReport, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.SubscriberLocationReportResp, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.SubscriberLocationReport, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.SubscriberLocationReportResp, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendSubscriberLocationReport();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	/**
+	 * TC-BEGIN + sendRoutingInforForLCSRequest
+	 * TC-END + sendRoutingInforForLCSResponse
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testSendRoutingInforForLCS() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onSendRoutingInfoForLCSResponse(SendRoutingInfoForLCSResponse ind) {
+				super.onSendRoutingInfoForLCSResponse(ind);
+
+				Assert.assertTrue(ind.getTargetMS().getIMSI().getData().equals("6666644444"));
+				Assert.assertTrue(ind.getLCSLocationInfo().getNetworkNodeNumber().getAddress().equals("11114444"));
+			}
+
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onSendRoutingInfoForLCSRequest(SendRoutingInfoForLCSRequest ind) {
+				super.onSendRoutingInfoForLCSRequest(ind);
+
+				MAPDialogLsm d = ind.getMAPDialog();
+
+				Assert.assertTrue(ind.getMLCNumber().getAddress().equals("11112222"));
+				Assert.assertTrue(ind.getTargetMS().getIMSI().getData().equals("5555544444"));
+
+
+				IMSI imsi = this.mapParameterFactory.createIMSI("6666644444");
+				SubscriberIdentity targetMS = this.mapParameterFactory.createSubscriberIdentity(imsi);
+				ISDNAddressString networkNodeNumber = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "11114444");;
+				LCSLocationInfo lcsLocationInfo = this.mapParameterFactory.createLCSLocationInfo(networkNodeNumber, null, null, false, null, null, null, null,
+						null);
+
+				try {
+					d.addSendRoutingInfoForLCSResponse(ind.getInvokeId(), targetMS, lcsLocationInfo, null, null, null, null, null);
+				} catch (MAPException e) {
+					this.error("Error while adding SendRoutingInfoForLCSResponse", e);
+					fail("Error while adding SendRoutingInfoForLCSResponse");
+				}
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.SendRoutingInfoForLCSResp, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending close()", e);
+					fail("Error while sending close()");
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.SendRoutingInfoForLCS, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.SendRoutingInfoForLCSResp, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.SendRoutingInfoForLCS, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.SendRoutingInfoForLCSResp, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendSendRoutingInforForLCS();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+
+	/**
+	 * TC-BEGIN + checkImeiRequest
+	 * TC-END + checkImeiResponse
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testCheckImei() throws Exception {
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onCheckImeiResponse(CheckImeiResponse ind) {
+				super.onCheckImeiResponse(ind);
+				
+				Assert.assertTrue(ind.getEquipmentStatus().equals(EquipmentStatus.blackListed));
+				Assert.assertTrue(ind.getBmuef().getUESBI_IuA().getData().get(0));
+				Assert.assertFalse(ind.getBmuef().getUESBI_IuB().getData().get(0));
+				Assert.assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(ind.getExtensionContainer()));
+			};
+		};
+		
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onCheckImeiRequest(CheckImeiRequest ind) {
+				super.onCheckImeiRequest(ind);
+				
+				MAPDialogMobility d = ind.getMAPDialog();
+				
+				Assert.assertTrue(ind.getIMEI().getIMEI().equals("111111112222222"));
+				Assert.assertTrue(ind.getRequestedEquipmentInfo().getEquipmentStatus());
+				Assert.assertFalse(ind.getRequestedEquipmentInfo().getBmuef());
+				Assert.assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(ind.getExtensionContainer()));
+				
+				BitSetStrictLength bsUESBIIuA = new BitSetStrictLength(1);
+				bsUESBIIuA.set(0);
+				BitSetStrictLength bsUESBIIuB = new BitSetStrictLength(1);
+				
+				UESBIIuA uesbiIuA = this.mapParameterFactory.createUESBIIuA(bsUESBIIuA); 
+				UESBIIuB uesbiIuB = this.mapParameterFactory.createUESBIIuB(bsUESBIIuB);
+				UESBIIu bmuef = this.mapParameterFactory.createUESBIIu(uesbiIuA, uesbiIuB);
+				
+				MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
+				try {
+					d.addCheckImeiResponse(ind.getInvokeId(), EquipmentStatus.blackListed, bmuef, extensionContainer);
+				} catch (MAPException e) {
+					this.error("Error while adding CheckImeiResponse", e);
+					fail("Error while adding CheckImeiResponse");
+				}
+			}
+			
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.CheckImeiResp, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending close()", e);
+					fail("Error while sending close()");
+				}
+			}
+		};
+		
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.CheckImei, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.CheckImeiResp, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+		
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.CheckImei, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.CheckImeiResp, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+		
+		client.sendCheckImei();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+	}
 	
+	/**
+	 * TC-BEGIN + checkImeiRequest_V2
+	 * TC-END + checkImeiResponse_V2
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testCheckImei_V2() throws Exception {
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onCheckImeiResponse(CheckImeiResponse ind) {
+				super.onCheckImeiResponse(ind);
+				
+				Assert.assertTrue(ind.getEquipmentStatus().equals(EquipmentStatus.blackListed));
+				Assert.assertNull(ind.getBmuef());
+				Assert.assertNull(ind.getExtensionContainer());
+			};
+		};
+		
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onCheckImeiRequest(CheckImeiRequest ind) {
+				super.onCheckImeiRequest(ind);
+				
+				MAPDialogMobility d = ind.getMAPDialog();
+				
+				Assert.assertTrue(ind.getIMEI().getIMEI().equals("333333334444444"));
+				Assert.assertNull(ind.getRequestedEquipmentInfo());
+				Assert.assertNull(ind.getExtensionContainer());
+				
+				try {
+					d.addCheckImeiResponse(ind.getInvokeId(), EquipmentStatus.blackListed, null, null);
+				} catch (MAPException e) {
+					this.error("Error while adding CheckImeiResponse_V2", e);
+					fail("Error while adding CheckImeiResponse_V2");
+				}
+			}
+			
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.CheckImeiResp, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending close()", e);
+					fail("Error while sending close()");
+				}
+			}
+		};
+		
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.CheckImei, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.CheckImeiResp, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+		
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.CheckImei, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.CheckImeiResp, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+		
+		client.sendCheckImei_V2();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+	}
 	
+	/**
+	 * TC-BEGIN + checkImeiRequest_V2_Huawei_extention_test
+	 * TC-END + checkImeiResponse_V2
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testCheckImei_Huawei_V2() throws Exception {
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onCheckImeiResponse(CheckImeiResponse ind) {
+				super.onCheckImeiResponse(ind);
+				
+				Assert.assertTrue(ind.getEquipmentStatus().equals(EquipmentStatus.blackListed));
+				Assert.assertNull(ind.getBmuef());
+				Assert.assertNull(ind.getExtensionContainer());
+			};
+		};
+		
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onCheckImeiRequest(CheckImeiRequest ind) {
+				super.onCheckImeiRequest(ind);
+				
+				MAPDialogMobility d = ind.getMAPDialog();
+				
+				Assert.assertTrue(ind.getIMEI().getIMEI().equals("333333334444444"));
+				Assert.assertNull(ind.getRequestedEquipmentInfo());
+				Assert.assertNull(ind.getExtensionContainer());
+				CheckImeiRequestImpl impl = (CheckImeiRequestImpl) ind;
+				Assert.assertTrue(impl.getIMSI().getData().equals("999999998888888"));
+				
+				try {
+					d.addCheckImeiResponse(ind.getInvokeId(), EquipmentStatus.blackListed, null, null);
+				} catch (MAPException e) {
+					this.error("Error while adding CheckImeiResponse_V2", e);
+					fail("Error while adding CheckImeiResponse_V2");
+				}
+			}
+			
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.CheckImeiResp, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending close()", e);
+					fail("Error while sending close()");
+				}
+			}
+		};
+		
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.CheckImei, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.CheckImeiResp, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+		
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.CheckImei, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.CheckImeiResp, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+		
+		client.sendCheckImei_Huawei_V2();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+	}
+
+	/** 
+	 * Some not real test for testing:
+	 * - sendDelayed() / closeDelayed()
+	 * - getTCAPMessageType()
+	 * - saving origReferense, destReference, extContainer in MAPDialog
+	 * TC-BEGIN + extContainer + checkImeiRequest + checkImeiRequest
+	 *   TC-CONTINUE + sendDelayed(checkImeiResponse) + sendDelayed(checkImeiResponse)
+	 * TC-END + closeDelayed(checkImeiResponse) + sendDelayed(checkImeiResponse)
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testDelayedSendClose() throws Exception {
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			
+			int dialogStep = 0;
+
+			@Override
+			public void onCheckImeiResponse(CheckImeiResponse ind) {
+				super.onCheckImeiResponse(ind);
+				
+				Assert.assertTrue(ind.getEquipmentStatus().equals(EquipmentStatus.blackListed));
+				Assert.assertNull(ind.getBmuef());
+				Assert.assertNull(ind.getExtensionContainer());
+				
+				MAPDialogMobility d = ind.getMAPDialog();
+				assertEquals(d.getTCAPMessageType(), MessageType.Continue);
+
+				try {
+					IMEI imei = this.mapParameterFactory.createIMEI("333333334444444");
+					d.addCheckImeiRequest(imei, null, null);
+					if (dialogStep == 0) {
+						d.closeDelayed(false);
+					} else {
+						d.sendDelayed();
+					}
+					dialogStep++;
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.CheckImei, null, sequence++));
+				} catch (MAPException e) {
+					this.error("Error while adding CheckImeiRequest/sending", e);
+					fail("Error while adding CheckImeiRequest/sending");
+				}
+			};
+		};
+		
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			int dialogStep = 0;
+
+			public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, AddressString origReference, MAPExtensionContainer extensionContainer) {
+				super.onDialogRequest(mapDialog, destReference, origReference, extensionContainer);
+
+				assertEquals(origReference.getAddressNature(), AddressNature.international_number);
+				assertEquals(origReference.getNumberingPlan(), NumberingPlan.ISDN);
+				assertTrue(origReference.getAddress().equals("11335577"));
+
+				assertEquals(destReference.getAddressNature(), AddressNature.international_number);
+				assertEquals(destReference.getNumberingPlan(), NumberingPlan.ISDN);
+				assertTrue(destReference.getAddress().equals("22446688"));
+
+				assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+
+				assertEquals(mapDialog.getTCAPMessageType(), MessageType.Begin);
+			}
+
+			@Override
+			public void onCheckImeiRequest(CheckImeiRequest ind) {
+				super.onCheckImeiRequest(ind);
+				
+				MAPDialogMobility d = ind.getMAPDialog();
+				
+				Assert.assertTrue(ind.getIMEI().getIMEI().equals("333333334444444"));
+				Assert.assertNull(ind.getRequestedEquipmentInfo());
+				Assert.assertNull(ind.getExtensionContainer());
+
+				assertEquals(d.getReceivedOrigReference().getAddressNature(), AddressNature.international_number);
+				assertEquals(d.getReceivedOrigReference().getNumberingPlan(), NumberingPlan.ISDN);
+				assertTrue(d.getReceivedOrigReference().getAddress().equals("11335577"));
+
+				assertEquals(d.getReceivedDestReference().getAddressNature(), AddressNature.international_number);
+				assertEquals(d.getReceivedDestReference().getNumberingPlan(), NumberingPlan.ISDN);
+				assertTrue(d.getReceivedDestReference().getAddress().equals("22446688"));
+
+				assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(d.getReceivedExtensionContainer()));
+				
+				if (dialogStep < 2) {
+					assertEquals(d.getTCAPMessageType(), MessageType.Begin);
+
+					try {
+						d.addCheckImeiResponse(ind.getInvokeId(), EquipmentStatus.blackListed, null, null);
+						d.sendDelayed();
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.CheckImeiResp, null, sequence++));
+					} catch (MAPException e) {
+						this.error("Error while adding CheckImeiResponse/sending", e);
+						fail("Error while adding CheckImeiResponse/sending");
+					}
+				} else {
+					assertEquals(d.getTCAPMessageType(), MessageType.End);
+				}
+
+				dialogStep++;
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.CheckImei, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.CheckImei, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.CheckImeiResp, null, count++, (stamp));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.CheckImei, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.CheckImeiResp, null, count++, (stamp));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.CheckImei, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+		
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.CheckImei, null, count++, (stamp));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.CheckImeiResp, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.CheckImei, null, count++, (stamp));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.CheckImeiResp, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.CheckImei, null, count++, (stamp));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.CheckImei, null, count++, (stamp));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+		
+		client.sendCheckImei_ForDelayedTest();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+	}
+
+	/** 
+	 * Some not real test for testing:
+	 * - closeDelayed(true)
+	 * - getTCAPMessageType()
+	 * TC-BEGIN + checkImeiRequest + checkImeiRequest
+	 *   TC-END + Prearranged + [checkImeiResponse + checkImeiResponse]
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testDelayedClosePrearranged() throws Exception {
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
 	
+			int dialogStep = 0;
+		};
+		
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			int dialogStep = 0;
+
+			public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, AddressString origReference, MAPExtensionContainer extensionContainer) {
+				super.onDialogRequest(mapDialog, destReference, origReference, extensionContainer);
+
+				assertNull(origReference);
+				assertNull(destReference);
+				assertNull(extensionContainer);
+
+				assertEquals(mapDialog.getTCAPMessageType(), MessageType.Begin);
+			}
+
+			@Override
+			public void onCheckImeiRequest(CheckImeiRequest ind) {
+				super.onCheckImeiRequest(ind);
+				
+				MAPDialogMobility d = ind.getMAPDialog();
+				
+				assertTrue(ind.getIMEI().getIMEI().equals("333333334444444"));
+				assertNull(ind.getRequestedEquipmentInfo());
+				assertNull(ind.getExtensionContainer());
+
+				assertNull(d.getReceivedOrigReference());
+				assertNull(d.getReceivedDestReference());
+				assertNull(d.getReceivedExtensionContainer());
+
+				assertEquals(d.getTCAPMessageType(), MessageType.Begin);
+
+				try {
+					d.addCheckImeiResponse(ind.getInvokeId(), EquipmentStatus.blackListed, null, null);
+					if (dialogStep == 0)
+						d.sendDelayed();
+					else
+						d.closeDelayed(true);
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.CheckImeiResp, null, sequence++));
+				} catch (MAPException e) {
+					this.error("Error while adding CheckImeiResponse/sending", e);
+						fail("Error while adding CheckImeiResponse/sending");
+					}
+
+				dialogStep++;
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.CheckImei, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.CheckImei, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+		
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.CheckImei, null, count++, (stamp));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.CheckImeiResp, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.CheckImei, null, count++, (stamp));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.CheckImeiResp, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+		
+		client.sendCheckImei_ForDelayedTest2();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+	}
+
+	/**
+	 * TC-BEGIN + cancelLocation MAV V3
+	 * TC-END + cancleLocationResponse
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testCancelLocation() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onCancelLocationResponse(CancelLocationResponse ind) {
+				super.onCancelLocationResponse(ind);
+				MAPExtensionContainerTest.CheckTestExtensionContainer(ind.getExtensionContainer());
+			}
+
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onCancelLocationRequest(CancelLocationRequest ind) {
+				super.onCancelLocationRequest(ind);
+			
+				MAPDialogMobility d = ind.getMAPDialog();
+
+				IMSI imsi = ind.getImsi();
+				IMSIWithLMSI imsiWithLmsi  = ind.getImsiWithLmsi();
+				CancellationType cancellationType = ind.getCancellationType();
+				MAPExtensionContainer extensionContainer =  ind.getExtensionContainer();
+				TypeOfUpdate typeOfUpdate = ind.getTypeOfUpdate();
+				boolean mtrfSupportedAndAuthorized = ind.getMtrfSupportedAndAuthorized();
+				boolean mtrfSupportedAndNotAuthorized = ind.getMtrfSupportedAndNotAuthorized();
+				ISDNAddressString newMSCNumber = ind.getNewMSCNumber();
+				ISDNAddressString newVLRNumber= ind.getNewVLRNumber();
+				LMSI newLmsi = ind.getNewLmsi();
+				long mapProtocolVersion= ind.getMapProtocolVersion();
+			
+				assertTrue(imsi.getData().equals("1111122222"));
+				assertNull(imsiWithLmsi);
+				assertEquals(cancellationType.getCode(), 1);
+				assertNotNull(extensionContainer);
+				MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer);
+				assertEquals(typeOfUpdate.getCode(),0);
+				assertFalse(mtrfSupportedAndAuthorized);
+				assertFalse(mtrfSupportedAndNotAuthorized);
+				assertTrue(newMSCNumber.getAddress().equals("22228"));
+				assertEquals(newMSCNumber.getAddressNature(), AddressNature.international_number);		
+				assertEquals(newMSCNumber.getNumberingPlan(), NumberingPlan.ISDN);		
+				assertTrue(newVLRNumber.getAddress().equals("22229"));
+				assertEquals(newVLRNumber.getAddressNature(), AddressNature.international_number);		
+				assertEquals(newVLRNumber.getNumberingPlan(), NumberingPlan.ISDN);	
+				assertTrue(Arrays.equals(newLmsi.getData(), new byte[] { 0, 3, 98, 39 }));
+				assertEquals(mapProtocolVersion, 3);
+
+				try {
+					d.addCancelLocationResponse(ind.getInvokeId(), extensionContainer);
+				} catch (MAPException e) {
+					this.error("Error while adding UpdateLocationResponse", e);
+					fail("Error while adding UpdateLocationResponse");
+				}
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.CancelLocationResp, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending the empty CancelLocationResponse", e);
+					fail("Error while sending the empty CancelLocationResponse");
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.CancelLocation, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.CancelLocationResp, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.CancelLocation, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.CancelLocationResp, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendCancelLocation();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}	
+
+
+	/**
+	 * TC-BEGIN + cancelLocation MAV V2
+	 * TC-END + cancleLocationResponse
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testCancelLocation_V2() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onCancelLocationResponse(CancelLocationResponse ind) {
+				super.onCancelLocationResponse(ind);
+				assertNull(ind.getExtensionContainer());
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onCancelLocationRequest(CancelLocationRequest ind) {
+				super.onCancelLocationRequest(ind);
+			
+				MAPDialogMobility d = ind.getMAPDialog();
+
+				IMSI imsi = ind.getImsi();
+				IMSIWithLMSI imsiWithLmsi  = ind.getImsiWithLmsi();
+				CancellationType cancellationType = ind.getCancellationType();
+				MAPExtensionContainer extensionContainer =  ind.getExtensionContainer();
+				TypeOfUpdate typeOfUpdate = ind.getTypeOfUpdate();
+				boolean mtrfSupportedAndAuthorized = ind.getMtrfSupportedAndAuthorized();
+				boolean mtrfSupportedAndNotAuthorized = ind.getMtrfSupportedAndNotAuthorized();
+				ISDNAddressString newMSCNumber = ind.getNewMSCNumber();
+				ISDNAddressString newVLRNumber= ind.getNewVLRNumber();
+				LMSI newLmsi = ind.getNewLmsi();
+				long mapProtocolVersion= ind.getMapProtocolVersion();
+			
+				assertTrue(imsi.getData().equals("1111122222"));
+				assertNull(imsiWithLmsi);
+				assertNull(cancellationType);
+				assertNull(extensionContainer);
+				assertNull(typeOfUpdate);
+				assertFalse(mtrfSupportedAndAuthorized);
+				assertFalse(mtrfSupportedAndNotAuthorized);
+				assertNull(newMSCNumber);
+				assertNull(newVLRNumber);
+				assertNull(newLmsi);
+				assertEquals(mapProtocolVersion, 2);
+
+				try {
+					d.addCancelLocationResponse(ind.getInvokeId(), null);
+				} catch (MAPException e) {
+					this.error("Error while adding UpdateLocationResponse", e);
+					fail("Error while adding UpdateLocationResponse");
+				}
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.CancelLocationResp, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending the empty CancelLocationResponse", e);
+					fail("Error while sending the empty CancelLocationResponse");
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.CancelLocation, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.CancelLocationResp, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.CancelLocation, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.CancelLocationResp, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendCancelLocation_V2();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}	
+
+
+	/**
+	 * TC-BEGIN + provideRoamingNumber V3
+	 * TC-END + provideRoamingNumberResponse
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testProvideRoamingNumber() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onProvideRoamingNumberResponse(ProvideRoamingNumberResponse ind) {
+				
+				super.onProvideRoamingNumberResponse(ind);
+				ISDNAddressString roamingNumber = ind.getRoamingNumber();
+				MAPExtensionContainer extensionContainer = ind.getExtensionContainer();
+				boolean releaseResourcesSupported = ind.getReleaseResourcesSupported();
+				ISDNAddressString vmscAddress = ind.getVmscAddress(); 
+				long mapProtocolVersion = ind.getMapProtocolVersion();
+			
+			    assertNotNull(roamingNumber);
+				assertEquals(roamingNumber.getAddressNature(), AddressNature.international_number);
+				assertEquals(roamingNumber.getNumberingPlan(), NumberingPlan.ISDN);
+				assertEquals(roamingNumber.getAddress(), "49883700292");	
+				assertEquals(mapProtocolVersion, 3);
+				MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer);
+				
+			}
+
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onProvideRoamingNumberRequest(ProvideRoamingNumberRequest ind) {
+				super.onProvideRoamingNumberRequest(ind);
+				
+				MAPDialogCallHandling d = ind.getMAPDialog();
+
+				IMSI imsi = ind.getImsi();
+				ISDNAddressString mscNumber = ind.getMscNumber();
+				ISDNAddressString msisdn = ind.getMsisdn();
+				LMSI lmsi = ind.getLmsi();
+				ExternalSignalInfo gsmBearerCapability = ind.getGsmBearerCapability();
+				ExternalSignalInfo networkSignalInfo = ind.getNetworkSignalInfo();
+				boolean suppressionOfAnnouncement = ind.getSuppressionOfAnnouncement();
+				ISDNAddressString gmscAddress = ind.getGmscAddress();
+				CallReferenceNumber callReferenceNumber = ind.getCallReferenceNumber();
+				boolean orInterrogation = ind.getOrInterrogation();
+				MAPExtensionContainer extensionContainer = ind.getExtensionContainer();
+				AlertingPattern alertingPattern = ind.getAlertingPattern();
+				boolean ccbsCall = ind.getCcbsCall();
+				SupportedCamelPhases supportedCamelPhasesInInterrogatingNode = ind.getSupportedCamelPhasesInInterrogatingNode();
+				ExtExternalSignalInfo additionalSignalInfo = ind.getAdditionalSignalInfo();
+				boolean orNotSupportedInGMSC = ind.getOrNotSupportedInGMSC();
+				boolean prePagingSupported = ind.getPrePagingSupported();
+				boolean longFTNSupported = ind.getLongFTNSupported();
+				boolean suppressVtCsi = ind.getSuppressVtCsi();
+				OfferedCamel4CSIs offeredCamel4CSIsInInterrogatingNode = ind.getOfferedCamel4CSIsInInterrogatingNode();
+				boolean mtRoamingRetrySupported= ind.getMtRoamingRetrySupported();
+				PagingArea pagingArea = ind.getPagingArea();
+				EMLPPPriority callPriority = ind.getCallPriority();
+				boolean mtrfIndicator = ind.getMtrfIndicator();
+				ISDNAddressString oldMSCNumber = ind.getOldMSCNumber();
+				long mapProtocolVersion = ind.getMapProtocolVersion();
+				
+				
+				assertNotNull(imsi);
+				assertEquals(imsi.getData(), "011220200198227");
+				assertNotNull(mscNumber);
+				assertEquals(mscNumber.getAddressNature(), AddressNature.international_number);
+				assertEquals(mscNumber.getNumberingPlan(), NumberingPlan.ISDN);
+				assertEquals(mscNumber.getAddress(), "22228");	
+				assertNotNull(msisdn);
+				assertEquals(msisdn.getAddressNature(), AddressNature.international_number);
+				assertEquals(msisdn.getNumberingPlan(), NumberingPlan.ISDN);
+				assertEquals(msisdn.getAddress(), "22227");	
+				assertNotNull(lmsi);
+				assertNotNull(gsmBearerCapability);
+				assertNotNull(networkSignalInfo);
+				assertFalse(suppressionOfAnnouncement);
+				assertNotNull(gmscAddress);
+				assertEquals(gmscAddress.getAddressNature(), AddressNature.international_number);
+				assertEquals(gmscAddress.getNumberingPlan(), NumberingPlan.ISDN);
+				assertEquals(gmscAddress.getAddress(), "22226");
+				MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer);
+
+				
+				
+				ISDNAddressString roamingNumber = new ISDNAddressStringImpl(
+						AddressNature.international_number, NumberingPlan.ISDN,
+						"49883700292");
+				boolean releaseResourcesSupported = false;
+				ISDNAddressString vmscAddress = new ISDNAddressStringImpl(
+						AddressNature.international_number, NumberingPlan.ISDN,
+						"29113123311");
+
+				try {
+					d.addProvideRoamingNumberResponse(ind.getInvokeId(), roamingNumber, extensionContainer, releaseResourcesSupported, vmscAddress);
+				} catch (MAPException e) {
+					this.error("Error while adding UpdateLocationResponse", e);
+					fail("Error while adding UpdateLocationResponse");
+				}
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.ProvideRoamingNumberResp, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending the empty CancelLocationResponse", e);
+					fail("Error while sending the empty CancelLocationResponse");
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.ProvideRoamingNumber, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ProvideRoamingNumberResp, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ProvideRoamingNumber, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ProvideRoamingNumberResp, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendProvideRoamingNumber();
+		
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}	
+
+
+	/**
+	 * TC-BEGIN + provideRoamingNumber V2
+	 * TC-END + provideRoamingNumberResponse
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testProvideRoamingNumber_V2() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onProvideRoamingNumberResponse(ProvideRoamingNumberResponse ind) {
+				
+				super.onProvideRoamingNumberResponse(ind);
+				ISDNAddressString roamingNumber = ind.getRoamingNumber();
+				MAPExtensionContainer extensionContainer = ind.getExtensionContainer();
+				boolean releaseResourcesSupported = ind.getReleaseResourcesSupported();
+				ISDNAddressString vmscAddress = ind.getVmscAddress(); 
+				long mapProtocolVersion = ind.getMapProtocolVersion();
+			
+			    assertNotNull(roamingNumber);
+				assertEquals(roamingNumber.getAddressNature(), AddressNature.international_number);
+				assertEquals(roamingNumber.getNumberingPlan(), NumberingPlan.ISDN);
+				assertEquals(roamingNumber.getAddress(), "49883700292");	
+				assertFalse(releaseResourcesSupported);
+				assertNull(extensionContainer);
+				assertNull(vmscAddress);
+				assertEquals(mapProtocolVersion, 2);
+				
+			}
+
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onProvideRoamingNumberRequest(ProvideRoamingNumberRequest ind) {
+				super.onProvideRoamingNumberRequest(ind);
+				
+				MAPDialogCallHandling d = ind.getMAPDialog();
+
+				IMSI imsi = ind.getImsi();
+				ISDNAddressString mscNumber = ind.getMscNumber();
+				ISDNAddressString msisdn = ind.getMsisdn();
+				LMSI lmsi = ind.getLmsi();
+				ExternalSignalInfo gsmBearerCapability = ind.getGsmBearerCapability();
+				ExternalSignalInfo networkSignalInfo = ind.getNetworkSignalInfo();
+				boolean suppressionOfAnnouncement = ind.getSuppressionOfAnnouncement();
+				ISDNAddressString gmscAddress = ind.getGmscAddress();
+				CallReferenceNumber callReferenceNumber = ind.getCallReferenceNumber();
+				boolean orInterrogation = ind.getOrInterrogation();
+				MAPExtensionContainer extensionContainer = ind.getExtensionContainer();
+				AlertingPattern alertingPattern = ind.getAlertingPattern();
+				boolean ccbsCall = ind.getCcbsCall();
+				SupportedCamelPhases supportedCamelPhasesInInterrogatingNode = ind.getSupportedCamelPhasesInInterrogatingNode();
+				ExtExternalSignalInfo additionalSignalInfo = ind.getAdditionalSignalInfo();
+				boolean orNotSupportedInGMSC = ind.getOrNotSupportedInGMSC();
+				boolean prePagingSupported = ind.getPrePagingSupported();
+				boolean longFTNSupported = ind.getLongFTNSupported();
+				boolean suppressVtCsi = ind.getSuppressVtCsi();
+				OfferedCamel4CSIs offeredCamel4CSIsInInterrogatingNode = ind.getOfferedCamel4CSIsInInterrogatingNode();
+				boolean mtRoamingRetrySupported= ind.getMtRoamingRetrySupported();
+				PagingArea pagingArea = ind.getPagingArea();
+				EMLPPPriority callPriority = ind.getCallPriority();
+				boolean mtrfIndicator = ind.getMtrfIndicator();
+				ISDNAddressString oldMSCNumber = ind.getOldMSCNumber();
+				long mapProtocolVersion = ind.getMapProtocolVersion();
+				
+				
+				assertNotNull(imsi);
+				assertEquals(imsi.getData(), "011220200198227");
+				assertNotNull(mscNumber);
+				assertEquals(mscNumber.getAddressNature(), AddressNature.international_number);
+				assertEquals(mscNumber.getNumberingPlan(), NumberingPlan.ISDN);
+				assertEquals(mscNumber.getAddress(), "22228");	
+				assertNull(msisdn);
+				assertNull(lmsi);
+				assertFalse(suppressionOfAnnouncement);
+				assertNull(gmscAddress);
+				assertNull(extensionContainer);
+				assertEquals(mapProtocolVersion, 2);
+
+				
+				
+				ISDNAddressString roamingNumber = new ISDNAddressStringImpl(
+						AddressNature.international_number, NumberingPlan.ISDN,
+						"49883700292");
+
+				try {
+					d.addProvideRoamingNumberResponse(ind.getInvokeId(), roamingNumber, null, false, null);
+				} catch (MAPException e) {
+					this.error("Error while adding UpdateLocationResponse", e);
+					fail("Error while adding UpdateLocationResponse");
+				}
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.ProvideRoamingNumberResp, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending the empty CancelLocationResponse", e);
+					fail("Error while sending the empty CancelLocationResponse");
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.ProvideRoamingNumber, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ProvideRoamingNumberResp, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ProvideRoamingNumber, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ProvideRoamingNumberResp, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendProvideRoamingNumber_V2();
+		
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}	
 	
 	private void waitForEnd() {
 		try {
@@ -3418,5 +5022,5 @@ public class MAPFunctionalTest extends SccpHarness {
 			fail("Interrupted on wait!");
 		}
 	}
-
 }
+

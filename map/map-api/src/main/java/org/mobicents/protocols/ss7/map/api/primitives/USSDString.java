@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
 
 import java.io.Serializable;
 import java.nio.charset.Charset;
+import org.mobicents.protocols.ss7.map.api.MAPException;
 
 /**
  * USSD-String ::= OCTET STRING (SIZE (1..maxUSSD-StringLength))
@@ -34,16 +35,10 @@ import java.nio.charset.Charset;
  *
  * 
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public interface USSDString extends Serializable {
-
-	/**
-	 * Get the decoded USSD String
-	 * 
-	 * @return
-	 */
-	public String getString();
 
 	/**
 	 * Get the byte[] that represents encoded USSD String
@@ -53,11 +48,10 @@ public interface USSDString extends Serializable {
 	public byte[] getEncodedString();
 
 	/**
-	 * Get the {@link java.nio.charset.Charset}
+	 * Get the decoded USSD String
 	 * 
 	 * @return
 	 */
-	public Charset getCharset();
-
+	public String getString(Charset gsm8Charset) throws MAPException;
 
 }

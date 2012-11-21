@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.isup.message;
 
+import org.mobicents.protocols.ss7.isup.message.parameter.ContinuityIndicators;
 /**
  * Start time:09:54:07 2009-07-23<br>
  * Project: mobicents-isup-stack<br>
@@ -75,4 +76,8 @@ public interface ContinuityMessage extends ISUPMessage {
 	 * Continuity Message, Q.763 reference table 28 <br> {@link ContinuityMessage}
 	 */
 	public static final int MESSAGE_CODE = 0x05;
+	
+	public void setContinuityIndicators(ContinuityIndicators value);
+
+	public ContinuityIndicators getContinuityIndicators();
 }

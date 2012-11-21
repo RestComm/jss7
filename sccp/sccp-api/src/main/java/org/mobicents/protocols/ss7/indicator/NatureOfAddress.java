@@ -316,6 +316,8 @@ public enum NatureOfAddress {
 			return RESERVED_NATIONAL_125;
 		case 126:
 			return RESERVED_NATIONAL_126;
+		case 127:
+			return RESERVED;			
 		default:
 			throw new IOException("Unrecognized Nature of Address. Must be between 0 to 127 and value is=" + v);
 		}

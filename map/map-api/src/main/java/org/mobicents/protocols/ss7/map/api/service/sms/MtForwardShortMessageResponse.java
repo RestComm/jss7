@@ -26,11 +26,12 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
  * 
- * MT-ForwardSM-Res ::= SEQUENCE {
- *	sm-RP-UI		SignalInfo	OPTIONAL,
- *	extensionContainer	ExtensionContainer	OPTIONAL,
- *	...}
- *
+
+MT-ForwardSM-Res ::= SEQUENCE {
+	sm-RP-UI				SignalInfo	OPTIONAL,
+	extensionContainer		ExtensionContainer	OPTIONAL,
+	...}
+
  * 
  * @author sergey vetyutnev
  * 

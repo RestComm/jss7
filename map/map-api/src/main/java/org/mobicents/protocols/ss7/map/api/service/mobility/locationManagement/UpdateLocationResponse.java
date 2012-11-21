@@ -27,7 +27,8 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
- * V3:
+
+MAP V3:
 UpdateLocationRes ::= SEQUENCE {
 	hlr-Number	ISDN-AddressString,
 	extensionContainer	ExtensionContainer	OPTIONAL,
@@ -35,17 +36,17 @@ UpdateLocationRes ::= SEQUENCE {
 	add-Capability	NULL			OPTIONAL,
 	pagingArea-Capability	[0]NULL			OPTIONAL }
 
- * 
- * V2:
- * UpdateLocationRes ::= CHOICE {
+MAP V2:
+  UpdateLocationRes ::= CHOICE {
 	hlr-Number						ISDN-AddressString,
 	-- hlr-Number must not be used in version greater 1
 	extensibleUpdateLocationRes		ExtensibleUpdateLocationRes}
 	-- extensibleUpdateLocationRes must not be used in version 1
- * 
- * ExtensibleUpdateLocationRes ::= SEQUENCE {
+  
+  ExtensibleUpdateLocationRes ::= SEQUENCE {
 	hlr-Number						ISDN-AddressString,
 	...}
+ 
  * 
  * @author sergey vetyutnev
  * 

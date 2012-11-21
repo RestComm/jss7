@@ -13,20 +13,16 @@
 
 
 	<dependencies>
-
-		<dependency>
-			<!-- This comes in container. -->
-			<groupId>org.jboss.jbossas</groupId>
-			<artifactId>jboss-as-system-jmx</artifactId>
-			<version>${jboss.version}</version>
-			<scope>compile</scope>
-		</dependency>
-
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
 			<artifactId>sccp-api</artifactId>
 			<version>${pom.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.management</groupId>
+			<artifactId>shell-server-api</artifactId>
+			<version>${pom.version}</version>
+		</dependency>		
 		<dependency>
 			<artifactId>mtp-api</artifactId>
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
@@ -35,10 +31,6 @@
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.testng</groupId>

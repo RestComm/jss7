@@ -13,8 +13,10 @@
 
 
 	<modules>
-		<module>shell</module>
-		<module>linkset</module>
+		<module>shell-transport</module>
+		<module>shell-client</module>
+		<module>shell-server-api</module>
+		<module>shell-server-impl</module>
 	</modules>
 
 	<build>

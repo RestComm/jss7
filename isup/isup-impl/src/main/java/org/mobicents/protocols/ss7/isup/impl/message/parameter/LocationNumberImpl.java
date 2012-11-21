@@ -107,7 +107,7 @@ public class LocationNumberImpl extends AbstractNAINumber implements LocationNum
 
 		if (this.addressRepresentationREstrictedIndicator != _APRI_NOT_AVAILABLE)
 			return;
-		// NOTE 1 � If the parameter is included and the address presentation
+		// NOTE 1 If the parameter is included and the address presentation
 		// restricted indicator indicates
 		// address not available, octets 3 to n( this are digits.) are omitted,
 		// the subfields in items a - odd/evem, b -nai , c - ni and d -npi, are

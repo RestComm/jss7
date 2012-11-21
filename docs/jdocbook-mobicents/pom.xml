@@ -31,7 +31,7 @@
 									<tasks>
 										<!-- copy docs -->
 										<copy overwrite="true" todir="${basedir}/../../release/${release.name}/docs">
-											<fileset dir="${basedir}/target/docbook/docbook/publish" />
+											<fileset dir="${basedir}/target/docbook/publish" />
 										</copy>
 									</tasks>
 								</configuration>
@@ -73,29 +73,19 @@
 			<plugin>
 				<groupId>org.jboss.maven.plugins</groupId>
 				<artifactId>maven-jdocbook-plugin</artifactId>
-				<version>2.3.0</version>
+				<version>2.3.5</version>
 				<extensions>true</extensions>
 				<dependencies>
 					<dependency>
 						<groupId>org.mobicents.jdocbook</groupId>
 						<artifactId>telestax-xslt-ns</artifactId>
-						<version>1.0.0.FINAL</version>
+						<version>1.2.0</version>
 					</dependency>
 					<dependency>
 						<groupId>org.mobicents.jdocbook</groupId>
 						<artifactId>telestax-community-style</artifactId>
 						<type>jdocbook-style</type>
-						<version>1.0.0.FINAL</version>
-					</dependency>
-					<dependency>
-						<groupId>xml-resolver</groupId>
-						<artifactId>xml-resolver</artifactId>
-						<version>1.1</version>
-					</dependency>
-					<dependency>
-						<groupId>saxon</groupId>
-						<artifactId>saxon</artifactId>
-						<version>6.5.3</version>
+						<version>1.2.0</version>
 					</dependency>
 				</dependencies>
 				<configuration>

@@ -24,7 +24,7 @@ package org.mobicents.protocols.ss7.m3ua.impl.router;
 
 import javolution.util.FastList;
 
-import org.mobicents.protocols.ss7.m3ua.impl.As;
+import org.mobicents.protocols.ss7.m3ua.impl.AsImpl;
 
 /**
  * 
@@ -46,7 +46,7 @@ public class OPCNode {
         this.opc = opc;
     }
 
-    protected void addSi(int si, As as) throws Exception {
+    protected void addSi(int si, AsImpl asImpl) throws Exception {
         for (FastList.Node<SINode> n = siList.head(), end = siList.tail(); (n = n.getNext()) != end;) {
             SINode siNode = n.getValue();
             if (siNode.si == si) {
@@ -55,7 +55,7 @@ public class OPCNode {
             }
         }
 
-        SINode siNode = new SINode(si, as);
+        SINode siNode = new SINode(si, asImpl);
         siList.add(siNode);
 
         if (si == -1) {
@@ -63,16 +63,16 @@ public class OPCNode {
         }
     }
 
-    protected As getAs(short si) {
+    protected AsImpl getAs(short si) {
         for (FastList.Node<SINode> n = siList.head(), end = siList.tail(); (n = n.getNext()) != end;) {
             SINode siNode = n.getValue();
             if (siNode.si == si) {
-                return siNode.as;
+                return siNode.asImpl;
             }
         }
 
         if (wildCardSINode != null) {
-            return wildCardSINode.as;
+            return wildCardSINode.asImpl;
         }
         return null;
     }

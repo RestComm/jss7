@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.isup;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 
@@ -30,7 +31,7 @@ import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
  * @author baranowb
  * @author kulikov
  */
-public interface ISUPProvider {
+public interface ISUPProvider extends Serializable {
 	
 	/**
 	 * Returns localy configured network indicator.
@@ -50,7 +51,7 @@ public interface ISUPProvider {
 	 * @throws ParameterException
 	 * @throws IOException
 	 */
-	public void sendMessage(ISUPMessage msg) throws ParameterException, IOException;
+	public void sendMessage(ISUPMessage msg,int dpc) throws ParameterException, IOException;
 
 	/**
 	 * Adds default listener.
@@ -86,6 +87,8 @@ public interface ISUPProvider {
 	 * 
 	 * @param cic
 	 *            - circuit identification code
+	 * @param dpc
+	 *            - destination point code
 	 * @param timerId
 	 *            - integer id of timer. See {@link ISUPTimeoutEvent} static values.
 	 * @return <ul>
@@ -93,6 +96,15 @@ public interface ISUPProvider {
 	 * 				<li><b>false</b> - otherwise</li>
 	 *         </ul>
 	 */
-	public boolean cancelTimer(int cic, int timerId);
+	public boolean cancelTimer(int cic, int dcp, int timerId);
 
+	/**
+	 * cancel all timers. Useable when circuit usage is ended
+	 * 
+	 * @param cic
+	 *            - circuit identification code
+	 * @param dpc
+	 *            - destination point code             
+	 */
+	public void cancelAllTimers(int cic, int dpc);
 }

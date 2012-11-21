@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.smstpdu;
 
+import org.mobicents.protocols.ss7.map.api.datacoding.NationalLanguageIdentifier;
 import org.mobicents.protocols.ss7.map.api.smstpdu.Gsm7NationalLanguageIdentifier;
 
 /**
@@ -31,22 +32,22 @@ import org.mobicents.protocols.ss7.map.api.smstpdu.Gsm7NationalLanguageIdentifie
  */
 public abstract class Gsm7NationalLanguageIdentifierImpl implements Gsm7NationalLanguageIdentifier {
 
-	private int nationalLanguageCode;
+	private NationalLanguageIdentifier nationalLanguageCode;
 
-	public Gsm7NationalLanguageIdentifierImpl(int nationalLanguageCode) {
+	public Gsm7NationalLanguageIdentifierImpl(NationalLanguageIdentifier nationalLanguageCode) {
 		this.nationalLanguageCode = nationalLanguageCode;
 	}
 
 	public Gsm7NationalLanguageIdentifierImpl(byte[] encodedInformationElementData) {
 		if (encodedInformationElementData != null && encodedInformationElementData.length > 0)
-			this.nationalLanguageCode = encodedInformationElementData[0] & 0xFF;
+			this.nationalLanguageCode = NationalLanguageIdentifier.getInstance(encodedInformationElementData[0] & 0xFF);
 	}
 	
-	public int getNationalLanguageCode() {
+	public NationalLanguageIdentifier getNationalLanguageIdentifier() {
 		return nationalLanguageCode;
 	}
 
 	public byte[] getEncodedInformationElementData() {
-		return new byte[] { (byte) nationalLanguageCode };
+		return new byte[] { (byte) nationalLanguageCode.getCode() };
 	}
 }

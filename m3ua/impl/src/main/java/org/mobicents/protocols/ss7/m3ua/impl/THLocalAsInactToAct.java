@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,17 +19,17 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import javolution.util.FastList;
 import javolution.util.FastSet;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.m3ua.Asp;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSMState;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
 import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
 import org.mobicents.protocols.ss7.m3ua.message.MessageType;
@@ -46,20 +46,20 @@ public class THLocalAsInactToAct implements TransitionHandler {
 
 	private static final Logger logger = Logger.getLogger(THLocalAsInactToAct.class);
 
-	private As as = null;
+	private AsImpl asImpl = null;
 	private FSM fsm;
 
 	private int lbCount = 0;
 
-	public THLocalAsInactToAct(As as, FSM fsm) {
-		this.as = as;
+	public THLocalAsInactToAct(AsImpl asImpl, FSM fsm) {
+		this.asImpl = asImpl;
 		this.fsm = fsm;
 	}
 
-	public boolean process(State state) {
+	public boolean process(FSMState state) {
 		try {
 
-			if (this.as.getTrafficModeType().getMode() == TrafficModeType.Broadcast) {
+			if (this.asImpl.getTrafficModeType().getMode() == TrafficModeType.Broadcast) {
 				// We don't handle this
 				return false;
 			}
@@ -67,13 +67,13 @@ public class THLocalAsInactToAct implements TransitionHandler {
 			// For Traffic Mode Type = load-balancing, need to check policy to
 			// have 'minAspActiveForLb' ASP's ACTIVE before AS_ACTIVE NOTIFY is
 			// sent.
-			if (this.as.getTrafficModeType().getMode() == TrafficModeType.Loadshare) {
-				lbCount = this.as.getMinAspActiveForLb();
+			if (this.asImpl.getTrafficModeType().getMode() == TrafficModeType.Loadshare) {
+				lbCount = this.asImpl.getMinAspActiveForLb();
 
 				// Find out how many ASP's are ACTIVE now
-				for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n
+				for (FastList.Node<Asp> n = this.asImpl.appServerProcs.head(), end = this.asImpl.appServerProcs.tail(); (n = n
 						.getNext()) != end;) {
-					Asp remAspImpl = n.getValue();
+					AspImpl remAspImpl = (AspImpl)n.getValue();
 					FSM aspPeerFSM = remAspImpl.getPeerFSM();
 					AspState aspState = AspState.getState(aspPeerFSM.getState().getName());
 
@@ -90,12 +90,12 @@ public class THLocalAsInactToAct implements TransitionHandler {
 
 			// Iterate through ASP's and send AS_ACTIVE to ASP's who
 			// are INACTIVE or ACTIVE
-			if (as.getFunctionality() != Functionality.IPSP) {
+			if (asImpl.getFunctionality() != Functionality.IPSP) {
 				// Send Notify only for ASP or SGW
 
-				for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n
+				for (FastList.Node<Asp> n = this.asImpl.appServerProcs.head(), end = this.asImpl.appServerProcs.tail(); (n = n
 						.getNext()) != end;) {
-					Asp remAspImpl = n.getValue();
+					AspImpl remAspImpl = (AspImpl)n.getValue();
 
 					FSM aspPeerFSM = remAspImpl.getPeerFSM();
 					AspState aspState = AspState.getState(aspPeerFSM.getState().getName());
@@ -108,15 +108,15 @@ public class THLocalAsInactToAct implements TransitionHandler {
 			}
 			
 			//We want to pass MTP3 RESUME only for SE. If its DE the peer transition handler will take care of MTP3 RESUME
-			if(as.getExchangeType() == ExchangeType.SE){
-				FastSet<AsStateListener> asStateListeners = this.as.getAsStateListeners();
+			if(asImpl.getExchangeType() == ExchangeType.SE){
+				FastSet<AsStateListener> asStateListeners = this.asImpl.getAsStateListeners();
 				for (FastSet.Record r = asStateListeners.head(), end = asStateListeners.tail(); (r = r.getNext()) != end;) {
 					AsStateListener asAsStateListener = asStateListeners.valueOf(r);
 					try {
-						asAsStateListener.onAsActive(this.as);
+						asAsStateListener.onAsActive(this.asImpl);
 					} catch (Exception e) {
 						logger.error(String.format("Error while calling AsStateListener=%s onAsActive method for As=%s",
-								asAsStateListener, this.as));
+								asAsStateListener, this.asImpl));
 					}
 				}
 			}
@@ -129,10 +129,10 @@ public class THLocalAsInactToAct implements TransitionHandler {
 		return false;
 	}
 
-	private Notify createNotify(Asp remAsp) {
-		Notify msg = (Notify) this.as.getMessageFactory().createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
+	private Notify createNotify(AspImpl remAsp) {
+		Notify msg = (Notify) this.asImpl.getMessageFactory().createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
 
-		Status status = this.as.getParameterFactory()
+		Status status = this.asImpl.getParameterFactory()
 				.createStatus(Status.STATUS_AS_State_Change, Status.INFO_AS_ACTIVE);
 		msg.setStatus(status);
 
@@ -140,8 +140,8 @@ public class THLocalAsInactToAct implements TransitionHandler {
 			msg.setASPIdentifier(remAsp.getASPIdentifier());
 		}
 
-		if (this.as.getRoutingContext() != null) {
-			msg.setRoutingContext(this.as.getRoutingContext());
+		if (this.asImpl.getRoutingContext() != null) {
+			msg.setRoutingContext(this.asImpl.getRoutingContext());
 		}
 
 		return msg;

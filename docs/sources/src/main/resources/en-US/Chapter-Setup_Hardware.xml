@@ -1,11 +1,14 @@
 <?xml version='1.0'?>
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">
+%BOOK_ENTITIES;
+]>
 
 <chapter
 	id="setup_hardware">
 	<title>Hardware Setup</title>
 	<para>
-		This chapter contains reference to configure hardware drivers for different types of <literal>SS7</literal> cards.
+		This chapter contains reference to configure hardware drivers for different types of SS7 cards.
 	</para>
 	<para>
 	&THIS.PLATFORM; &THIS.APPLICATION; supports <literal>dahdi</literal> based SS7 cards like <literal>diguim</literal> and <literal>sangoma</literal>. 

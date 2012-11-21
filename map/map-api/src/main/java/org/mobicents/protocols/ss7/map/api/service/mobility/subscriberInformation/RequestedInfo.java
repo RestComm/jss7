@@ -19,6 +19,7 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
+
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
 import java.io.Serializable;
@@ -43,20 +44,20 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
  *
  */
 public interface RequestedInfo extends Serializable {
-	public Boolean getLocationInformation();
+	public boolean getLocationInformation();
 	
-	public Boolean getSubscriberState();
+	public boolean getSubscriberState();
 	
 	public MAPExtensionContainer getExtensionContainer();
 	
-	public Boolean getCurrentLocation();
+	public boolean getCurrentLocation();
 	
 	public DomainType getRequestedDomain();
 	
-	public Boolean getImei();
+	public boolean getImei();
 	
-	public Boolean getMsClassmark();
+	public boolean getMsClassmark();
 	
-	public Boolean getMnpRequestedInfo();
+	public boolean getMnpRequestedInfo();
 	
 }

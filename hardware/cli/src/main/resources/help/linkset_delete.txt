@@ -1,0 +1,22 @@
+Name
+	linkset delete
+
+SYNOPSIS
+	linkset delete <linkset-name>
+
+DESCRIPTION
+	This command is used to delete an existing Linkset.
+
+PARAMETERS
+	<linkset-name>		-	Name of the Linkset to be deleted.
+
+EXAMPLE
+	linkset delete dahdilinkset1
+
+	The above command will delete the Linkset identified by the name dahdilinkset1.
+
+SEE ALSO
+	linkset, linkset create, linkset activate, linkset deactivate, linkset show, 
+	linkset link create, linkset link delete, linkset link activate, 
+	linkset link deactivate.
+

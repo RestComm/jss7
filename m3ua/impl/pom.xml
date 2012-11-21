@@ -1,106 +1,105 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+        <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<artifactId>m3ua</artifactId>
-		<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
-		<version>2.0.0.BETA3</version>
-	</parent>
+        <parent>
+                <artifactId>m3ua</artifactId>
+                <groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+                <version>2.0.0.BETA3</version>
+        </parent>
 
-	<artifactId>m3ua-impl</artifactId>
+        <artifactId>m3ua-impl</artifactId>
 
-	<name>Mobicents SS7 :: M3UA :: Impl :: ${pom.artifactId}</name>
+        <name>Mobicents SS7 :: M3UA :: Impl :: ${pom.artifactId}</name>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.mobicents.commons</groupId>
-			<artifactId>commons</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-		</dependency>		
-		<dependency>
-			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
-			<artifactId>m3ua-api</artifactId>
-			<version>${pom.version}</version>
-		</dependency>
-		
-		<!-- shell -->
-		<dependency>
-			<groupId>org.mobicents.protocols.ss7.management</groupId>
-			<artifactId>shell</artifactId>
-		</dependency>
+        <dependencies>
+                <dependency>
+                        <groupId>org.mobicents.commons</groupId>
+                        <artifactId>commons</artifactId>
+                </dependency>
+                <dependency>
+                        <groupId>org.mobicents.protocols.ss7.management</groupId>
+                        <artifactId>shell-server-api</artifactId>
+                        <version>${pom.version}</version>
+                </dependency>           
+                <dependency>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                        <scope>provided</scope>
+                </dependency>
+                <dependency>
+                        <groupId>org.testng</groupId>
+                        <artifactId>testng</artifactId>
+                </dependency>           
+                <dependency>
+                        <groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+                        <artifactId>m3ua-api</artifactId>
+                        <version>${pom.version}</version>
+                </dependency>
+                
+                <!-- javolution -->
+                <dependency>
+                        <groupId>javolution</groupId>
+                        <artifactId>javolution</artifactId>
+                </dependency>
+                <dependency>
+                        <groupId>org.mobicents.protocols.ss7.mtp</groupId>
+                        <artifactId>mtp</artifactId>
+                </dependency>
+                <dependency>
+                        <groupId>org.mobicents.protocols.sctp</groupId>
+                        <artifactId>sctp-api</artifactId>
+                </dependency>
+                <dependency>
+                        <groupId>org.mobicents.protocols.sctp</groupId>
+                        <artifactId>sctp-impl</artifactId>
+                        <scope>test</scope>
+                </dependency>
+        </dependencies>
 
-		<!-- javolution -->
-		<dependency>
-			<groupId>javolution</groupId>
-			<artifactId>javolution</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
-			<artifactId>mtp</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.mobicents.protocols.sctp</groupId>
-			<artifactId>sctp-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.mobicents.protocols.sctp</groupId>
-			<artifactId>sctp-impl</artifactId>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+        <build>
+                <finalName>${pom.artifactId}-${pom.version}</finalName>
+                <plugins>
+                        <plugin>
+                                <groupId>org.apache.maven.plugins</groupId>
+                                <artifactId>maven-surefire-plugin</artifactId>
 
-	<build>
-		<finalName>${pom.artifactId}-${pom.version}</finalName>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-
-				<configuration>
-					<suiteXmlFiles>
-						<suiteXmlFile>testng-methods.xml</suiteXmlFile>
-						<suiteXmlFile>testng-classes.xml</suiteXmlFile>
-					</suiteXmlFiles>
-				</configuration>
-			</plugin>		
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<groupId>org.apache.maven.plugins</groupId>
-				<version>2.3</version>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-					<compilerArgument>
-						-XDignore.symbol.file=true
-					</compilerArgument>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-clean-plugin</artifactId>
-				<configuration>
-					<filesets>
-						<fileset>
-							<directory>.</directory>
-							<includes>
-								<include>*_m3ua.xml</include>
-								<include>*_sctp.xml</include>
-								<include>debuglog.txt</include>
-							</includes>
-							<!-- <excludes> <exclude>**/important.log</exclude> <exclude>**/another-important.log</exclude> 
-								</excludes> -->
-							<followSymlinks>false</followSymlinks>
-						</fileset>
-					</filesets>
-				</configuration>
-			</plugin>			
-		</plugins>
-	</build>
+                                <configuration>
+                                        <suiteXmlFiles>
+                                                <suiteXmlFile>testng-methods.xml</suiteXmlFile>
+                                                <suiteXmlFile>testng-classes.xml</suiteXmlFile>
+                                        </suiteXmlFiles>
+                                </configuration>
+                        </plugin>               
+                        <plugin>
+                                <artifactId>maven-compiler-plugin</artifactId>
+                                <groupId>org.apache.maven.plugins</groupId>
+                                <version>2.3</version>
+                                <configuration>
+                                        <source>1.7</source>
+                                        <target>1.7</target>
+                                        <compilerArgument>
+                                                -XDignore.symbol.file=true
+                                        </compilerArgument>
+                                </configuration>
+                        </plugin>
+                        <plugin>
+                                <artifactId>maven-clean-plugin</artifactId>
+                                <configuration>
+                                        <filesets>
+                                                <fileset>
+                                                        <directory>.</directory>
+                                                        <includes>
+                                                                <include>*_m3ua.xml</include>
+                                                                <include>*_sctp.xml</include>
+                                                                <include>debuglog.txt</include>
+                                                        </includes>
+                                                        <!-- <excludes> <exclude>**/important.log</exclude> <exclude>**/another-important.log</exclude> 
+                                                                </excludes> -->
+                                                        <followSymlinks>false</followSymlinks>
+                                                </fileset>
+                                        </filesets>
+                                </configuration>
+                        </plugin>                       
+                </plugins>
+        </build>
 </project>

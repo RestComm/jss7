@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -29,24 +29,23 @@ import javolution.util.FastList;
 import javolution.util.FastMap;
 
 import org.apache.log4j.Logger;
-
-import org.mobicents.protocols.ss7.mtp.Mtp3UserPartListener;
-import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
-import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
+import org.mobicents.protocols.ss7.m3ua.M3UAManagement;
+import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl;
 import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3StatusPrimitive;
-import org.mobicents.protocols.ss7.m3ua.message.transfer.PayloadData;
-import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement;
-
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitiveFactory;
+import org.mobicents.protocols.ss7.mtp.Mtp3UserPartListener;
+import org.mobicents.protocols.ss7.scheduler.IntConcurrentHashMap;
+import org.mobicents.protocols.ss7.scheduler.Scheduler;
+import org.mobicents.protocols.ss7.scheduler.Task;
 import org.mobicents.protocols.stream.api.SelectorKey;
 import org.mobicents.ss7.linkset.oam.Layer4;
 import org.mobicents.ss7.linkset.oam.Linkset;
 import org.mobicents.ss7.linkset.oam.LinksetManager;
 import org.mobicents.ss7.linkset.oam.LinksetSelector;
 import org.mobicents.ss7.linkset.oam.LinksetStream;
-
-import org.mobicents.protocols.ss7.scheduler.Scheduler;
-import org.mobicents.protocols.ss7.scheduler.Task;
 
 /** */
 public class NodalInterworkingFunction extends Task implements Layer4,Mtp3UserPartListener {
@@ -58,17 +57,21 @@ public class NodalInterworkingFunction extends Task implements Layer4,Mtp3UserPa
 
 	private LinksetManager linksetManager = null;
 
-	private M3UAManagement m3UAManagement = null;
+	private M3UAManagementImpl m3UAManagement = null;
+	private Mtp3TransferPrimitiveFactory mtp3TransferPrimitiveFactory = null;
 
 	private boolean started = false;
 
 	private int OP_READ_WRITE = 3;
 
-	private byte[] rxBuffer;
-
+	//max data size is 2176;
+	private byte[] rxBuffer=new byte[2176];
+	private byte[] tempBuffer;
+	
 	private ConcurrentLinkedQueue<byte[]> mtpqueue = new ConcurrentLinkedQueue<byte[]>();
 	private ConcurrentLinkedQueue<Mtp3TransferPrimitive> m3uaqueue = new ConcurrentLinkedQueue<Mtp3TransferPrimitive>();
 
+	private IntConcurrentHashMap<Linkset> linksets=new IntConcurrentHashMap<Linkset>();
 	public NodalInterworkingFunction(Scheduler scheduler) {
 		super(scheduler);
 	}
@@ -91,13 +94,16 @@ public class NodalInterworkingFunction extends Task implements Layer4,Mtp3UserPa
 	}
 
 	public void setM3UAManagement(M3UAManagement m3UAManagement) {
-		this.m3UAManagement = m3UAManagement;
+		this.m3UAManagement = (M3UAManagementImpl)m3UAManagement;
 		this.m3UAManagement.addMtp3UserPartListener(this);
+		this.mtp3TransferPrimitiveFactory = this.m3UAManagement.getMtp3TransferPrimitiveFactory();
 	}
 
 	// Layer4 methods
 	public void add(Linkset linkset) {
 		try {
+			linksets.add(linkset,linkset.getApc());
+			
 			linksetStream = linkset.getLinksetStream();
 			linksetStream.register(this.linkSetSelector);
 		} catch (IOException ex) {
@@ -105,8 +111,8 @@ public class NodalInterworkingFunction extends Task implements Layer4,Mtp3UserPa
 		}
 	}
 
-	public void remove(Linkset arg0) {
-		// TODO Auto-generated method stub
+	public void remove(Linkset linkset) {
+		linksets.remove(linkset.getApc());
 
 	}
 
@@ -144,38 +150,33 @@ public class NodalInterworkingFunction extends Task implements Layer4,Mtp3UserPa
 			FastList<SelectorKey> selected = linkSetSelector.selectNow(OP_READ_WRITE, 1);
 			for (FastList.Node<SelectorKey> n = selected.head(), end = selected.tail(); (n = n.getNext()) != end;) {
 				SelectorKey key = n.getValue();
-				((LinksetStream) key.getStream()).read(rxBuffer);
-
-				// Read data
-				if (rxBuffer != null) {
-					currPrimitive=new Mtp3TransferPrimitive();
-					currPrimitive.decodeMtp3(rxBuffer);
-					this.m3UAManagement.sendMessage(currPrimitive);					
-				}				
+				int size=((LinksetStream) key.getStream()).read(rxBuffer);
+				if(size>0)
+				{
+					tempBuffer=new byte[size];
+					System.arraycopy(rxBuffer, 0, tempBuffer, 0, size);
+					
+					currPrimitive=mtp3TransferPrimitiveFactory.createMtp3TransferPrimitive(tempBuffer);
+					this.m3UAManagement.sendMessage(currPrimitive);				
+				}
 			}
 		}
 		catch(IOException e)
-		{
-			
+		{			
 		}
 								
 		try
 		{
-			// TODO
-			currPrimitive = null;
-			FastMap<String, Linkset> map = this.linksetManager.getLinksets();
+			currPrimitive = null;			
 			while ((currPrimitive = m3uaqueue.poll()) != null)
-			{							
-				for (FastMap.Entry<String, Linkset> e = map.head(), end = map.tail(); (e = e.getNext()) != end;) {
-					Linkset value = e.getValue();
-					if(value.getApc()==currPrimitive.getDpc())
-						value.getLinksetStream().write(currPrimitive.encodeMtp3());
-				}
-			}									
+			{				
+				Linkset value = linksets.get(currPrimitive.getDpc());
+				if(value!=null)
+					value.getLinksetStream().write(currPrimitive.encodeMtp3());				
+			}
 		}
 		catch(IOException e)
-		{
-			
+		{			
 		}						
 		
 		scheduler.submit(this,scheduler.INTERNETWORKING_QUEUE);

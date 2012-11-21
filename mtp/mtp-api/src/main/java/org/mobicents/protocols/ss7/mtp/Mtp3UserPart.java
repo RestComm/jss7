@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -31,12 +31,44 @@ import java.io.IOException;
  */
 public interface Mtp3UserPart {
 
+	/**
+	 * Add {@link Mtp3UserPartListener}
+	 * 
+	 * @param listener
+	 */
 	public void addMtp3UserPartListener(Mtp3UserPartListener listener);
 
+	/**
+	 * Remove {@link Mtp3UserPartListener}
+	 * 
+	 * @param listener
+	 */
 	public void removeMtp3UserPartListener(Mtp3UserPartListener listener);
 
 	/**
-	 * Return the maximum data field length of the MTP-TRANSFER message to the DPC
+	 * return PointCodeFormat
+	 * 
+	 * @return
+	 */
+	public RoutingLabelFormat getRoutingLabelFormat();
+
+	/**
+	 * Set PointCodeFormat
+	 * 
+	 * @param length
+	 */
+	public void setRoutingLabelFormat(RoutingLabelFormat routingLabelFormat);
+
+	/**
+	 * Get the Mtp3TransferPrimitiveFactory
+	 * 
+	 * @return
+	 */
+	public Mtp3TransferPrimitiveFactory getMtp3TransferPrimitiveFactory();
+
+	/**
+	 * Return the maximum data field length of the MTP-TRANSFER message to the
+	 * DPC
 	 * 
 	 * @param dpc
 	 * @return
@@ -51,5 +83,21 @@ public interface Mtp3UserPart {
 	 * 
 	 */
 	public void sendMessage(Mtp3TransferPrimitive msg) throws IOException;
+
+	/**
+	 * If set to true, lowest bit of SLS is used for loadbalancing between
+	 * Linkset else highest bit of SLS is used.
+	 * 
+	 * @param useLsbForLinksetSelection
+	 */
+	public void setUseLsbForLinksetSelection(boolean useLsbForLinksetSelection);
+
+	/**
+	 * Returns true if lowest bit of SLS is used for loadbalancing between
+	 * Linkset else returns false
+	 * 
+	 * @return
+	 */
+	public boolean isUseLsbForLinksetSelection();
 
 }

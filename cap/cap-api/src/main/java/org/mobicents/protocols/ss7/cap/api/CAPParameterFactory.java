@@ -122,14 +122,21 @@ import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectingNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformation;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.UUData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.MSClassmark2;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OfferedCamel4Functionalities;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
+import org.mobicents.protocols.ss7.tcap.asn.comp.GeneralProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.InvokeProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnErrorProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
 
 /**
  * 
@@ -151,6 +158,7 @@ public interface CAPParameterFactory {
 			boolean automaticRearm);
 	
 	public CalledPartyBCDNumber createCalledPartyBCDNumber(byte[] data);
+	public CalledPartyBCDNumber createCalledPartyBCDNumber(AddressNature addressNature, NumberingPlan numberingPlan, String address, boolean isExtension) throws CAPException;
 
 	public ExtensionField createExtensionField(Integer localCode, CriticalityType criticalityType, byte[] data);
 	public ExtensionField createExtensionField(long[] globalCode, CriticalityType criticalityType, byte[] data);
@@ -188,6 +196,7 @@ public interface CAPParameterFactory {
 	
 	public RouteSelectFailureSpecificInfo createRouteSelectFailureSpecificInfo(CauseCap failureCause);
 	public OCalledPartyBusySpecificInfo createOCalledPartyBusySpecificInfo(CauseCap busyCause);
+	public OAbandonSpecificInfo createOAbandonSpecificInfo(boolean routeNotPermitted);
 	public ONoAnswerSpecificInfo createONoAnswerSpecificInfo();
 	public OAnswerSpecificInfo createOAnswerSpecificInfo(CalledPartyNumberCap destinationAddress, boolean orCall, boolean forwardedCall,
 			ChargeIndicator chargeIndicator, ExtBasicServiceCode extBasicServiceCode, ExtBasicServiceCode extBasicServiceCode2);
@@ -289,6 +298,11 @@ public interface CAPParameterFactory {
 			Boolean voiceInformation, Boolean voiceBack);
 	public CollectedInfo createCollectedInfo(CollectedDigits collectedDigits);
 	public CallSegmentToCancel createCallSegmentToCancel(Integer invokeID, Integer callSegmentID);
+
+	public Problem createProblemGeneral(GeneralProblemType prob);
+	public Problem createProblemInvoke(InvokeProblemType prob);
+	public Problem createProblemResult(ReturnResultProblemType prob);
+	public Problem createProblemError(ReturnErrorProblemType prob);
 
 }
 

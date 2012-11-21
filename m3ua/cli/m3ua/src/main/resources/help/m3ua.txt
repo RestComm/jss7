@@ -1,0 +1,26 @@
+Name
+	m3ua
+	Manage M3UA - AS, ASP and Route
+
+SYNOPSIS
+	m3ua as [create | destroy | show | add | remove]  [parameters]
+
+	m3ua asp [create | destroy | show | start | stop]  [parameters]
+
+	m3ua route [add | remove | show]  [parameters]
+         
+	parameters 
+		Command Line parameters.
+
+DESCRIPTION
+	This command is used to manage M3UA - AS (Application Server), 
+	ASP (Application Server Process) and Route. You can create and destroy an AS using
+	the m3ua as command. You can create, destroy, start and stop an ASP using the 
+	m3ua asp command. You can manage route configuration using the m3ua route command.
+
+SEE ALSO
+	m3ua as create, m3ua as destroy, m3ua as show, m3ua asp create, m3ua asp destroy, 
+	m3ua asp show, m3ua asp start, m3ua asp stop, m3ua as add, m3ua as remove,
+	m3ua route add, m3ua route remove, m3ua route show.
+
+

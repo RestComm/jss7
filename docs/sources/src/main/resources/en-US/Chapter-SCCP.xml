@@ -172,34 +172,7 @@
 		
 			
 	</section>
-	<section
-		id="sccp_access_point">
-		<title>Access Point</title>
-		<para>
-			<literal>SS7 Service</literal> provides user with access point to <literal>SCCP</literal> protocol/stack.		
-		</para>
-		<para>
-			To get handle to <classname>SccpStack</classname> do the JNDI look-up passing the 
-			JNDI name configured in SS7 service as explained in <xref linkend="configuring_SS7Service"/> 
-		</para>			
-		<programlisting
-			language="Java"
-			role="JAVA"><![CDATA[	
-	    private static SccpProvider getSccpProvider() throws NamingException {
-	
-	        // no arg is ok, if we run in JBoss
-	        InitialContext ctx = new InitialContext();
-	        try {
-	            String providerJndiName = "/mobicents/ss7/sccp";
-	            return ((SccpStack) ctx.lookup(providerJndiName)).getSccpProvider();
-	
-	        } finally {
-	            ctx.close();
-	        }
-	    }
-			]]>
-		</programlisting>		
-	</section>	
+
 	<section
 		id="sccp_complete_example">
 		<title>SCCP User Part Example</title>
@@ -213,16 +186,18 @@ public class Test implements SccpListener {
     private SccpAddress localAddress;
     private int localSsn = 8;
 
-    private static SccpProvider getSccpProvider() throws NamingException {
+	private static SccpProvider getSccpProvider() {
+		
+		Mtp3UserPartImpl mtp3UserPart1 = null;
+		......
+		......
 
-        // no arg is ok, if we run in JBoss
-        InitialContext ctx = new InitialContext();
-        try {
-            String providerJndiName = "/mobicents/ss7/sccp";
-            return ((SccpStack) ctx.lookup(providerJndiName)).getSccpProvider();
-        } finally {
-            ctx.close();
-        }
+		SccpStackImpl sccpStack1 = new SccpStackImpl("testSccpStack");
+		sccpStack1.setMtp3UserPart(1, mtp3UserPart1);
+		sccpStack1.start();
+		
+		return sccpStack1.getSccpProvider();
+
     }
 
     public void start() throws Exception {

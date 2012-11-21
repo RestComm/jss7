@@ -314,8 +314,8 @@ public class M3uaForm extends JDialog {
 		setEnumeratedBaseComboBox(cbM3uaIPSPType, new M3uaIPSPType(M3uaIPSPType.VAL_CLIENT));
 		setEnumeratedBaseComboBox(cbM3uaExchangeType, new M3uaExchangeType(M3uaExchangeType.VAL_SE));
 		tbM3uaDpc.setText("2");
-		tbM3uaOpc.setText("-1");
-		tbM3uaSi.setText("-1");
+		tbM3uaOpc.setText("1");
+		tbM3uaSi.setText("3");
 		tbM3uaRoutingContext.setText("101");
 		tbM3uaNetworkAppearance.setText("102");
 	}
@@ -338,8 +338,8 @@ public class M3uaForm extends JDialog {
 		setEnumeratedBaseComboBox(cbM3uaIPSPType, new M3uaIPSPType(M3uaIPSPType.VAL_SERVER));
 		setEnumeratedBaseComboBox(cbM3uaExchangeType, new M3uaExchangeType(M3uaExchangeType.VAL_SE));
 		tbM3uaDpc.setText("1");
-		tbM3uaOpc.setText("-1");
-		tbM3uaSi.setText("-1");
+		tbM3uaOpc.setText("2");
+		tbM3uaSi.setText("3");
 		tbM3uaRoutingContext.setText("101");
 		tbM3uaNetworkAppearance.setText("102");
 	}

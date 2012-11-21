@@ -18,19 +18,38 @@
 		<checkout.basedir>${checkout.dir}</checkout.basedir>
 		<checkout.username>mobicents-read-only</checkout.username>
 		<checkout.password />
+    <!--
+		<asn.scmVersion>release-2.0.0.FINAL</asn.scmVersion>
+		<asn.scmVersionType>tag</asn.scmVersionType>
+
+		<sctp.scmVersion>release-1.0.0.CR3</sctp.scmVersion>
+		<sctp.scmVersionType>tag</sctp.scmVersionType>
+
+		<ss7.scmVersion>release-2.0.0.BETA1</ss7.scmVersion>
+		<ss7.scmVersionType>tag</ss7.scmVersionType>
+    -->
+    
+  		<asn.scmVersion>HEAD</asn.scmVersion>
+		<asn.scmVersionType>revision</asn.scmVersionType>
+
+		<sctp.scmVersion>HEAD</sctp.scmVersion>
+		<sctp.scmVersionType>revision</sctp.scmVersionType>
+
+		<ss7.scmVersion>HEAD</ss7.scmVersion>
+		<ss7.scmVersionType>revision</ss7.scmVersionType>    
 
 			<!-- TAGS 
-		<asn.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/asn/asn-1.0.0.CR1</asn.connectionURL>
+		<commons.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/commons/1.0.0.CR1</commons.connectionURL>
 		<stream.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/tags/protocols/stream/stream-1.0.0.CR1</stream.connectionURL>
-
-		<ss7.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/protocols/ss7/mobicents-ss7-1.0.0.CR1</ss7.connectionURL>
  		-->
 		<!-- TRUNK -->
 		<commons.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/commons</commons.connectionURL>
-		<asn.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/asn</asn.connectionURL>
-		<sctp.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/sctp</sctp.connectionURL>
-		<stream.connectionURL>scm:svn:https://mobicents.googlecode.com/svn/trunk/protocols/stream</stream.connectionURL>
-		<ss7.connectionURL>scm:git:https://code.google.com/p/jss7/</ss7.connectionURL>
+		<stream.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/protocols/stream</stream.connectionURL>
+		
+
+		<asn.connectionURL>scm:git:http://code.google.com/p/jasn/</asn.connectionURL>
+		<sctp.connectionURL>scm:git:http://code.google.com/p/sctp/</sctp.connectionURL>
+		<ss7.connectionURL>scm:git:http://code.google.com/p/jss7/</ss7.connectionURL>
 		
 
 		
@@ -74,8 +93,8 @@
 								</goals>
 								<phase>validate</phase>
 								<configuration>
-									<scmVersion>HEAD</scmVersion>
-									<scmVersionType>revision</scmVersionType>
+									<scmVersion>${asn.scmVersion}</scmVersion>
+									<scmVersionType>${asn.scmVersionType}</scmVersionType>
 									<skipCheckoutIfExists>true</skipCheckoutIfExists>
 									<checkoutDirectory>
 										${checkout.basedir}/asn
@@ -83,8 +102,10 @@
 									<connectionUrl>
 										${asn.connectionURL}
 							</connectionUrl>
+									<!--
 									<username>${checkout.username}</username>
 									<password>${checkout.password}</password>
+									-->
 								</configuration>
 							</execution>
 							<execution>
@@ -94,8 +115,8 @@
 								</goals>
 								<phase>validate</phase>
 								<configuration>
-									<scmVersion>HEAD</scmVersion>
-									<scmVersionType>revision</scmVersionType>
+									<scmVersion>${sctp.scmVersion}</scmVersion>
+									<scmVersionType>${sctp.scmVersionType}</scmVersionType>
 									<skipCheckoutIfExists>true</skipCheckoutIfExists>
 									<checkoutDirectory>
 										${checkout.basedir}/sctp
@@ -103,8 +124,10 @@
 									<connectionUrl>
 										${sctp.connectionURL}
 									</connectionUrl>
+									<!--
 									<username>${checkout.username}</username>
 									<password>${checkout.password}</password>
+									-->
 								</configuration>
 							</execution>
 							<execution>
@@ -131,13 +154,15 @@
 								</goals>
 								<phase>validate</phase>
 								<configuration>
-									<scmVersion>HEAD</scmVersion>
-									<scmVersionType>revision</scmVersionType>
+									<scmVersion>${ss7.scmVersion}</scmVersion>
+									<scmVersionType>${ss7.scmVersionType}</scmVersionType>
 									<skipCheckoutIfExists>true</skipCheckoutIfExists>
 									<checkoutDirectory>${checkout.basedir}/ss7</checkoutDirectory>
 									<connectionUrl>${ss7.connectionURL}</connectionUrl>
+									<!--
 									<username>${checkout.username}</username>
 									<password>${checkout.password}</password>
+									-->
 								</configuration>
 							</execution>
 						</executions>

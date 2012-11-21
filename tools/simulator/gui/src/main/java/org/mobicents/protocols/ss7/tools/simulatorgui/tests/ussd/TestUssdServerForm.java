@@ -49,6 +49,7 @@ public class TestUssdServerForm extends TestingForm {
 	private static final long serialVersionUID = -3323069535001828614L;
 
 	private TestUssdServerManMBean ussdServer; 
+
 	private JTextField tbMessage;
 	private JLabel lbMessage;
 	private JLabel lbResult;

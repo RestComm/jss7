@@ -22,7 +22,7 @@
 			The index of a sap must correspont to the index of the sap.   
 		</para>
 		<para>
-			The second step is a definition of a list of available remote signalling pointcodes (SPC - rsp) and 
+			The second step is a definition of a list of available remote signaling pointcodes (SPC - rsp) and 
 			a list of available remote Sub-Systems (SNN - rss). This step is also mandatory. 
 			If routing only by GlobalTytle is used the remote Sub-Systems configuring is not required.
 		</para>
@@ -191,7 +191,7 @@ Service access point successfully removed
 						<term>&lt;last-dpc&gt;</term>
 						<listitem>
 							<para>Specifies the last value of the remote signaling point codes range. 
-							If destination specifies a single signalling point code, this value must be equal first-dpc</para>
+							If destination specifies a single signaling point code, this value must be equal first-dpc</para>
 						</listitem>
 					</varlistentry>
 					<varlistentry>
@@ -616,11 +616,32 @@ sccp rule create &lt;id&gt; &lt;mask&gt; &lt;address-indicator&gt; &lt;point-cod
 								<tbody>
 									<row>
 										<entry>
-											bit4
-										</entry>													
+											bit0
+										</entry>														
 										<entry>
-											<para>if( (SLS &amp; 0x10) == 0 ) &lt;route to primary&gt; else &lt;route to backup&gt;</para>  
-											<para>This algorithm is the best if all traffic is local (mobisents stack) originated</para>  
+											<para>if( (SLS &amp; 0x01) == 0 ) &lt;route to primary&gt; else &lt;route to backup&gt;</para>  
+											<para>This algorithm can be used if not all traffic is local (mobisents stack) originated.
+											But only 8 links in the both linksets is acceptable.</para>  
+										</entry>
+									</row>
+									<row>
+										<entry>
+											bit1
+										</entry>														
+										<entry>
+											<para>if( (SLS &amp; 0x02) == 0 ) &lt;route to primary&gt; else &lt;route to backup&gt;</para>  
+											<para>This algorithm can be used if not all traffic is local (mobisents stack) originated.
+											But only 8 links in the both linksets is acceptable.</para>  
+										</entry>
+									</row>
+									<row>
+										<entry>
+											bit2
+										</entry>														
+										<entry>
+											<para>if( (SLS &amp; 0x04) == 0 ) &lt;route to primary&gt; else &lt;route to backup&gt;</para>  
+											<para>This algorithm can be used if not all traffic is local (mobisents stack) originated.
+											But only 8 links in the both linksets is acceptable.</para>  
 										</entry>
 									</row>
 									<row>
@@ -631,6 +652,15 @@ sccp rule create &lt;id&gt; &lt;mask&gt; &lt;address-indicator&gt; &lt;point-cod
 											<para>if( (SLS &amp; 0x08) == 0 ) &lt;route to primary&gt; else &lt;route to backup&gt;</para>  
 											<para>This algorithm can be used if not all traffic is local (mobisents stack) originated.
 											But only 8 links in the both linksets is acceptable.</para>  
+										</entry>
+									</row>
+									<row>
+										<entry>
+											bit4
+										</entry>													
+										<entry>
+											<para>if( (SLS &amp; 0x10) == 0 ) &lt;route to primary&gt; else &lt;route to backup&gt;</para>  
+											<para>This algorithm is the best if all traffic is local (mobisents stack) originated</para>  
 										</entry>
 									</row>
 								</tbody>
@@ -1200,7 +1230,7 @@ sccp rss create &lt;id&gt; &lt;remote-spc&gt; &lt;remote-ssn&gt; &lt;rss-flag&gt
 					<term>&lt;mark-prohibited-when-spc-resuming&gt;</term>
 					<listitem>
 						<para>This parameter is optional, its possible value is: prohibitedWhenSpcResuming.
-						When this parameter is present configured subsystem is marked as prohibited when its corresponded signalling point code has been resumed.</para>
+						When this parameter is present configured subsystem is marked as prohibited when its corresponded signaling point code has been resumed.</para>
 					</listitem>
 				</varlistentry>	
 			</variablelist>	
@@ -1312,7 +1342,7 @@ sccp lmr create &lt;id&gt; &lt;first-spc&gt; &lt;last-spc&gt; &lt;long-message-r
 						<term>&lt;last-spc&gt;</term>
 						<listitem>
 							<para>Specifies the last value of the remote signaling point codes range.
-							If Long message rule specifies a single signalling point code, this value must be equal first-spc.</para>
+							If Long message rule specifies a single signaling point code, this value must be equal first-spc.</para>
 						</listitem>
 					</varlistentry>	
 					<varlistentry>

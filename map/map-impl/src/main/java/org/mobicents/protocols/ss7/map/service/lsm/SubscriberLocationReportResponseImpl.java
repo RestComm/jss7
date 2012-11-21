@@ -23,7 +23,6 @@
 package org.mobicents.protocols.ss7.map.service.lsm;
 
 import java.io.IOException;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -33,7 +32,6 @@ import org.mobicents.protocols.ss7.map.api.MAPMessageType;
 import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberLocationReportResponse;
@@ -41,7 +39,7 @@ import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
- * TODO : Add unit test
+ *
  * 
  * @author amit bhayani
  * 
@@ -51,9 +49,11 @@ public class SubscriberLocationReportResponseImpl extends LsmMessageImpl impleme
 	private static final int _TAG_NA_ESRK = 0;
 	private static final int _TAG_NA_ESRD = 1;
 
-	private ISDNAddressString naEsrd = null;
-	private ISDNAddressString naEsrk = null;
-	private MAPExtensionContainer extensionContainer = null;
+	public static final String _PrimitiveName = "SubscriberLocationReportResponse";
+
+	private ISDNAddressString naEsrd;
+	private ISDNAddressString naEsrk;
+	private MAPExtensionContainer extensionContainer;
 
 	/**
 	 * 
@@ -98,7 +98,7 @@ public class SubscriberLocationReportResponseImpl extends LsmMessageImpl impleme
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.
 	 * SubscriberLocationReportResponseIndication#getNaESRK()
 	 */
-	public AddressString getNaESRK() {
+	public ISDNAddressString getNaESRK() {
 		return this.naEsrk;
 	}
 
@@ -108,7 +108,7 @@ public class SubscriberLocationReportResponseImpl extends LsmMessageImpl impleme
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.
 	 * SubscriberLocationReportResponseIndication#getNaESRD()
 	 */
-	public AddressString getNaESRD() {
+	public ISDNAddressString getNaESRD() {
 		return this.naEsrd;
 	}
 
@@ -156,10 +156,10 @@ public class SubscriberLocationReportResponseImpl extends LsmMessageImpl impleme
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding ProvideSubscriberLocationRequestIndication: ", e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": ", e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding ProvideSubscriberLocationRequestIndication: ", e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": ", e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -175,15 +175,19 @@ public class SubscriberLocationReportResponseImpl extends LsmMessageImpl impleme
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding ProvideSubscriberLocationRequestIndication: ", e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": ", e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding ProvideSubscriberLocationRequestIndication: ", e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": ", e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
 	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+
+		this.naEsrd = null;
+		this.naEsrk = null;
+		this.extensionContainer = null;
 
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 
@@ -199,7 +203,7 @@ public class SubscriberLocationReportResponseImpl extends LsmMessageImpl impleme
 					// ExtensionContainer
 					if (ais.isTagPrimitive())
 						throw new MAPParsingComponentException(
-								"Error while decoding ReportSMDeliveryStatusResponse: Parameter extensionContainer is primitive",
+								"Error while decoding " + _PrimitiveName + ": Parameter extensionContainer is primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					this.extensionContainer = new MAPExtensionContainerImpl();
 					((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
@@ -209,32 +213,34 @@ public class SubscriberLocationReportResponseImpl extends LsmMessageImpl impleme
 					ais.advanceElement();
 					break;
 				}// switch
-			} else {
+			} else if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 				switch (tag) {
 				case _TAG_NA_ESRK:
 					// na-ESRK [0] ISDN-AddressString OPTIONAL
-					if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
+					if (!ais.isTagPrimitive()) {
 						throw new MAPParsingComponentException(
-								"Error while decoding SubscriberLocationReportResponseIndication: Parameter [na-ESRK [0] ISDN-AddressString] bad tag class or not primitive or not Sequence",
+								"Error while decoding " + _PrimitiveName + ": Parameter [na-ESRK [0] ISDN-AddressString] is not Sequence",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					}
 					this.naEsrk = new ISDNAddressStringImpl();
-					((ISDNAddressStringImpl)this.naEsrk).decodeAll(ais);
+					((ISDNAddressStringImpl) this.naEsrk).decodeAll(ais);
 					break;
 				case _TAG_NA_ESRD:
 					// na-ESRD [1] ISDN-AddressString OPTIONAL,
-					if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
+					if (!ais.isTagPrimitive()) {
 						throw new MAPParsingComponentException(
-								"Error while decoding SubscriberLocationReportResponseIndication: Parameter [na-ESRD [1] ISDN-AddressString] bad tag class or not primitive or not Sequence",
+								"Error while decoding " + _PrimitiveName + ": Parameter [na-ESRD [1] ISDN-AddressString] is not Sequence",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					}
 					this.naEsrd = new ISDNAddressStringImpl();
-					((ISDNAddressStringImpl)this.naEsrd).decodeAll(ais);
+					((ISDNAddressStringImpl) this.naEsrd).decodeAll(ais);
 					break;
 				default:
 					ais.advanceElement();
 					break;
 				}
+			} else {
+				ais.advanceElement();
 			}
 		}// while
 	}
@@ -247,7 +253,7 @@ public class SubscriberLocationReportResponseImpl extends LsmMessageImpl impleme
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	/*
@@ -264,7 +270,7 @@ public class SubscriberLocationReportResponseImpl extends LsmMessageImpl impleme
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding ReportSMDeliveryStatusResponse: " + e.getMessage(), e);
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 
@@ -292,4 +298,27 @@ public class SubscriberLocationReportResponseImpl extends LsmMessageImpl impleme
 		}
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		if (this.extensionContainer != null) {
+			sb.append("extensionContainer");
+			sb.append(this.extensionContainer);
+		}
+		if (this.naEsrd != null) {
+			sb.append(", naEsrd=");
+			sb.append(this.naEsrd);
+		}
+		if (this.naEsrk != null) {
+			sb.append(", naEsrk=");
+			sb.append(this.naEsrk);
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }

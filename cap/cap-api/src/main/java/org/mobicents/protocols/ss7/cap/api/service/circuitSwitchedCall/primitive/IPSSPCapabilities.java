@@ -60,15 +60,15 @@ public interface IPSSPCapabilities {
 
 	public byte[] getData();
 
-	public boolean IPRoutingAddressSupported();
+	public boolean getIPRoutingAddressSupported();
 
-	public boolean VoiceBackSupported();
+	public boolean getVoiceBackSupported();
 
-	public boolean VoiceInformationSupportedViaSpeechRecognition();
+	public boolean getVoiceInformationSupportedViaSpeechRecognition();
 
-	public boolean VoiceInformationSupportedViaVoiceRecognition();
+	public boolean getVoiceInformationSupportedViaVoiceRecognition();
 
-	public boolean GenerationOfVoiceAnnouncementsFromTextSupported();
+	public boolean getGenerationOfVoiceAnnouncementsFromTextSupported();
 
 	/**
 	 * @return 2, 3 and 3 byte array: Bilateral Part: Network operator/equipment

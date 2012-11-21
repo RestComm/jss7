@@ -104,7 +104,7 @@ public class CAPUserAbortPrimitiveImpl implements CAPAsnPrimitive {
 
 	private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		int code = (int)ais.readInteger();
+		int code = (int) ais.readIntegerData(length);
 		
 		this.reason = CAPUserAbortReason.getInstance(code);
 		if (this.reason == null)

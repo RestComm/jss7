@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,115 +22,51 @@
 
 package org.mobicents.protocols.ss7.map.service.sms;
 
-import java.io.IOException;
+import java.io.ByteArrayInputStream;
 
-import org.mobicents.protocols.asn.AsnException;
-import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_SMEA;
-import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
+import org.mobicents.protocols.ss7.map.api.smstpdu.AddressField;
+import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
+import org.mobicents.protocols.ss7.map.smstpdu.AddressFieldImpl;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class SM_RP_SMEAImpl implements SM_RP_SMEA, MAPAsnPrimitive {
+public class SM_RP_SMEAImpl extends OctetStringBase implements SM_RP_SMEA {
 
-	public static final String _PrimitiveName = "SM_RP_SMEA";
-
-	private byte[] data;
-
-	
 	public SM_RP_SMEAImpl() {
+		super(1, 12, "SM_RP_SMEA");
 	}
 
 	public SM_RP_SMEAImpl(byte[] data) {
-		this.data = data;
+		super(1, 12, "SM_RP_SMEA", data);
 	}
 
+	public SM_RP_SMEAImpl(AddressField addressField) throws MAPException {
+		super(1, 12, "SM_RP_SMEA");
+
+		if (addressField == null) {
+			throw new MAPException("addressField field must not be equal null");
+		}
+
+		AsnOutputStream res = new AsnOutputStream();
+		addressField.encodeData(res);
+		this.data = res.toByteArray();
+	}
 
 	public byte[] getData() {
 		return data;
 	}
 
-	public int getTag() throws MAPException {
-		return Tag.STRING_OCTET;
-	}
+	@Override
+	public AddressField getAddressField() throws MAPException {
 
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
-
-	public boolean getIsPrimitive() {
-		return true;
-	}
-
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
-
-		this.data = ansIS.readOctetStringData(length);
-		
-		if (this.data.length < 1 || this.data.length > 12)
-			throw new MAPParsingComponentException("Error when decoding " + _PrimitiveName + ": data length must be from 1 to 12, found: " + this.data.length,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-	}
-
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, this.getTag());
-	}
-
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		
-		try {
-			asnOs.writeTag(tagClass, true, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
-
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-
-		if (this.data == null)
-			throw new MAPException("Error when encoding " + _PrimitiveName + ": data is empty");
-		if (this.data.length < 1 || this.data.length > 12)
-			throw new MAPException("Error when encoding " + _PrimitiveName + ": data length must be from 1 to 12, found: " + this.data.length);
-
-		asnOs.writeOctetStringData(data);
-	}
+		ByteArrayInputStream stm = new ByteArrayInputStream(data);
+		AddressField res = AddressFieldImpl.createMessage(stm);
+		return res;
+	}	
 }
-

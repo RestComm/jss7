@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
@@ -51,11 +52,11 @@ public interface MAPDialogSupplementary extends MAPDialog {
 	 * @return invokeId
 	 * @throws MAPException
 	 */
-	public Long addProcessUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter, ISDNAddressString msisdn)
-			throws MAPException;
-
-	public Long addProcessUnstructuredSSRequest(int customInvokeTimeout, byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter,
+	public Long addProcessUnstructuredSSRequest(CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter,
 			ISDNAddressString msisdn) throws MAPException;
+
+	public Long addProcessUnstructuredSSRequest(int customInvokeTimeout, CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString,
+			AlertingPattern alertingPatter, ISDNAddressString msisdn) throws MAPException;
 
 	/**
 	 * Add's a new ProcessUnstructured SS Response as Component.
@@ -70,7 +71,7 @@ public interface MAPDialogSupplementary extends MAPDialog {
 	 *            Ussd String {@link USSDString}
 	 * @throws MAPException
 	 */
-	public void addProcessUnstructuredSSResponse(long invokeId, byte ussdDataCodingScheme, USSDString ussdString) throws MAPException;
+	public void addProcessUnstructuredSSResponse(long invokeId, CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString) throws MAPException;
 
 	/**
 	 * Add's a new Unstructured SS Request
@@ -87,11 +88,11 @@ public interface MAPDialogSupplementary extends MAPDialog {
 	 * @return invokeId
 	 * @throws MAPException
 	 */
-	public Long addUnstructuredSSRequest(byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter, ISDNAddressString msisdn)
-			throws MAPException;
-
-	public Long addUnstructuredSSRequest(int customInvokeTimeout, byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter,
+	public Long addUnstructuredSSRequest(CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter,
 			ISDNAddressString msisdn) throws MAPException;
+
+	public Long addUnstructuredSSRequest(int customInvokeTimeout, CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString,
+			AlertingPattern alertingPatter, ISDNAddressString msisdn) throws MAPException;
 
 	/**
 	 * Add's a new Unstructured SS Response
@@ -106,7 +107,7 @@ public interface MAPDialogSupplementary extends MAPDialog {
 	 *            Ussd String {@link USSDString}
 	 * @throws MAPException
 	 */
-	public void addUnstructuredSSResponse(long invokeId, byte ussdDataCodingScheme, USSDString ussdString) throws MAPException;
+	public void addUnstructuredSSResponse(long invokeId, CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString) throws MAPException;
 
 	/**
 	 * Add's a new Unstructured SS Notify
@@ -123,11 +124,11 @@ public interface MAPDialogSupplementary extends MAPDialog {
 	 * @return invokeId
 	 * @throws MAPException
 	 */
-	public Long addUnstructuredSSNotifyRequest(byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter, ISDNAddressString msisdn)
-			throws MAPException;
-
-	public Long addUnstructuredSSNotifyRequest(int customInvokeTimeout, byte ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter,
+	public Long addUnstructuredSSNotifyRequest(CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter,
 			ISDNAddressString msisdn) throws MAPException;
+
+	public Long addUnstructuredSSNotifyRequest(int customInvokeTimeout, CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString,
+			AlertingPattern alertingPatter, ISDNAddressString msisdn) throws MAPException;
 
 	public void addUnstructuredSSNotifyResponse(long invokeId) throws MAPException;
 

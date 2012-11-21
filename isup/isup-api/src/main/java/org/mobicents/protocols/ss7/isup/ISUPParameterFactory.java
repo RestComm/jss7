@@ -25,6 +25,7 @@
  */
 package org.mobicents.protocols.ss7.isup;
 
+import java.io.Serializable;
 import org.mobicents.protocols.ss7.isup.message.parameter.*;
 import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.AccessTransport;
 
@@ -93,7 +94,7 @@ public interface ISUPParameterFactory {
 	
 	ConnectionRequest createConnectionRequest();
 	
-	ContinuitiyIndicators createContinuitiyIndicators();
+	ContinuityIndicators createContinuityIndicators();
 	
 	CorrelationID createCorrelationID();
 	

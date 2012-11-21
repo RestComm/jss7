@@ -1,0 +1,42 @@
+Name
+	linkset create
+
+SYNOPSIS
+	linkset create dahdi opc <point-code> apc <point-code> ni <network-id> 
+	<linkset-name>
+
+DESCRIPTION
+	This command is used to create a new Linkset of type Dahdi as explained below. You 
+	must ensure that appropriate linkset factories are deployed prior to creating any 
+	linkset.
+
+PARAMETERS
+	opc <point-code> 		-	MTP Point code of the originating 
+						signalling point. Takes an Integer Value. 
+
+	apc <point-code>		-	MTP  Point code of the adjacent signalling 
+						point. Takes an Integer Value.
+
+	ni <network-id> 		-	Network Identifier and should be one of 
+						the following values
+							0 - International Network
+							1 - Spare (for International use)
+							2 - National Network
+							3 - Reserved for National use
+
+	<linkset-name>			-	Name of the Linkset to be created. This 
+						will be used to identify the linkset. 
+						Takes a String value.
+
+EXAMPLES	
+	linkset create dahdi opc 3 apc 4 ni 0 dahdilinkset1
+
+	The above command will create a new linkset of type Dahdi and name dahdilinkset1. 
+	The originating point code value is 3 and the adjacent point code value is 4 and 
+	the network is an international network.
+	
+SEE ALSO
+	linkset, linkset delete, linkset activate, linkset deactivate, linkset show, 
+	linkset link create, linkset link delete, linkset link activate, 
+	linkset link deactivate.
+

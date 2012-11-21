@@ -33,10 +33,13 @@ import org.mobicents.protocols.ss7.map.api.MAPMessageType;
 import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.map.api.primitives.GSNAddress;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSLocationInfo;
 import org.mobicents.protocols.ss7.map.api.service.lsm.SendRoutingInfoForLCSResponse;
+import org.mobicents.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdOrLAIImpl;
+import org.mobicents.protocols.ss7.map.primitives.GSNAddressImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.primitives.SubscriberIdentityImpl;
 
@@ -54,13 +57,15 @@ public class SendRoutingInfoForLCSResponseImpl extends LsmMessageImpl implements
 	private static final int _TAG_PPR_ADDRESS = 5;
 	private static final int _TAG_ADDITIONAL_V_GMLC_ADDRESS = 6;
 
-	private SubscriberIdentity targetMS = null;
-	private LCSLocationInfo lcsLocationInfo = null;
-	private MAPExtensionContainer extensionContainer = null;
-	private byte[] vgmlcAddress = null;
-	private byte[] hGmlcAddress = null;
-	private byte[] pprAddress = null;
-	private byte[] additionalVGmlcAddress = null;
+	public static final String _PrimitiveName = "SendRoutingInfoForLCSResponse";
+
+	private SubscriberIdentity targetMS;
+	private LCSLocationInfo lcsLocationInfo;
+	private MAPExtensionContainer extensionContainer;
+	private GSNAddress vgmlcAddress;
+	private GSNAddress hGmlcAddress;
+	private GSNAddress pprAddress;
+	private GSNAddress additionalVGmlcAddress;
 
 	/**
 	 * 
@@ -79,7 +84,7 @@ public class SendRoutingInfoForLCSResponseImpl extends LsmMessageImpl implements
 	 * @param additionalVGmlcAddress
 	 */
 	public SendRoutingInfoForLCSResponseImpl(SubscriberIdentity targetMS, LCSLocationInfo lcsLocationInfo, MAPExtensionContainer extensionContainer,
-			byte[] vgmlcAddress, byte[] hGmlcAddress, byte[] pprAddress, byte[] additionalVGmlcAddress) {
+			GSNAddress vgmlcAddress, GSNAddress hGmlcAddress, GSNAddress pprAddress, GSNAddress additionalVGmlcAddress) {
 		super();
 		this.targetMS = targetMS;
 		this.lcsLocationInfo = lcsLocationInfo;
@@ -134,7 +139,7 @@ public class SendRoutingInfoForLCSResponseImpl extends LsmMessageImpl implements
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.
 	 * SendRoutingInforForLCSResponseIndication#getVgmlcAddress()
 	 */
-	public byte[] getVgmlcAddress() {
+	public GSNAddress getVgmlcAddress() {
 		return this.vgmlcAddress;
 	}
 
@@ -144,7 +149,7 @@ public class SendRoutingInfoForLCSResponseImpl extends LsmMessageImpl implements
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.
 	 * SendRoutingInforForLCSResponseIndication#getHGmlcAddress()
 	 */
-	public byte[] getHGmlcAddress() {
+	public GSNAddress getHGmlcAddress() {
 		return this.hGmlcAddress;
 	}
 
@@ -154,7 +159,7 @@ public class SendRoutingInfoForLCSResponseImpl extends LsmMessageImpl implements
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.
 	 * SendRoutingInforForLCSResponseIndication#getPprAddress()
 	 */
-	public byte[] getPprAddress() {
+	public GSNAddress getPprAddress() {
 		return this.pprAddress;
 	}
 
@@ -164,7 +169,7 @@ public class SendRoutingInfoForLCSResponseImpl extends LsmMessageImpl implements
 	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.
 	 * SendRoutingInforForLCSResponseIndication#getAdditionalVGmlcAddress()
 	 */
-	public byte[] getAdditionalVGmlcAddress() {
+	public GSNAddress getAdditionalVGmlcAddress() {
 		return this.additionalVGmlcAddress;
 	}
 
@@ -212,10 +217,10 @@ public class SendRoutingInfoForLCSResponseImpl extends LsmMessageImpl implements
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding ProvideSubscriberLocationRequestIndication: ", e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": ", e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding ProvideSubscriberLocationRequestIndication: ", e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": ", e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -231,37 +236,43 @@ public class SendRoutingInfoForLCSResponseImpl extends LsmMessageImpl implements
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding ProvideSubscriberLocationRequestIndication: ", e,
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": ", e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding ProvideSubscriberLocationRequestIndication: ", e,
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": ", e,
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
 	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
+		this.targetMS = null;
+		this.lcsLocationInfo = null;
+		this.extensionContainer = null;
+		this.vgmlcAddress = null;
+		this.hGmlcAddress = null;
+		this.pprAddress = null;
+		this.additionalVGmlcAddress = null;
+
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 
 		// targetMS [0] SubscriberIdentity
 		int tag = ais.readTag();
-
 		if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive() || tag != _TAG_TARGET_MS) {
 			throw new MAPParsingComponentException(
-					"Error while decoding SendRoutingInforForLCSResponseIndication: Parameter [targetMS [0] SubscriberIdentity] bad tag class or not primitive or not Sequence",
+					"Error while decoding " + _PrimitiveName + ": Parameter [targetMS [0] SubscriberIdentity] bad tag, tag class or primitive",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
-		int length1 = ais.readLength();
-		tag = ais.readTag();
-
 		this.targetMS = new SubscriberIdentityImpl();
-		((SubscriberIdentityImpl)this.targetMS).decodeAll(ais);
+		AsnInputStream ais2 = ais.readSequenceStream();
+		ais2.readTag();
+		((SubscriberIdentityImpl)this.targetMS).decodeAll(ais2);
 
 		// lcsLocationInfo [1] LCSLocationInfo,
 		tag = ais.readTag();
 		if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive() || tag != _TAG_LCS_LOCATION_INFO) {
 			throw new MAPParsingComponentException(
-					"Error while decoding SendRoutingInforForLCSResponseIndication: Parameter [lcsLocationInfo [1] LCSLocationInfo] bad tag class or not primitive or not Sequence",
+					"Error while decoding " + _PrimitiveName + ": Parameter [lcsLocationInfo [1] LCSLocationInfo] bad tag, tag class or primitive",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 		this.lcsLocationInfo = new LCSLocationInfoImpl();
@@ -273,58 +284,63 @@ public class SendRoutingInfoForLCSResponseImpl extends LsmMessageImpl implements
 
 			tag = ais.readTag();
 
-			switch (tag) {
-			case _TAG_EXTENSION_CONTAINER:
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Error while decoding SendRoutingInforForLCSResponseIndication: Parameter [extensionContainer [2] ExtensionContainer] bad tag class or not primitive or not Sequence",
-							MAPParsingComponentExceptionReason.MistypedParameter);
+			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+				switch (tag) {
+				case _TAG_EXTENSION_CONTAINER:
+					if (ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter [extensionContainer [2] ExtensionContainer] is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.extensionContainer = new MAPExtensionContainerImpl();
+					((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+					break;
+				case _TAG_V_GMLC_ADDRESS:
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter [v-gmlc-Address [3] GSN-Address] is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.vgmlcAddress = new GSNAddressImpl();
+					((GSNAddressImpl) this.vgmlcAddress).decodeAll(ais);
+					break;
+				case _TAG_H_GMLC_ADDRESS:
+					// h-gmlc-Address [4] GSN-Address OPTIONAL,
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter [h-gmlc-Address [4] GSN-Address] is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.hGmlcAddress = new GSNAddressImpl();
+					((GSNAddressImpl) this.hGmlcAddress).decodeAll(ais);
+					break;
+				case _TAG_PPR_ADDRESS:
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter [ppr-Address [5] GSN-Address] is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.pprAddress = new GSNAddressImpl();
+					((GSNAddressImpl) this.pprAddress).decodeAll(ais);
+					break;
+				case _TAG_ADDITIONAL_V_GMLC_ADDRESS:
+					// additional-v-gmlc-Address [6] GSN-Address OPTIONAL
+					if (!ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ": Parameter [additional-v-gmlc-Address [6] GSN-Address] is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					}
+					this.additionalVGmlcAddress = new GSNAddressImpl();
+					((GSNAddressImpl) this.additionalVGmlcAddress).decodeAll(ais);
+					break;
+				default:
+					ais.advanceElement();
+					break;
 				}
-				this.extensionContainer = new MAPExtensionContainerImpl();
-				((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
-				break;
-			case _TAG_V_GMLC_ADDRESS:
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Error while decoding SendRoutingInforForLCSResponseIndication: Parameter [v-gmlc-Address [3] GSN-Address] bad tag class or not primitive or not Sequence",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				length1 = ais.readLength();
-				this.vgmlcAddress = ais.readOctetStringData(length1);
-				break;
-			case _TAG_H_GMLC_ADDRESS:
-				// h-gmlc-Address [4] GSN-Address OPTIONAL,
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Error while decoding SendRoutingInforForLCSResponseIndication: Parameter [h-gmlc-Address [4] GSN-Address] bad tag class or not primitive or not Sequence",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				length1 = ais.readLength();
-				this.hGmlcAddress = ais.readOctetStringData(length1);
-				break;
-			case _TAG_PPR_ADDRESS:
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Error while decoding SendRoutingInforForLCSResponseIndication: Parameter [ppr-Address [5] GSN-Address] bad tag class or not primitive or not Sequence",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				length1 = ais.readLength();
-				this.pprAddress = ais.readOctetStringData(length1);
-				break;
-			case _TAG_ADDITIONAL_V_GMLC_ADDRESS:
-				// additional-v-gmlc-Address [6] GSN-Address OPTIONAL
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
-					throw new MAPParsingComponentException(
-							"Error while decoding SendRoutingInforForLCSResponseIndication: Parameter [additional-v-gmlc-Address [6] GSN-Address] bad tag class or not primitive or not Sequence",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				}
-				length1 = ais.readLength();
-				this.additionalVGmlcAddress = ais.readOctetStringData(length1);
-				break;
-			default:
+			} else {
 				ais.advanceElement();
-				break;
 			}
+			
 		}// while
 
 	}
@@ -337,7 +353,7 @@ public class SendRoutingInfoForLCSResponseImpl extends LsmMessageImpl implements
 	 * (org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	/*
@@ -354,7 +370,7 @@ public class SendRoutingInfoForLCSResponseImpl extends LsmMessageImpl implements
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding MWStatus: " + e.getMessage(), e);
+			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 
@@ -368,23 +384,23 @@ public class SendRoutingInfoForLCSResponseImpl extends LsmMessageImpl implements
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.targetMS == null) {
 			throw new MAPException(
-					"Encoding of SendRoutingInforForLCSResponseIndication failed. Manadatory parameter targetMS [0] SubscriberIdentity is not set");
+					"Encoding of " + _PrimitiveName + " failed. Manadatory parameter targetMS [0] SubscriberIdentity is not set");
 		}
 
 		if (this.lcsLocationInfo == null) {
 			throw new MAPException(
-					"Encoding of SendRoutingInforForLCSResponseIndication failed. Manadatory parameter lcsLocationInfo [1] LCSLocationInfo is not set");
+					"Encoding of " + _PrimitiveName + " failed. Manadatory parameter lcsLocationInfo [1] LCSLocationInfo is not set");
 		}
 
 		try {
 			asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG_TARGET_MS);
+			int pos = asnOs.StartContentDefiniteLength();
+			((SubscriberIdentityImpl)this.targetMS).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, ((SubscriberIdentityImpl)this.targetMS).getTag());
+			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
-			throw new MAPException("AsnException while encoding parameter targetMS [0] SubscriberIdentity");
+			throw new MAPException("AsnException while encoding parameter " + _PrimitiveName + ".targetMS [0] SubscriberIdentity");
 		}
 
-		int pos = asnOs.StartContentDefiniteLength();
-		((SubscriberIdentityImpl)this.targetMS).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, ((SubscriberIdentityImpl)this.targetMS).getTag());
-		asnOs.FinalizeContent(pos);
 
 		((LCSLocationInfoImpl)this.lcsLocationInfo).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LCS_LOCATION_INFO);
 
@@ -395,47 +411,62 @@ public class SendRoutingInfoForLCSResponseImpl extends LsmMessageImpl implements
 
 		if (this.vgmlcAddress != null) {
 			// v-gmlc-Address [3] GSN-Address OPTIONAL,
-			try {
-				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_V_GMLC_ADDRESS, this.vgmlcAddress);
-			} catch (IOException e) {
-				throw new MAPException("IOException while encoding parameter v-gmlc-Address");
-			} catch (AsnException e) {
-				throw new MAPException("AsnException while encoding parameter v-gmlc-Address");
-			}
+			((GSNAddressImpl)this.vgmlcAddress).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_V_GMLC_ADDRESS);
 		}
 
 		if (this.hGmlcAddress != null) {
 			// h-gmlc-Address [4] GSN-Address OPTIONAL,
-			try {
-				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_H_GMLC_ADDRESS, this.hGmlcAddress);
-			} catch (IOException e) {
-				throw new MAPException("IOException while encoding parameter hGmlcAddress");
-			} catch (AsnException e) {
-				throw new MAPException("AsnException while encoding parameter hGmlcAddress");
-			}
+			((GSNAddressImpl)this.hGmlcAddress).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_H_GMLC_ADDRESS);
 		}
 
 		if (this.pprAddress != null) {
 			// ppr-Address [5] GSN-Address OPTIONAL,
-			try {
-				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_PPR_ADDRESS, this.pprAddress);
-			} catch (IOException e) {
-				throw new MAPException("IOException while encoding parameter pprAddress");
-			} catch (AsnException e) {
-				throw new MAPException("AsnException while encoding parameter pprAddress");
-			}
+			((GSNAddressImpl)this.pprAddress).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_PPR_ADDRESS);
 		}
 
 		if (this.additionalVGmlcAddress != null) {
 			// additional-v-gmlc-Address [6] GSN-Address OPTIONAL,
-			try {
-				asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_ADDITIONAL_V_GMLC_ADDRESS, this.additionalVGmlcAddress);
-			} catch (IOException e) {
-				throw new MAPException("IOException while encoding parameter additionalVGmlcAddress");
-			} catch (AsnException e) {
-				throw new MAPException("AsnException while encoding parameter additionalVGmlcAddress");
-			}
+			((GSNAddressImpl)this.additionalVGmlcAddress).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_ADDITIONAL_V_GMLC_ADDRESS);
 		}
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		if (this.targetMS != null) {
+			sb.append("targetMS");
+			sb.append(this.targetMS);
+		}
+		if (this.lcsLocationInfo != null) {
+			sb.append(", lcsLocationInfo=");
+			sb.append(this.lcsLocationInfo);
+		}
+		if (this.extensionContainer != null) {
+			sb.append(", extensionContainer=");
+			sb.append(this.extensionContainer);
+		}
+		if (this.vgmlcAddress != null) {
+			sb.append(", vgmlcAddress=");
+			sb.append(this.vgmlcAddress);
+		}
+		if (this.hGmlcAddress != null) {
+			sb.append(", hGmlcAddress=");
+			sb.append(this.hGmlcAddress);
+		}
+		if (this.pprAddress != null) {
+			sb.append(", pprAddress=");
+			sb.append(this.pprAddress);
+		}
+		if (this.additionalVGmlcAddress != null) {
+			sb.append(", additionalVGmlcAddress=");
+			sb.append(this.additionalVGmlcAddress);
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }

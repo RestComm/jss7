@@ -84,7 +84,7 @@ public class CircuitStateIndicatorImpl extends AbstractISUPParameter implements 
 		// FIXME: Shoudl we here enforce proper coding? according to note or
 		// move it to encode??
 		if (HBS != _HBS_NO_BLOCKING) {
-			// NOTE � If bits F E are not coded 0 0, bits D C must be coded 1 1.
+			// NOTE If bits F E are not coded 0 0, bits D C must be coded 1 1.
 			// - this means CPS == 3
 			CPS = _CPS_IDLE;
 		}

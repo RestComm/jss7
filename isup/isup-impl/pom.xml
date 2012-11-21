@@ -44,10 +44,6 @@
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
 			<artifactId>mtp</artifactId>
 		</dependency>
-		<dependency>
-			<artifactId>linkset</artifactId>
-			<groupId>org.mobicents.protocols.ss7.management</groupId>
-		</dependency>
 	</dependencies>
 
 	<build>

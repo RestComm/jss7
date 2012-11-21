@@ -1,0 +1,65 @@
+Name
+	sccp dest create
+
+SYNOPSIS
+	sccp dest create <sap-id> <id> <first-dpc> <last-dpc> <first-sls> <last-sls> 
+	<sls-mask>
+
+DESCRIPTION
+	This command is used to define a new Destination for a Service Access Point. 
+	For every SAP in the system, you should configure one or more Destinations. 
+
+PARAMETERS
+
+	Standard Parameters
+                                              
+	<sap-id>	-	The identifier of the SAP for which this new Destination 
+				is being defined. You must ensure that the SAP has been 
+				created prior to issuing this command.
+
+	<id>		-	An identifier for this newly created Destination. 
+				The number must be unique within each SAP.
+
+	<first-dpc>	-	The first value of the remote signaling point codes range.
+
+	<last-dpc>	-	The last value of the remote signaling point codes range. 
+				If the Destination specifies only a single Signaling 
+				Point Code, this value must be equal to the value 
+				specified for 'first-dpc'.
+
+	<first-sls>	-	The first value of the SLS range. 
+				SLS value range is from 0 to 255.
+
+	<last-sls>	-	The last value of the SLS range. 
+
+	<sls-mask>	-	The mask value. SLS of a message will be exposed by 
+				performing a bitwise AND operation with this mask prior to
+				comparing it with first-sls and last-sls values.
+
+
+EXAMPLES
+	sccp dest create 1 1 201 201 0 7 7
+	
+	The above command will create a new Destination (identified by number '1') for 
+	a Service Access Point identified by the number '1'. The values for 'first-dpc', 
+	'last-dpc', 'first-sls', 'last-sls' and 'sls-mask' are 201, 201, 0, 7 and 7 
+	respectively.
+
+	sccp dest create 2 1 300 399 0 255 255
+
+	The above command will create a new Destination (identified by number '2') for 
+	a Service Access Point identified by the number '1'. The values for 'first-dpc', 
+	'last-dpc', 'first-sls', 'last-sls' and 'sls-mask' are 300, 399, 0, 255 and 255 
+	respectively. This Destination will cover all possible SLS values. 
+	Therefore the value for first-sls =0, last-sls=255 and sls-mask=255
+
+SEE ALSO
+	sccp sap create, sccp sap modify, sccp sap delete, sccp sap show, 
+	sccp dest modify, sccp dest delete, sccp dest show, sccp rule create, 
+	sccp rule modify, sccp rule delete, sccp rule show, sccp primary_add create, 
+	sccp primary_add modify, sccp primary_add delete, sccp primary_add show,
+	sccp backup_add create, sccp backup_add modify, sccp backup_add delete, 
+	sccp backup_add show, sccp rsp create, sccp rsp modify, sccp rsp delete, 
+	sccp rsp show, sccp rss create, sccp rss modify, sccp rss delete, sccp rss show,
+	sccp lmr create, sccp lmr modify, sccp lmr delete, sccp lmr show, sccp csp create,
+	sccp csp modify, sccp csp delete, sccp csp show, sccp get, sccp set

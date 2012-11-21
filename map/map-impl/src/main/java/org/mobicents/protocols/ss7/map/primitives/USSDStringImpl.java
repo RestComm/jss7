@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,232 +22,254 @@
 
 package org.mobicents.protocols.ss7.map.primitives;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
-
-import org.mobicents.protocols.asn.AsnException;
-import org.mobicents.protocols.asn.AsnInputStream;
-import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.map.GSMCharset;
-import org.mobicents.protocols.ss7.map.GSMCharsetDecoder;
-import org.mobicents.protocols.ss7.map.GSMCharsetDecodingData;
-import org.mobicents.protocols.ss7.map.GSMCharsetEncoder;
-import org.mobicents.protocols.ss7.map.GSMCharsetEncodingData;
 import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingGroup;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSNationalLanguage;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
+import org.mobicents.protocols.ss7.map.datacoding.GSMCharset;
+import org.mobicents.protocols.ss7.map.datacoding.GSMCharsetDecoder;
+import org.mobicents.protocols.ss7.map.datacoding.GSMCharsetDecodingData;
+import org.mobicents.protocols.ss7.map.datacoding.GSMCharsetEncoder;
+import org.mobicents.protocols.ss7.map.datacoding.GSMCharsetEncodingData;
 
 /**
  * 
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
-public class USSDStringImpl implements USSDString, MAPAsnPrimitive {
+public class USSDStringImpl extends OctetStringBase implements USSDString {
 
-	private String ussdString;
-	private byte[] encodedString;
+	private CBSDataCodingScheme dataCodingScheme;
 
-	//TODO : Should Charset be serializable?
-	private transient Charset charset;
+	private static GSMCharset gsm7Charset = new GSMCharset("GSM", new String[] {});
+	private static GSMCharset gsm7Charset_Urdu = new GSMCharset("GSM", new String[] {}, GSMCharset.BYTE_TO_CHAR_UrduAlphabet,
+			GSMCharset.BYTE_TO_CHAR_UrduAlphabetExtentionTable);
+	private static Charset ucs2Charset = Charset.forName("UTF-16BE");
 
-	/**
-	 * 
-	 */
-	public USSDStringImpl() {
-		super();
-	}
 
-	public USSDStringImpl(String ussdString, Charset charset) {
-		this.ussdString = ussdString;
-		this.charset = charset;
+	public USSDStringImpl(CBSDataCodingScheme dataCodingScheme) {
+		super(1, 160, "USSDString");
 
-		// set to default if not set by user
-		if (this.charset == null) {
-			this.charset = new GSMCharset("GSM", new String[] {});
+		if (dataCodingScheme == null) {
+			dataCodingScheme = new CBSDataCodingSchemeImpl(15);
 		}
+		this.dataCodingScheme = dataCodingScheme;
 	}
 
-	public USSDStringImpl(byte[] encodedString, Charset charset) {
-		this.encodedString = encodedString;
-		this.charset = charset;
+	public USSDStringImpl(byte[] data, CBSDataCodingScheme dataCodingScheme) {
+		super(1, 160, "USSDString", data);
 
-		// set to default if not set by user
-		if (this.charset == null) {
-			this.charset = new GSMCharset("GSM", new String[] {});
+		if (dataCodingScheme == null) {
+			dataCodingScheme = new CBSDataCodingSchemeImpl(15);
+		}
+		this.dataCodingScheme = dataCodingScheme;
+	}
+
+	public USSDStringImpl(String ussdString, CBSDataCodingScheme dataCodingScheme, Charset gsm8Charset) throws MAPException {
+		super(1, 160, "USSDString");
+
+		if (ussdString == null) {
+			ussdString = "";
+		}
+		if (dataCodingScheme == null) {
+			dataCodingScheme = new CBSDataCodingSchemeImpl(15);
+		}
+		this.dataCodingScheme = dataCodingScheme;
+
+		if (dataCodingScheme.getIsCompressed()) {
+			// TODO: implement the case with compressed message
+			throw new MAPException("Error encoding a text in USSDStringImpl: compressed message is not supported yet");
+		} else {
+
+			switch (dataCodingScheme.getCharacterSet()) {
+			case GSM7:
+				Charset cSet = gsm7Charset;
+				if (dataCodingScheme.getNationalLanguageShiftTable() == CBSNationalLanguage.Arabic) {
+					cSet = gsm7Charset_Urdu;
+				}
+				GSMCharsetEncoder encoder = (GSMCharsetEncoder) cSet.newEncoder();
+				encoder.setGSMCharsetEncodingData(new GSMCharsetEncodingData());
+				ByteBuffer bb = null;
+				try {
+					bb = encoder.encode(CharBuffer.wrap(ussdString));
+				} catch (Exception e) {
+					// This can not occur
+				}
+				if (bb != null) {
+					this.data = new byte[bb.limit()];
+					bb.get(this.data);
+				} else
+					this.data = new byte[0];
+				break;
+
+			case GSM8:
+				if (gsm8Charset != null) {
+					bb = gsm8Charset.encode(ussdString);
+					this.data = new byte[bb.limit()];
+					bb.get(this.data);
+				} else {
+					throw new MAPException("Error encoding a text in USSDStringImpl: gsm8Charset is not defined for GSM8 dataCodingScheme");
+				}
+				break;
+
+			case UCS2:
+				if (dataCodingScheme.getDataCodingGroup() == CBSDataCodingGroup.GeneralWithLanguageIndication) {
+					if (ussdString.length() < 1)
+						ussdString = ussdString + " ";
+					if (ussdString.length() < 2)
+						ussdString = ussdString + " ";
+					if (ussdString.length() < 3)
+						ussdString = ussdString + "\n";
+					cSet = gsm7Charset;
+					encoder = (GSMCharsetEncoder) cSet.newEncoder();
+					encoder.setGSMCharsetEncodingData(new GSMCharsetEncodingData());
+					bb = null;
+					try {
+						String sb = ussdString.substring(0, 3);
+						bb = encoder.encode(CharBuffer.wrap(sb));
+					} catch (Exception e) {
+						// This can not occur
+					}
+					byte[] buf1;
+					if (bb != null) {
+						buf1 = new byte[bb.limit()];
+						bb.get(buf1);
+					} else
+						buf1 = new byte[0];
+
+					String sb2 = ussdString.substring(3);
+					bb = ucs2Charset.encode(sb2);
+					this.data = new byte[buf1.length + bb.limit()];
+					System.arraycopy(buf1, 0, this.data, 0, buf1.length);
+					bb.get(this.data, buf1.length, this.data.length - buf1.length);
+				} else {
+					bb = ucs2Charset.encode(ussdString);
+					this.data = new byte[bb.limit()];
+					bb.get(this.data);
+				}
+				break;
+			}
 		}
 	}
 
 	public byte[] getEncodedString() {
-		return this.encodedString;
+		return this.data;
 	}
 
-	public String getString() {
-		return this.ussdString;
-	}
-	
-	public Charset getCharset() {
-		return this.charset;
-	}
+	public String getString(Charset gsm8Charset) throws MAPException {
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
-	 */
-	public int getTag() throws MAPException {
-		return Tag.STRING_OCTET;
-	}
+		String res = "";
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass()
-	 */
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+		if (dataCodingScheme == null) {
+			dataCodingScheme = new CBSDataCodingSchemeImpl(15);
+		}
+		if (this.data == null) {
+			throw new MAPException("Error decoding a text in USSDStringImpl: encoded data can not be null");
+		}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive()
-	 */
-	public boolean getIsPrimitive() {
-		return true;
-	}
+		if (dataCodingScheme.getIsCompressed()) {
+			// TODO: implement the case with compressed sms message
+			throw new MAPException("Error decoding a text in USSDStringImpl: compressed message is not supported yet");
+		} else {
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll(org.mobicents.protocols.asn.AsnInputStream)
-	 */
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding ReportSMDeliveryStatusRequest: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding ReportSMDeliveryStatusRequest: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}		
-	}
+			switch (dataCodingScheme.getCharacterSet()) {
+			case GSM7:
+				GSMCharset cSet = gsm7Charset;
+				if (dataCodingScheme.getNationalLanguageShiftTable() == CBSNationalLanguage.Arabic) {
+					cSet = gsm7Charset_Urdu;
+				}
+				GSMCharsetDecoder decoder = (GSMCharsetDecoder) cSet.newDecoder();
+				decoder.setGSMCharsetDecodingData(new GSMCharsetDecodingData());		
+				ByteBuffer bb = ByteBuffer.wrap(this.data);
+				CharBuffer bf = null;
+				try {
+					bf = decoder.decode(bb);
+				} catch (CharacterCodingException e) {
+					// This can not occur
+				}
+				if (bf != null)
+					res = bf.toString();
+				break;
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData(org.mobicents.protocols.asn.AsnInputStream, int)
-	 */
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding ReportSMDeliveryStatusRequest: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding ReportSMDeliveryStatusRequest: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}		
-	}
-	
-	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
-		this.encodedString = asnIS.readOctetStringData(length);
-		
-		ByteBuffer bb = ByteBuffer.wrap(this.encodedString);
+			case GSM8:
+				if (gsm8Charset != null) {
+					byte[] buf = this.data;
+					bb = ByteBuffer.wrap(buf);
+					bf = gsm8Charset.decode(bb);
+					res = bf.toString();
+				}
+				break;
 
-		// set to default if not set by user
-		if (charset == null) {
-			charset = new GSMCharset("GSM", new String[] {});
+			case UCS2:
+				String pref = "";
+				byte[] buf = this.data;
+				if (dataCodingScheme.getDataCodingGroup() == CBSDataCodingGroup.GeneralWithLanguageIndication) {
+					cSet = gsm7Charset;
+					decoder = (GSMCharsetDecoder) cSet.newDecoder();
+					decoder.setGSMCharsetDecodingData(new GSMCharsetDecodingData());
+					byte[] buf2 = new byte[3];
+					if (this.data.length < 3)
+						buf2 = new byte[this.data.length];
+					System.arraycopy(this.data, 0, buf2, 0, buf2.length);
+					bb = ByteBuffer.wrap(buf2);
+					bf = null;
+					try {
+						bf = decoder.decode(bb);
+					} catch (CharacterCodingException e) {
+						// This can not occur
+					}
+					if (bf != null)
+						pref = bf.toString();
+
+					if (this.data.length <= 3) {
+						buf = new byte[0];
+					} else {
+						buf = new byte[this.data.length - 3];
+						System.arraycopy(this.data, 3, buf, 0, buf.length);
+					}
+
+					bb = ByteBuffer.wrap(buf);
+					bf = ucs2Charset.decode(bb);
+					res = pref + bf.toString();
+				} else {
+					bb = ByteBuffer.wrap(buf);
+					bf = ucs2Charset.decode(bb);
+					res = bf.toString();
+				}
+				break;
+			}
 		}
 		
-//		CharBuffer bf = this.charset.decode(bb);
-//		this.ussdString = bf.toString();
-		GSMCharsetDecoder decoder = (GSMCharsetDecoder) this.charset.newDecoder();
-		decoder.setGSMCharsetDecodingData(new GSMCharsetDecodingData());		
-		CharBuffer bf = null;
-		try {
-			bf = decoder.decode(bb);
-		} catch (CharacterCodingException e) {
-			// This can not occur
-		}
-		if (bf != null)
-			this.ussdString = bf.toString();
-		else
-			this.ussdString = "";
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream)
-	 */
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET);		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream, int, int)
-	 */
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		try {
-			asnOs.writeTag(tagClass, true, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding reportSMDeliveryStatusRequest: " + e.getMessage(), e);
-		}		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData(org.mobicents.protocols.asn.AsnOutputStream)
-	 */
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		if (this.ussdString == null) {
-			throw new MAPException("Error while encoding USSDString the mandatory USSDString is not defined");
-		}
-		
-//		ByteBuffer bb = this.charset.encode(ussdString);
-//		// Not using bb.array() as it also includes the bytes beyond limit till
-//		// capacity
-//		encodedString = new byte[bb.limit()];
-//		int count = 0;
-//		while (bb.hasRemaining()) {
-//			encodedString[count++] = bb.get();
-//		}
-
-		GSMCharsetEncoder encoder = (GSMCharsetEncoder) charset.newEncoder();
-		encoder.setGSMCharsetEncodingData(new GSMCharsetEncodingData());
-		ByteBuffer bb = null;
-		try {
-			bb = encoder.encode(CharBuffer.wrap(this.ussdString));
-		} catch (Exception e) {
-			// This can not occur
-		}
-		if (bb != null) {
-			this.encodedString = new byte[bb.limit()];
-			bb.get(this.encodedString);
-			asnOs.writeOctetStringData(this.encodedString);
-		}		
-	}
-	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((ussdString == null) ? 0 : ussdString.hashCode());
-		return result;
+		return res;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		USSDStringImpl other = (USSDStringImpl) obj;
-		if (ussdString == null) {
-			if (other.ussdString != null)
-				return false;
-		} else if (!ussdString.equals(other.ussdString))
-			return false;
-		return true;
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		try {
+			String s1 = this.getString(null);
+			sb.append(s1);
+		} catch (MAPException e) {
+		}
+
+		if (this.dataCodingScheme != null) {
+			sb.append(", dcs=");
+			sb.append(dataCodingScheme);
+		}
+
+		sb.append("]");
+
+		return sb.toString();
 	}
 }
 

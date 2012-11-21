@@ -40,15 +40,15 @@ static int openFileChannel(jint zapid,jint ioBufferSize) {
     int res;
     int fd;
 
-    sprintf(devname,"/dev/dahdi/%d",zapid );
-
-
-
-    fd = open(devname, O_RDWR);
+    fd = open("/dev/dahdi/channel", O_RDWR);	
     if (fd < 0) {
         return -1;
-    }
+    }	
 
+	res = ioctl(fd, DAHDI_SPECIFY, &zapid);
+	if(res<0) {
+		return -1;
+	}
 
     bi.txbufpolicy = DAHDI_POLICY_IMMEDIATE;
     bi.rxbufpolicy = DAHDI_POLICY_IMMEDIATE;
@@ -62,6 +62,11 @@ static int openFileChannel(jint zapid,jint ioBufferSize) {
         return -1;
     }
     
+	res = ioctl(fd, DAHDI_SET_BLOCKSIZE, &ioBufferSize);
+	if (res < 0) {
+        return -1;
+    }
+
     return fd;    	
 }
 
@@ -76,14 +81,20 @@ JNIEXPORT void JNICALL Java_org_mobicents_ss7_hardware_dahdi_Selector_doUnregist
     struct pollfd temp[16];
     
     int i;
-    int k;
+    int k=0;
     
+    int found=0;
     for (i = 0; i < channel_count; i++) {
 	if (fds[i].fd != fd) {
 	    temp[k++] = fds[i];
 	}
+	else
+ 	    found=1;
     }
     
+    if(found==0)
+       return;
+
     channel_count = channel_count - 1;
     
     for (i = 0; i < channel_count; i++) {

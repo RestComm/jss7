@@ -30,9 +30,9 @@
 		<compiler.plugin.version>2.0.2</compiler.plugin.version>
 		<compile.source>1.5</compile.source>
 		<!-- mobicents but not strictly ss7 -->
-		<asn.version>2.0.0.FINAL</asn.version>
+		<asn.version>2.0.1.FINAL</asn.version>
 		<stream.version>1.0.0.CR1</stream.version>
-		<sctp.version>1.0.0.CR3</sctp.version>
+		<sctp.version>1.0.0.FINAL</sctp.version>
 		<commons.version>1.0.0.CR1</commons.version>
 	</properties>
 
@@ -40,10 +40,9 @@
 		<module>docs</module>
 		<module>scheduler</module>
 		<module>congestion</module>
-		<module>clock</module>
-		<module>m3ua</module>
-		<module>mtp</module>
 		<module>management</module>
+		<module>mtp</module>
+		<module>m3ua</module>
 		<module>hardware</module>
 		<module>isup</module>
 		<module>sccp</module>
@@ -103,19 +102,29 @@
 			</dependency>
 			<!-- Management Shell -->
 			<dependency>
-				<artifactId>shell</artifactId>
-				<groupId>
-					org.mobicents.protocols.ss7.management
-				</groupId>
+				<artifactId>shell-transport</artifactId>
+				<groupId>org.mobicents.protocols.ss7.management</groupId>
 				<version>${pom.version}</version>
 			</dependency>
-
+			<dependency>
+				<artifactId>shell-client</artifactId>
+				<groupId>org.mobicents.protocols.ss7.management</groupId>
+				<version>${pom.version}</version>
+			</dependency>
+			<dependency>
+				<artifactId>shell-server-api</artifactId>
+				<groupId>org.mobicents.protocols.ss7.management</groupId>
+				<version>${pom.version}</version>
+			</dependency>
+			<dependency>
+				<artifactId>shell-server-impl</artifactId>
+				<groupId>org.mobicents.protocols.ss7.management</groupId>
+				<version>${pom.version}</version>
+			</dependency>
 			<!-- Management linkset -->
 			<dependency>
 				<artifactId>linkset</artifactId>
-				<groupId>
-					org.mobicents.protocols.ss7.management
-				</groupId>
+				<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 				<version>${pom.version}</version>
 			</dependency>
 
@@ -464,48 +473,6 @@
                             <updatePolicy>never</updatePolicy>
                           </snapshots>
                 </repository>
-                <repository>
-                        <id>jboss-public-repository-group</id>
-                        <name>JBoss Public Maven Repository Group</name>
-                        <url>http://repository.jboss.org/nexus/content/groups/public/</url>
-                        <layout>default</layout>
-                        <releases>
-                                <enabled>true</enabled>
-                                <updatePolicy>never</updatePolicy>
-                        </releases>
-                        <snapshots>
-                                <enabled>true</enabled>
-                                <updatePolicy>never</updatePolicy>
-                        </snapshots>
-                </repository>
-                <repository>
-                        <id>jboss-3rd-party-repository-group</id>
-                        <name>JBoss ThirdParty Releases Repository Group</name>
-                        <url>http://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
-                        <layout>default</layout>
-                        <releases>
-                                <enabled>true</enabled>
-                                <updatePolicy>never</updatePolicy>
-                        </releases>
-                        <snapshots>
-                                <enabled>true</enabled>
-                                <updatePolicy>never</updatePolicy>
-                        </snapshots>
-                </repository>
-                <repository>
-                        <id>jboss-3rd-party-upload-repository-group</id>
-                        <name>JBoss ThirdParty Upload Repository Group</name>
-                        <url>http://repository.jboss.org/nexus/content/repositories/thirdparty-upload</url>
-                        <layout>default</layout>
-                        <releases>
-                                <enabled>true</enabled>
-                                <updatePolicy>never</updatePolicy>
-                        </releases>
-                        <snapshots>
-                                <enabled>true</enabled>
-                                <updatePolicy>never</updatePolicy>
-                        </snapshots>
-                </repository>
             <repository>
                 <id>java.net-Public</id>
                 <name>Maven Java Net Snapshots and Releases</name>
@@ -519,16 +486,5 @@
                                 <updatePolicy>never</updatePolicy>
                         </snapshots>
             </repository>               
-                <repository>
-                        <id>backup.repository.jboss.org</id>
-                        <name>JBoss Repository Backup</name>
-                        <url>http://anonsvn.jboss.org/repos/repository.jboss.org/maven2/</url>
-                        <snapshots>
-                                <enabled>true</enabled>
-                        </snapshots>
-                        <releases>
-                                <enabled>true</enabled>
-                        </releases>
-                </repository>
         </repositories>
 </project>

@@ -21,6 +21,8 @@
 	</properties>
 
 	<modules>
+		<module>linkset</module>
+		<module>cli</module>
 		<module>dahdi</module>
 		<module>dialogic</module>
 	</modules>
@@ -29,9 +31,8 @@
 		<profile>
 			<id>maven-release</id>
 			<modules>
-				<!--
+				<!-- -->
 				<module>dahdi</module>
-				-->
 				<module>dialogic</module>
 			</modules>
 		</profile>

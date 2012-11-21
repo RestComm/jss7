@@ -78,16 +78,16 @@ public abstract class SingleTimers extends EventTestHarness {
 		List<EventReceived> expectedLocalEvents = new ArrayList<EventReceived>();
 		
 		long startTStamp = System.currentTimeMillis();
-		super.provider.sendMessage(this.request);
-		MessageEventReceived eventReceived = new MessageEventReceived(startTStamp, new ISUPEvent(super.provider, this.request));
+		super.provider.sendMessage(this.request,dpc);
+		MessageEventReceived eventReceived = new MessageEventReceived(startTStamp, new ISUPEvent(super.provider, this.request , dpc));
 		expectedRemoteEventsReceived.add(eventReceived);
 		ISUPMessage afterTimeoutMessage = getAfterTRequest();
 		if(afterTimeoutMessage!=null)
 		{
-			eventReceived = new MessageEventReceived(startTStamp+getT(), new ISUPEvent(super.provider,afterTimeoutMessage));
+			eventReceived = new MessageEventReceived(startTStamp+getT(), new ISUPEvent(super.provider,afterTimeoutMessage , dpc));
 			expectedRemoteEventsReceived.add(eventReceived);
 		}
-		ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(super.provider, this.request, tid);
+		ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(super.provider, this.request, tid , dpc);
 		TimeoutEventReceived ter = new TimeoutEventReceived(startTStamp + timeout, timeoutEvent);
 		expectedLocalEvents.add(ter);
 		doWait(timeout+1000);
@@ -106,14 +106,14 @@ public abstract class SingleTimers extends EventTestHarness {
 		List<EventReceived> expectedLocalEvents = new ArrayList<EventReceived>();
 
 		long startTStamp = System.currentTimeMillis();
-		this.provider.sendMessage(this.request);
-		MessageEventReceived eventReceived = new MessageEventReceived(startTStamp, new ISUPEvent(super.provider, this.request));
+		this.provider.sendMessage(this.request,dpc);
+		MessageEventReceived eventReceived = new MessageEventReceived(startTStamp, new ISUPEvent(super.provider, this.request , dpc));
 		expectedRemoteEventsReceived.add(eventReceived);
 
 		doWait(timeout/2); //500 should be good even here.
 		long tstamp = System.currentTimeMillis();
 		doAnswer();
-		ISUPEvent event = new ISUPEvent(super.provider, this.answer);
+		ISUPEvent event = new ISUPEvent(super.provider, this.answer , dpc);
 		eventReceived = new MessageEventReceived(tstamp, event);
 		expectedLocalEvents.add(eventReceived);
 		doWait(timeout); //wait more

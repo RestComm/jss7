@@ -44,6 +44,7 @@ import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPProvider;
 import org.mobicents.protocols.ss7.cap.api.CAPServiceBase;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPComponentErrorReason;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPDialogState;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPNoticeProblemDiagnostic;
@@ -61,7 +62,14 @@ import org.mobicents.protocols.ss7.cap.errors.CAPErrorMessageImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.CAPServiceCircuitSwitchedCallImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.CAPServiceGprsImpl;
 import org.mobicents.protocols.ss7.cap.service.sms.CAPServiceSmsImpl;
-import org.mobicents.protocols.ss7.map.api.dialog.ServingCheckData;
+import org.mobicents.protocols.ss7.cap.api.dialog.ServingCheckData;
+import org.mobicents.protocols.ss7.inap.api.INAPParameterFactory;
+import org.mobicents.protocols.ss7.inap.isup.INAPParameterFactoryImpl;
+import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.ISUPParameterFactoryImpl;
+import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
+import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
+import org.mobicents.protocols.ss7.tcap.api.MessageType;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.TCListener;
@@ -108,21 +116,24 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
  */
 public class CAPProviderImpl implements CAPProvider, TCListener {
 
-	protected Logger loger = Logger.getLogger(CAPProviderImpl.class);
+	protected static final Logger loger = Logger.getLogger(CAPProviderImpl.class);
 
-	private List<CAPDialogListener> dialogListeners = new CopyOnWriteArrayList<CAPDialogListener>();
+	transient private List<CAPDialogListener> dialogListeners = new CopyOnWriteArrayList<CAPDialogListener>();
 
-	protected Map<Long, CAPDialogImpl> dialogs = new HashMap<Long, CAPDialogImpl>();
+	transient protected Map<Long, CAPDialogImpl> dialogs = new HashMap<Long, CAPDialogImpl>();
 
-	private TCAPProvider tcapProvider = null;
+	transient private TCAPProvider tcapProvider = null;
 
-	private final CAPParameterFactory capParameterFactory = new CAPParameterFactoryImpl();
-	private final CAPErrorMessageFactory capErrorMessageFactory = new CAPErrorMessageFactoryImpl();
+	transient private final CAPParameterFactory capParameterFactory = new CAPParameterFactoryImpl();
+	transient private final MAPParameterFactory mapParameterFactory = new MAPParameterFactoryImpl();
+	transient private final ISUPParameterFactory isupParameterFactory = new ISUPParameterFactoryImpl();
+	transient private final INAPParameterFactory inapParameterFactory = new INAPParameterFactoryImpl();
+	transient private final CAPErrorMessageFactory capErrorMessageFactory = new CAPErrorMessageFactoryImpl();
 
-	protected Set<CAPServiceBase> capServices = new HashSet<CAPServiceBase>();
-	private final CAPServiceCircuitSwitchedCall capServiceCircuitSwitchedCall = new CAPServiceCircuitSwitchedCallImpl(this);
-	private final CAPServiceGprs capServiceGprs = new CAPServiceGprsImpl(this);
-	private final CAPServiceSms capServiceSms = new CAPServiceSmsImpl(this);
+	transient protected Set<CAPServiceBase> capServices = new HashSet<CAPServiceBase>();
+	transient private final CAPServiceCircuitSwitchedCall capServiceCircuitSwitchedCall = new CAPServiceCircuitSwitchedCallImpl(this);
+	transient private final CAPServiceGprs capServiceGprs = new CAPServiceGprsImpl(this);
+	transient private final CAPServiceSms capServiceSms = new CAPServiceSmsImpl(this);
 	
 
 	public CAPProviderImpl(TCAPProvider tcapProvider) {
@@ -133,7 +144,6 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		this.capServices.add(this.capServiceSms);
 	}
 
-	@Override
 	public TCAPProvider getTCAPProvider() {
 		return this.tcapProvider;
 	}
@@ -163,7 +173,22 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 	public CAPParameterFactory getCAPParameterFactory() {
 		return capParameterFactory;
 	}
-	
+
+	@Override
+	public MAPParameterFactory getMAPParameterFactory() {
+		return mapParameterFactory;
+	}
+
+	@Override
+	public ISUPParameterFactory getISUPParameterFactory() {
+		return isupParameterFactory;
+	}
+
+	@Override
+	public INAPParameterFactory getINAPParameterFactory() {
+		return inapParameterFactory;
+	}
+
 	@Override
 	public CAPErrorMessageFactory getCAPErrorMessageFactory() {
 		return this.capErrorMessageFactory;
@@ -197,9 +222,9 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		}
 	}
 
-	protected void removeDialog(Long dialogId) {
+	protected CAPDialogImpl removeDialog(Long dialogId) {
 		synchronized (this.dialogs) {
-			this.dialogs.remove(dialogId);
+			return this.dialogs.remove(dialogId);
 		}
 	}
 
@@ -266,7 +291,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			
 		return referenceNumber;
 	}	
-	
+
 	public void onTCBegin(TCBeginIndication tcBeginIndication) {
 		
 		ApplicationContextName acn = tcBeginIndication.getApplicationContextName();
@@ -342,13 +367,18 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		CAPDialogImpl capDialogImpl = ((CAPServiceBaseImpl) perfSer).createNewDialogIncoming(capAppCtx, tcBeginIndication.getDialog());
 		synchronized (capDialogImpl) {
 			this.addDialog(capDialogImpl);
+			capDialogImpl.tcapMessageType = MessageType.Begin;
+			capDialogImpl.receivedGprsReferenceNumber = referenceNumber;
 
 			capDialogImpl.setState(CAPDialogState.InitialReceived);
 
+			capDialogImpl.delayedAreaState = CAPDialogImpl.DelayedAreaState.No;
+
 			this.deliverDialogRequest(capDialogImpl, referenceNumber);
-			if (capDialogImpl.getState() == CAPDialogState.Expunged)
+			if (capDialogImpl.getState() == CAPDialogState.Expunged) {
 				// The Dialog was aborter or refused
 				return;
+			}
 
 			// Now let us decode the Components
 			if (comps != null) {
@@ -356,7 +386,33 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			}
 
 			this.deliverDialogDelimiter(capDialogImpl);
+
+			finishComponentProcessingState(capDialogImpl);
 		}
+	}
+
+	private void finishComponentProcessingState(CAPDialogImpl capDialogImpl) {
+
+		if (capDialogImpl.getState() == CAPDialogState.Expunged)
+			return;
+
+		try {
+			switch (capDialogImpl.delayedAreaState) {
+			case Continue:
+				capDialogImpl.send();
+				break;
+			case End:
+				capDialogImpl.close(false);
+				break;
+			case PrearrangedEnd:
+				capDialogImpl.close(true);
+				break;
+			}
+		} catch (CAPException e) {
+			loger.error("Error while finishComponentProcessingState, delayedAreaState=" + capDialogImpl.delayedAreaState, e);
+		}
+
+		capDialogImpl.delayedAreaState = null;
 	}
 	
 	public void onTCContinue(TCContinueIndication tcContinueIndication) {
@@ -374,6 +430,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			}
 			return;
 		}
+		capDialogImpl.tcapMessageType = MessageType.Continue;
 
 		synchronized (capDialogImpl) {
 			if (capDialogImpl.getState() == CAPDialogState.InitialSent) {
@@ -387,7 +444,8 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 						loger.error("Error while firing TC-U-ABORT. ", e);
 					}
 
-					capDialogImpl.setNormalDialogShutDown();
+//					capDialogImpl.setNormalDialogShutDown();
+
 					this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
 					capDialogImpl.setState(CAPDialogState.Expunged);
 
@@ -404,7 +462,8 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 						loger.error("Error while firing TC-U-ABORT. ", e);
 					}
 
-					capDialogImpl.setNormalDialogShutDown();
+//					capDialogImpl.setNormalDialogShutDown();
+
 					this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
 					capDialogImpl.setState(CAPDialogState.Expunged);
 
@@ -418,13 +477,20 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 				if (userInfo != null) {
 					referenceNumber = ParseUserInfo(userInfo, tcContinueIndication.getDialog());
 				}
+				capDialogImpl.receivedGprsReferenceNumber = referenceNumber;
+
+				capDialogImpl.delayedAreaState = CAPDialogImpl.DelayedAreaState.No;
 
 				capDialogImpl.setState(CAPDialogState.Active);
 				this.deliverDialogAccept(capDialogImpl, referenceNumber);
 
-				if (capDialogImpl.getState() == CAPDialogState.Expunged)
+				if (capDialogImpl.getState() == CAPDialogState.Expunged) {
 					// The Dialog was aborter
+					finishComponentProcessingState(capDialogImpl);
 					return;
+				}
+			} else {
+				capDialogImpl.delayedAreaState = CAPDialogImpl.DelayedAreaState.No;
 			}
 
 			// Now let us decode the Components
@@ -439,9 +505,11 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			}
 
 			this.deliverDialogDelimiter(capDialogImpl);
+
+			finishComponentProcessingState(capDialogImpl);
 		}
 	}	
-	
+
 	public void onTCEnd(TCEndIndication tcEndIndication) {
 
 		Dialog tcapDialog = tcEndIndication.getDialog();
@@ -457,6 +525,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			}
 			return;
 		}
+		capDialogImpl.tcapMessageType = MessageType.End;
 
 		synchronized (capDialogImpl) {
 			if (capDialogImpl.getState() == CAPDialogState.InitialSent) {
@@ -470,7 +539,8 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 						loger.error("Error while firing TC-U-ABORT. ", e);
 					}
 
-					capDialogImpl.setNormalDialogShutDown();
+//					capDialogImpl.setNormalDialogShutDown();
+
 					this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
 					capDialogImpl.setState(CAPDialogState.Expunged);
 
@@ -482,7 +552,8 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 				if (capAcn == null || !capAcn.equals(capDialogImpl.getApplicationContext())) {
 					loger.error(String.format("Received first TC-END. CAPDialog=%s. But CAPApplicationContext=%s", capDialogImpl, capAcn));
 
-					capDialogImpl.setNormalDialogShutDown();
+//					capDialogImpl.setNormalDialogShutDown();
+
 					this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
 					capDialogImpl.setState(CAPDialogState.Expunged);
 
@@ -498,11 +569,13 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 				if (userInfo != null) {
 					referenceNumber = ParseUserInfo(userInfo, tcEndIndication.getDialog());
 				}
+				capDialogImpl.receivedGprsReferenceNumber = referenceNumber;
 
 				this.deliverDialogAccept(capDialogImpl, referenceNumber);
-				if (capDialogImpl.getState() == CAPDialogState.Expunged)
+				if (capDialogImpl.getState() == CAPDialogState.Expunged) {
 					// The Dialog was aborter
 					return;
+				}
 			}
 
 			// Now let us decode the Components
@@ -511,8 +584,9 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 				processComponents(capDialogImpl, comps);
 			}
 
-			capDialogImpl.setNormalDialogShutDown();
+//			capDialogImpl.setNormalDialogShutDown();
 			this.deliverDialogClose(capDialogImpl);
+
 			capDialogImpl.setState(CAPDialogState.Expunged);
 		}
 	}	
@@ -527,7 +601,8 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
 		if (capDialogImpl != null) {
 			synchronized (capDialogImpl) {
-				if (capDialogImpl.getState() != CAPDialogState.Expunged && !capDialogImpl.getNormalDialogShutDown()) {
+				if (capDialogImpl.getState() != CAPDialogState.Expunged) {
+//				if (capDialogImpl.getState() != CAPDialogState.Expunged && !capDialogImpl.getNormalDialogShutDown()) {
 
 					// Getting the CAP Service that serves the CAP Dialog
 					CAPServiceBaseImpl perfSer = (CAPServiceBaseImpl)capDialogImpl.getService();
@@ -548,7 +623,8 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
 		if (capDialogImpl != null) {
 			synchronized (capDialogImpl) {
-				if (capDialogImpl.getState() != CAPDialogState.Expunged && !capDialogImpl.getNormalDialogShutDown()) {
+				if (capDialogImpl.getState() != CAPDialogState.Expunged) {
+//				if (capDialogImpl.getState() != CAPDialogState.Expunged && !capDialogImpl.getNormalDialogShutDown()) {
 
 					this.deliverDialogTimeout(capDialogImpl);
 				}
@@ -563,16 +639,22 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
 		if (capDialogImpl != null) {
 			synchronized (capDialogImpl) {
-				if (capDialogImpl.getState() != CAPDialogState.Expunged && !capDialogImpl.getNormalDialogShutDown()) {
-
-					// TCAP Dialog is destroyed when CapDialog is alive and not shutting down
-					capDialogImpl.setNormalDialogShutDown();
-					this.deliverDialogUserAbort(capDialogImpl, CAPGeneralAbortReason.BadReceivedData, null);
-					
-					capDialogImpl.setState(CAPDialogState.Expunged);
-				}
+				this.deliverDialogRelease(capDialogImpl);
 			}
 		}
+
+//		if (capDialogImpl != null) {
+//			synchronized (capDialogImpl) {
+//				if (capDialogImpl.getState() != CAPDialogState.Expunged && !capDialogImpl.getNormalDialogShutDown()) {
+//
+//					// TCAP Dialog is destroyed when CapDialog is alive and not shutting down
+//					capDialogImpl.setNormalDialogShutDown();
+//					this.deliverDialogUserAbort(capDialogImpl, CAPGeneralAbortReason.BadReceivedData, null);
+//					
+//					capDialogImpl.setState(CAPDialogState.Expunged);
+//				}
+//			}
+//		}
 	}
 
 	public void onTCPAbort(TCPAbortIndication tcPAbortIndication) {
@@ -584,11 +666,12 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			loger.warn("CAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
 			return;
 		}
+		capDialogImpl.tcapMessageType = MessageType.Abort;
 
 		synchronized (capDialogImpl) {
 			PAbortCauseType pAbortCause = tcPAbortIndication.getPAbortCause();
 
-			capDialogImpl.setNormalDialogShutDown();
+//			capDialogImpl.setNormalDialogShutDown();
 			this.deliverDialogProviderAbort(capDialogImpl, pAbortCause);
 
 			capDialogImpl.setState(CAPDialogState.Expunged);
@@ -605,6 +688,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			loger.error("CAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
 			return;
 		}
+		capDialogImpl.tcapMessageType = MessageType.Abort;
 
 		synchronized (capDialogImpl) {
 			CAPGeneralAbortReason generalReason = CAPGeneralAbortReason.BadReceivedData;
@@ -630,7 +714,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 					if (!userInfo.isOid()) {
 						loger.warn("When parsing TCUserAbortIndication indication: userInfo.isOid() is null");
 					} else {
-						if (Arrays.equals(userInfo.getOidValue(), CAPUserAbortPrimitiveImpl.CAP_AbortReason_OId)) {
+						if (!Arrays.equals(userInfo.getOidValue(), CAPUserAbortPrimitiveImpl.CAP_AbortReason_OId)) {
 							loger.warn("When parsing TCUserAbortIndication indication: userInfo.getOidValue() must be CAPUserAbortPrimitiveImpl.CAP_AbortReason_OId");
 						} else if (!userInfo.isAsn()) {
 							loger.warn("When parsing TCUserAbortIndication indication: userInfo.isAsn() check failed");
@@ -661,7 +745,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 				}
 			}
 
-			capDialogImpl.setNormalDialogShutDown();
+//			capDialogImpl.setNormalDialogShutDown();
 			this.deliverDialogUserAbort(capDialogImpl, generalReason, userReason);
 
 			capDialogImpl.setState(CAPDialogState.Expunged);
@@ -684,7 +768,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.MessageCannotBeDeliveredToThePeer);
 
 			if (capDialogImpl.getState() == CAPDialogState.InitialReceived) {
-				capDialogImpl.setNormalDialogShutDown();
+//				capDialogImpl.setNormalDialogShutDown();
 				capDialogImpl.setState(CAPDialogState.Expunged);
 			}
 		}
@@ -774,7 +858,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 						
 						return;
 					}
-					
+
 					CAPErrorMessage msgErr = this.capErrorMessageFactory.createMessageFromErrorCode(errorCode);
 					try {
 						Parameter p = comp.getParameter();
@@ -921,7 +1005,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		}
 	}
 
-	protected void deliverDialogResease(CAPDialog capDialog) {
+	protected void deliverDialogRelease(CAPDialog capDialog) {
 		for (CAPDialogListener listener : this.dialogListeners) {
 			listener.onDialogRelease(capDialog);
 		}
@@ -1085,11 +1169,15 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
 			tcUserAbort.setUserInformation(userInformation);
 			break;
-			
+
 		case DialogRefused:
+			if (tcapDialog.getApplicationContextName() != null) {
+				tcUserAbort.setDialogServiceUserType(DialogServiceUserType.NoReasonGive);
+				tcUserAbort.setApplicationContextName(tcapDialog.getApplicationContextName());
+			}
+			break;
+
 		default:
-			tcUserAbort.setDialogServiceUserType(DialogServiceUserType.NoReasonGive);
-			tcUserAbort.setApplicationContextName(tcapDialog.getApplicationContextName());
 			break;
 		}
 		if (returnMessageOnError)

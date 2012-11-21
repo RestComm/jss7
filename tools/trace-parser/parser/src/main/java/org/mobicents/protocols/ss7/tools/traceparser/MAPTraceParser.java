@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -90,6 +90,11 @@ import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.MAPServiceCallHandlingListener;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.ProvideRoamingNumberRequest;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.ProvideRoamingNumberResponse;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.SendRoutingInformationRequest;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.SendRoutingInformationResponse;
 import org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsmListener;
 import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationRequest;
 import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationResponse;
@@ -100,10 +105,18 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberLocationReportR
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobilityListener;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancelLocationRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancelLocationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.InsertSubscriberDataRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.InsertSubscriberDataResponse;
+import org.mobicents.protocols.ss7.map.api.service.oam.MAPServiceOamListener;
+import org.mobicents.protocols.ss7.map.api.service.pdpContextActivation.MAPServicePdpContextActivationListener;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequest;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreResponse;
 import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageRequest;
@@ -146,6 +159,7 @@ import org.mobicents.protocols.ss7.tcap.asn.DialogPortion;
 import org.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDU;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
+import org.mobicents.protocols.ss7.tcap.asn.Utils;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
@@ -165,8 +179,10 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.TCEndMessage;
  * @author sergey vetyutnev
  * 
  */
-public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, CAPDialogListener, Runnable, ProcessControl, MAPServiceSmsListener,
-		MAPServiceSupplementaryListener, MAPServiceLsmListener, MAPServiceMobilityListener, CAPServiceCircuitSwitchedCallListener, CAPServiceGprsListener, CAPServiceSmsListener {
+public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, CAPDialogListener, Runnable, ProcessControl, 
+		MAPServiceMobilityListener, MAPServiceCallHandlingListener, MAPServiceOamListener, MAPServicePdpContextActivationListener, 
+		MAPServiceSupplementaryListener, MAPServiceSmsListener, MAPServiceLsmListener,  
+		CAPServiceCircuitSwitchedCallListener, CAPServiceGprsListener, CAPServiceSmsListener {
 
 	private Ss7ParseParameters par;
 	private Thread t;
@@ -246,16 +262,22 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 
 			this.mapProvider = new MAPProviderImpl(this.tcapProvider);
 
+			this.mapProvider.getMAPServiceMobility().acivate();
+			this.mapProvider.getMAPServiceCallHandling().acivate();
+			this.mapProvider.getMAPServiceOam().acivate();
+			this.mapProvider.getMAPServicePdpContextActivation().acivate();
 			this.mapProvider.getMAPServiceSupplementary().acivate();
 			this.mapProvider.getMAPServiceSms().acivate();
 			this.mapProvider.getMAPServiceLsm().acivate();
-			this.mapProvider.getMAPServiceMobility().acivate();
 
 			this.mapProvider.addMAPDialogListener(this);
+			this.mapProvider.getMAPServiceMobility().addMAPServiceListener(this);
+			this.mapProvider.getMAPServiceCallHandling().addMAPServiceListener(this);
+			this.mapProvider.getMAPServiceOam().addMAPServiceListener(this);
+			this.mapProvider.getMAPServicePdpContextActivation().addMAPServiceListener(this);
 			this.mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
 			this.mapProvider.getMAPServiceSms().addMAPServiceListener(this);
 			this.mapProvider.getMAPServiceLsm().addMAPServiceListener(this);
-			this.mapProvider.getMAPServiceMobility().addMAPServiceListener(this);
 
 			this.capProvider = new CAPProviderImpl(this.tcapProvider);
 
@@ -468,8 +490,8 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 				TCContinueMessage tcm = TcapFactory.createTCContinueMessage(ais);
 				// received continue, destID == localDialogId(originatingTxId of
 				// begin);
-				long originatingTransactionId = tcm.getOriginatingTransactionId();
-				long destinationTransactionId = tcm.getDestinationTransactionId();
+				long originatingTransactionId = Utils.decodeTransactionId(tcm.getOriginatingTransactionId());
+				long destinationTransactionId = Utils.decodeTransactionId(tcm.getDestinationTransactionId());
 				int dpc = message.getIncomingDpc();
 				Map<Long, DialogImplWrapper> dpcData = this.dialogs.get(dpc);
 				int acnValue = 0;
@@ -531,7 +553,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 				TCBeginMessage tcb = TcapFactory.createTCBeginMessage(ais);
 				DialogImplWrapper di = new DialogImplWrapper(localAddress, remoteAddress, ++this.dialogEnumerator, true, this.tcapProvider.getExecuter(),
 						this.tcapProvider, 0);
-				long originatingTransactionId = tcb.getOriginatingTransactionId();
+				long originatingTransactionId = Utils.decodeTransactionId(tcb.getOriginatingTransactionId());
 				int opc = message.getIncomingOpc();
 				Map<Long, DialogImplWrapper> opcData = this.dialogs.get(opc);
 				if (opcData == null) {
@@ -582,7 +604,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 
 			case TCEndMessage._TAG: {
 				TCEndMessage teb = TcapFactory.createTCEndMessage(ais);
-				long destinationTransactionId = teb.getDestinationTransactionId();
+				long destinationTransactionId = Utils.decodeTransactionId(teb.getDestinationTransactionId());
 
 				int dpc = message.getIncomingDpc();
 				Map<Long, DialogImplWrapper> dpcData = this.dialogs.get(dpc);
@@ -626,7 +648,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 
 			case TCAbortMessage._TAG: {
 				TCAbortMessage tub = TcapFactory.createTCAbortMessage(ais);
-				long destinationTransactionId = tub.getDestinationTransactionId();
+				long destinationTransactionId = Utils.decodeTransactionId(tub.getDestinationTransactionId());
 
 				int dpc = message.getIncomingDpc();
 				Map<Long, DialogImplWrapper> dpcData = this.dialogs.get(dpc);
@@ -1326,7 +1348,10 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	
 	@Override
 	public void onForwardShortMessageRequest(ForwardShortMessageRequest forwSmInd) {
-		this.parseSmsSignalInfo(forwSmInd.getSM_RP_UI(), true, true);
+		if (forwSmInd.getSM_RP_DA().getServiceCentreAddressDA() != null)
+			this.parseSmsSignalInfo(forwSmInd.getSM_RP_UI(), true, false);
+		else
+			this.parseSmsSignalInfo(forwSmInd.getSM_RP_UI(), false, true);
 	}
 
 	@Override
@@ -1442,18 +1467,6 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	}
 
 	@Override
-	public void onSendRoutingInforForLCSRequest(SendRoutingInfoForLCSRequest arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onSendRoutingInforForLCSResponse(SendRoutingInfoForLCSResponse arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void onSubscriberLocationReportRequest(SubscriberLocationReportRequest arg0) {
 		// TODO Auto-generated method stub
 		
@@ -1502,145 +1515,145 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	}
 
 	@Override
-	public void onActivityTestRequestIndication(ActivityTestRequest arg0) {
+	public void onActivityTestRequest(ActivityTestRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onActivityTestResponseIndication(ActivityTestResponse arg0) {
+	public void onActivityTestResponse(ActivityTestResponse arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onApplyChargingReportRequestIndication(ApplyChargingReportRequest arg0) {
+	public void onApplyChargingReportRequest(ApplyChargingReportRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onApplyChargingRequestIndication(ApplyChargingRequest arg0) {
+	public void onApplyChargingRequest(ApplyChargingRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onAssistRequestInstructionsRequestIndication(AssistRequestInstructionsRequest arg0) {
+	public void onAssistRequestInstructionsRequest(AssistRequestInstructionsRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onCallInformationReportRequestIndication(CallInformationReportRequest arg0) {
+	public void onCallInformationReportRequest(CallInformationReportRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onCallInformationRequestRequestIndication(CallInformationRequestRequest arg0) {
+	public void onCallInformationRequestRequest(CallInformationRequestRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onCancelRequestIndication(CancelRequest arg0) {
+	public void onCancelRequest(CancelRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onConnectRequestIndication(ConnectRequest arg0) {
+	public void onConnectRequest(ConnectRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onConnectToResourceRequestIndication(ConnectToResourceRequest arg0) {
+	public void onConnectToResourceRequest(ConnectToResourceRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onContinueRequestIndication(ContinueRequest arg0) {
+	public void onContinueRequest(ContinueRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onDisconnectForwardConnectionRequestIndication(DisconnectForwardConnectionRequest arg0) {
+	public void onDisconnectForwardConnectionRequest(DisconnectForwardConnectionRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onEstablishTemporaryConnectionRequestIndication(EstablishTemporaryConnectionRequest arg0) {
+	public void onEstablishTemporaryConnectionRequest(EstablishTemporaryConnectionRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onEventReportBCSMRequestIndication(EventReportBCSMRequest arg0) {
+	public void onEventReportBCSMRequest(EventReportBCSMRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onFurnishChargingInformationRequestIndication(FurnishChargingInformationRequest arg0) {
+	public void onFurnishChargingInformationRequest(FurnishChargingInformationRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onInitialDPRequestIndication(InitialDPRequest arg0) {
+	public void onInitialDPRequest(InitialDPRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onPlayAnnouncementRequestIndication(PlayAnnouncementRequest arg0) {
+	public void onPlayAnnouncementRequest(PlayAnnouncementRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onPromptAndCollectUserInformationRequestIndication(PromptAndCollectUserInformationRequest arg0) {
+	public void onPromptAndCollectUserInformationRequest(PromptAndCollectUserInformationRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onPromptAndCollectUserInformationResponseIndication(PromptAndCollectUserInformationResponse arg0) {
+	public void onPromptAndCollectUserInformationResponse(PromptAndCollectUserInformationResponse arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onReleaseCalltRequestIndication(ReleaseCallRequest arg0) {
+	public void onReleaseCallRequest(ReleaseCallRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onRequestReportBCSMEventRequestIndication(RequestReportBCSMEventRequest arg0) {
+	public void onRequestReportBCSMEventRequest(RequestReportBCSMEventRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onResetTimerRequestIndication(ResetTimerRequest arg0) {
+	public void onResetTimerRequest(ResetTimerRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onSendChargingInformationRequestIndication(SendChargingInformationRequest arg0) {
+	public void onSendChargingInformationRequest(SendChargingInformationRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onSpecializedResourceReportRequestIndication(SpecializedResourceReportRequest arg0) {
+	public void onSpecializedResourceReportRequest(SpecializedResourceReportRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -1683,6 +1696,80 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	 */
 	@Override
 	public void onAnyTimeInterrogationResponse(AnyTimeInterrogationResponse arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCheckImeiRequest(CheckImeiRequest request) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCheckImeiResponse(CheckImeiResponse response) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSendRoutingInfoForLCSRequest(SendRoutingInfoForLCSRequest arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSendRoutingInfoForLCSResponse(SendRoutingInfoForLCSResponse arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSendRoutingInformationRequest(SendRoutingInformationRequest arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSendRoutingInformationResponse(SendRoutingInformationResponse arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProvideRoamingNumberRequest(
+			ProvideRoamingNumberRequest request) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProvideRoamingNumberResponse(
+			ProvideRoamingNumberResponse response) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCancelLocationRequest(CancelLocationRequest request) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCancelLocationResponse(CancelLocationResponse response) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onInsertSubscriberDataRequest(InsertSubscriberDataRequest request) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onInsertSubscriberDataResponse(InsertSubscriberDataResponse request) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -157,15 +157,8 @@ public class Client implements TCListener{
 	}
 
 	private static SccpProvider getSccpProvider() throws NamingException {
-
-        // no arg is ok, if we run in JBoss
-        InitialContext ctx = new InitialContext();
-        try {
-            String providerJndiName = "/mobicents/ss7/sccp";
-            return ((SccpStack) ctx.lookup(providerJndiName)).getSccpProvider();
-        } finally {
-            ctx.close();
-        }
+       ......
+       ......
     }
 
 	public void start() throws TCAPException, TCAPSendException {

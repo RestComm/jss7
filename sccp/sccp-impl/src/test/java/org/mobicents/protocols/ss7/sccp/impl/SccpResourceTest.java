@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,9 +22,17 @@
 
 package org.mobicents.protocols.ss7.sccp.impl;
 
-import org.testng.annotations.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
-import static org.testng.Assert.*;
+import org.mobicents.protocols.ss7.sccp.ConcernedSignalingPointCode;
+import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
+import org.mobicents.protocols.ss7.sccp.RemoteSubSystem;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 /**
  * @author amit bhayani
@@ -32,7 +40,7 @@ import static org.testng.Assert.*;
  */
 public class SccpResourceTest {
 	
-	private SccpResource resource = null;
+	private SccpResourceImpl resource = null;
 
 	public SccpResourceTest() {
 	}
@@ -47,7 +55,7 @@ public class SccpResourceTest {
 
 	@BeforeMethod
 	public void setUp() {
-		resource = new SccpResource("SccpResourceTest");
+		resource = new SccpResourceImpl("SccpResourceTest");
 		resource.start();
 		resource.removeAllResourses();
 
@@ -62,25 +70,16 @@ public class SccpResourceTest {
 	@Test(groups = { "sccpresource","functional.encode"})
 	public void testSerialization() throws Exception {
 
-		RemoteSignalingPointCode rsp1 = new RemoteSignalingPointCode(6034, 0, 0);
-		RemoteSignalingPointCode rsp2 = new RemoteSignalingPointCode(6045, 0, 0);
+		resource.addRemoteSpc(1, 6034, 0, 0);
+		resource.addRemoteSpc(2, 6045, 0, 0);
 
-		RemoteSubSystem rss1 = new RemoteSubSystem(6034, 8, 0, false);
-		RemoteSubSystem rss2 = new RemoteSubSystem(6045, 8, 0, false);
+		resource.addRemoteSsn(1, 6034, 8, 0, false);
+		resource.addRemoteSsn(2, 6045, 8, 0, false);
 
-		ConcernedSignalingPointCode csp1 = new ConcernedSignalingPointCode(603);
-		ConcernedSignalingPointCode csp2 = new ConcernedSignalingPointCode(604);
+		resource.addConcernedSpc(1, 603);
+		resource.addConcernedSpc(2, 604);
 
-		resource.addRemoteSpc(1, rsp1);
-		resource.addRemoteSpc(2, rsp2);
-
-		resource.addRemoteSsn(1, rss1);
-		resource.addRemoteSsn(2, rss2);
-
-		resource.addConcernedSpc(1, csp1);
-		resource.addConcernedSpc(2, csp2);
-
-		SccpResource resource1 = new SccpResource("SccpResourceTest");
+		SccpResourceImpl resource1 = new SccpResourceImpl("SccpResourceTest");
 		resource1.start();
 
 		assertEquals( resource1.getRemoteSpcs().size(),2);

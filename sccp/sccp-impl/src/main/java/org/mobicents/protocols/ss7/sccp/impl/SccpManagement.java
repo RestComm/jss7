@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -36,12 +36,14 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.mtp.Mtp3StatusCause;
+import org.mobicents.protocols.ss7.sccp.ConcernedSignalingPointCode;
+import org.mobicents.protocols.ss7.sccp.Mtp3ServiceAccessPoint;
 import org.mobicents.protocols.ss7.sccp.RemoteSccpStatus;
+import org.mobicents.protocols.ss7.sccp.RemoteSubSystem;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SignallingPointStatus;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
-import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3ServiceAccessPoint;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -77,8 +79,10 @@ public class SccpManagement {
 	protected static final int UNAVAILABILITY_CAUSE_UNEQUIPED = 1;
 	protected static final int UNAVAILABILITY_CAUSE_INACCESSIBLE = 2;
 
-//	private static final int SST_TIMER_DURATION_MIN = 10000;
-//	private static final int SST_TIMER_DURATION_MAX = 600000;
+	private static final int ALL_POINT_CODE = -1;
+
+	// private static final int SST_TIMER_DURATION_MIN = 10000;
+	// private static final int SST_TIMER_DURATION_MAX = 600000;
 
 	private SccpProviderImpl sccpProviderImpl;
 	private SccpStackImpl sccpStackImpl;
@@ -88,14 +92,15 @@ public class SccpManagement {
 
 	// Keeps track of how many SST are running for given DPC
 	private final FastMap<Integer, FastList<SubSystemTest>> dpcVsSst = new FastMap<Integer, FastList<SubSystemTest>>();
-	// Keeps the time when the last SSP (after recdMsgForProhibitedSsn()) has been sent
+	// Keeps the time when the last SSP (after recdMsgForProhibitedSsn()) has
+	// been sent
 	private final FastMap<DpcSsn, Long> dpcSspSent = new FastMap<DpcSsn, Long>();
-	
+
 	private final String name;
 
 	public SccpManagement(String name, SccpProviderImpl sccpProviderImpl, SccpStackImpl sccpStackImpl) {
 		this.name = name;
-		this.logger = Logger.getLogger(SccpManagement.class.getCanonicalName()+"-"+this.name);
+		this.logger = Logger.getLogger(SccpManagement.class.getCanonicalName() + "-" + this.name);
 		this.sccpProviderImpl = sccpProviderImpl;
 		this.sccpStackImpl = sccpStackImpl;
 	}
@@ -119,9 +124,9 @@ public class SccpManagement {
 		case SSA:
 
 			if (logger.isInfoEnabled()) {
-				logger.info(String
-						.format("Rx : SSA, Affected SSN=%d, Affected PC=%d, Subsystem Multiplicity Ind=%d SeqControl=%d",
-								affectedSsn, affectedPc, subsystemMultiplicity, message.getSls()));
+				logger.info(String.format(
+						"Rx : SSA, Affected SSN=%d, Affected PC=%d, Subsystem Multiplicity Ind=%d SeqControl=%d",
+						affectedSsn, affectedPc, subsystemMultiplicity, message.getSls()));
 			}
 
 			// Stop the SST if already started
@@ -136,9 +141,9 @@ public class SccpManagement {
 			break;
 		case SSP:
 			if (logger.isEnabledFor(Level.WARN)) {
-				logger.warn(String
-						.format("Rx : SSP, Affected SSN=%d, Affected PC=%d, Subsystem Multiplicity Ind=%d SeqControl=%d",
-								affectedSsn, affectedPc, subsystemMultiplicity, message.getSls()));
+				logger.warn(String.format(
+						"Rx : SSP, Affected SSN=%d, Affected PC=%d, Subsystem Multiplicity Ind=%d SeqControl=%d",
+						affectedSsn, affectedPc, subsystemMultiplicity, message.getSls()));
 			}
 
 			if (affectedSsn == 1) {
@@ -161,11 +166,11 @@ public class SccpManagement {
 				// MTP.
 
 				if (logger.isInfoEnabled()) {
-					logger.info(String
-							.format("Rx : SST, Affected SSN=%d, Affected PC=%d, Subsystem Multiplicity Ind=%d SeqControl=%d",
-									affectedSsn, affectedPc, subsystemMultiplicity, message.getSls()));
+					logger.info(String.format(
+							"Rx : SST, Affected SSN=%d, Affected PC=%d, Subsystem Multiplicity Ind=%d SeqControl=%d",
+							affectedSsn, affectedPc, subsystemMultiplicity, message.getSls()));
 				}
-				
+
 				this.sendSSA(message, affectedSsn);
 			} else {
 
@@ -206,7 +211,8 @@ public class SccpManagement {
 
 		Mtp3ServiceAccessPoint sap = this.sccpStackImpl.router.findMtp3ServiceAccessPoint(dpc, 0);
 		if (sap == null) {
-			logger.warn(String.format("Failed sendManagementMessage : Mtp3ServiceAccessPoint has not found for dpc=%d", dpc));
+			logger.warn(String.format("Failed sendManagementMessage : Mtp3ServiceAccessPoint has not found for dpc=%d",
+					dpc));
 			return;
 		}
 		int affectedPc;
@@ -225,11 +231,12 @@ public class SccpManagement {
 		data[2] = (byte) (affectedPc & 0x000000ff);
 		data[3] = (byte) ((affectedPc & 0x0000ff00) >> 8);
 		data[4] = (byte) subsystemMultiplicityIndicator;
-		SccpDataMessageImpl msg = (SccpDataMessageImpl) sccpProviderImpl.getMessageFactory().createDataMessageClass0(calledAdd, callingAdd, data, -1, false,
-				null, null);
+		SccpDataMessageImpl msg = (SccpDataMessageImpl) sccpProviderImpl.getMessageFactory().createDataMessageClass0(
+				calledAdd, callingAdd, data, -1, false, null, null);
 
 		if (logger.isDebugEnabled()) {
-			logger.debug(String.format("Tx :SCMG Type=%d, Affected SSN=%d, AffectedPc=%d", messageTypeCode, affectedSsn, affectedPc));
+			logger.debug(String.format("Tx :SCMG Type=%d, Affected SSN=%d, AffectedPc=%d", messageTypeCode,
+					affectedSsn, affectedPc));
 		}
 
 		try {
@@ -244,22 +251,31 @@ public class SccpManagement {
 	}
 
 	protected void broadcastChangedSsnState(int affectedSsn, boolean inService) {
+		this.broadcastChangedSsnState(affectedSsn, inService, ALL_POINT_CODE);
+	}
 
-		FastMap<Integer, ConcernedSignalingPointCode> lst = this.sccpStackImpl.getSccpResource().getConcernedSpcs();
+	private void broadcastChangedSsnState(int affectedSsn, boolean inService, int concernedPointCode) {
+
+		FastMap<Integer, ConcernedSignalingPointCode> lst = this.sccpStackImpl.sccpResource.concernedSpcs;
 		for (FastMap.Entry<Integer, ConcernedSignalingPointCode> e = lst.head(), end = lst.tail(); (e = e.getNext()) != end;) {
 			ConcernedSignalingPointCode concernedSubSystem = e.getValue();
 
 			int dpc = concernedSubSystem.getRemoteSpc();
-			if (inService)
-				this.sendManagementMessage(dpc, SSA, affectedSsn, 0);
-			else
-				this.sendManagementMessage(dpc, SSP, affectedSsn, 0);
+
+			if (concernedPointCode == ALL_POINT_CODE || concernedPointCode == dpc) {
+				// Send SSA/SSP to only passed concerned point code
+				if (inService)
+					this.sendManagementMessage(dpc, SSA, affectedSsn, 0);
+				else
+					this.sendManagementMessage(dpc, SSP, affectedSsn, 0);
+			}
 		}
 	}
 
 	protected void recdMsgForProhibitedSsn(SccpMessage msg, int ssn) {
 
-		// we do not send new SSP's to the same DPC+SSN during the one second interval  
+		// we do not send new SSP's to the same DPC+SSN during the one second
+		// interval
 		int dpc = msg.getIncomingOpc();
 		DpcSsn key = new DpcSsn(dpc, ssn);
 		long now = System.currentTimeMillis();
@@ -271,7 +287,7 @@ public class SccpManagement {
 		}
 
 		// Send SSP (when message is mtp3-originated)
-		if(msg.getIsMtpOriginated()) {
+		if (msg.getIsMtpOriginated()) {
 			this.sendManagementMessage(dpc, SSP, ssn, 0);
 		}
 	}
@@ -287,20 +303,32 @@ public class SccpManagement {
 		// Look at Q.714 Section 5.2.2
 		this.allowRsp(affectedPc, true, RemoteSccpStatus.available);
 
+		// Send SSA for all SS registered to affectedPc if it's included in
+		// concerned point-code
+		FastMap<Integer, SccpListener> lstrs = this.sccpProviderImpl.getAllSccpListeners();
+		for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1.getNext()) != end1;) {
+			int affectedSsn = e1.getKey();
+
+			this.broadcastChangedSsnState(affectedSsn, true, affectedPc);
+		}
+
 	}
 
 	protected void handleMtp3Status(Mtp3StatusCause cause, int affectedPc, int congStatus) {
-		
+
 		switch (cause) {
 		case SignallingNetworkCongested:
 			// Signaling Network Congestion
 			// TODO: implement congestion management
 			break;
-			
+
 		case UserPartUnavailability_Unknown:
 		case UserPartUnavailability_InaccessibleRemoteUser:
-			this.prohibitRsp(affectedPc, false, (cause == Mtp3StatusCause.UserPartUnavailability_Unknown ? RemoteSccpStatus.unavailableReasonUnknown
-					: RemoteSccpStatus.inaccessible));
+			this.prohibitRsp(
+					affectedPc,
+					false,
+					(cause == Mtp3StatusCause.UserPartUnavailability_Unknown ? RemoteSccpStatus.unavailableReasonUnknown
+							: RemoteSccpStatus.inaccessible));
 
 			SubSystemTest sstForSsn1 = this.cancelAllSst(affectedPc, false);
 			if (sstForSsn1 != null) {
@@ -317,7 +345,7 @@ public class SccpManagement {
 				this.startSst(affectedPc, 1);
 			}
 			break;
-			
+
 		case UserPartUnavailability_UnequippedRemoteUser:
 			// See ITU-T Q.714 5.2.2 Signalling point prohibited
 
@@ -340,14 +368,15 @@ public class SccpManagement {
 
 	private void prohibitAllSsn(int affectedPc) {
 		FastMap<Integer, SccpListener> lstrs = this.sccpProviderImpl.getAllSccpListeners();
-		FastMap<Integer, RemoteSubSystem> remoteSsns = this.sccpStackImpl.getSccpResource().getRemoteSsns();
+		FastMap<Integer, RemoteSubSystem> remoteSsns = this.sccpStackImpl.sccpResource.remoteSsns;
 		for (FastMap.Entry<Integer, RemoteSubSystem> e = remoteSsns.head(), end = remoteSsns.tail(); (e = e.getNext()) != end;) {
-			RemoteSubSystem remoteSsn = e.getValue();
+			RemoteSubSystemImpl remoteSsn = (RemoteSubSystemImpl) e.getValue();
 			if (remoteSsn.getRemoteSpc() == affectedPc) {
 				if (!remoteSsn.isRemoteSsnProhibited()) {
 					remoteSsn.setRemoteSsnProhibited(true);
 
-					for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1.getNext()) != end1;) {
+					for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1
+							.getNext()) != end1;) {
 						try {
 							e1.getValue().onState(affectedPc, remoteSsn.getRemoteSsn(), false, 0);
 						} catch (Exception ee) {
@@ -361,9 +390,9 @@ public class SccpManagement {
 	private void allowAllSsn(int affectedPc) {
 
 		FastMap<Integer, SccpListener> lstrs = this.sccpProviderImpl.getAllSccpListeners();
-		FastMap<Integer, RemoteSubSystem> remoteSsns = this.sccpStackImpl.getSccpResource().getRemoteSsns();
+		FastMap<Integer, RemoteSubSystem> remoteSsns = this.sccpStackImpl.sccpResource.remoteSsns;
 		for (FastMap.Entry<Integer, RemoteSubSystem> e = remoteSsns.head(), end = remoteSsns.tail(); (e = e.getNext()) != end;) {
-			RemoteSubSystem remoteSsn = e.getValue();
+			RemoteSubSystemImpl remoteSsn = (RemoteSubSystemImpl) e.getValue();
 			if (remoteSsn.getRemoteSpc() == affectedPc) {
 
 				if (remoteSsn.getMarkProhibitedWhenSpcResuming()) {
@@ -371,7 +400,8 @@ public class SccpManagement {
 						remoteSsn.setRemoteSsnProhibited(true);
 						this.startSst(affectedPc, remoteSsn.getRemoteSsn());
 
-						for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1.getNext()) != end1;) {
+						for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1
+								.getNext()) != end1;) {
 							try {
 								e1.getValue().onState(affectedPc, remoteSsn.getRemoteSsn(), false, 0);
 							} catch (Exception ee) {
@@ -383,7 +413,8 @@ public class SccpManagement {
 					if (remoteSsn.isRemoteSsnProhibited()) {
 						remoteSsn.setRemoteSsnProhibited(false);
 
-						for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1.getNext()) != end1;) {
+						for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1
+								.getNext()) != end1;) {
 							try {
 								e1.getValue().onState(affectedPc, remoteSsn.getRemoteSsn(), true, 0);
 							} catch (Exception ee) {
@@ -397,7 +428,8 @@ public class SccpManagement {
 
 	private void prohibitRsp(int affectedPc, boolean spcChanging, RemoteSccpStatus remoteSccpStatus) {
 
-		RemoteSignalingPointCode remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpcByPC(affectedPc);
+		RemoteSignalingPointCodeImpl remoteSpc = (RemoteSignalingPointCodeImpl) this.sccpStackImpl.getSccpResource()
+				.getRemoteSpcByPC(affectedPc);
 		if (remoteSpc != null) {
 			if (spcChanging)
 				remoteSpc.setRemoteSpcProhibited(true);
@@ -407,8 +439,10 @@ public class SccpManagement {
 			FastMap<Integer, SccpListener> lstrs = this.sccpProviderImpl.getAllSccpListeners();
 			for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1.getNext()) != end1;) {
 				try {
-					e1.getValue().onPcState(affectedPc,
-							(remoteSpc.isRemoteSpcProhibited() ? SignallingPointStatus.inaccessible : SignallingPointStatus.accessible), 0, remoteSccpStatus);
+					e1.getValue().onPcState(
+							affectedPc,
+							(remoteSpc.isRemoteSpcProhibited() ? SignallingPointStatus.inaccessible
+									: SignallingPointStatus.accessible), 0, remoteSccpStatus);
 				} catch (Exception ee) {
 				}
 			}
@@ -419,7 +453,8 @@ public class SccpManagement {
 
 	private void allowRsp(int affectedPc, boolean spcChanging, RemoteSccpStatus remoteSccpStatus) {
 
-		RemoteSignalingPointCode remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpcByPC(affectedPc);
+		RemoteSignalingPointCodeImpl remoteSpc = (RemoteSignalingPointCodeImpl) this.sccpStackImpl.getSccpResource()
+				.getRemoteSpcByPC(affectedPc);
 		if (remoteSpc != null) {
 			if (spcChanging)
 				remoteSpc.setRemoteSpcProhibited(false);
@@ -441,14 +476,15 @@ public class SccpManagement {
 	private void prohibitSsn(int affectedPc, int ssn) {
 
 		FastMap<Integer, SccpListener> lstrs = this.sccpProviderImpl.getAllSccpListeners();
-		FastMap<Integer, RemoteSubSystem> remoteSsns = this.sccpStackImpl.getSccpResource().getRemoteSsns();
+		FastMap<Integer, RemoteSubSystem> remoteSsns = this.sccpStackImpl.sccpResource.remoteSsns;
 		for (FastMap.Entry<Integer, RemoteSubSystem> e = remoteSsns.head(), end = remoteSsns.tail(); (e = e.getNext()) != end;) {
-			RemoteSubSystem remoteSsn = e.getValue();
+			RemoteSubSystemImpl remoteSsn = (RemoteSubSystemImpl) e.getValue();
 			if (remoteSsn.getRemoteSpc() == affectedPc && remoteSsn.getRemoteSsn() == ssn) {
 				if (!remoteSsn.isRemoteSsnProhibited()) {
 					remoteSsn.setRemoteSsnProhibited(true);
 
-					for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1.getNext()) != end1;) {
+					for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1
+							.getNext()) != end1;) {
 						try {
 							e1.getValue().onState(affectedPc, remoteSsn.getRemoteSsn(), false, 0);
 						} catch (Exception ee) {
@@ -463,14 +499,15 @@ public class SccpManagement {
 	private void allowSsn(int affectedPc, int ssn) {
 
 		FastMap<Integer, SccpListener> lstrs = this.sccpProviderImpl.getAllSccpListeners();
-		FastMap<Integer, RemoteSubSystem> remoteSsns = this.sccpStackImpl.getSccpResource().getRemoteSsns();
+		FastMap<Integer, RemoteSubSystem> remoteSsns = this.sccpStackImpl.sccpResource.remoteSsns;
 		for (FastMap.Entry<Integer, RemoteSubSystem> e = remoteSsns.head(), end = remoteSsns.tail(); (e = e.getNext()) != end;) {
-			RemoteSubSystem remoteSsn = e.getValue();
+			RemoteSubSystemImpl remoteSsn = (RemoteSubSystemImpl) e.getValue();
 			if (remoteSsn.getRemoteSpc() == affectedPc && (ssn == 1 || remoteSsn.getRemoteSsn() == ssn)) {
 				if (remoteSsn.isRemoteSsnProhibited()) {
 					remoteSsn.setRemoteSsnProhibited(false);
 
-					for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1.getNext()) != end1;) {
+					for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1
+							.getNext()) != end1;) {
 						try {
 							e1.getValue().onState(affectedPc, remoteSsn.getRemoteSsn(), true, 0);
 						} catch (Exception ee) {
@@ -516,9 +553,11 @@ public class SccpManagement {
 			ArrayList<SubSystemTest> arr = new ArrayList<SubSystemTest>();
 			synchronized (ssts) {
 				// TODO : Amit: Added n.getValue() != null check. Evaluate
-				// javolution.FastList as why for loop continues even after removing
+				// javolution.FastList as why for loop continues even after
+				// removing
 				// last element?
-				for (FastList.Node<SubSystemTest> n = ssts.head(), endSst = ssts.tail(); ((n = n.getNext()) != endSst) && n.getValue() != null;) {
+				for (FastList.Node<SubSystemTest> n = ssts.head(), endSst = ssts.tail(); ((n = n.getNext()) != endSst)
+						&& n.getValue() != null;) {
 					arr.add(n.getValue());
 				}
 			}
@@ -535,7 +574,7 @@ public class SccpManagement {
 
 		return sstForSsn1;
 	}
-	
+
 	private FastList<SubSystemTest> getSubSystemTestListForAffectedDpc(int affectedPc, boolean createIfAbsent) {
 		synchronized (dpcVsSst) {
 			FastList<SubSystemTest> ssts = dpcVsSst.get(affectedPc);
@@ -617,17 +656,18 @@ public class SccpManagement {
 				if (!started) {
 					this.testFuture = managementExecutors.schedule(this, currentTimerDelay, TimeUnit.MILLISECONDS);
 
-					// increase the "T(stat info)" timer delay up to 10 minutes for the next step
+					// increase the "T(stat info)" timer delay up to 10 minutes
+					// for the next step
 					currentTimerDelay = (int) (currentTimerDelay * sccpStackImpl.sstTimerDuration_IncreaseFactor);
 					if (currentTimerDelay > sccpStackImpl.sstTimerDuration_Max)
 						currentTimerDelay = sccpStackImpl.sstTimerDuration_Max;
-					
-						started = true;
+
+					started = true;
 					this.testsList.add(this);
 				}
 			}
 		}
-		
+
 		private void resetTimerDuration() {
 			currentTimerDelay = sccpStackImpl.sstTimerDuration_Min;
 		}
@@ -659,7 +699,7 @@ public class SccpManagement {
 							// Mark remote SSN Allowed
 							allowSsn(affectedPc, ssn);
 						}
-						
+
 						return;
 
 					}
@@ -673,7 +713,7 @@ public class SccpManagement {
 				}
 
 				sendManagementMessage(affectedPc, SST, ssn, 0);
-				
+
 			}// while
 
 		}// run
@@ -721,7 +761,7 @@ public class SccpManagement {
 	}
 
 	private class DpcSsn {
-		
+
 		private int dpc;
 		private int ssn;
 

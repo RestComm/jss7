@@ -19,6 +19,7 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
+
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
 import java.io.IOException;
@@ -37,6 +38,7 @@ import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
  * @author abhayani
+ * @author sergey vetyutnev
  * 
  */
 public class GPRSMSClassImpl implements GPRSMSClass, MAPAsnPrimitive {
@@ -53,7 +55,11 @@ public class GPRSMSClassImpl implements GPRSMSClass, MAPAsnPrimitive {
 	 * 
 	 */
 	public GPRSMSClassImpl() {
-		// TODO Auto-generated constructor stub
+	}
+
+	public GPRSMSClassImpl(MSNetworkCapability mSNetworkCapability, MSRadioAccessCapability mSRadioAccessCapability) {
+		this.mSNetworkCapability = mSNetworkCapability;
+		this.mSRadioAccessCapability = mSRadioAccessCapability;
 	}
 
 	/*
@@ -135,22 +141,36 @@ public class GPRSMSClassImpl implements GPRSMSClass, MAPAsnPrimitive {
 			if (ais.available() == 0)
 				break;
 
-			int tag = ais.readTag();
-			switch (tag) {
-			case _ID_mSNetworkCapability:
-				this.mSNetworkCapability = new MSNetworkCapabilityImpl();
-				((MSNetworkCapabilityImpl) this.mSNetworkCapability).decodeAll(ais);
-				break;
-			case _ID_mSRadioAccessCapability:
-				this.mSRadioAccessCapability = new MSRadioAccessCapabilityImpl();
-				((MSRadioAccessCapabilityImpl) this.mSRadioAccessCapability).decodeAll(ais);
-				break;
-			default:
-				ais.advanceElement();
-				break;
+			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 
+				int tag = ais.readTag();
+				switch (tag) {
+				case _ID_mSNetworkCapability:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " mSNetworkCapability: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.mSNetworkCapability = new MSNetworkCapabilityImpl();
+					((MSNetworkCapabilityImpl) this.mSNetworkCapability).decodeAll(ais);
+					break;
+				case _ID_mSRadioAccessCapability:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+								+ " mSRadioAccessCapability: Parameter is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+					this.mSRadioAccessCapability = new MSRadioAccessCapabilityImpl();
+					((MSRadioAccessCapabilityImpl) this.mSRadioAccessCapability).decodeAll(ais);
+					break;
+				default:
+					ais.advanceElement();
+					break;
+				}
+			} else {
+				ais.advanceElement();
 			}
 		}
+
+		if (this.mSNetworkCapability == null)
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+					+ ": mSNetworkCapability must not be null", MAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
 	/*
@@ -161,7 +181,7 @@ public class GPRSMSClassImpl implements GPRSMSClass, MAPAsnPrimitive {
 	 * org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, this.getTag());
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	/*
@@ -173,7 +193,7 @@ public class GPRSMSClassImpl implements GPRSMSClass, MAPAsnPrimitive {
 	 */
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
-			asnOs.writeTag(tagClass, true, tag);
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
@@ -219,6 +239,25 @@ public class GPRSMSClassImpl implements GPRSMSClass, MAPAsnPrimitive {
 	 */
 	public MSRadioAccessCapability getMSRadioAccessCapability() {
 		return this.mSRadioAccessCapability;
+	}
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+		
+		if (this.mSNetworkCapability != null) {
+			sb.append("mSNetworkCapability=");
+			sb.append(this.mSNetworkCapability);
+		}
+		
+		if (this.mSRadioAccessCapability != null) {
+			sb.append(", mSRadioAccessCapability=");
+			sb.append(this.mSRadioAccessCapability);
+		}
+		
+		sb.append("]");
+		return sb.toString();
 	}
 
 }

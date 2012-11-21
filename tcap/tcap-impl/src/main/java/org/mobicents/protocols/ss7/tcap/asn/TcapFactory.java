@@ -257,11 +257,13 @@ public final class TcapFactory {
 		return p;
 	}
 
-	public static Parameter createParameter(int tag, AsnInputStream localAis) throws ParseException {
+	public static Parameter createParameter(int tag, AsnInputStream localAis, boolean singleParameterInAsn) throws ParseException {
 		ParameterImpl p = new ParameterImpl();
 		p.setTag(tag);
 		//p.setPrimitive(localAis.isTagPrimitive());
 		//p.setTagClass(localAis.getTagClass());
+		if (singleParameterInAsn)
+			p.setSingleParameterInAsn();
 		p.decode(localAis);
 		return p;
 	}

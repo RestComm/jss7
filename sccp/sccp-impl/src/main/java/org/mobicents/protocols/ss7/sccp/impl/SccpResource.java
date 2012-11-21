@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -26,12 +26,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+
 import javolution.text.TextBuilder;
 import javolution.util.FastMap;
-import javolution.xml.XMLBinding;
 import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
 import javolution.xml.stream.XMLStreamException;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -46,27 +47,28 @@ public class SccpResource {
 	private static final String USER_DIR_KEY = "user.dir";
 	private static final String PERSIST_FILE_NAME = "sccpresource.xml";
 
-	private static final String REMOTE_SSN = "remoteSsn";
-	private static final String REMOTE_SPC = "remoteSpc";
-	private static final String CONCERNED_SPC = "concernedSpc";
+	private static final String REMOTE_SSN = "remoteSsns";
+	private static final String REMOTE_SPC = "remoteSpcs";
+	private static final String CONCERNED_SPC = "concernedSpcs";
 
 	private final TextBuilder persistFile = TextBuilder.newInstance();
 
-	private static final XMLBinding binding = new XMLBinding();
+	private static final SccpResourceXMLBinding binding = new SccpResourceXMLBinding();
 	private static final String TAB_INDENT = "\t";
 	private static final String CLASS_ATTRIBUTE = "type";
 
 	private String persistDir = null;
 
-	private FastMap<Integer, RemoteSubSystem> remoteSsns = new FastMap<Integer, RemoteSubSystem>();
-	private FastMap<Integer, RemoteSignalingPointCode> remoteSpcs = new FastMap<Integer, RemoteSignalingPointCode>();
-	private FastMap<Integer, ConcernedSignalingPointCode> concernedSpcs = new FastMap<Integer, ConcernedSignalingPointCode>();
+	private RemoteSubSystemMap<Integer, RemoteSubSystemImpl> remoteSsns = new RemoteSubSystemMap<Integer, RemoteSubSystemImpl>();
+	private RemoteSignalingPointCodeMap<Integer, RemoteSignalingPointCodeImpl> remoteSpcs = new RemoteSignalingPointCodeMap<Integer, RemoteSignalingPointCodeImpl>();
+	private ConcernedSignalingPointCodeMap<Integer, ConcernedSignalingPointCodeImpl> concernedSpcs = new ConcernedSignalingPointCodeMap<Integer, ConcernedSignalingPointCodeImpl>();
 	
 	private final String name;
 
 	public SccpResource(String name) {
 		this.name = name;
 		binding.setClassAttribute(CLASS_ATTRIBUTE);
+		binding.setAlias(RemoteSubSystemImpl.class, "remoteSubSystem");
 	}
 
 	public String getPersistDir() {
@@ -102,9 +104,9 @@ public class SccpResource {
 		this.store();
 	}
 
-	public void addRemoteSsn(int remoteSsnid, RemoteSubSystem remoteSsn) {
+	public void addRemoteSsn(int remoteSsnid, RemoteSubSystemImpl remoteSsn) {
 		synchronized (this) {
-			FastMap<Integer, RemoteSubSystem> newRemoteSsns = new FastMap<Integer, RemoteSubSystem>();
+			RemoteSubSystemMap<Integer, RemoteSubSystemImpl> newRemoteSsns = new RemoteSubSystemMap<Integer, RemoteSubSystemImpl>();
 			newRemoteSsns.putAll(this.remoteSsns);
 			newRemoteSsns.put(remoteSsnid, remoteSsn);
 			this.remoteSsns = newRemoteSsns;
@@ -114,7 +116,7 @@ public class SccpResource {
 
 	public void removeRemoteSsn(int remoteSsnid) {
 		synchronized (this) {
-			FastMap<Integer, RemoteSubSystem> newRemoteSsns = new FastMap<Integer, RemoteSubSystem>();
+			RemoteSubSystemMap<Integer, RemoteSubSystemImpl> newRemoteSsns = new RemoteSubSystemMap<Integer, RemoteSubSystemImpl>();
 			newRemoteSsns.putAll(this.remoteSsns);
 			newRemoteSsns.remove(remoteSsnid);
 			this.remoteSsns = newRemoteSsns;
@@ -122,14 +124,14 @@ public class SccpResource {
 		}
 	}
 
-	public RemoteSubSystem getRemoteSsn(int remoteSsnid) {
+	public RemoteSubSystemImpl getRemoteSsn(int remoteSsnid) {
 		return this.remoteSsns.get(remoteSsnid);
 	}
 
-	public RemoteSubSystem getRemoteSsn(int spc, int remoteSsn) {
+	public RemoteSubSystemImpl getRemoteSsn(int spc, int remoteSsn) {
 
-		for (FastMap.Entry<Integer, RemoteSubSystem> e = this.remoteSsns.head(), end = this.remoteSsns.tail(); (e = e.getNext()) != end;) {
-			RemoteSubSystem remoteSubSystem = e.getValue();
+		for (FastMap.Entry<Integer, RemoteSubSystemImpl> e = this.remoteSsns.head(), end = this.remoteSsns.tail(); (e = e.getNext()) != end;) {
+			RemoteSubSystemImpl remoteSubSystem = e.getValue();
 			if (remoteSubSystem.getRemoteSpc() == spc && remoteSsn == remoteSubSystem.getRemoteSsn()) {
 				return remoteSubSystem;
 			}
@@ -138,13 +140,13 @@ public class SccpResource {
 		return null;
 	}
 
-	public FastMap<Integer, RemoteSubSystem> getRemoteSsns() {
+	public FastMap<Integer, RemoteSubSystemImpl> getRemoteSsns() {
 		return remoteSsns;
 	}
 
-	public void addRemoteSpc(int remoteSpcId, RemoteSignalingPointCode remoteSpc) {
+	public void addRemoteSpc(int remoteSpcId, RemoteSignalingPointCodeImpl remoteSpc) {
 		synchronized (this) {
-			FastMap<Integer, RemoteSignalingPointCode> newRemoteSpcs = new FastMap<Integer, RemoteSignalingPointCode>(); 
+			RemoteSignalingPointCodeMap<Integer, RemoteSignalingPointCodeImpl> newRemoteSpcs = new RemoteSignalingPointCodeMap<Integer, RemoteSignalingPointCodeImpl>(); 
 			newRemoteSpcs.putAll(this.remoteSpcs);
 			newRemoteSpcs.put(remoteSpcId, remoteSpc);
 			this.remoteSpcs = newRemoteSpcs; 
@@ -154,7 +156,7 @@ public class SccpResource {
 
 	public void removeRemoteSpc(int remoteSpcId) {
 		synchronized (this) {
-			FastMap<Integer, RemoteSignalingPointCode> newRemoteSpcs = new FastMap<Integer, RemoteSignalingPointCode>(); 
+			RemoteSignalingPointCodeMap<Integer, RemoteSignalingPointCodeImpl> newRemoteSpcs = new RemoteSignalingPointCodeMap<Integer, RemoteSignalingPointCodeImpl>(); 
 			newRemoteSpcs.putAll(this.remoteSpcs);
 			newRemoteSpcs.remove(remoteSpcId);
 			this.remoteSpcs = newRemoteSpcs; 
@@ -162,14 +164,14 @@ public class SccpResource {
 		}
 	}
 
-	public RemoteSignalingPointCode getRemoteSpc(int remoteSpcId) {
+	public RemoteSignalingPointCodeImpl getRemoteSpc(int remoteSpcId) {
 		return this.remoteSpcs.get(remoteSpcId);
 	}
 
-	public RemoteSignalingPointCode getRemoteSpcByPC(int remotePC) {
-		for (FastMap.Entry<Integer, RemoteSignalingPointCode> e = this.remoteSpcs.head(), end = this.remoteSpcs.tail(); (e = e
+	public RemoteSignalingPointCodeImpl getRemoteSpcByPC(int remotePC) {
+		for (FastMap.Entry<Integer, RemoteSignalingPointCodeImpl> e = this.remoteSpcs.head(), end = this.remoteSpcs.tail(); (e = e
 				.getNext()) != end;) {
-			RemoteSignalingPointCode remoteSubSystem = e.getValue();
+			RemoteSignalingPointCodeImpl remoteSubSystem = e.getValue();
 			if (remoteSubSystem.getRemoteSpc() == remotePC ) {
 				return remoteSubSystem;
 			}
@@ -178,13 +180,13 @@ public class SccpResource {
 		return null;
 	}
 	
-	public FastMap<Integer, RemoteSignalingPointCode> getRemoteSpcs() {
+	public FastMap<Integer, RemoteSignalingPointCodeImpl> getRemoteSpcs() {
 		return remoteSpcs;
 	}
 
-	public void addConcernedSpc(int concernedSpcId, ConcernedSignalingPointCode concernedSpc) {
+	public void addConcernedSpc(int concernedSpcId, ConcernedSignalingPointCodeImpl concernedSpc) {
 		synchronized (this) {
-			FastMap<Integer, ConcernedSignalingPointCode> newConcernedSpcs = new FastMap<Integer, ConcernedSignalingPointCode>(); 
+			ConcernedSignalingPointCodeMap<Integer, ConcernedSignalingPointCodeImpl> newConcernedSpcs = new ConcernedSignalingPointCodeMap<Integer, ConcernedSignalingPointCodeImpl>(); 
 			newConcernedSpcs.putAll(this.concernedSpcs);
 			newConcernedSpcs.put(concernedSpcId, concernedSpc);
 			this.concernedSpcs = newConcernedSpcs; 
@@ -194,7 +196,7 @@ public class SccpResource {
 
 	public void removeConcernedSpc(int concernedSpcId) {
 		synchronized (this) {
-			FastMap<Integer, ConcernedSignalingPointCode> newConcernedSpcs = new FastMap<Integer, ConcernedSignalingPointCode>(); 
+			ConcernedSignalingPointCodeMap<Integer, ConcernedSignalingPointCodeImpl> newConcernedSpcs = new ConcernedSignalingPointCodeMap<Integer, ConcernedSignalingPointCodeImpl>(); 
 			newConcernedSpcs.putAll(this.concernedSpcs);
 			newConcernedSpcs.remove(concernedSpcId);
 			this.concernedSpcs = newConcernedSpcs; 
@@ -202,13 +204,13 @@ public class SccpResource {
 		}
 	}
 
-	public ConcernedSignalingPointCode getConcernedSpc(int concernedSpcId) {
+	public ConcernedSignalingPointCodeImpl getConcernedSpc(int concernedSpcId) {
 		return this.concernedSpcs.get(concernedSpcId);
 	}
 
-	public ConcernedSignalingPointCode getConcernedSpcByPC(int remotePC) {
-		for (FastMap.Entry<Integer, ConcernedSignalingPointCode> e = this.concernedSpcs.head(), end = this.concernedSpcs.tail(); (e = e.getNext()) != end;) {
-			ConcernedSignalingPointCode concernedSubSystem = e.getValue();
+	public ConcernedSignalingPointCodeImpl getConcernedSpcByPC(int remotePC) {
+		for (FastMap.Entry<Integer, ConcernedSignalingPointCodeImpl> e = this.concernedSpcs.head(), end = this.concernedSpcs.tail(); (e = e.getNext()) != end;) {
+			ConcernedSignalingPointCodeImpl concernedSubSystem = e.getValue();
 			if (concernedSubSystem.getRemoteSpc() == remotePC) {
 				return concernedSubSystem;
 			}
@@ -217,7 +219,7 @@ public class SccpResource {
 		return null;
 	}
 	
-	public FastMap<Integer, ConcernedSignalingPointCode> getConcernedSpcs() {
+	public FastMap<Integer, ConcernedSignalingPointCodeImpl> getConcernedSpcs() {
 		return concernedSpcs;
 	}
 
@@ -228,9 +230,9 @@ public class SccpResource {
 				// no resources allocated - nothing to do
 				return;
 
-			remoteSsns = new FastMap<Integer, RemoteSubSystem>();
-			remoteSpcs = new FastMap<Integer, RemoteSignalingPointCode>();
-			concernedSpcs = new FastMap<Integer, ConcernedSignalingPointCode>();
+			remoteSsns = new RemoteSubSystemMap<Integer, RemoteSubSystemImpl>();
+			remoteSpcs = new RemoteSignalingPointCodeMap<Integer, RemoteSignalingPointCodeImpl>();
+			concernedSpcs = new ConcernedSignalingPointCodeMap<Integer, ConcernedSignalingPointCodeImpl>();
 
 			// We store the cleared state
 			this.store();
@@ -250,9 +252,9 @@ public class SccpResource {
 			// Enables cross-references.
 			// writer.setReferenceResolver(new XMLReferenceResolver());
 			writer.setIndentation(TAB_INDENT);
-			writer.write(remoteSsns, REMOTE_SSN, FastMap.class);
-			writer.write(remoteSpcs, REMOTE_SPC, FastMap.class);
-			writer.write(concernedSpcs, CONCERNED_SPC, FastMap.class);
+			writer.write(remoteSsns, REMOTE_SSN, RemoteSubSystemMap.class);
+			writer.write(remoteSpcs, REMOTE_SPC, RemoteSignalingPointCodeMap.class);
+			writer.write(concernedSpcs, CONCERNED_SPC, ConcernedSignalingPointCodeMap.class);
 
 			writer.close();
 		} catch (Exception e) {
@@ -272,9 +274,9 @@ public class SccpResource {
 			reader = XMLObjectReader.newInstance(new FileInputStream(persistFile.toString()));
 
 			reader.setBinding(binding);
-			remoteSsns = reader.read(REMOTE_SSN, FastMap.class);
-			remoteSpcs = reader.read(REMOTE_SPC, FastMap.class);
-			concernedSpcs = reader.read(CONCERNED_SPC, FastMap.class);
+			remoteSsns = reader.read(REMOTE_SSN, RemoteSubSystemMap.class);
+			remoteSpcs = reader.read(REMOTE_SPC, RemoteSignalingPointCodeMap.class);
+			concernedSpcs = reader.read(CONCERNED_SPC, ConcernedSignalingPointCodeMap.class);
 		} catch (XMLStreamException ex) {
 			// this.logger.info(
 			// "Error while re-creating Linksets from persisted file", ex);

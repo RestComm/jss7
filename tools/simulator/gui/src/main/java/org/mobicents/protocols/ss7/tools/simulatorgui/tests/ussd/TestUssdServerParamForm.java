@@ -55,6 +55,7 @@ public class TestUssdServerParamForm extends JDialog {
 	private static final long serialVersionUID = 1589538832800021188L;
 
 	private TestUssdServerManMBean ussdServer;
+	
 	private JTextField tbMsisdnAddress;
 	private JTextField tbDataCodingScheme;
 	private JTextField tbAlertingPattern;
@@ -112,9 +113,9 @@ public class TestUssdServerParamForm extends JDialog {
 		cbNumberingPlan.setBounds(123, 81, 266, 20);
 		panel_1.add(cbNumberingPlan);
 		
-		JLabel label_4 = new JLabel("Data coding scheme");
-		label_4.setBounds(10, 143, 149, 14);
-		panel.add(label_4);
+		JLabel lblDataCodingScheme = new JLabel("Data coding scheme (15-GSM7, 72-UCS2)");
+		lblDataCodingScheme.setBounds(10, 143, 298, 14);
+		panel.add(lblDataCodingScheme);
 		
 		tbDataCodingScheme = new JTextField();
 		tbDataCodingScheme.setColumns(10);

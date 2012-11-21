@@ -1,129 +1,144 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
-import java.io.IOException;
-
-import org.mobicents.protocols.asn.AsnException;
-import org.mobicents.protocols.asn.AsnInputStream;
-import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GeodeticInformation;
-import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.TypeOfShape;
+import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
  * @author amit bhayani
+ * @author sergey vetyutnev
  *
  */
-public class GeodeticInformationImpl implements GeodeticInformation, MAPAsnPrimitive {
-	
-	private byte[] data;
+public class GeodeticInformationImpl extends OctetStringBase implements GeodeticInformation {
 
-	/**
-	 * 
-	 */
 	public GeodeticInformationImpl() {
-		// TODO Auto-generated constructor stub
+		super(10, 10, "GeodeticInformation");
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTag()
-	 */
-	public int getTag() throws MAPException {
-		return Tag.STRING_OCTET;
+	public GeodeticInformationImpl(byte[] data) {
+		super(10, 10, "GeodeticInformation", data);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTagClass()
-	 */
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
+	public GeodeticInformationImpl(int screeningAndPresentationIndicators, TypeOfShape typeOfShape, double latitude, double longitude, double uncertainty,
+			int confidence) throws MAPException {
+		super(10, 10, "GeodeticInformation");
+
+		if (typeOfShape != TypeOfShape.EllipsoidPointWithUncertaintyCircle) {
+			throw new MAPException("typeOfShape parameter for GeographicalInformation can be only \" ellipsoid point with uncertainty circle\"");
+		}
+
+		this.data = new byte[10];
+
+		this.data[0] = (byte)screeningAndPresentationIndicators;
+		this.data[1] = (byte) (typeOfShape.getCode() << 4);
+
+		GeographicalInformationImpl.encodeLatitude(data, 2, latitude);
+		GeographicalInformationImpl.encodeLongitude(data, 5, longitude);
+		data[8] = (byte) GeographicalInformationImpl.encodeUncertainty(uncertainty);
+		data[9] = (byte) confidence;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getIsPrimitive()
-	 */
-	public boolean getIsPrimitive() {
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeAll(org.mobicents.protocols.asn.AsnInputStream)
-	 */
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding GeodeticInformation: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding GeodeticInformation: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}	
-	}
-	
-	private void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
-		this.data = asnIS.readOctetStringData(length);
-		if (this.data.length != 10 )
-			throw new MAPParsingComponentException("Error while decoding GeodeticInformation value must be 10 bytes length, found: "
-					+ this.data.length, MAPParsingComponentExceptionReason.MistypedParameter);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeData(org.mobicents.protocols.asn.AsnInputStream, int)
-	 */
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding GeodeticInformation: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding GeodeticInformation: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream)
-	 */
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET);			
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream, int, int)
-	 */
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		try {
-			asnOs.writeTag(tagClass, true, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding GeodeticInformation: " + e.getMessage(), e);
-		}	
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeData(org.mobicents.protocols.asn.AsnOutputStream)
-	 */
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		if (this.data == null)
-			throw new MAPException("Data must not be null");
-		if (this.data.length != 8)
-			throw new MAPException("Data length must be 10");
-		
-		asnOs.writeOctetStringData(this.data);	
-	}
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.GeodeticInformation#getData()
-	 */
 	public byte[] getData() {
-		return this.data;
+		return data;
 	}
 
+	@Override
+	public int getScreeningAndPresentationIndicators() {
+		if (this.data == null || this.data.length != 10)
+			return 0;
+
+		return this.data[0];
+	}
+
+	@Override
+	public TypeOfShape getTypeOfShape() {
+		if (this.data == null || this.data.length != 10)
+			return null;
+
+		return TypeOfShape.getInstance((this.data[1] & 0xFF) >> 4);
+	}
+
+	@Override
+	public double getLatitude() {
+		if (this.data == null || this.data.length != 10)
+			return 0;
+
+		return GeographicalInformationImpl.decodeLatitude(this.data, 2);
+	}
+
+	@Override
+	public double getLongitude() {
+		if (this.data == null || this.data.length != 10)
+			return 0;
+
+		return GeographicalInformationImpl.decodeLongitude(this.data, 5);
+	}
+
+	@Override
+	public double getUncertainty() {
+		if (this.data == null || this.data.length != 10)
+			return 0;
+
+		return GeographicalInformationImpl.decodeUncertainty(this.data[8]);
+	}
+
+	@Override
+	public int getConfidence() {
+		if (this.data == null || this.data.length != 10)
+			return 0;
+
+		return this.data[9];
+	}	
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+
+		sb.append("ScreeningAndPresentationIndicators=");
+		sb.append(this.getScreeningAndPresentationIndicators());
+
+		sb.append(", TypeOfShape=");
+		sb.append(this.getTypeOfShape());
+
+		sb.append(", Latitude=");
+		sb.append(this.getLatitude());
+
+		sb.append(", Longitude=");
+		sb.append(this.getLongitude());
+
+		sb.append(", Uncertainty=");
+		sb.append(this.getUncertainty());
+
+		sb.append(", Confidence=");
+		sb.append(this.getConfidence());
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 }

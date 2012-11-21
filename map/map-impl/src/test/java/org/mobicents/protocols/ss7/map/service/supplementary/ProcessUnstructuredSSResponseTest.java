@@ -29,7 +29,9 @@ import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
 
 /**
@@ -63,13 +65,13 @@ public class ProcessUnstructuredSSResponseTest {
 
 		ProcessUnstructuredSSResponseImpl addNum = new ProcessUnstructuredSSResponseImpl();
 		addNum.decodeAll(asn);
-		byte dataCodingScheme = addNum.getUSSDDataCodingScheme();
-		assertEquals( dataCodingScheme,(byte) 0x0f);
+		CBSDataCodingScheme dataCodingScheme = addNum.getDataCodingScheme();
+		assertEquals( dataCodingScheme.getCode(),(byte) 0x0f);
 
 		USSDString ussdString = addNum.getUSSDString();
 		assertNotNull(ussdString);
 
-		assertEquals( ussdString.getString(),"Your balance = 350");
+		assertEquals( ussdString.getString(null),"Your balance = 350");
 
 	}
 
@@ -78,8 +80,8 @@ public class ProcessUnstructuredSSResponseTest {
 		byte[] data = new byte[] { 0x30, 0x15, 0x04, 0x01, 0x0f, 0x04, 0x10, (byte) 0xd9, 0x77, 0x5d, 0x0e, 0x12, (byte) 0x87, (byte) 0xd9, 0x61, (byte) 0xf7,
 				(byte) 0xb8, 0x0c, (byte) 0xea, (byte) 0x81, 0x66, 0x35, 0x18 };
 
-		USSDString ussdStr = new USSDStringImpl("Your balance = 350", null);
-		ProcessUnstructuredSSResponseImpl addNum = new ProcessUnstructuredSSResponseImpl((byte) 0x0f, ussdStr);
+		USSDString ussdStr = new USSDStringImpl("Your balance = 350", null, null);
+		ProcessUnstructuredSSResponseImpl addNum = new ProcessUnstructuredSSResponseImpl(new CBSDataCodingSchemeImpl(0x0f), ussdStr);
 
 		AsnOutputStream asnOS = new AsnOutputStream();
 		addNum.encodeAll(asnOS);

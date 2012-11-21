@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -23,12 +23,22 @@
 package org.mobicents.protocols.ss7.sccp.impl;
 
 import java.io.IOException;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
 import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitiveFactory;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
+import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
+import org.mobicents.protocols.ss7.sccp.LongMessageRule;
+import org.mobicents.protocols.ss7.sccp.LongMessageRuleType;
+import org.mobicents.protocols.ss7.sccp.Mtp3ServiceAccessPoint;
+import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
+import org.mobicents.protocols.ss7.sccp.RemoteSubSystem;
+import org.mobicents.protocols.ss7.sccp.Rule;
+import org.mobicents.protocols.ss7.sccp.RuleType;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.impl.message.EncodingResultData;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
@@ -37,12 +47,6 @@ import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpNoticeMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl;
-import org.mobicents.protocols.ss7.sccp.impl.router.LoadSharingAlgorithm;
-import org.mobicents.protocols.ss7.sccp.impl.router.LongMessageRule;
-import org.mobicents.protocols.ss7.sccp.impl.router.LongMessageRuleType;
-import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3ServiceAccessPoint;
-import org.mobicents.protocols.ss7.sccp.impl.router.Rule;
-import org.mobicents.protocols.ss7.sccp.impl.router.RuleType;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
@@ -183,14 +187,15 @@ public class SccpRoutingControl {
 		EncodingResultData erd = message.encode(lmrt, mup.getMaxUserDataLength(dpc), logger);
 		switch (erd.getEncodingResult()) {
 		case Success:
+			Mtp3TransferPrimitiveFactory factory = mup.getMtp3TransferPrimitiveFactory();
 			if (erd.getSolidData() != null) {
 				// nonsegmented data
-				Mtp3TransferPrimitive msg = new Mtp3TransferPrimitive(Mtp3._SI_SERVICE_SCCP, sap.getNi(), 0, sap.getOpc(), dpc, sls, erd.getSolidData());
+				Mtp3TransferPrimitive msg = factory.createMtp3TransferPrimitive(Mtp3._SI_SERVICE_SCCP, sap.getNi(), 0, sap.getOpc(), dpc, sls, erd.getSolidData());
 				mup.sendMessage(msg);
 			} else {
 				// segmented data
 				for (byte[] bf : erd.getSegementedData()) {
-					Mtp3TransferPrimitive msg = new Mtp3TransferPrimitive(Mtp3._SI_SERVICE_SCCP, sap.getNi(), 0, sap.getOpc(), dpc, sls, bf);
+					Mtp3TransferPrimitive msg = factory.createMtp3TransferPrimitive(Mtp3._SI_SERVICE_SCCP, sap.getNi(), 0, sap.getOpc(), dpc, sls, bf);
 					mup.sendMessage(msg);
 				}
 			}
@@ -392,6 +397,21 @@ public class SccpRoutingControl {
 				return false;
 		} else if (loadSharingAlgo == LoadSharingAlgorithm.Bit3) {
 			if ((msg.getSls() & 0x08) == 0)
+				return true;
+			else
+				return false;
+		} else if (loadSharingAlgo == LoadSharingAlgorithm.Bit2) {
+			if ((msg.getSls() & 0x04) == 0)
+				return true;
+			else
+				return false;
+		} else if (loadSharingAlgo == LoadSharingAlgorithm.Bit1) {
+			if ((msg.getSls() & 0x02) == 0)
+				return true;
+			else
+				return false;
+		} else if (loadSharingAlgo == LoadSharingAlgorithm.Bit0) {
+			if ((msg.getSls() & 0x01) == 0)
 				return true;
 			else
 				return false;

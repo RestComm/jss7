@@ -1,0 +1,15 @@
+Name
+	m3ua route show
+
+SYNOPSIS
+	m3ua route show
+
+DESCRIPTION
+	This command is used to display all configured routes.
+
+SEE ALSO
+	m3ua, m3ua as create, m3ua as destroy, m3ua as show, m3ua asp create, 
+	m3ua asp destroy, m3ua asp show, m3ua asp start, m3ua asp stop, m3ua as add, 
+	m3ua as remove, m3ua route add, m3ua route remove.
+
+

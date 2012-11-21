@@ -22,18 +22,22 @@
 
 package org.mobicents.protocols.ss7.cap.api;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageFactory;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPServiceCircuitSwitchedCall;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.CAPServiceGprs;
 import org.mobicents.protocols.ss7.cap.api.service.sms.CAPServiceSms;
-import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
+import org.mobicents.protocols.ss7.inap.api.INAPParameterFactory;
+import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
+import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public interface CAPProvider {
+public interface CAPProvider extends Serializable {
 
 	/**
 	 * Add CAP Dialog listener to the Stack
@@ -57,6 +61,27 @@ public interface CAPProvider {
 	public CAPParameterFactory getCAPParameterFactory();
 
 	/**
+	 * Get the {@link MAPParameterFactory}
+	 * 
+	 * @return
+	 */
+	public MAPParameterFactory getMAPParameterFactory();
+
+	/**
+	 * Get the {@link ISUPParameterFactory}
+	 * 
+	 * @return
+	 */
+	public ISUPParameterFactory getISUPParameterFactory();
+
+	/**
+	 * Get the {@link INAPParameterFactory}
+	 * 
+	 * @return
+	 */
+	public INAPParameterFactory getINAPParameterFactory();
+
+	/**
 	 * Get the {@link CAPErrorMessageFactory}
 	 * 
 	 * @return
@@ -70,8 +95,6 @@ public interface CAPProvider {
 	 * @return
 	 */
 	public CAPDialog getCAPDialog(Long dialogId);
-
-	public TCAPProvider getTCAPProvider();
 
 	public CAPServiceCircuitSwitchedCall getCAPServiceCircuitSwitchedCall();
 	public CAPServiceGprs getCAPServiceGprs();

@@ -64,10 +64,14 @@ public class Server extends EventTestHarness {
 		this.mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
 		this.mapProvider.getMAPServiceSms().addMAPServiceListener(this);
 		this.mapProvider.getMAPServiceMobility().addMAPServiceListener(this);
+		this.mapProvider.getMAPServiceLsm().addMAPServiceListener(this);
+		this.mapProvider.getMAPServiceCallHandling().addMAPServiceListener(this);
 
 		this.mapProvider.getMAPServiceSupplementary().acivate();
 		this.mapProvider.getMAPServiceSms().acivate();
 		this.mapProvider.getMAPServiceMobility().acivate();
+		this.mapProvider.getMAPServiceLsm().acivate();
+		this.mapProvider.getMAPServiceCallHandling().acivate();
 	}
 
 	public void debug(String message) {

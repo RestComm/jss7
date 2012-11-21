@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -21,6 +21,10 @@
  */
 
 package org.mobicents.protocols.ss7.sccp;
+
+import java.util.Map;
+
+import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 
 /**
  * @author amit bhayani
@@ -45,6 +49,12 @@ public interface SccpStack {
 	 * @throws org.mobicents.protocols.StartFailedException
 	 */
 	public void stop();
+	
+	/**
+	 * Returns the name of this stack
+	 * @return
+	 */
+	public String getName();
 
 	/**
 	 * Exposes SCCP provider object to SCCP user.
@@ -53,42 +63,19 @@ public interface SccpStack {
 	 */
 	public SccpProvider getSccpProvider();
 
-//	/**
-//	 * <p>
-//	 * Set the local signaling point for this SCCP instance. The local signaling
-//	 * point will be added as OPC for outgoing MTP3 MSU.
-//	 * </p>
-//	 * <p>
-//	 * For incoming MSU, after translation the point code of the Called Party
-//	 * Address (SCCP Address) will compared with localSpc, if it matches MSU
-//	 * will be consumed
-//	 * </p>
-//	 * 
-//	 * @param localSpc
-//	 */
-//	public void setLocalSpc(int localSpc);
-//
-//	/**
-//	 * Get the local signaling point set for this SCCP instance
-//	 * 
-//	 * @return
-//	 */
-//	public int getLocalSpc();
-//
-//	/**
-//	 * Set the Network Indicator value. This value will be set in Service
-//	 * Information Octet (SIO) for outgoing MTP3 MSU
-//	 * 
-//	 * @param ni
-//	 */
-//	public void setNi(int ni);
-//
-//	/**
-//	 * Get the Network Indicator value.
-//	 * 
-//	 * @return
-//	 */
-//	public int getNi();
+	/**
+	 * Set the persist directory to store the xml files
+	 * 
+	 * @return
+	 */
+	public String getPersistDir();
+
+	/**
+	 * Get the persist directory from which to read the xml files
+	 * 
+	 * @param persistDir
+	 */
+	public void setPersistDir(String persistDir);
 
 	/**
 	 * If set, the signaling point code from SCCP called/calling address will be
@@ -100,8 +87,29 @@ public interface SccpStack {
 
 	/**
 	 * Get the remove siganling point code flag
+	 * 
 	 * @return
 	 */
 	public boolean isRemoveSpc();
+
+	public SccpResource getSccpResource();
+
+	public int getSstTimerDuration_Min();
+	
+	public int getSstTimerDuration_Max();
+	
+	public double getSstTimerDuration_IncreaseFactor();
+	
+	public int getZMarginXudtMessage();
+	
+	public int getMaxDataMessage();
+	
+	public int getReassemblyTimerDelay();
+	
+	public Map<Integer, Mtp3UserPart> getMtp3UserParts();
+
+	public Mtp3UserPart getMtp3UserPart(int id);
+	
+	public Router getRouter();
 
 }

@@ -1,3 +1,24 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import static org.testng.Assert.assertEquals;
@@ -18,8 +39,10 @@ import org.mobicents.protocols.api.AssociationListener;
 import org.mobicents.protocols.api.AssociationType;
 import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.api.Management;
+import org.mobicents.protocols.api.ManagementEventListener;
 import org.mobicents.protocols.api.PayloadData;
 import org.mobicents.protocols.api.Server;
+import org.mobicents.protocols.api.ServerListener;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
@@ -58,7 +81,7 @@ import org.testng.annotations.Test;
 public class IPSPClientFSMTest {
 	private ParameterFactoryImpl parmFactory = new ParameterFactoryImpl();
 	private MessageFactoryImpl messageFactory = new MessageFactoryImpl();
-	private M3UAManagement clientM3UAMgmt = null;
+	private M3UAManagementImpl clientM3UAMgmt = null;
 	private Mtp3UserPartListenerimpl mtp3UserPartListener = null;
 	private TransportManagement transportManagement = null;
 	
@@ -79,7 +102,7 @@ public class IPSPClientFSMTest {
 	public void setUp() throws Exception {
 		semaphore = new Semaphore(0);
 		this.transportManagement = new TransportManagement();
-		this.clientM3UAMgmt = new M3UAManagement("IPSPClientFSMTest");
+		this.clientM3UAMgmt = new M3UAManagementImpl("IPSPClientFSMTest");
 		this.clientM3UAMgmt.setTransportManagement(this.transportManagement);
 		this.mtp3UserPartListener = new Mtp3UserPartListenerimpl();
 		this.clientM3UAMgmt.addMtp3UserPartListener(this.mtp3UserPartListener);
@@ -117,12 +140,12 @@ public class IPSPClientFSMTest {
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
 		// As as = rsgw.createAppServer("testas", rc, rKey, trModType);
-		As as = this.clientM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, null, rc, null, null);
+		AsImpl asImpl = (AsImpl)this.clientM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, null, rc, null, 1, null);
 
-		AspFactory localAspFactory = this.clientM3UAMgmt.createAspFactory("testasp", "testAssoc1");
+		AspFactoryImpl localAspFactory = (AspFactoryImpl)this.clientM3UAMgmt.createAspFactory("testasp", "testAssoc1");
 		localAspFactory.start();
 
-		Asp asp = this.clientM3UAMgmt.assignAspToAs("testas", "testasp");
+		AspImpl aspImpl = this.clientM3UAMgmt.assignAspToAs("testas", "testasp");
 
 		// Create Route. Adding 3 routes
 		this.clientM3UAMgmt.addRoute(3, -1, -1, "testas");
@@ -134,7 +157,7 @@ public class IPSPClientFSMTest {
 		testAssociation.signalCommUp();
 
 		// Once communication is UP, ASP_UP should have been sent.
-		FSM aspLocalFSM = asp.getLocalFSM();
+		FSM aspLocalFSM = aspImpl.getLocalFSM();
 		assertEquals(AspState.UP_SENT, this.getAspState(aspLocalFSM));
 		assertTrue(validateMessage(testAssociation, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP, -1, -1));
 
@@ -147,7 +170,7 @@ public class IPSPClientFSMTest {
 		assertTrue(validateMessage(testAssociation, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE, -1,
 				-1));
 
-		FSM asPeerFSM = as.getPeerFSM();
+		FSM asPeerFSM = asImpl.getPeerFSM();
 		// also the AS should be INACTIVE now
 		assertEquals(AsState.INACTIVE, this.getAsState(asPeerFSM));
 
@@ -227,12 +250,12 @@ public class IPSPClientFSMTest {
 		this.transportManagement.addAssociation(null, 0, null, 0, "testAssoc1");
 
 		// As as = rsgw.createAppServer("testas", rc, rKey, trModType);
-		As as = this.clientM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, null, null, null, null);
+		AsImpl asImpl = (AsImpl)this.clientM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, null, null, null, 1, null);
 
-		AspFactory localAspFactory = this.clientM3UAMgmt.createAspFactory("testasp", "testAssoc1");
+		AspFactoryImpl localAspFactory = (AspFactoryImpl)this.clientM3UAMgmt.createAspFactory("testasp", "testAssoc1");
 		localAspFactory.start();
 
-		Asp asp = clientM3UAMgmt.assignAspToAs("testas", "testasp");
+		AspImpl aspImpl = clientM3UAMgmt.assignAspToAs("testas", "testasp");
 		
 		// Create Route
 		this.clientM3UAMgmt.addRoute(2, -1, -1, "testas");
@@ -242,7 +265,7 @@ public class IPSPClientFSMTest {
 		testAssociation.signalCommUp();
 
 		// Once comunication is UP, ASP_UP should have been sent.
-		FSM aspLocalFSM = asp.getLocalFSM();
+		FSM aspLocalFSM = aspImpl.getLocalFSM();
 		assertEquals(AspState.UP_SENT, this.getAspState(aspLocalFSM));
 		assertTrue(validateMessage(testAssociation, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP, -1, -1));
 
@@ -255,7 +278,7 @@ public class IPSPClientFSMTest {
 		assertTrue(validateMessage(testAssociation, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE, -1,
 				-1));
 
-		FSM asPeerFSM = as.getPeerFSM();
+		FSM asPeerFSM = asImpl.getPeerFSM();
 		// also the AS should be INACTIVE now
 		assertEquals(AsState.INACTIVE, this.getAsState(asPeerFSM));
 
@@ -283,7 +306,7 @@ public class IPSPClientFSMTest {
 
 		// Since we didn't set the Traffic Mode while creating AS, it should now
 		// be set to loadshare as default
-		assertEquals(TrafficModeType.Loadshare, as.getTrafficModeType().getMode());
+		assertEquals(TrafficModeType.Loadshare, asImpl.getTrafficModeType().getMode());
 
 		// Lets stop ASP Factory
 		localAspFactory.stop();
@@ -317,18 +340,18 @@ public class IPSPClientFSMTest {
 
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
-		As as = this.clientM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, null, rc, null, null);
-		FSM asPeerFSM = as.getPeerFSM();
+		AsImpl asImpl = (AsImpl)this.clientM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, null, rc, null, 1, null);
+		FSM asPeerFSM = asImpl.getPeerFSM();
 
-		AspFactory localAspFactory = clientM3UAMgmt.createAspFactory("testasp", "testAssoc");
+		AspFactoryImpl localAspFactory = (AspFactoryImpl)clientM3UAMgmt.createAspFactory("testasp", "testAssoc");
 		localAspFactory.start();
 
-		Asp asp = clientM3UAMgmt.assignAspToAs("testas", "testasp");
+		AspImpl aspImpl = clientM3UAMgmt.assignAspToAs("testas", "testasp");
 		
 		// Create Route
 		this.clientM3UAMgmt.addRoute(2, -1, -1, "testas");
 		
-		FSM aspLocalFSM = asp.getLocalFSM();
+		FSM aspLocalFSM = aspImpl.getLocalFSM();
 
 		// Check for Communication UP
 		testAssociation.signalCommUp();
@@ -393,7 +416,7 @@ public class IPSPClientFSMTest {
 		payload.setRoutingContext(rc);
 		payload.setData(p1);
 
-		as.write(payload);
+		asImpl.write(payload);
 
 		// Now again the ASP is brought up
 		testAssociation.signalCommUp();
@@ -451,12 +474,12 @@ public class IPSPClientFSMTest {
 		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 100 });
 
 		// As as = rsgw.createAppServer("testas", rc, rKey, trModType);
-		As as = this.clientM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.DE, null, rc, null, null);
+		AsImpl asImpl = (AsImpl)this.clientM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.DE, null, rc, null, 1, null);
 
-		AspFactory localAspFactory = this.clientM3UAMgmt.createAspFactory("testasp", "testAssoc1");
+		AspFactoryImpl localAspFactory = (AspFactoryImpl)this.clientM3UAMgmt.createAspFactory("testasp", "testAssoc1");
 		localAspFactory.start();
 
-		Asp asp = clientM3UAMgmt.assignAspToAs("testas", "testasp");
+		AspImpl aspImpl = clientM3UAMgmt.assignAspToAs("testas", "testasp");
 		
 		// Create Route
 		this.clientM3UAMgmt.addRoute(2, -1, -1, "testas");
@@ -465,14 +488,14 @@ public class IPSPClientFSMTest {
 		TestAssociation testAssociation = (TestAssociation) this.transportManagement.getAssociation("testAssoc1");
 		testAssociation.signalCommUp();
 
-		FSM aspLocalFSM = asp.getLocalFSM();
-		FSM aspPeerFSM = asp.getPeerFSM();
+		FSM aspLocalFSM = aspImpl.getLocalFSM();
+		FSM aspPeerFSM = aspImpl.getPeerFSM();
 
 		assertNotNull(aspLocalFSM);
 		assertNotNull(aspPeerFSM);
 
-		FSM asPeerFSM = as.getPeerFSM();
-		FSM asLocalFSM = as.getLocalFSM();
+		FSM asPeerFSM = asImpl.getPeerFSM();
+		FSM asLocalFSM = asImpl.getLocalFSM();
 
 		assertNotNull(asPeerFSM);
 		assertNotNull(asLocalFSM);
@@ -701,6 +724,24 @@ public class IPSPClientFSMTest {
 			return false;
 		}
 
+		@Override
+		public void acceptAnonymousAssociation(AssociationListener arg0) throws Exception {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void rejectAnonymousAssociation() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void stopAnonymousAssociation() throws Exception {
+			// TODO Auto-generated method stub
+			
+		}
+
 	}
 
 	class TransportManagement implements Management {
@@ -862,6 +903,45 @@ public class IPSPClientFSMTest {
 		public void removeAllResourses() throws Exception {
 			// TODO Auto-generated method stub
 
+		}
+
+		@Override
+		public void addManagementEventListener(ManagementEventListener arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public Server addServer(String arg0, String arg1, int arg2, IpChannelType arg3, boolean arg4, int arg5, String[] arg6) throws Exception {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public ServerListener getServerListener() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void removeManagementEventListener(ManagementEventListener arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void setServerListener(ServerListener arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/* (non-Javadoc)
+		 * @see org.mobicents.protocols.api.Management#isStarted()
+		 */
+		@Override
+		public boolean isStarted() {
+			// TODO Auto-generated method stub
+			return false;
 		}
 
 	}

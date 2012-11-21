@@ -53,22 +53,22 @@ public abstract class TestHarness implements MAPDialogListener, MAPServiceSupple
 	protected static int MAXCONCURRENTDIALOGS = 15;
 
 	// MTP Details
-	protected final int CLIENT_SPC = 1;
-	protected final int SERVET_SPC = 2;
-	protected final int NETWORK_INDICATOR = 2;
-	protected final int SERVICE_INIDCATOR = 3; //SCCP
-	protected final int SSN = 8;
+	protected static int CLIENT_SPC = 1;
+	protected static int SERVET_SPC = 2;
+	protected static int NETWORK_INDICATOR = 2;
+	protected static int SERVICE_INIDCATOR = 3; //SCCP
+	protected static int SSN = 8;
 
 	// M3UA details
 	//protected final String CLIENT_IP = "172.31.96.40";
-	protected final String CLIENT_IP = "127.0.0.1";
-	protected final int CLIENT_PORT = 2345;
+	protected static String CLIENT_IP = "127.0.0.1";
+	protected static int CLIENT_PORT = 2345;
 
 	//protected final String SERVER_IP = "172.31.96.41";
-	protected final String SERVER_IP = "127.0.0.1";
-	protected final int SERVER_PORT = 3434;
+	protected static String SERVER_IP = "127.0.0.1";
+	protected static int SERVER_PORT = 3434;
 
-	protected final int ROUTING_CONTEXT = 100;
+	protected static int ROUTING_CONTEXT = 100;
 	
 	protected final String SERVER_ASSOCIATION_NAME = "serverAsscoiation";
 	protected final String CLIENT_ASSOCIATION_NAME = "clientAsscoiation";

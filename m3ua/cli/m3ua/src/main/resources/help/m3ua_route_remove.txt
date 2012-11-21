@@ -1,0 +1,31 @@
+Name
+	m3ua route remove
+
+SYNOPSIS
+	m3ua route remove <as-name> <dpc> <opc> <si>
+
+DESCRIPTION
+	This command is used to remove a previously configured route.
+
+PARAMETERS
+
+	Standard Parameters
+
+	<as-name>		-	Name of the AS assigned to route message for 
+					this dpc.
+
+	<dpc>			-	Destination Point Code.
+
+	<opc>			-	Originating Point Code.
+
+	<si>			-	Service Indicator.
+
+EXAMPLES
+	m3ua route remove AS1 2 -1 -1
+
+SEE ALSO
+	m3ua, m3ua as create, m3ua as destroy, m3ua as show, m3ua asp create, 
+	m3ua asp destroy, m3ua asp show, m3ua asp start, m3ua asp stop, m3ua as add, 
+	m3ua as remove, m3ua route add, m3ua route show.
+
+

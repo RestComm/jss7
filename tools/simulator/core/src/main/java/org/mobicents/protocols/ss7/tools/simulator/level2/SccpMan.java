@@ -27,21 +27,20 @@ import java.io.IOException;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
+import org.apache.log4j.Level;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
+import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
+import org.mobicents.protocols.ss7.sccp.RemoteSubSystem;
+import org.mobicents.protocols.ss7.sccp.Router;
+import org.mobicents.protocols.ss7.sccp.RuleType;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
+import org.mobicents.protocols.ss7.sccp.SccpResource;
 import org.mobicents.protocols.ss7.sccp.SccpStack;
-import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCode;
-import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystem;
-import org.mobicents.protocols.ss7.sccp.impl.SccpResource;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
-import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3Destination;
-import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3ServiceAccessPoint;
-import org.mobicents.protocols.ss7.sccp.impl.router.Router;
-import org.mobicents.protocols.ss7.sccp.impl.router.Rule;
-import org.mobicents.protocols.ss7.sccp.impl.router.RuleType;
+import org.mobicents.protocols.ss7.sccp.impl.router.RouterImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
@@ -67,6 +66,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 	private static final String NUMBERING_PLAN = "numberingPlan";
 	private static final String TRANSLATION_TYTE = "translationType";
 	private static final String CALLING_PARTY_ADDRESS_DIGITS = "callingPartyAddressDigits";
+	private static final String EXTRA_LOCAL_ADDRESS_DIGITS = "extraLocalAddressDigits";
 
 	private final String name;
 	private TesterHost testerHost;
@@ -83,6 +83,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 	private NumberingPlan numberingPlan = NumberingPlan.ISDN_MOBILE;
 	private int translationType = 0;
 	private String callingPartyAddressDigits = "";
+	private String extraLocalAddressDigits = "";
 
 	private SccpStackImpl sccpStack;
 	private SccpProvider sccpProvider;
@@ -259,6 +260,17 @@ public class SccpMan implements SccpManMBean, Stoppable {
 	}
 
 	@Override
+	public String getExtraLocalAddressDigits() {
+		return extraLocalAddressDigits;
+	}
+
+	@Override
+	public void setExtraLocalAddressDigits(String val) {
+		extraLocalAddressDigits = val;
+		this.testerHost.markStore();
+	}
+
+	@Override
 	public void putGlobalTitleType(String val) {
 		GlobalTitleType x = GlobalTitleType.createInstance(val);
 		if (x != null)
@@ -294,11 +306,12 @@ public class SccpMan implements SccpManMBean, Stoppable {
 		try {
 			this.isRspcUp = true;
 			this.isRssUp = true;
-			this.initSccp(this.mtp3UserPart, this.remoteSsn, this.localSsn, this.remoteSpc, this.localSpc, this.ni, this.callingPartyAddressDigits);
-			this.testerHost.sendNotif(SOURCE_NAME, "SCCP has been started", "", true);
+			this.initSccp(this.mtp3UserPart, this.remoteSsn, this.localSsn, this.remoteSpc, this.localSpc, this.ni, this.callingPartyAddressDigits,
+					this.extraLocalAddressDigits);
+			this.testerHost.sendNotif(SOURCE_NAME, "SCCP has been started", "", Level.INFO);
 			return true;
 		} catch (Throwable e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when starting SccpMan", e, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when starting SccpMan", e, Level.ERROR);
 			return false;
 		}
 	}
@@ -307,9 +320,9 @@ public class SccpMan implements SccpManMBean, Stoppable {
 	public void stop() {
 		try {
 			this.stopSccp();
-			this.testerHost.sendNotif(SOURCE_NAME, "SCCP has been stopped", "", true);
+			this.testerHost.sendNotif(SOURCE_NAME, "SCCP has been stopped", "", Level.INFO);
 		} catch (Exception e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when stopping SccpMan", e, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when stopping SccpMan", e, Level.ERROR);
 		}
 	}
 
@@ -322,7 +335,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 				boolean conn = !rspc.isRemoteSpcProhibited();
 				if (this.isRspcUp != conn) {
 					this.isRspcUp = conn;
-					this.testerHost.sendNotif(SOURCE_NAME, "SCCP RemoteSignalingPoint is " + (conn ? "enabled" : "disabled"), "Dpc=" + this.remoteSpc, true);
+					this.testerHost.sendNotif(SOURCE_NAME, "SCCP RemoteSignalingPoint is " + (conn ? "enabled" : "disabled"), "Dpc=" + this.remoteSpc, Level.INFO);
 				}
 			}			
 			if (rss != null) {
@@ -330,13 +343,14 @@ public class SccpMan implements SccpManMBean, Stoppable {
 				if (this.isRssUp != conn) {
 					this.isRssUp = conn;
 					this.testerHost.sendNotif(SOURCE_NAME, "SCCP RemoteSubSystem is " + (conn ? "enabled" : "disabled"), "Dpc=" + this.remoteSpc + " Ssn="
-							+ this.remoteSsn, true);
+							+ this.remoteSsn, Level.INFO);
 				}
 			}
 		}
 	}
 
-	private void initSccp(Mtp3UserPart mtp3UserPart, int remoteSsn, int localSsn, int dpc, int opc, int ni, String callingPartyAddressDigits) {
+	private void initSccp(Mtp3UserPart mtp3UserPart, int remoteSsn, int localSsn, int dpc, int opc, int ni, String callingPartyAddressDigits,
+			String extraLocalAddressDigits) throws Exception {
 
 		this.sccpStack = new SccpStackImpl("TestingSccp");
 
@@ -344,10 +358,8 @@ public class SccpMan implements SccpManMBean, Stoppable {
 		this.sccpStack.start();
 		this.sccpStack.removeAllResourses();
 
-		Mtp3ServiceAccessPoint sap = new Mtp3ServiceAccessPoint(1, opc, ni);
-		this.sccpStack.getRouter().addMtp3ServiceAccessPoint(1, sap);
-		Mtp3Destination dest = new Mtp3Destination(dpc, dpc, 0, 255, 255);
-		this.sccpStack.getRouter().addMtp3Destination(1, 1, dest);
+		this.sccpStack.getRouter().addMtp3ServiceAccessPoint(1, 1, opc, ni);
+		this.sccpStack.getRouter().addMtp3Destination(1, 1, dpc, dpc, 0, 255, 255);
 
 		this.sccpProvider = this.sccpStack.getSccpProvider();
 
@@ -355,8 +367,8 @@ public class SccpMan implements SccpManMBean, Stoppable {
 
 		this.resource = this.sccpStack.getSccpResource();
 
-		this.resource.addRemoteSpc(1, new RemoteSignalingPointCode(dpc, 0, 0));
-		this.resource.addRemoteSsn(1, new RemoteSubSystem(dpc, remoteSsn, 0, false));
+		this.resource.addRemoteSpc(1, dpc, 0, 0);
+		this.resource.addRemoteSsn(1, dpc, remoteSsn, 0, false);
 
 		if (this.routeOnGtMode) {
 			this.router = this.sccpStack.getRouter();
@@ -366,15 +378,24 @@ public class SccpMan implements SccpManMBean, Stoppable {
 
 			SccpAddress pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, this.createGlobalTitle("*"), 0);
 			String mask = "K";
-			Rule rule = new Rule(RuleType.Solitary, null, pattern, mask);
-			rule.setPrimaryAddressId(1);
-			this.router.addRule(1, rule);
+			((RouterImpl)this.router).addRule(1, RuleType.Solitary, null, pattern, mask, 1, -1);
 
 			pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, this.createGlobalTitle(callingPartyAddressDigits), 0);
 			mask = "R";
-			rule = new Rule(RuleType.Solitary, null, pattern, mask);
-			rule.setPrimaryAddressId(2);
-			this.router.addRule(2, rule);
+			((RouterImpl)this.router).addRule(2, RuleType.Solitary, null, pattern, mask, 2, -1);
+
+			if (extraLocalAddressDigits != null && !extraLocalAddressDigits.equals("")) {
+				String[] ss = extraLocalAddressDigits.split(",");
+				
+				int ruleNum = 3;
+				for (String s : ss) {
+					s = s.trim();
+					pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, this.createGlobalTitle(s), 0);
+					mask = "R";
+					((RouterImpl)this.router).addRule(ruleNum, RuleType.Solitary, null, pattern, mask, 2, -1);
+					ruleNum++;
+				}
+			}
 		}
 	}
 
@@ -387,9 +408,9 @@ public class SccpMan implements SccpManMBean, Stoppable {
 
 	public SccpAddress createCallingPartyAddress() {
 		if (this.routeOnGtMode) {
-			return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, this.localSpc, null, this.localSsn);
-		} else {
 			return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, createGlobalTitle(this.callingPartyAddressDigits), this.localSsn);
+		} else {
+			return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, this.localSpc, null, this.localSsn);
 		}
 	}
 	
@@ -443,6 +464,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 			xml.add(sccp.natureOfAddress.toString(), ADDRESS_NATURE);
 			xml.add(sccp.numberingPlan.toString(), NUMBERING_PLAN);
 			xml.add(sccp.callingPartyAddressDigits, CALLING_PARTY_ADDRESS_DIGITS);
+			xml.add(sccp.extraLocalAddressDigits, EXTRA_LOCAL_ADDRESS_DIGITS);
 		}
 
 		public void read(InputElement xml, SccpMan sccp) throws XMLStreamException {
@@ -461,6 +483,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 			String np = (String) xml.get(NUMBERING_PLAN, String.class);
 			sccp.numberingPlan = NumberingPlan.valueOf(np);
 			sccp.callingPartyAddressDigits = (String) xml.get(CALLING_PARTY_ADDRESS_DIGITS, String.class);
+			sccp.extraLocalAddressDigits = (String) xml.get(EXTRA_LOCAL_ADDRESS_DIGITS, String.class);
 		}
 	};
 }

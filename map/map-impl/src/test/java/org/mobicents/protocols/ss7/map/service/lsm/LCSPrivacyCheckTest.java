@@ -73,6 +73,7 @@ public class LCSPrivacyCheckTest {
 
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
+		assertEquals(tag, Tag.SEQUENCE);
 
 		LCSPrivacyCheckImpl lcsPrivacyCheck = new LCSPrivacyCheckImpl();
 		lcsPrivacyCheck.decodeAll(asn);
@@ -91,7 +92,7 @@ public class LCSPrivacyCheckTest {
 
 		LCSPrivacyCheckImpl lcsPrivacyCheck = new LCSPrivacyCheckImpl(callSessionUnrelated, callSessionRelated);
 		AsnOutputStream asnOS = new AsnOutputStream();
-		lcsPrivacyCheck.encodeAll(asnOS, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+		lcsPrivacyCheck.encodeAll(asnOS);
 
 		byte[] encodedData = asnOS.toByteArray();
 

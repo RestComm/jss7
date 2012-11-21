@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -23,7 +23,6 @@
 package org.mobicents.protocols.ss7.m3ua.parameter;
 
 import org.mobicents.protocols.ss7.m3ua.parameter.CongestedIndication.CongestionLevel;
-import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 
 /**
  * Constructs parameters.
@@ -54,17 +53,7 @@ public interface ParameterFactory {
     public ProtocolData createProtocolData(int opc, int dpc, int si, int ni,
             int mp, int sls, byte[] data);
 
-    /**
-     * Constructs Protocol Data parameter.
-     * 
-     * @param mp
-     *            message priority
-     * @param msu
-     *            the message signaling unit
-     * @return Protocol data parameter
-     */
-    public ProtocolData createProtocolData(Mtp3TransferPrimitive mtp3TransferPrimitive);
-    
+
     public ProtocolData createProtocolData(byte[] payloadData);
 
     public NetworkAppearance createNetworkAppearance(long netApp);

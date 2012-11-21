@@ -47,6 +47,10 @@ public class IMEITest  {
 	private byte[] getEncodedData() {
 		return new byte[] { 4, 8, 33, 67, 101, (byte)135, 9, 33, 67, 101 };
 	}
+	
+	private byte[] getEncodedDataImeiLengthLessThan15() {
+		return new byte[] { 4, 1, -15 };
+	}
 
 	@Test(groups = { "functional.decode","primitives"})
 	public void testDecode() throws Exception {
@@ -63,6 +67,19 @@ public class IMEITest  {
 		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
 		
 		assertEquals( imei.getIMEI(),"1234567890123456");
+		
+		// Testing IMEI length != 15
+		rawData = getEncodedDataImeiLengthLessThan15();
+		asn = new AsnInputStream(rawData);
+
+		tag = asn.readTag();
+		imei = new IMEIImpl();
+		imei.decodeAll(asn);
+
+		assertEquals( tag,Tag.STRING_OCTET);
+		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
+		
+		assertEquals( imei.getIMEI(),"1");
 	}
 	
 	@Test(groups = { "functional.encode","primitives"})
@@ -79,6 +96,15 @@ public class IMEITest  {
 		
 		assertTrue( Arrays.equals(rawData,encodedData));
 		
+		// Testing IMEI length != 15
+		imei = new IMEIImpl("1");
+		asnOS = new AsnOutputStream();
+		imei.encodeAll(asnOS);
+		
+		encodedData = asnOS.toByteArray();
+		rawData = getEncodedDataImeiLengthLessThan15();		
+		
+		assertTrue( Arrays.equals(rawData,encodedData));
 	}
 	
 	@Test(groups = { "functional.serialize", "primitives" })

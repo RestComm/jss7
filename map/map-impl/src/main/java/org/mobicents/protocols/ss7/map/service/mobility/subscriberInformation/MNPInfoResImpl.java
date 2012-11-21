@@ -1,3 +1,25 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2011, Red Hat, Inc. and/or its affiliates, and individual
+ * contributors as indicated by the @authors tag. All rights reserved.
+ * See the copyright.txt in the distribution for a full listing
+ * of individual contributors.
+ * 
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU General Public License, v. 2.0.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License,
+ * v. 2.0 along with this distribution; if not, write to the Free 
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301, USA.
+ */
+
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
 import java.io.IOException;
@@ -22,6 +44,7 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public class MNPInfoResImpl implements MNPInfoRes, MAPAsnPrimitive {
@@ -44,7 +67,15 @@ public class MNPInfoResImpl implements MNPInfoRes, MAPAsnPrimitive {
 	 * 
 	 */
 	public MNPInfoResImpl() {
-		// TODO Auto-generated constructor stub
+	}
+
+	public MNPInfoResImpl(RouteingNumber routeingNumber, IMSI imsi, ISDNAddressString msisdn, NumberPortabilityStatus numberPortabilityStatus,
+			MAPExtensionContainer extensionContainer) {
+		this.routeingNumber = routeingNumber;
+		this.imsi = imsi;
+		this.msisdn = msisdn;
+		this.numberPortabilityStatus = numberPortabilityStatus;
+		this.extensionContainer = extensionContainer;
 	}
 
 	/*
@@ -185,34 +216,51 @@ public class MNPInfoResImpl implements MNPInfoRes, MAPAsnPrimitive {
 				break;
 
 			int tag = ais.readTag();
-			switch (tag) {
-			case _ID_routeingNumber:
-				this.routeingNumber = new RouteingNumberImpl();
-				((RouteingNumberImpl) this.routeingNumber).decodeAll(ais);
-				break;
-			case _ID_imsi:
-				this.imsi = new IMSIImpl();
-				((IMSIImpl) this.imsi).decodeAll(ais);
-				break;
-			case _ID_msisdn:
-				this.msisdn = new ISDNAddressStringImpl();
-				((ISDNAddressStringImpl) this.msisdn).decodeAll(ais);
-				break;
-			case _ID_numberPortabilityStatus:
-				if (tag != Tag.ENUMERATED || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException(
-							"Error while decoding MNPInfoRes.numberPortabilityStatus: Parameter bad tag or tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				int i1 = (int) ais.readInteger();
-				this.numberPortabilityStatus = NumberPortabilityStatus.getInstance(i1);
-				break;
-			case _ID_extensionContainer:
-				this.extensionContainer = new MAPExtensionContainerImpl();
-				((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
-				break;
-			default:
+
+			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+				
+				switch (tag) {
+				case _ID_routeingNumber:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " routeingNumber: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.routeingNumber = new RouteingNumberImpl();
+					((RouteingNumberImpl) this.routeingNumber).decodeAll(ais);
+					break;
+				case _ID_imsi:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " imsi: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.imsi = new IMSIImpl();
+					((IMSIImpl) this.imsi).decodeAll(ais);
+					break;
+				case _ID_msisdn:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " msisdn: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.msisdn = new ISDNAddressStringImpl();
+					((ISDNAddressStringImpl) this.msisdn).decodeAll(ais);
+					break;
+				case _ID_numberPortabilityStatus:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " numberPortabilityStatus: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					int i1 = (int) ais.readInteger();
+					this.numberPortabilityStatus = NumberPortabilityStatus.getInstance(i1);
+					break;
+				case _ID_extensionContainer:
+					if (ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " extensionContainer: Parameter is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.extensionContainer = new MAPExtensionContainerImpl();
+					((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+					break;
+				default:
+					ais.advanceElement();
+					break;
+				}
+			} else {
 				ais.advanceElement();
-				break;
 			}
 		}
 	}
@@ -225,7 +273,7 @@ public class MNPInfoResImpl implements MNPInfoRes, MAPAsnPrimitive {
 	 * org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, this.getTag());
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	/*
@@ -237,7 +285,7 @@ public class MNPInfoResImpl implements MNPInfoRes, MAPAsnPrimitive {
 	 */
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
-			asnOs.writeTag(tagClass, true, tag);
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
@@ -275,5 +323,39 @@ public class MNPInfoResImpl implements MNPInfoRes, MAPAsnPrimitive {
 
 		if (this.extensionContainer != null)
 			((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensionContainer);
+	}
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+		
+		if (this.routeingNumber != null) {
+			sb.append("routeingNumber=");
+			sb.append(this.routeingNumber);
+		}
+		
+		if (this.imsi != null) {
+			sb.append(", imsi=");
+			sb.append(this.imsi);
+		}
+		
+		if (this.msisdn != null) {
+			sb.append(", msisdn=");
+			sb.append(this.msisdn);
+		}
+		
+		if (this.numberPortabilityStatus != null) {
+			sb.append(", numberPortabilityStatus=");
+			sb.append(this.numberPortabilityStatus);
+		}
+
+		if (this.extensionContainer != null) {
+			sb.append(", extensionContainer=");
+			sb.append(this.extensionContainer);
+		}
+		
+		sb.append("]");
+		return sb.toString();
 	}
 }

@@ -1,3 +1,24 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import org.apache.log4j.Logger;
@@ -20,40 +41,40 @@ public class ManagementMessageHandler extends MessageHandler {
 
 	private static final Logger logger = Logger.getLogger(ManagementMessageHandler.class);
 
-	public ManagementMessageHandler(AspFactory aspFactory) {
-		super(aspFactory);
+	public ManagementMessageHandler(AspFactoryImpl aspFactoryImpl) {
+		super(aspFactoryImpl);
 	}
 
 	public void handleNotify(Notify notify) {
 
 		RoutingContext rc = notify.getRoutingContext();
 
-		if (aspFactory.getFunctionality() == Functionality.AS
-				|| (aspFactory.getFunctionality() == Functionality.SGW && aspFactory.getExchangeType() == ExchangeType.DE)
-				|| (aspFactory.getFunctionality() == Functionality.IPSP && aspFactory.getExchangeType() == ExchangeType.DE)
-				|| (aspFactory.getFunctionality() == Functionality.IPSP
-						&& aspFactory.getExchangeType() == ExchangeType.SE && aspFactory.getIpspType() == IPSPType.CLIENT)) {
+		if (aspFactoryImpl.getFunctionality() == Functionality.AS
+				|| (aspFactoryImpl.getFunctionality() == Functionality.SGW && aspFactoryImpl.getExchangeType() == ExchangeType.DE)
+				|| (aspFactoryImpl.getFunctionality() == Functionality.IPSP && aspFactoryImpl.getExchangeType() == ExchangeType.DE)
+				|| (aspFactoryImpl.getFunctionality() == Functionality.IPSP
+						&& aspFactoryImpl.getExchangeType() == ExchangeType.SE && aspFactoryImpl.getIpspType() == IPSPType.CLIENT)) {
 
 			if (rc == null) {
 
-				Asp asp = this.getAspForNullRc();
-				if (asp == null) {
+				AspImpl aspImpl = this.getAspForNullRc();
+				if (aspImpl == null) {
 					logger.error(String
 							.format("Rx : NTFY=%s with null RC for Aspfactory=%s. But no ASP configured for null RC. Sending back Error",
-									notify, this.aspFactory.getName()));
+									notify, this.aspFactoryImpl.getName()));
 					return;
 				}
 
 				try {
 					// Received NTFY, so peer FSM has to be used.
-					FSM fsm = asp.getAs().getPeerFSM();
+					FSM fsm = ((AsImpl)aspImpl.getAs()).getPeerFSM();
 
 					if (fsm == null) {
 						logger.error(String.format("Received NTFY=%s for ASP=%s. But Peer FSM is null.", notify,
-								this.aspFactory.getName()));
+								this.aspFactoryImpl.getName()));
 						return;
 					}
-					fsm.setAttribute(As.ATTRIBUTE_ASP, asp);
+					fsm.setAttribute(AsImpl.ATTRIBUTE_ASP, aspImpl);
 					fsm.signal(TransitionState.getTransition(notify));
 				} catch (UnknownTransitionException e) {
 					logger.error(e.getMessage(), e);
@@ -61,31 +82,31 @@ public class ManagementMessageHandler extends MessageHandler {
 			} else {
 				long[] rcs = notify.getRoutingContext().getRoutingContexts();
 				for (int count = 0; count < rcs.length; count++) {
-					Asp asp = this.aspFactory.getAsp(rcs[count]);
+					AspImpl aspImpl = this.aspFactoryImpl.getAsp(rcs[count]);
 
-					if (asp == null) {
+					if (aspImpl == null) {
 						// this is error. Send back error
-						RoutingContext rcObj = this.aspFactory.parameterFactory
+						RoutingContext rcObj = this.aspFactoryImpl.parameterFactory
 								.createRoutingContext(new long[] { rcs[count] });
-						ErrorCode errorCodeObj = this.aspFactory.parameterFactory
+						ErrorCode errorCodeObj = this.aspFactoryImpl.parameterFactory
 								.createErrorCode(ErrorCode.Invalid_Routing_Context);
 						sendError(rcObj, errorCodeObj);
 						logger.error(String
 								.format("Rx : NTFY=%s with RC=%d for Aspfactory=%s. But no ASP configured for this RC. Sending back Error",
-										notify, rcs[count], this.aspFactory.getName()));
+										notify, rcs[count], this.aspFactoryImpl.getName()));
 						continue;
 					}
 
 					try {
 						// Received NTFY, so peer FSM has to be set.
-						FSM fsm = asp.getAs().getPeerFSM();
+						FSM fsm = ((AsImpl)aspImpl.getAs()).getPeerFSM();
 
 						if (fsm == null) {
 							logger.error(String.format("Received NTFY=%s for ASP=%s. But Peer FSM is null.", notify,
-									this.aspFactory.getName()));
+									this.aspFactoryImpl.getName()));
 							return;
 						}
-						fsm.setAttribute(As.ATTRIBUTE_ASP, asp);
+						fsm.setAttribute(AsImpl.ATTRIBUTE_ASP, aspImpl);
 						fsm.signal(TransitionState.getTransition(notify));
 					} catch (UnknownTransitionException e) {
 						logger.error(e.getMessage(), e);
@@ -94,7 +115,7 @@ public class ManagementMessageHandler extends MessageHandler {
 			}// if (rc == null) {
 		} else {
 			// NTFY is unexpected in this state
-			ErrorCode errorCodeObj = this.aspFactory.parameterFactory.createErrorCode(ErrorCode.Unexpected_Message);
+			ErrorCode errorCodeObj = this.aspFactoryImpl.parameterFactory.createErrorCode(ErrorCode.Unexpected_Message);
 			sendError(rc, errorCodeObj);
 		}
 

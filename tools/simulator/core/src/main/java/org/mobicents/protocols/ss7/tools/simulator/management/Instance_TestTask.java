@@ -37,9 +37,8 @@ public class Instance_TestTask extends EnumeratedBase {
 	public static final int VAL_NO = 0;
 	public static final int VAL_USSD_TEST_CLIENT = 1;
 	public static final int VAL_USSD_TEST_SERVER = 2;
-	public static final int VAL_SMSC_SMS_DELIVER = 3;
-	public static final int VAL_DIALOGIC_MTU_INTERCONNECT = 4;
-	public static final int VAL_DIALOGIC_MTR_INTERCONNECT = 5;
+	public static final int VAL_SMS_TEST_CLIENT = 3;
+	public static final int VAL_SMS_TEST_SERVER = 4;
 
 	private static Hashtable<String, Integer> stringMap = new Hashtable<String, Integer>();
 	private static Hashtable<Integer,String> intMap = new Hashtable<Integer,String>();
@@ -48,16 +47,14 @@ public class Instance_TestTask extends EnumeratedBase {
 		intMap.put(VAL_NO, "NO");
 		intMap.put(VAL_USSD_TEST_CLIENT, "USSD_TEST_CLIENT");
 		intMap.put(VAL_USSD_TEST_SERVER, "USSD_TEST_SERVER");
-		intMap.put(VAL_SMSC_SMS_DELIVER, "SMSC_SMS_DELIVER");
-		intMap.put(VAL_DIALOGIC_MTU_INTERCONNECT, "DIALOGIC_MTU_INTERCONNECT");
-		intMap.put(VAL_DIALOGIC_MTR_INTERCONNECT, "DIALOGIC_MTR_INTERCONNECT");
+		intMap.put(VAL_SMS_TEST_CLIENT, "SMS_TEST_CLIENT");
+		intMap.put(VAL_SMS_TEST_SERVER, "SMS_TEST_SERVER");
 
 		stringMap.put("NO", VAL_NO);
 		stringMap.put("USSD_TEST_CLIENT", VAL_USSD_TEST_CLIENT);
 		stringMap.put("USSD_TEST_SERVER", VAL_USSD_TEST_SERVER);
-		stringMap.put("SMSC_SMS_DELIVER", VAL_SMSC_SMS_DELIVER);
-		stringMap.put("DIALOGIC_MTU_INTERCONNECT", VAL_DIALOGIC_MTU_INTERCONNECT);
-		stringMap.put("DIALOGIC_MTR_INTERCONNECT", VAL_DIALOGIC_MTR_INTERCONNECT);
+		stringMap.put("SMS_TEST_CLIENT", VAL_SMS_TEST_CLIENT);
+		stringMap.put("SMS_TEST_SERVER", VAL_SMS_TEST_SERVER);
 	}
 
 	public Instance_TestTask() {

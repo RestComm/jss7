@@ -22,20 +22,26 @@
 
 package org.mobicents.protocols.ss7.tools.simulator.level1;
 
+import java.util.List;
+
 import javolution.util.FastList;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
+
+import org.apache.log4j.Level;
 import org.mobicents.protocols.api.Association;
 import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.sctp.ManagementImpl;
+import org.mobicents.protocols.ss7.m3ua.As;
+import org.mobicents.protocols.ss7.m3ua.Asp;
+import org.mobicents.protocols.ss7.m3ua.AspFactory;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.IPSPType;
-import org.mobicents.protocols.ss7.m3ua.impl.As;
+import org.mobicents.protocols.ss7.m3ua.impl.AsImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.AsState;
-import org.mobicents.protocols.ss7.m3ua.impl.Asp;
-import org.mobicents.protocols.ss7.m3ua.impl.AspFactory;
-import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement;
+import org.mobicents.protocols.ss7.m3ua.impl.AspImpl;
+import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.parameter.NetworkAppearance;
@@ -88,7 +94,7 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 	private TesterHost testerHost;
 	private ManagementImpl sctpManagement;
 	private ParameterFactoryImpl factory = new ParameterFactoryImpl();
-	private M3UAManagement m3uaMgmt; 
+	private M3UAManagementImpl m3uaMgmt; 
 	private boolean isSctpConnectionUp = false;
 	private boolean isM3uaConnectionActive = false;
 	private Association assoc;
@@ -348,19 +354,21 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 		sb.append("  M3UA:");
 
 		this.m3uaMgmt.getAppServers();
-		FastList<As> lstAs = this.m3uaMgmt.getAppServers();
+		List<As> lstAs = this.m3uaMgmt.getAppServers();
 		for (As as : lstAs) {
 			if (as.getName().equals("testas")) {
-				FSM lFsm = as.getLocalFSM();
-				FSM pFsm = as.getPeerFSM();
+				AsImpl asImpl = (AsImpl)as;
+				FSM lFsm = asImpl.getLocalFSM();
+				FSM pFsm = asImpl.getPeerFSM();
 				FSM lFsmP = null;
 				FSM pFsmP = null;
 
-				FastList<Asp> lstAsp = as.getAspList();
+				List<Asp> lstAsp = as.getAspList();
 				for (Asp asp : lstAsp) {
 					// we take only the first ASP (it should be a single)
-					lFsmP = asp.getLocalFSM();
-					pFsmP = asp.getPeerFSM();
+					AspImpl aspImpl = (AspImpl)asp;
+					lFsmP = aspImpl.getLocalFSM();
+					pFsmP = aspImpl.getPeerFSM();
 					break;
 				}
 
@@ -440,10 +448,10 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 			this.isSctpConnectionUp = false;
 			this.isM3uaConnectionActive = false;
 			this.initM3ua(this.isSctpServer, this.localHost, this.localPort, this.remoteHost, this.remotePort, this.ipChannelType, this.extraHostAddresses);
-			this.testerHost.sendNotif(SOURCE_NAME, "M3UA has been started", "", true);
+			this.testerHost.sendNotif(SOURCE_NAME, "M3UA has been started", "", Level.INFO);
 			return true;
 		} catch (Throwable e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when starting M3uaMan", e, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when starting M3uaMan", e, Level.ERROR);
 			return false;
 		}
 	}
@@ -451,9 +459,9 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 	public void stop() {
 		try {
 			this.stopM3ua();
-			this.testerHost.sendNotif(SOURCE_NAME, "M3UA has been stopped", "", true);
+			this.testerHost.sendNotif(SOURCE_NAME, "M3UA has been stopped", "", Level.INFO);
 		} catch (Exception e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when stopping M3uaMan", e, true);
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when stopping M3uaMan", e, Level.ERROR);
 		}
 	}
 
@@ -463,16 +471,17 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 			boolean conn = this.assoc.isConnected();
 			if (this.isSctpConnectionUp != conn) {
 				this.isSctpConnectionUp = conn;
-				this.testerHost.sendNotif(SOURCE_NAME, "Sctp connection is " + (conn ? "up" : "down"), this.assoc.getName(), true);
+				this.testerHost.sendNotif(SOURCE_NAME, "Sctp connection is " + (conn ? "up" : "down"), this.assoc.getName(), Level.INFO);
 			}
 		}
 		if (this.m3uaMgmt != null) {
 			boolean active = false;
-			FastList<As> lstAs = this.m3uaMgmt.getAppServers();
+			List<As> lstAs = this.m3uaMgmt.getAppServers();
 			for (As as : lstAs) {
 				if (as.getName().equals("testas")) {
-					FSM lFsm = as.getLocalFSM();
-					FSM pFsm = as.getPeerFSM();
+					AsImpl asImpl = (AsImpl)as;
+					FSM lFsm = asImpl.getLocalFSM();
+					FSM pFsm = asImpl.getPeerFSM();
 					if ((lFsm == null || lFsm.getState().getName().equals(AsState.ACTIVE.toString()))
 							&& (pFsm == null || pFsm.getState().getName().equals(AsState.ACTIVE.toString()))) {
 						active = true;
@@ -482,7 +491,7 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 			}
 			if (this.isM3uaConnectionActive != active) {
 				this.isM3uaConnectionActive = active;
-				this.testerHost.sendNotif(SOURCE_NAME, "M3ua connection is " + (active ? "active" : "not active"), this.assoc.getName(), true);
+				this.testerHost.sendNotif(SOURCE_NAME, "M3ua connection is " + (active ? "active" : "not active"), this.assoc.getName(), Level.INFO);
 			}
 		}
 	}
@@ -494,14 +503,16 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 
 		// init SCTP stack
 		this.sctpManagement = new ManagementImpl("SimSCTPServer_" + name);
-		this.sctpManagement.setSingleThread(true);
+		// set 8 threads for delivering messages
+		this.sctpManagement.setWorkerThreads(8);
+		this.sctpManagement.setSingleThread(false);
 		this.sctpManagement.setConnectDelay(10000);
 
 		this.sctpManagement.start();
 		this.sctpManagement.removeAllResourses();
 
 		// init M3UA stack
-		this.m3uaMgmt = new M3UAManagement("SimM3uaServer_" + name);
+		this.m3uaMgmt = new M3UAManagementImpl("SimM3uaServer_" + name);
 		this.m3uaMgmt.setTransportManagement(this.sctpManagement);
 		this.m3uaMgmt.start();
 		this.m3uaMgmt.removeAllResourses();
@@ -537,7 +548,7 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 		RoutingContext rc = factory.createRoutingContext(new long[] { this.routingConext });
 		TrafficModeType trafficModeType = factory.createTrafficModeType(TrafficModeType.Loadshare);
 		NetworkAppearance na = factory.createNetworkAppearance(this.networkAppearance);
-		localAs = m3uaMgmt.createAs("testas", this.m3uaFunctionality, this.m3uaExchangeType, this.m3uaIPSPType, rc, trafficModeType, na);
+		localAs = m3uaMgmt.createAs("testas", this.m3uaFunctionality, this.m3uaExchangeType, this.m3uaIPSPType, rc, trafficModeType, 1, na);
 
 		// 2. Create ASP
 		localAspFactory = m3uaMgmt.createAspFactory("testasp", assName);

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,7 +19,6 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.mobicents.protocols.ss7.m3ua.impl.oam;
 
 import java.util.List;
@@ -35,9 +34,11 @@ import org.mobicents.protocols.api.AssociationListener;
 import org.mobicents.protocols.api.AssociationType;
 import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.api.Management;
+import org.mobicents.protocols.api.ManagementEventListener;
 import org.mobicents.protocols.api.PayloadData;
 import org.mobicents.protocols.api.Server;
-import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement;
+import org.mobicents.protocols.api.ServerListener;
+import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl;
 
 /**
  * 
@@ -48,7 +49,7 @@ public class M3UAShellExecutorTest {
 
 	M3UAShellExecutor m3uaExec = null;
 	private TransportManagement transportManagement = null;
-	M3UAManagement clientM3UAMgmt = null;
+	M3UAManagementImpl clientM3UAMgmt = null;
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -64,7 +65,7 @@ public class M3UAShellExecutorTest {
 
 		this.transportManagement = new TransportManagement();
 
-		this.clientM3UAMgmt = new M3UAManagement("M3UAShellExecutorTest");
+		this.clientM3UAMgmt = new M3UAManagementImpl("M3UAShellExecutorTest");
 		this.clientM3UAMgmt.setTransportManagement(this.transportManagement);
 		this.clientM3UAMgmt.start();
 
@@ -73,9 +74,7 @@ public class M3UAShellExecutorTest {
 	@AfterMethod
 	public void tearDown() throws Exception {
 		// Clean up
-		clientM3UAMgmt.getAppServers().clear();
-		clientM3UAMgmt.getAspfactories().clear();
-		clientM3UAMgmt.getRoute().clear();
+		clientM3UAMgmt.removeAllResourses();
 		clientM3UAMgmt.stop();
 
 	}
@@ -86,6 +85,8 @@ public class M3UAShellExecutorTest {
 		m3uaExec.setM3uaManagement(clientM3UAMgmt);
 
 		Association sctpAssociation = this.transportManagement.addAssociation(null, 0, null, 0, "testAssoc1");
+		
+		Association sctpAssociation2 = this.transportManagement.addAssociation(null, 0, null, 0, "testAssoc2");
 
 		// Test creating new AS testas
 		String result = m3uaExec.execute("m3ua as create testas AS mode SE rc 100 traffic-mode loadshare".split(" "));
@@ -107,9 +108,17 @@ public class M3UAShellExecutorTest {
 		result = m3uaExec.execute("m3ua as create MTUAS IPSP mode DE ipspType server rc 1 traffic-mode loadshare".split(" "));
 		assertEquals(String.format(M3UAOAMMessages.CREATE_AS_SUCESSFULL, "MTUAS"), result);
 
-		// create ASP
+		// create ASP with only mandatory params
 		result = m3uaExec.execute("m3ua asp create testasp1 testAssoc1".split(" "));
 		assertEquals(String.format(M3UAOAMMessages.CREATE_ASP_SUCESSFULL, "testasp1"), result);
+		
+		// create ASP with all params but with same aspid
+		result = m3uaExec.execute("m3ua asp create testasp2 testAssoc2 aspid 2".split(" "));
+		assertEquals(result, String.format(M3UAOAMMessages.ASP_ID_TAKEN, 2));
+		
+		// create ASP with all params but with unique aspid
+		result = m3uaExec.execute("m3ua asp create testasp2 testAssoc2 aspid 3".split(" "));
+		assertEquals(result, String.format(M3UAOAMMessages.CREATE_ASP_SUCESSFULL, "testasp2"));
 
 		// Error for same name
 		result = m3uaExec.execute("m3ua asp create testasp1 testAssoc1".split(" "));
@@ -176,7 +185,6 @@ public class M3UAShellExecutorTest {
 		result = m3uaExec.execute("m3ua as destroy testas".split(" "));
 		assertEquals(result, String.format(M3UAOAMMessages.DESTROY_AS_SUCESSFULL, "testas"));
 
-		clientM3UAMgmt.stop();
 	}
 
 	class TestAssociation implements Association {
@@ -286,6 +294,24 @@ public class M3UAShellExecutorTest {
 
 		protected void stop() {
 			this.started = false;
+		}
+
+		@Override
+		public void acceptAnonymousAssociation(AssociationListener arg0) throws Exception {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void rejectAnonymousAssociation() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void stopAnonymousAssociation() throws Exception {
+			// TODO Auto-generated method stub
+			
 		}
 	}
 
@@ -448,6 +474,45 @@ public class M3UAShellExecutorTest {
 		public void removeAllResourses() throws Exception {
 			// TODO Auto-generated method stub
 
+		}
+
+		@Override
+		public void addManagementEventListener(ManagementEventListener arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public Server addServer(String arg0, String arg1, int arg2, IpChannelType arg3, boolean arg4, int arg5, String[] arg6) throws Exception {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public ServerListener getServerListener() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void removeManagementEventListener(ManagementEventListener arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void setServerListener(ServerListener arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/* (non-Javadoc)
+		 * @see org.mobicents.protocols.api.Management#isStarted()
+		 */
+		@Override
+		public boolean isStarted() {
+			// TODO Auto-generated method stub
+			return false;
 		}
 
 	}

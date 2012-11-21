@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.functional;
 
+import static org.testng.Assert.*;
+import java.util.ArrayList;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.MAPDialogImpl;
@@ -36,15 +38,39 @@ import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.MAPStack;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.AlertingCategory;
+import org.mobicents.protocols.ss7.map.api.primitives.EMLPPPriority;
+import org.mobicents.protocols.ss7.map.api.primitives.ExtProtocolId;
+import org.mobicents.protocols.ss7.map.api.primitives.ExternalSignalInfo;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.primitives.ProtocolId;
+import org.mobicents.protocols.ss7.map.api.primitives.SignalInfo;
+import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.MAPDialogCallHandling;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientID;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSEvent;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSLocationInfo;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LocationEstimateType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LocationType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.MAPDialogLsm;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPDialogMobility;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.RequestingNodeType;
+import org.mobicents.protocols.ss7.map.api.service.mobility.imei.RequestedEquipmentInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancellationType;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.IMSIWithLMSI;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LocationArea;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.TypeOfUpdate;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPDialogSms;
 import org.mobicents.protocols.ss7.map.api.service.sms.SMDeliveryOutcome;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
@@ -54,7 +80,22 @@ import org.mobicents.protocols.ss7.map.api.service.sms.SmsSignalInfo;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
 import org.mobicents.protocols.ss7.map.api.smstpdu.NumberingPlanIdentification;
 import org.mobicents.protocols.ss7.map.api.smstpdu.TypeOfNumber;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
+import org.mobicents.protocols.ss7.map.primitives.AlertingPatternImpl;
+import org.mobicents.protocols.ss7.map.primitives.ExtExternalSignalInfoImpl;
+import org.mobicents.protocols.ss7.map.primitives.ExternalSignalInfoImpl;
+import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
+import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
+import org.mobicents.protocols.ss7.map.primitives.SignalInfoImpl;
+import org.mobicents.protocols.ss7.map.service.callhandling.CallReferenceNumberImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.IMSIWithLMSIImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.LACImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.LocationAreaImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.PagingAreaImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.OfferedCamel4CSIsImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.SupportedCamelPhasesImpl;
 import org.mobicents.protocols.ss7.map.service.sms.AlertServiceCentreRequestImpl;
 import org.mobicents.protocols.ss7.map.service.sms.SM_RP_SMEAImpl;
 import org.mobicents.protocols.ss7.map.service.sms.SmsSignalInfoImpl;
@@ -93,6 +134,8 @@ public class Client extends EventTestHarness {
 	private MAPDialogSupplementary clientDialog;
 	protected MAPDialogSms clientDialogSms;
 	protected MAPDialogMobility clientDialogMobility;
+	protected MAPDialogLsm clientDialogLsm;
+	protected MAPDialogCallHandling clientDialogCallHandling;
 
 	private long savedInvokeId;
 
@@ -109,10 +152,14 @@ public class Client extends EventTestHarness {
 		this.mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
 		this.mapProvider.getMAPServiceSms().addMAPServiceListener(this);
 		this.mapProvider.getMAPServiceMobility().addMAPServiceListener(this);
+		this.mapProvider.getMAPServiceLsm().addMAPServiceListener(this);
+		this.mapProvider.getMAPServiceCallHandling().addMAPServiceListener(this);
 
 		this.mapProvider.getMAPServiceSupplementary().acivate();
 		this.mapProvider.getMAPServiceSms().acivate();
 		this.mapProvider.getMAPServiceMobility().acivate();
+		this.mapProvider.getMAPServiceLsm().acivate();
+		this.mapProvider.getMAPServiceCallHandling().acivate();
 	}
 
 	public void start() throws MAPException {
@@ -132,7 +179,7 @@ public class Client extends EventTestHarness {
 
 		USSDString ussdString = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_STRING);
 
-		clientDialog.addProcessUnstructuredSSRequest((byte) 0x0F, ussdString, null, msisdn);
+		clientDialog.addProcessUnstructuredSSRequest(new CBSDataCodingSchemeImpl(0x0f), ussdString, null, msisdn);
 
 		logger.debug("Sending USSDString" + MAPFunctionalTest.USSD_STRING);
 
@@ -157,7 +204,7 @@ public class Client extends EventTestHarness {
 
 		USSDString ussdString = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_STRING);
 
-		clientDialog.addProcessUnstructuredSSRequest((byte) 0x0F, ussdString, null, msisdn);
+		clientDialog.addProcessUnstructuredSSRequest(new CBSDataCodingSchemeImpl( 0x0f), ussdString, null, msisdn);
 
 		logger.debug("Sending USSDString" + MAPFunctionalTest.USSD_STRING);
 
@@ -184,7 +231,7 @@ public class Client extends EventTestHarness {
 
 		USSDString ussdString = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_STRING);
 
-		savedInvokeId = clientDialog.addProcessUnstructuredSSRequest((byte) 0x0F, ussdString, null, msisdn);
+		savedInvokeId = clientDialog.addProcessUnstructuredSSRequest(new CBSDataCodingSchemeImpl( 0x0f), ussdString, null, msisdn);
 
 		logger.debug("Sending USSDString" + MAPFunctionalTest.USSD_STRING);
 		this.observerdEvents.add(TestEvent.createSentEvent(EventType.ProcessUnstructuredSSRequestIndication, null, sequence++));
@@ -497,7 +544,7 @@ public class Client extends EventTestHarness {
 		ISDNAddressString msisdn1 = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
 		AddressString servCenAddr1 = this.mapParameterFactory.createAddressString(AddressNature.network_specific_number, NumberingPlan.national, "999000");
 		clientDialogSms.addSendRoutingInfoForSMRequest(msisdn1, false, servCenAddr1, MAPExtensionContainerTest.GetTestExtensionContainer(), true,
-				SM_RP_MTI.SMS_Status_Report, new SM_RP_SMEAImpl(new byte[] { 90, 91 }));
+				SM_RP_MTI.SMS_Status_Report, new SM_RP_SMEAImpl(new byte[] { 90, 91 }), null);
 
 		this.observerdEvents.add(TestEvent.createSentEvent(EventType.SendRoutingInfoForSMIndication, null, sequence++));
 		clientDialogSms.send();
@@ -561,7 +608,378 @@ public class Client extends EventTestHarness {
 		this.observerdEvents.add(TestEvent.createSentEvent(EventType.UpdateLocation, null, sequence++));
 		clientDialogMobility.send();
 
-	}		
+	}
+
+	public void sendCancelLocation() throws Exception {
+
+		this.mapProvider.getMAPServiceMobility().acivate();
+
+		MAPApplicationContext appCnt = null;
+
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.locationCancellationContext, MAPApplicationContextVersion.version3);
+
+		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+
+		IMSI imsi = new IMSIImpl("1111122222");
+		LMSI lmsi = this.mapParameterFactory.createLMSI(new byte[] { 0, 3, 98, 39 });
+		IMSIWithLMSI imsiWithLmsi  = new IMSIWithLMSIImpl(imsi, lmsi);
+		CancellationType cancellationType = CancellationType.getInstance(1);
+		
+		ArrayList<MAPPrivateExtension> al = new ArrayList<MAPPrivateExtension>();
+		al.add(this.mapParameterFactory
+				.createMAPPrivateExtension(new long[] { 1, 2, 3, 4 }, new byte[] { 11, 12, 13, 14, 15 }));
+		al.add(this.mapParameterFactory.createMAPPrivateExtension(new long[] { 1, 2, 3, 6 }, null));
+		al.add(this.mapParameterFactory.createMAPPrivateExtension(new long[] { 1, 2, 3, 5 }, new byte[] { 21, 22, 23, 24, 25,
+				26 }));
+
+		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
+
+		TypeOfUpdate typeOfUpdate = TypeOfUpdate.getInstance(0);
+		boolean mtrfSupportedAndAuthorized = false;
+		boolean mtrfSupportedAndNotAuthorized = false;
+		ISDNAddressString newMSCNumber = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "22228");
+		ISDNAddressString newVLRNumber=  new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "22229");
+		LMSI newLmsi = this.mapParameterFactory.createLMSI(new byte[] { 0, 3, 98, 39 });
+		
+		clientDialogMobility.addCancelLocationRequest(imsi, imsiWithLmsi, cancellationType, extensionContainer, typeOfUpdate, mtrfSupportedAndAuthorized, mtrfSupportedAndNotAuthorized, newMSCNumber, newVLRNumber, newLmsi);
+
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.CancelLocation, null, sequence++));
+		clientDialogMobility.send();
+
+	}
+
+	public void sendCancelLocation_V2() throws Exception {
+
+		this.mapProvider.getMAPServiceMobility().acivate();
+
+		MAPApplicationContext appCnt = null;
+
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.locationCancellationContext, MAPApplicationContextVersion.version2);
+
+		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+
+		IMSI imsi = new IMSIImpl("1111122222");
+		LMSI lmsi = this.mapParameterFactory.createLMSI(new byte[] { 0, 3, 98, 39 });
+		
+		clientDialogMobility.addCancelLocationRequest(imsi, null, null, null, null, false, false, null, null, null);
+
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.CancelLocation, null, sequence++));
+		clientDialogMobility.send();
+
+	}
+
+
+	public void sendProvideRoamingNumber() throws Exception {
+
+		this.mapProvider.getMAPServiceMobility().acivate();
+
+		MAPApplicationContext appCnt = null;
+
+		appCnt = MAPApplicationContext.getInstance(
+				MAPApplicationContextName.roamingNumberEnquiryContext,
+				MAPApplicationContextVersion.version3);
+
+		clientDialogCallHandling = this.mapProvider.getMAPServiceCallHandling()
+				.createNewDialog(appCnt, this.thisAddress, null,
+						this.remoteAddress, null);
+
+		ArrayList<MAPPrivateExtension> al = new ArrayList<MAPPrivateExtension>();
+		al.add(this.mapParameterFactory.createMAPPrivateExtension(new long[] {
+				1, 2, 3, 4 }, new byte[] { 11, 12, 13, 14, 15 }));
+		al.add(this.mapParameterFactory.createMAPPrivateExtension(new long[] {
+				1, 2, 3, 6 }, null));
+		al.add(this.mapParameterFactory.createMAPPrivateExtension(new long[] {
+				1, 2, 3, 5 }, new byte[] { 21, 22, 23, 24, 25, 26 }));
+
+		IMSI imsi = new IMSIImpl("011220200198227");
+		ISDNAddressString mscNumber = new ISDNAddressStringImpl(
+				AddressNature.international_number, NumberingPlan.ISDN, "22228");
+		ISDNAddressString msisdn = new ISDNAddressStringImpl(
+				AddressNature.international_number, NumberingPlan.ISDN, "22227");
+		LMSI lmsi = new LMSIImpl(new byte[] { 0, 3, 98, 39 });
+
+		MAPExtensionContainer extensionContainerForExtSigInfo = this.mapParameterFactory
+				.createMAPExtensionContainer(al, new byte[] { 31, 32, 33 });
+		byte[] data_ = new byte[] { 10, 20, 30, 40 };
+		SignalInfo signalInfo = new SignalInfoImpl(data_);
+		ProtocolId protocolId = ProtocolId.gsm_0806;
+		ExternalSignalInfo gsmBearerCapability = new ExternalSignalInfoImpl(
+				signalInfo, protocolId, extensionContainerForExtSigInfo);
+		ExternalSignalInfo networkSignalInfo = new ExternalSignalInfoImpl(
+				signalInfo, protocolId, extensionContainerForExtSigInfo);
+
+		boolean suppressionOfAnnouncement = false;
+		ISDNAddressString gmscAddress = new ISDNAddressStringImpl(
+				AddressNature.international_number, NumberingPlan.ISDN, "22226");
+		CallReferenceNumberImpl callReferenceNumber = new CallReferenceNumberImpl(
+				new byte[] { 19, -6, 61, 61, -22 });
+		boolean orInterrogation = false;
+		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
+		AlertingPatternImpl alertingPattern = new AlertingPatternImpl(
+				AlertingCategory.Category5);
+		boolean ccbsCall = false;
+		SupportedCamelPhases supportedCamelPhasesInInterrogatingNode = new SupportedCamelPhasesImpl(
+				true, true, false, false);
+		MAPExtensionContainer extensionContainerforAddSigInfo = this.mapParameterFactory
+				.createMAPExtensionContainer(al, new byte[] { 31, 32, 33 });
+		ExtExternalSignalInfoImpl additionalSignalInfo = new ExtExternalSignalInfoImpl(
+				signalInfo, ExtProtocolId.getExtProtocolId(0),
+				extensionContainerforAddSigInfo);
+		boolean orNotSupportedInGMSC = false;
+		boolean prePagingSupported = false;
+		boolean longFTNSupported = false;
+		boolean suppressVtCsi = false;
+		OfferedCamel4CSIsImpl offeredCamel4CSIsInInterrogatingNode = new OfferedCamel4CSIsImpl(
+				false, false, false, false, true, true, true);
+		boolean mtRoamingRetrySupported = false;
+		ArrayList<LocationArea> locationAreas = new ArrayList<LocationArea>();
+		LACImpl lac = new LACImpl(123);
+		LocationAreaImpl la = new LocationAreaImpl(lac);
+		locationAreas.add(la);
+		PagingAreaImpl pagingArea = new PagingAreaImpl(locationAreas);
+		EMLPPPriority callPriority = EMLPPPriority.getEMLPPPriority(0);
+		boolean mtrfIndicator = false;
+		ISDNAddressString oldMSCNumber = new ISDNAddressStringImpl(
+				AddressNature.international_number, NumberingPlan.ISDN, "22225");
+		
+		clientDialogCallHandling.addProvideRoamingNumberRequest(imsi,
+				mscNumber, msisdn, lmsi, gsmBearerCapability,
+				networkSignalInfo, suppressionOfAnnouncement, gmscAddress,
+				null, orInterrogation,
+				null, null, ccbsCall,
+				null, null,
+				orNotSupportedInGMSC, prePagingSupported, longFTNSupported,
+				suppressVtCsi, null,
+				mtRoamingRetrySupported, null, null,
+				mtrfIndicator, null);
+		this.observerdEvents.add(TestEvent.createSentEvent(
+				EventType.ProvideRoamingNumber, null, sequence++));
+		clientDialogCallHandling.send();
+
+	}
+
+
+	public void sendProvideRoamingNumber_V2() throws Exception {
+
+		this.mapProvider.getMAPServiceMobility().acivate();
+
+		MAPApplicationContext appCnt = null;
+
+		appCnt = MAPApplicationContext.getInstance(
+				MAPApplicationContextName.roamingNumberEnquiryContext,
+				MAPApplicationContextVersion.version2);
+
+		clientDialogCallHandling = this.mapProvider.getMAPServiceCallHandling()
+				.createNewDialog(appCnt, this.thisAddress, null,
+						this.remoteAddress, null);
+
+		ArrayList<MAPPrivateExtension> al = new ArrayList<MAPPrivateExtension>();
+		al.add(this.mapParameterFactory.createMAPPrivateExtension(new long[] {
+				1, 2, 3, 4 }, new byte[] { 11, 12, 13, 14, 15 }));
+		al.add(this.mapParameterFactory.createMAPPrivateExtension(new long[] {
+				1, 2, 3, 6 }, null));
+		al.add(this.mapParameterFactory.createMAPPrivateExtension(new long[] {
+				1, 2, 3, 5 }, new byte[] { 21, 22, 23, 24, 25, 26 }));
+
+		IMSI imsi = new IMSIImpl("011220200198227");
+		ISDNAddressString mscNumber = new ISDNAddressStringImpl(
+				AddressNature.international_number, NumberingPlan.ISDN, "22228");
+		
+		clientDialogCallHandling.addProvideRoamingNumberRequest(imsi, mscNumber, null, null, null, null, false, null, null, false, null, null, false, null,
+				null, false, false, false, false, null, false, null, null, false, null);
+		this.observerdEvents.add(TestEvent.createSentEvent(
+				EventType.ProvideRoamingNumber, null, sequence++));
+		clientDialogCallHandling.send();
+
+	}
+
+	public void sendAnyTimeInterrogation() throws Exception {
+
+		this.mapProvider.getMAPServiceMobility().acivate();
+
+		MAPApplicationContext appCnt = null;
+
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.anyTimeEnquiryContext, MAPApplicationContextVersion.version3);
+
+		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+
+		IMSI imsi = this.mapParameterFactory.createIMSI("33334444");
+		SubscriberIdentity subscriberIdentity = this.mapParameterFactory.createSubscriberIdentity(imsi);
+		RequestedInfo requestedInfo = this.mapParameterFactory.createRequestedInfo(true, true, null, false, null, false, false, false);
+		ISDNAddressString gsmSCFAddress = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "11112222");
+
+		clientDialogMobility.addAnyTimeInterrogationRequest(subscriberIdentity, requestedInfo, gsmSCFAddress, null);
+
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.AnyTimeInterrogation, null, sequence++));
+		clientDialogMobility.send();
+	}
+
+	public void sendProvideSubscriberLocation() throws Exception {
+
+		this.mapProvider.getMAPServiceLsm().acivate();
+
+		MAPApplicationContext appCnt = null;
+
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.locationSvcEnquiryContext, MAPApplicationContextVersion.version3);
+
+		clientDialogLsm = this.mapProvider.getMAPServiceLsm().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+
+		LocationType locationType = this.mapParameterFactory.createLocationType(LocationEstimateType.cancelDeferredLocation, null);
+		ISDNAddressString mlcNumber = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "11112222");
+
+		clientDialogLsm.addProvideSubscriberLocationRequest(locationType, mlcNumber, null, false, null, null, null, null, null, null, null, null,
+				null, null, null, null, null, null, false, null, null);
+
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.ProvideSubscriberLocation, null, sequence++));
+		clientDialogLsm.send();
+	}
+
+	public void sendSubscriberLocationReport() throws Exception {
+
+		this.mapProvider.getMAPServiceLsm().acivate();
+
+		MAPApplicationContext appCnt = null;
+
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.locationSvcEnquiryContext, MAPApplicationContextVersion.version3);
+
+		clientDialogLsm = this.mapProvider.getMAPServiceLsm().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+
+		LCSClientID lcsClientID = this.mapParameterFactory.createLCSClientID(LCSClientType.plmnOperatorServices, null, null, null, null, null, null);
+		ISDNAddressString networkNodeNumber = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "11113333");
+		LCSLocationInfo lcsLocationInfo = this.mapParameterFactory.createLCSLocationInfo(networkNodeNumber, null, null, false, null, null, null, null, null);
+
+		clientDialogLsm.addSubscriberLocationReportRequest(LCSEvent.emergencyCallOrigination, lcsClientID, lcsLocationInfo, null, null, null, null, null, null,
+				null, null, null, null, null, null, null, null, null, null, false, false, null, null, null, null, false, null, null, null);
+
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.SubscriberLocationReport, null, sequence++));
+		clientDialogLsm.send();
+	}
+
+	public void sendSendRoutingInforForLCS() throws Exception {
+
+		this.mapProvider.getMAPServiceLsm().acivate();
+
+		MAPApplicationContext appCnt = null;
+
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.locationSvcGatewayContext, MAPApplicationContextVersion.version3);
+
+		clientDialogLsm = this.mapProvider.getMAPServiceLsm().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+
+		ISDNAddressString mlcNumber = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "11112222");
+		IMSI imsi = this.mapParameterFactory.createIMSI("5555544444");
+		SubscriberIdentity targetMS = this.mapParameterFactory.createSubscriberIdentity(imsi);
+
+		clientDialogLsm.addSendRoutingInfoForLCSRequest(mlcNumber, targetMS, null);
+
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.SendRoutingInfoForLCS, null, sequence++));
+		clientDialogLsm.send();
+	}
+	
+	public void sendCheckImei() throws Exception {
+		
+		this.mapProvider.getMAPServiceMobility().acivate();
+		
+		MAPApplicationContext appCnt = null;
+		
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.equipmentMngtContext, MAPApplicationContextVersion.version3);
+		
+		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+		
+		IMEI imei = this.mapParameterFactory.createIMEI("111111112222222");
+		RequestedEquipmentInfo requestedEquipmentInfo = this.mapParameterFactory.createRequestedEquipmentInfo(true, false);
+		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
+		
+		clientDialogMobility.addCheckImeiRequest(imei, requestedEquipmentInfo, extensionContainer);
+		
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.CheckImei, null, sequence++));
+		clientDialogMobility.send();
+	}
+	
+	public void sendCheckImei_V2() throws Exception {
+		
+		this.mapProvider.getMAPServiceMobility().acivate();
+		
+		MAPApplicationContext appCnt = null;
+		
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.equipmentMngtContext, MAPApplicationContextVersion.version2);
+		
+		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+		
+		IMEI imei = this.mapParameterFactory.createIMEI("333333334444444");
+		
+		clientDialogMobility.addCheckImeiRequest(imei, null, null);
+		
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.CheckImei, null, sequence++));
+		clientDialogMobility.send();
+	}
+	
+	public void sendCheckImei_Huawei_V2() throws Exception {
+		
+		this.mapProvider.getMAPServiceMobility().acivate();
+		
+		MAPApplicationContext appCnt = null;
+		
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.equipmentMngtContext, MAPApplicationContextVersion.version2);
+		
+		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+		
+		IMEI imei = this.mapParameterFactory.createIMEI("333333334444444");
+		IMSI imsi = this.mapParameterFactory.createIMSI("999999998888888");
+		
+		clientDialogMobility.addCheckImeiRequest_Huawei(imei, null, null, imsi);
+		
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.CheckImei, null, sequence++));
+		clientDialogMobility.send();
+	}
+
+	public void sendCheckImei_ForDelayedTest() throws Exception {
+		
+		this.mapProvider.getMAPServiceMobility().acivate();
+		
+		MAPApplicationContext appCnt = null;
+		
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.equipmentMngtContext, MAPApplicationContextVersion.version2);
+
+		AddressString origReference = this.mapParameterFactory.createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "11335577");
+		AddressString destReference = this.mapParameterFactory.createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "22446688");
+		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, origReference, this.remoteAddress, destReference);
+		clientDialogMobility.setExtentionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
+
+		IMEI imei = this.mapParameterFactory.createIMEI("333333334444444");
+		
+		clientDialogMobility.addCheckImeiRequest(imei, null, null);
+		clientDialogMobility.addCheckImeiRequest(imei, null, null);
+		
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.CheckImei, null, sequence++));
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.CheckImei, null, sequence++));
+
+		assertNull(clientDialogMobility.getTCAPMessageType());
+		
+		clientDialogMobility.send();
+	}
+
+	public void sendCheckImei_ForDelayedTest2() throws Exception {
+		
+		this.mapProvider.getMAPServiceMobility().acivate();
+		
+		MAPApplicationContext appCnt = null;
+		
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.equipmentMngtContext, MAPApplicationContextVersion.version2);
+
+		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+
+		IMEI imei = this.mapParameterFactory.createIMEI("333333334444444");
+		
+		clientDialogMobility.addCheckImeiRequest(imei, null, null);
+		clientDialogMobility.addCheckImeiRequest(imei, null, null);
+		
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.CheckImei, null, sequence++));
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.CheckImei, null, sequence++));
+
+		assertNull(clientDialogMobility.getTCAPMessageType());
+		
+		clientDialogMobility.send();
+	}
 
 	public MAPDialog getMapDialog() {
 		return this.clientDialog;

@@ -41,7 +41,12 @@ public interface CAPErrorMessageFactory {
 
 	public CAPErrorMessageParameterless createCAPErrorMessageParameterless(Long errorCode);
 
-//	public CAPErrorMessageSMDeliveryFailure createCAPErrorMessageSMDeliveryFailure(SMEnumeratedDeliveryFailureCause smEnumeratedDeliveryFailureCause,
-//			byte[] signalInfo, CAPExtensionContainer extensionContainer);
+	public CAPErrorMessageCancelFailed createCAPErrorMessageCancelFailed(CancelProblem cancelProblem);
+
+	public CAPErrorMessageRequestedInfoError createCAPErrorMessageRequestedInfoError(RequestedInfoErrorParameter requestedInfoErrorParameter);
+
+	public CAPErrorMessageSystemFailure createCAPErrorMessageSystemFailure(UnavailableNetworkResource unavailableNetworkResource);
+
+	public CAPErrorMessageTaskRefused createCAPErrorMessageTaskRefused(TaskRefusedParameter taskRefusedParameter);
 
 }

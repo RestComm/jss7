@@ -39,6 +39,6 @@ ChargeIndicator ::= OCTET STRING (SIZE (1))
 */
 public interface ChargeIndicator {
 
-	public byte[] getData();
+	public ChargeIndicatorValue getData();
 
 }

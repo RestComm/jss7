@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -25,10 +25,14 @@ package org.mobicents.protocols.ss7.map.service.supplementary;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
+import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.map.MessageImpl;
+import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SupplementaryMessage;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
 
@@ -37,6 +41,8 @@ import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
  * 
  */
 public abstract class SupplementaryMessageImpl extends MessageImpl implements SupplementaryMessage, MAPAsnPrimitive {
+	
+	private static final Logger logger = Logger.getLogger(SupplementaryMessageImpl.class);
 
 	private static final String DATA_CODING_SCHEME = "dataCodingScheme";
 	private static final String STRING = "string";
@@ -44,8 +50,7 @@ public abstract class SupplementaryMessageImpl extends MessageImpl implements Su
 	private static final byte DEFAULT_DATA_CODING_SCHEME = 0x0f;
 	private static final String DEFAULT_USSD_STRING = "";
 
-	protected byte ussdDataCodingSch;
-
+	protected CBSDataCodingScheme ussdDataCodingSch;
 	protected USSDString ussdString;
 
 	/**
@@ -55,7 +60,7 @@ public abstract class SupplementaryMessageImpl extends MessageImpl implements Su
 		super();
 	}
 
-	public SupplementaryMessageImpl(byte ussdDataCodingSch, USSDString ussdString) {
+	public SupplementaryMessageImpl(CBSDataCodingScheme ussdDataCodingSch, USSDString ussdString) {
 		this.ussdDataCodingSch = ussdDataCodingSch;
 		this.ussdString = ussdString;
 	}
@@ -64,7 +69,7 @@ public abstract class SupplementaryMessageImpl extends MessageImpl implements Su
 		return (MAPDialogSupplementary) super.getMAPDialog();
 	}
 
-	public byte getUSSDDataCodingScheme() {
+	public CBSDataCodingScheme getDataCodingScheme() {
 		return ussdDataCodingSch;
 	}
 
@@ -75,12 +80,15 @@ public abstract class SupplementaryMessageImpl extends MessageImpl implements Su
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		
+
 		sb.append(", ussdDataCodingSch=");
 		sb.append(ussdDataCodingSch);
 		if (ussdString != null) {
 			sb.append(", ussdString=");
-			sb.append(ussdString.getString());
+			try {
+				sb.append(ussdString.getString(null));
+			} catch (Exception e) {
+			}
 		}
 
 		sb.append("]");
@@ -89,27 +97,35 @@ public abstract class SupplementaryMessageImpl extends MessageImpl implements Su
 	}
 
 	/**
-	 * XML Serialization/Deserialization
-	 */
-	protected static final XMLFormat<SupplementaryMessageImpl> USSD_MESSAGE_XML = new XMLFormat<SupplementaryMessageImpl>(
-			SupplementaryMessageImpl.class) {
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<SupplementaryMessageImpl> USSD_MESSAGE_XML = new XMLFormat<SupplementaryMessageImpl>(
+                    SupplementaryMessageImpl.class) {
 
 		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml, SupplementaryMessageImpl ussdMessage)
-				throws XMLStreamException {
+		public void read(javolution.xml.XMLFormat.InputElement xml, SupplementaryMessageImpl ussdMessage) throws XMLStreamException {
 			MAP_MESSAGE_XML.read(xml, ussdMessage);
-			ussdMessage.ussdDataCodingSch = xml.getAttribute(DATA_CODING_SCHEME, DEFAULT_DATA_CODING_SCHEME);
-			ussdMessage.ussdString = new USSDStringImpl(xml.getAttribute(STRING, DEFAULT_USSD_STRING), null);
+			ussdMessage.ussdDataCodingSch = new CBSDataCodingSchemeImpl(xml.getAttribute(DATA_CODING_SCHEME, DEFAULT_DATA_CODING_SCHEME));
 
+			String encodedString = xml.getAttribute(STRING, DEFAULT_USSD_STRING);
+			try {
+				ussdMessage.ussdString = new USSDStringImpl(encodedString, ussdMessage.ussdDataCodingSch, null);
+			} catch (MAPException e) {
+				logger.error("Error while trying to read ussd string", e);
+			}
 		}
 
 		@Override
-		public void write(SupplementaryMessageImpl ussdMessage, javolution.xml.XMLFormat.OutputElement xml)
-				throws XMLStreamException {
+		public void write(SupplementaryMessageImpl ussdMessage, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
 			MAP_MESSAGE_XML.write(ussdMessage, xml);
-			xml.setAttribute(DATA_CODING_SCHEME, ussdMessage.ussdDataCodingSch);
-			xml.setAttribute(STRING, ussdMessage.getUSSDString().getString());
+			xml.setAttribute(DATA_CODING_SCHEME, ussdMessage.ussdDataCodingSch.getCode());
+			String ussdStr = "";
+			try {
+				ussdStr = ussdMessage.ussdString.getString(null);
+			} catch (MAPException e) {
+				logger.error("Error while trying to write ussd string", e);
+			}
+			xml.setAttribute(STRING, ussdStr);
 		}
 	};
-
 }

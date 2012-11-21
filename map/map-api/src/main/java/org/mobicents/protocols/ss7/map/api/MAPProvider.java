@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,8 +24,11 @@ package org.mobicents.protocols.ss7.map.api;
 
 import java.io.Serializable;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageFactory;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.MAPServiceCallHandling;
 import org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsm;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobility;
+import org.mobicents.protocols.ss7.map.api.service.oam.MAPServiceOam;
+import org.mobicents.protocols.ss7.map.api.service.pdpContextActivation.MAPServicePdpContextActivation;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSms;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementary;
 
@@ -73,13 +76,26 @@ public interface MAPProvider extends Serializable {
 	 * @return
 	 */
 	public MAPDialog getMAPDialog(Long dialogId);
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public MAPSmsTpduParameterFactory getMAPSmsTpduParameterFactory();
+
+
+	public MAPServiceMobility getMAPServiceMobility();
+
+	public MAPServiceCallHandling getMAPServiceCallHandling();
+
+	public MAPServiceOam getMAPServiceOam();
+
+	public MAPServicePdpContextActivation getMAPServicePdpContextActivation();
 
 	public MAPServiceSupplementary getMAPServiceSupplementary();
 	
 	public MAPServiceSms getMAPServiceSms();
 	
 	public MAPServiceLsm getMAPServiceLsm();
-	
-	public MAPServiceMobility getMAPServiceMobility();
 
 }

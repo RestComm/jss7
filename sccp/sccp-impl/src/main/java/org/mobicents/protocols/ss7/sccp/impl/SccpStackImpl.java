@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -43,7 +43,14 @@ import org.mobicents.protocols.ss7.mtp.Mtp3StatusPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPartListener;
+import org.mobicents.protocols.ss7.sccp.LongMessageRule;
+import org.mobicents.protocols.ss7.sccp.LongMessageRuleType;
+import org.mobicents.protocols.ss7.sccp.Mtp3ServiceAccessPoint;
+import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
+import org.mobicents.protocols.ss7.sccp.Router;
+import org.mobicents.protocols.ss7.sccp.Rule;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
+import org.mobicents.protocols.ss7.sccp.SccpResource;
 import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpAddressedMessageImpl;
@@ -52,11 +59,7 @@ import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpSegmentableMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressCodec;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SegmentationImpl;
-import org.mobicents.protocols.ss7.sccp.impl.router.LongMessageRule;
-import org.mobicents.protocols.ss7.sccp.impl.router.LongMessageRuleType;
-import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3ServiceAccessPoint;
-import org.mobicents.protocols.ss7.sccp.impl.router.Router;
-import org.mobicents.protocols.ss7.sccp.impl.router.Rule;
+import org.mobicents.protocols.ss7.sccp.impl.router.RouterImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.ReturnCauseValue;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -98,8 +101,8 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 	// provider ref, this can be real provider or pipe, for tests.
 	protected SccpProviderImpl sccpProvider;
 
-	protected Router router;
-	protected SccpResource sccpResource;
+	protected RouterImpl router;
+	protected SccpResourceImpl sccpResource;
 
 	protected MessageFactoryImpl messageFactory;
 
@@ -309,11 +312,11 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		this.sccpManagement.setSccpRoutingControl(sccpRoutingControl);
 		this.sccpRoutingControl.setSccpManagement(sccpManagement);
 		
-		this.router = new Router(this.name);
+		this.router = new RouterImpl(this.name, this);
 		this.router.setPersistDir(this.persistDir);
 		this.router.start();
 		
-		this.sccpResource = new SccpResource(this.name);
+		this.sccpResource = new SccpResourceImpl(this.name);
 		this.sccpResource.setPersistDir(this.persistDir);
 		this.sccpResource.start();
 
@@ -485,7 +488,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		try {
 			int fieldsLen = 0;
 			byte[] cdp = SccpAddressCodec.encode(calledPartyAddress, this.isRemoveSpc());
-			byte[] cnp = SccpAddressCodec.encode(callingPartyAddress, false);
+			byte[] cnp = SccpAddressCodec.encode(callingPartyAddress, this.isRemoveSpc());
 			switch (lmrt) {
 			case LongMessagesForbidden:
 				fieldsLen = this.calculateUdtFieldsLengthWithoutData(cdp.length, cnp.length);

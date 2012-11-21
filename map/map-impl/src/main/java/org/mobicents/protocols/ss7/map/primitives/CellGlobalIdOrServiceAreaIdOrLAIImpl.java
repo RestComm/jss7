@@ -33,15 +33,14 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdFixedLength;
 import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdOrLAI;
-import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LAIFixedLength;
-import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.LAIFixedLengthImpl;
+import org.mobicents.protocols.ss7.map.api.primitives.LAIFixedLength;
 
 /**
  * @author amit bhayani
  * 
  */
 public class CellGlobalIdOrServiceAreaIdOrLAIImpl implements CellGlobalIdOrServiceAreaIdOrLAI, MAPAsnPrimitive {
-	
+
 	private static final int _TAG_CELL_GLOBAL_ID_OR_SERVICE_AREAR_ID = 0;
 	private static final int _TAG_LAI = 1;
 

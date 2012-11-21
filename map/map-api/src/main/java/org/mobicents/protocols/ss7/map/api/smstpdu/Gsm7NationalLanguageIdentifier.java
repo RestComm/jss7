@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.smstpdu;
 
+import org.mobicents.protocols.ss7.map.api.datacoding.NationalLanguageIdentifier;
+
 /**
  User data header for National Language Locking Shift & National Language Single Shift (Gsm7 encoding)
  * 
@@ -50,7 +52,7 @@ Look at 3GPP TS 23.038
  */
 public interface Gsm7NationalLanguageIdentifier extends UserDataHeaderElement {
 
-	public int getNationalLanguageCode();
+	public NationalLanguageIdentifier getNationalLanguageIdentifier();
 
 	public byte[] getEncodedInformationElementData();
 

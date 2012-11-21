@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.cap;
 
 import java.util.ArrayList;
 
+import org.mobicents.protocols.ss7.cap.EsiBcsm.OAbandonSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.OAnswerSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.OCalledPartyBusySpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.ODisconnectSpecificInfoImpl;
@@ -132,7 +133,6 @@ import org.mobicents.protocols.ss7.cap.isup.LocationNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.OriginalCalledNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.RedirectingPartyIDCapImpl;
 import org.mobicents.protocols.ss7.cap.primitives.BCSMEventImpl;
-import org.mobicents.protocols.ss7.cap.primitives.CAMELAChBillingChargingCharacteristicsImpl;
 import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsImpl;
 import org.mobicents.protocols.ss7.cap.primitives.CalledPartyBCDNumberImpl;
 import org.mobicents.protocols.ss7.cap.primitives.DateAndTimeImpl;
@@ -146,6 +146,7 @@ import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.AOC
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.AlertingPatternCapImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.BearerCapabilityImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CAI_GSM0224Impl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristicsImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CAMELSCIBillingChargingCharacteristicsAltImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CallSegmentToCancelImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CollectedDigitsImpl;
@@ -186,14 +187,23 @@ import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectingNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformation;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.UUData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.MSClassmark2;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OfferedCamel4Functionalities;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
+import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
+import org.mobicents.protocols.ss7.tcap.asn.comp.GeneralProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.InvokeProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnErrorProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
 
 /**
  * 
@@ -201,6 +211,30 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
  * 
  */
 public class CAPParameterFactoryImpl implements CAPParameterFactory {
+	
+	public Problem createProblemGeneral(GeneralProblemType prob) {
+		Problem pb = TcapFactory.createProblem(ProblemType.General);
+		pb.setGeneralProblemType(prob);
+		return pb;
+	}
+
+	public Problem createProblemInvoke(InvokeProblemType prob) {
+		Problem pb = TcapFactory.createProblem(ProblemType.Invoke);
+		pb.setInvokeProblemType(prob);
+		return pb;
+	}
+
+	public Problem createProblemResult(ReturnResultProblemType prob) {
+		Problem pb = TcapFactory.createProblem(ProblemType.ReturnResult);
+		pb.setReturnResultProblemType(prob);
+		return pb;
+	}
+
+	public Problem createProblemError(ReturnErrorProblemType prob) {
+		Problem pb = TcapFactory.createProblem(ProblemType.ReturnError);
+		pb.setReturnErrorProblemType(prob);
+		return pb;
+	}
 
 	@Override
 	public CAPGprsReferenceNumber createCAPGprsReferenceNumber(Integer destinationReference, Integer originationReference) {
@@ -248,6 +282,12 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
 		return new CalledPartyBCDNumberImpl(data);
 	}
 
+	@Override
+	public CalledPartyBCDNumber createCalledPartyBCDNumber(AddressNature addressNature, NumberingPlan numberingPlan, String address, boolean isExtension) throws CAPException {
+		return new CalledPartyBCDNumberImpl(addressNature, numberingPlan, address, isExtension);
+	}
+
+	
 	@Override
 	public ExtensionField createExtensionField(Integer localCode, CriticalityType criticalityType, byte[] data) {
 		return new ExtensionFieldImpl(localCode, criticalityType, data);
@@ -391,10 +431,17 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
 	}
 
 	@Override
+	public OAbandonSpecificInfo createOAbandonSpecificInfo(boolean routeNotPermitted) {
+		return new OAbandonSpecificInfoImpl(routeNotPermitted);
+	}
+	
+	@Override
 	public ONoAnswerSpecificInfo createONoAnswerSpecificInfo() {
 		return new ONoAnswerSpecificInfoImpl();
 	}
 
+	
+	
 	@Override
 	public OAnswerSpecificInfo createOAnswerSpecificInfo(CalledPartyNumberCap destinationAddress, boolean orCall, boolean forwardedCall,
 			ChargeIndicator chargeIndicator, ExtBasicServiceCode extBasicServiceCode, ExtBasicServiceCode extBasicServiceCode2) {

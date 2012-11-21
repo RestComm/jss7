@@ -17,10 +17,11 @@
 		<THIS.ISSUE_TRACKER_URL>http://code.google.com/p/jss7/issues/list</THIS.ISSUE_TRACKER_URL>
 		<THIS.RELEASE_SOURCE_CODE_URL>http://code.google.com/p/jss7/source/browse/</THIS.RELEASE_SOURCE_CODE_URL>
 		<THIS.TRUNK_SOURCE_CODE_URL>http://code.google.com/p/jss7</THIS.TRUNK_SOURCE_CODE_URL>
-		<THIS.RELEASE_BINARY_URL>http://sourceforge.net/projects/mobicents/files</THIS.RELEASE_BINARY_URL>
+		<THIS.RELEASE_BINARY_URL>http://code.google.com/p/jss7/wiki/Downloads?tm=2</THIS.RELEASE_BINARY_URL>
 		<author.email.amit>amit.bhayani (at) gmail.com</author.email.amit>
 		<author.email.bartosz>baranowb (at) gmail.com</author.email.bartosz>
-		<author.email.oleg>oleg.kulikoff (at) gmail.com</author.email.oleg>	
+		<author.email.sergey>serg.vetyutnev (at) gmail.com</author.email.sergey>
+		<author.email.vinu>vinu.saseedaran (at) gmail.com</author.email.vinu>
 	</properties>
 
 	<build>

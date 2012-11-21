@@ -19,6 +19,7 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
+
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
 import java.io.IOException;
@@ -30,18 +31,20 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.map.api.primitives.DiameterIdentity;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.DiameterIdentity;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.EUtranCgi;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GeodeticInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GeographicalInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformationEPS;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.TAId;
+import org.mobicents.protocols.ss7.map.primitives.DiameterIdentityImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public class LocationInformationEPSImpl implements LocationInformationEPS, MAPAsnPrimitive {
@@ -62,7 +65,7 @@ public class LocationInformationEPSImpl implements LocationInformationEPS, MAPAs
 	private MAPExtensionContainer extensionContainer = null;
 	private GeographicalInformation geographicalInformation = null;
 	private GeodeticInformation geodeticInformation = null;
-	private Boolean currentLocationRetrieved = null;
+	private boolean currentLocationRetrieved = false;
 	private Integer ageOfLocationInformation = null;
 	private DiameterIdentity mmeName = null;
 
@@ -85,7 +88,7 @@ public class LocationInformationEPSImpl implements LocationInformationEPS, MAPAs
 	 * @param mmeName
 	 */
 	public LocationInformationEPSImpl(EUtranCgi eUtranCellGlobalIdentity, TAId trackingAreaIdentity, MAPExtensionContainer extensionContainer,
-			GeographicalInformation geographicalInformation, GeodeticInformation geodeticInformation, Boolean currentLocationRetrieved,
+			GeographicalInformation geographicalInformation, GeodeticInformation geodeticInformation, boolean currentLocationRetrieved,
 			Integer ageOfLocationInformation, DiameterIdentity mmeName) {
 		super();
 		this.eUtranCellGlobalIdentity = eUtranCellGlobalIdentity;
@@ -154,7 +157,7 @@ public class LocationInformationEPSImpl implements LocationInformationEPS, MAPAs
 	 * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
 	 * LocationInformationEPS#getCurrentLocationRetrieved()
 	 */
-	public Boolean getCurrentLocationRetrieved() {
+	public boolean getCurrentLocationRetrieved() {
 		return this.currentLocationRetrieved;
 	}
 
@@ -254,7 +257,7 @@ public class LocationInformationEPSImpl implements LocationInformationEPS, MAPAs
 		this.extensionContainer = null;
 		this.geographicalInformation = null;
 		this.geodeticInformation = null;
-		this.currentLocationRetrieved = null;
+		this.currentLocationRetrieved = false;
 		this.ageOfLocationInformation = null;
 
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
@@ -265,41 +268,66 @@ public class LocationInformationEPSImpl implements LocationInformationEPS, MAPAs
 
 			int tag = ais.readTag();
 
-			// optional parameters
 			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 
 				switch (tag) {
 				case _ID_eUtranCellGlobalIdentity:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " eUtranCellGlobalIdentity: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
 					this.eUtranCellGlobalIdentity = new EUtranCgiImpl();
 					((EUtranCgiImpl) this.eUtranCellGlobalIdentity).decodeAll(ais);
 					break;
 				case _ID_trackingAreaIdentity:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " trackingAreaIdentity: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
 					this.trackingAreaIdentity = new TAIdImpl();
 					((TAIdImpl) this.trackingAreaIdentity).decodeAll(ais);
 					break;
 				case _ID_extensionContainer:
+					if (ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " extensionContainer: Parameter is primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
 					this.extensionContainer = new MAPExtensionContainerImpl();
 					((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
 					break;
 				case _ID_geographicalInformation:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " geographicalInformation: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
 					this.geographicalInformation = new GeographicalInformationImpl();
 					((GeographicalInformationImpl) this.geographicalInformation).decodeAll(ais);
 					break;
 
 				case _ID_geodeticInformation:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " geodeticInformation: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
 					this.geodeticInformation = new GeodeticInformationImpl();
 					((GeodeticInformationImpl) this.geodeticInformation).decodeAll(ais);
 					break;
 				case _ID_currentLocationRetrieved:
-					if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive()) {
+					if (!ais.isTagPrimitive()) {
 						throw new MAPParsingComponentException(
-								"Error while decoding LocationInformation: Parameter [currentLocationRetrieved	[8] NULL ] bad tag class, tag or not primitive",
+								"Error while decoding LocationInformation: Parameter [currentLocationRetrieved	[8] NULL ] not primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					}
+					ais.readNull();
 					this.currentLocationRetrieved = true;
 					break;
 				case _ID_ageOfLocationInformation:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " ageOfLocationInformation: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
 					this.ageOfLocationInformation = (int) ais.readInteger();
+					break;
+				case _ID_mme_Name:
+					if (!ais.isTagPrimitive())
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " mmeName: Parameter is not primitive",
+								MAPParsingComponentExceptionReason.MistypedParameter);
+					this.mmeName = new DiameterIdentityImpl();
+					((DiameterIdentityImpl) this.mmeName).decodeAll(ais);
 					break;
 				default:
 					ais.advanceElement();
@@ -319,7 +347,7 @@ public class LocationInformationEPSImpl implements LocationInformationEPS, MAPAs
 	 * org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, this.getTag());
+		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
 	/*
@@ -331,7 +359,7 @@ public class LocationInformationEPSImpl implements LocationInformationEPS, MAPAs
 	 */
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
-			asnOs.writeTag(tagClass, true, tag);
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
@@ -366,7 +394,7 @@ public class LocationInformationEPSImpl implements LocationInformationEPS, MAPAs
 			if (this.geodeticInformation != null)
 				((GeodeticInformationImpl) this.geodeticInformation).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_geodeticInformation);
 			
-			if (this.currentLocationRetrieved != null && this.currentLocationRetrieved) {
+			if (this.currentLocationRetrieved) {
 				try {
 					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_currentLocationRetrieved);
 				} catch (IOException e) {
@@ -377,7 +405,7 @@ public class LocationInformationEPSImpl implements LocationInformationEPS, MAPAs
 			}
 			
 			if (ageOfLocationInformation != null)
-				asnOs.writeInteger((int) ageOfLocationInformation);
+				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_ageOfLocationInformation, (int) ageOfLocationInformation);
 			
 			if(this.mmeName != null){
 				((DiameterIdentityImpl)this.mmeName).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_mme_Name);
@@ -388,6 +416,54 @@ public class LocationInformationEPSImpl implements LocationInformationEPS, MAPAs
 		} catch (AsnException e) {
 			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
+	}
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+		
+		if (this.eUtranCellGlobalIdentity != null) {
+			sb.append("eUtranCellGlobalIdentity=");
+			sb.append(this.eUtranCellGlobalIdentity);
+		}
+		
+		if (this.trackingAreaIdentity != null) {
+			sb.append(", trackingAreaIdentity=");
+			sb.append(this.trackingAreaIdentity);
+		}
+		
+		if (this.extensionContainer != null) {
+			sb.append(", extensionContainer=");
+			sb.append(this.extensionContainer);
+		}
+		
+		if (this.geographicalInformation != null) {
+			sb.append(", geographicalInformation=");
+			sb.append(this.geographicalInformation);
+		}
+		
+		if (this.geodeticInformation != null) {
+			sb.append(", geodeticInformation=");
+			sb.append(this.geodeticInformation);
+		}
+		
+		if (currentLocationRetrieved) {
+			sb.append(", currentLocationRetrieved");
+		}
+
+		if (this.ageOfLocationInformation != null) {
+			sb.append(", ageOfLocationInformation=");
+			sb.append(this.ageOfLocationInformation);
+		}
+		
+		if (this.mmeName != null) {
+			sb.append(", mmeName=");
+			sb.append(this.mmeName);
+		}
+		
+		sb.append("]");
+		return sb.toString();
 	}
 
 }

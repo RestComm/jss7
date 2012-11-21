@@ -40,6 +40,8 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSFormatIndicator;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
@@ -47,7 +49,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 /**
- * TODO Add test for LCS-FormatIndicator
+ *
  * 
  * @author amit bhayani
  * 
@@ -72,35 +74,70 @@ public class LCSRequestorIDTest {
 	public void tearDown() {
 	}
 
+	public byte[] getData() {
+		return new byte[] { 48, 0x13, (byte) 0x80, 0x01, 0x0f, (byte) 0x81, 0x0e, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65, 0x6e,
+				0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
+	}
+
+	public byte[] getDataFull() {
+		return new byte[] { 48, 22, -128, 1, 15, -127, 14, 110, 114, -5, 28, -122, -61, 101, 110, 114, -5, 28, -122, -61, 101, -126, 1, 1 };
+	}
+	
 	@Test(groups = { "functional.decode","service.lsm"})
 	public void testDecode() throws Exception {
-		byte[] data = new byte[] { (byte) 0xb0, 0x13, (byte) 0x80, 0x01, 0x0f, (byte) 0x81, 0x0e, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3,
-				0x65, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
+		byte[] data = getData();
 
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
+		assertEquals(tag, Tag.SEQUENCE);
 
 		LCSRequestorIDImpl lcsRequestorID = new LCSRequestorIDImpl();
 		lcsRequestorID.decodeAll(asn);
 
-		assertEquals( lcsRequestorID.getDataCodingScheme(),(byte) 0x0f);
+		assertEquals( lcsRequestorID.getDataCodingScheme().getCode(), 0x0f);
 		assertNotNull(lcsRequestorID.getRequestorIDString());
-		assertEquals( lcsRequestorID.getRequestorIDString().getString(),"ndmgapp2ndmgapp2");
+		assertEquals( lcsRequestorID.getRequestorIDString().getString(null),"ndmgapp2ndmgapp2");
 
 		assertNull(lcsRequestorID.getLCSFormatIndicator());
+
+	
+		data = getDataFull();
+
+		asn = new AsnInputStream(data);
+		tag = asn.readTag();
+		assertEquals(tag, Tag.SEQUENCE);
+
+		lcsRequestorID = new LCSRequestorIDImpl();
+		lcsRequestorID.decodeAll(asn);
+
+		assertEquals( lcsRequestorID.getDataCodingScheme().getCode(), 0x0f);
+		assertNotNull(lcsRequestorID.getRequestorIDString());
+		assertEquals( lcsRequestorID.getRequestorIDString().getString(null),"ndmgapp2ndmgapp2");
+
+		assertEquals(lcsRequestorID.getLCSFormatIndicator(), LCSFormatIndicator.emailAddress);
 	}
 
 	@Test(groups = { "functional.encode","service.lsm"})
 	public void testEncode() throws Exception {
-		byte[] data = new byte[] { (byte) 0xb0, 0x13, (byte) 0x80, 0x01, 0x0f, (byte) 0x81, 0x0e, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3,
-				0x65, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
+		byte[] data = getData();
 
 		USSDString nameString = MAPParameterFactory.createUSSDString("ndmgapp2ndmgapp2");
-		LCSRequestorIDImpl lcsRequestorID = new LCSRequestorIDImpl((byte) 0x0f, nameString, null);
+		LCSRequestorIDImpl lcsRequestorID = new LCSRequestorIDImpl(new CBSDataCodingSchemeImpl(0x0f), nameString, null);
 		AsnOutputStream asnOS = new AsnOutputStream();
-		lcsRequestorID.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, Tag.SEQUENCE);
+		lcsRequestorID.encodeAll(asnOS);
 
 		byte[] encodedData = asnOS.toByteArray();
+
+		assertTrue( Arrays.equals(data,encodedData));
+
+	
+		data = getDataFull();
+
+		lcsRequestorID = new LCSRequestorIDImpl(new CBSDataCodingSchemeImpl(0x0f), nameString, LCSFormatIndicator.emailAddress);
+		asnOS = new AsnOutputStream();
+		lcsRequestorID.encodeAll(asnOS);
+
+		encodedData = asnOS.toByteArray();
 
 		assertTrue( Arrays.equals(data,encodedData));
 	}
@@ -108,7 +145,7 @@ public class LCSRequestorIDTest {
 	@Test(groups = { "functional.serialize", "service.lsm" })
 	public void testSerialization() throws Exception {
 		USSDString nameString = MAPParameterFactory.createUSSDString("ndmgapp2ndmgapp2");
-		LCSRequestorIDImpl original = new LCSRequestorIDImpl((byte) 0x0f, nameString, null);
+		LCSRequestorIDImpl original = new LCSRequestorIDImpl(new CBSDataCodingSchemeImpl(0x0f), nameString, null);
 
 		// serialize
 		ByteArrayOutputStream out = new ByteArrayOutputStream();

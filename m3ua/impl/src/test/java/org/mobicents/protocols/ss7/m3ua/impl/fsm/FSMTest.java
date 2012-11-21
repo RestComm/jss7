@@ -1,15 +1,40 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package org.mobicents.protocols.ss7.m3ua.impl.fsm;
 
 
-import org.testng.annotations.*;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-
 import org.mobicents.protocols.ss7.m3ua.impl.scheduler.M3UAScheduler;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 /**
  * 
@@ -228,7 +253,7 @@ public class FSMTest {
 
 	}	
 
-	class AsState1Exit implements StateEventHandler {
+	class AsState1Exit implements FSMStateEventHandler {
 
 		private FSM fsm;
 
@@ -236,12 +261,12 @@ public class FSMTest {
 			this.fsm = fsm;
 		}
 
-		public void onEvent(State state) {
+		public void onEvent(FSMState state) {
 			stateExited = true;
 		}
 	}
 
-	class AsState2Timeout implements StateEventHandler {
+	class AsState2Timeout implements FSMStateEventHandler {
 
 		private FSM fsm;
 
@@ -249,12 +274,12 @@ public class FSMTest {
 			this.fsm = fsm;
 		}
 
-		public void onEvent(State state) {
+		public void onEvent(FSMState state) {
 			timedOut = true;
 		}
 	}
 
-	class AsState2Enter implements StateEventHandler {
+	class AsState2Enter implements FSMStateEventHandler {
 
 		private FSM fsm;
 
@@ -262,7 +287,7 @@ public class FSMTest {
 			this.fsm = fsm;
 		}
 
-		public void onEvent(State state) {
+		public void onEvent(FSMState state) {
 			stateEntered = true;
 		}
 	}
@@ -270,7 +295,7 @@ public class FSMTest {
 	class State1ToState2Transition implements TransitionHandler {
 
 		@Override
-		public boolean process(State state) {
+		public boolean process(FSMState state) {
 			transitionHandlerCalled = true;
 			return true;
 		}
@@ -280,7 +305,7 @@ public class FSMTest {
 	class State2TimeoutTransition implements TransitionHandler {
 
 		@Override
-		public boolean process(State state) {
+		public boolean process(FSMState state) {
 			timeOutCount++;
 			return true;
 		}
@@ -290,7 +315,7 @@ public class FSMTest {
 	class State1ToState2NoTransition implements TransitionHandler {
 
 		@Override
-		public boolean process(State state) {
+		public boolean process(FSMState state) {
 			transitionHandlerCalled = true;
 			return false;
 		}
@@ -300,7 +325,7 @@ public class FSMTest {
 	class NoTransition implements TransitionHandler {
 
 		@Override
-		public boolean process(State state) {
+		public boolean process(FSMState state) {
 			return false;
 		}
 

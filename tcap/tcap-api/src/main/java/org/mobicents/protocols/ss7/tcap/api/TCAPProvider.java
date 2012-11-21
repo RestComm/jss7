@@ -22,10 +22,12 @@
 
 package org.mobicents.protocols.ss7.tcap.api;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 
-public interface TCAPProvider {
+public interface TCAPProvider extends Serializable {
 
 	/**
 	 * Create new structured dialog.

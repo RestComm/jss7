@@ -19,6 +19,7 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
+
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
 import static org.testng.Assert.assertEquals;
@@ -29,6 +30,7 @@ import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
@@ -55,6 +57,7 @@ public class AnyTimeInterrogationRequestTest {
 
 		AsnInputStream ansIS = new AsnInputStream(data);
 		int tag = ansIS.readTag();
+		assertEquals(tag, Tag.SEQUENCE);
 
 		AnyTimeInterrogationRequestImpl anyTimeInt = new AnyTimeInterrogationRequestImpl();
 		anyTimeInt.decodeAll(ansIS);
@@ -77,26 +80,17 @@ public class AnyTimeInterrogationRequestTest {
 	@Test(groups = { "functional.decode", "subscriberInformation" })
 	public void testEncode() throws Exception {
 
-		AsnInputStream ansIS = new AsnInputStream(data);
-		int tag = ansIS.readTag();
-
 		ISDNAddressString isdnAdd = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "553499775190");
 		SubscriberIdentity subsId = new SubscriberIdentityImpl(isdnAdd);
-
-		RequestedInfo requestedInfo = new RequestedInfoImpl(true, true, null, null, null, null, null, null);
-
+		RequestedInfo requestedInfo = new RequestedInfoImpl(true, true, null, false, null, false, false, false);
 		ISDNAddressString gscmSCFAddress = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "553496629943");
 
 		AnyTimeInterrogationRequestImpl anyTimeInt = new AnyTimeInterrogationRequestImpl(subsId, requestedInfo, gscmSCFAddress, null);
-		anyTimeInt.decodeAll(ansIS);
 
 		AsnOutputStream asnOS = new AsnOutputStream();
 		anyTimeInt.encodeAll(asnOS);
-
 		byte[] encodedData = asnOS.toByteArray();
-
 		assertTrue(Arrays.equals(data, encodedData));
-
 	}
 
 }

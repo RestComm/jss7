@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -36,8 +36,10 @@ import org.mobicents.protocols.api.AssociationListener;
 import org.mobicents.protocols.api.AssociationType;
 import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.api.Management;
+import org.mobicents.protocols.api.ManagementEventListener;
 import org.mobicents.protocols.api.PayloadData;
 import org.mobicents.protocols.api.Server;
+import org.mobicents.protocols.api.ServerListener;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
@@ -52,7 +54,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
  */
 public class M3UAManagementTest {
 
-	private M3UAManagement m3uaMgmt = null;
+	private M3UAManagementImpl m3uaMgmt = null;
 	private TransportManagement transportManagement = null;
 	private ParameterFactoryImpl factory = new ParameterFactoryImpl();
 
@@ -75,7 +77,7 @@ public class M3UAManagementTest {
 	public void setUp() throws Exception {
 		this.transportManagement = new TransportManagement();
 
-		this.m3uaMgmt = new M3UAManagement("M3UAManagementTest");
+		this.m3uaMgmt = new M3UAManagementImpl("M3UAManagementTest");
 		this.m3uaMgmt.setTransportManagement(this.transportManagement);
 		this.m3uaMgmt.start();
 		this.m3uaMgmt.removeAllResourses();
@@ -93,9 +95,9 @@ public class M3UAManagementTest {
 
 		RoutingContext rc = factory.createRoutingContext(new long[] { 1 });
 		NetworkAppearance na = factory.createNetworkAppearance(12l);
-		As as1 = this.m3uaMgmt.createAs("AS1", Functionality.AS, ExchangeType.SE, null, rc, null, na);
+		AsImpl as1 = (AsImpl)this.m3uaMgmt.createAs("AS1", Functionality.AS, ExchangeType.SE, null, rc, null, 1, na);
 
-		AspFactory aspFactory = this.m3uaMgmt.createAspFactory("ASP1", "ASPAssoc1");
+		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl)this.m3uaMgmt.createAspFactory("ASP1", "ASPAssoc1");
 
 		this.m3uaMgmt.assignAspToAs("AS1", "ASP1");
 
@@ -105,21 +107,21 @@ public class M3UAManagementTest {
 
 		this.m3uaMgmt.stop();
 
-		M3UAManagement m3uaMgmt1 = new M3UAManagement("M3UAManagementTest");
+		M3UAManagementImpl m3uaMgmt1 = new M3UAManagementImpl("M3UAManagementTest");
 		m3uaMgmt1.setTransportManagement(this.transportManagement);
 		m3uaMgmt1.start();
 
 		assertEquals(1, m3uaMgmt1.getAppServers().size());
 		assertEquals(1, m3uaMgmt1.getAspfactories().size());
-		FastMap<String, As[]> route = m3uaMgmt1.getRoute();
+		FastMap<String, AsImpl[]> route = m3uaMgmt1.getRoute();
 		assertEquals(1, route.size());
 		
 		// Make sure AS is not null
-		As[] asList = route.get("123:1:1");
-		As routeAs = asList[0];
+		AsImpl[] asList = route.get("123:1:1");
+		AsImpl routeAs = asList[0];
 		assertNotNull(routeAs);
 		
-		As managementAs = m3uaMgmt1.getAppServers().get(0);
+		AsImpl managementAs = (AsImpl)m3uaMgmt1.getAppServers().get(0);
 
 		//Make sure both m3uamanagament and route are pointing to same AS instance
 		assertEquals(routeAs, managementAs);
@@ -242,6 +244,24 @@ public class M3UAManagementTest {
 		public boolean isConnected() {
 			// TODO Auto-generated method stub
 			return false;
+		}
+
+		@Override
+		public void acceptAnonymousAssociation(AssociationListener arg0) throws Exception {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void rejectAnonymousAssociation() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void stopAnonymousAssociation() throws Exception {
+			// TODO Auto-generated method stub
+			
 		}
 
 	}
@@ -405,6 +425,45 @@ public class M3UAManagementTest {
 		public void removeAllResourses() throws Exception {
 			// TODO Auto-generated method stub
 			
+		}
+
+		@Override
+		public void addManagementEventListener(ManagementEventListener arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public Server addServer(String arg0, String arg1, int arg2, IpChannelType arg3, boolean arg4, int arg5, String[] arg6) throws Exception {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public ServerListener getServerListener() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void removeManagementEventListener(ManagementEventListener arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void setServerListener(ServerListener arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/* (non-Javadoc)
+		 * @see org.mobicents.protocols.api.Management#isStarted()
+		 */
+		@Override
+		public boolean isStarted() {
+			// TODO Auto-generated method stub
+			return false;
 		}
 
 	}

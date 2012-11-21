@@ -22,40 +22,40 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import org.mobicents.protocols.ss7.map.api.primitives.GSNAddress;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 
 /**
- * RoutingInfoForLCS-Res ::= SEQUENCE {
- *		targetMS [0] SubscriberIdentity,
- *		lcsLocationInfo [1] LCSLocationInfo,
- *		extensionContainer [2] ExtensionContainer OPTIONAL,
- *		...,
- *		v-gmlc-Address [3] GSN-Address OPTIONAL,
- *		h-gmlc-Address [4] GSN-Address OPTIONAL,
- *		ppr-Address [5] GSN-Address OPTIONAL,
- *		additional-v-gmlc-Address [6] GSN-Address OPTIONAL }
+
+RoutingInfoForLCS-Res ::= SEQUENCE {
+		targetMS [0] SubscriberIdentity,
+		lcsLocationInfo [1] LCSLocationInfo,
+		extensionContainer [2] ExtensionContainer OPTIONAL,
+		...,
+		v-gmlc-Address [3] GSN-Address OPTIONAL,
+		h-gmlc-Address [4] GSN-Address OPTIONAL,
+		ppr-Address [5] GSN-Address OPTIONAL,
+		additional-v-gmlc-Address [6] GSN-Address OPTIONAL }
+
  *
  * @author amit bhayani
  *
  */
 public interface SendRoutingInfoForLCSResponse extends LsmMessage {
+
 	public SubscriberIdentity getTargetMS();
 	
 	public LCSLocationInfo getLCSLocationInfo();
 	
 	public MAPExtensionContainer getExtensionContainer();
 	
-	/**
-	 * GSN-Address ::= OCTET STRING (SIZE (5..17))
-     *		-- Octets are coded according to TS 3GPP TS 23.003 [17]
-	 */
-	public byte[] getVgmlcAddress();
+	public GSNAddress getVgmlcAddress();
 	
-	public byte[] getHGmlcAddress();
+	public GSNAddress getHGmlcAddress();
 	
-	public byte[] getPprAddress();
+	public GSNAddress getPprAddress();
 	
-	public byte[] getAdditionalVGmlcAddress();
+	public GSNAddress getAdditionalVGmlcAddress();
 
 }

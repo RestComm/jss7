@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -41,6 +41,7 @@ public class SccpAddress implements Parameter, XMLSerializable { // impl? pfff
 	public static final String GLOBAL_TITLE = "gt";
 	public static final String POINT_CODE = "pc";
 	public static final String SUBSYSTEM_NUMBER = "ssn";
+	public static final String AI = "ai";
 
 	private GlobalTitle gt;
 	private int pc = 0;
@@ -132,7 +133,7 @@ public class SccpAddress implements Parameter, XMLSerializable { // impl? pfff
 		public void write(SccpAddress ai, OutputElement xml) throws XMLStreamException {
 			xml.setAttribute(POINT_CODE, ai.pc);
 			xml.setAttribute(SUBSYSTEM_NUMBER, ai.ssn);
-			xml.add(ai.ai, AddressIndicator.AI);
+			xml.add(ai.ai, AI, AddressIndicator.class);
 			xml.add(ai.gt, GLOBAL_TITLE);
 
 		}
@@ -140,7 +141,7 @@ public class SccpAddress implements Parameter, XMLSerializable { // impl? pfff
 		public void read(InputElement xml, SccpAddress ai) throws XMLStreamException {
 			ai.pc = xml.getAttribute(POINT_CODE).toInt();
 			ai.ssn = xml.getAttribute(SUBSYSTEM_NUMBER).toInt();
-			ai.ai = xml.get(AddressIndicator.AI);
+			ai.ai = xml.get(AI, AddressIndicator.class);
 			ai.gt = xml.get(GLOBAL_TITLE);
 		}
 	};

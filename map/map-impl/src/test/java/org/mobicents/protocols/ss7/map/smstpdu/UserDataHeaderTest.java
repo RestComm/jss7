@@ -27,6 +27,7 @@ import static org.testng.Assert.*;
 import java.util.Arrays;
 import java.util.Map;
 
+import org.mobicents.protocols.ss7.map.api.datacoding.NationalLanguageIdentifier;
 import org.mobicents.protocols.ss7.map.api.smstpdu.ConcatenatedShortMessagesIdentifier;
 import org.mobicents.protocols.ss7.map.api.smstpdu.NationalLanguageLockingShiftIdentifier;
 import org.mobicents.protocols.ss7.map.api.smstpdu.NationalLanguageSingleShiftIdentifier;
@@ -108,7 +109,7 @@ public class UserDataHeaderTest {
 		assertTrue(Arrays.equals(mp.get(37), new byte[] { 2 }));
 		NationalLanguageLockingShiftIdentifier nls = impl.getNationalLanguageLockingShift();
 		assertNotNull(nls);
-		assertEquals(nls.getNationalLanguageCode(), 2);
+		assertEquals(nls.getNationalLanguageIdentifier(), NationalLanguageIdentifier.Spanish);
 
 		impl = new UserDataHeaderImpl(this.getDataA2());
 		mp = impl.getAllData();
@@ -116,7 +117,7 @@ public class UserDataHeaderTest {
 		assertTrue(Arrays.equals(mp.get(36), new byte[] { 3 }));
 		NationalLanguageSingleShiftIdentifier nss = impl.getNationalLanguageSingleShift();
 		assertNotNull(nss);
-		assertEquals(nss.getNationalLanguageCode(), 3);
+		assertEquals(nss.getNationalLanguageIdentifier(), NationalLanguageIdentifier.Portuguese);
 
 		
 		// TODO: implement getData3()-getData7() decoding 
@@ -136,12 +137,12 @@ public class UserDataHeaderTest {
 		assertTrue(Arrays.equals(impl.getEncodedData(), this.getData2()));
 
 		impl = new UserDataHeaderImpl();
-		ie = new NationalLanguageLockingShiftIdentifierImpl(2);
+		ie = new NationalLanguageLockingShiftIdentifierImpl(NationalLanguageIdentifier.Spanish);
 		impl.addInformationElement(ie);
 		assertTrue(Arrays.equals(impl.getEncodedData(), this.getDataA1()));
 
 		impl = new UserDataHeaderImpl();
-		ie = new NationalLanguageSingleShiftIdentifierImpl(3);
+		ie = new NationalLanguageSingleShiftIdentifierImpl(NationalLanguageIdentifier.Portuguese);
 		impl.addInformationElement(ie);
 		assertTrue(Arrays.equals(impl.getEncodedData(), this.getDataA2()));
 		

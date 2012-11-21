@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -38,8 +38,8 @@ import javolution.xml.stream.XMLStreamException;
  * @author kulikov
  */
 public class AddressIndicator implements XMLSerializable {
-
-	public static final String AI = "ai";
+	
+	private static final String VALUE = "value";
 
 	// Global title indicator
 	private GlobalTitleIndicator globalTitleIndicator;
@@ -113,11 +113,11 @@ public class AddressIndicator implements XMLSerializable {
 	protected static final XMLFormat<AddressIndicator> XML = new XMLFormat<AddressIndicator>(AddressIndicator.class) {
 
 		public void write(AddressIndicator ai, OutputElement xml) throws XMLStreamException {
-			xml.setAttribute(AI, ai.getValue());
+			xml.setAttribute(VALUE, ai.getValue());
 		}
 
 		public void read(InputElement xml, AddressIndicator ai) throws XMLStreamException {
-			byte b = (byte) xml.getAttribute(AI).toInt();
+			byte b = (byte) xml.getAttribute(VALUE).toInt();
 			ai.init(b);
 		}
 	};

@@ -1,0 +1,30 @@
+Name
+	m3ua as remove
+
+SYNOPSIS
+	m3ua as remove <as-name> <asp-name>
+
+DESCRIPTION
+	This command is used to un-assign an Application Server Process from an 
+	Application Server that it was previously assigned to. 
+
+PARAMETERS
+
+	Standard Parameters
+
+	<as-name>		-	Name of the AS from which this ASP is being 
+					un-assigned.
+
+	<asp-name>		-	Name of the ASP to be un-assigned.
+
+EXAMPLES
+	m3ua as remove AS1 ASP1
+
+	The above command will remove ASP1 from AS1. 
+
+SEE ALSO
+	m3ua, m3ua as create, m3ua as destroy, m3ua as show, m3ua asp create, 
+	m3ua asp destroy, m3ua asp show, m3ua asp start, m3ua asp stop, m3ua as add, 
+	m3ua route add, m3ua route remove, m3ua route show.
+
+

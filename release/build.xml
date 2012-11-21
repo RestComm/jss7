@@ -1,135 +1,135 @@
 <?xml version="1.0"?>
 <project name="ss7.release.sf" default="package" basedir=".">
 
-	<!-- Components Versions -->
-	<property name="release.version" value="2.0.0-SNAPSHOT" />
+        <!-- Components Versions -->
+        <property name="release.version" value="2.0.0-SNAPSHOT" />
 
-	<property name="ss7.version" value="2.0.0-SNAPSHOT" />
+        <property name="ss7.version" value="2.0.0-SNAPSHOT" />
+
+        <property name="asn.version" value="2.0.0-SNAPSHOT" />
+        <property name="sctp.version" value="1.0.0-SNAPSHOT" />
+        <property name="stream.version" value="1.0.0-SNAPSHOT" />
+       
+
+        <property name="protocols.build.list" value="parent,m3ua,mtp,isup,sccp,tcap,map" />
+        <property name="protocols.copy.list" value="m3ua,mtp,isup,sccp,tcap,map" />
+
+        <!-- Directories Configuration -->
+        <property name="checkout.basedir" value="checkout" />
+        <property name="zip.dir" value="${basedir}/zip" />
+        <property name="zip.file.destination.dir" value="${basedir}/upload" />
+        <property name="zip.file.name" value="mobicents-ss7-${release.version}" />
+        <property name="failoncopy" value="true" />
+        <property name="test.skip" value="true" />
+        <!-- Definition -->
+
+        <property name="release.name" value="SNAPSHOT" />
+
+        <property environment="sys" />
+        <condition property="mvn.executable" value="${sys.M2_HOME}\bin\mvn.bat" else="mvn">
+                <os family="windows" />
+        </condition>
+
+        <taskdef onerror="fail" resource="net/sf/antcontrib/antlib.xml">
+                <classpath>
+                        <pathelement location="${ss7.release.sf}/../ant-contrib-1.0b3.jar" />
+                </classpath>
+        </taskdef>
+
+        <target name="init" >
+            <echo message="Java Version: ${java.version}"/>
+            <echo message="Java home: ${java.home}"/>
+            <fail message="Unsupported Java version: ${java.version}. Make sure that the version of the Java compiler is 1.7 (7.0) or greater.">
+                <condition>
+                    <not>
+                        <or>
+                            <contains string="${java.version}" substring="1.7" casesensitive="false" />
+                        </or>
+                    </not>
+                </condition>
+            </fail>
+        </target>
+
+        <target name="checkout" description="Checks out src and downloads everything that is required." depends="checkout-sources" />
+        <target name="build" description="Builds components sources and everything associated." depends="build-sources-commons,build-sources-sctp,build-sources-asn,build-sources-stream,build-sources-ss7" />
+        <target name="copy" depends="copy-asn,copy-sctp,copy-protocols-ss7" />
+        <target name="package" description="Builds builds binary package." depends="init,clean,checkout,zip.src,build,notes,copy,zip.binary" />
+        <target name="clean">
+                <echo>Cleaning checkout directory</echo>
+                <delete dir="${ant.file.ss7.release.sf}/../${checkout.basedir}" verbose="false" />
+                <echo>Cleaning work directory</echo>
+                <delete dir="${zip.dir}" verbose="false" />
+                <echo>Cleaning upload directory</echo>
+                <delete dir="${zip.file.destination.dir}" verbose="false" />
+        </target>
 
 
-	<property name="asn.version" value="1.0.0.CR1" />
-	<property name="stream.version" value="1.0.0.CR1" />
-	
 
-	<property name="protocols.build.list" value="parent,m3ua,mtp,isup,sccp,tcap,map" />
-	<property name="protocols.copy.list" value="m3ua,mtp,isup,sccp,tcap,map" />
-
-	<!-- Directories Configuration -->
-	<property name="checkout.basedir" value="checkout" />
-	<property name="zip.dir" value="${basedir}/zip" />
-	<property name="zip.file.destination.dir" value="${basedir}/upload" />
-	<property name="zip.file.name" value="mobicents-ss7-${release.version}" />
-	<property name="failoncopy" value="true" />
-	<property name="test.skip" value="true" />
-	<!-- Definition -->
-
-	<property name="release.name" value="SNAPSHOT" />
-
-	<property environment="sys" />
-	<condition property="mvn.executable" value="${sys.M2_HOME}\bin\mvn.bat" else="mvn">
-		<os family="windows" />
-	</condition>
-
-	<taskdef onerror="fail" resource="net/sf/antcontrib/antlib.xml">
-		<classpath>
-			<pathelement location="${ss7.release.sf}/../ant-contrib-1.0b3.jar" />
-		</classpath>
-	</taskdef>
-
-	<target name="init" >
-	    <echo message="Java Version: ${java.version}"/> 
-	    <echo message="Java home: ${java.home}"/> 
-	    <fail message="Unsupported Java version: ${java.version}. Make sure that the version of the Java compiler is 1.7 (7.0) or greater."> 
-		<condition> 
-		    <not> 
-			<or> 
-			    <contains string="${java.version}" substring="1.7" casesensitive="false" /> 
-			</or> 
-		    </not> 
-		</condition> 
-	    </fail>
-	</target>
-
-	<target name="checkout" description="Checks out src and downloads everything that is required." depends="checkout-sources" />
-	<target name="build" description="Builds components sources and everything associated." depends="build-sources-commons,build-sources-sctp,build-sources-asn,build-sources-stream,build-sources-ss7" />
-	<target name="copy" depends="copy-asn,copy-sctp,copy-protocols-ss7" />
-	<target name="package" description="Builds builds binary package." depends="init,clean,checkout,zip.src,build,notes,copy,zip.binary" />
-	<target name="clean">
-		<echo>Cleaning checkout directory</echo>
-		<delete dir="${ant.file.ss7.release.sf}/../${checkout.basedir}" verbose="false" />
-		<echo>Cleaning work directory</echo>
-		<delete dir="${zip.dir}" verbose="false" />
-		<echo>Cleaning upload directory</echo>
-		<delete dir="${zip.file.destination.dir}" verbose="false" />
-	</target>
-
-
-
-	<target name="checkout-sources">
-		<echo>Checking out sources</echo>
-		 <mkdir dir="${checkout.basedir}"/>
-		<exec executable="${mvn.executable}" dir="${ant.file.mobicents.release}/../">
-			<arg line="validate -P checkout -Dcheckout.dir=${checkout.basedir}" />
-		</exec>
-	</target>
+        <target name="checkout-sources">
+                <echo>Checking out sources</echo>
+                 <mkdir dir="${checkout.basedir}"/>
+                <exec executable="${mvn.executable}" dir="${ant.file.mobicents.release}/../">
+                        <arg line="validate -P checkout -Dcheckout.dir=${checkout.basedir}" />
+                </exec>
+        </target>
 
         <target name="build-sources-commons">
                 <exec executable="${mvn.executable}" dir="${checkout.basedir}/commons">
                         <arg line="install -P release,set-svn-revision -Dmaven.test.skip=${test.skip} -Drelease.name=${release.name}" />
                 </exec>
         </target>
-        
+       
         <target name="build-sources-sctp">
                 <exec executable="${mvn.executable}" dir="${checkout.basedir}/sctp">
                         <arg line="install -P release,set-svn-revision -Dmaven.test.skip=${test.skip} -Drelease.name=${release.name}" />
                 </exec>
         </target>
-	<target name="build-sources-asn">
-		<exec executable="${mvn.executable}" dir="${checkout.basedir}/asn">
-			<arg line="install -Prelease,set-svn-revision -Dmaven.test.skip=${test.skip} -Drelease.name=${release.name}" />
-		</exec>
-	</target>
+        <target name="build-sources-asn">
+                <exec executable="${mvn.executable}" dir="${checkout.basedir}/asn">
+                        <arg line="install -Prelease,set-svn-revision -Dmaven.test.skip=${test.skip} -Drelease.name=${release.name}" />
+                </exec>
+        </target>
 
-	<target name="build-sources-stream">
-		<exec executable="${mvn.executable}" dir="${checkout.basedir}/stream">
-			<arg line="install -P release,set-svn-revision -Dmaven.test.skip=${test.skip} -Drelease.name=${release.name}" />
-		</exec>
-	</target>
-	<target name="build-sources-ss7">
-		<echo>Build SS7</echo>
-		<exec executable="${mvn.executable}" dir="${checkout.basedir}/ss7">
-					<arg line="-f pom.xml install -P release,set-svn-revision -Dmaven.test.skip=${test.skip} -Drelease.name=${release.name}" />
-				</exec>
-	</target>
+        <target name="build-sources-stream">
+                <exec executable="${mvn.executable}" dir="${checkout.basedir}/stream">
+                        <arg line="install -P release,set-svn-revision -Dmaven.test.skip=${test.skip} -Drelease.name=${release.name}" />
+                </exec>
+        </target>
+        <target name="build-sources-ss7">
+                <echo>Build SS7</echo>
+                <exec executable="${mvn.executable}" dir="${checkout.basedir}/ss7">
+                                        <arg line="-f pom.xml install -P release,set-svn-revision -Dmaven.test.skip=${test.skip} -Drelease.name=${release.name}" />
+                                </exec>
+        </target>
 
-	<target name="notes">
-		<copy todir="${zip.dir}" file="${basedir}/README.TXT" failonerror="${failoncopy}">
-			<filterchain>
-				<replacetokens>
-					<token key="VERSION" value="${release.version}" />
-					<token key="SCTP_VERSION" value="${sctp.version}" />
-					<token key="ASN_VERSION" value="${asn.version}" />
-					<token key="STREAM_VERSION" value="${stream.version}" />
-					<token key="SS7_VERSION" value="${ss7.version}" />
-				</replacetokens>
-			</filterchain>
-		</copy>
-	</target>
+        <target name="notes">
+                <copy todir="${zip.dir}" file="${basedir}/README.TXT" failonerror="${failoncopy}">
+                        <filterchain>
+                                <replacetokens>
+                                        <token key="VERSION" value="${release.version}" />
+                                        <token key="SCTP_VERSION" value="${sctp.version}" />
+                                        <token key="ASN_VERSION" value="${asn.version}" />
+                                        <token key="STREAM_VERSION" value="${stream.version}" />
+                                        <token key="SS7_VERSION" value="${ss7.version}" />
+                                </replacetokens>
+                        </filterchain>
+                </copy>
+        </target>
 
-	<target name="copy-asn">
-		<echo>Copy ASN</echo>
-		<copy todir="${zip.dir}/asn" failonerror="${failoncopy}">
-			<fileset dir="${checkout.basedir}/asn/release/${release.name}">
-				<include name="**" />
-			</fileset>
-		</copy>
- 		<echo>Copy ASN Docs</echo>
+        <target name="copy-asn">
+                <echo>Copy ASN</echo>
+                <copy todir="${zip.dir}/asn" failonerror="${failoncopy}">
+                        <fileset dir="${checkout.basedir}/asn/release/${release.name}">
+                                <include name="**" />
+                        </fileset>
+                </copy>
+                <echo>Copy ASN Docs</echo>
                 <copy todir="${zip.dir}/asn/docs" failonerror="${failoncopy}">
-                        <fileset dir="${checkout.basedir}/asn/docs/jdocbook-mobicents/target/docbook/docbook/publish">
+                        <fileset dir="${checkout.basedir}/asn/docs/jdocbook-mobicents/target/docbook/publish">
                                 <include name="**" />
                         </fileset>
                 </copy>  
-	</target>
+        </target>
         <target name="copy-sctp">
                 <echo>Copy SCTP</echo>
                 <copy todir="${zip.dir}/sctp" failonerror="${failoncopy}">
@@ -137,116 +137,128 @@
                                 <include name="**" />
                         </fileset>
                 </copy>
-                
+               
                 <echo>Copy SCTP Docs</echo>
                 <copy todir="${zip.dir}/sctp/docs" failonerror="${failoncopy}">
-                        <fileset dir="${checkout.basedir}/sctp/docs/jdocbook-mobicents/target/docbook/docbook/publish">
+                        <fileset dir="${checkout.basedir}/sctp/docs/jdocbook-mobicents/target/docbook/publish">
                                 <include name="**" />
                         </fileset>
-                </copy>                 
-        </target> 
-	<target name="copy-stream">
-		<echo>Copy Stream</echo>
-		<copy todir="${zip.dir}/stream" failonerror="${failoncopy}">
-			<fileset dir="${checkout.basedir}/stream/release/${release.name}">
-				<include name="**" />
-			</fileset>
-		</copy>
-	</target>
-	<target name="copy-protocols-ss7">
-		<echo>Copy SS7 Service</echo>
-		<copy todir="${zip.dir}/ss7/mobicents-ss7-service" failonerror="${failoncopy}">
-			<fileset dir="${checkout.basedir}/ss7/service/target/mobicents-ss7-service">
-				<include name="**" />
-			</fileset>
-		</copy>
+                </copy>                
+        </target>
+        <target name="copy-stream">
+                <echo>Copy Stream</echo>
+                <copy todir="${zip.dir}/stream" failonerror="${failoncopy}">
+                        <fileset dir="${checkout.basedir}/stream/release/${release.name}">
+                                <include name="**" />
+                        </fileset>
+                </copy>
+        </target>
+        <target name="copy-protocols-ss7">
+                <echo>Copy SS7 Service</echo>
+                <copy todir="${zip.dir}/ss7/mobicents-ss7-service" failonerror="${failoncopy}">
+                        <fileset dir="${checkout.basedir}/ss7/service/target/mobicents-ss7-service">
+                                <include name="**" />
+                        </fileset>
+                </copy>
 
-		<echo>Copy sgw</echo>
-		<copy todir="${zip.dir}/ss7/mobicents-sgw" failonerror="${failoncopy}">
-			<fileset dir="${checkout.basedir}/ss7/sgw/boot/target/mobicents-sgw">
-				<include name="**" />
-			</fileset>
-		</copy>
+                <echo>Copy sgw</echo>
+                <copy todir="${zip.dir}/ss7/mobicents-sgw" failonerror="${failoncopy}">
+                        <fileset dir="${checkout.basedir}/ss7/sgw/boot/target/mobicents-sgw">
+                                <include name="**" />
+                        </fileset>
+                </copy>
 
-		<echo>Copy SS7 Simulator</echo>
-		<copy todir="${zip.dir}/ss7/mobicents-ss7-simulator" failonerror="${failoncopy}">
-			<fileset dir="${checkout.basedir}/ss7/tools/simulator/bootstrap/target/simulator-ss7">
-				<include name="**" />
-			</fileset>
-		</copy>
+                <echo>Copy SS7 Simulator</echo>
+                <copy todir="${zip.dir}/ss7/mobicents-ss7-simulator" failonerror="${failoncopy}">
+                        <fileset dir="${checkout.basedir}/ss7/tools/simulator/bootstrap/target/simulator-ss7">
+                                <include name="**" />
+                        </fileset>
+                </copy>
 
-		<echo>Copy Shell</echo>
-		<copy todir="${zip.dir}/ss7/shell" failonerror="${failoncopy}">
-			<fileset dir="${checkout.basedir}/ss7/management/shell/target/release">
-				<include name="**" />
-			</fileset>
-		</copy>
+                <echo>Copy Protocols</echo>
+                <copy todir="${zip.dir}/ss7/protocols" failonerror="${failoncopy}">
+                        <fileset dir="${checkout.basedir}/ss7/tcap/release/${release.name}">
+                                <include name="**" />
+                        </fileset>
+                        <fileset dir="${checkout.basedir}/ss7/map/release/${release.name}">
+                                <include name="**" />
+                        </fileset>
+                        <fileset dir="${checkout.basedir}/ss7/isup/release/${release.name}">
+                                <include name="**" />
+                        </fileset>
+                        <fileset dir="${checkout.basedir}/ss7/cap/release/${release.name}">
+                                <include name="**" />
+                        </fileset>
+                        <fileset dir="${checkout.basedir}/ss7/inap/release/${release.name}">
+                                <include name="**" />
+                        </fileset>
+                </copy>
 
-		<echo>Copy Protocols</echo>
-		<copy todir="${zip.dir}/ss7/protocols" failonerror="${failoncopy}">
-			<fileset dir="${checkout.basedir}/ss7/tcap/release/${release.name}">
-				<include name="**" />
-			</fileset>
-			<fileset dir="${checkout.basedir}/ss7/map/release/${release.name}">
-				<include name="**" />
-			</fileset>
-			<fileset dir="${checkout.basedir}/ss7/isup/release/${release.name}">
-				<include name="**" />
-			</fileset>
-			<fileset dir="${checkout.basedir}/ss7/cap/release/${release.name}">
-				<include name="**" />
-			</fileset>
-			<fileset dir="${checkout.basedir}/ss7/inap/release/${release.name}">
-				<include name="**" />
-			</fileset>
-		</copy>
+                <echo>Copy Shell</echo>
+                <copy todir="${zip.dir}/ss7/shell/lib" failonerror="${failoncopy}">
+                        <fileset dir="${checkout.basedir}/ss7/management/shell-client/target/mobicents-cli/lib">
+                                <include name="**" />
+                        </fileset>
+                </copy>
+                <copy todir="${zip.dir}/ss7/shell/bin" failonerror="${failoncopy}">
+                        <fileset dir="${checkout.basedir}/ss7/management/shell-client/target/mobicents-cli/bin">
+                                <include name="**" />
+                        </fileset>
+                </copy>
+                <copy file="${checkout.basedir}/ss7/hardware/cli/target/linkset-cli.jar" todir="${zip.dir}/ss7/shell/lib" failonerror="${failoncopy}" />
+                <copy file="${checkout.basedir}/ss7/m3ua/cli/m3ua/target/m3ua-cli-m3ua.jar" todir="${zip.dir}/ss7/shell/lib" failonerror="${failoncopy}" />
+                <copy file="${checkout.basedir}/ss7/m3ua/cli/sctp/target/m3ua-cli-sctp.jar" todir="${zip.dir}/ss7/shell/lib" failonerror="${failoncopy}" />
+                <copy file="${checkout.basedir}/ss7/sccp/sccp-cli/target/sccp-cli.jar" todir="${zip.dir}/ss7/shell/lib" failonerror="${failoncopy}" />
 
-		<echo>Copy Native</echo>
-		<copy todir="${zip.dir}/ss7/native" failonerror="${failoncopy}">
-			<fileset dir="${checkout.basedir}/ss7/hardware/dahdi/native/linux/target">
-				<include name="*.so" />
-			</fileset>
-			<fileset dir="${checkout.basedir}/ss7/hardware/dialogic/native/linux/target">
-				<include name="*.so" />
-			</fileset>
-		</copy>
 
-		<echo>Copy Docs</echo>
-		<copy todir="${zip.dir}/ss7/docs" failonerror="${failoncopy}">
-			<fileset dir="${checkout.basedir}/ss7/docs/jdocbook-mobicents/target/docbook/docbook/publish">
-				<include name="**" />
-			</fileset>
-		</copy>
 
-		<echo>Copy Build File</echo>
-		<copy file="${checkout.basedir}/ss7/release/release-build.xml" tofile="${zip.dir}/ss7/build.xml" failonerror="${failoncopy}" />
-	</target>
+                <echo>Copy Native</echo>
+                <copy todir="${zip.dir}/ss7/native" failonerror="false">
+                        <fileset dir="${checkout.basedir}/ss7/hardware/dahdi/native/linux/target">
+                                <include name="*.so" />
+                        </fileset>
+                        <fileset dir="${checkout.basedir}/ss7/hardware/dialogic/native/linux/target">
+                                <include name="*.so" />
+                        </fileset>
+                </copy>
 
-	<target name="zip.binary">
-		<zip destfile="${zip.file.destination.dir}/${zip.file.name}.zip">
-			<zipfileset dir="${zip.dir}" excludes="zip">
-			</zipfileset>
-		</zip>
+                <echo>Copy Docs</echo>
+                <copy todir="${zip.dir}/ss7/docs" failonerror="${failoncopy}">
+                        <fileset dir="${checkout.basedir}/ss7/docs/jdocbook-mobicents/target/docbook/publish">
+                                <include name="**" />
+                        </fileset>
+                </copy>
 
-		<antcall target="checksum">
-			<param name="source.file" value="${zip.file.destination.dir}/${zip.file.name}.zip" />
-			<param name="algorithm" value="sha1" />
-		</antcall>
-	</target>
-	<target name="zip.src">
-		<mkdir dir="${zip.file.destination.dir}"/>
-		<zip destfile="${zip.file.destination.dir}/${zip.file.name}-src.zip">
-			<zipfileset dir="${checkout.basedir}" excludes="zip">
-			</zipfileset>
-		</zip>
+                <echo>Copy Build File</echo>
+                <copy file="${checkout.basedir}/ss7/release/release-build.xml" tofile="${zip.dir}/ss7/build.xml" failonerror="${failoncopy}" />
+        </target>
 
-		<antcall target="checksum">
-			<param name="source.file" value="${zip.file.destination.dir}/${zip.file.name}-src.zip" />
-			<param name="algorithm" value="sha1" />
-		</antcall>
+        <target name="zip.binary">
+                <zip destfile="${zip.file.destination.dir}/${zip.file.name}.zip">
+                        <zipfileset dir="${zip.dir}" excludes="zip">
+                        </zipfileset>
+                </zip>
 
-	</target>
-	<target name="checksum">
-		<checksum file="${source.file}" algorithm="${algorithm}" fileext=".${algorithm}.asc" forceOverwrite="yes" />
-	</target>
+                <antcall target="checksum">
+                        <param name="source.file" value="${zip.file.destination.dir}/${zip.file.name}.zip" />
+                        <param name="algorithm" value="sha1" />
+                </antcall>
+        </target>
+        <target name="zip.src">
+                <mkdir dir="${zip.file.destination.dir}"/>
+                <zip destfile="${zip.file.destination.dir}/${zip.file.name}-src.zip">
+                        <zipfileset dir="${checkout.basedir}" excludes="zip">
+                        </zipfileset>
+                </zip>
+
+                <antcall target="checksum">
+                        <param name="source.file" value="${zip.file.destination.dir}/${zip.file.name}-src.zip" />
+                        <param name="algorithm" value="sha1" />
+                </antcall>
+
+        </target>
+        <target name="checksum">
+                <checksum file="${source.file}" algorithm="${algorithm}" fileext=".${algorithm}.asc" forceOverwrite="yes" />
+        </target>
 </project>
+

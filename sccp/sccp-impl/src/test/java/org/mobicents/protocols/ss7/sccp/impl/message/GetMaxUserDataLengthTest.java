@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -25,15 +25,11 @@ package org.mobicents.protocols.ss7.sccp.impl.message;
 import static org.testng.Assert.assertEquals;
 
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
+import org.mobicents.protocols.ss7.sccp.LongMessageRuleType;
+import org.mobicents.protocols.ss7.sccp.RuleType;
 import org.mobicents.protocols.ss7.sccp.impl.Mtp3UserPartImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
-import org.mobicents.protocols.ss7.sccp.impl.router.LoadSharingAlgorithm;
-import org.mobicents.protocols.ss7.sccp.impl.router.LongMessageRule;
-import org.mobicents.protocols.ss7.sccp.impl.router.LongMessageRuleType;
-import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3Destination;
-import org.mobicents.protocols.ss7.sccp.impl.router.Mtp3ServiceAccessPoint;
-import org.mobicents.protocols.ss7.sccp.impl.router.Rule;
-import org.mobicents.protocols.ss7.sccp.impl.router.RuleType;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.testng.annotations.AfterMethod;
@@ -59,24 +55,25 @@ public class GetMaxUserDataLengthTest {
 	public void tearDown() {
 	}
 
-	@Test(groups = { "SccpMessage", "MessageLength"})
+	@Test(groups = { "SccpMessage", "MessageLength" })
 	public void testMessageLength() throws Exception {
 
 		SccpAddress a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2, null, 8);
-		SccpAddress a2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(0, "1122334455"), 18);
+		SccpAddress a2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(0,
+				"1122334455"), 18);
 
 		Mtp3UserPartImpl_2 mtp3UserPart = new Mtp3UserPartImpl_2();
 		stack.setMtp3UserPart(1, mtp3UserPart);
-		Mtp3ServiceAccessPoint sap = new Mtp3ServiceAccessPoint(1, 1, 2);
-		stack.getRouter().addMtp3ServiceAccessPoint(1, sap);
-		Mtp3Destination dest = new Mtp3Destination(2, 2, 0, 255, 255);
-		sap.addMtp3Destination(1, dest);
-		SccpAddress primaryAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 2, GlobalTitle.getInstance(0, "1122334455"), 18);
+		stack.getRouter().addMtp3ServiceAccessPoint(1, 1, 1, 2);
+
+		stack.getRouter().addMtp3Destination(1, 1, 2, 2, 0, 255, 255);
+
+		SccpAddress primaryAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 2,
+				GlobalTitle.getInstance(0, "1122334455"), 18);
 		stack.getRouter().addPrimaryAddress(1, primaryAddress);
-		SccpAddress pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 2, GlobalTitle.getInstance(0, "1122334455"), 18);
-		Rule rule = new Rule(RuleType.Solitary, LoadSharingAlgorithm.Undefined, pattern, "K");
-		rule.setPrimaryAddressId(1);
-		stack.getRouter().addRule(1, rule);
+		SccpAddress pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 2,
+				GlobalTitle.getInstance(0, "1122334455"), 18);
+		stack.getRouter().addRule(1, RuleType.Solitary, LoadSharingAlgorithm.Undefined, pattern, "K", 1, -1);
 
 		int len = stack.getSccpProvider().getMaxUserDataLength(a1, a2);
 		assertEquals(len, 248);
@@ -84,14 +81,12 @@ public class GetMaxUserDataLengthTest {
 		len = stack.getSccpProvider().getMaxUserDataLength(a2, a1);
 		assertEquals(len, 248);
 
-		LongMessageRule lmr = new LongMessageRule(2, 2, LongMessageRuleType.XudtEnabled);
-		stack.getRouter().addLongMessageRule(1, lmr);
+		stack.getRouter().addLongMessageRule(1, 2, 2, LongMessageRuleType.XudtEnabled);
 
 		len = stack.getSccpProvider().getMaxUserDataLength(a1, a2);
 		assertEquals(len, 2560);
-
-		lmr = new LongMessageRule(2, 2, LongMessageRuleType.LudtEnabled);
-		stack.getRouter().addLongMessageRule(1, lmr);
+		stack.getRouter().removeLongMessageRule(1);
+		stack.getRouter().addLongMessageRule(1, 2, 2, LongMessageRuleType.LudtEnabled);
 
 		len = stack.getSccpProvider().getMaxUserDataLength(a1, a2);
 		assertEquals(len, 231);
@@ -114,7 +109,6 @@ public class GetMaxUserDataLengthTest {
 		public int getMaxUserDataLength(int dpc) {
 			return mtpMsgLen;
 		}
-	
+
 	}
 }
-

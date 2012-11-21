@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,14 +19,14 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.m3ua.Asp;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
-import org.mobicents.protocols.ss7.m3ua.impl.fsm.State;
+import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSMState;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
 import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
 import org.mobicents.protocols.ss7.m3ua.message.MessageType;
@@ -43,32 +43,32 @@ public class THLocalAsActToPendRemAspDwn implements TransitionHandler {
 
 	private static final Logger logger = Logger.getLogger(THLocalAsActToPendRemAspDwn.class);
 
-	private As as = null;
+	private AsImpl asImpl = null;
 	private FSM fsm;
 
 	private int lbCount = 0;
 
-	public THLocalAsActToPendRemAspDwn(As as, FSM fsm) {
-		this.as = as;
+	public THLocalAsActToPendRemAspDwn(AsImpl asImpl, FSM fsm) {
+		this.asImpl = asImpl;
 		this.fsm = fsm;
 	}
 
-	public boolean process(State state) {
+	public boolean process(FSMState state) {
 		try {
-			Asp remAsp = (Asp) this.fsm.getAttribute(As.ATTRIBUTE_ASP);
+			AspImpl remAsp = (AspImpl) this.fsm.getAttribute(AsImpl.ATTRIBUTE_ASP);
 
-			if (this.as.getTrafficModeType().getMode() == TrafficModeType.Broadcast) {
+			if (this.asImpl.getTrafficModeType().getMode() == TrafficModeType.Broadcast) {
 				// We don't support this
 				return false;
 
 			}
 
-			if (this.as.getTrafficModeType().getMode() == TrafficModeType.Loadshare) {
+			if (this.asImpl.getTrafficModeType().getMode() == TrafficModeType.Loadshare) {
 				this.lbCount = 0;
 
-				for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n
+				for (FastList.Node<Asp> n = this.asImpl.appServerProcs.head(), end = this.asImpl.appServerProcs.tail(); (n = n
 						.getNext()) != end;) {
-					Asp remAspImpl = n.getValue();
+					AspImpl remAspImpl = (AspImpl) n.getValue();
 
 					FSM aspPeerFSM = remAspImpl.getPeerFSM();
 					AspState aspState = AspState.getState(aspPeerFSM.getState().getName());
@@ -78,7 +78,7 @@ public class THLocalAsActToPendRemAspDwn implements TransitionHandler {
 					}
 				}// for
 
-				if (this.lbCount >= this.as.getMinAspActiveForLb()) {
+				if (this.lbCount >= this.asImpl.getMinAspActiveForLb()) {
 					// we still have more ASP's ACTIVE for lb. Don't change
 					// state
 					return false;
@@ -91,9 +91,9 @@ public class THLocalAsActToPendRemAspDwn implements TransitionHandler {
 					// But we are below threshold. Send "Ins. ASPs" to INACTIVE
 					// ASP's but not to ASP that caused this transition as it is
 					// already DOWN
-					for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n
-							.getNext()) != end;) {
-						Asp remAspTemp = n.getValue();
+					for (FastList.Node<Asp> n = this.asImpl.appServerProcs.head(), end = this.asImpl.appServerProcs
+							.tail(); (n = n.getNext()) != end;) {
+						AspImpl remAspTemp = (AspImpl) n.getValue();
 
 						FSM aspPeerFSM = remAspTemp.getPeerFSM();
 						AspState aspState = AspState.getState(aspPeerFSM.getState().getName());
@@ -113,9 +113,9 @@ public class THLocalAsActToPendRemAspDwn implements TransitionHandler {
 			// We have reached here means AS is transitioning to be PENDING.
 			// Send new AS STATUS to all INACTIVE APS's
 
-			for (FastList.Node<Asp> n = this.as.getAspList().head(), end = this.as.getAspList().tail(); (n = n
+			for (FastList.Node<Asp> n = this.asImpl.appServerProcs.head(), end = this.asImpl.appServerProcs.tail(); (n = n
 					.getNext()) != end;) {
-				remAsp = n.getValue();
+				remAsp = (AspImpl) n.getValue();
 
 				FSM aspPeerFSM = remAsp.getPeerFSM();
 				AspState aspState = AspState.getState(aspPeerFSM.getState().getName());
@@ -133,18 +133,19 @@ public class THLocalAsActToPendRemAspDwn implements TransitionHandler {
 		return true;
 	}
 
-	private Notify createNotify(Asp remAsp, int type, int info) {
-		Notify msg = (Notify) this.as.getMessageFactory().createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
+	private Notify createNotify(AspImpl remAsp, int type, int info) {
+		Notify msg = (Notify) this.asImpl.getMessageFactory()
+				.createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
 
-		Status status = this.as.getParameterFactory().createStatus(type, info);
+		Status status = this.asImpl.getParameterFactory().createStatus(type, info);
 		msg.setStatus(status);
 
 		if (remAsp.getASPIdentifier() != null) {
 			msg.setASPIdentifier(remAsp.getASPIdentifier());
 		}
 
-		if (this.as.getRoutingContext() != null) {
-			msg.setRoutingContext(this.as.getRoutingContext());
+		if (this.asImpl.getRoutingContext() != null) {
+			msg.setRoutingContext(this.asImpl.getRoutingContext());
 		}
 
 		return msg;

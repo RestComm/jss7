@@ -1,0 +1,32 @@
+Name
+	m3ua as add
+
+SYNOPSIS
+	m3ua as add <as-name> <asp-name>
+
+DESCRIPTION
+	This command is used to assign an Application Server Process to an Application 
+	Server. The AS and ASP must both be created prior to executing this command. 
+
+	You can configure an ASP to process signaling traffic related to more than one AS,
+	over a single SCTP Association. However you must ensure that all the Application 
+	Servers that share the ASP are configured with a valid Routing Context value.
+
+PARAMETERS
+
+	Standard Parameters
+
+	<as-name>		-	Name of the AS to which this ASP is being assigned.
+
+	<asp-name>		-	Name of the ASP that is being assigned to the AS.
+
+EXAMPLES
+	m3ua as add AS1 ASP1
+	- The above command will assign ASP1 to AS1. 
+
+SEE ALSO
+	m3ua, m3ua as create, m3ua as destroy, m3ua as show, m3ua asp create, 
+	m3ua asp destroy, m3ua asp show, m3ua asp start, m3ua asp stop, m3ua as remove, 
+	m3ua route add, m3ua route remove, m3ua route show.
+
+

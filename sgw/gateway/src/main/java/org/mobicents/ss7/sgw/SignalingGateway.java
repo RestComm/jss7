@@ -22,11 +22,8 @@
 
 package org.mobicents.ss7.sgw;
 
-import java.io.IOException;
-
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.scheduler.Scheduler;
-import org.mobicents.protocols.ss7.scheduler.Task;
 
 public class SignalingGateway {
 
@@ -34,7 +31,6 @@ public class SignalingGateway {
 
     private static final Logger logger = Logger.getLogger(SignalingGateway.class);
 
-    private ShellExecutor shellExecutor = null;
     private NodalInterworkingFunction nodalInterworkingFunction = null;
 
     private boolean isActive = false;
@@ -51,14 +47,6 @@ public class SignalingGateway {
         this.scheduler = scheduler;        
     }
     
-    public ShellExecutor getShellExecutor() {
-        return shellExecutor;
-    }
-
-    public void setShellExecutor(ShellExecutor shellExecutor) {
-        this.shellExecutor = shellExecutor;    
-    }
-
     public NodalInterworkingFunction getNodalInterworkingFunction() {
         return nodalInterworkingFunction;
     }
