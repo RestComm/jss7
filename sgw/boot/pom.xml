@@ -9,6 +9,10 @@
 	<artifactId>boot</artifactId>
 
 	<name>Mobicents SS7 :: SGW :: Boot :: ${pom.artifactId}</name>
+	
+	<properties>
+		<dahdi.linux.so.version>2.0.0.BETA3</dahdi.linux.so.version>
+	</properties>
 
 	<dependencies>
 		<dependency>
@@ -89,7 +93,7 @@
 										libmobicents-dahdi-linux
 									</artifactId>
 									<version>
-										${pom.version}
+										${dahdi.linux.so.version}
 									</version>
 									<type>so</type>
 									<overWrite>true</overWrite>

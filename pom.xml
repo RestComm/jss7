@@ -3,8 +3,8 @@
 
 	<parent>
 		<artifactId>mobicents-parent</artifactId>
-                <groupId>org.mobicents</groupId>
-                <version>6.1.2.GA-TelScale</version>
+        <groupId>org.mobicents</groupId>
+        <version>6.1.2.GA-TelScale</version>
 	</parent>
 
 	<artifactId>ss7-parent</artifactId>
