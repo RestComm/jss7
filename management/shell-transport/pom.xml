@@ -36,9 +36,6 @@
 	<profiles>
 		<profile>
 			<id>mobicents</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
 			<properties>
 				<cli.name>Mobicents CLI</cli.name>
 				<cli.vendor>TeleStax</cli.vendor>
@@ -48,6 +45,9 @@
 		</profile>
 		<profile>
 			<id>telscale</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
 			<properties>
 				<cli.name>TelScale CLI</cli.name>
 				<cli.vendor>TeleStax</cli.vendor>
