@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api;
 
+import java.io.Serializable;
+
 import javolution.util.FastMap;
 
 /**
@@ -30,7 +32,7 @@ import javolution.util.FastMap;
  * @author sergey vetyutnev
  * 
  */
-public class MAPApplicationContext {
+public class MAPApplicationContext implements Serializable {
 
 	private static long[] oidTemplate = new long[] { 0, 4, 0, 0, 1, 0, 0, 0 };
 
