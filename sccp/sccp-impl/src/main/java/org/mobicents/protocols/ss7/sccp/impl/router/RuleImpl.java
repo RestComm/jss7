@@ -532,7 +532,6 @@ public class RuleImpl implements Rule, Serializable {
 		buff.append(OPEN_BRACKET);
 		buff.append(this.mask);
 		buff.append(CLOSE_BRACKET);
-		buff.append("\n");
 		return buff.toString();
 	}
 }
