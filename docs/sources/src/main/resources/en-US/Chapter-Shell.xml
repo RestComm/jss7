@@ -80,7 +80,7 @@ telscale(10.65.208.215:3435)>
    <section id="disconnect_shell">
 		<title>Disconnect</title>
 		<para>Command to disconnect has following structure:</para>
-		<programlisting>ss7 discconnect </programlisting>
+		<programlisting>ss7 disconnect</programlisting>
 		<example>
 			<title>Disconnect</title>
 			<screen>
