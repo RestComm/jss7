@@ -55,7 +55,7 @@ set ARGS=""
 
 rem Find run.jar, or we can't continue
 
-set RUNJAR=%SHELL_HOME%\bin\mobicents-ss7-shell.jar
+set RUNJAR=%SHELL_HOME%\lib\mobicents-ss7-shell.jar
 if exist "%RUNJAR%" goto FOUND_RUN_JAR
 echo Could not locate %RUNJAR%. Please check that you are in the
 echo bin directory when running this script.
@@ -115,7 +115,7 @@ rem JPDA options. Uncomment and modify as appropriate to enable remote debugging
 rem set JAVA_OPTS=-Xdebug -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y %JAVA_OPTS%
 
 rem Setup the java endorsed dirs
-set SHELL_ENDORSED_DIRS=%SHELL_HOME%\bin\lib
+set SHELL_ENDORSED_DIRS=%SHELL_HOME%\lib
 
 
 echo ===============================================================================
