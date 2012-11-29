@@ -103,7 +103,7 @@ public class ExtForwInfoImpl extends SequenceBase implements ExtForwInfo {
 					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".ssCode: bad tag or tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.ssCode = new SSCodeImpl();
-				((ExtSSStatusImpl) this.ssCode).decodeAll(ais);
+				((SSCodeImpl) this.ssCode).decodeAll(ais);
 				break;
 			
 			case 1:	// forwardingFeatureList

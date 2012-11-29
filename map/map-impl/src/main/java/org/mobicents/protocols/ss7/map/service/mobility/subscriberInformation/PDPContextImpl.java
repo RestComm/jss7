@@ -483,7 +483,7 @@ public class PDPContextImpl extends SequenceBase implements PDPContext {
 					break;
 
 				case _ID_sipto_Permission:
-					if (tag != Tag.ENUMERATED || !ais.isTagPrimitive())
+					if (!ais.isTagPrimitive())
 						throw new MAPParsingComponentException("Error while decoding sipToPermission: Parameter bad tag or tag class or not primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					int i1 = (int) ais.readInteger();
@@ -491,7 +491,7 @@ public class PDPContextImpl extends SequenceBase implements PDPContext {
 					break;
 
 				case _ID_lipa_Permission:
-					if (tag != Tag.ENUMERATED || !ais.isTagPrimitive())
+					if (!ais.isTagPrimitive())
 						throw new MAPParsingComponentException("Error while decoding lipaPermission: Parameter bad tag or tag class or not primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					int i2 = (int) ais.readInteger();
@@ -510,23 +510,24 @@ public class PDPContextImpl extends SequenceBase implements PDPContext {
 				ais.advanceElement();
 				break;
 			}
-
-			if (this.pdpContextId < 1) {
-				throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": A mandatory parameter ContextId has not found",
-						MAPParsingComponentExceptionReason.MistypedParameter);
-			}
-			if (this.pdpType != null) {
-				throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": A mandatory parameter pdpType has not found",
-						MAPParsingComponentExceptionReason.MistypedParameter);
-			}
-			if (this.qosSubscribed != null) {
-				throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": A mandatory parameter qosSubscribed has not found",
-						MAPParsingComponentExceptionReason.MistypedParameter);
-			}
-			if (this.apn != null) {
-				throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": A mandatory parameter apn has not found",
-						MAPParsingComponentExceptionReason.MistypedParameter);
-			}
+		}
+		
+		if (this.pdpContextId < 1) {
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": A mandatory parameter ContextId has not found",
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+		if (this.pdpType == null) {
+//			System.out.println(" this.pdpType " + this.pdpType  );
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": A mandatory parameter pdpType has not found",
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+		if (this.qosSubscribed == null) {
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": A mandatory parameter qosSubscribed has not found",
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+		if (this.apn == null) {
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": A mandatory parameter apn has not found",
+					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
