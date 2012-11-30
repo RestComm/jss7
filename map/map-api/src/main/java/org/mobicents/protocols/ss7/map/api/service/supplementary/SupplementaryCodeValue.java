@@ -70,6 +70,8 @@ public enum SupplementaryCodeValue {
 
 	public static SupplementaryCodeValue getInstance(int code) {
 		switch (code) {
+		case 0x0:
+			return SupplementaryCodeValue.allServices;
 		case 0x10:
 			return SupplementaryCodeValue.allSpeechTransmissionServices;
 		case 0x11:

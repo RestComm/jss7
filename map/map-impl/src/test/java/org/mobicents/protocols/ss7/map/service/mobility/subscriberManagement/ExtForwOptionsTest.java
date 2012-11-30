@@ -58,7 +58,7 @@ public class ExtForwOptionsTest {
 		assertTrue(prim.getNotificationToCallingParty());
 		assertTrue(prim.getNotificationToForwardingParty());
 		assertTrue(!prim.getRedirectingPresentation());
-		assertTrue(prim.getExtForwOptionsForwardingReason().getCode() == ExtForwOptionsForwardingReason.msBusy.getCode());
+		assertEquals(prim.getExtForwOptionsForwardingReason(), ExtForwOptionsForwardingReason.msBusy);
 	}
 	
 	@Test(groups = { "functional.encode", "primitives" })

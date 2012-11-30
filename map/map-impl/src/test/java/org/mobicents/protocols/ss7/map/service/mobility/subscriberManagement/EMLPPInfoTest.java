@@ -23,21 +23,15 @@ package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
-import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.InterCUGRestrictions;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.InterCUGRestrictionsValue;
+import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.testng.annotations.Test;
 
 /**
@@ -53,18 +47,18 @@ public class EMLPPInfoTest {
 				11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
 	};
 	
-	public static MAPExtensionContainer getMapExtensionContainer() {
-		MAPParameterFactory mapServiceFactory = new MAPParameterFactoryImpl(); 
-		
-		ArrayList<MAPPrivateExtension> al = new ArrayList<MAPPrivateExtension>();
-		al.add(mapServiceFactory
-				.createMAPPrivateExtension(new long[] { 1, 2, 3, 4 }, new byte[] { 11, 12, 13, 14, 15 }));
-		al.add(mapServiceFactory.createMAPPrivateExtension(new long[] { 1, 2, 3, 6 }, null));
-		al.add(mapServiceFactory.createMAPPrivateExtension(new long[] { 1, 2, 3, 5 }, new byte[] { 21, 22, 23, 24, 25,
-				26 }));
-		MAPExtensionContainer cnt = mapServiceFactory.createMAPExtensionContainer(al, new byte[] { 31, 32, 33 });
-		return cnt;
-	}
+//	public static MAPExtensionContainer getMapExtensionContainer() {
+//		MAPParameterFactory mapServiceFactory = new MAPParameterFactoryImpl(); 
+//		
+//		ArrayList<MAPPrivateExtension> al = new ArrayList<MAPPrivateExtension>();
+//		al.add(mapServiceFactory
+//				.createMAPPrivateExtension(new long[] { 1, 2, 3, 4 }, new byte[] { 11, 12, 13, 14, 15 }));
+//		al.add(mapServiceFactory.createMAPPrivateExtension(new long[] { 1, 2, 3, 6 }, null));
+//		al.add(mapServiceFactory.createMAPPrivateExtension(new long[] { 1, 2, 3, 5 }, new byte[] { 21, 22, 23, 24, 25,
+//				26 }));
+//		MAPExtensionContainer cnt = mapServiceFactory.createMAPExtensionContainer(al, new byte[] { 31, 32, 33 });
+//		return cnt;
+//	}
 
 	@Test(groups = { "functional.decode", "primitives" })
 	public void testDecode() throws Exception {
@@ -81,11 +75,12 @@ public class EMLPPInfoTest {
 		assertTrue(prim.getMaximumentitledPriority() == 2);
 		assertTrue(prim.getDefaultPriority() == 1);
 		assertNotNull(extensionContainer);
+		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
 	}
 	
 	@Test(groups = { "functional.encode", "primitives" })
 	public void testEncode() throws Exception {
-		MAPExtensionContainer extensionContainer = getMapExtensionContainer();
+		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
 		EMLPPInfoImpl prim = new EMLPPInfoImpl(2, 1, extensionContainer);
 		AsnOutputStream asn = new AsnOutputStream();
 		prim.encodeAll(asn);

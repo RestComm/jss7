@@ -31,13 +31,12 @@ import java.util.Arrays;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
-import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BearerServiceCodeValue;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtCallBarringFeature;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SupplementaryCodeValue;
+import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.mobicents.protocols.ss7.map.service.supplementary.SSCodeImpl;
 import org.testng.annotations.Test;
 
@@ -58,23 +57,6 @@ public class ExtCallBarInfoTest {
 				3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
 	};
 	
-	private byte[] getBearerServiceCodeData() {
-		return new byte[] { 22 };
-	}
-	
-	public static MAPExtensionContainer getMapExtensionContainer() {
-		MAPParameterFactory mapServiceFactory = new MAPParameterFactoryImpl(); 
-		
-		ArrayList<MAPPrivateExtension> al = new ArrayList<MAPPrivateExtension>();
-		al.add(mapServiceFactory
-				.createMAPPrivateExtension(new long[] { 1, 2, 3, 4 }, new byte[] { 11, 12, 13, 14, 15 }));
-		al.add(mapServiceFactory.createMAPPrivateExtension(new long[] { 1, 2, 3, 6 }, null));
-		al.add(mapServiceFactory.createMAPPrivateExtension(new long[] { 1, 2, 3, 5 }, new byte[] { 21, 22, 23, 24, 25,
-				26 }));
-		MAPExtensionContainer cnt = mapServiceFactory.createMAPExtensionContainer(al, new byte[] { 31, 32, 33 });
-		return cnt;
-	}
-
 	@Test(groups = { "functional.decode", "primitives" })
 	public void testDecode() throws Exception {
 		byte[] data = this.getData();
@@ -82,24 +64,27 @@ public class ExtCallBarInfoTest {
 		int tag = asn.readTag();
 		ExtCallBarInfoImpl prim = new ExtCallBarInfoImpl();
 		prim.decodeAll(asn);
-		
+
 		assertEquals(tag, Tag.SEQUENCE);
 		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
-		
+
 		MAPExtensionContainer extensionContainer = prim.getExtensionContainer();
-		assertTrue(prim.getSsCode().getData() == SupplementaryCodeValue.allServices.getCode());
+		assertEquals(prim.getSsCode().getSupplementaryCodeValue(), SupplementaryCodeValue.allServices);
 		assertNotNull(prim.getCallBarringFeatureList());
 		assertTrue(prim.getCallBarringFeatureList().size() == 1);
-		assertNotNull(prim.getCallBarringFeatureList().get(0));
+		ExtCallBarringFeature ec = prim.getCallBarringFeatureList().get(0);
+		assertNotNull(ec);
+		assertEquals(ec.getBasicService().getExtBearerService().getBearerServiceCodeValue(), BearerServiceCodeValue.Asynchronous9_6kbps);
 		assertNotNull(extensionContainer);
+		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
 	}
-	
+
 	@Test(groups = { "functional.encode", "primitives" })
 	public void testEncode() throws Exception {
 		SSCode ssCode = new SSCodeImpl(SupplementaryCodeValue.allServices);
-		ExtBearerServiceCodeImpl b = new ExtBearerServiceCodeImpl(this.getBearerServiceCodeData());
+		ExtBearerServiceCodeImpl b = new ExtBearerServiceCodeImpl(BearerServiceCodeValue.Asynchronous9_6kbps);
 		ExtBasicServiceCodeImpl basicService = new ExtBasicServiceCodeImpl(b);
-		MAPExtensionContainer extensionContainer = getMapExtensionContainer();
+		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
 		ExtSSStatusImpl ssStatus =  new ExtSSStatusImpl(false, false, true, true);
 		
 		ExtCallBarringFeatureImpl callBarringFeature = new ExtCallBarringFeatureImpl(basicService,

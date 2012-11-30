@@ -282,7 +282,7 @@ public class ExtSSDataImpl extends SequenceBase implements ExtSSData {
 					sb.append(", ");
 				sb.append(be.toString());
 			}
-			sb.append("]");
+			sb.append("], ");
 		}
 
 		if (this.extensionContainer != null) {

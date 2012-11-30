@@ -224,7 +224,7 @@ public class ExtForwInfoImpl extends SequenceBase implements ExtForwInfo {
 					sb.append(", ");
 				sb.append(be.toString());
 			}
-			sb.append("]");
+			sb.append("], ");
 		}
 
 		if (this.extensionContainer != null) {

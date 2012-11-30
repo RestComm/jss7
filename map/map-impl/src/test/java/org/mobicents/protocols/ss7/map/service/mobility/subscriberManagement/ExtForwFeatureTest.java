@@ -26,26 +26,24 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
-import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.FTNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNSubaddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BearerServiceCodeValue;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtForwOptions;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtForwOptionsForwardingReason;
 import org.mobicents.protocols.ss7.map.primitives.FTNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNSubaddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.testng.annotations.Test;
 
 
@@ -63,27 +61,8 @@ public class ExtForwFeatureTest {
 				3, 31, 32, 33, -118, 4, -111, 34, 34, -9 };
 	};
 	
-	private byte[] getBearerServiceCodeData() {
-		return new byte[] { 22 };
-	}
-	
 	private byte[] getISDNSubaddressStringData() {
 		return new byte[] { 2,5 };
-	}
-	
-	public static MAPExtensionContainer getMapExtensionContainer() {
-		MAPParameterFactory mapServiceFactory = new MAPParameterFactoryImpl(); 
-		
-		ArrayList<MAPPrivateExtension> al = new ArrayList<MAPPrivateExtension>();
-		al.add(mapServiceFactory
-				.createMAPPrivateExtension(new long[] { 1, 2, 3, 4 }, new byte[] { 11, 12, 13, 14, 15 }));
-		al.add(mapServiceFactory.createMAPPrivateExtension(new long[] { 1, 2, 3, 6 }, null));
-		al.add(mapServiceFactory.createMAPPrivateExtension(new long[] { 1, 2, 3, 5 }, new byte[] { 21, 22, 23, 24, 25,
-				26 }));
-
-		MAPExtensionContainer cnt = mapServiceFactory.createMAPExtensionContainer(al, new byte[] { 31, 32, 33 });
-
-		return cnt;
 	}
 
 	@Test(groups = { "functional.decode", "primitives" })
@@ -98,8 +77,7 @@ public class ExtForwFeatureTest {
 		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
 		
 		MAPExtensionContainer extensionContainer = prim.getExtensionContainer();
-		assertTrue(Arrays.equals(prim.getBasicService().getExtBearerService().getData(), 
-				this.getBearerServiceCodeData()));
+		assertEquals(prim.getBasicService().getExtBearerService().getBearerServiceCodeValue(), BearerServiceCodeValue.Asynchronous9_6kbps);
 		assertNull(prim.getBasicService().getExtTeleservice());
 		assertNotNull(prim.getSsStatus());
 		assertTrue(prim.getSsStatus().getBitA());
@@ -112,14 +90,13 @@ public class ExtForwFeatureTest {
 		assertTrue(forwardedToNumber.getAddress().equals("22228"));
 		assertEquals(forwardedToNumber.getAddressNature(), AddressNature.international_number);
 		assertEquals(forwardedToNumber.getNumberingPlan(), NumberingPlan.ISDN);
-		
+
 		assertTrue(Arrays.equals(prim.getForwardedToSubaddress().getData(), 
 				this.getISDNSubaddressStringData()));
 		assertTrue(prim.getForwardingOptions().getNotificationToCallingParty());
 		assertTrue(prim.getForwardingOptions().getNotificationToForwardingParty());
 		assertTrue(!prim.getForwardingOptions().getRedirectingPresentation());
-		assertTrue(prim.getForwardingOptions().getExtForwOptionsForwardingReason().getCode()
-				== ExtForwOptionsForwardingReason.msBusy.getCode());
+		assertEquals(prim.getForwardingOptions().getExtForwOptionsForwardingReason(), ExtForwOptionsForwardingReason.msBusy);
 		assertNotNull(prim.getNoReplyConditionTime());
 		assertTrue(prim.getNoReplyConditionTime().equals(new Integer(2)));
 		FTNAddressString longForwardedToNumber = prim.getLongForwardedToNumber();
@@ -128,13 +105,14 @@ public class ExtForwFeatureTest {
 		assertEquals(longForwardedToNumber.getAddressNature(), AddressNature.international_number);
 		assertEquals(longForwardedToNumber.getNumberingPlan(), NumberingPlan.ISDN);
 		assertNotNull(extensionContainer);
+		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
 	}
 	
 	@Test(groups = { "functional.encode", "primitives" })
 	public void testEncode() throws Exception {
-		ExtBearerServiceCodeImpl b = new ExtBearerServiceCodeImpl(this.getBearerServiceCodeData());
+		ExtBearerServiceCodeImpl b = new ExtBearerServiceCodeImpl(BearerServiceCodeValue.Asynchronous9_6kbps);
 		ExtBasicServiceCodeImpl basicService = new ExtBasicServiceCodeImpl(b);
-		MAPExtensionContainer extensionContainer = getMapExtensionContainer();
+		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
 		ExtSSStatusImpl ssStatus =  new ExtSSStatusImpl(false, false, true, true);
 		ISDNAddressString forwardedToNumber = new ISDNAddressStringImpl(
 				AddressNature.international_number, NumberingPlan.ISDN, "22228");
