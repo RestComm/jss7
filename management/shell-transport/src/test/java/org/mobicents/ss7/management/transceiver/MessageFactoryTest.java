@@ -60,6 +60,19 @@ public class MessageFactoryTest {
     }
     
     @Test
+    public void testEmptyMessage() throws IOException {
+        Message msgInput = messageFactory.createMessage("");
+        
+        ByteBuffer rxBuffer = ByteBuffer.allocateDirect(8192);
+        msgInput.encode(rxBuffer);
+        rxBuffer.flip();
+        
+        Message messageOutpu = messageFactory.createMessage(rxBuffer);
+        
+        assertEquals(messageOutpu, msgInput);
+    }
+    
+    @Test
     public void testLongMessage() throws IOException {
 
         String message = new StringBuffer()

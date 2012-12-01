@@ -107,7 +107,7 @@ public class MessageFactory {
 
         // at this point we must recheck remainder of the input buffer
         // because possible case when input buffer fits exactly to the header
-        if (!buffer.hasRemaining()) {
+        if (length>0 && !buffer.hasRemaining()) {
             return null;
         }
 

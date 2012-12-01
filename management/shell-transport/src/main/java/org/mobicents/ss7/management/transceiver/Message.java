@@ -23,6 +23,7 @@
 package org.mobicents.ss7.management.transceiver;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 /**
  * Represents the Shell Command protocol data unit
@@ -74,5 +75,33 @@ public class Message {
     public String toString() {
         return new String(data);
     }
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(data);
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Message other = (Message) obj;
+		if (!Arrays.equals(data, other.data))
+			return false;
+		return true;
+	}
 
 }
