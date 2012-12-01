@@ -908,7 +908,7 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 				factory.setM3UAManagement(this);
 				try {
 					factory.setAssociation(this.transportManagement.getAssociation(factory.associationName));
-				} catch (Exception e1) {
+				} catch (Throwable e1) {
 					logger.error(String.format(
 							"Error setting Assciation=%s for the AspFactory=%s while loading from XML",
 							factory.associationName, factory.getName()), e1);

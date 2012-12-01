@@ -131,7 +131,7 @@ public class CUGFeatureImpl extends SequenceBase implements CUGFeature {
 					((InterCUGRestrictionsImpl) this.interCugRestrictions).decodeAll(ais);						
 					break;
 				case Tag.SEQUENCE:
-					if (!ais.isTagPrimitive())
+					if (ais.isTagPrimitive())
 						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
 								+ ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
 					this.extensionContainer = new MAPExtensionContainerImpl();

@@ -41,8 +41,8 @@ public class InterCUGRestrictionsImpl extends OctetStringLength1Base implements 
 		super("InterCUGRestrictions", data);
 	}
 
-	public InterCUGRestrictionsImpl(InterCUGRestrictions val) {
-		super("InterCUGRestrictions", (val != null ? val.getData() : 0));
+	public InterCUGRestrictionsImpl(InterCUGRestrictionsValue val) {
+		super("InterCUGRestrictions", (val != null ? val.getCode() : 0));
 	}
 
 	@Override
