@@ -278,7 +278,7 @@ public class CUGSubscriptionImpl extends SequenceBase implements CUGSubscription
 					sb.append(", ");
 				sb.append(be.toString());
 			}
-			sb.append("]");
+			sb.append("], ");
 		}
 
 		if (this.extensionContainer != null) {
@@ -286,7 +286,7 @@ public class CUGSubscriptionImpl extends SequenceBase implements CUGSubscription
 			sb.append(this.extensionContainer.toString());
 		}
 
-		sb.append("]");
+		sb.append("], ");
 
 		return sb.toString();
 	}

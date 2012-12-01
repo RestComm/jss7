@@ -123,7 +123,7 @@ public class ExtSSDataImpl extends SequenceBase implements ExtSSData {
 					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".ssCode: bad tag or tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.ssCode = new SSCodeImpl();
-				((ExtSSStatusImpl) this.ssCode).decodeAll(ais);
+				((SSCodeImpl) this.ssCode).decodeAll(ais);
 				break;
 			
 			case 1:	// ss-Status
@@ -282,7 +282,7 @@ public class ExtSSDataImpl extends SequenceBase implements ExtSSData {
 					sb.append(", ");
 				sb.append(be.toString());
 			}
-			sb.append("]");
+			sb.append("], ");
 		}
 
 		if (this.extensionContainer != null) {

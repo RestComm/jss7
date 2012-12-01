@@ -89,13 +89,13 @@ public class EMLPPInfoImpl extends SequenceBase implements EMLPPInfo {
 
 			switch (num) {
 			case 0:	// maximumentitledPriority
-				if (!ais.isTagPrimitive())
+				if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || tag != Tag.INTEGER || !ais.isTagPrimitive())
 					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".maximumentitledPriority: bad tag or tag class or not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
 				this.maximumentitledPriority = (int) ais.readInteger();
 				break;
 			
 			case 1:	// defaultPriority
-				if (!ais.isTagPrimitive())
+				if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || tag != Tag.INTEGER || !ais.isTagPrimitive())
 					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".defaultPriority: bad tag or tag class or not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
 				this.defaultPriority = (int) ais.readInteger();
 				break;
@@ -105,7 +105,7 @@ public class EMLPPInfoImpl extends SequenceBase implements EMLPPInfo {
 				case Tag.CLASS_UNIVERSAL:
 					switch (tag) {
 					case Tag.SEQUENCE:
-						if (!ais.isTagPrimitive())
+						if (ais.isTagPrimitive())
 							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
 									+ ".extensionContainer: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
 						this.extensionContainer = new MAPExtensionContainerImpl();

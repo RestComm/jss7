@@ -42,15 +42,15 @@ public interface M3UAOAMMessages {
 	
 	public static final String ADD_ASP_TO_AS_FAIL_ALREADY_ASSIGNED_TO_THIS_AS = "Cannot assign ASP=%s to AS=%s. This ASP is already assigned to this AS";
 	
-	public static final String ADD_ASP_TO_AS_FAIL_ALREADY_ASSIGNED_TO_OTHER_AS = "Cannot assign ASP=% to AS=%. This ASP is already assigned to other AS.";
+	public static final String ADD_ASP_TO_AS_FAIL_ALREADY_ASSIGNED_TO_OTHER_AS = "Cannot assign ASP=%s to AS=%s. This ASP is already assigned to other AS.";
 	
-	public static final String ADD_ASP_TO_AS_FAIL_ALREADY_ASSIGNED_TO_OTHER_AS_WITH_NULL_RC = "Cannot assign ASP=% to AS=%. This ASP is already assigned to other AS which has null RoutingContext.";
+	public static final String ADD_ASP_TO_AS_FAIL_ALREADY_ASSIGNED_TO_OTHER_AS_WITH_NULL_RC = "Cannot assign ASP=%s to AS=%s. This ASP is already assigned to other AS which has null RoutingContext.";
 	
-	public static final String ADD_ASP_TO_AS_FAIL_ALREADY_ASSIGNED_TO_OTHER_AS_TYPE = "Cannot assign ASP=% to AS=%. This ASP is already assigned to other AS of type=%s";
+	public static final String ADD_ASP_TO_AS_FAIL_ALREADY_ASSIGNED_TO_OTHER_AS_TYPE = "Cannot assign ASP=%s to AS=%s. This ASP is already assigned to other AS of type=%s";
 	
-	public static final String ADD_ASP_TO_AS_FAIL_ALREADY_ASSIGNED_TO_OTHER_IPSP_TYPE = "Cannot assign ASP=% to AS=%. This ASP is already assigned to other AS of which has IPSP type=%s";
+	public static final String ADD_ASP_TO_AS_FAIL_ALREADY_ASSIGNED_TO_OTHER_IPSP_TYPE = "Cannot assign ASP=%s to AS=%s. This ASP is already assigned to other AS of which has IPSP type=%s";
 	
-	public static final String ADD_ASP_TO_AS_FAIL_ALREADY_ASSIGNED_TO_OTHER_AS_EXCHANGETYPE = "Cannot assign ASP=% to AS=%. This ASP is already assigned to other AS of ExchangeType=%s";
+	public static final String ADD_ASP_TO_AS_FAIL_ALREADY_ASSIGNED_TO_OTHER_AS_EXCHANGETYPE = "Cannot assign ASP=%s to AS=%s. This ASP is already assigned to other AS of ExchangeType=%s";
 	
 	public static final String ASP_NOT_ASSIGNED_TO_AS = "ASP name=%s not assigned to any AS yet";
 

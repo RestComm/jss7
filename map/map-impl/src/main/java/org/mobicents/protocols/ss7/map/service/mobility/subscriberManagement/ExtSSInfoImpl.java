@@ -53,11 +53,11 @@ public class ExtSSInfoImpl implements ExtSSInfo, MAPAsnPrimitive {
 
 	public static final String _PrimitiveName = "ExtSSInfo";
 
-	private static final int _TAG_forwardingInfo = 0;
-	private static final int _TAG_callBarringInfo = 1;
-	private static final int _TAG_cugInfo = 2;
-	private static final int _TAG_ssData = 3;
-	private static final int _TAG_emlppInfo = 4;
+	protected static final int _TAG_forwardingInfo = 0;
+	protected static final int _TAG_callBarringInfo = 1;
+	protected static final int _TAG_cugInfo = 2;
+	protected static final int _TAG_ssData = 3;
+	protected static final int _TAG_emlppInfo = 4;
 
 	private ExtForwInfo forwardingInfo = null;
 	private ExtCallBarInfo callBarringInfo = null;
@@ -253,7 +253,7 @@ public class ExtSSInfoImpl implements ExtSSInfo, MAPAsnPrimitive {
 	 */
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 		try {
-			asnOs.writeTag(tagClass, true, tag);
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);

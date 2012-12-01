@@ -258,7 +258,7 @@ public class CUGInfoImpl extends SequenceBase implements CUGInfo {
 					sb.append(", ");
 				sb.append(be.toString());
 			}
-			sb.append("]");
+			sb.append("], ");
 		}
 
 		if (this.cugFeatureList != null) {
@@ -271,12 +271,13 @@ public class CUGInfoImpl extends SequenceBase implements CUGInfo {
 					sb.append(", ");
 				sb.append(be.toString());
 			}
-			sb.append("]");
+			sb.append("], ");
 		}
 
 		if (this.extensionContainer != null) {
 			sb.append("extensionContainer=");
 			sb.append(this.extensionContainer.toString());
+			sb.append(", ");
 		}
 
 		sb.append("]");
