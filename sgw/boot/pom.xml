@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.mobicents.protocols.ss7.sgw</groupId>
@@ -37,6 +38,71 @@
 			<groupId>org.jboss.microcontainer</groupId>
 			<artifactId>jboss-kernel</artifactId>
 		</dependency>
+
+		<!-- SS7 Dependencies -->
+		<dependency>
+			<artifactId>mtp-api</artifactId>
+			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>mtp</artifactId>
+			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
+			<artifactId>linkset</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
+
+		<!-- Hardware Dahdi Java -->
+		<dependency>
+			<artifactId>mobicents-dahdi</artifactId>
+			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
+		</dependency>
+
+		<!-- Hardware Dialogic Java 
+		<dependency>
+			<artifactId>mobicents-dialogic</artifactId>
+			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
+		</dependency>
+		-->
+
+		<!-- m3ua -->
+		<dependency>
+			<artifactId>m3ua-api</artifactId>
+			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+		</dependency>
+
+		<dependency>
+			<artifactId>m3ua-impl</artifactId>
+			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+		</dependency>
+		
+		<dependency>
+			<artifactId>shell-server-api</artifactId>
+			<groupId>org.mobicents.protocols.ss7.management</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>shell-server-impl</artifactId>
+			<groupId>org.mobicents.protocols.ss7.management</groupId>
+		</dependency>		
+		<dependency>
+			<artifactId>shell-transport</artifactId>
+			<groupId>org.mobicents.protocols.ss7.management</groupId>
+		</dependency>		
+		<dependency>
+			<artifactId>scheduler</artifactId>
+			<groupId>org.mobicents.protocols.ss7.scheduler</groupId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.sctp</groupId>
+			<artifactId>sctp-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.sctp</groupId>
+			<artifactId>sctp-impl</artifactId>
+		</dependency>
+				
 	</dependencies>
 	<build>
 		<finalName>run</finalName>
