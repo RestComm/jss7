@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,9 +20,6 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * 
- */
 package org.mobicents.protocols.ss7.tcap.api;
 
 
@@ -105,5 +102,26 @@ public interface TCAPStack {
 	* @return ending dialog id within the range
 	*/
 	public long getDialogIdRangeEnd();
+
+	/**
+	* previewMode is needed for special processing mode
+	* When PreviewMode in TCAP level we have:
+	* - we only listern incoming messages and sends nothing. send(),
+	*   close(), sendComponent() and other such methods do nothing.
+	* - A TCAP Dialog is temporary. TCAP Dialog is discarded after any
+	*   icoming message like TC-BEGIN or TC-CONTINUE has been processed
+	* - for any incoming messages (including TC-CONTINUE, TC-END, TC-ABORT)
+	*   a new TCAP Dialog is created (end then deleted).
+	* - no timers and timeouts
+	* 
+	* default state: no previewMode
+	*/
+	public void setPreviewMode(boolean val);
+
+	/**
+	*     
+	* @return if areviewMode is active
+	*/
+	public boolean getPreviewMode();
 	
 }

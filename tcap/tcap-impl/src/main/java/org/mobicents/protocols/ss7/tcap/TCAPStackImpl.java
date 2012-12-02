@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,9 +20,6 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * 
- */
 package org.mobicents.protocols.ss7.tcap;
 
 
@@ -61,6 +58,7 @@ public class TCAPStackImpl implements TCAPStack {
 	// TODO: make this configurable
 	private long dialogIdRangeStart = 1;
 	private long dialogIdRangeEnd = Integer.MAX_VALUE;
+	private boolean previewMode = false;
 
     public TCAPStackImpl() {
         super();
@@ -174,28 +172,20 @@ public class TCAPStackImpl implements TCAPStack {
 		dialogIdRangeEnd = val;
 	}
 
-//	public void setDialogIdRanges(long start, long end) {
-//		if (start >= end)
-//			throw new IllegalArgumentException("Range start value cannot be equal/greater than Range end value");
-//		if (start < 1)
-//			throw new IllegalArgumentException("Range start value must be greater or equal 1");
-//		if (end > Integer.MAX_VALUE)
-//			throw new IllegalArgumentException("Range end value must be less or equal " + Integer.MAX_VALUE);
-//		if (end - start < 10000)
-//			throw new IllegalArgumentException("Range \"end - start\" must has at least 10000 possible dialogs");
-//		if (end - start <= maxDialogs)
-//			throw new IllegalArgumentException("MaxDialog must be less than DialogIdRange");
-//
-//		dialogIdRangeStart = start;
-//		dialogIdRangeEnd = end;
-//	}
-
 	public long getDialogIdRangeStart() {
 		return dialogIdRangeStart;
 	}
 
 	public long getDialogIdRangeEnd() {
 		return dialogIdRangeEnd;
+	}
+
+	public void setPreviewMode(boolean val) {
+		previewMode = val;
+	}
+
+	public boolean getPreviewMode() {
+		return previewMode;
 	}
 
 }

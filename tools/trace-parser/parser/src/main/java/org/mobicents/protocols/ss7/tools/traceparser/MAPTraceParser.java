@@ -218,9 +218,9 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 
 	@Override
 	public void run() {
-		
+
 		String filePath = this.par.getSourceFilePath();
-		
+
 		switch (this.par.getFileTypeN()) {
 		case Acterna:
 			this.driver = new TraceReaderDriverActerna(this, filePath);
@@ -258,6 +258,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 			this.sccpProvider = new SccpProviderWrapper(this.sccpStack);
 			this.msgFact = new MessageFactoryImpl(this.sccpStack);
 			this.tcapStack = new TCAPStackImplWrapper(this.sccpProvider, 1);
+			this.tcapStack.setPreviewMode(true);
 			this.tcapProvider = (TCAPProviderImplWrapper) this.tcapStack.getProvider();
 
 			this.mapProvider = new MAPProviderImpl(this.tcapProvider);
@@ -436,6 +437,10 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	}
 
 	public void onMessage(SccpDataMessageImpl message, int seqControl) {
+		this.tcapProvider.onMessage(message);
+	}
+
+	public void onMessageX(SccpDataMessageImpl message, int seqControl) {
 		try {
 			this.msgDetailBuffer.clear();
 
@@ -1096,10 +1101,12 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	@Override
 	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, AddressString origReference, MAPExtensionContainer extensionContainer) {
 		
-		DialogImplWrapper di = (DialogImplWrapper)((MAPDialogImpl)mapDialog).getTcapDialog();
-		if (mapDialog.getApplicationContext() != null) {
-			di.setAcnValue(mapDialog.getApplicationContext().getApplicationContextName().getApplicationContextCode());
-			di.setAcnVersion(mapDialog.getApplicationContext().getApplicationContextVersion().getVersion());
+		if (((MAPDialogImpl) mapDialog).getTcapDialog() instanceof DialogImplWrapper) {
+			DialogImplWrapper di = (DialogImplWrapper) ((MAPDialogImpl) mapDialog).getTcapDialog();
+			if (mapDialog.getApplicationContext() != null) {
+				di.setAcnValue(mapDialog.getApplicationContext().getApplicationContextName().getApplicationContextCode());
+				di.setAcnVersion(mapDialog.getApplicationContext().getApplicationContextVersion().getVersion());
+			}
 		}
 	}
 

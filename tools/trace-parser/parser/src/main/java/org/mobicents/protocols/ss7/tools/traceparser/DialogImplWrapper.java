@@ -55,7 +55,7 @@ public class DialogImplWrapper extends DialogImpl {
 	
 	public DialogImplWrapper(SccpAddress localAddress, SccpAddress remoteAddress, Long origTransactionId, boolean structured,
 			ScheduledExecutorService executor, TCAPProviderImpl provider, int seqControl) {
-		super(localAddress, remoteAddress, origTransactionId, structured, executor, provider, seqControl);
+		super(localAddress, remoteAddress, origTransactionId, structured, executor, provider, seqControl, true);
 	}
 
 	public int getAcnValue() {

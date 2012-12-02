@@ -59,4 +59,6 @@ public interface TCAPProvider extends Serializable {
 	public void addTCListener(TCListener lst);
 
 	public void removeTCListener(TCListener lst);
+
+	public boolean getPreviewMode();
 }

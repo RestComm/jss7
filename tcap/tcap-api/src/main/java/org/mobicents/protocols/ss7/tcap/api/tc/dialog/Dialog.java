@@ -242,4 +242,10 @@ public interface Dialog {
 	 */
 	public void setUserObject(Object userObject);
 
+	/**
+	 * 
+	 * @return Returns if a dialog works in preview mode
+	 */
+	public boolean getPreviewMode();
+
 }
