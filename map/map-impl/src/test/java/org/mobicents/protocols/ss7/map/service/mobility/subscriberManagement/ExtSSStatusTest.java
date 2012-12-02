@@ -42,6 +42,10 @@ public class ExtSSStatusTest {
 		return new byte[] { 4, 1, 5 };
 	};
 
+	public byte[] getData2() {
+		return new byte[] { (byte) 132, 1, 15 };
+	};
+
 	@Test(groups = { "functional.decode", "primitives" })
 	public void testDecode() throws Exception {
 		byte[] data = this.getData();
@@ -57,6 +61,21 @@ public class ExtSSStatusTest {
 		assertTrue(prim.getBitP());
 		assertTrue(!prim.getBitR());
 		assertTrue(prim.getBitA());
+
+		
+		data = this.getData2();
+		asn = new AsnInputStream(data);
+		tag = asn.readTag();
+		prim = new ExtSSStatusImpl();
+		prim.decodeAll(asn);
+		
+		assertEquals(tag, 4);
+		assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
+
+		assertTrue(prim.getBitQ());
+		assertTrue(prim.getBitP());
+		assertTrue(prim.getBitR());
+		assertTrue(prim.getBitA());
 	}
 	
 	@Test(groups = { "functional.encode", "primitives" })
@@ -66,5 +85,12 @@ public class ExtSSStatusTest {
 		prim.encodeAll(asn);
 
 		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+
+		
+		prim = new ExtSSStatusImpl(true, true, true, true);
+		asn = new AsnOutputStream();
+		prim.encodeAll(asn, Tag.CLASS_CONTEXT_SPECIFIC, 4);
+
+		assertTrue(Arrays.equals(asn.toByteArray(), this.getData2()));
 	}
 }
