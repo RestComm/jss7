@@ -28,6 +28,7 @@ import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TeleserviceCodeValue;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtBasicServiceCodeImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtBearerServiceCodeImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtTeleserviceCodeImpl;
@@ -46,6 +47,10 @@ public class ExtBasicServiceCodeTest {
 
 	private byte[] getEncodedData2() {
 		return new byte[] { (byte) 131, 1, 17 };
+	}
+
+	private byte[] getEncodedData3() {
+		return new byte[] { (byte) 131, 1, 16 };	
 	}
 
 	private byte[] getData1() {
@@ -74,6 +79,14 @@ public class ExtBasicServiceCodeTest {
 		impl.decodeAll(asn);
 		assertTrue(Arrays.equals(impl.getExtTeleservice().getData(), this.getData2()));
 		assertNull(impl.getExtBearerService());
+
+		rawData = getEncodedData3();
+		asn = new AsnInputStream(rawData);
+		tag = asn.readTag();
+		impl = new ExtBasicServiceCodeImpl();
+		impl.decodeAll(asn);
+		assertEquals(impl.getExtTeleservice().getTeleserviceCodeValue(), TeleserviceCodeValue.allSpeechTransmissionServices);
+		assertNull(impl.getExtBearerService());
 	}
 	
 	@Test(groups = { "functional.encode","primitives"})
@@ -96,6 +109,16 @@ public class ExtBasicServiceCodeTest {
 			impl.encodeAll(asnOS);
 			byte[] encodedData = asnOS.toByteArray();
 			byte[] rawData = getEncodedData2();
+			assertTrue(Arrays.equals(rawData, encodedData));
+		}
+
+		{
+			ExtTeleserviceCodeImpl b = new ExtTeleserviceCodeImpl(TeleserviceCodeValue.allSpeechTransmissionServices);
+			ExtBasicServiceCodeImpl impl = new ExtBasicServiceCodeImpl(b);
+			AsnOutputStream asnOS = new AsnOutputStream();
+			impl.encodeAll(asnOS);
+			byte[] encodedData = asnOS.toByteArray();
+			byte[] rawData = getEncodedData3();
 			assertTrue(Arrays.equals(rawData, encodedData));
 		}
 	}
