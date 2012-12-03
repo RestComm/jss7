@@ -656,8 +656,7 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
 	}
 
 	protected void createSLSTable(int minimumBoundStream) {
-
-		if (minimumBoundStream == 1) { // special case - only 1 stream
+		if (minimumBoundStream == 0) { // special case - only 1 stream
 			for (int i = 0; i < this.maxSequenceNumber; i++) {
 				slsTable[i] = 0;
 			}
