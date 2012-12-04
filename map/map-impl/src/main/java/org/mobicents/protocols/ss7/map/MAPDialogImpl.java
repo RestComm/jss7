@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -209,6 +209,9 @@ public abstract class MAPDialogImpl implements MAPDialog {
 
 	public void abort(MAPUserAbortChoice mapUserAbortChoice) throws MAPException {
 
+		if (this.tcapDialog.getPreviewMode())
+			return;
+
 		synchronized (this) {
 			// Dialog is not started or has expunged - we need not send TC-U-ABORT,
 			// only Dialog removing
@@ -226,6 +229,9 @@ public abstract class MAPDialogImpl implements MAPDialog {
 
 	public void refuse(Reason reason) throws MAPException {
 
+		if (this.tcapDialog.getPreviewMode())
+			return;
+
 		synchronized (this) {
 			// Dialog must be in the InitialReceived state
 			if (this.getState() != MAPDialogState.INITIAL_RECEIVED) {
@@ -240,6 +246,9 @@ public abstract class MAPDialogImpl implements MAPDialog {
 	}
 
 	public void close(boolean prearrangedEnd) throws MAPException {
+
+		if (this.tcapDialog.getPreviewMode())
+			return;
 
 		synchronized (this) {
 			switch (this.tcapDialog.getState()) {
@@ -274,6 +283,10 @@ public abstract class MAPDialogImpl implements MAPDialog {
 	}
 
 	public void closeDelayed(boolean prearrangedEnd) throws MAPException {
+
+		if (this.tcapDialog.getPreviewMode())
+			return;
+
 		if (this.delayedAreaState == null) {
 			this.close(prearrangedEnd);
 		} else {
@@ -297,6 +310,9 @@ public abstract class MAPDialogImpl implements MAPDialog {
 	}
 
 	public void send() throws MAPException {
+
+		if (this.tcapDialog.getPreviewMode())
+			return;
 
 		synchronized (this) {
 			switch (this.tcapDialog.getState()) {
@@ -343,6 +359,10 @@ public abstract class MAPDialogImpl implements MAPDialog {
 	}
 
 	public void sendDelayed() throws MAPException {
+
+		if (this.tcapDialog.getPreviewMode())
+			return;
+
 		if (this.delayedAreaState == null) {
 			this.send();
 		} else {
@@ -377,6 +397,9 @@ public abstract class MAPDialogImpl implements MAPDialog {
 
 	public void sendInvokeComponent(Invoke invoke) throws MAPException {
 
+		if (this.tcapDialog.getPreviewMode())
+			return;
+
 		try {
 			this.tcapDialog.sendComponent(invoke);
 		} catch (TCAPSendException e) {
@@ -386,6 +409,9 @@ public abstract class MAPDialogImpl implements MAPDialog {
 
 	public void sendReturnResultComponent(ReturnResult returnResult) throws MAPException {
 
+		if (this.tcapDialog.getPreviewMode())
+			return;
+
 		try {
 			this.tcapDialog.sendComponent(returnResult);
 		} catch (TCAPSendException e) {
@@ -394,6 +420,9 @@ public abstract class MAPDialogImpl implements MAPDialog {
 	}
 
 	public void sendReturnResultLastComponent(ReturnResultLast returnResultLast) throws MAPException {
+
+		if (this.tcapDialog.getPreviewMode())
+			return;
 
 		this.removeIncomingInvokeId(returnResultLast.getInvokeId());
 
@@ -405,6 +434,9 @@ public abstract class MAPDialogImpl implements MAPDialog {
 	}
 
 	public void sendErrorComponent(Long invokeId, MAPErrorMessage mem) throws MAPException {
+
+		if (this.tcapDialog.getPreviewMode())
+			return;
 
 		MAPErrorMessageImpl mapErrorMessage = (MAPErrorMessageImpl)mem;
 		
@@ -441,6 +473,9 @@ public abstract class MAPDialogImpl implements MAPDialog {
 
 	public void sendRejectComponent(Long invokeId, Problem problem) throws MAPException {
 
+		if (this.tcapDialog.getPreviewMode())
+			return;
+
 		if (invokeId != null && problem != null && problem.getInvokeProblemType() != null)
 			this.removeIncomingInvokeId(invokeId);
 
@@ -460,6 +495,10 @@ public abstract class MAPDialogImpl implements MAPDialog {
 	}
 
 	public void resetInvokeTimer(Long invokeId) throws MAPException {
+
+		if (this.tcapDialog.getPreviewMode())
+			return;
+
 		try {
 			this.getTcapDialog().resetTimer(invokeId);
 		} catch( TCAPException e ) {
@@ -468,6 +507,10 @@ public abstract class MAPDialogImpl implements MAPDialog {
 	}
 
 	public boolean cancelInvocation(Long invokeId) throws MAPException {
+
+		if (this.tcapDialog.getPreviewMode())
+			return false;
+
 		try {
 			return this.getTcapDialog().cancelInvocation(invokeId);
 		} catch( TCAPException e ) {

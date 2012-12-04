@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -209,6 +209,9 @@ public abstract class CAPDialogImpl implements CAPDialog {
 
 	public void send() throws CAPException {
 
+		if (this.tcapDialog.getPreviewMode())
+			return;
+
 		synchronized (this) {
 			switch (this.tcapDialog.getState()) {
 
@@ -249,6 +252,10 @@ public abstract class CAPDialogImpl implements CAPDialog {
 	}
 
 	public void sendDelayed() throws CAPException {
+
+		if (this.tcapDialog.getPreviewMode())
+			return;
+
 		if (this.delayedAreaState == null) {
 			this.send();
 		} else {
@@ -261,6 +268,9 @@ public abstract class CAPDialogImpl implements CAPDialog {
 	}
 
 	public void close(boolean prearrangedEnd) throws CAPException {
+
+		if (this.tcapDialog.getPreviewMode())
+			return;
 
 		synchronized (this) {
 			switch (this.tcapDialog.getState()) {
@@ -293,6 +303,10 @@ public abstract class CAPDialogImpl implements CAPDialog {
 	}
 
 	public void closeDelayed(boolean prearrangedEnd) throws CAPException {
+
+		if (this.tcapDialog.getPreviewMode())
+			return;
+
 		if (this.delayedAreaState == null) {
 			this.close(prearrangedEnd);
 		} else {
@@ -318,6 +332,9 @@ public abstract class CAPDialogImpl implements CAPDialog {
 	@Override
 	public void abort(CAPUserAbortReason abortReason) throws CAPException {
 
+		if (this.tcapDialog.getPreviewMode())
+			return;
+
 		synchronized (this) {
 			// Dialog is not started or has expunged - we need not send TC-U-ABORT,
 			// only Dialog removing
@@ -336,6 +353,9 @@ public abstract class CAPDialogImpl implements CAPDialog {
 	@Override
 	public void sendInvokeComponent(Invoke invoke) throws CAPException {
 
+		if (this.tcapDialog.getPreviewMode())
+			return;
+
 		try {
 			this.tcapDialog.sendComponent(invoke);
 		} catch (TCAPSendException e) {
@@ -345,6 +365,9 @@ public abstract class CAPDialogImpl implements CAPDialog {
 
 	@Override
 	public void sendReturnResultLastComponent(ReturnResultLast returnResultLast) throws CAPException {
+
+		if (this.tcapDialog.getPreviewMode())
+			return;
 
 		this.removeIncomingInvokeId(returnResultLast.getInvokeId());
 
@@ -357,6 +380,9 @@ public abstract class CAPDialogImpl implements CAPDialog {
 
 	@Override
 	public void sendErrorComponent(Long invokeId, CAPErrorMessage mem) throws CAPException {
+
+		if (this.tcapDialog.getPreviewMode())
+			return;
 		
 		CAPErrorMessageImpl capErrorMessage = (CAPErrorMessageImpl)mem;
 		
@@ -394,6 +420,9 @@ public abstract class CAPDialogImpl implements CAPDialog {
 	@Override
 	public void sendRejectComponent(Long invokeId, Problem problem) throws CAPException {
 
+		if (this.tcapDialog.getPreviewMode())
+			return;
+
 		if (invokeId != null && problem != null && problem.getInvokeProblemType() != null)
 			this.removeIncomingInvokeId(invokeId);
 
@@ -414,6 +443,10 @@ public abstract class CAPDialogImpl implements CAPDialog {
 
 	@Override
 	public void resetInvokeTimer(Long invokeId) throws CAPException {
+
+		if (this.tcapDialog.getPreviewMode())
+			return;
+
 		try {
 			this.getTcapDialog().resetTimer(invokeId);
 		} catch( TCAPException e ) {

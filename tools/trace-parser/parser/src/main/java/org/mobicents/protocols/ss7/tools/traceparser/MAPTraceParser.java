@@ -153,6 +153,16 @@ import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.sccp.parameter.Segmentation;
+import org.mobicents.protocols.ss7.tcap.DialogImpl;
+import org.mobicents.protocols.ss7.tcap.api.TCListener;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCNoticeIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCPAbortIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUniIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortIndication;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.DialogAPDU;
 import org.mobicents.protocols.ss7.tcap.asn.DialogPortion;
@@ -179,7 +189,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.TCEndMessage;
  * @author sergey vetyutnev
  * 
  */
-public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, CAPDialogListener, Runnable, ProcessControl, 
+public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, CAPDialogListener, TCListener, Runnable, ProcessControl, 
 		MAPServiceMobilityListener, MAPServiceCallHandlingListener, MAPServiceOamListener, MAPServicePdpContextActivationListener, 
 		MAPServiceSupplementaryListener, MAPServiceSmsListener, MAPServiceLsmListener,  
 		CAPServiceCircuitSwitchedCallListener, CAPServiceGprsListener, CAPServiceSmsListener {
@@ -190,6 +200,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	private boolean needInterrupt = false;
 	private String errorMessage = null;
 	private PrintWriter pw;
+	private DialogImpl curTcapDialog;
 	private int msgCount;
 
 	private TraceReaderDriver driver;
@@ -218,9 +229,9 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 
 	@Override
 	public void run() {
-		
+
 		String filePath = this.par.getSourceFilePath();
-		
+
 		switch (this.par.getFileTypeN()) {
 		case Acterna:
 			this.driver = new TraceReaderDriverActerna(this, filePath);
@@ -258,43 +269,48 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 			this.sccpProvider = new SccpProviderWrapper(this.sccpStack);
 			this.msgFact = new MessageFactoryImpl(this.sccpStack);
 			this.tcapStack = new TCAPStackImplWrapper(this.sccpProvider, 1);
+			this.tcapStack.setPreviewMode(true);
 			this.tcapProvider = (TCAPProviderImplWrapper) this.tcapStack.getProvider();
-
-			this.mapProvider = new MAPProviderImpl(this.tcapProvider);
-
-			this.mapProvider.getMAPServiceMobility().acivate();
-			this.mapProvider.getMAPServiceCallHandling().acivate();
-			this.mapProvider.getMAPServiceOam().acivate();
-			this.mapProvider.getMAPServicePdpContextActivation().acivate();
-			this.mapProvider.getMAPServiceSupplementary().acivate();
-			this.mapProvider.getMAPServiceSms().acivate();
-			this.mapProvider.getMAPServiceLsm().acivate();
-
-			this.mapProvider.addMAPDialogListener(this);
-			this.mapProvider.getMAPServiceMobility().addMAPServiceListener(this);
-			this.mapProvider.getMAPServiceCallHandling().addMAPServiceListener(this);
-			this.mapProvider.getMAPServiceOam().addMAPServiceListener(this);
-			this.mapProvider.getMAPServicePdpContextActivation().addMAPServiceListener(this);
-			this.mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
-			this.mapProvider.getMAPServiceSms().addMAPServiceListener(this);
-			this.mapProvider.getMAPServiceLsm().addMAPServiceListener(this);
-
-			this.capProvider = new CAPProviderImpl(this.tcapProvider);
-
-			this.capProvider.getCAPServiceCircuitSwitchedCall().acivate();
-			this.capProvider.getCAPServiceGprs().acivate();
-			this.capProvider.getCAPServiceSms().acivate();
-			this.capProvider.getCAPServiceCircuitSwitchedCall().addCAPServiceListener(this);
-			this.capProvider.getCAPServiceGprs().addCAPServiceListener(this);
-			this.capProvider.getCAPServiceSms().addCAPServiceListener(this);
+			this.tcapProvider.addTCListener(this);
 
 			this.tcapStack.start();
-			if (this.par.getParseProtocol() == ParseProtocol.Map)
+			if (this.par.getParseProtocol() == ParseProtocol.Map) {
+				this.mapProvider = new MAPProviderImpl(this.tcapProvider);
+
+				this.mapProvider.getMAPServiceMobility().acivate();
+				this.mapProvider.getMAPServiceCallHandling().acivate();
+				this.mapProvider.getMAPServiceOam().acivate();
+				this.mapProvider.getMAPServicePdpContextActivation().acivate();
+				this.mapProvider.getMAPServiceSupplementary().acivate();
+				this.mapProvider.getMAPServiceSms().acivate();
+				this.mapProvider.getMAPServiceLsm().acivate();
+
+				this.mapProvider.addMAPDialogListener(this);
+				this.mapProvider.getMAPServiceMobility().addMAPServiceListener(this);
+				this.mapProvider.getMAPServiceCallHandling().addMAPServiceListener(this);
+				this.mapProvider.getMAPServiceOam().addMAPServiceListener(this);
+				this.mapProvider.getMAPServicePdpContextActivation().addMAPServiceListener(this);
+				this.mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
+				this.mapProvider.getMAPServiceSms().addMAPServiceListener(this);
+				this.mapProvider.getMAPServiceLsm().addMAPServiceListener(this);
+
 				this.mapProvider.start();
-			else
+			}
+			else {
+				this.capProvider = new CAPProviderImpl(this.tcapProvider);
+
+				this.capProvider.getCAPServiceCircuitSwitchedCall().acivate();
+				this.capProvider.getCAPServiceGprs().acivate();
+				this.capProvider.getCAPServiceSms().acivate();
+				this.capProvider.getCAPServiceCircuitSwitchedCall().addCAPServiceListener(this);
+				this.capProvider.getCAPServiceGprs().addCAPServiceListener(this);
+				this.capProvider.getCAPServiceSms().addCAPServiceListener(this);
+
 				this.capProvider.start();
+
+				this.capProvider.addCAPDialogListener(this);
+			}
 			
-			this.capProvider.addCAPDialogListener(this);
 			
 			this.driver.addTraceListener(this);
 			
@@ -438,6 +454,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	public void onMessage(SccpDataMessageImpl message, int seqControl) {
 		try {
 			this.msgDetailBuffer.clear();
+			this.curTcapDialog = null;
 
 			byte[] data = message.getData();
 			SccpAddress localAddress = message.getCalledPartyAddress();
@@ -452,7 +469,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 						dd.remainingSegm = sgm.getRemainingSegments();
 						dd.dLst.add(data);
 						xLst.put(mrp, dd);
-						
+
 						return;
 					}
 				} else {
@@ -475,227 +492,348 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 					data = stm.toByteArray();
 				}
 			}
+			message.setData(data);
 
-			// asnData - it should pass
+
+			this.tcapProvider.onMessage(message);
+
+			if (this.curTcapDialog == null || this.curTcapDialog.getPrevewDialogData() == null
+					|| this.curTcapDialog.getPrevewDialogData().getUpperDialog() == null) {
+				return;
+			}
+			
 			AsnInputStream ais = new AsnInputStream(data);
 			AsnInputStream aisMsg = new AsnInputStream(data);
 
-			// this should have TC message tag :)
 			int tag = ais.readTag();
 
 			switch (tag) {
-			// continue first, usually we will get more of those. small perf
-			// boost
-			case TCContinueMessage._TAG: {
-				TCContinueMessage tcm = TcapFactory.createTCContinueMessage(ais);
-				// received continue, destID == localDialogId(originatingTxId of
-				// begin);
-				long originatingTransactionId = Utils.decodeTransactionId(tcm.getOriginatingTransactionId());
-				long destinationTransactionId = Utils.decodeTransactionId(tcm.getDestinationTransactionId());
-				int dpc = message.getIncomingDpc();
-				Map<Long, DialogImplWrapper> dpcData = this.dialogs.get(dpc);
-				int acnValue = 0;
-				int acnVersion = 0;
-				if (dpcData != null) {
-					
-					
-					// TODO: remove it
-					if (destinationTransactionId == 3452) {
-						destinationTransactionId = 5048;
-					}
-					// TODO: remove it
-					
-					
-					DialogImplWrapper di = dpcData.get(destinationTransactionId);
-					if (di != null) {
-						int opc = message.getIncomingOpc();
-						Map<Long, DialogImplWrapper> opcData = this.dialogs.get(opc);
-						if (opcData == null) {
-							opcData = new HashMap<Long, DialogImplWrapper>();
-							this.dialogs.put(opc, opcData);
-						}
-						opcData.put(originatingTransactionId, di);
-
-						acnValue = di.getAcnValue();
-						acnVersion = di.getAcnVersion();
-
-						di.SetStateActive();
-
-						Integer applicationContextFilter = par.getApplicationContextFilter();
-						if (applicationContextFilter != null && applicationContextFilter != acnValue)
-							return;
-
-						if (!CheckDialogIdFilter(originatingTransactionId, destinationTransactionId))
-							return;
-
-						di.curOpc = message.getIncomingOpc();
-						di.processContinue(tcm, localAddress, remoteAddress);
-
-						if (this.pw != null) {
-//							this.pw.print("TC-CONTINUE: OPC=" + message.getOpc() + ", DPC=" + message.getDpc() + ", originatingTransactionId="
-//									+ originatingTransactionId + ", destinationTransactionId=" + destinationTransactionId);
-							this.pw.print("TC-CONTINUE: ");
-							this.printAddresses(message, originatingTransactionId, destinationTransactionId);
-							if (this.par.getTcapMsgData()) {
-								LogDataTag(aisMsg, "Continue", tcm.getComponent(), acnValue, acnVersion, tcm.getDialogPortion());
-							}
-							this.printMsgData();
-							
-//							this.LogComponents(tcm.getComponent(), acnValue, acnVersion, comp);
-						}
-					}
-				}
-
-				break;
-			}
-
-			case TCBeginMessage._TAG: {
-				TCBeginMessage tcb = TcapFactory.createTCBeginMessage(ais);
-				DialogImplWrapper di = new DialogImplWrapper(localAddress, remoteAddress, ++this.dialogEnumerator, true, this.tcapProvider.getExecuter(),
-						this.tcapProvider, 0);
-				long originatingTransactionId = Utils.decodeTransactionId(tcb.getOriginatingTransactionId());
-				int opc = message.getIncomingOpc();
-				Map<Long, DialogImplWrapper> opcData = this.dialogs.get(opc);
-				if (opcData == null) {
-					opcData = new HashMap<Long, DialogImplWrapper>();
-					this.dialogs.put(opc, opcData);
-				}
-				opcData.put(originatingTransactionId, di);
-
-				DialogPortion dp = tcb.getDialogPortion();
-				if (dp != null) {
-					DialogAPDU apduN = dp.getDialogAPDU();
-					if (apduN instanceof DialogRequestAPDU) {
-						DialogRequestAPDU apdu = (DialogRequestAPDU) apduN;
-						ApplicationContextName acnV = apdu.getApplicationContextName();
-						if (acnV != null) {
-							if (acnV.getOid()[5] == 0) {
-								di.setAcnValue(((int) acnV.getOid()[6]));
-								di.setAcnVersion(((int) acnV.getOid()[7]));
-							} else {
-								di.setAcnValue(((int) acnV.getOid()[7]));
-								di.setAcnVersion(((int) acnV.getOid()[5]));
-							}
-						}
-					}
-				}
-
-				Integer applicationContextFilter = par.getApplicationContextFilter();
-				if (applicationContextFilter != null && applicationContextFilter != di.getAcnValue())
-					return;
-
-				if (!CheckDialogIdFilter(originatingTransactionId, Integer.MIN_VALUE))
-					return;
-
-				di.curOpcOrig = message.getIncomingOpc();
-				di.curOpc = message.getIncomingOpc();
-				di.processBegin(tcb, localAddress, remoteAddress);
-
+			case TCContinueMessage._TAG:
 				if (this.pw != null) {
-					this.pw.print("TC-BEGIN: ");
-					this.printAddresses(message, originatingTransactionId, -1);
+					TCContinueMessage tcm = TcapFactory.createTCContinueMessage(ais);
+					long originatingTransactionId = Utils.decodeTransactionId(tcm.getOriginatingTransactionId());
+					long destinationTransactionId = Utils.decodeTransactionId(tcm.getDestinationTransactionId());
+
+					if (!CheckTransactionIdFilter(this.curTcapDialog.getApplicationContextName()))
+						return;
+					if (!CheckDialogIdFilter(destinationTransactionId, originatingTransactionId))
+						return;
+					
+					this.pw.print("TC-CONTINUE: ");
+					this.printAddresses(message, originatingTransactionId, destinationTransactionId);
 					if (this.par.getTcapMsgData()) {
-						LogDataTag(aisMsg, "Begin", tcb.getComponent(), di.getAcnValue(), di.getAcnVersion(), tcb.getDialogPortion());
+						LogDataTag(aisMsg, "Continue", tcm.getComponent(), this.curTcapDialog.getApplicationContextName(), tcm.getDialogPortion());
 					}
 					this.printMsgData();
 				}
 				break;
-			}
 
-			case TCEndMessage._TAG: {
-				TCEndMessage teb = TcapFactory.createTCEndMessage(ais);
-				long destinationTransactionId = Utils.decodeTransactionId(teb.getDestinationTransactionId());
+			case TCBeginMessage._TAG:
+				if (this.pw != null) {
+					TCBeginMessage tcb = TcapFactory.createTCBeginMessage(ais);
+					long originatingTransactionId = Utils.decodeTransactionId(tcb.getOriginatingTransactionId());
 
-				int dpc = message.getIncomingDpc();
-				Map<Long, DialogImplWrapper> dpcData = this.dialogs.get(dpc);
-				int acnValue = 0;
-				int acnVersion = 0;
-				if (dpcData != null) {
-					DialogImplWrapper di = dpcData.get(destinationTransactionId);
-					if (di != null) {
-						dpcData.remove(destinationTransactionId);
-
-						acnValue = di.getAcnValue();
-						acnVersion = di.getAcnVersion();
-
-						Integer applicationContextFilter = par.getApplicationContextFilter();
-						if (applicationContextFilter != null && applicationContextFilter != acnValue)
-							return;
-
-						if (!CheckDialogIdFilter(destinationTransactionId, Integer.MIN_VALUE))
-							return;
-
-						di.curOpc = message.getIncomingOpc();
-						di.processEnd(teb, localAddress, remoteAddress);
-
-						if (this.pw != null) {
-//							this.pw.print("TC-END: OPC=" + message.getOpc() + ", DPC=" + message.getDpc() + ", destinationTransactionId="
-//									+ destinationTransactionId);
-							this.pw.print("TC-END: ");
-							this.printAddresses(message, -1, destinationTransactionId);
-							if (this.par.getTcapMsgData()) {
-								LogDataTag(aisMsg, "End", teb.getComponent(), acnValue, acnVersion, teb.getDialogPortion());
-							}
-							this.printMsgData();
-							
-//							this.LogComponents(teb.getComponent(), acnValue, acnVersion, comp);
-						}
+					if (!CheckTransactionIdFilter(this.curTcapDialog.getApplicationContextName()))
+						return;
+					if (!CheckDialogIdFilter(originatingTransactionId, originatingTransactionId))
+						return;
+					
+					this.pw.print("TC-BEGIN: ");
+					this.printAddresses(message, originatingTransactionId, -1);
+					if (this.par.getTcapMsgData()) {
+						LogDataTag(aisMsg, "Begin", tcb.getComponent(), this.curTcapDialog.getApplicationContextName(), tcb.getDialogPortion());
 					}
+					this.printMsgData();
 				}
+				break;
 
+			case TCEndMessage._TAG:
+				if (this.pw != null) {
+					TCEndMessage teb = TcapFactory.createTCEndMessage(ais);
+					long destinationTransactionId = Utils.decodeTransactionId(teb.getDestinationTransactionId());
+
+					if (!CheckTransactionIdFilter(this.curTcapDialog.getApplicationContextName()))
+						return;
+					if (!CheckDialogIdFilter(destinationTransactionId, destinationTransactionId))
+						return;
+
+					this.pw.print("TC-END: ");
+					this.printAddresses(message, -1, destinationTransactionId);
+					if (this.par.getTcapMsgData()) {
+						LogDataTag(aisMsg, "End", teb.getComponent(), this.curTcapDialog.getApplicationContextName(), teb.getDialogPortion());
+					}
+					this.printMsgData();
+				}
+				break;
+
+			case TCAbortMessage._TAG:
+				if (this.pw != null) {
+					TCAbortMessage tub = TcapFactory.createTCAbortMessage(ais);
+					long destinationTransactionId = Utils.decodeTransactionId(tub.getDestinationTransactionId());
+
+					if (!CheckTransactionIdFilter(this.curTcapDialog.getApplicationContextName()))
+						return;
+					if (!CheckDialogIdFilter(destinationTransactionId, destinationTransactionId))
+						return;
+
+					this.pw.print("TC-ABORT: ");
+					this.printAddresses(message, -1, destinationTransactionId);
+					if (this.par.getTcapMsgData()) {
+						LogDataTag(aisMsg, "Abort", null, this.curTcapDialog.getApplicationContextName(), tub.getDialogPortion());
+					}
+					this.printMsgData();
+
+					this.pw.println();
+					this.pw.flush();
+				}
 				break;
 			}
-
-			case TCAbortMessage._TAG: {
-				TCAbortMessage tub = TcapFactory.createTCAbortMessage(ais);
-				long destinationTransactionId = Utils.decodeTransactionId(tub.getDestinationTransactionId());
-
-				int dpc = message.getIncomingDpc();
-				Map<Long, DialogImplWrapper> dpcData = this.dialogs.get(dpc);
-				int acnValue = 0;
-				int acnVersion = 0;
-				
-				if (dpcData != null) {
-					DialogImplWrapper di = dpcData.get(destinationTransactionId);
-					if (di != null) {
-						acnValue = di.getAcnValue();
-						acnVersion = di.getAcnVersion();
-
-						dpcData.remove(destinationTransactionId);
-
-						Integer applicationContextFilter = par.getApplicationContextFilter();
-						if (applicationContextFilter != null && applicationContextFilter != acnValue)
-							return;
-
-						if (!CheckDialogIdFilter(destinationTransactionId, Integer.MIN_VALUE))
-							return;
-
-						di.curOpc = message.getIncomingOpc();
-						di.processAbort(tub, localAddress, remoteAddress);
-
-						if (this.pw != null) {
-//							this.pw.print("TC-ABORT: OPC=" + message.getOpc() + ", DPC=" + message.getDpc() + ", destinationTransactionId="
-//									+ destinationTransactionId);
-							this.pw.print("TC-ABORT: ");
-							this.printAddresses(message, -1, destinationTransactionId);
-							if (this.par.getTcapMsgData()) {
-								LogDataTag(aisMsg, "Abort", null, acnValue, acnVersion, tub.getDialogPortion());
-							}
-							this.printMsgData();
-							
-//							this.LogComponents(null, acnValue, acnVersion, comp);
-							this.pw.println();
-							this.pw.flush();
-						}
-					}
-				}
-
-				break;
-			}
-			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void onMessageX(SccpDataMessageImpl message, int seqControl) {
+//		try {
+//			this.msgDetailBuffer.clear();
+//
+//			byte[] data = message.getData();
+//			SccpAddress localAddress = message.getCalledPartyAddress();
+//			SccpAddress remoteAddress = message.getCallingPartyAddress();
+//
+//			Segmentation sgm = message.getSegmentation();
+//			if (sgm != null) {
+//				if (sgm.isFirstSegIndication()) {
+//					if (sgm.getRemainingSegments() > 0) {
+//						MessageReassemblyProcess mrp = new MessageReassemblyProcess(sgm.getSegmentationLocalRef(), message.getCallingPartyAddress());
+//						XUnitDataDef dd = new XUnitDataDef();
+//						dd.remainingSegm = sgm.getRemainingSegments();
+//						dd.dLst.add(data);
+//						xLst.put(mrp, dd);
+//						
+//						return;
+//					}
+//				} else {
+//					MessageReassemblyProcess mrp = new MessageReassemblyProcess(sgm.getSegmentationLocalRef(), message.getCallingPartyAddress());
+//					XUnitDataDef dd = xLst.get(mrp);
+//					if (dd == null)
+//						return;
+//					dd.remainingSegm--;
+//					if (dd.remainingSegm != sgm.getRemainingSegments())
+//						return;
+//					dd.dLst.add(data);
+//
+//					if (dd.remainingSegm > 0)
+//						return;
+//					xLst.remove(mrp);
+//					ByteArrayOutputStream stm = new ByteArrayOutputStream();
+//					for (byte[] buf : dd.dLst) {
+//						stm.write(buf);
+//					}
+//					data = stm.toByteArray();
+//				}
+//			}
+//
+//			// asnData - it should pass
+//			AsnInputStream ais = new AsnInputStream(data);
+//			AsnInputStream aisMsg = new AsnInputStream(data);
+//
+//			// this should have TC message tag :)
+//			int tag = ais.readTag();
+//
+//			switch (tag) {
+//			// continue first, usually we will get more of those. small perf
+//			// boost
+//			case TCContinueMessage._TAG: {
+//				TCContinueMessage tcm = TcapFactory.createTCContinueMessage(ais);
+//				// received continue, destID == localDialogId(originatingTxId of
+//				// begin);
+//				long originatingTransactionId = Utils.decodeTransactionId(tcm.getOriginatingTransactionId());
+//				long destinationTransactionId = Utils.decodeTransactionId(tcm.getDestinationTransactionId());
+//				int dpc = message.getIncomingDpc();
+//				Map<Long, DialogImplWrapper> dpcData = this.dialogs.get(dpc);
+//				int acnValue = 0;
+//				int acnVersion = 0;
+//				if (dpcData != null) {
+//					DialogImplWrapper di = dpcData.get(destinationTransactionId);
+//					if (di != null) {
+//						int opc = message.getIncomingOpc();
+//						Map<Long, DialogImplWrapper> opcData = this.dialogs.get(opc);
+//						if (opcData == null) {
+//							opcData = new HashMap<Long, DialogImplWrapper>();
+//							this.dialogs.put(opc, opcData);
+//						}
+//						opcData.put(originatingTransactionId, di);
+//
+//						acnValue = di.getAcnValue();
+//						acnVersion = di.getAcnVersion();
+//
+//						di.SetStateActive();
+//
+//						Integer applicationContextFilter = par.getApplicationContextFilter();
+//						if (applicationContextFilter != null && applicationContextFilter != acnValue)
+//							return;
+//
+//						if (!CheckDialogIdFilter(originatingTransactionId, destinationTransactionId))
+//							return;
+//
+//						di.curOpc = message.getIncomingOpc();
+//						di.processContinue(tcm, localAddress, remoteAddress);
+//
+//						if (this.pw != null) {
+//							this.pw.print("TC-CONTINUE: ");
+//							this.printAddresses(message, originatingTransactionId, destinationTransactionId);
+//							if (this.par.getTcapMsgData()) {
+//								LogDataTag(aisMsg, "Continue", tcm.getComponent(), acnValue, acnVersion, tcm.getDialogPortion());
+//							}
+//							this.printMsgData();
+//						}
+//					}
+//				}
+//
+//				break;
+//			}
+//
+//			case TCBeginMessage._TAG: {
+//				TCBeginMessage tcb = TcapFactory.createTCBeginMessage(ais);
+//				DialogImplWrapper di = new DialogImplWrapper(localAddress, remoteAddress, ++this.dialogEnumerator, true, this.tcapProvider.getExecuter(),
+//						this.tcapProvider, 0);
+//				long originatingTransactionId = Utils.decodeTransactionId(tcb.getOriginatingTransactionId());
+//				int opc = message.getIncomingOpc();
+//				Map<Long, DialogImplWrapper> opcData = this.dialogs.get(opc);
+//				if (opcData == null) {
+//					opcData = new HashMap<Long, DialogImplWrapper>();
+//					this.dialogs.put(opc, opcData);
+//				}
+//				opcData.put(originatingTransactionId, di);
+//
+//				DialogPortion dp = tcb.getDialogPortion();
+//				if (dp != null) {
+//					DialogAPDU apduN = dp.getDialogAPDU();
+//					if (apduN instanceof DialogRequestAPDU) {
+//						DialogRequestAPDU apdu = (DialogRequestAPDU) apduN;
+//						ApplicationContextName acnV = apdu.getApplicationContextName();
+//						if (acnV != null) {
+//							if (acnV.getOid()[5] == 0) {
+//								di.setAcnValue(((int) acnV.getOid()[6]));
+//								di.setAcnVersion(((int) acnV.getOid()[7]));
+//							} else {
+//								di.setAcnValue(((int) acnV.getOid()[7]));
+//								di.setAcnVersion(((int) acnV.getOid()[5]));
+//							}
+//						}
+//					}
+//				}
+//
+//				Integer applicationContextFilter = par.getApplicationContextFilter();
+//				if (applicationContextFilter != null && applicationContextFilter != di.getAcnValue())
+//					return;
+//
+//				if (!CheckDialogIdFilter(originatingTransactionId, Integer.MIN_VALUE))
+//					return;
+//
+//				di.curOpcOrig = message.getIncomingOpc();
+//				di.curOpc = message.getIncomingOpc();
+//				di.processBegin(tcb, localAddress, remoteAddress);
+//
+//				if (this.pw != null) {
+//					this.pw.print("TC-BEGIN: ");
+//					this.printAddresses(message, originatingTransactionId, -1);
+//					if (this.par.getTcapMsgData()) {
+//						LogDataTag(aisMsg, "Begin", tcb.getComponent(), di.getAcnValue(), di.getAcnVersion(), tcb.getDialogPortion());
+//					}
+//					this.printMsgData();
+//				}
+//				break;
+//			}
+//
+//			case TCEndMessage._TAG: {
+//				TCEndMessage teb = TcapFactory.createTCEndMessage(ais);
+//				long destinationTransactionId = Utils.decodeTransactionId(teb.getDestinationTransactionId());
+//
+//				int dpc = message.getIncomingDpc();
+//				Map<Long, DialogImplWrapper> dpcData = this.dialogs.get(dpc);
+//				int acnValue = 0;
+//				int acnVersion = 0;
+//				if (dpcData != null) {
+//					DialogImplWrapper di = dpcData.get(destinationTransactionId);
+//					if (di != null) {
+//						dpcData.remove(destinationTransactionId);
+//
+//						acnValue = di.getAcnValue();
+//						acnVersion = di.getAcnVersion();
+//
+//						Integer applicationContextFilter = par.getApplicationContextFilter();
+//						if (applicationContextFilter != null && applicationContextFilter != acnValue)
+//							return;
+//
+//						if (!CheckDialogIdFilter(destinationTransactionId, Integer.MIN_VALUE))
+//							return;
+//
+//						di.curOpc = message.getIncomingOpc();
+//						di.processEnd(teb, localAddress, remoteAddress);
+//
+//						if (this.pw != null) {
+//							this.pw.print("TC-END: ");
+//							this.printAddresses(message, -1, destinationTransactionId);
+//							if (this.par.getTcapMsgData()) {
+//								LogDataTag(aisMsg, "End", teb.getComponent(), acnValue, acnVersion, teb.getDialogPortion());
+//							}
+//							this.printMsgData();
+//						}
+//					}
+//				}
+//
+//				break;
+//			}
+//
+//			case TCAbortMessage._TAG: {
+//				TCAbortMessage tub = TcapFactory.createTCAbortMessage(ais);
+//				long destinationTransactionId = Utils.decodeTransactionId(tub.getDestinationTransactionId());
+//
+//				int dpc = message.getIncomingDpc();
+//				Map<Long, DialogImplWrapper> dpcData = this.dialogs.get(dpc);
+//				int acnValue = 0;
+//				int acnVersion = 0;
+//				
+//				if (dpcData != null) {
+//					DialogImplWrapper di = dpcData.get(destinationTransactionId);
+//					if (di != null) {
+//						acnValue = di.getAcnValue();
+//						acnVersion = di.getAcnVersion();
+//
+//						dpcData.remove(destinationTransactionId);
+//
+//						Integer applicationContextFilter = par.getApplicationContextFilter();
+//						if (applicationContextFilter != null && applicationContextFilter != acnValue)
+//							return;
+//
+//						if (!CheckDialogIdFilter(destinationTransactionId, Integer.MIN_VALUE))
+//							return;
+//
+//						di.curOpc = message.getIncomingOpc();
+//						di.processAbort(tub, localAddress, remoteAddress);
+//
+//						if (this.pw != null) {
+//							this.pw.print("TC-ABORT: ");
+//							this.printAddresses(message, -1, destinationTransactionId);
+//							if (this.par.getTcapMsgData()) {
+//								LogDataTag(aisMsg, "Abort", null, acnValue, acnVersion, tub.getDialogPortion());
+//							}
+//							this.printMsgData();
+//							this.pw.println();
+//							this.pw.flush();
+//						}
+//					}
+//				}
+//
+//				break;
+//			}
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 	}
 	
 	private void printMsgData() {
@@ -745,7 +883,21 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 		return false;
 	}
 
-	private void LogDataTag(AsnInputStream aisMsg, String name, Component[] comp, int acnValue, int acnVersion, DialogPortion dp) {
+	private boolean CheckTransactionIdFilter(ApplicationContextName acn) {
+		Integer applicationContextFilter = par.getApplicationContextFilter();
+		if (applicationContextFilter == null)
+			return true;
+
+		if (acn == null || acn.getOid().length != 8)
+			return false;
+
+		if (acn.getOid()[6] == applicationContextFilter)
+			return true;
+
+		return false;
+	}
+
+	private void LogDataTag(AsnInputStream aisMsg, String name, Component[] comp, ApplicationContextName acn, DialogPortion dp) {
 		
 		try {
 			aisMsg.readTag();
@@ -796,7 +948,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 				if (tag == 11 && this.par.getDetailedDialog())
 					this.LogDialog(dp, buf);
 				if (tag == 12 && this.par.getDetailedComponents())
-					this.LogComponents(comp, acnValue, acnVersion, buf);
+					this.LogComponents(comp, acn, buf);
 			}
 			
 			this.pw.println();
@@ -901,13 +1053,27 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 		}
 	}
 	
-	private void LogComponents(Component[] comp, int acnValue, int acnVersion, byte[] logData) {
+	private void LogComponents(Component[] comp, ApplicationContextName acn, byte[] logData) {
 		this.pw.println();
 		this.pw.print("\tAcn: ");
-		if (acnValue > 0)
-			this.pw.print(acnValue + "-" + acnVersion);
-		else
-			this.pw.print("???");
+
+		if (acn != null) {
+			if (acn.getOid().length == 8 && acn.getOid()[0] == 0 && acn.getOid()[1] == 4 && acn.getOid()[2] == 0 && acn.getOid()[3] == 0
+					&& acn.getOid()[4] == 1 && acn.getOid()[5] == 0) {
+				this.pw.print(acn.getOid()[6] + "-" + acn.getOid()[7]);
+			} else {
+				boolean first = true;
+				for (long i1 : acn.getOid()) {
+					this.pw.print(i1);
+					if (first)
+						first = false;
+					else
+						this.pw.print(".");
+				}
+			}
+		} else
+			this.pw.print("???");		
+
 		this.pw.print("\tComponents: ");
 		if (comp != null) {
 			int i1 = 0;
@@ -1096,10 +1262,12 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	@Override
 	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, AddressString origReference, MAPExtensionContainer extensionContainer) {
 		
-		DialogImplWrapper di = (DialogImplWrapper)((MAPDialogImpl)mapDialog).getTcapDialog();
-		if (mapDialog.getApplicationContext() != null) {
-			di.setAcnValue(mapDialog.getApplicationContext().getApplicationContextName().getApplicationContextCode());
-			di.setAcnVersion(mapDialog.getApplicationContext().getApplicationContextVersion().getVersion());
+		if (((MAPDialogImpl) mapDialog).getTcapDialog() instanceof DialogImplWrapper) {
+			DialogImplWrapper di = (DialogImplWrapper) ((MAPDialogImpl) mapDialog).getTcapDialog();
+			if (mapDialog.getApplicationContext() != null) {
+				di.setAcnValue(mapDialog.getApplicationContext().getApplicationContextName().getApplicationContextCode());
+				di.setAcnVersion(mapDialog.getApplicationContext().getApplicationContextVersion().getVersion());
+			}
 		}
 	}
 
@@ -1231,12 +1399,11 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 
 	@Override
 	public void onDialogRequest(CAPDialog capDialog, CAPGprsReferenceNumber arg1) {
-		// TODO Auto-generated method stub
-		
-		DialogImplWrapper di = (DialogImplWrapper)((CAPDialogImpl)capDialog).getTcapDialog();
-		if (capDialog.getApplicationContext() != null) {
-//			di.setAcnValue(capDialog.getApplicationContext().getApplicationContextName().getApplicationContextCode());
-			di.setAcnVersion(capDialog.getApplicationContext().getVersion().getVersion());
+		if (((CAPDialogImpl) capDialog).getTcapDialog() instanceof DialogImplWrapper) {
+			DialogImplWrapper di = (DialogImplWrapper) ((CAPDialogImpl) capDialog).getTcapDialog();
+			if (capDialog.getApplicationContext() != null) {
+				di.setAcnVersion(capDialog.getApplicationContext().getVersion().getVersion());
+			}
 		}
 	}
 
@@ -1503,9 +1670,9 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	}
 
 	@Override
-	public void onCAPMessage(CAPMessage arg0) {
-		// TODO Auto-generated method stub
-		
+	public void onCAPMessage(CAPMessage msg) {
+
+		msgDetailBuffer.add(msg.toString());
 	}
 
 	@Override
@@ -1772,6 +1939,60 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	public void onInsertSubscriberDataResponse(InsertSubscriberDataResponse request) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void onDialogReleased(Dialog arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogTimeout(Dialog arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onInvokeTimeout(Invoke arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTCBegin(TCBeginIndication ind) {
+		this.curTcapDialog = (DialogImpl)ind.getDialog();
+	}
+
+	@Override
+	public void onTCContinue(TCContinueIndication ind) {
+		this.curTcapDialog = (DialogImpl)ind.getDialog();
+	}
+
+	@Override
+	public void onTCEnd(TCEndIndication ind) {
+		this.curTcapDialog = (DialogImpl)ind.getDialog();
+	}
+
+	@Override
+	public void onTCNotice(TCNoticeIndication arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTCPAbort(TCPAbortIndication ind) {
+		this.curTcapDialog = (DialogImpl)ind.getDialog();
+	}
+
+	@Override
+	public void onTCUni(TCUniIndication ind) {
+		this.curTcapDialog = (DialogImpl)ind.getDialog();
+	}
+
+	@Override
+	public void onTCUserAbort(TCUserAbortIndication ind) {
+		this.curTcapDialog = (DialogImpl)ind.getDialog();
 	}
 }
 

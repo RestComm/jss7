@@ -28,7 +28,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.DialogImpl;
 import org.mobicents.protocols.ss7.tcap.TCAPProviderImpl;
-import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.TRPseudoState;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortRequest;
@@ -55,7 +54,7 @@ public class DialogImplWrapper extends DialogImpl {
 	
 	public DialogImplWrapper(SccpAddress localAddress, SccpAddress remoteAddress, Long origTransactionId, boolean structured,
 			ScheduledExecutorService executor, TCAPProviderImpl provider, int seqControl) {
-		super(localAddress, remoteAddress, origTransactionId, structured, executor, provider, seqControl);
+		super(localAddress, remoteAddress, origTransactionId, structured, executor, provider, seqControl, true);
 	}
 
 	public int getAcnValue() {

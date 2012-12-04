@@ -106,6 +106,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 									// mapping, but not described
 	// explicitly...
 	private transient Map<Long, DialogImpl> dialogs = new HashMap<Long, DialogImpl>();
+	private transient Map<PrevewDialogDataKey, PrevewDialogData> dialogPreviewList = new HashMap<PrevewDialogDataKey, PrevewDialogData>();
 	
 	private int seqControl = 0;
 	private int ssn;
@@ -122,6 +123,10 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
 		this.componentPrimitiveFactory = new ComponentPrimitiveFactoryImpl(this);
 		this.dialogPrimitiveFactory = new DialogPrimitiveFactoryImpl(this.componentPrimitiveFactory);
+	}
+
+	public boolean getPreviewMode() {
+		return this.stack.getPreviewMode();
 	}
 
 	/*
@@ -231,9 +236,14 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
 	private Dialog _getDialog(SccpAddress localAddress, SccpAddress remoteAddress, boolean structured, int seqControl) throws TCAPException {
 
+		if (this.stack.getPreviewMode()) {
+			throw new NullPointerException("Can not create a Dialog in a PreviewMode");
+		}
+
 		if (localAddress == null) {
 			throw new NullPointerException("LocalAddress must not be null");
 		}
+
 		if (remoteAddress == null) {
 			throw new NullPointerException("RemoteAddress must not be null");
 		}
@@ -241,20 +251,23 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 		if (structured) {
 			synchronized (this.dialogs) {
 				Long id = this.getAvailableTxId();
-				DialogImpl di = new DialogImpl(localAddress, remoteAddress, id, structured, this._EXECUTOR, this, seqControl);
+				DialogImpl di = new DialogImpl(localAddress, remoteAddress, id, structured, this._EXECUTOR, this, seqControl, this.stack.getPreviewMode());
 
 				this.dialogs.put(id, di);
 
 				return di;
 			}
 		} else {
-			DialogImpl di = new DialogImpl(localAddress, remoteAddress, null, structured, this._EXECUTOR, this, seqControl);
+			DialogImpl di = new DialogImpl(localAddress, remoteAddress, null, structured, this._EXECUTOR, this, seqControl, this.stack.getPreviewMode());
 			return di;
 		}
 	}
 
 	public void send(byte[] data, boolean returnMessageOnError, SccpAddress destinationAddress, SccpAddress originatingAddress, int seqControl)
 			throws IOException {
+		if (this.stack.getPreviewMode())
+			return;
+
 		SccpDataMessage msg = messageFactory.createDataMessageClass1(destinationAddress, originatingAddress, data, seqControl, this.ssn, returnMessageOnError,
 				null, null);
 		sccpProvider.send(msg);
@@ -355,9 +368,15 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
 	public void release(DialogImpl d) {
 	    Long did = d.getDialogId();
-		synchronized (this.dialogs) {
-			this.dialogs.remove(did);
+
+		if (d.getPreviewMode()) {
+			this.removePreviewDialog(d);
+		} else {
+			synchronized (this.dialogs) {
+				this.dialogs.remove(did);
+			}
 		}
+		
 		try {
 			for (TCListener lst : this.tcListeners) {
 				lst.onDialogReleased(d);
@@ -433,9 +452,13 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 		this._EXECUTOR.shutdown();
 		this.sccpProvider.deregisterSccpListener(ssn);
 
+		this.dialogs.clear();
+		this.dialogPreviewList.clear();
 	}
 
 	protected void sendProviderAbort(PAbortCauseType pAbortCause, byte[] remoteTransactionId, SccpAddress remoteAddress, SccpAddress localAddress, int seqControl) {
+		if (this.stack.getPreviewMode())
+			return;
 
 		TCAbortMessageImpl msg = (TCAbortMessageImpl) TcapFactory.createTCAbortMessage();
 		msg.setDestinationTransactionId(remoteTransactionId);
@@ -454,6 +477,8 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
 	protected void sendProviderAbort(DialogServiceProviderType pt, byte[] remoteTransactionId, SccpAddress remoteAddress, SccpAddress localAddress,
 			int seqControl, ApplicationContextName acn) {
+		if (this.stack.getPreviewMode())
+			return;
 
 		DialogPortion dp = TcapFactory.createDialogPortion();
 		dp.setUnidirectional(false);
@@ -532,14 +557,31 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 				}
 
 				long dialogId = Utils.decodeTransactionId(tcm.getDestinationTransactionId());
-				DialogImpl di = this.dialogs.get(dialogId);
+				DialogImpl di;
+				if (this.stack.getPreviewMode()) {
+					PrevewDialogDataKey ky1 = new PrevewDialogDataKey(message.getIncomingDpc(),
+							(message.getCalledPartyAddress().getGlobalTitle() != null ? message.getCalledPartyAddress().getGlobalTitle().getDigits() : null),
+							message.getCalledPartyAddress().getSubsystemNumber(), dialogId);
+					long dId = Utils.decodeTransactionId(tcm.getOriginatingTransactionId());
+					PrevewDialogDataKey ky2 = new PrevewDialogDataKey(message.getIncomingOpc(),
+							(message.getCallingPartyAddress().getGlobalTitle() != null ? message.getCallingPartyAddress().getGlobalTitle().getDigits() : null),
+							message.getCallingPartyAddress().getSubsystemNumber(), dId);
+					di = (DialogImpl) this.getPreviewDialog(ky1, ky2, localAddress, remoteAddress, seqControl);
+				} else {
+					di = this.dialogs.get(dialogId);
+				}
 				if (di == null) {
 					logger.error("No dialog/transaction for id: " + dialogId);
 					this.sendProviderAbort(PAbortCauseType.UnrecognizedTxID, tcm.getOriginatingTransactionId(), remoteAddress, localAddress,
 							message.getSls());
 				} else {
 					di.processContinue(tcm, localAddress, remoteAddress);
+
+					if (this.stack.getPreviewMode()) {
+						di.release();
+					}
 				}
+
 				break;
 
 			case TCBeginMessage._TAG:
@@ -573,7 +615,15 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
 				di = null;
 				try {
-					di = (DialogImpl) this.getNewDialog(localAddress, remoteAddress, message.getSls());
+					if (this.stack.getPreviewMode()) {
+						long dId = Utils.decodeTransactionId(tcb.getOriginatingTransactionId());
+						PrevewDialogDataKey ky = new PrevewDialogDataKey(message.getIncomingOpc(), (message.getCallingPartyAddress().getGlobalTitle() != null ? message
+								.getCallingPartyAddress().getGlobalTitle().getDigits() : null), message.getCallingPartyAddress().getSubsystemNumber(), dId);
+						di = (DialogImpl) this.createPreviewDialog(ky, localAddress, remoteAddress, seqControl);
+					} else {
+						di = (DialogImpl) this.getNewDialog(localAddress, remoteAddress, message.getSls());
+					}
+
 				} catch (TCAPException e) {
 					this.sendProviderAbort(PAbortCauseType.ResourceLimitation, tcb.getOriginatingTransactionId(), remoteAddress, localAddress,
 							message.getSls());
@@ -581,6 +631,12 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 					return;
 				}
 				di.processBegin(tcb, localAddress, remoteAddress);
+
+				if (this.stack.getPreviewMode()) {
+					di.getPrevewDialogData().setLastACN(di.getApplicationContextName());
+					di.getPrevewDialogData().setOperationsSent(di.operationsSent);
+					di.release();
+				}
 
 				break;
 
@@ -594,15 +650,26 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 				}
 
 				dialogId = Utils.decodeTransactionId(teb.getDestinationTransactionId());
-				di = this.dialogs.get(dialogId);
+				if (this.stack.getPreviewMode()) {
+					PrevewDialogDataKey ky = new PrevewDialogDataKey(message.getIncomingDpc(),
+							(message.getCalledPartyAddress().getGlobalTitle() != null ? message.getCalledPartyAddress().getGlobalTitle().getDigits() : null),
+							message.getCalledPartyAddress().getSubsystemNumber(), dialogId);
+					di = (DialogImpl) this.getPreviewDialog(ky, null, localAddress, remoteAddress, seqControl);
+				} else {
+					di = this.dialogs.get(dialogId);
+				}
 				if (di == null) {
 					logger.error("No dialog/transaction for id: " + dialogId);
 				} else {
 					di.processEnd(teb, localAddress, remoteAddress);
 
+					if (this.stack.getPreviewMode()) {
+						this.removePreviewDialog(di);
+						di.release();
+					}
 				}
 				break;
-			
+
 			case TCAbortMessage._TAG:
 				TCAbortMessage tub = null;
 				try {
@@ -613,11 +680,24 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 				}
 
 				dialogId = Utils.decodeTransactionId(tub.getDestinationTransactionId());
-				di = this.dialogs.get(dialogId);
+				if (this.stack.getPreviewMode()) {
+					long dId = Utils.decodeTransactionId(tub.getDestinationTransactionId());
+					PrevewDialogDataKey ky = new PrevewDialogDataKey(message.getIncomingDpc(),
+							(message.getCalledPartyAddress().getGlobalTitle() != null ? message.getCalledPartyAddress().getGlobalTitle().getDigits() : null),
+							message.getCalledPartyAddress().getSubsystemNumber(), dId);
+					di = (DialogImpl) this.getPreviewDialog(ky, null, localAddress, remoteAddress, seqControl);
+				} else {
+					di = this.dialogs.get(dialogId);
+				}
 				if (di == null) {
 					logger.error("No dialog/transaction for id: " + dialogId);
 				} else {
 					di.processAbort(tub, localAddress, remoteAddress);
+
+					if (this.stack.getPreviewMode()) {
+						this.removePreviewDialog(di);
+						di.release();
+					}
 				}
 				break;
 			
@@ -628,6 +708,10 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 				break;
 			
 			default:
+				if (this.stack.getPreviewMode()) {
+					break;
+				}
+
 				logger.error(String.format("Rx unidentified messageType=%s. SccpMessage=%s", tag, message));
 				TCUnidentifiedMessage tcUnidentified = new TCUnidentifiedMessage();
 				tcUnidentified.decode(ais);
@@ -656,6 +740,10 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 	}
 
 	public void onNotice(SccpNoticeMessage msg) {
+
+		if (this.stack.getPreviewMode()) {
+			return;
+		}
 
 		DialogImpl dialog = null;
 
@@ -709,6 +797,100 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 	public void onState(int arg0, int arg1, boolean arg2, int arg3) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	private Dialog createPreviewDialog(PrevewDialogDataKey ky, SccpAddress localAddress, SccpAddress remoteAddress, int seqControl) {
+		synchronized (this.dialogPreviewList) {
+			PrevewDialogData pdd = new PrevewDialogData();
+			this.dialogPreviewList.put(ky, pdd);
+			DialogImpl di = new DialogImpl(0, localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd);
+			pdd.prevewDialogDataKey1 = ky;
+			return di;
+		}
+	}
+
+	private Dialog getPreviewDialog(PrevewDialogDataKey ky1, PrevewDialogDataKey ky2, SccpAddress localAddress, SccpAddress remoteAddress, int seqControl) {
+		synchronized (this.dialogPreviewList) {
+			PrevewDialogData pdd = this.dialogPreviewList.get(ky1);
+			DialogImpl di = null;
+			if (pdd != null) {
+				di = new DialogImpl(0, localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd);
+			} else {
+				pdd = this.dialogPreviewList.get(ky2);
+				if (pdd != null) {
+					di = new DialogImpl(0, localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd);
+				} else {
+					return null;
+				}
+			}
+
+			if (pdd.prevewDialogDataKey2 == null && ky2 != null) {
+				if (pdd.prevewDialogDataKey1.equals(ky1))
+					pdd.prevewDialogDataKey2 = ky2;
+				else
+					pdd.prevewDialogDataKey2 = ky1;
+				this.dialogPreviewList.put(pdd.prevewDialogDataKey2, pdd);
+			}
+
+			return di;
+		}
+	}
+
+	private void removePreviewDialog(DialogImpl di) {
+		synchronized (this.dialogPreviewList) {
+			this.dialogPreviewList.remove(di.prevewDialogData.prevewDialogDataKey1);
+			this.dialogPreviewList.remove(di.prevewDialogData.prevewDialogDataKey2);
+		}
+	}
+
+
+	protected class PrevewDialogDataKey {
+		public int dpc;
+		public String sccpDigits;
+		public int ssn;
+		public long origTxId;
+
+		public PrevewDialogDataKey(int dpc, String sccpDigits, int ssn, long txId) {
+			this.dpc = dpc;
+			this.sccpDigits = sccpDigits;
+			this.ssn = ssn;
+			this.origTxId = txId;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null)
+				return false;
+			if (!(obj instanceof PrevewDialogDataKey))
+				return false;
+			PrevewDialogDataKey b = (PrevewDialogDataKey) obj;
+
+			if (this.sccpDigits != null) {
+				// sccpDigits + ssn
+				if (!this.sccpDigits.equals(b.sccpDigits))
+					return false;
+			} else {
+				// dpc + ssn
+				if (this.dpc != b.dpc)
+					return false;
+			}
+			if (this.ssn != b.ssn)
+				return false;
+			if (this.origTxId != b.origTxId)
+				return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + this.dpc;
+			result = prime * result + ((sccpDigits == null) ? 0 : sccpDigits.hashCode());
+			result = prime * result + this.ssn;
+			result = prime * result + (int) (this.origTxId + (this.origTxId >> 32));
+			return result;
+		}
 	}
 }
 

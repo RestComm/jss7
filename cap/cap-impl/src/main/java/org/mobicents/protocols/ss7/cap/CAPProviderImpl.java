@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -69,6 +69,7 @@ import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.ISUPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
+import org.mobicents.protocols.ss7.tcap.DialogImpl;
 import org.mobicents.protocols.ss7.tcap.api.MessageType;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
@@ -388,6 +389,11 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			this.deliverDialogDelimiter(capDialogImpl);
 
 			finishComponentProcessingState(capDialogImpl);
+
+			if (this.getTCAPProvider().getPreviewMode()) {
+				DialogImpl dimp = (DialogImpl)tcBeginIndication.getDialog();
+				dimp.getPrevewDialogData().setUpperDialog(capDialogImpl);
+			}
 		}
 	}
 
@@ -419,7 +425,12 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
 		Dialog tcapDialog = tcContinueIndication.getDialog();
 
-		CAPDialogImpl capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getDialogId());
+		CAPDialogImpl capDialogImpl;
+		if (this.getTCAPProvider().getPreviewMode()) {
+			capDialogImpl = (CAPDialogImpl) (((DialogImpl)tcapDialog).getPrevewDialogData().getUpperDialog());
+		} else {
+			capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getDialogId());
+		}
 
 		if (capDialogImpl == null) {
 			loger.warn("CAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
@@ -433,45 +444,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		capDialogImpl.tcapMessageType = MessageType.Continue;
 
 		synchronized (capDialogImpl) {
-			if (capDialogImpl.getState() == CAPDialogState.InitialSent) {
-				ApplicationContextName acn = tcContinueIndication.getApplicationContextName();
-				
-				if (acn == null) {
-					loger.warn("CAP Dialog is in InitialSent state but no application context name is received");
-					try {
-						this.fireTCAbort(tcContinueIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null, capDialogImpl.getReturnMessageOnError());
-					} catch (CAPException e) {
-						loger.error("Error while firing TC-U-ABORT. ", e);
-					}
-
-//					capDialogImpl.setNormalDialogShutDown();
-
-					this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
-					capDialogImpl.setState(CAPDialogState.Expunged);
-
-					return;
-				}
-
-				CAPApplicationContext capAcn = CAPApplicationContext.getInstance(acn.getOid());
-				if (capAcn == null || !capAcn.equals(capDialogImpl.getApplicationContext())) {
-					loger.warn(String.format("Received first TC-CONTINUE. But the received ACN is not the equal to the original ACN"));
-
-					try {
-						this.fireTCAbort(tcContinueIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null, capDialogImpl.getReturnMessageOnError());
-					} catch (CAPException e) {
-						loger.error("Error while firing TC-U-ABORT. ", e);
-					}
-
-//					capDialogImpl.setNormalDialogShutDown();
-
-					this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
-					capDialogImpl.setState(CAPDialogState.Expunged);
-
-					return;
-				}
-
-				// Parsing CAPGprsReferenceNumber if exists
-				// we ignore all errors this
+			if (this.getTCAPProvider().getPreviewMode()) {
 				CAPGprsReferenceNumberImpl referenceNumber = null;
 				UserInformation userInfo = tcContinueIndication.getUserInformation();
 				if (userInfo != null) {
@@ -479,34 +452,94 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 				}
 				capDialogImpl.receivedGprsReferenceNumber = referenceNumber;
 
-				capDialogImpl.delayedAreaState = CAPDialogImpl.DelayedAreaState.No;
+				if (tcContinueIndication.getApplicationContextName() != null)
+					this.deliverDialogAccept(capDialogImpl, referenceNumber);
 
-				capDialogImpl.setState(CAPDialogState.Active);
-				this.deliverDialogAccept(capDialogImpl, referenceNumber);
-
-				if (capDialogImpl.getState() == CAPDialogState.Expunged) {
-					// The Dialog was aborter
-					finishComponentProcessingState(capDialogImpl);
-					return;
-				}
-			} else {
-				capDialogImpl.delayedAreaState = CAPDialogImpl.DelayedAreaState.No;
-			}
-
-			// Now let us decode the Components
-			if (capDialogImpl.getState() == CAPDialogState.Active) {
 				Component[] comps = tcContinueIndication.getComponents();
 				if (comps != null) {
 					processComponents(capDialogImpl, comps);
 				}
+
+				this.deliverDialogDelimiter(capDialogImpl);
+
 			} else {
-				// This should never happen
-				loger.error(String.format("Received TC-CONTINUE. CAPDialog=%s. But state is not Active", capDialogImpl));
+				if (capDialogImpl.getState() == CAPDialogState.InitialSent) {
+					ApplicationContextName acn = tcContinueIndication.getApplicationContextName();
+
+					if (acn == null) {
+						loger.warn("CAP Dialog is in InitialSent state but no application context name is received");
+						try {
+							this.fireTCAbort(tcContinueIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null,
+									capDialogImpl.getReturnMessageOnError());
+						} catch (CAPException e) {
+							loger.error("Error while firing TC-U-ABORT. ", e);
+						}
+
+						// capDialogImpl.setNormalDialogShutDown();
+
+						this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
+						capDialogImpl.setState(CAPDialogState.Expunged);
+
+						return;
+					}
+
+					CAPApplicationContext capAcn = CAPApplicationContext.getInstance(acn.getOid());
+					if (capAcn == null || !capAcn.equals(capDialogImpl.getApplicationContext())) {
+						loger.warn(String.format("Received first TC-CONTINUE. But the received ACN is not the equal to the original ACN"));
+
+						try {
+							this.fireTCAbort(tcContinueIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null,
+									capDialogImpl.getReturnMessageOnError());
+						} catch (CAPException e) {
+							loger.error("Error while firing TC-U-ABORT. ", e);
+						}
+
+						// capDialogImpl.setNormalDialogShutDown();
+
+						this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
+						capDialogImpl.setState(CAPDialogState.Expunged);
+
+						return;
+					}
+
+					// Parsing CAPGprsReferenceNumber if exists
+					// we ignore all errors this
+					CAPGprsReferenceNumberImpl referenceNumber = null;
+					UserInformation userInfo = tcContinueIndication.getUserInformation();
+					if (userInfo != null) {
+						referenceNumber = ParseUserInfo(userInfo, tcContinueIndication.getDialog());
+					}
+					capDialogImpl.receivedGprsReferenceNumber = referenceNumber;
+
+					capDialogImpl.delayedAreaState = CAPDialogImpl.DelayedAreaState.No;
+
+					capDialogImpl.setState(CAPDialogState.Active);
+					this.deliverDialogAccept(capDialogImpl, referenceNumber);
+
+					if (capDialogImpl.getState() == CAPDialogState.Expunged) {
+						// The Dialog was aborter
+						finishComponentProcessingState(capDialogImpl);
+						return;
+					}
+				} else {
+					capDialogImpl.delayedAreaState = CAPDialogImpl.DelayedAreaState.No;
+				}
+
+				// Now let us decode the Components
+				if (capDialogImpl.getState() == CAPDialogState.Active) {
+					Component[] comps = tcContinueIndication.getComponents();
+					if (comps != null) {
+						processComponents(capDialogImpl, comps);
+					}
+				} else {
+					// This should never happen
+					loger.error(String.format("Received TC-CONTINUE. CAPDialog=%s. But state is not Active", capDialogImpl));
+				}
+
+				this.deliverDialogDelimiter(capDialogImpl);
+
+				finishComponentProcessingState(capDialogImpl);
 			}
-
-			this.deliverDialogDelimiter(capDialogImpl);
-
-			finishComponentProcessingState(capDialogImpl);
 		}
 	}	
 
@@ -514,7 +547,12 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
 		Dialog tcapDialog = tcEndIndication.getDialog();
 
-		CAPDialogImpl capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getDialogId());
+		CAPDialogImpl capDialogImpl;
+		if (this.getTCAPProvider().getPreviewMode()) {
+			capDialogImpl = (CAPDialogImpl) (((DialogImpl)tcapDialog).getPrevewDialogData().getUpperDialog());
+		} else {
+			capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getDialogId());
+		}
 
 		if (capDialogImpl == null) {
 			loger.warn("CAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
@@ -528,37 +566,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		capDialogImpl.tcapMessageType = MessageType.End;
 
 		synchronized (capDialogImpl) {
-			if (capDialogImpl.getState() == CAPDialogState.InitialSent) {
-				ApplicationContextName acn = tcEndIndication.getApplicationContextName();
-
-				if (acn == null) {
-					loger.warn("CAP Dialog is in InitialSent state but no application context name is received");
-					try {
-						this.fireTCAbort(tcEndIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null, capDialogImpl.getReturnMessageOnError());
-					} catch (CAPException e) {
-						loger.error("Error while firing TC-U-ABORT. ", e);
-					}
-
-//					capDialogImpl.setNormalDialogShutDown();
-
-					this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
-					capDialogImpl.setState(CAPDialogState.Expunged);
-
-					return;
-				}
-				
-				CAPApplicationContext capAcn = CAPApplicationContext.getInstance(acn.getOid());
-
-				if (capAcn == null || !capAcn.equals(capDialogImpl.getApplicationContext())) {
-					loger.error(String.format("Received first TC-END. CAPDialog=%s. But CAPApplicationContext=%s", capDialogImpl, capAcn));
-
-//					capDialogImpl.setNormalDialogShutDown();
-
-					this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
-					capDialogImpl.setState(CAPDialogState.Expunged);
-
-					return;
-				}
+			if (this.getTCAPProvider().getPreviewMode()) {
 
 				capDialogImpl.setState(CAPDialogState.Active);
 
@@ -571,23 +579,80 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 				}
 				capDialogImpl.receivedGprsReferenceNumber = referenceNumber;
 
-				this.deliverDialogAccept(capDialogImpl, referenceNumber);
-				if (capDialogImpl.getState() == CAPDialogState.Expunged) {
-					// The Dialog was aborter
-					return;
+				if (tcEndIndication.getApplicationContextName() != null)
+					this.deliverDialogAccept(capDialogImpl, referenceNumber);
+
+				// Now let us decode the Components
+				Component[] comps = tcEndIndication.getComponents();
+				if (comps != null) {
+					processComponents(capDialogImpl, comps);
 				}
+
+				// capDialogImpl.setNormalDialogShutDown();
+				this.deliverDialogClose(capDialogImpl);
+
+			} else {
+				if (capDialogImpl.getState() == CAPDialogState.InitialSent) {
+					ApplicationContextName acn = tcEndIndication.getApplicationContextName();
+
+					if (acn == null) {
+						loger.warn("CAP Dialog is in InitialSent state but no application context name is received");
+						try {
+							this.fireTCAbort(tcEndIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null, capDialogImpl.getReturnMessageOnError());
+						} catch (CAPException e) {
+							loger.error("Error while firing TC-U-ABORT. ", e);
+						}
+
+						// capDialogImpl.setNormalDialogShutDown();
+
+						this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
+						capDialogImpl.setState(CAPDialogState.Expunged);
+
+						return;
+					}
+
+					CAPApplicationContext capAcn = CAPApplicationContext.getInstance(acn.getOid());
+
+					if (capAcn == null || !capAcn.equals(capDialogImpl.getApplicationContext())) {
+						loger.error(String.format("Received first TC-END. CAPDialog=%s. But CAPApplicationContext=%s", capDialogImpl, capAcn));
+
+						// capDialogImpl.setNormalDialogShutDown();
+
+						this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
+						capDialogImpl.setState(CAPDialogState.Expunged);
+
+						return;
+					}
+
+					capDialogImpl.setState(CAPDialogState.Active);
+
+					// Parsing CAPGprsReferenceNumber if exists
+					// we ignore all errors this
+					CAPGprsReferenceNumberImpl referenceNumber = null;
+					UserInformation userInfo = tcEndIndication.getUserInformation();
+					if (userInfo != null) {
+						referenceNumber = ParseUserInfo(userInfo, tcEndIndication.getDialog());
+					}
+					capDialogImpl.receivedGprsReferenceNumber = referenceNumber;
+
+					this.deliverDialogAccept(capDialogImpl, referenceNumber);
+					if (capDialogImpl.getState() == CAPDialogState.Expunged) {
+						// The Dialog was aborter
+						return;
+					}
+				}
+
+				// Now let us decode the Components
+				Component[] comps = tcEndIndication.getComponents();
+				if (comps != null) {
+					processComponents(capDialogImpl, comps);
+				}
+
+				// capDialogImpl.setNormalDialogShutDown();
+				this.deliverDialogClose(capDialogImpl);
+
+				capDialogImpl.setState(CAPDialogState.Expunged);
 			}
-
-			// Now let us decode the Components
-			Component[] comps = tcEndIndication.getComponents();
-			if (comps != null) {
-				processComponents(capDialogImpl, comps);
-			}
-
-//			capDialogImpl.setNormalDialogShutDown();
-			this.deliverDialogClose(capDialogImpl);
-
-			capDialogImpl.setState(CAPDialogState.Expunged);
 		}
 	}	
 
@@ -642,25 +707,17 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 				this.deliverDialogRelease(capDialogImpl);
 			}
 		}
-
-//		if (capDialogImpl != null) {
-//			synchronized (capDialogImpl) {
-//				if (capDialogImpl.getState() != CAPDialogState.Expunged && !capDialogImpl.getNormalDialogShutDown()) {
-//
-//					// TCAP Dialog is destroyed when CapDialog is alive and not shutting down
-//					capDialogImpl.setNormalDialogShutDown();
-//					this.deliverDialogUserAbort(capDialogImpl, CAPGeneralAbortReason.BadReceivedData, null);
-//					
-//					capDialogImpl.setState(CAPDialogState.Expunged);
-//				}
-//			}
-//		}
 	}
 
 	public void onTCPAbort(TCPAbortIndication tcPAbortIndication) {
 		Dialog tcapDialog = tcPAbortIndication.getDialog();
 
-		CAPDialogImpl capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getDialogId());
+		CAPDialogImpl capDialogImpl;
+		if (this.getTCAPProvider().getPreviewMode()) {
+			capDialogImpl = (CAPDialogImpl) (((DialogImpl)tcapDialog).getPrevewDialogData().getUpperDialog());
+		} else {
+			capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getDialogId());
+		}
 
 		if (capDialogImpl == null) {
 			loger.warn("CAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
@@ -671,7 +728,6 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		synchronized (capDialogImpl) {
 			PAbortCauseType pAbortCause = tcPAbortIndication.getPAbortCause();
 
-//			capDialogImpl.setNormalDialogShutDown();
 			this.deliverDialogProviderAbort(capDialogImpl, pAbortCause);
 
 			capDialogImpl.setState(CAPDialogState.Expunged);
@@ -679,10 +735,14 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 	}
 
 	public void onTCUserAbort(TCUserAbortIndication tcUserAbortIndication) {
-		
 		Dialog tcapDialog = tcUserAbortIndication.getDialog();
 
-		CAPDialogImpl capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getDialogId());
+		CAPDialogImpl capDialogImpl;
+		if (this.getTCAPProvider().getPreviewMode()) {
+			capDialogImpl = (CAPDialogImpl) (((DialogImpl)tcapDialog).getPrevewDialogData().getUpperDialog());
+		} else {
+			capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getDialogId());
+		}
 
 		if (capDialogImpl == null) {
 			loger.error("CAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
@@ -754,6 +814,10 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
 	@Override
 	public void onTCNotice(TCNoticeIndication ind) {
+
+		if (this.getTCAPProvider().getPreviewMode()) {
+			return;
+		}
 
 		Dialog tcapDialog = ind.getDialog();
 
@@ -1026,6 +1090,10 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 	protected void fireTCBegin(Dialog tcapDialog, ApplicationContextName acn, CAPGprsReferenceNumber gprsReferenceNumber, boolean returnMessageOnError)
 			throws CAPException {
 
+		if (this.getTCAPProvider().getPreviewMode()) {
+			return;
+		}
+
 		TCBeginRequest tcBeginReq = encodeTCBegin(tcapDialog, acn, gprsReferenceNumber);
 		if (returnMessageOnError)
 			tcBeginReq.setReturnMessageOnError(true);
@@ -1064,6 +1132,10 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 	protected void fireTCContinue(Dialog tcapDialog, ApplicationContextName acn, CAPGprsReferenceNumber gprsReferenceNumber, boolean returnMessageOnError)
 			throws CAPException {
 
+		if (this.getTCAPProvider().getPreviewMode()) {
+			return;
+		}
+
 		TCContinueRequest tcContinueReq = encodeTCContinue(tcapDialog, acn, gprsReferenceNumber);
 		if (returnMessageOnError)
 			tcContinueReq.setReturnMessageOnError(true);
@@ -1101,6 +1173,10 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
 	protected void fireTCEnd(Dialog tcapDialog, boolean prearrangedEnd, ApplicationContextName acn, CAPGprsReferenceNumber gprsReferenceNumber,
 			boolean returnMessageOnError) throws CAPException {
+
+		if (this.getTCAPProvider().getPreviewMode()) {
+			return;
+		}
 
 		TCEndRequest endRequest = encodeTCEnd(tcapDialog, prearrangedEnd, acn, gprsReferenceNumber);
 		if (returnMessageOnError)
@@ -1145,6 +1221,10 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
 	protected void fireTCAbort(Dialog tcapDialog, CAPGeneralAbortReason generalAbortReason, CAPUserAbortReason userAbortReason, boolean returnMessageOnError)
 			throws CAPException {
+
+		if (this.getTCAPProvider().getPreviewMode()) {
+			return;
+		}
 
 		TCUserAbortRequest tcUserAbort = this.getTCAPProvider().getDialogPrimitiveFactory().createUAbort(tcapDialog);
 
