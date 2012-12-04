@@ -139,7 +139,7 @@ public class DialogImpl implements Dialog {
 	private int lastInvokeIdIndex = _INVOKE_TABLE_SHIFT;
 
 	// only originating side keeps FSM, see: Q.771 - 3.1.5
-	private InvokeImpl[] operationsSent = new InvokeImpl[invokeIDTable.length];
+	protected InvokeImpl[] operationsSent = new InvokeImpl[invokeIDTable.length];
 	private ScheduledExecutorService executor;
 
 	// scheduled components list
@@ -153,6 +153,7 @@ public class DialogImpl implements Dialog {
 	private boolean dpSentInBegin = false;
 
 	private boolean previewMode = false;
+	protected PrevewDialogData prevewDialogData;
 
 	private static final int getIndexFromInvokeId(Long l) {
 		int tmp = l.intValue();
@@ -192,7 +193,7 @@ public class DialogImpl implements Dialog {
 	}
 
 	protected DialogImpl(long dialogId, SccpAddress localAddress, SccpAddress remoteAddress, int seqControl, ScheduledExecutorService executor,
-			TCAPProviderImpl provider, TCAPProviderImpl.PrevewDialogData prevewDialogData) {
+			TCAPProviderImpl provider, PrevewDialogData prevewDialogData) {
 		this.localAddress = localAddress;
 		this.remoteAddress = remoteAddress;
 		this.localTransactionId = dialogId;
@@ -206,7 +207,13 @@ public class DialogImpl implements Dialog {
 		TCAPStack stack = this.provider.getStack();
 		this.idleTaskTimeout = stack.getDialogIdleTimeout();
 
-		this.lastACN = prevewDialogData.lastACN;
+		this.prevewDialogData = prevewDialogData;
+		this.lastACN = prevewDialogData.getLastACN();
+		if (prevewDialogData.getOperationsSent() != null)
+			this.operationsSent = prevewDialogData.getOperationsSent();
+
+		// start
+		startIdleTimer();
 	}
 
 	public void release() {
@@ -1613,11 +1620,12 @@ public class DialogImpl implements Dialog {
 		for (Component ci : components) {
 			Long invokeId = ci.getInvokeId();
 			InvokeImpl invoke = null;
+			int index = 0;
 			if (invokeId != null) {
-				int index = getIndexFromInvokeId(invokeId);
+				index = getIndexFromInvokeId(invokeId);
 				invoke = this.operationsSent[index];
 			}
-			
+
 			switch (ci.getType()) {
 
 			case ReturnResult:
@@ -1643,7 +1651,7 @@ public class DialogImpl implements Dialog {
 					if (invoke.isSuccessReported()) {
 						resultingIndications.add(ci);
 					}
-					ReturnResultLastImpl rri = (ReturnResultLastImpl)ci;
+					ReturnResultLastImpl rri = (ReturnResultLastImpl) ci;
 					if (rri.getOperationCode() == null)
 						rri.setOperationCode(invoke.getOperationCode());
 				}
@@ -1668,18 +1676,26 @@ public class DialogImpl implements Dialog {
 
 			case Reject:
 				if (invoke != null) {
-					// If the Reject Problem is the InvokeProblemType we should move the invoke to the idle state 
-					Problem problem = ((Reject)ci).getProblem();
+					// If the Reject Problem is the InvokeProblemType we
+					// should move the invoke to the idle state
+					Problem problem = ((Reject) ci).getProblem();
 					if (problem.getInvokeProblemType() != null)
 						invoke.onReject();
 				}
 				resultingIndications.add(ci);
 				break;
-				
+
 			default:
 				resultingIndications.add(ci);
 				break;
 			}
+
+			if (this.previewMode) {
+				if (ci.getType() == ComponentType.Invoke) {
+					this.operationsSent[index] = (InvokeImpl) ci;
+				}
+			}
+
 		}
 
 		components = new Component[resultingIndications.size()];
@@ -1713,8 +1729,8 @@ public class DialogImpl implements Dialog {
 	{
 		if (!this.structured)
 			return;
-		if (this.previewMode)
-			return;
+//		if (this.previewMode)
+//			return;
 
 		try {
 			this.dialogLock.lock();
@@ -1767,7 +1783,7 @@ public class DialogImpl implements Dialog {
 				d.idleTimerInvoked = true;
 				provider.timeout(d);
 				// send abort
-				if (d.idleTimerActionTaken) {
+				if (d.idleTimerActionTaken && !getPreviewMode()) {
 					startIdleTimer();
 				} else {
 					d.release();
@@ -1853,7 +1869,11 @@ public class DialogImpl implements Dialog {
 	public boolean getPreviewMode() {
 		return this.previewMode;
 	}
-	
+
+	public PrevewDialogData getPrevewDialogData() {
+		return this.prevewDialogData;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
