@@ -248,9 +248,9 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 			throw new NullPointerException("RemoteAddress must not be null");
 		}
 
+		Long id = this.getAvailableTxId();
 		if (structured) {
 			synchronized (this.dialogs) {
-				Long id = this.getAvailableTxId();
 				DialogImpl di = new DialogImpl(localAddress, remoteAddress, id, structured, this._EXECUTOR, this, seqControl, this.stack.getPreviewMode());
 
 				this.dialogs.put(id, di);
@@ -258,7 +258,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 				return di;
 			}
 		} else {
-			DialogImpl di = new DialogImpl(localAddress, remoteAddress, null, structured, this._EXECUTOR, this, seqControl, this.stack.getPreviewMode());
+			DialogImpl di = new DialogImpl(localAddress, remoteAddress, id, structured, this._EXECUTOR, this, seqControl, this.stack.getPreviewMode());
 			return di;
 		}
 	}
