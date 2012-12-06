@@ -101,11 +101,12 @@ public class RuleImpl implements Rule, Serializable {
 	 * Creates new routing rule.
 	 * 
 	 */
-	public RuleImpl(RuleType ruleType, LoadSharingAlgorithm loadSharingAlgo, SccpAddress pattern, String mask) {
+	public RuleImpl(RuleType ruleType, LoadSharingAlgorithm loadSharingAlgo, OriginationType originationType, SccpAddress pattern, String mask) {
 		this.ruleType = ruleType;
 		this.pattern = pattern;
 		this.mask = mask;
 		this.setLoadSharingAlgorithm(loadSharingAlgo);
+		this.setOriginationType(originationType);
 
 		configure();
 	}

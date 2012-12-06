@@ -80,11 +80,11 @@ public interface Router {
 
 	public Map<Integer, LongMessageRule> getLongMessageRules();
 
-	public void addRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, SccpAddress pattern, String mask,
-			int pAddressId, int sAddressId) throws Exception;
+	public void addRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, OriginationType originationType, SccpAddress pattern, String mask,
+			int pAddressId, int sAddressId, Integer newCallingPartyAddressAddressId) throws Exception;
 
-	public void modifyRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, SccpAddress pattern, String mask,
-			int pAddressId, int sAddressId) throws Exception;
+	public void modifyRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, OriginationType originationType, SccpAddress pattern, String mask,
+			int pAddressId, int sAddressId, Integer newCallingPartyAddressAddressId) throws Exception;
 	
 	public Rule getRule(int id);
 

@@ -152,10 +152,10 @@ public class SccpExecutorTest {
 		assertEquals(gt.getNatureOfAddress(), NatureOfAddress.INTERNATIONAL);
 		assertEquals(rule.getRuleType(), RuleType.Solitary);
 
-		String sec_addressCmd = "sccp backup_add create 1 71 3 8 0 0 3 123456789";
-		result = this.sccpExecutor.execute(sec_addressCmd.split(" "));
-		assertTrue(result.equals(SccpOAMMessage.ADDRESS_SUCCESSFULLY_ADDED));
-		assertEquals(this.router.getBackupAddresses().size(), 1);
+//		String sec_addressCmd = "sccp backup_add create 1 71 3 8 0 0 3 123456789";
+//		result = this.sccpExecutor.execute(sec_addressCmd.split(" "));
+//		assertTrue(result.equals(SccpOAMMessage.ADDRESS_SUCCESSFULLY_ADDED));
+//		assertEquals(this.router.getBackupAddresses().size(), 1);
 
 		String createRuleCmd2 = "sccp rule create 3 R 71 2 8 0 0 3 123456789 dominant 1 1";
 		result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
@@ -339,61 +339,61 @@ public class SccpExecutorTest {
 		assertEquals(this.router.getRoutingAddresses().size(), 0);
 	}
 
-	@Test(groups = { "oam", "functional.mgmt" })
-	public void testBackupAddress() {
-
-		String rspCmd = "sccp backup_add create 11 71 6535 8 0 0 12 93707100007";
-		// <id> <address-indicator> <point-code> <subsystem-number>
-		// <translation-type> <numbering-plan> <nature-of-address-indicator>
-		// <digits>
-		String res = this.sccpExecutor.execute(rspCmd.split(" "));
-		assertEquals(this.router.getBackupAddresses().size(), 1);
-		SccpAddress addr = this.router.getBackupAddress(11);
-		assertEquals(addr.getAddressIndicator().getValue(), 71);
-		assertEquals(addr.getSignalingPointCode(), 6535);
-		assertEquals(addr.getSubsystemNumber(), 8);
-		assertTrue(addr.getGlobalTitle().getDigits().equals("93707100007"));
-
-		// test show
-		rspCmd = "sccp backup_add show";
-		res = this.sccpExecutor.execute(rspCmd.split(" "));
-		assertEquals(res, "key=11  backup_add=pc=6535,ssn=8,AI=71,gt=GT0001{na=SPARE_12, digits=93707100007}\n");
-
-		rspCmd = "sccp backup_add create 11 71 6536 8 0 0 12 93707100007";
-		res = this.sccpExecutor.execute(rspCmd.split(" "));
-		assertTrue(res.equals(SccpOAMMessage.ADDRESS_ALREADY_EXIST));
-		assertEquals(this.router.getBackupAddresses().size(), 1);
-		addr = this.router.getBackupAddress(11);
-		assertEquals(addr.getSignalingPointCode(), 6535);
-
-		rspCmd = "sccp backup_add modify 11 71 6537 8 0 0 12 93707100007";
-		res = this.sccpExecutor.execute(rspCmd.split(" "));
-		assertEquals(this.router.getBackupAddresses().size(), 1);
-		addr = this.router.getBackupAddress(11);
-		assertEquals(addr.getSignalingPointCode(), 6537);
-
-		rspCmd = "sccp backup_add modify 12 71 6538 8 0 0 12 93707100007";
-		res = this.sccpExecutor.execute(rspCmd.split(" "));
-		assertTrue(res.equals(SccpOAMMessage.ADDRESS_DOESNT_EXIST));
-		assertEquals(this.router.getBackupAddresses().size(), 1);
-		addr = this.router.getBackupAddress(11);
-		assertEquals(addr.getSignalingPointCode(), 6537);
-
-		rspCmd = "sccp backup_add show 11";
-		res = this.sccpExecutor.execute(rspCmd.split(" "));
-
-		rspCmd = "sccp backup_add show";
-		res = this.sccpExecutor.execute(rspCmd.split(" "));
-
-		rspCmd = "sccp backup_add delete 12";
-		res = this.sccpExecutor.execute(rspCmd.split(" "));
-		assertTrue(res.equals(SccpOAMMessage.ADDRESS_DOESNT_EXIST));
-		assertEquals(this.router.getBackupAddresses().size(), 1);
-
-		rspCmd = "sccp backup_add delete 11";
-		res = this.sccpExecutor.execute(rspCmd.split(" "));
-		assertEquals(this.router.getBackupAddresses().size(), 0);
-	}
+//	@Test(groups = { "oam", "functional.mgmt" })
+//	public void testBackupAddress() {
+//
+//		String rspCmd = "sccp backup_add create 11 71 6535 8 0 0 12 93707100007";
+//		// <id> <address-indicator> <point-code> <subsystem-number>
+//		// <translation-type> <numbering-plan> <nature-of-address-indicator>
+//		// <digits>
+//		String res = this.sccpExecutor.execute(rspCmd.split(" "));
+//		assertEquals(this.router.getBackupAddresses().size(), 1);
+//		SccpAddress addr = this.router.getBackupAddress(11);
+//		assertEquals(addr.getAddressIndicator().getValue(), 71);
+//		assertEquals(addr.getSignalingPointCode(), 6535);
+//		assertEquals(addr.getSubsystemNumber(), 8);
+//		assertTrue(addr.getGlobalTitle().getDigits().equals("93707100007"));
+//
+//		// test show
+//		rspCmd = "sccp backup_add show";
+//		res = this.sccpExecutor.execute(rspCmd.split(" "));
+//		assertEquals(res, "key=11  backup_add=pc=6535,ssn=8,AI=71,gt=GT0001{na=SPARE_12, digits=93707100007}\n");
+//
+//		rspCmd = "sccp backup_add create 11 71 6536 8 0 0 12 93707100007";
+//		res = this.sccpExecutor.execute(rspCmd.split(" "));
+//		assertTrue(res.equals(SccpOAMMessage.ADDRESS_ALREADY_EXIST));
+//		assertEquals(this.router.getBackupAddresses().size(), 1);
+//		addr = this.router.getBackupAddress(11);
+//		assertEquals(addr.getSignalingPointCode(), 6535);
+//
+//		rspCmd = "sccp backup_add modify 11 71 6537 8 0 0 12 93707100007";
+//		res = this.sccpExecutor.execute(rspCmd.split(" "));
+//		assertEquals(this.router.getBackupAddresses().size(), 1);
+//		addr = this.router.getBackupAddress(11);
+//		assertEquals(addr.getSignalingPointCode(), 6537);
+//
+//		rspCmd = "sccp backup_add modify 12 71 6538 8 0 0 12 93707100007";
+//		res = this.sccpExecutor.execute(rspCmd.split(" "));
+//		assertTrue(res.equals(SccpOAMMessage.ADDRESS_DOESNT_EXIST));
+//		assertEquals(this.router.getBackupAddresses().size(), 1);
+//		addr = this.router.getBackupAddress(11);
+//		assertEquals(addr.getSignalingPointCode(), 6537);
+//
+//		rspCmd = "sccp backup_add show 11";
+//		res = this.sccpExecutor.execute(rspCmd.split(" "));
+//
+//		rspCmd = "sccp backup_add show";
+//		res = this.sccpExecutor.execute(rspCmd.split(" "));
+//
+//		rspCmd = "sccp backup_add delete 12";
+//		res = this.sccpExecutor.execute(rspCmd.split(" "));
+//		assertTrue(res.equals(SccpOAMMessage.ADDRESS_DOESNT_EXIST));
+//		assertEquals(this.router.getBackupAddresses().size(), 1);
+//
+//		rspCmd = "sccp backup_add delete 11";
+//		res = this.sccpExecutor.execute(rspCmd.split(" "));
+//		assertEquals(this.router.getBackupAddresses().size(), 0);
+//	}
 
 	@Test(groups = { "oam", "functional.mgmt" })
 	public void testLmr() {

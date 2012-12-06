@@ -26,6 +26,7 @@ import static org.testng.Assert.assertTrue;
 
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
+import org.mobicents.protocols.ss7.sccp.OriginationType;
 import org.mobicents.protocols.ss7.sccp.RuleType;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.impl.User;
@@ -95,8 +96,8 @@ public class GT0010SccpStackImplTest extends SccpHarness {
 		
 		SccpAddress rule1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0010(0,GT2_pattern_digits), getSSN());
 		SccpAddress rule2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0010(0,GT1_pattern_digits), getSSN());
-		super.router1.addRule(1, RuleType.Solitary, LoadSharingAlgorithm.Undefined, rule1SccpAddress, "K/R/K", 22, -1);
-		super.router2.addRule(1, RuleType.Solitary, LoadSharingAlgorithm.Undefined, rule2SccpAddress, "R/R/R", 33, -1);
+		super.router1.addRule(1, RuleType.Solitary, LoadSharingAlgorithm.Undefined, OriginationType.All, rule1SccpAddress, "K/R/K", 22, -1, null);
+		super.router2.addRule(1, RuleType.Solitary, LoadSharingAlgorithm.Undefined, OriginationType.All, rule2SccpAddress, "R/R/R", 33, -1, null);
 		
 
 		

@@ -40,6 +40,7 @@ import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
 import org.mobicents.protocols.ss7.sccp.LongMessageRule;
 import org.mobicents.protocols.ss7.sccp.LongMessageRuleType;
 import org.mobicents.protocols.ss7.sccp.Mtp3ServiceAccessPoint;
+import org.mobicents.protocols.ss7.sccp.OriginationType;
 import org.mobicents.protocols.ss7.sccp.Router;
 import org.mobicents.protocols.ss7.sccp.Rule;
 import org.mobicents.protocols.ss7.sccp.RuleType;
@@ -363,8 +364,8 @@ public class RouterImpl implements Router {
 		return saps.unmodifiable();
 	}
 
-	public void addRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, SccpAddress pattern, String mask,
-			int pAddressId, int sAddressId) throws Exception {
+	public void addRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, OriginationType originationType, SccpAddress pattern, String mask,
+			int pAddressId, int sAddressId, Integer newCallingPartyAddressAddressId) throws Exception {
 
 		Rule ruleTmp = this.getRule(id);
 
@@ -406,9 +407,10 @@ public class RouterImpl implements Router {
 		}
 
 		synchronized (this) {
-			RuleImpl rule = new RuleImpl(ruleType, algo, pattern, mask);
+			RuleImpl rule = new RuleImpl(ruleType, algo, originationType, pattern, mask);
 			rule.setPrimaryAddressId(pAddressId);
 			rule.setSecondaryAddressId(sAddressId);
+			rule.setNewCallingPartyAddressAddressId(newCallingPartyAddressAddressId);
 
 			rule.setRuleId(id);
 			RuleImpl[] rulesArray = new RuleImpl[(this.rulesMap.size() + 1)];
@@ -437,8 +439,8 @@ public class RouterImpl implements Router {
 		}
 	}
 
-	public void modifyRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, SccpAddress pattern, String mask,
-			int pAddressId, int sAddressId) throws Exception {
+	public void modifyRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, OriginationType originationType, SccpAddress pattern, String mask,
+			int pAddressId, int sAddressId, Integer newCallingPartyAddressAddressId) throws Exception {
 		Rule ruleTmp = this.getRule(id);
 
 		if (ruleTmp == null) {
@@ -477,9 +479,10 @@ public class RouterImpl implements Router {
 			throw new Exception(SccpOAMMessage.RULETYPE_NOT_SOLI_SEC_ADD_MANDATORY);
 		}
 		synchronized (this) {
-			RuleImpl rule = new RuleImpl(ruleType, algo, pattern, mask);
+			RuleImpl rule = new RuleImpl(ruleType, algo, originationType, pattern, mask);
 			rule.setPrimaryAddressId(pAddressId);
 			rule.setSecondaryAddressId(sAddressId);
+			rule.setNewCallingPartyAddressAddressId(newCallingPartyAddressAddressId);
 
 			rule.setRuleId(id);
 			RuleImpl[] rulesArray = new RuleImpl[(this.rulesMap.size() + 1)];

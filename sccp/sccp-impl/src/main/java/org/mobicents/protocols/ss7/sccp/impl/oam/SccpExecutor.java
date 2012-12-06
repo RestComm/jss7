@@ -35,6 +35,7 @@ import org.mobicents.protocols.ss7.sccp.LongMessageRule;
 import org.mobicents.protocols.ss7.sccp.LongMessageRuleType;
 import org.mobicents.protocols.ss7.sccp.Mtp3Destination;
 import org.mobicents.protocols.ss7.sccp.Mtp3ServiceAccessPoint;
+import org.mobicents.protocols.ss7.sccp.OriginationType;
 import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.RemoteSubSystem;
 import org.mobicents.protocols.ss7.sccp.Router;
@@ -547,7 +548,7 @@ public class SccpExecutor implements ShellExecutor {
 
 		SccpAddress pattern = this.createAddress(options, 5);
 
-		this.router.addRule(ruleId, ruleType, algo, pattern, mask, pAddressId, sAddressId);
+		this.router.addRule(ruleId, ruleType, algo, OriginationType.All, pattern, mask, pAddressId, sAddressId, null);
 		return SccpOAMMessage.RULE_SUCCESSFULLY_ADDED;
 	}
 
@@ -599,7 +600,7 @@ public class SccpExecutor implements ShellExecutor {
 		}
 
 		SccpAddress pattern = this.createAddress(options, 5);
-		this.router.modifyRule(ruleId, ruleType, algo, pattern, mask, pAddressId, sAddressId);
+		this.router.modifyRule(ruleId, ruleType, algo, OriginationType.All, pattern, mask, pAddressId, sAddressId, null);
 		return SccpOAMMessage.RULE_SUCCESSFULLY_MODIFIED;
 	}
 
