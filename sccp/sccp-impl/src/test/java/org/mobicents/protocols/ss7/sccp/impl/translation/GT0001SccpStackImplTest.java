@@ -93,8 +93,8 @@ public class GT0001SccpStackImplTest extends SccpHarness {
 		//add addresses to translate
 		SccpAddress primary1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(), GlobalTitle.getInstance("-/-/-"), getSSN());
 		SccpAddress primary2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack1PC(), GlobalTitle.getInstance("-/-/-"), getSSN());
-		super.router1.addPrimaryAddress(22, primary1SccpAddress);
-		super.router2.addPrimaryAddress(33, primary2SccpAddress);
+		super.router1.addRoutingAddress(22, primary1SccpAddress);
+		super.router2.addRoutingAddress(33, primary2SccpAddress);
 		
 		SccpAddress rule1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0001(NatureOfAddress.NATIONAL,GT2_pattern_digits), getSSN());
 		SccpAddress rule2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0001(NatureOfAddress.NATIONAL,GT1_pattern_digits), getSSN());
@@ -160,8 +160,8 @@ public class GT0001SccpStackImplTest extends SccpHarness {
 		//add addresses to translate
 		SccpAddress primary1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, getStack2PC(), GlobalTitle.getInstance("-/-/-"), getSSN());
 		SccpAddress primary2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, getStack1PC(), GlobalTitle.getInstance("-/-/-"), getSSN());
-		super.router1.addPrimaryAddress(22, primary1SccpAddress);
-		super.router2.addPrimaryAddress(33, primary2SccpAddress);
+		super.router1.addRoutingAddress(22, primary1SccpAddress);
+		super.router2.addRoutingAddress(33, primary2SccpAddress);
 		
 		SccpAddress rule1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0001(NatureOfAddress.NATIONAL,GT2_pattern_digits), getSSN());
 		SccpAddress rule2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0001(NatureOfAddress.NATIONAL,GT1_pattern_digits), getSSN());
@@ -174,8 +174,8 @@ public class GT0001SccpStackImplTest extends SccpHarness {
 		//NOTE PC passed in address match local PC for stack
 		primary1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack1PC(), GlobalTitle.getInstance("-/-/-"), getSSN());
 		primary2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(), GlobalTitle.getInstance("-/-"), getSSN());
-		super.router1.addPrimaryAddress(44, primary1SccpAddress);
-		super.router2.addPrimaryAddress(66, primary2SccpAddress);
+		super.router1.addRoutingAddress(44, primary1SccpAddress);
+		super.router2.addRoutingAddress(66, primary2SccpAddress);
 		//2. add rules to make translation to above
 		rule1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0001(NatureOfAddress.NATIONAL,"23456/?/8"), getSSN());
 		rule2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0001(NatureOfAddress.NATIONAL,"02/?"), getSSN());

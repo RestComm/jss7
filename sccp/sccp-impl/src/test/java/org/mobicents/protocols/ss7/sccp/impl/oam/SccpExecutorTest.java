@@ -113,7 +113,7 @@ public class SccpExecutorTest {
 		String prim_addressCmd = "sccp primary_add create 1 71 2 8 0 0 3 123456789";
 		String result = this.sccpExecutor.execute(prim_addressCmd.split(" "));
 		assertTrue(result.equals(SccpOAMMessage.ADDRESS_SUCCESSFULLY_ADDED));
-		assertEquals(this.router.getPrimaryAddresses().size(), 1);
+		assertEquals(this.router.getRoutingAddresses().size(), 1);
 
 		String createRuleCmd = "sccp rule create 1 R 71 2 8 0 0 3 123456789 solitary 1";
 		// <id> <mask> <address-indicator> <point-code> <subsystem-number>
@@ -280,7 +280,7 @@ public class SccpExecutorTest {
 		String prim_addressCmd = "sccp primary_add create 1 71 6535 8 0 0 12 93707100007";
 		String result = this.sccpExecutor.execute(prim_addressCmd.split(" "));
 		assertEquals(result, SccpOAMMessage.ADDRESS_SUCCESSFULLY_ADDED);
-		assertEquals(this.router.getPrimaryAddresses().size(), 1);
+		assertEquals(this.router.getRoutingAddresses().size(), 1);
 
 		// test show
 		prim_addressCmd = "sccp primary_add show";
@@ -296,8 +296,8 @@ public class SccpExecutorTest {
 		// <translation-type> <numbering-plan> <nature-of-address-indicator>
 		// <digits>
 		String res = this.sccpExecutor.execute(rspCmd.split(" "));
-		assertEquals(this.router.getPrimaryAddresses().size(), 1);
-		SccpAddress addr = this.router.getPrimaryAddress(11);
+		assertEquals(this.router.getRoutingAddresses().size(), 1);
+		SccpAddress addr = this.router.getRoutingAddress(11);
 		assertEquals(addr.getAddressIndicator().getValue(), 71);
 		assertEquals(addr.getSignalingPointCode(), 6535);
 		assertEquals(addr.getSubsystemNumber(), 8);
@@ -306,21 +306,21 @@ public class SccpExecutorTest {
 		rspCmd = "sccp primary_add create 11 71 6536 8 0 0 12 93707100007";
 		res = this.sccpExecutor.execute(rspCmd.split(" "));
 		assertTrue(res.equals(SccpOAMMessage.ADDRESS_ALREADY_EXIST));
-		assertEquals(this.router.getPrimaryAddresses().size(), 1);
-		addr = this.router.getPrimaryAddress(11);
+		assertEquals(this.router.getRoutingAddresses().size(), 1);
+		addr = this.router.getRoutingAddress(11);
 		assertEquals(addr.getSignalingPointCode(), 6535);
 
 		rspCmd = "sccp primary_add modify 11 71 6537 8 0 0 12 93707100007";
 		res = this.sccpExecutor.execute(rspCmd.split(" "));
-		assertEquals(this.router.getPrimaryAddresses().size(), 1);
-		addr = this.router.getPrimaryAddress(11);
+		assertEquals(this.router.getRoutingAddresses().size(), 1);
+		addr = this.router.getRoutingAddress(11);
 		assertEquals(addr.getSignalingPointCode(), 6537);
 
 		rspCmd = "sccp primary_add modify 12 71 6538 8 0 0 12 93707100007";
 		res = this.sccpExecutor.execute(rspCmd.split(" "));
 		assertTrue(res.equals(SccpOAMMessage.ADDRESS_DOESNT_EXIST));
-		assertEquals(this.router.getPrimaryAddresses().size(), 1);
-		addr = this.router.getPrimaryAddress(11);
+		assertEquals(this.router.getRoutingAddresses().size(), 1);
+		addr = this.router.getRoutingAddress(11);
 		assertEquals(addr.getSignalingPointCode(), 6537);
 
 		rspCmd = "sccp primary_add show 11";
@@ -332,11 +332,11 @@ public class SccpExecutorTest {
 		rspCmd = "sccp primary_add delete 12";
 		res = this.sccpExecutor.execute(rspCmd.split(" "));
 		assertTrue(res.equals(SccpOAMMessage.ADDRESS_DOESNT_EXIST));
-		assertEquals(this.router.getPrimaryAddresses().size(), 1);
+		assertEquals(this.router.getRoutingAddresses().size(), 1);
 
 		rspCmd = "sccp primary_add delete 11";
 		res = this.sccpExecutor.execute(rspCmd.split(" "));
-		assertEquals(this.router.getPrimaryAddresses().size(), 0);
+		assertEquals(this.router.getRoutingAddresses().size(), 0);
 	}
 
 	@Test(groups = { "oam", "functional.mgmt" })

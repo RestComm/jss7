@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.sccp.impl.router;
 
 import java.io.Serializable;
 
+import javolution.text.CharArray;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
@@ -31,6 +32,7 @@ import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
+import org.mobicents.protocols.ss7.sccp.OriginationType;
 import org.mobicents.protocols.ss7.sccp.Rule;
 import org.mobicents.protocols.ss7.sccp.RuleType;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0001;
@@ -61,18 +63,21 @@ public class RuleImpl implements Rule, Serializable {
 	private static final long serialVersionUID = 2147449454267320237L;
 
 	private static final String RULETYPE = "ruleType";
+	private static final String ORIGINATING_TYPE = "originatingType";
 	private static final String LS_ALGO = "loadSharingAlgo";
 	private static final String PATTERN = "patternSccpAddress";
 	private static final String OPEN_BRACKET = "(";
 	private static final String CLOSE_BRACKET = ")";
 	private static final String PRIMARY_ADDRESS = "paddress";
 	private static final String SECONDARY_ADDRESS = "saddress";
+	private static final String NEW_CALLING_PARTY_ADDRESS = "ncpaddress";
 	private static final String MASK = "mask";
 
 	private final static String SEPARATOR = ";";
 
 	private RuleType ruleType = RuleType.Solitary;
 	private LoadSharingAlgorithm loadSharingAlgo = LoadSharingAlgorithm.Undefined;
+	private OriginationType originationType = OriginationType.All;
 
 	/** Pattern used for selecting rule */
 	private SccpAddress pattern;
@@ -81,8 +86,8 @@ public class RuleImpl implements Rule, Serializable {
 
 	/** Translation method */
 	private int primaryAddressId = 0;
-
 	private int secondaryAddressId = 0;
+	private Integer newCallingPartyAddressAddressId = null;
 
 	private String mask = null;
 
@@ -95,14 +100,6 @@ public class RuleImpl implements Rule, Serializable {
 	/**
 	 * Creates new routing rule.
 	 * 
-	 * @param the
-	 *            order number of the rule.
-	 * @param pattern
-	 *            pattern for rule selection.
-	 * @param translation
-	 *            translation method.
-	 * @param mtpInfo
-	 *            MTP routing info
 	 */
 	public RuleImpl(RuleType ruleType, LoadSharingAlgorithm loadSharingAlgo, SccpAddress pattern, String mask) {
 		this.ruleType = ruleType;
@@ -154,6 +151,14 @@ public class RuleImpl implements Rule, Serializable {
 			this.loadSharingAlgo = loadSharingAlgo;
 	}
 
+	public OriginationType getOriginationType() {
+		return originationType;
+	}
+
+	public void setOriginationType(OriginationType originationType) {
+		this.originationType = originationType;
+	}
+
 	public SccpAddress getPattern() {
 		return pattern;
 	}
@@ -176,6 +181,14 @@ public class RuleImpl implements Rule, Serializable {
 
 	public void setSecondaryAddressId(int secondaryAddressId) {
 		this.secondaryAddressId = secondaryAddressId;
+	}
+
+	public Integer getNewCallingPartyAddressAddressId() {
+		return newCallingPartyAddressAddressId;
+	}
+
+	public void setNewCallingPartyAddressAddressId(Integer newCallingPartyAddressAddressId) {
+		this.newCallingPartyAddressAddressId = newCallingPartyAddressAddressId;
 	}
 
 	/**
@@ -477,9 +490,15 @@ public class RuleImpl implements Rule, Serializable {
 		public void read(javolution.xml.XMLFormat.InputElement xml, RuleImpl rule) throws XMLStreamException {
 			rule.ruleType = RuleType.getInstance(xml.getAttribute(RULETYPE, RuleType.Solitary.getType()));
 			rule.loadSharingAlgo = LoadSharingAlgorithm.getInstance(xml.getAttribute(LS_ALGO, LoadSharingAlgorithm.Undefined.getAlgo()));
+			rule.originationType = OriginationType.getInstance(xml.getAttribute(ORIGINATING_TYPE, OriginationType.All.getType()));
 			rule.mask = xml.getAttribute(MASK).toString();
 			rule.primaryAddressId = xml.getAttribute(PRIMARY_ADDRESS).toInt();
 			rule.secondaryAddressId = xml.getAttribute(SECONDARY_ADDRESS).toInt();
+			CharArray cha = xml.getAttribute(NEW_CALLING_PARTY_ADDRESS);
+			if (cha != null)
+				rule.newCallingPartyAddressAddressId = cha.toInt();
+			else
+				rule.newCallingPartyAddressAddressId = null;
 			rule.pattern = xml.get(PATTERN, SccpAddress.class);
 			rule.configure();
 		}
@@ -487,9 +506,12 @@ public class RuleImpl implements Rule, Serializable {
 		public void write(RuleImpl rule, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
 			xml.setAttribute(RULETYPE, rule.ruleType.toString());
 			xml.setAttribute(LS_ALGO, rule.loadSharingAlgo.toString());
+			xml.setAttribute(ORIGINATING_TYPE, rule.originationType.toString());
 			xml.setAttribute(MASK, rule.mask);
 			xml.setAttribute(PRIMARY_ADDRESS, rule.primaryAddressId);
 			xml.setAttribute(SECONDARY_ADDRESS, rule.secondaryAddressId);
+			if (rule.newCallingPartyAddressAddressId != null)
+				xml.setAttribute(NEW_CALLING_PARTY_ADDRESS, rule.newCallingPartyAddressAddressId);
 			xml.add(rule.pattern, PATTERN, SccpAddress.class);
 		}
 	};
@@ -510,6 +532,12 @@ public class RuleImpl implements Rule, Serializable {
 			buff.append(SEPARATOR);
 		}
 
+		buff.append(ORIGINATING_TYPE);
+		buff.append(OPEN_BRACKET);
+		buff.append(this.originationType.toString());
+		buff.append(CLOSE_BRACKET);
+		buff.append(SEPARATOR);
+
 		buff.append(PATTERN);
 		buff.append(OPEN_BRACKET);
 		buff.append(pattern.toString());
@@ -527,6 +555,14 @@ public class RuleImpl implements Rule, Serializable {
 		buff.append(secondaryAddressId);
 		buff.append(CLOSE_BRACKET);
 		buff.append(SEPARATOR);
+
+		if (newCallingPartyAddressAddressId != null) {
+			buff.append(NEW_CALLING_PARTY_ADDRESS);
+			buff.append(OPEN_BRACKET);
+			buff.append(newCallingPartyAddressAddressId);
+			buff.append(CLOSE_BRACKET);
+			buff.append(SEPARATOR);
+		}
 
 		buff.append(MASK);
 		buff.append(OPEN_BRACKET);

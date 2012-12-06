@@ -524,7 +524,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		if (rule == null) {
 			return 0;
 		}
-		SccpAddress translationAddressPri = this.router.getPrimaryAddress(rule.getPrimaryAddressId());
+		SccpAddress translationAddressPri = this.router.getRoutingAddress(rule.getPrimaryAddressId());
 		if (translationAddressPri == null) {
 			return 0;
 		}

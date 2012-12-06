@@ -19,35 +19,41 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+
 package org.mobicents.protocols.ss7.sccp;
 
-import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-
 /**
- * 
- * @author Amit Bhayani
  *
+ * @author sergey vetyutnev
+ * 
  */
-public interface Rule {
-	
-	public String getMask();
-	
-	public RuleType getRuleType();
-	
-	public LoadSharingAlgorithm getLoadSharingAlgorithm();
-	
-	public SccpAddress getPattern();
-	
-	public int getPrimaryAddressId();
+public enum OriginationType {
+	LocalOriginated("LocalOriginated"), RemoteOriginated("RemoteOriginated"), All("All");
 
-	public int getSecondaryAddressId();
+	private static final String LOCAL_ORIGINATED = "LocalOriginated";
+	private static final String REMOTE_ORIGINATED = "RemoteOriginated";
+	private static final String ALL = "All";
 
-	public Integer getNewCallingPartyAddressAddressId();
+	private final String type;
 
-	public OriginationType getOriginationType();
+	private OriginationType(String type) {
+		this.type = type;
+	}
+
+	public static OriginationType getInstance(String type) {
+		if (LOCAL_ORIGINATED.equalsIgnoreCase(type)) {
+			return LocalOriginated;
+		} else if (REMOTE_ORIGINATED.equalsIgnoreCase(type)) {
+			return RemoteOriginated;
+		} else if (ALL.equalsIgnoreCase(type)) {
+			return All;
+		}
+
+		return null;
+	}
 	
-	public boolean matches(SccpAddress address);
-	
-	public SccpAddress translate(SccpAddress address, SccpAddress ruleAddress);
+	public String getType(){
+		return this.type;
+	}
 
 }

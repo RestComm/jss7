@@ -224,7 +224,7 @@ public class SccpRoutingControl {
 
 		if (translationAddress == null) {
 			if (logger.isEnabledFor(Level.WARN)) {
-				logger.warn(String.format("Received SccpMessage=% for Translation but no matching %s Address defined for Rule=%s for routing", msg, destName,
+				logger.warn(String.format("Received SccpMessage=%s for Translation but no matching %s Address defined for Rule=%s for routing", msg, destName,
 						rule));
 			}
 			return TranslationAddressCheckingResult.translationFailure;
@@ -320,7 +320,7 @@ public class SccpRoutingControl {
 		}
 
 		// Check whether to use primary or backup address
-		SccpAddress translationAddressPri = this.sccpStackImpl.router.getPrimaryAddress(rule.getPrimaryAddressId());
+		SccpAddress translationAddressPri = this.sccpStackImpl.router.getRoutingAddress(rule.getPrimaryAddressId());
 		TranslationAddressCheckingResult resPri = this.checkTranslationAddress(msg, rule, translationAddressPri, "primary");
 		if (resPri == TranslationAddressCheckingResult.translationFailure) {
 			this.sendSccpError(msg, ReturnCauseValue.NO_TRANSLATION_FOR_ADDRESS);
@@ -330,7 +330,7 @@ public class SccpRoutingControl {
 		SccpAddress translationAddressSec = null;
 		TranslationAddressCheckingResult resSec = TranslationAddressCheckingResult.destinationUnavailable_SubsystemFailure; 
 		if (rule.getRuleType() != RuleType.Solitary) {
-			translationAddressSec = this.sccpStackImpl.router.getBackupAddress(rule.getSecondaryAddressId());
+			translationAddressSec = this.sccpStackImpl.router.getRoutingAddress(rule.getSecondaryAddressId());
 			resSec = this.checkTranslationAddress(msg, rule, translationAddressSec, "secondary");
 			if (resSec == TranslationAddressCheckingResult.translationFailure) {
 				this.sendSccpError(msg, ReturnCauseValue.NO_TRANSLATION_FOR_ADDRESS);

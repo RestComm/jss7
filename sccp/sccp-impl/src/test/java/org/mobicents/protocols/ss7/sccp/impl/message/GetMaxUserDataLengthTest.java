@@ -70,7 +70,7 @@ public class GetMaxUserDataLengthTest {
 
 		SccpAddress primaryAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 2,
 				GlobalTitle.getInstance(0, "1122334455"), 18);
-		stack.getRouter().addPrimaryAddress(1, primaryAddress);
+		stack.getRouter().addRoutingAddress(1, primaryAddress);
 		SccpAddress pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 2,
 				GlobalTitle.getInstance(0, "1122334455"), 18);
 		stack.getRouter().addRule(1, RuleType.Solitary, LoadSharingAlgorithm.Undefined, pattern, "K", 1, -1);

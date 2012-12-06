@@ -90,8 +90,8 @@ public class GT0010SccpStackImplTest extends SccpHarness {
 		//add addresses to translate
 		SccpAddress primary1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(), GlobalTitle.getInstance("-/-/-"), getSSN());
 		SccpAddress primary2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack1PC(), GlobalTitle.getInstance("-/-/-"), getSSN());
-		super.router1.addPrimaryAddress(22, primary1SccpAddress);
-		super.router2.addPrimaryAddress(33, primary2SccpAddress);
+		super.router1.addRoutingAddress(22, primary1SccpAddress);
+		super.router2.addRoutingAddress(33, primary2SccpAddress);
 		
 		SccpAddress rule1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0010(0,GT2_pattern_digits), getSSN());
 		SccpAddress rule2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0010(0,GT1_pattern_digits), getSSN());

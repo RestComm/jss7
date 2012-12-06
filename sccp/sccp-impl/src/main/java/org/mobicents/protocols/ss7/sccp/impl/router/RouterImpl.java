@@ -193,11 +193,11 @@ public class RouterImpl implements Router {
 
 	private static final String SCCP_ROUTER_PERSIST_DIR_KEY = "sccprouter.persist.dir";
 	private static final String USER_DIR_KEY = "user.dir";
-	private static final String PERSIST_FILE_NAME = "sccprouter.xml";
+	private static final String PERSIST_FILE_NAME = "sccprouter2.xml";
 
 	private static final String RULE = "rule";
-	private static final String PRIMARY_ADDRESS = "primaryAddress";
-	private static final String BACKUP_ADDRESS = "backupAddress";
+	private static final String ROUTING_ADDRESS = "routingAddress";
+//	private static final String BACKUP_ADDRESS = "backupAddress";
 	private static final String LONG_MESSAGE_RULE = "longMessageRule";
 	private static final String MTP3_SERVICE_ACCESS_POINT = "sap";
 
@@ -212,8 +212,8 @@ public class RouterImpl implements Router {
 	private final RuleComparator ruleComparator = new RuleComparator();
 	// rule list
 	private RuleMap<Integer, Rule> rulesMap = new RuleMap<Integer, Rule>();
-	private SccpAddressMap<Integer, SccpAddress> primaryAddresses = new SccpAddressMap<Integer, SccpAddress>();
-	private SccpAddressMap<Integer, SccpAddress> backupAddresses = new SccpAddressMap<Integer, SccpAddress>();
+	private SccpAddressMap<Integer, SccpAddress> routingAddresses = new SccpAddressMap<Integer, SccpAddress>();
+//	private SccpAddressMap<Integer, SccpAddress> backupAddresses = new SccpAddressMap<Integer, SccpAddress>();
 	private LongMessageRuleMap<Integer, LongMessageRule> longMessageRules = new LongMessageRuleMap<Integer, LongMessageRule>();
 	private Mtp3ServiceAccessPointMap<Integer, Mtp3ServiceAccessPoint> saps = new Mtp3ServiceAccessPointMap<Integer, Mtp3ServiceAccessPoint>();
 
@@ -316,13 +316,13 @@ public class RouterImpl implements Router {
 		return this.rulesMap.get(id);
 	}
 
-	public SccpAddress getPrimaryAddress(int id) {
-		return this.primaryAddresses.get(id);
+	public SccpAddress getRoutingAddress(int id) {
+		return this.routingAddresses.get(id);
 	}
 
-	public SccpAddress getBackupAddress(int id) {
-		return this.backupAddresses.get(id);
-	}
+//	public SccpAddress getBackupAddress(int id) {
+//		return this.backupAddresses.get(id);
+//	}
 
 	public LongMessageRule getLongMessageRule(int id) {
 		return this.longMessageRules.get(id);
@@ -347,13 +347,13 @@ public class RouterImpl implements Router {
 		return rulesMap.unmodifiable();
 	}
 
-	public Map<Integer, SccpAddress> getPrimaryAddresses() {
-		return primaryAddresses.unmodifiable();
+	public Map<Integer, SccpAddress> getRoutingAddresses() {
+		return routingAddresses.unmodifiable();
 	}
 
-	public Map<Integer, SccpAddress> getBackupAddresses() {
-		return backupAddresses.unmodifiable();
-	}
+//	public Map<Integer, SccpAddress> getBackupAddresses() {
+//		return backupAddresses.unmodifiable();
+//	}
 
 	public Map<Integer, LongMessageRule> getLongMessageRules() {
 		return longMessageRules.unmodifiable();
@@ -379,7 +379,7 @@ public class RouterImpl implements Router {
 			throw new Exception(SccpOAMMessage.SEC_MISMATCH_PATTERN);
 		}
 
-		SccpAddress pAddress = this.getPrimaryAddress(pAddressId);
+		SccpAddress pAddress = this.getRoutingAddress(pAddressId);
 		if (pAddress == null) {
 			throw new Exception(String.format(SccpOAMMessage.NO_PRIMARY_ADDRESS, pAddressId));
 		}
@@ -390,7 +390,7 @@ public class RouterImpl implements Router {
 		}
 
 		if (sAddressId != -1) {
-			SccpAddress sAddress = this.getBackupAddress(sAddressId);
+			SccpAddress sAddress = this.getRoutingAddress(sAddressId);
 			if (sAddress == null) {
 				throw new Exception(String.format(SccpOAMMessage.NO_BACKUP_ADDRESS, sAddressId));
 			}
@@ -452,7 +452,7 @@ public class RouterImpl implements Router {
 			throw new Exception(SccpOAMMessage.SEC_MISMATCH_PATTERN);
 		}
 
-		SccpAddress pAddress = this.getPrimaryAddress(pAddressId);
+		SccpAddress pAddress = this.getRoutingAddress(pAddressId);
 
 		if (pAddress == null) {
 			throw new Exception(String.format(SccpOAMMessage.NO_PRIMARY_ADDRESS, pAddressId));
@@ -463,7 +463,7 @@ public class RouterImpl implements Router {
 		}
 
 		if (sAddressId != -1) {
-			SccpAddress sAddress = this.getBackupAddress(sAddressId);
+			SccpAddress sAddress = this.getRoutingAddress(sAddressId);
 			if (sAddress == null) {
 				throw new Exception(String.format(SccpOAMMessage.NO_BACKUP_ADDRESS, sAddressId));
 			}
@@ -523,92 +523,92 @@ public class RouterImpl implements Router {
 		}
 	}
 
-	public void addPrimaryAddress(int primAddressId, SccpAddress primaryAddress) throws Exception {
+	public void addRoutingAddress(int primAddressId, SccpAddress primaryAddress) throws Exception {
 
-		if (this.getPrimaryAddress(primAddressId) != null) {
+		if (this.getRoutingAddress(primAddressId) != null) {
 			throw new Exception(SccpOAMMessage.ADDRESS_ALREADY_EXIST);
 		}
 
 		synchronized (this) {
 			SccpAddressMap<Integer, SccpAddress> newPrimaryAddress = new SccpAddressMap<Integer, SccpAddress>();
-			newPrimaryAddress.putAll(this.primaryAddresses);
+			newPrimaryAddress.putAll(this.routingAddresses);
 			newPrimaryAddress.put(primAddressId, primaryAddress);
-			this.primaryAddresses = newPrimaryAddress;
+			this.routingAddresses = newPrimaryAddress;
 			this.store();
 		}
 	}
 
-	public void modifyPrimaryAddress(int primAddressId, SccpAddress primaryAddress) throws Exception {
-		if (this.getPrimaryAddress(primAddressId) == null) {
+	public void modifyRoutingAddress(int primAddressId, SccpAddress primaryAddress) throws Exception {
+		if (this.getRoutingAddress(primAddressId) == null) {
 			throw new Exception(SccpOAMMessage.ADDRESS_DOESNT_EXIST);
 		}
 
 		synchronized (this) {
 			SccpAddressMap<Integer, SccpAddress> newPrimaryAddress = new SccpAddressMap<Integer, SccpAddress>();
-			newPrimaryAddress.putAll(this.primaryAddresses);
+			newPrimaryAddress.putAll(this.routingAddresses);
 			newPrimaryAddress.put(primAddressId, primaryAddress);
-			this.primaryAddresses = newPrimaryAddress;
+			this.routingAddresses = newPrimaryAddress;
 			this.store();
 		}
 	}
 
-	public void removePrimaryAddress(int id) throws Exception {
-		if (this.getPrimaryAddress(id) == null) {
+	public void removeRoutingAddress(int id) throws Exception {
+		if (this.getRoutingAddress(id) == null) {
 			throw new Exception(SccpOAMMessage.ADDRESS_DOESNT_EXIST);
 		}
 
 		synchronized (this) {
 			SccpAddressMap<Integer, SccpAddress> newPrimaryAddress = new SccpAddressMap<Integer, SccpAddress>();
-			newPrimaryAddress.putAll(this.primaryAddresses);
+			newPrimaryAddress.putAll(this.routingAddresses);
 			newPrimaryAddress.remove(id);
-			this.primaryAddresses = newPrimaryAddress;
+			this.routingAddresses = newPrimaryAddress;
 			this.store();
 		}
 	}
 
-	public void addBackupAddress(int id, SccpAddress backupAddress) throws Exception {
-
-		if (this.getBackupAddress(id) != null) {
-			throw new Exception(SccpOAMMessage.ADDRESS_ALREADY_EXIST);
-		}
-
-		synchronized (this) {
-			SccpAddressMap<Integer, SccpAddress> newBackupAddress = new SccpAddressMap<Integer, SccpAddress>();
-			newBackupAddress.putAll(this.backupAddresses);
-			newBackupAddress.put(id, backupAddress);
-			this.backupAddresses = newBackupAddress;
-			this.store();
-		}
-	}
-
-	public void modifyBackupAddress(int id, SccpAddress backupAddress) throws Exception {
-		if (this.getBackupAddress(id) == null) {
-			throw new Exception(SccpOAMMessage.ADDRESS_DOESNT_EXIST);
-		}
-
-		synchronized (this) {
-			SccpAddressMap<Integer, SccpAddress> newBackupAddress = new SccpAddressMap<Integer, SccpAddress>();
-			newBackupAddress.putAll(this.backupAddresses);
-			newBackupAddress.put(id, backupAddress);
-			this.backupAddresses = newBackupAddress;
-			this.store();
-		}
-	}
-
-	public void removeBackupAddress(int id) throws Exception {
-
-		if (this.getBackupAddress(id) == null) {
-			throw new Exception(SccpOAMMessage.ADDRESS_DOESNT_EXIST);
-		}
-
-		synchronized (this) {
-			SccpAddressMap<Integer, SccpAddress> newBackupAddress = new SccpAddressMap<Integer, SccpAddress>();
-			newBackupAddress.putAll(this.backupAddresses);
-			newBackupAddress.remove(id);
-			this.backupAddresses = newBackupAddress;
-			this.store();
-		}
-	}
+//	public void addBackupAddress(int id, SccpAddress backupAddress) throws Exception {
+//
+//		if (this.getBackupAddress(id) != null) {
+//			throw new Exception(SccpOAMMessage.ADDRESS_ALREADY_EXIST);
+//		}
+//
+//		synchronized (this) {
+//			SccpAddressMap<Integer, SccpAddress> newBackupAddress = new SccpAddressMap<Integer, SccpAddress>();
+//			newBackupAddress.putAll(this.backupAddresses);
+//			newBackupAddress.put(id, backupAddress);
+//			this.backupAddresses = newBackupAddress;
+//			this.store();
+//		}
+//	}
+//
+//	public void modifyBackupAddress(int id, SccpAddress backupAddress) throws Exception {
+//		if (this.getBackupAddress(id) == null) {
+//			throw new Exception(SccpOAMMessage.ADDRESS_DOESNT_EXIST);
+//		}
+//
+//		synchronized (this) {
+//			SccpAddressMap<Integer, SccpAddress> newBackupAddress = new SccpAddressMap<Integer, SccpAddress>();
+//			newBackupAddress.putAll(this.backupAddresses);
+//			newBackupAddress.put(id, backupAddress);
+//			this.backupAddresses = newBackupAddress;
+//			this.store();
+//		}
+//	}
+//
+//	public void removeBackupAddress(int id) throws Exception {
+//
+//		if (this.getBackupAddress(id) == null) {
+//			throw new Exception(SccpOAMMessage.ADDRESS_DOESNT_EXIST);
+//		}
+//
+//		synchronized (this) {
+//			SccpAddressMap<Integer, SccpAddress> newBackupAddress = new SccpAddressMap<Integer, SccpAddress>();
+//			newBackupAddress.putAll(this.backupAddresses);
+//			newBackupAddress.remove(id);
+//			this.backupAddresses = newBackupAddress;
+//			this.store();
+//		}
+//	}
 
 	public void addLongMessageRule(int id, int firstSpc, int lastSpc, LongMessageRuleType ruleType) throws Exception {
 		if (this.getLongMessageRule(id) != null) {
@@ -747,14 +747,15 @@ public class RouterImpl implements Router {
 	public void removeAllResourses() {
 
 		synchronized (this) {
-			if (this.rulesMap.size() == 0 && this.primaryAddresses.size() == 0 && this.backupAddresses.size() == 0
-					&& this.longMessageRules.size() == 0 && this.saps.size() == 0)
+//			if (this.rulesMap.size() == 0 && this.routingAddresses.size() == 0 && this.backupAddresses.size() == 0
+//					&& this.longMessageRules.size() == 0 && this.saps.size() == 0)
+			if (this.rulesMap.size() == 0 && this.routingAddresses.size() == 0 && this.longMessageRules.size() == 0 && this.saps.size() == 0)
 				// no resources allocated - nothing to do
 				return;
 
 			rulesMap = new RuleMap<Integer, Rule>();
-			primaryAddresses = new SccpAddressMap<Integer, SccpAddress>();
-			backupAddresses = new SccpAddressMap<Integer, SccpAddress>();
+			routingAddresses = new SccpAddressMap<Integer, SccpAddress>();
+//			backupAddresses = new SccpAddressMap<Integer, SccpAddress>();
 			longMessageRules = new LongMessageRuleMap<Integer, LongMessageRule>();
 			saps = new Mtp3ServiceAccessPointMap<Integer, Mtp3ServiceAccessPoint>();
 
@@ -777,8 +778,8 @@ public class RouterImpl implements Router {
 			// writer.setReferenceResolver(new XMLReferenceResolver());
 			writer.setIndentation(TAB_INDENT);
 			writer.write(rulesMap, RULE, RuleMap.class);
-			writer.write(primaryAddresses, PRIMARY_ADDRESS, SccpAddressMap.class);
-			writer.write(backupAddresses, BACKUP_ADDRESS, SccpAddressMap.class);
+			writer.write(routingAddresses, ROUTING_ADDRESS, SccpAddressMap.class);
+//			writer.write(backupAddresses, BACKUP_ADDRESS, SccpAddressMap.class);
 
 			writer.write(longMessageRules, LONG_MESSAGE_RULE, LongMessageRuleMap.class);
 			writer.write(saps, MTP3_SERVICE_ACCESS_POINT, Mtp3ServiceAccessPointMap.class);
@@ -802,8 +803,8 @@ public class RouterImpl implements Router {
 
 			reader.setBinding(binding);
 			rulesMap = reader.read(RULE, RuleMap.class);
-			primaryAddresses = reader.read(PRIMARY_ADDRESS, SccpAddressMap.class);
-			backupAddresses = reader.read(BACKUP_ADDRESS, SccpAddressMap.class);
+			routingAddresses = reader.read(ROUTING_ADDRESS, SccpAddressMap.class);
+//			backupAddresses = reader.read(BACKUP_ADDRESS, SccpAddressMap.class);
 
 			longMessageRules = reader.read(LONG_MESSAGE_RULE, LongMessageRuleMap.class);
 			saps = reader.read(MTP3_SERVICE_ACCESS_POINT, Mtp3ServiceAccessPointMap.class);

@@ -94,8 +94,8 @@ public class GT0011SccpStackImplTest extends SccpHarness {
 		SccpAddress primary2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack1PC(),
 				GlobalTitle.getInstance("-/-/-"), getSSN());
 
-		super.router1.addPrimaryAddress(22, primary1SccpAddress);
-		super.router2.addPrimaryAddress(33, primary2SccpAddress);
+		super.router1.addRoutingAddress(22, primary1SccpAddress);
+		super.router2.addRoutingAddress(33, primary2SccpAddress);
 
 		SccpAddress rule1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0011(0,
 				NumberingPlan.ISDN_TELEPHONY, GT2_pattern_digits), getSSN());
@@ -163,8 +163,8 @@ public class GT0011SccpStackImplTest extends SccpHarness {
 				getStack2PC(), GlobalTitle.getInstance("-/-/-"), getSSN());
 		SccpAddress primary2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE,
 				getStack1PC(), GlobalTitle.getInstance("-/-/-"), getSSN());
-		super.router1.addPrimaryAddress(22, primary1SccpAddress);
-		super.router2.addPrimaryAddress(33, primary2SccpAddress);
+		super.router1.addRoutingAddress(22, primary1SccpAddress);
+		super.router2.addRoutingAddress(33, primary2SccpAddress);
 		
 		SccpAddress rule1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0011(0,
 				NumberingPlan.ISDN_TELEPHONY, GT2_pattern_digits), getSSN());
@@ -181,8 +181,8 @@ public class GT0011SccpStackImplTest extends SccpHarness {
 				GlobalTitle.getInstance("-/-/-"), getSSN());
 		primary2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(),
 				GlobalTitle.getInstance("-/-"), getSSN());
-		super.router1.addPrimaryAddress(44, primary1SccpAddress);
-		super.router2.addPrimaryAddress(66, primary2SccpAddress);
+		super.router1.addRoutingAddress(44, primary1SccpAddress);
+		super.router2.addRoutingAddress(66, primary2SccpAddress);
 		// 2. add rules to make translation to above
 		rule1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0011(0,
 				NumberingPlan.ISDN_MOBILE, "23456/?/8"), getSSN());

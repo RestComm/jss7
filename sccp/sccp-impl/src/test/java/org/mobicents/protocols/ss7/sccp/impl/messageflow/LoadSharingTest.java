@@ -112,10 +112,10 @@ public class LoadSharingTest extends SccpHarness {
 		Thread.sleep(100);
 
 		SccpAddress primaryAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(), GlobalTitle.getInstance(1, "111111"), 8);
-		sccpStack1.getRouter().addPrimaryAddress(1, primaryAddress);
+		sccpStack1.getRouter().addRoutingAddress(1, primaryAddress);
 		// primaryAddress2 - with ssn==0, so we will get ssn from the message CalledPartyAddress
 		SccpAddress primaryAddress2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(), GlobalTitle.getInstance(1, "111111"), 0);
-		sccpStack1.getRouter().addPrimaryAddress(2, primaryAddress2);
+		sccpStack1.getRouter().addRoutingAddress(2, primaryAddress2);
 		SccpAddress backupAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 12, GlobalTitle.getInstance(1, "111111"), 8);
 		sccpStack1.getRouter().addBackupAddress(1, backupAddress);
 

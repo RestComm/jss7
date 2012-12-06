@@ -51,7 +51,7 @@ public class SccpResourceImpl implements SccpResource {
 
 	private static final String SCCP_RESOURCE_PERSIST_DIR_KEY = "sccpresource.persist.dir";
 	private static final String USER_DIR_KEY = "user.dir";
-	private static final String PERSIST_FILE_NAME = "sccpresource.xml";
+	private static final String PERSIST_FILE_NAME = "sccpresource2.xml";
 
 	private static final String REMOTE_SSN = "remoteSsns";
 	private static final String REMOTE_SPC = "remoteSpcs";
