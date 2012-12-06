@@ -118,7 +118,7 @@ public class LoadSharingTest extends SccpHarness {
 		SccpAddress primaryAddress2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(), GlobalTitle.getInstance(1, "111111"), 0);
 		sccpStack1.getRouter().addRoutingAddress(2, primaryAddress2);
 		SccpAddress backupAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 12, GlobalTitle.getInstance(1, "111111"), 8);
-		sccpStack1.getRouter().addRoutingAddress(1, backupAddress);
+		sccpStack1.getRouter().addRoutingAddress(3, backupAddress);
 //		sccpStack1.getRouter().addBackupAddress(1, backupAddress);
 
 		// ---- Solitary case
@@ -176,7 +176,7 @@ public class LoadSharingTest extends SccpHarness {
 
 		// ---- Dominant case
 		sccpStack1.getRouter().removeRule(1);
-		sccpStack1.getRouter().addRule(1, RuleType.Dominant, LoadSharingAlgorithm.Undefined, OriginationType.All, pattern, "K", 1, 1, null);
+		sccpStack1.getRouter().addRule(1, RuleType.Dominant, LoadSharingAlgorithm.Undefined, OriginationType.All, pattern, "K", 1, 3, null);
 
 		// Primary and backup are available
 		a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
@@ -227,9 +227,9 @@ public class LoadSharingTest extends SccpHarness {
 
 		// ---- Loadshared case
 		sccpStack1.getRouter().removeRule(1);
-		sccpStack1.getRouter().addRule(1, RuleType.Loadshared, LoadSharingAlgorithm.Bit4, OriginationType.All, pattern, "K", 1, 1, null);
+		sccpStack1.getRouter().addRule(1, RuleType.Loadshared, LoadSharingAlgorithm.Bit4, OriginationType.All, pattern, "K", 1, 3, null);
 		// rule which primaryAddress ssn==0 (getting ssn from origin CalledPartyAddress)
-		sccpStack1.getRouter().addRule(2, RuleType.Loadshared, LoadSharingAlgorithm.Bit4, OriginationType.All, pattern2, "K", 2, 1, null);
+		sccpStack1.getRouter().addRule(2, RuleType.Loadshared, LoadSharingAlgorithm.Bit4, OriginationType.All, pattern2, "K", 2, 3, null);
 
 		// Primary and backup are available
 		//   - class 1 (route by sls): sls = 0xEF: primary route (sls & 0x10 rule)
