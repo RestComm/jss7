@@ -90,10 +90,8 @@ public class SccpExecutor implements ShellExecutor {
 		try {
 			if (firstOption.equals("rule")) {
 				return this.manageRule(options);
-			} else if (firstOption.equals("primary_add")) {
-				return this.managePrimAddress(options);
-//			} else if (firstOption.equals("backup_add")) {
-//				return this.manageBackupAddress(options);
+			} else if (firstOption.equals("address")) {
+				return this.manageAddress(options);
 			} else if (firstOption.equals("rsp")) {
 				return this.manageRsp(options);
 			} else if (firstOption.equals("rss")) {
@@ -293,7 +291,7 @@ public class SccpExecutor implements ShellExecutor {
 		return SccpOAMMessage.INVALID_COMMAND;
 	}
 
-	private String managePrimAddress(String[] options) throws Exception {
+	private String manageAddress(String[] options) throws Exception {
 		// Minimum 3 needed. Show
 		if (options.length < 3) {
 			return SccpOAMMessage.INVALID_COMMAND;
@@ -309,33 +307,33 @@ public class SccpExecutor implements ShellExecutor {
 			if (options.length < 4) {
 				return SccpOAMMessage.INVALID_COMMAND;
 			}
-			int primAddressId = Integer.parseInt(options[3]);
-			SccpAddress primAddress = this.createAddress(options, 4);
+			int addressId = Integer.parseInt(options[3]);
+			SccpAddress address = this.createAddress(options, 4);
 
-			this.router.addRoutingAddress(primAddressId, primAddress);
+			this.router.addRoutingAddress(addressId, address);
 			return SccpOAMMessage.ADDRESS_SUCCESSFULLY_ADDED;
 		} else if (command.equals("modify")) {
 			if (options.length < 4) {
 				return SccpOAMMessage.INVALID_COMMAND;
 			}
-			int primAddressId = Integer.parseInt(options[3]);
-			SccpAddress primAddress = this.createAddress(options, 4);
+			int addressId = Integer.parseInt(options[3]);
+			SccpAddress address = this.createAddress(options, 4);
 
-			this.router.modifyRoutingAddress(primAddressId, primAddress);
+			this.router.modifyRoutingAddress(addressId, address);
 			return SccpOAMMessage.ADDRESS_SUCCESSFULLY_MODIFIED;
 		} else if (command.equals("delete")) {
 			if (options.length < 4) {
 				return SccpOAMMessage.INVALID_COMMAND;
 			}
-			int primAddressId = Integer.parseInt(options[3]);
-			this.router.removeRoutingAddress(primAddressId);
+			int addressId = Integer.parseInt(options[3]);
+			this.router.removeRoutingAddress(addressId);
 			return SccpOAMMessage.ADDRESS_SUCCESSFULLY_DELETED;
 
 		} else if (command.equals("show")) {
 
 			if (options.length == 4) {
-				int primAddressId = Integer.parseInt(options[3]);
-				SccpAddress pa = this.router.getRoutingAddress(primAddressId);
+				int addressId = Integer.parseInt(options[3]);
+				SccpAddress pa = this.router.getRoutingAddress(addressId);
 				if (pa == null) {
 					return SccpOAMMessage.ADDRESS_DOESNT_EXIST;
 				}
@@ -362,76 +360,6 @@ public class SccpExecutor implements ShellExecutor {
 
 		return SccpOAMMessage.INVALID_COMMAND;
 	}
-
-//	private String manageBackupAddress(String[] options) throws Exception {
-//		// Minimum 3 needed. Show
-//		if (options.length < 3) {
-//			return SccpOAMMessage.INVALID_COMMAND;
-//		}
-//
-//		String command = options[2];
-//
-//		if (command == null) {
-//			return SccpOAMMessage.INVALID_COMMAND;
-//		}
-//
-//		if (command.equals("create")) {
-//			if (options.length < 4) {
-//				return SccpOAMMessage.INVALID_COMMAND;
-//			}
-//			int backupAddressId = Integer.parseInt(options[3]);
-//
-//			SccpAddress backupAddress = this.createAddress(options, 4);
-//			this.router.addBackupAddress(backupAddressId, backupAddress);
-//			return SccpOAMMessage.ADDRESS_SUCCESSFULLY_ADDED;
-//		} else if (command.equals("modify")) {
-//			if (options.length < 4) {
-//				return SccpOAMMessage.INVALID_COMMAND;
-//			}
-//			int backupAddressId = Integer.parseInt(options[3]);
-//			SccpAddress backupAddress = this.createAddress(options, 4);
-//
-//			this.router.modifyBackupAddress(backupAddressId, backupAddress);
-//			return SccpOAMMessage.ADDRESS_SUCCESSFULLY_MODIFIED;
-//
-//		} else if (command.equals("delete")) {
-//			if (options.length < 4) {
-//				return SccpOAMMessage.INVALID_COMMAND;
-//			}
-//			int backupAddressId = Integer.parseInt(options[3]);
-//			this.router.removeBackupAddress(backupAddressId);
-//			return SccpOAMMessage.ADDRESS_SUCCESSFULLY_DELETED;
-//		} else if (command.equals("show")) {
-//			if (options.length == 4) {
-//				int backupAddressId = Integer.parseInt(options[3]);
-//				SccpAddress pa = this.router.getBackupAddress(backupAddressId);
-//				if (pa == null) {
-//					return SccpOAMMessage.ADDRESS_DOESNT_EXIST;
-//				}
-//				return pa.toString();
-//			}
-//
-//			if (this.router.getBackupAddresses().size() == 0) {
-//				return SccpOAMMessage.ADDRESS_DOESNT_EXIST;
-//			}
-//
-//			StringBuffer sb = new StringBuffer();
-//
-//			Map<Integer, SccpAddress> idVsBkAdd = this.router.getBackupAddresses();
-//			for (Integer e: idVsBkAdd.keySet()) {
-//				SccpAddress address = idVsBkAdd.get(e);
-//				sb.append("key=");
-//				sb.append(e);
-//				sb.append("  backup_add=");
-//				sb.append(address);
-//				sb.append("\n");
-//			}
-//			return sb.toString();
-//
-//		}
-//
-//		return SccpOAMMessage.INVALID_COMMAND;
-//	}
 
 	private String manageRule(String[] options) throws Exception {
 		// Minimum 3 needed. Show
@@ -600,7 +528,8 @@ public class SccpExecutor implements ShellExecutor {
 		}
 
 		SccpAddress pattern = this.createAddress(options, 5);
-		this.router.modifyRule(ruleId, ruleType, algo, OriginationType.All, pattern, mask, pAddressId, sAddressId, null);
+		this.router
+				.modifyRule(ruleId, ruleType, algo, OriginationType.All, pattern, mask, pAddressId, sAddressId, null);
 		return SccpOAMMessage.RULE_SUCCESSFULLY_MODIFIED;
 	}
 
@@ -652,9 +581,9 @@ public class SccpExecutor implements ShellExecutor {
 		}
 
 		Map<Integer, Rule> idVsRule = this.router.getRules();
-		
+
 		StringBuffer sb = new StringBuffer();
-		for (Integer e: idVsRule.keySet()) {
+		for (Integer e : idVsRule.keySet()) {
 			Rule rule = idVsRule.get(e);
 			sb.append("key=");
 			sb.append(e);
@@ -790,7 +719,7 @@ public class SccpExecutor implements ShellExecutor {
 			}
 
 			Map<Integer, LongMessageRule> idVsLngmsgRule = this.router.getLongMessageRules();
-			
+
 			StringBuffer sb = new StringBuffer();
 			for (Integer e : idVsLngmsgRule.keySet()) {
 				LongMessageRule lmr = idVsLngmsgRule.get(e);
