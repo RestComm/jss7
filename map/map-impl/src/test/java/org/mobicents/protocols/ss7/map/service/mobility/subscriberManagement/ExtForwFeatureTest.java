@@ -90,7 +90,7 @@ public class ExtForwFeatureTest {
 		
 		ISDNAddressString forwardedToNumber = prim.getForwardedToNumber();
 		assertNotNull(forwardedToNumber);
-		assertTrue(forwardedToNumber.getAddress().equals("22228"));
+		assertEquals(forwardedToNumber.getAddress(),"22228");
 		assertEquals(forwardedToNumber.getAddressNature(), AddressNature.international_number);
 		assertEquals(forwardedToNumber.getNumberingPlan(), NumberingPlan.ISDN);
 
@@ -101,10 +101,10 @@ public class ExtForwFeatureTest {
 		assertTrue(!prim.getForwardingOptions().getRedirectingPresentation());
 		assertEquals(prim.getForwardingOptions().getExtForwOptionsForwardingReason(), ExtForwOptionsForwardingReason.msBusy);
 		assertNotNull(prim.getNoReplyConditionTime());
-		assertTrue(prim.getNoReplyConditionTime().equals(new Integer(2)));
+		assertEquals(prim.getNoReplyConditionTime().intValue(),2);
 		FTNAddressString longForwardedToNumber = prim.getLongForwardedToNumber();
 		assertNotNull(longForwardedToNumber);
-		assertTrue(longForwardedToNumber.getAddress().equals("22227"));
+		assertEquals(longForwardedToNumber.getAddress(),"22227");
 		assertEquals(longForwardedToNumber.getAddressNature(), AddressNature.international_number);
 		assertEquals(longForwardedToNumber.getNumberingPlan(), NumberingPlan.ISDN);
 		assertNotNull(extensionContainer);
@@ -131,7 +131,7 @@ public class ExtForwFeatureTest {
 		
 		forwardedToNumber = prim.getForwardedToNumber();
 		assertNotNull(forwardedToNumber);
-		assertTrue(forwardedToNumber.getAddress().equals("999888777"));
+		assertEquals(forwardedToNumber.getAddress(),"999888777");
 		assertEquals(forwardedToNumber.getAddressNature(), AddressNature.international_number);
 		assertEquals(forwardedToNumber.getNumberingPlan(), NumberingPlan.ISDN);
 

@@ -60,6 +60,8 @@ public enum TeleserviceCodeValue {
 
 	public static TeleserviceCodeValue getInstance(int code) {
 		switch (code) {
+		case 0:
+			return TeleserviceCodeValue.allServices;
 		case 0x10:
 			return TeleserviceCodeValue.allSpeechTransmissionServices;
 		case 0x11:

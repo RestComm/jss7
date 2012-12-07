@@ -22,20 +22,21 @@
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.BitSetStrictLength;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BearerServiceCodeValue;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGInterlock;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.IntraCUGOptions;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.AdditionalInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.AdditionalSubscriptions;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.GroupId;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.LongGroupId;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.testng.annotations.Test;
 
@@ -44,60 +45,57 @@ import org.testng.annotations.Test;
  * @author Lasith Waruna Perera
  * 
  */
-public class CUGSubscriptionTest {
-	
+public class VoiceGroupCallDataTest {
+
 	public byte[] getData() {
-		return new byte[] { 48, 58, 2, 1, 1, 4, 4, 1, 2, 3, 4, 10, 1, 0, 48, 3,
-				-126, 1, 22, -96, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12,
-				13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21,
-				22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
+		return new byte[] { 48, 55, 4, 1, -12, 48, 39, -96, 32, 48, 10, 6, 3,
+				42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6,
+				3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, 3, 2,
+				5, -96, -128, 2, 7, -128, -127, 1, -11 };
 	};
 	
-	private byte[] getGugData() {
-		return new byte[] { 1, 2, 3, 4 };
-	}
-
 	@Test(groups = { "functional.decode", "primitives" })
 	public void testDecode() throws Exception {
 		byte[] data = this.getData();
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
-		CUGSubscriptionImpl prim = new CUGSubscriptionImpl();
+		VoiceGroupCallDataImpl prim = new VoiceGroupCallDataImpl();
 		prim.decodeAll(asn);
-
+		
 		assertEquals(tag, Tag.SEQUENCE);
 		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
-
-		MAPExtensionContainer extensionContainer = prim.getExtensionContainer();
-		assertTrue(prim.getCUGIndex()==1);
-		assertTrue(Arrays.equals(prim.getCugInterlock().getData(), getGugData()));
-		assertEquals(prim.getIntraCugOptions(), IntraCUGOptions.noCUGRestrictions);
-		assertNotNull(prim.getBasicServiceGroupList());
-		assertTrue(prim.getBasicServiceGroupList().size()==1);
-		ExtBasicServiceCode bsc = prim.getBasicServiceGroupList().get(0);
-		assertNotNull(bsc);
-		assertEquals(bsc.getExtBearerService().getBearerServiceCodeValue(), BearerServiceCodeValue.Asynchronous9_6kbps);
-		assertNotNull(extensionContainer);
-		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
-
+		
+		assertEquals( prim.getGroupId().getGroupId(),"4");
+		assertEquals( prim.getLongGroupId().getLongGroupId(),"5");
+		assertNotNull(prim.getExtensionContainer());
+		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(prim.getExtensionContainer()));
+		assertTrue(prim.getAdditionalSubscriptions().getEmergencyReset());
+		assertFalse(prim.getAdditionalSubscriptions().getEmergencyUplinkRequest());
+		assertTrue(prim.getAdditionalSubscriptions().getPrivilegedUplinkRequest());
+		assertNotNull(prim.getAdditionalInfo());
+		assertTrue(prim.getAdditionalInfo().getData().get(0));
+		
 	}
 	
 	@Test(groups = { "functional.encode", "primitives" })
 	public void testEncode() throws Exception {
-		int cugIndex = 1;
-		CUGInterlock cugInterlock = new CUGInterlockImpl(getGugData());
-		IntraCUGOptions intraCugOptions = IntraCUGOptions.noCUGRestrictions;
-		ExtBearerServiceCodeImpl b = new ExtBearerServiceCodeImpl(BearerServiceCodeValue.Asynchronous9_6kbps);
-		ExtBasicServiceCodeImpl bs= new ExtBasicServiceCodeImpl(b);
-		ArrayList<ExtBasicServiceCode> basicService = new ArrayList<ExtBasicServiceCode>();
-		basicService.add(bs);
+		
+		GroupId groupId = new GroupIdImpl("4");
 		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
+		LongGroupId longGroupId = new LongGroupIdImpl("5");
+		AdditionalSubscriptions additionalSubscriptions = new AdditionalSubscriptionsImpl(true,
+				false, true);
+		BitSetStrictLength b = new BitSetStrictLength(1);
+		b.set(0);
+		AdditionalInfo additionalInfo = new AdditionalInfoImpl(b);
 
-		CUGSubscriptionImpl prim = new CUGSubscriptionImpl(cugIndex, cugInterlock, 
-				intraCugOptions, basicService, extensionContainer);
-
+		VoiceGroupCallDataImpl prim = new VoiceGroupCallDataImpl( groupId, extensionContainer,
+				additionalSubscriptions, additionalInfo, longGroupId);
+		
 		AsnOutputStream asn = new AsnOutputStream();
 		prim.encodeAll(asn);
+
 		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
 	}
+
 }

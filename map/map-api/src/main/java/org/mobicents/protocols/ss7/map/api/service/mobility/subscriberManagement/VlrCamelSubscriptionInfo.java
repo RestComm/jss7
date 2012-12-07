@@ -76,6 +76,8 @@ public interface VlrCamelSubscriptionInfo {
 	public ArrayList<TBcsmCamelTdpCriteria> getTBcsmCamelTdpCriteriaList();
 
 	public DCSI getDCsi();
+	
+	public SMSCSI getMtSmsCSI();
 
 	public ArrayList<MTsmsCAMELTDPCriteria> getMtSmsCamelTdpCriteriaList();
 

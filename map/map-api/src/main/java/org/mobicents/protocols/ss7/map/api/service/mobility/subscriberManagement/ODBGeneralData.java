@@ -94,7 +94,7 @@ public interface ODBGeneralData {
 
 	public boolean getInterzonalECTBarred();
 
-	public boolean getTBarred();
+	public boolean getDoublyChargeableECTBarred();
 
 	public boolean getMultipleECTBarred();
 
