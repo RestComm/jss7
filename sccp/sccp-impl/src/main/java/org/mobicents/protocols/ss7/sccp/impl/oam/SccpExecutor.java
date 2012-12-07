@@ -389,31 +389,15 @@ public class SccpExecutor implements ShellExecutor {
 	/**
 	 * <p>
 	 * Command to create new rule.
+	 * 
+	 * sccp rule create <id> <mask> <address-indicator> <point-code>
+	 * <subsystem-number> <translation-type> <numbering-plan>
+	 * <nature-of-address-indicator> <digits> <ruleType> <primary-address-id>
+	 * backup-addressid <backup-address-id> loadsharing-algo
+	 * <loadsharing-algorithm> newcgparty-addressid <new-callingPartyAddress-id>
+	 * origination-type <originationType>
 	 * </p>
-	 * <p>
-	 * The valid combination for a command are
-	 * <ul>
-	 * <li>
-	 * <p>
-	 * <i>pattern</i> and <i>translation</i>
-	 * </p>
-	 * </li>
-	 * <li>
-	 * <p>
-	 * <i>pattern</i>, <i>translation</i> and <i>mtpinfo</i>
-	 * </p>
-	 * </li>
-	 * <li>
-	 * <p>
-	 * <i>pattern</i> and <i>mtpinfo</i>
-	 * </p>
-	 * </li>
-	 * </ul>
-	 * </p>
-	 * <p>
-	 * To know more about these options look at
-	 * {@link org.mobicents.protocols.ss7.sccp.impl.router.RouterImpl}
-	 * </p>
+	 * 
 	 * 
 	 * @param options
 	 * @return
@@ -421,7 +405,7 @@ public class SccpExecutor implements ShellExecutor {
 	 */
 	private String createRule(String[] options) throws Exception {
 		// Minimum is 13
-		if (options.length < 14) {
+		if (options.length < 14 || options.length > 22) {
 			return SccpOAMMessage.INVALID_COMMAND;
 		}
 		int ruleId = Integer.parseInt(options[3]);
@@ -432,11 +416,11 @@ public class SccpExecutor implements ShellExecutor {
 
 		RuleType ruleType;
 		String s1 = options[12].toLowerCase();
-		if (s1.equals("solitary")) {
+		if (s1.equalsIgnoreCase(RuleType.Solitary.getType())) {
 			ruleType = RuleType.Solitary;
-		} else if (s1.equals("dominant")) {
+		} else if (s1.equalsIgnoreCase(RuleType.Dominant.getType())) {
 			ruleType = RuleType.Dominant;
-		} else if (s1.equals("loadshared")) {
+		} else if (s1.equalsIgnoreCase(RuleType.Loadshared.getType())) {
 			ruleType = RuleType.Loadshared;
 		} else {
 			return SccpOAMMessage.INVALID_COMMAND;
@@ -444,31 +428,26 @@ public class SccpExecutor implements ShellExecutor {
 
 		int pAddressId = Integer.parseInt(options[13]);
 
+		int count = 14;
 		int sAddressId = -1;
-		if (options.length > 14) {
-			sAddressId = Integer.parseInt(options[14]);
-			SccpAddress sAddress = this.router.getRoutingAddress(sAddressId);
-			if (sAddress == null) {
-				return String.format(SccpOAMMessage.NO_BACKUP_ADDRESS, sAddressId);
-			}
-		}
-
+		Integer newcgpartyAddressId = null;
 		LoadSharingAlgorithm algo = LoadSharingAlgorithm.Undefined;
-		if (ruleType == RuleType.Loadshared) {
-			if (options.length < 16) {
+		OriginationType originationType = OriginationType.All;
+
+		while (count < options.length) {
+			String key = options[count++];
+			if (key == null) {
 				return SccpOAMMessage.INVALID_COMMAND;
 			}
-			s1 = options[15].toLowerCase();
-			if (s1.equals("bit0")) {
-				algo = LoadSharingAlgorithm.Bit0;
-			} else if (s1.equals("bit1")) {
-				algo = LoadSharingAlgorithm.Bit1;
-			} else if (s1.equals("bit2")) {
-				algo = LoadSharingAlgorithm.Bit2;
-			} else if (s1.equals("bit3")) {
-				algo = LoadSharingAlgorithm.Bit3;
-			} else if (s1.equals("bit4")) {
-				algo = LoadSharingAlgorithm.Bit4;
+
+			if (key.equals("loadsharing-algo")) {
+				algo = LoadSharingAlgorithm.getInstance(options[count++]);
+			} else if (key.equals("backup-addressid")) {
+				sAddressId = Integer.parseInt(options[count++]);
+			} else if (key.equals("newcgparty-addressid")) {
+				newcgpartyAddressId = Integer.parseInt(options[count++]);
+			} else if (key.equals("origination-type")) {
+				originationType = OriginationType.getInstance(options[count++]);
 			} else {
 				return SccpOAMMessage.INVALID_COMMAND;
 			}
@@ -476,13 +455,14 @@ public class SccpExecutor implements ShellExecutor {
 
 		SccpAddress pattern = this.createAddress(options, 5);
 
-		this.router.addRule(ruleId, ruleType, algo, OriginationType.All, pattern, mask, pAddressId, sAddressId, null);
+		this.router.addRule(ruleId, ruleType, algo, originationType, pattern, mask, pAddressId, sAddressId,
+				newcgpartyAddressId);
 		return SccpOAMMessage.RULE_SUCCESSFULLY_ADDED;
 	}
 
 	private String modifyRule(String[] options) throws Exception {
 		// Minimum is 13
-		if (options.length < 13) {
+		if (options.length < 14 || options.length > 22) {
 			return SccpOAMMessage.INVALID_COMMAND;
 		}
 		int ruleId = Integer.parseInt(options[3]);
@@ -507,29 +487,34 @@ public class SccpExecutor implements ShellExecutor {
 
 		int pAddressId = Integer.parseInt(options[13]);
 
+		int count = 14;
 		int sAddressId = -1;
-		if (options.length > 14) {
-			sAddressId = Integer.parseInt(options[14]);
-		}
-
+		Integer newcgpartyAddressId = null;
 		LoadSharingAlgorithm algo = LoadSharingAlgorithm.Undefined;
-		if (ruleType == RuleType.Loadshared) {
-			if (options.length < 16) {
+		OriginationType originationType = OriginationType.All;
+
+		while (count < options.length) {
+			String key = options[count++];
+			if (key == null) {
 				return SccpOAMMessage.INVALID_COMMAND;
 			}
-			s1 = options[15].toLowerCase();
-			if (s1.equals("bit3")) {
-				algo = LoadSharingAlgorithm.Bit3;
-			} else if (s1.equals("bit4")) {
-				algo = LoadSharingAlgorithm.Bit4;
+
+			if (key.equals("loadsharing-algo")) {
+				algo = LoadSharingAlgorithm.getInstance(options[count++]);
+			} else if (key.equals("backup-addressid")) {
+				sAddressId = Integer.parseInt(options[count++]);
+			} else if (key.equals("newcgparty-addressid")) {
+				newcgpartyAddressId = Integer.parseInt(options[count++]);
+			} else if (key.equals("origination-type")) {
+				originationType = OriginationType.getInstance(options[count++]);
 			} else {
 				return SccpOAMMessage.INVALID_COMMAND;
 			}
 		}
 
 		SccpAddress pattern = this.createAddress(options, 5);
-		this.router
-				.modifyRule(ruleId, ruleType, algo, OriginationType.All, pattern, mask, pAddressId, sAddressId, null);
+		this.router.modifyRule(ruleId, ruleType, algo, originationType, pattern, mask, pAddressId, sAddressId,
+				newcgpartyAddressId);
 		return SccpOAMMessage.RULE_SUCCESSFULLY_MODIFIED;
 	}
 
