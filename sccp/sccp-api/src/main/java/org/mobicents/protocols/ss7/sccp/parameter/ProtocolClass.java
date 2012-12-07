@@ -54,4 +54,10 @@ public interface ProtocolClass extends Parameter{
      * @return
      */
     public boolean getReturnMessageOnError();
+
+    
+	/**
+	 * Clear a flag "ReturnMessageOnError"
+	 */
+	public void clearReturnMessageOnError();
 }

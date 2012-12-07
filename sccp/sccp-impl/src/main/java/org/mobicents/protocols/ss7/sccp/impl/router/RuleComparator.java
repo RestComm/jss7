@@ -23,6 +23,8 @@ package org.mobicents.protocols.ss7.sccp.impl.router;
 
 import java.util.Comparator;
 
+import org.mobicents.protocols.ss7.sccp.OriginationType;
+
 /**
  * <p>
  * A comparison function which imposes ordering on collection of {@link RuleImpl}
@@ -74,6 +76,12 @@ public class RuleComparator implements Comparator<RuleImpl> {
 		// Normalize rule. Remove all separator
 		digits1 = digits1.replaceAll(SECTION_SEPARTOR, "");
 		digits2 = digits2.replaceAll(SECTION_SEPARTOR, "");
+
+		// If a rule 1 is not OriginationType.All and rule 2 is OriginationType.All we put rule 1 first
+		if (o1.getOriginationType() != OriginationType.All && o2.getOriginationType() == OriginationType.All)
+			return -1;
+		if (o1.getOriginationType() == OriginationType.All && o2.getOriginationType() != OriginationType.All)
+			return 1;
 
 		// If any digit is just wildcard "*" return 1 indicating it should be
 		// below the other

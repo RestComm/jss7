@@ -40,6 +40,8 @@ public interface SccpAddressedMessage extends SccpMessage {
 
 	public boolean getReturnMessageOnError();
 
+	public void clearReturnMessageOnError();
+
 	public boolean getSccpCreatesSls();
 
 	public HopCounter getHopCounter();

@@ -87,7 +87,7 @@ public class RuleImpl implements Rule, Serializable {
 	/** Translation method */
 	private int primaryAddressId = 0;
 	private int secondaryAddressId = 0;
-	private Integer newCallingPartyAddressAddressId = null;
+	private Integer newCallingPartyAddressId = null;
 
 	private String mask = null;
 
@@ -184,12 +184,12 @@ public class RuleImpl implements Rule, Serializable {
 		this.secondaryAddressId = secondaryAddressId;
 	}
 
-	public Integer getNewCallingPartyAddressAddressId() {
-		return newCallingPartyAddressAddressId;
+	public Integer getNewCallingPartyAddressId() {
+		return newCallingPartyAddressId;
 	}
 
-	public void setNewCallingPartyAddressAddressId(Integer newCallingPartyAddressAddressId) {
-		this.newCallingPartyAddressAddressId = newCallingPartyAddressAddressId;
+	public void setNewCallingPartyAddressId(Integer newCallingPartyAddressId) {
+		this.newCallingPartyAddressId = newCallingPartyAddressId;
 	}
 
 	/**
@@ -251,13 +251,13 @@ public class RuleImpl implements Rule, Serializable {
 			gt = GlobalTitle.getInstance(((GT0010) primaryGt).getTranslationType(), translatedDigits);
 			break;
 		case NO_GLOBAL_TITLE_INCLUDED:
-			// Use Global Title from received aadress
+			// Use Global Title from received address
 			break;
 		}
 		return gt;
 	}
 
-	public boolean matches(SccpAddress address) {
+	public boolean matches(SccpAddress address, boolean isMtpOriginated) {
 
 		// Rule is for GTT only
 		if (address.getAddressIndicator().getRoutingIndicator() == RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN) {
@@ -267,6 +267,12 @@ public class RuleImpl implements Rule, Serializable {
 			return false;
 		}
 
+		// checking firstly about rule OriginationType
+		if (this.getOriginationType() == OriginationType.LocalOriginated && isMtpOriginated)
+			return false;
+		if (this.getOriginationType() == OriginationType.RemoteOriginated && !isMtpOriginated)
+			return false;
+		
 		// Routing on GTT
 		GlobalTitleIndicator gti = address.getAddressIndicator().getGlobalTitleIndicator();
 		GlobalTitle patternGT = pattern.getGlobalTitle();
@@ -497,9 +503,9 @@ public class RuleImpl implements Rule, Serializable {
 			rule.secondaryAddressId = xml.getAttribute(SECONDARY_ADDRESS).toInt();
 			CharArray cha = xml.getAttribute(NEW_CALLING_PARTY_ADDRESS);
 			if (cha != null)
-				rule.newCallingPartyAddressAddressId = cha.toInt();
+				rule.newCallingPartyAddressId = cha.toInt();
 			else
-				rule.newCallingPartyAddressAddressId = null;
+				rule.newCallingPartyAddressId = null;
 			rule.pattern = xml.get(PATTERN, SccpAddress.class);
 			rule.configure();
 		}
@@ -511,8 +517,8 @@ public class RuleImpl implements Rule, Serializable {
 			xml.setAttribute(MASK, rule.mask);
 			xml.setAttribute(PRIMARY_ADDRESS, rule.primaryAddressId);
 			xml.setAttribute(SECONDARY_ADDRESS, rule.secondaryAddressId);
-			if (rule.newCallingPartyAddressAddressId != null)
-				xml.setAttribute(NEW_CALLING_PARTY_ADDRESS, rule.newCallingPartyAddressAddressId);
+			if (rule.newCallingPartyAddressId != null)
+				xml.setAttribute(NEW_CALLING_PARTY_ADDRESS, rule.newCallingPartyAddressId);
 			xml.add(rule.pattern, PATTERN, SccpAddress.class);
 		}
 	};
@@ -557,10 +563,10 @@ public class RuleImpl implements Rule, Serializable {
 		buff.append(CLOSE_BRACKET);
 		buff.append(SEPARATOR);
 
-		if (newCallingPartyAddressAddressId != null) {
+		if (newCallingPartyAddressId != null) {
 			buff.append(NEW_CALLING_PARTY_ADDRESS);
 			buff.append(OPEN_BRACKET);
-			buff.append(newCallingPartyAddressAddressId);
+			buff.append(newCallingPartyAddressId);
 			buff.append(CLOSE_BRACKET);
 			buff.append(SEPARATOR);
 		}

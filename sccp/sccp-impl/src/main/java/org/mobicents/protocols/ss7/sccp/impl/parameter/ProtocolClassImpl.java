@@ -70,6 +70,11 @@ public class ProtocolClassImpl extends AbstractParameter implements ProtocolClas
 		return (this.msgHandling & HANDLING_RET_ERR) != 0 ? true : false;
 	}
 
+	public void clearReturnMessageOnError() {
+		int mask = HANDLING_RET_ERR ^ (-1);
+		this.msgHandling = this.msgHandling & mask;
+	}
+
 	public void decode(InputStream in) throws IOException {
 		if (in.read() != 1) {
 			throw new IOException();

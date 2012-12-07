@@ -280,11 +280,11 @@ public class RouterImpl implements Router {
 	 *            called party address
 	 * @return the rule with match to the called party address
 	 */
-	public Rule findRule(SccpAddress calledParty) {
+	public Rule findRule(SccpAddress calledParty, boolean isMtpOriginated) {
 
 		for (FastMap.Entry<Integer, Rule> e = this.rulesMap.head(), end = this.rulesMap.tail(); (e = e.getNext()) != end;) {
 			Rule rule = e.getValue();
-			if (rule.matches(calledParty)) {
+			if (rule.matches(calledParty, isMtpOriginated)) {
 				return rule;
 			}
 		}
@@ -410,7 +410,7 @@ public class RouterImpl implements Router {
 			RuleImpl rule = new RuleImpl(ruleType, algo, originationType, pattern, mask);
 			rule.setPrimaryAddressId(pAddressId);
 			rule.setSecondaryAddressId(sAddressId);
-			rule.setNewCallingPartyAddressAddressId(newCallingPartyAddressAddressId);
+			rule.setNewCallingPartyAddressId(newCallingPartyAddressAddressId);
 
 			rule.setRuleId(id);
 			RuleImpl[] rulesArray = new RuleImpl[(this.rulesMap.size() + 1)];
@@ -482,7 +482,7 @@ public class RouterImpl implements Router {
 			RuleImpl rule = new RuleImpl(ruleType, algo, originationType, pattern, mask);
 			rule.setPrimaryAddressId(pAddressId);
 			rule.setSecondaryAddressId(sAddressId);
-			rule.setNewCallingPartyAddressAddressId(newCallingPartyAddressAddressId);
+			rule.setNewCallingPartyAddressId(newCallingPartyAddressAddressId);
 
 			rule.setRuleId(id);
 			RuleImpl[] rulesArray = new RuleImpl[(this.rulesMap.size() + 1)];

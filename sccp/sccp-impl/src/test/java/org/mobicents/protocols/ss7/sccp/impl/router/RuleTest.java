@@ -42,6 +42,9 @@ import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
 import org.mobicents.protocols.ss7.sccp.OriginationType;
 import org.mobicents.protocols.ss7.sccp.RuleType;
+import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
+import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0100;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -92,7 +95,7 @@ public class RuleTest {
 
 		SccpAddress address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "123456789"), 0);
 
-		assertTrue(rule.matches(address));
+		assertTrue(rule.matches(address, false));
 
 		SccpAddress translatedAddress = rule.translate(address, primaryAddress);
 
@@ -117,7 +120,7 @@ public class RuleTest {
 
 		SccpAddress address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "1234567"), 0);
 
-		assertTrue(rule.matches(address));
+		assertTrue(rule.matches(address, false));
 
 		SccpAddress translatedAddress = rule.translate(address, primaryAddress);
 
@@ -142,7 +145,7 @@ public class RuleTest {
 
 		SccpAddress address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "4414257897897"), 0);
 
-		assertTrue(rule.matches(address));
+		assertTrue(rule.matches(address, false));
 
 		SccpAddress translatedAddress = rule.translate(address, primaryAddress);
 
@@ -166,7 +169,7 @@ public class RuleTest {
 
 		SccpAddress address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "4414257897897"), 0);
 
-		assertTrue(rule.matches(address));
+		assertTrue(rule.matches(address, false));
 
 		SccpAddress translatedAddress = rule.translate(address, primaryAddress);
 
@@ -192,7 +195,7 @@ public class RuleTest {
 		SccpAddress address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(0, NumberingPlan.valueOf(1),
 				NatureOfAddress.valueOf(4), "4414257897897"), 6);
 
-		assertTrue(rule.matches(address));
+		assertTrue(rule.matches(address, false));
 
 		SccpAddress translatedAddress = rule.translate(address, primaryAddress);
 
@@ -222,7 +225,7 @@ public class RuleTest {
 
 		SccpAddress address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "1234567"), 8);
 
-		assertTrue(rule.matches(address));
+		assertTrue(rule.matches(address, false));
 
 		SccpAddress translatedAddress = rule.translate(address, primaryAddress);
 
@@ -247,7 +250,7 @@ public class RuleTest {
 		SccpAddress address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "55"), 8);
 
 		// TODO: the exception is here
-		assertFalse(rule.matches(address));
+		assertFalse(rule.matches(address, false));
 	}
 
 	@Test(groups = { "router", "functional.translate" })
@@ -263,7 +266,7 @@ public class RuleTest {
 
 		SccpAddress address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "222"), 8);
 
-		assertTrue(rule.matches(address));
+		assertTrue(rule.matches(address, false));
 
 		// TODO: the exception is here
 		SccpAddress translatedAddress = rule.translate(address, primaryAddress);
@@ -273,6 +276,43 @@ public class RuleTest {
 		assertEquals(translatedAddress.getSignalingPointCode(), 123);
 		assertEquals(translatedAddress.getSubsystemNumber(), 8);
 		assertEquals(translatedAddress.getGlobalTitle().getDigits(), "222");
+	}
+
+	@Test(groups = { "router", "functional.translate" })
+	public void testTranslate9() throws Exception {
+		// OriginationType checking
+
+		SccpAddress pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "*"), 0);
+
+		SccpAddress address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "222"), 8);
+
+		SccpStackImpl stack = new SccpStackImpl("test");
+		MessageFactoryImpl mesFact = new MessageFactoryImpl(stack);
+		SccpMessage msgLocalOrig = mesFact.createDataMessageClass1(address, null, new byte[5], 0, 6, false, null, null);
+		byte[] b = new byte[] { 9, 0x01, 0x03, 0x05, 0x09, 0x02, 0x42, 0x08, 0x04, 0x43, 0x01, 0x00, 0x08, 0x5D, 0x62, 0x5B, 0x48, 0x04, 0x00, 0x02, 0x00,
+				0x30, 0x6B, 0x1A, 0x28, 0x18, 0x06, 0x07, 0x00, 0x11, (byte) 0x86, 0x05, 0x01, 0x01, 0x01, (byte) 0xA0, 0x0D, 0x60, 0x0B, (byte) 0xA1, 0x09,
+				0x06, 0x07, 0x04, 0x00, 0x00, 0x01, 0x00, 0x19, 0x02, 0x6C, 0x37, (byte) 0xA1, 0x35, 0x02, 0x01, 0x01, 0x02, 0x01, 0x2E, 0x30, 0x2D,
+				(byte) 0x80, 0x05, (byte) 0x89, 0x67, 0x45, 0x23, (byte) 0xF1, (byte) 0x84, 0x06, (byte) 0xA1, 0x21, 0x43, 0x65, (byte) 0x87, (byte) 0xF9,
+				0x04, 0x1C, 0x2C, 0x09, 0x04, 0x21, 0x43, 0x65, (byte) 0x87, (byte) 0xF9, 0x04, 0x00, 0x11, 0x30, (byte) 0x92, 0x60, 0x60, 0x62, 0x00, 0x0B,
+				(byte) 0xC8, 0x32, (byte) 0x9B, (byte) 0xFD, 0x06, 0x5D, (byte) 0xDF, 0x72, 0x36, 0x19 };
+		ByteArrayInputStream buf = new ByteArrayInputStream(b);
+		int type = buf.read();
+		SccpMessage msgRemoteOrig = mesFact.createMessage(type, 101, 102, 0, buf);
+		
+		RuleImpl rule = new RuleImpl(RuleType.Solitary, LoadSharingAlgorithm.Undefined, OriginationType.LocalOriginated, pattern, "K");
+		rule.setPrimaryAddressId(1);
+		assertTrue(rule.matches(address, msgLocalOrig.getIsMtpOriginated()));
+		assertFalse(rule.matches(address, msgRemoteOrig.getIsMtpOriginated()));
+		
+		rule = new RuleImpl(RuleType.Solitary, LoadSharingAlgorithm.Undefined, OriginationType.RemoteOriginated, pattern, "K");
+		rule.setPrimaryAddressId(1);
+		assertFalse(rule.matches(address, msgLocalOrig.getIsMtpOriginated()));
+		assertTrue(rule.matches(address, msgRemoteOrig.getIsMtpOriginated()));
+		
+		rule = new RuleImpl(RuleType.Solitary, LoadSharingAlgorithm.Undefined, OriginationType.All, pattern, "K");
+		rule.setPrimaryAddressId(1);
+		assertTrue(rule.matches(address, msgLocalOrig.getIsMtpOriginated()));
+		assertTrue(rule.matches(address, msgRemoteOrig.getIsMtpOriginated()));
 	}
 
 	@Test(groups = { "router", "functional.encode" })
@@ -306,13 +346,13 @@ public class RuleTest {
 		assertTrue(aiOut.getMask().equals("R/K"));
 		assertEquals(aiOut.getPrimaryAddressId(), 1);
 		assertEquals(aiOut.getSecondaryAddressId(), 0);
-		assertNull(aiOut.getNewCallingPartyAddressAddressId());
+		assertNull(aiOut.getNewCallingPartyAddressId());
 
 		
 		rule = new RuleImpl(RuleType.Broadcast, LoadSharingAlgorithm.Bit2, OriginationType.LocalOriginated, pattern, "R/K");
 		rule.setPrimaryAddressId(11);
 		rule.setSecondaryAddressId(12);
-		rule.setNewCallingPartyAddressAddressId(13);
+		rule.setNewCallingPartyAddressId(13);
 
 		// Writes
 		output = new ByteArrayOutputStream();
@@ -336,7 +376,7 @@ public class RuleTest {
 		assertTrue(aiOut.getMask().equals("R/K"));
 		assertEquals(aiOut.getPrimaryAddressId(), 11);
 		assertEquals(aiOut.getSecondaryAddressId(), 12);
-		assertEquals((int)aiOut.getNewCallingPartyAddressAddressId(), 13);
+		assertEquals((int)aiOut.getNewCallingPartyAddressId(), 13);
 
 	}
 
@@ -358,3 +398,4 @@ public class RuleTest {
 		// assertEquals( rule.toString(),RULE);
 	}
 }
+
