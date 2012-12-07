@@ -309,7 +309,7 @@ public class SccpRoutingControl {
 
 		SccpAddress calledPartyAddress = msg.getCalledPartyAddress();
 
-		Rule rule = this.sccpStackImpl.router.findRule(calledPartyAddress);
+		Rule rule = this.sccpStackImpl.router.findRule(calledPartyAddress, msg.getIsMtpOriginated());
 		if (rule == null) {
 			if (logger.isEnabledFor(Level.WARN)) {
 				logger.warn(String.format("Received SccpMessage for Translation but no matching Rule found for local routing\nSccpMessage=%s", msg));
@@ -352,15 +352,20 @@ public class SccpRoutingControl {
 			}
 		}
 
-		SccpAddress translationAddress;
+		SccpAddress translationAddress = null;
+		SccpAddress translationAddress2 = null;
 		if (resPri == TranslationAddressCheckingResult.destinationAvailable && resSec != TranslationAddressCheckingResult.destinationAvailable) {
 			translationAddress = translationAddressPri;
 		} else if (resPri != TranslationAddressCheckingResult.destinationAvailable && resSec == TranslationAddressCheckingResult.destinationAvailable) {
 			translationAddress = translationAddressSec;
 		} else {
-			if (rule.getRuleType() != RuleType.Loadshared) {
+			switch(rule.getRuleType()) {
+			case Solitary:
+			case Dominant:
 				translationAddress = translationAddressPri;
-			} else {
+				break;
+
+			case Loadshared:
 				// loadsharing case and both destinations are available
 				if (msg.getSccpCreatesSls()) {
 					if (this.sccpStackImpl.newSelector())
@@ -372,6 +377,24 @@ public class SccpRoutingControl {
 						translationAddress = translationAddressPri;
 					else
 						translationAddress = translationAddressSec;
+				}
+				break;
+			
+			case Broadcast:
+				// Broadcast case and both destinations are available
+				translationAddress = translationAddressPri;
+				translationAddress2 = translationAddressSec;
+				break;
+			}
+		}
+
+		// changing calling party address if a rule has NewCallingPartyAddress
+		if (rule.getNewCallingPartyAddressId() != null) {
+			SccpAddress newCallingPartyAddress = this.sccpStackImpl.router.getRoutingAddress(rule.getNewCallingPartyAddressId());
+			if (newCallingPartyAddress != null) {
+				msg.setCallingPartyAddress(newCallingPartyAddress);
+				if (logger.isDebugEnabled()) {
+					logger.debug(String.format("New CallingPartyAddress assigned after translation = %s", newCallingPartyAddress));
 				}
 			}
 		}
@@ -386,6 +409,20 @@ public class SccpRoutingControl {
 
 		// routing procedures then continue's
 		this.route(msg);
+		
+		if (translationAddress2 != null) {
+			// for broadcast mode - route to a secondary destination if it is available
+			address = rule.translate(calledPartyAddress, translationAddress2);
+			msg.setCalledPartyAddress(address);
+			msg.clearReturnMessageOnError();
+
+			if (logger.isDebugEnabled()) {
+				logger.debug(String.format("CalledPartyAddress after translation - a second broadcast address = %s", address));
+			}
+
+			// routing procedures then continue's
+			this.route(msg);
+		}
 	}
 
 	private boolean selectLoadSharingRoute(LoadSharingAlgorithm loadSharingAlgo, SccpAddressedMessageImpl msg) {

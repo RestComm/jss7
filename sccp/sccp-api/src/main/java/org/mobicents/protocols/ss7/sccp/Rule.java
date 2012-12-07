@@ -42,11 +42,11 @@ public interface Rule {
 
 	public int getSecondaryAddressId();
 
-	public Integer getNewCallingPartyAddressAddressId();
+	public Integer getNewCallingPartyAddressId();
 
 	public OriginationType getOriginationType();
 	
-	public boolean matches(SccpAddress address);
+	public boolean matches(SccpAddress address, boolean isMtpOriginated);
 	
 	public SccpAddress translate(SccpAddress address, SccpAddress ruleAddress);
 

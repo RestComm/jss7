@@ -66,11 +66,17 @@ public class RuleComparatorTest {
 		SccpAddress pattern1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "800/????/9"), 0);
 		RuleImpl rule1 = new RuleImpl(RuleType.Solitary, LoadSharingAlgorithm.Undefined, OriginationType.All, pattern1, "R/K/R");
 
+		RuleImpl rule1a = new RuleImpl(RuleType.Solitary, LoadSharingAlgorithm.Undefined, OriginationType.LocalOriginated, pattern1, "R/K/R");
+
 		SccpAddress pattern2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "*"), 0);
 		RuleImpl rule2 = new RuleImpl(RuleType.Solitary, LoadSharingAlgorithm.Undefined, OriginationType.All, pattern2, "K");
 
+		RuleImpl rule2a = new RuleImpl(RuleType.Solitary, LoadSharingAlgorithm.Undefined, OriginationType.LocalOriginated, pattern2, "K");
+
 		SccpAddress pattern3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "9/?/9/*"), 0);
 		RuleImpl rule3 = new RuleImpl(RuleType.Solitary, LoadSharingAlgorithm.Undefined, OriginationType.All, pattern3, "K/K/K/K");
+
+		RuleImpl rule3a = new RuleImpl(RuleType.Solitary, LoadSharingAlgorithm.Undefined, OriginationType.RemoteOriginated, pattern3, "K/K/K/K");
 
 		SccpAddress pattern4 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "80/??/0/???/9"), 0);
 		RuleImpl rule4 = new RuleImpl(RuleType.Solitary, LoadSharingAlgorithm.Undefined, OriginationType.All, pattern4, "R/K/R/K/R");
@@ -88,18 +94,22 @@ public class RuleComparatorTest {
 		RuleImpl rule8 = new RuleImpl(RuleType.Solitary, LoadSharingAlgorithm.Undefined, OriginationType.All, pattern8, "R/K");
 
 		// This is unsorted
-		RuleImpl[] rules = new RuleImpl[] { rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8 };
+		RuleImpl[] rules = new RuleImpl[] { rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule1a, rule2a, rule3a };
 
 		// Sort
 		Arrays.sort(rules, ruleComparator);
 
-		assertEquals(rule6, rules[0]);
-		assertEquals(rule7, rules[1]);
-		assertEquals(rule1, rules[2]);
-		assertEquals(rule5, rules[3]);
-		assertEquals(rule4, rules[4]);
-		assertEquals(rule8, rules[5]);
-		assertEquals(rule3, rules[6]);
-		assertEquals(rule2, rules[7]);
+		assertEquals(rule1a, rules[0]);
+		assertEquals(rule3a, rules[1]);
+		assertEquals(rule2a, rules[2]);
+
+		assertEquals(rule6, rules[3]);
+		assertEquals(rule7, rules[4]);
+		assertEquals(rule1, rules[5]);
+		assertEquals(rule5, rules[6]);
+		assertEquals(rule4, rules[7]);
+		assertEquals(rule8, rules[8]);
+		assertEquals(rule3, rules[9]);
+		assertEquals(rule2, rules[10]);
 	}
 }
