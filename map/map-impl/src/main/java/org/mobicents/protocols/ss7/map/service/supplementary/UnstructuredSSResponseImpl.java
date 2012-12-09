@@ -1,6 +1,6 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
- * and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -175,7 +175,7 @@ public class UnstructuredSSResponseImpl extends SupplementaryMessageImpl impleme
 		StringBuilder sb = new StringBuilder();
 		sb.append("UnstructuredSSResponse [");
 		if(this.getMAPDialog() != null){
-			sb.append("DialogId=").append(this.getMAPDialog().getDialogId());
+			sb.append("DialogId=").append(this.getMAPDialog().getLocalDialogId());
 		}
 		sb.append(super.toString());
 		sb.append("]");

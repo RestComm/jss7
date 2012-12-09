@@ -1,6 +1,6 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012.
- * and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -60,13 +60,10 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 
 /**
  * 
- * MAP-DialoguePDU ::= CHOICE { 
- * 			map-open 			[0] 	MAP-OpenInfo, 
- * 			map-accept 			[1] 	MAP-AcceptInfo, 
- * 			map-close 			[2] 	MAP-CloseInfo, 
- * 			map-refuse 			[3] 	MAP-RefuseInfo,
- * 			map-userAbort 		[4] 	MAP-UserAbortInfo, 
- * 			map-providerAbort 	[5]		MAP-ProviderAbortInfo}
+ * MAP-DialoguePDU ::= CHOICE { map-open [0] MAP-OpenInfo, map-accept [1]
+ * MAP-AcceptInfo, map-close [2] MAP-CloseInfo, map-refuse [3] MAP-RefuseInfo,
+ * map-userAbort [4] MAP-UserAbortInfo, map-providerAbort [5]
+ * MAP-ProviderAbortInfo}
  * 
  * @author amit bhayani
  * @author baranowb
@@ -90,9 +87,9 @@ public abstract class MAPDialogImpl implements MAPDialog {
 	protected MAPExtensionContainer receivedExtensionContainer;
 
 	protected MAPDialogState state = MAPDialogState.IDLE;
-	
+
 	private Set<Long> incomingInvokeList = new HashSet<Long>();
-	
+
 	protected boolean eriStyle;
 	protected IMSI eriImsi;
 	protected AddressString eriVlrNo;
@@ -118,22 +115,22 @@ public abstract class MAPDialogImpl implements MAPDialog {
 	public boolean getReturnMessageOnError() {
 		return returnMessageOnError;
 	}
-	
-    /**
-     * 
-     * @return - local sccp address.
-     */
-    public SccpAddress getLocalAddress(){
-    	return this.tcapDialog.getLocalAddress();
-    }
 
-    /**
-         * 
-         * @return - sccp address of calling party
-         */
-    public SccpAddress getRemoteAddress(){
-    	return this.tcapDialog.getRemoteAddress();
-    }
+	/**
+	 * 
+	 * @return - local sccp address.
+	 */
+	public SccpAddress getLocalAddress() {
+		return this.tcapDialog.getLocalAddress();
+	}
+
+	/**
+	 * 
+	 * @return - sccp address of calling party
+	 */
+	public SccpAddress getRemoteAddress() {
+		return this.tcapDialog.getRemoteAddress();
+	}
 
 	public MessageType getTCAPMessageType() {
 		return tcapMessageType;
@@ -143,8 +140,12 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		this.tcapDialog.keepAlive();
 	}
 
-	public Long getDialogId() {
-		return tcapDialog.getDialogId();
+	public Long getLocalDialogId() {
+		return tcapDialog.getLocalDialogId();
+	}
+
+	public Long getRemoteDialogId() {
+		return tcapDialog.getRemoteDialogId();
 	}
 
 	public MAPServiceBase getService() {
@@ -157,7 +158,7 @@ public abstract class MAPDialogImpl implements MAPDialog {
 
 	public void release() {
 		this.setState(MAPDialogState.EXPUNGED);
-		
+
 		if (this.tcapDialog != null)
 			this.tcapDialog.release();
 	}
@@ -213,14 +214,16 @@ public abstract class MAPDialogImpl implements MAPDialog {
 			return;
 
 		synchronized (this) {
-			// Dialog is not started or has expunged - we need not send TC-U-ABORT,
+			// Dialog is not started or has expunged - we need not send
+			// TC-U-ABORT,
 			// only Dialog removing
 			if (this.getState() == MAPDialogState.EXPUNGED || this.getState() == MAPDialogState.IDLE) {
 				this.setState(MAPDialogState.EXPUNGED);
 				return;
 			}
 
-			this.mapProviderImpl.fireTCAbortUser(this.getTcapDialog(), mapUserAbortChoice, this.extContainer, this.getReturnMessageOnError());
+			this.mapProviderImpl.fireTCAbortUser(this.getTcapDialog(), mapUserAbortChoice, this.extContainer,
+					this.getReturnMessageOnError());
 			this.extContainer = null;
 
 			this.setState(MAPDialogState.EXPUNGED);
@@ -238,7 +241,8 @@ public abstract class MAPDialogImpl implements MAPDialog {
 				throw new MAPException("Refuse can be called in the Dialog InitialReceived state");
 			}
 
-			this.mapProviderImpl.fireTCAbortRefused(this.getTcapDialog(), reason, this.extContainer, this.getReturnMessageOnError());
+			this.mapProviderImpl.fireTCAbortRefused(this.getTcapDialog(), reason, this.extContainer,
+					this.getReturnMessageOnError());
 			this.extContainer = null;
 
 			this.setState(MAPDialogState.EXPUNGED);
@@ -253,31 +257,30 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		synchronized (this) {
 			switch (this.tcapDialog.getState()) {
 			case InitialReceived:
-				ApplicationContextName acn = this.mapProviderImpl
-						.getTCAPProvider().getDialogPrimitiveFactory()
+				ApplicationContextName acn = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
 						.createApplicationContextName(this.appCntx.getOID());
 
-				this.mapProviderImpl.fireTCEnd(this.getTcapDialog(), true, prearrangedEnd, acn, this.extContainer, this.getReturnMessageOnError());
+				this.mapProviderImpl.fireTCEnd(this.getTcapDialog(), true, prearrangedEnd, acn, this.extContainer,
+						this.getReturnMessageOnError());
 				this.extContainer = null;
 
 				this.setState(MAPDialogState.EXPUNGED);
 				break;
 
 			case Active:
-				this.mapProviderImpl.fireTCEnd(this.getTcapDialog(), false, prearrangedEnd, null, null, this.getReturnMessageOnError());
+				this.mapProviderImpl.fireTCEnd(this.getTcapDialog(), false, prearrangedEnd, null, null,
+						this.getReturnMessageOnError());
 
 				this.setState(MAPDialogState.EXPUNGED);
 				break;
-				
+
 			case Idle:
 				throw new MAPException(
 						"Awaiting TC-BEGIN to be sent, can not send another dialog initiating primitive!");
 			case InitialSent: // we have sent TC-BEGIN already, need to wait
-				throw new MAPException(
-						"Awaiting TC-BEGIN response, can not send another dialog initiating primitive!");
+				throw new MAPException("Awaiting TC-BEGIN response, can not send another dialog initiating primitive!");
 			case Expunged: // dialog has been terminated on TC level, cant send
-				throw new MAPException(
-						"Dialog has been terminated, can not send primitives!");
+				throw new MAPException("Dialog has been terminated, can not send primitives!");
 			}
 		}
 	}
@@ -318,12 +321,11 @@ public abstract class MAPDialogImpl implements MAPDialog {
 			switch (this.tcapDialog.getState()) {
 
 			case Idle:
-				ApplicationContextName acn = this.mapProviderImpl
-						.getTCAPProvider().getDialogPrimitiveFactory()
+				ApplicationContextName acn = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
 						.createApplicationContextName(this.appCntx.getOID());
 
-				this.mapProviderImpl.fireTCBegin(this.getTcapDialog(), acn, destReference, origReference, this.extContainer, this.eriStyle, this.eriImsi,
-						this.eriVlrNo, this.getReturnMessageOnError());
+				this.mapProviderImpl.fireTCBegin(this.getTcapDialog(), acn, destReference, origReference,
+						this.extContainer, this.eriStyle, this.eriImsi, this.eriVlrNo, this.getReturnMessageOnError());
 				this.extContainer = null;
 
 				this.setState(MAPDialogState.INITIAL_SENT);
@@ -332,28 +334,27 @@ public abstract class MAPDialogImpl implements MAPDialog {
 			case Active:
 				// Its Active send TC-CONTINUE
 
-				this.mapProviderImpl.fireTCContinue(this.getTcapDialog(), false, null, null, this.getReturnMessageOnError());
+				this.mapProviderImpl.fireTCContinue(this.getTcapDialog(), false, null, null,
+						this.getReturnMessageOnError());
 				break;
 
 			case InitialReceived:
 				// Its first Reply to TC-Begin
 
-				ApplicationContextName acn1 = this.mapProviderImpl
-						.getTCAPProvider().getDialogPrimitiveFactory()
+				ApplicationContextName acn1 = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
 						.createApplicationContextName(this.appCntx.getOID());
 
-				this.mapProviderImpl.fireTCContinue(this.getTcapDialog(), true, acn1, this.extContainer, this.getReturnMessageOnError());
+				this.mapProviderImpl.fireTCContinue(this.getTcapDialog(), true, acn1, this.extContainer,
+						this.getReturnMessageOnError());
 				this.extContainer = null;
 
 				this.setState(MAPDialogState.ACTIVE);
 				break;
 
 			case InitialSent: // we have sent TC-BEGIN already, need to wait
-				throw new MAPException(
-						"Awaiting TC-BEGIN response, can not send another dialog initiating primitive!");
+				throw new MAPException("Awaiting TC-BEGIN response, can not send another dialog initiating primitive!");
 			case Expunged: // dialog has been terminated on TC level, cant send
-				throw new MAPException(
-						"Dialog has been terminated, can not send primitives!");
+				throw new MAPException("Dialog has been terminated, can not send primitives!");
 			}
 		}
 	}
@@ -373,7 +374,7 @@ public abstract class MAPDialogImpl implements MAPDialog {
 			}
 		}
 	}
-	
+
 	public MAPApplicationContext getApplicationContext() {
 		return appCntx;
 	}
@@ -387,12 +388,12 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		if (this.state == MAPDialogState.EXPUNGED) {
 			return;
 		}
-		
+
 		this.state = newState;
-//		if (newState == MAPDialogState.EXPUNGED) {
-//			this.mapProviderImpl.removeDialog(tcapDialog.getDialogId());
-//			this.mapProviderImpl.deliverDialogResease(this);
-//		}
+		// if (newState == MAPDialogState.EXPUNGED) {
+		// this.mapProviderImpl.removeDialog(tcapDialog.getDialogId());
+		// this.mapProviderImpl.deliverDialogResease(this);
+		// }
 	}
 
 	public void sendInvokeComponent(Invoke invoke) throws MAPException {
@@ -438,11 +439,12 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		if (this.tcapDialog.getPreviewMode())
 			return;
 
-		MAPErrorMessageImpl mapErrorMessage = (MAPErrorMessageImpl)mem;
-		
+		MAPErrorMessageImpl mapErrorMessage = (MAPErrorMessageImpl) mem;
+
 		this.removeIncomingInvokeId(invokeId);
-		
-		ReturnError returnError = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCReturnErrorRequest();
+
+		ReturnError returnError = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
+				.createTCReturnErrorRequest();
 
 		try {
 			returnError.setInvokeId(invokeId);
@@ -451,7 +453,7 @@ public abstract class MAPDialogImpl implements MAPDialog {
 			ErrorCode ec = TcapFactory.createErrorCode();
 			ec.setLocalErrorCode(mapErrorMessage.getErrorCode());
 			returnError.setErrorCode(ec);
-			
+
 			AsnOutputStream aos = new AsnOutputStream();
 			mapErrorMessage.encodeData(aos);
 			byte[] buf = aos.toByteArray();
@@ -501,8 +503,8 @@ public abstract class MAPDialogImpl implements MAPDialog {
 
 		try {
 			this.getTcapDialog().resetTimer(invokeId);
-		} catch( TCAPException e ) {
-			throw new MAPException( "TCAPException occure: " + e.getMessage(), e );
+		} catch (TCAPException e) {
+			throw new MAPException("TCAPException occure: " + e.getMessage(), e);
 		}
 	}
 
@@ -513,8 +515,8 @@ public abstract class MAPDialogImpl implements MAPDialog {
 
 		try {
 			return this.getTcapDialog().cancelInvocation(invokeId);
-		} catch( TCAPException e ) {
-			throw new MAPException( "TCAPException occure: " + e.getMessage(), e );
+		} catch (TCAPException e) {
+			throw new MAPException("TCAPException occure: " + e.getMessage(), e);
 		}
 	}
 
@@ -529,11 +531,12 @@ public abstract class MAPDialogImpl implements MAPDialog {
 	public int getMaxUserDataLength() {
 		return this.getTcapDialog().getMaxUserDataLength();
 	}
-	
+
 	/**
-	 * Return the MAP message length (in bytes) that will be after encoding
-	 * if TC-BEGIN or TC-CONTINUE cases
-	 * This value must not exceed getMaxUserDataLength() value
+	 * Return the MAP message length (in bytes) that will be after encoding if
+	 * TC-BEGIN or TC-CONTINUE cases This value must not exceed
+	 * getMaxUserDataLength() value
+	 * 
 	 * @return
 	 */
 	public int getMessageUserDataLengthOnSend() throws MAPException {
@@ -544,8 +547,8 @@ public abstract class MAPDialogImpl implements MAPDialog {
 				ApplicationContextName acn = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
 						.createApplicationContextName(this.appCntx.getOID());
 
-				TCBeginRequest tb = this.mapProviderImpl.encodeTCBegin(this.getTcapDialog(), acn, destReference, origReference, this.extContainer,
-						this.eriStyle, this.eriImsi, this.eriVlrNo);
+				TCBeginRequest tb = this.mapProviderImpl.encodeTCBegin(this.getTcapDialog(), acn, destReference,
+						origReference, this.extContainer, this.eriStyle, this.eriImsi, this.eriVlrNo);
 				return tcapDialog.getDataLength(tb);
 
 			case Active:
@@ -569,11 +572,11 @@ public abstract class MAPDialogImpl implements MAPDialog {
 
 		throw new MAPException("Bad TCAP Dialog state: " + this.tcapDialog.getState());
 	}
-	
+
 	/**
-	 * Return the MAP message length (in bytes) that will be after encoding
-	 * if TC-END case
-	 * This value must not exceed getMaxUserDataLength() value
+	 * Return the MAP message length (in bytes) that will be after encoding if
+	 * TC-END case This value must not exceed getMaxUserDataLength() value
+	 * 
 	 * @param prearrangedEnd
 	 * @return
 	 */
@@ -585,7 +588,8 @@ public abstract class MAPDialogImpl implements MAPDialog {
 				ApplicationContextName acn = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
 						.createApplicationContextName(this.appCntx.getOID());
 
-				TCEndRequest te = this.mapProviderImpl.encodeTCEnd(this.getTcapDialog(), true, prearrangedEnd, acn, this.extContainer);
+				TCEndRequest te = this.mapProviderImpl.encodeTCEnd(this.getTcapDialog(), true, prearrangedEnd, acn,
+						this.extContainer);
 				return tcapDialog.getDataLength(te);
 
 			case Active:
@@ -598,16 +602,17 @@ public abstract class MAPDialogImpl implements MAPDialog {
 
 		throw new MAPException("Bad TCAP Dialog state: " + this.tcapDialog.getState());
 	}
-	
+
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		sb.append("MAPDialog: DialogId=").append(this.getDialogId()).append(" MAPDialogState=").append(this.getState())
+		sb.append("MAPDialog: LocalDialogId=").append(this.getLocalDialogId()).append(" RemoteDialogId=")
+				.append(this.getRemoteDialogId()).append(" MAPDialogState=").append(this.getState())
 				.append(" MAPApplicationContext=").append(this.appCntx).append(" TCAPDialogState=")
 				.append(this.tcapDialog.getState());
 		return sb.toString();
 	}
 
-	public void addEricssonData(IMSI imsi, AddressString vlrNo){
+	public void addEricssonData(IMSI imsi, AddressString vlrNo) {
 		this.eriStyle = true;
 		this.eriImsi = imsi;
 		this.eriVlrNo = vlrNo;
@@ -617,4 +622,3 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		No, Continue, End, PrearrangedEnd;
 	}
 }
-

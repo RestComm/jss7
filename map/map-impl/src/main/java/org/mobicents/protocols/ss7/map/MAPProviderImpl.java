@@ -1,6 +1,6 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012.
- * and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -252,7 +252,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 	protected void addDialog(MAPDialogImpl dialog) {
 		synchronized (this.dialogs) {
-			this.dialogs.put(dialog.getDialogId(), dialog);
+			this.dialogs.put(dialog.getLocalDialogId(), dialog);
 		}
 	}
 
@@ -661,12 +661,12 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		if (this.getTCAPProvider().getPreviewMode()) {
 			mapDialogImpl = (MAPDialogImpl) (((DialogImpl)tcapDialog).getPrevewDialogData().getUpperDialog());
 		} else {
-			mapDialogImpl = (MAPDialogImpl) this.getMAPDialog(tcapDialog.getDialogId());
+			mapDialogImpl = (MAPDialogImpl) this.getMAPDialog(tcapDialog.getLocalDialogId());
 		}
 
 		if (mapDialogImpl == null) {
 			// TODO : ABort TCAP?
-			loger.error("MAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
+			loger.error("MAP Dialog not found for Dialog Id " + tcapDialog.getLocalDialogId());
 			try {
 				this.fireTCAbortProvider(tcapDialog, MAPProviderAbortReason.abnormalDialogue, null, false);
 			} catch (MAPException e) {
@@ -870,11 +870,11 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		if (this.getTCAPProvider().getPreviewMode()) {
 			mapDialogImpl = (MAPDialogImpl) (((DialogImpl)tcapDialog).getPrevewDialogData().getUpperDialog());
 		} else {
-			mapDialogImpl = (MAPDialogImpl) this.getMAPDialog(tcapDialog.getDialogId());
+			mapDialogImpl = (MAPDialogImpl) this.getMAPDialog(tcapDialog.getLocalDialogId());
 		}
 
 		if (mapDialogImpl == null) {
-			loger.error("MAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
+			loger.error("MAP Dialog not found for Dialog Id " + tcapDialog.getLocalDialogId());
 			return;
 		}
 		mapDialogImpl.tcapMessageType = MessageType.End;
@@ -1078,7 +1078,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 	public void onInvokeTimeout(Invoke invoke) {
 
-		MAPDialogImpl mapDialogImpl = (MAPDialogImpl) this.getMAPDialog(((InvokeImpl) invoke).getDialog().getDialogId());
+		MAPDialogImpl mapDialogImpl = (MAPDialogImpl) this.getMAPDialog(((InvokeImpl) invoke).getDialog().getLocalDialogId());
 
 		if (mapDialogImpl != null) {
 			synchronized (mapDialogImpl) {
@@ -1098,7 +1098,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 	public void onDialogTimeout(Dialog tcapDialog) {
 		
-		MAPDialogImpl mapDialogImpl = (MAPDialogImpl) this.getMAPDialog(tcapDialog.getDialogId());
+		MAPDialogImpl mapDialogImpl = (MAPDialogImpl) this.getMAPDialog(tcapDialog.getLocalDialogId());
 
 		if (mapDialogImpl != null) {
 			synchronized (mapDialogImpl) {
@@ -1111,7 +1111,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 	public void onDialogReleased(Dialog tcapDialog) {
 
-		MAPDialogImpl mapDialogImpl = this.removeDialog(tcapDialog.getDialogId());
+		MAPDialogImpl mapDialogImpl = this.removeDialog(tcapDialog.getLocalDialogId());
 
 		if (mapDialogImpl != null) {
 			synchronized (mapDialogImpl) {
@@ -1127,11 +1127,11 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		if (this.getTCAPProvider().getPreviewMode()) {
 			mapDialogImpl = (MAPDialogImpl) (((DialogImpl)tcapDialog).getPrevewDialogData().getUpperDialog());
 		} else {
-			mapDialogImpl = (MAPDialogImpl) this.getMAPDialog(tcapDialog.getDialogId());
+			mapDialogImpl = (MAPDialogImpl) this.getMAPDialog(tcapDialog.getLocalDialogId());
 		}
 
 		if (mapDialogImpl == null) {
-			loger.error("MAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
+			loger.error("MAP Dialog not found for Dialog Id " + tcapDialog.getLocalDialogId());
 			return;
 		}
 
@@ -1201,11 +1201,11 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		if (this.getTCAPProvider().getPreviewMode()) {
 			mapDialogImpl = (MAPDialogImpl) (((DialogImpl)tcapDialog).getPrevewDialogData().getUpperDialog());
 		} else {
-			mapDialogImpl = (MAPDialogImpl) this.getMAPDialog(tcapDialog.getDialogId());
+			mapDialogImpl = (MAPDialogImpl) this.getMAPDialog(tcapDialog.getLocalDialogId());
 		}
 
 		if (mapDialogImpl == null) {
-			loger.error("MAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
+			loger.error("MAP Dialog not found for Dialog Id " + tcapDialog.getLocalDialogId());
 			return;
 		}
 		mapDialogImpl.tcapMessageType = MessageType.Abort;
@@ -1609,10 +1609,10 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			return;
 		}
 
-		MAPDialogImpl mapDialogImpl = (MAPDialogImpl) this.getMAPDialog(tcapDialog.getDialogId());
+		MAPDialogImpl mapDialogImpl = (MAPDialogImpl) this.getMAPDialog(tcapDialog.getLocalDialogId());
 
 		if (mapDialogImpl == null) {
-			loger.error("MAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
+			loger.error("MAP Dialog not found for Dialog Id " + tcapDialog.getLocalDialogId());
 			return;
 		}
 

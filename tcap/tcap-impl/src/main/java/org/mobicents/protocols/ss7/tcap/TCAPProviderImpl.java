@@ -1,6 +1,6 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012.
- * and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -367,7 +367,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 	}
 
 	public void release(DialogImpl d) {
-	    Long did = d.getDialogId();
+	    Long did = d.getLocalDialogId();
 
 		if (d.getPreviewMode()) {
 			this.removePreviewDialog(d);

@@ -1,6 +1,6 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
- * and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -130,7 +130,15 @@ public interface MAPDialog {
 	 * 
 	 * @return
 	 */
-	public Long getDialogId();
+	public Long getLocalDialogId();
+	
+	/**
+	 * Returns this Dialog's remote ID. This ID is actually TCAP's remote Dialog ID.
+	 * {@link org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog}
+	 * 
+	 * @return
+	 */
+	public Long getRemoteDialogId();
 
 	/**
 	 * Returns the MAP service that serve this dialog

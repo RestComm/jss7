@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,6 +24,8 @@ package org.mobicents.protocols.ss7.tcap;
 
 
 
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.fail;
 
 import java.util.ArrayList;
@@ -135,11 +137,21 @@ public class TCAPFunctionalTest extends SccpHarness {
         serverExpectedEvents.add(te);
 
     	client.startClientDialog();
+    	assertNotNull(client.dialog.getLocalAddress());
+    	assertNull(client.dialog.getRemoteDialogId());
+    	
         client.sendBegin();
         client.waitFor(WAIT_TIME);
+        
         server.sendContinue();
+        assertNotNull(server.dialog.getLocalAddress());
+    	assertNotNull(server.dialog.getRemoteDialogId());
+    	
         client.waitFor(WAIT_TIME);
         client.sendEnd(TerminationType.Basic);
+    	assertNotNull(client.dialog.getLocalAddress());
+    	assertNotNull(client.dialog.getRemoteDialogId());
+    	
         client.waitFor(WAIT_TIME);
 //        waitForEnd();
 

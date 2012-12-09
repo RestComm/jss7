@@ -1,6 +1,6 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012.
- * and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -219,7 +219,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
 	protected void addDialog(CAPDialogImpl dialog) {
 		synchronized (this.dialogs) {
-			this.dialogs.put(dialog.getDialogId(), dialog);
+			this.dialogs.put(dialog.getLocalDialogId(), dialog);
 		}
 	}
 
@@ -429,11 +429,11 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		if (this.getTCAPProvider().getPreviewMode()) {
 			capDialogImpl = (CAPDialogImpl) (((DialogImpl)tcapDialog).getPrevewDialogData().getUpperDialog());
 		} else {
-			capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getDialogId());
+			capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getLocalDialogId());
 		}
 
 		if (capDialogImpl == null) {
-			loger.warn("CAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
+			loger.warn("CAP Dialog not found for Dialog Id " + tcapDialog.getLocalDialogId());
 			try {
 				this.fireTCAbort(tcContinueIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null, false);
 			} catch (CAPException e) {
@@ -551,11 +551,11 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		if (this.getTCAPProvider().getPreviewMode()) {
 			capDialogImpl = (CAPDialogImpl) (((DialogImpl)tcapDialog).getPrevewDialogData().getUpperDialog());
 		} else {
-			capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getDialogId());
+			capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getLocalDialogId());
 		}
 
 		if (capDialogImpl == null) {
-			loger.warn("CAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
+			loger.warn("CAP Dialog not found for Dialog Id " + tcapDialog.getLocalDialogId());
 			try {
 				this.fireTCAbort(tcEndIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null, false);
 			} catch (CAPException e) {
@@ -662,7 +662,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 	@Override
 	public void onInvokeTimeout(Invoke invoke) {
 
-		CAPDialogImpl capDialogImpl = (CAPDialogImpl) this.getCAPDialog(((InvokeImpl) invoke).getDialog().getDialogId());
+		CAPDialogImpl capDialogImpl = (CAPDialogImpl) this.getCAPDialog(((InvokeImpl) invoke).getDialog().getLocalDialogId());
 
 		if (capDialogImpl != null) {
 			synchronized (capDialogImpl) {
@@ -684,7 +684,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 	@Override
 	public void onDialogTimeout(Dialog tcapDialog) {
 		
-		CAPDialogImpl capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getDialogId());
+		CAPDialogImpl capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getLocalDialogId());
 
 		if (capDialogImpl != null) {
 			synchronized (capDialogImpl) {
@@ -700,7 +700,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 	@Override
 	public void onDialogReleased(Dialog tcapDialog) {
 
-		CAPDialogImpl capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getDialogId());
+		CAPDialogImpl capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getLocalDialogId());
 
 		if (capDialogImpl != null) {
 			synchronized (capDialogImpl) {
@@ -716,11 +716,11 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		if (this.getTCAPProvider().getPreviewMode()) {
 			capDialogImpl = (CAPDialogImpl) (((DialogImpl)tcapDialog).getPrevewDialogData().getUpperDialog());
 		} else {
-			capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getDialogId());
+			capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getLocalDialogId());
 		}
 
 		if (capDialogImpl == null) {
-			loger.warn("CAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
+			loger.warn("CAP Dialog not found for Dialog Id " + tcapDialog.getLocalDialogId());
 			return;
 		}
 		capDialogImpl.tcapMessageType = MessageType.Abort;
@@ -741,11 +741,11 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		if (this.getTCAPProvider().getPreviewMode()) {
 			capDialogImpl = (CAPDialogImpl) (((DialogImpl)tcapDialog).getPrevewDialogData().getUpperDialog());
 		} else {
-			capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getDialogId());
+			capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getLocalDialogId());
 		}
 
 		if (capDialogImpl == null) {
-			loger.error("CAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
+			loger.error("CAP Dialog not found for Dialog Id " + tcapDialog.getLocalDialogId());
 			return;
 		}
 		capDialogImpl.tcapMessageType = MessageType.Abort;
@@ -821,10 +821,10 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
 		Dialog tcapDialog = ind.getDialog();
 
-		CAPDialogImpl capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getDialogId());
+		CAPDialogImpl capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getLocalDialogId());
 
 		if (capDialogImpl == null) {
-			loger.error("CAP Dialog not found for Dialog Id " + tcapDialog.getDialogId());
+			loger.error("CAP Dialog not found for Dialog Id " + tcapDialog.getLocalDialogId());
 			return;
 		}
 

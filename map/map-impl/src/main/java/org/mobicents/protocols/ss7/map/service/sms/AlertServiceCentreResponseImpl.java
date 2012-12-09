@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -86,7 +86,7 @@ public class AlertServiceCentreResponseImpl extends SmsMessageImpl implements Al
 		sb.append("AlertServiceCentreResponse [");
 		
 		if(this.getMAPDialog() != null){
-			sb.append("DialogId=").append(this.getMAPDialog().getDialogId());
+			sb.append("DialogId=").append(this.getMAPDialog().getLocalDialogId());
 		}
 		
 		sb.append("]");
