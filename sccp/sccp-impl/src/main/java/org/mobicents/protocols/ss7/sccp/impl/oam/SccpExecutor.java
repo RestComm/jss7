@@ -35,6 +35,7 @@ import org.mobicents.protocols.ss7.sccp.LongMessageRule;
 import org.mobicents.protocols.ss7.sccp.LongMessageRuleType;
 import org.mobicents.protocols.ss7.sccp.Mtp3Destination;
 import org.mobicents.protocols.ss7.sccp.Mtp3ServiceAccessPoint;
+import org.mobicents.protocols.ss7.sccp.OriginationType;
 import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.RemoteSubSystem;
 import org.mobicents.protocols.ss7.sccp.Router;
@@ -89,10 +90,8 @@ public class SccpExecutor implements ShellExecutor {
 		try {
 			if (firstOption.equals("rule")) {
 				return this.manageRule(options);
-			} else if (firstOption.equals("primary_add")) {
-				return this.managePrimAddress(options);
-			} else if (firstOption.equals("backup_add")) {
-				return this.manageBackupAddress(options);
+			} else if (firstOption.equals("address")) {
+				return this.manageAddress(options);
 			} else if (firstOption.equals("rsp")) {
 				return this.manageRsp(options);
 			} else if (firstOption.equals("rss")) {
@@ -292,7 +291,7 @@ public class SccpExecutor implements ShellExecutor {
 		return SccpOAMMessage.INVALID_COMMAND;
 	}
 
-	private String managePrimAddress(String[] options) throws Exception {
+	private String manageAddress(String[] options) throws Exception {
 		// Minimum 3 needed. Show
 		if (options.length < 3) {
 			return SccpOAMMessage.INVALID_COMMAND;
@@ -308,46 +307,46 @@ public class SccpExecutor implements ShellExecutor {
 			if (options.length < 4) {
 				return SccpOAMMessage.INVALID_COMMAND;
 			}
-			int primAddressId = Integer.parseInt(options[3]);
-			SccpAddress primAddress = this.createAddress(options, 4);
+			int addressId = Integer.parseInt(options[3]);
+			SccpAddress address = this.createAddress(options, 4);
 
-			this.router.addPrimaryAddress(primAddressId, primAddress);
+			this.router.addRoutingAddress(addressId, address);
 			return SccpOAMMessage.ADDRESS_SUCCESSFULLY_ADDED;
 		} else if (command.equals("modify")) {
 			if (options.length < 4) {
 				return SccpOAMMessage.INVALID_COMMAND;
 			}
-			int primAddressId = Integer.parseInt(options[3]);
-			SccpAddress primAddress = this.createAddress(options, 4);
+			int addressId = Integer.parseInt(options[3]);
+			SccpAddress address = this.createAddress(options, 4);
 
-			this.router.modifyPrimaryAddress(primAddressId, primAddress);
+			this.router.modifyRoutingAddress(addressId, address);
 			return SccpOAMMessage.ADDRESS_SUCCESSFULLY_MODIFIED;
 		} else if (command.equals("delete")) {
 			if (options.length < 4) {
 				return SccpOAMMessage.INVALID_COMMAND;
 			}
-			int primAddressId = Integer.parseInt(options[3]);
-			this.router.removePrimaryAddress(primAddressId);
+			int addressId = Integer.parseInt(options[3]);
+			this.router.removeRoutingAddress(addressId);
 			return SccpOAMMessage.ADDRESS_SUCCESSFULLY_DELETED;
 
 		} else if (command.equals("show")) {
 
 			if (options.length == 4) {
-				int primAddressId = Integer.parseInt(options[3]);
-				SccpAddress pa = this.router.getPrimaryAddress(primAddressId);
+				int addressId = Integer.parseInt(options[3]);
+				SccpAddress pa = this.router.getRoutingAddress(addressId);
 				if (pa == null) {
 					return SccpOAMMessage.ADDRESS_DOESNT_EXIST;
 				}
 				return pa.toString();
 			}
 
-			if (this.router.getPrimaryAddresses().size() == 0) {
+			if (this.router.getRoutingAddresses().size() == 0) {
 				return SccpOAMMessage.ADDRESS_DOESNT_EXIST;
 			}
 
 			StringBuffer sb = new StringBuffer();
 
-			Map<Integer, SccpAddress> idVsPrimAdd = this.router.getPrimaryAddresses();
+			Map<Integer, SccpAddress> idVsPrimAdd = this.router.getRoutingAddresses();
 			for (Integer e : idVsPrimAdd.keySet()) {
 				SccpAddress address = idVsPrimAdd.get(e);
 				sb.append("key=");
@@ -357,76 +356,6 @@ public class SccpExecutor implements ShellExecutor {
 				sb.append("\n");
 			}
 			return sb.toString();
-		}
-
-		return SccpOAMMessage.INVALID_COMMAND;
-	}
-
-	private String manageBackupAddress(String[] options) throws Exception {
-		// Minimum 3 needed. Show
-		if (options.length < 3) {
-			return SccpOAMMessage.INVALID_COMMAND;
-		}
-
-		String command = options[2];
-
-		if (command == null) {
-			return SccpOAMMessage.INVALID_COMMAND;
-		}
-
-		if (command.equals("create")) {
-			if (options.length < 4) {
-				return SccpOAMMessage.INVALID_COMMAND;
-			}
-			int backupAddressId = Integer.parseInt(options[3]);
-
-			SccpAddress backupAddress = this.createAddress(options, 4);
-			this.router.addBackupAddress(backupAddressId, backupAddress);
-			return SccpOAMMessage.ADDRESS_SUCCESSFULLY_ADDED;
-		} else if (command.equals("modify")) {
-			if (options.length < 4) {
-				return SccpOAMMessage.INVALID_COMMAND;
-			}
-			int backupAddressId = Integer.parseInt(options[3]);
-			SccpAddress backupAddress = this.createAddress(options, 4);
-
-			this.router.modifyBackupAddress(backupAddressId, backupAddress);
-			return SccpOAMMessage.ADDRESS_SUCCESSFULLY_MODIFIED;
-
-		} else if (command.equals("delete")) {
-			if (options.length < 4) {
-				return SccpOAMMessage.INVALID_COMMAND;
-			}
-			int backupAddressId = Integer.parseInt(options[3]);
-			this.router.removeBackupAddress(backupAddressId);
-			return SccpOAMMessage.ADDRESS_SUCCESSFULLY_DELETED;
-		} else if (command.equals("show")) {
-			if (options.length == 4) {
-				int backupAddressId = Integer.parseInt(options[3]);
-				SccpAddress pa = this.router.getBackupAddress(backupAddressId);
-				if (pa == null) {
-					return SccpOAMMessage.ADDRESS_DOESNT_EXIST;
-				}
-				return pa.toString();
-			}
-
-			if (this.router.getBackupAddresses().size() == 0) {
-				return SccpOAMMessage.ADDRESS_DOESNT_EXIST;
-			}
-
-			StringBuffer sb = new StringBuffer();
-
-			Map<Integer, SccpAddress> idVsBkAdd = this.router.getBackupAddresses();
-			for (Integer e: idVsBkAdd.keySet()) {
-				SccpAddress address = idVsBkAdd.get(e);
-				sb.append("key=");
-				sb.append(e);
-				sb.append("  backup_add=");
-				sb.append(address);
-				sb.append("\n");
-			}
-			return sb.toString();
-
 		}
 
 		return SccpOAMMessage.INVALID_COMMAND;
@@ -460,31 +389,15 @@ public class SccpExecutor implements ShellExecutor {
 	/**
 	 * <p>
 	 * Command to create new rule.
+	 * 
+	 * sccp rule create <id> <mask> <address-indicator> <point-code>
+	 * <subsystem-number> <translation-type> <numbering-plan>
+	 * <nature-of-address-indicator> <digits> <ruleType> <primary-address-id>
+	 * backup-addressid <backup-address-id> loadsharing-algo
+	 * <loadsharing-algorithm> newcgparty-addressid <new-callingPartyAddress-id>
+	 * origination-type <originationType>
 	 * </p>
-	 * <p>
-	 * The valid combination for a command are
-	 * <ul>
-	 * <li>
-	 * <p>
-	 * <i>pattern</i> and <i>translation</i>
-	 * </p>
-	 * </li>
-	 * <li>
-	 * <p>
-	 * <i>pattern</i>, <i>translation</i> and <i>mtpinfo</i>
-	 * </p>
-	 * </li>
-	 * <li>
-	 * <p>
-	 * <i>pattern</i> and <i>mtpinfo</i>
-	 * </p>
-	 * </li>
-	 * </ul>
-	 * </p>
-	 * <p>
-	 * To know more about these options look at
-	 * {@link org.mobicents.protocols.ss7.sccp.impl.router.RouterImpl}
-	 * </p>
+	 * 
 	 * 
 	 * @param options
 	 * @return
@@ -492,7 +405,7 @@ public class SccpExecutor implements ShellExecutor {
 	 */
 	private String createRule(String[] options) throws Exception {
 		// Minimum is 13
-		if (options.length < 14) {
+		if (options.length < 14 || options.length > 22) {
 			return SccpOAMMessage.INVALID_COMMAND;
 		}
 		int ruleId = Integer.parseInt(options[3]);
@@ -503,11 +416,11 @@ public class SccpExecutor implements ShellExecutor {
 
 		RuleType ruleType;
 		String s1 = options[12].toLowerCase();
-		if (s1.equals("solitary")) {
+		if (s1.equalsIgnoreCase(RuleType.Solitary.getType())) {
 			ruleType = RuleType.Solitary;
-		} else if (s1.equals("dominant")) {
+		} else if (s1.equalsIgnoreCase(RuleType.Dominant.getType())) {
 			ruleType = RuleType.Dominant;
-		} else if (s1.equals("loadshared")) {
+		} else if (s1.equalsIgnoreCase(RuleType.Loadshared.getType())) {
 			ruleType = RuleType.Loadshared;
 		} else {
 			return SccpOAMMessage.INVALID_COMMAND;
@@ -515,31 +428,26 @@ public class SccpExecutor implements ShellExecutor {
 
 		int pAddressId = Integer.parseInt(options[13]);
 
+		int count = 14;
 		int sAddressId = -1;
-		if (options.length > 14) {
-			sAddressId = Integer.parseInt(options[14]);
-			SccpAddress sAddress = this.router.getBackupAddress(sAddressId);
-			if (sAddress == null) {
-				return String.format(SccpOAMMessage.NO_BACKUP_ADDRESS, sAddressId);
-			}
-		}
-
+		Integer newcgpartyAddressId = null;
 		LoadSharingAlgorithm algo = LoadSharingAlgorithm.Undefined;
-		if (ruleType == RuleType.Loadshared) {
-			if (options.length < 16) {
+		OriginationType originationType = OriginationType.All;
+
+		while (count < options.length) {
+			String key = options[count++];
+			if (key == null) {
 				return SccpOAMMessage.INVALID_COMMAND;
 			}
-			s1 = options[15].toLowerCase();
-			if (s1.equals("bit0")) {
-				algo = LoadSharingAlgorithm.Bit0;
-			} else if (s1.equals("bit1")) {
-				algo = LoadSharingAlgorithm.Bit1;
-			} else if (s1.equals("bit2")) {
-				algo = LoadSharingAlgorithm.Bit2;
-			} else if (s1.equals("bit3")) {
-				algo = LoadSharingAlgorithm.Bit3;
-			} else if (s1.equals("bit4")) {
-				algo = LoadSharingAlgorithm.Bit4;
+
+			if (key.equals("loadsharing-algo")) {
+				algo = LoadSharingAlgorithm.getInstance(options[count++]);
+			} else if (key.equals("backup-addressid")) {
+				sAddressId = Integer.parseInt(options[count++]);
+			} else if (key.equals("newcgparty-addressid")) {
+				newcgpartyAddressId = Integer.parseInt(options[count++]);
+			} else if (key.equals("origination-type")) {
+				originationType = OriginationType.getInstance(options[count++]);
 			} else {
 				return SccpOAMMessage.INVALID_COMMAND;
 			}
@@ -547,13 +455,14 @@ public class SccpExecutor implements ShellExecutor {
 
 		SccpAddress pattern = this.createAddress(options, 5);
 
-		this.router.addRule(ruleId, ruleType, algo, pattern, mask, pAddressId, sAddressId);
+		this.router.addRule(ruleId, ruleType, algo, originationType, pattern, mask, pAddressId, sAddressId,
+				newcgpartyAddressId);
 		return SccpOAMMessage.RULE_SUCCESSFULLY_ADDED;
 	}
 
 	private String modifyRule(String[] options) throws Exception {
 		// Minimum is 13
-		if (options.length < 13) {
+		if (options.length < 14 || options.length > 22) {
 			return SccpOAMMessage.INVALID_COMMAND;
 		}
 		int ruleId = Integer.parseInt(options[3]);
@@ -578,28 +487,34 @@ public class SccpExecutor implements ShellExecutor {
 
 		int pAddressId = Integer.parseInt(options[13]);
 
+		int count = 14;
 		int sAddressId = -1;
-		if (options.length > 14) {
-			sAddressId = Integer.parseInt(options[14]);
-		}
-
+		Integer newcgpartyAddressId = null;
 		LoadSharingAlgorithm algo = LoadSharingAlgorithm.Undefined;
-		if (ruleType == RuleType.Loadshared) {
-			if (options.length < 16) {
+		OriginationType originationType = OriginationType.All;
+
+		while (count < options.length) {
+			String key = options[count++];
+			if (key == null) {
 				return SccpOAMMessage.INVALID_COMMAND;
 			}
-			s1 = options[15].toLowerCase();
-			if (s1.equals("bit3")) {
-				algo = LoadSharingAlgorithm.Bit3;
-			} else if (s1.equals("bit4")) {
-				algo = LoadSharingAlgorithm.Bit4;
+
+			if (key.equals("loadsharing-algo")) {
+				algo = LoadSharingAlgorithm.getInstance(options[count++]);
+			} else if (key.equals("backup-addressid")) {
+				sAddressId = Integer.parseInt(options[count++]);
+			} else if (key.equals("newcgparty-addressid")) {
+				newcgpartyAddressId = Integer.parseInt(options[count++]);
+			} else if (key.equals("origination-type")) {
+				originationType = OriginationType.getInstance(options[count++]);
 			} else {
 				return SccpOAMMessage.INVALID_COMMAND;
 			}
 		}
 
 		SccpAddress pattern = this.createAddress(options, 5);
-		this.router.modifyRule(ruleId, ruleType, algo, pattern, mask, pAddressId, sAddressId);
+		this.router.modifyRule(ruleId, ruleType, algo, originationType, pattern, mask, pAddressId, sAddressId,
+				newcgpartyAddressId);
 		return SccpOAMMessage.RULE_SUCCESSFULLY_MODIFIED;
 	}
 
@@ -651,9 +566,9 @@ public class SccpExecutor implements ShellExecutor {
 		}
 
 		Map<Integer, Rule> idVsRule = this.router.getRules();
-		
+
 		StringBuffer sb = new StringBuffer();
-		for (Integer e: idVsRule.keySet()) {
+		for (Integer e : idVsRule.keySet()) {
 			Rule rule = idVsRule.get(e);
 			sb.append("key=");
 			sb.append(e);
@@ -789,7 +704,7 @@ public class SccpExecutor implements ShellExecutor {
 			}
 
 			Map<Integer, LongMessageRule> idVsLngmsgRule = this.router.getLongMessageRules();
-			
+
 			StringBuffer sb = new StringBuffer();
 			for (Integer e : idVsLngmsgRule.keySet()) {
 				LongMessageRule lmr = idVsLngmsgRule.get(e);

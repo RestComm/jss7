@@ -22,14 +22,21 @@
 
 package org.mobicents.protocols.ss7.sccp.impl;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.util.Map;
 
 import javolution.text.TextBuilder;
 import javolution.util.FastMap;
+import javolution.xml.XMLBinding;
 import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
 import javolution.xml.stream.XMLStreamException;
@@ -51,7 +58,7 @@ public class SccpResourceImpl implements SccpResource {
 
 	private static final String SCCP_RESOURCE_PERSIST_DIR_KEY = "sccpresource.persist.dir";
 	private static final String USER_DIR_KEY = "user.dir";
-	private static final String PERSIST_FILE_NAME = "sccpresource.xml";
+	private static final String PERSIST_FILE_NAME = "sccpresource2.xml";
 
 	private static final String REMOTE_SSN = "remoteSsns";
 	private static final String REMOTE_SPC = "remoteSpcs";
@@ -98,11 +105,7 @@ public class SccpResourceImpl implements SccpResource {
 
 		logger.info(String.format("SCCP Resource configuration file path %s", persistFile.toString()));
 
-		try {
-			this.load();
-		} catch (FileNotFoundException e) {
-			logger.warn(String.format("Failed to load the SS7 configuration file. \n%s", e.getMessage()));
-		}
+		this.load();
 
 		logger.info("Started Sccp Resource");
 	}
@@ -365,19 +368,109 @@ public class SccpResourceImpl implements SccpResource {
 	 * 
 	 * @throws Exception
 	 */
-	private void load() throws FileNotFoundException {
+	private void load() {
 
-		XMLObjectReader reader = null;
 		try {
-			reader = XMLObjectReader.newInstance(new FileInputStream(persistFile.toString()));
-
-			reader.setBinding(binding);
-			remoteSsns = reader.read(REMOTE_SSN, RemoteSubSystemMap.class);
-			remoteSpcs = reader.read(REMOTE_SPC, RemoteSignalingPointCodeMap.class);
-			concernedSpcs = reader.read(CONCERNED_SPC, ConcernedSignalingPointCodeMap.class);
+			File f = new File(persistFile.toString());
+			if (f.exists()) {
+				// we have V3 config
+				loadVer3(persistFile.toString());
+			} else {
+				String s1 = persistFile.toString().replace("2.xml", ".xml");
+				f = new File(s1);
+				
+				if (f.exists()) {
+					if (!loadVer1(s1)) {
+						loadVer2(s1);
+					}
+				}
+				
+				this.store();
+				f.delete();
+			}
 		} catch (XMLStreamException ex) {
-			// this.logger.info(
-			// "Error while re-creating Linksets from persisted file", ex);
+			logger.error(String.format("Failed to load the SS7 configuration file. \n%s", ex.getMessage()));
+		} catch (FileNotFoundException e) {
+			logger.warn(String.format("Failed to load the SS7 configuration file. \n%s", e.getMessage()));
+		} catch (IOException e) {
+			logger.error(String.format("Failed to load the SS7 configuration file. \n%s", e.getMessage()));
 		}
 	}
+
+	private boolean loadVer1(String fn) throws XMLStreamException, IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fn)));
+		StringBuilder sb = new StringBuilder(); 
+		while (true) {
+			String s1 = br.readLine();
+			if (s1 == null)
+				break;
+			sb.append(s1);
+            sb.append("\n");
+		}
+		br.close();
+		String s2 = sb.toString();
+		s2 = s2.replace("impl.RemoteSubSystem", "impl.RemoteSubSystemImpl");
+		s2 = s2.replace("impl.RemoteSignalingPointCode", "impl.RemoteSignalingPointCodeImpl");
+		s2 = s2.replace("impl.ConcernedSignalingPointCode", "impl.ConcernedSignalingPointCodeImpl");
+
+		StringReader sr = new StringReader(s2);
+		XMLObjectReader reader = XMLObjectReader.newInstance(sr);
+
+		reader.setBinding(binding);
+		
+		String REMOTE_SSN_V1 = "remoteSsn";
+		String REMOTE_SPC_V1 = "remoteSpc";
+		String CONCERNED_SPC_V1 = "concernedSpc";
+		XMLBinding binding2 = new XMLBinding();
+		binding2.setClassAttribute(CLASS_ATTRIBUTE);
+
+		FastMap<Integer, RemoteSubSystem>  remoteSsnsX = reader.read(REMOTE_SSN_V1, FastMap.class);
+		FastMap<Integer, RemoteSignalingPointCode> remoteSpcsX = reader.read(REMOTE_SPC_V1, FastMap.class);
+		FastMap<Integer, ConcernedSignalingPointCode> concernedSpcsX = reader.read(CONCERNED_SPC_V1, FastMap.class);
+
+		reader.close();
+
+		if (remoteSsnsX == null)
+			return false;
+
+		for (Integer id : remoteSsnsX.keySet()) {
+			RemoteSubSystem val = remoteSsnsX.get(id);
+			remoteSsns.put(id, val);
+		}
+
+		for (Integer id : remoteSpcsX.keySet()) {
+			RemoteSignalingPointCode val = remoteSpcsX.get(id);
+			remoteSpcs.put(id, val);
+		}
+
+		for (Integer id : concernedSpcsX.keySet()) {
+			ConcernedSignalingPointCode val = concernedSpcsX.get(id);
+			concernedSpcs.put(id, val);
+		}
+
+		return true;
+	}
+
+	private void loadVer2(String fn) throws XMLStreamException, FileNotFoundException {
+		XMLObjectReader reader = XMLObjectReader.newInstance(new FileInputStream(fn));
+
+		reader.setBinding(binding);
+		remoteSsns = reader.read(REMOTE_SSN, RemoteSubSystemMap.class);
+		remoteSpcs = reader.read(REMOTE_SPC, RemoteSignalingPointCodeMap.class);
+		concernedSpcs = reader.read(CONCERNED_SPC, ConcernedSignalingPointCodeMap.class);
+
+		reader.close();
+	}
+
+	private void loadVer3(String fn) throws XMLStreamException, FileNotFoundException {
+		XMLObjectReader reader = XMLObjectReader.newInstance(new FileInputStream(fn));
+
+		reader.setBinding(binding);
+		remoteSsns = reader.read(REMOTE_SSN, RemoteSubSystemMap.class);
+		remoteSpcs = reader.read(REMOTE_SPC, RemoteSignalingPointCodeMap.class);
+		concernedSpcs = reader.read(CONCERNED_SPC, ConcernedSignalingPointCodeMap.class);
+
+		reader.close();
+	}
 }
+

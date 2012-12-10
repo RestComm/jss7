@@ -27,6 +27,7 @@ import static org.testng.Assert.assertTrue;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
+import org.mobicents.protocols.ss7.sccp.OriginationType;
 import org.mobicents.protocols.ss7.sccp.RuleType;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.impl.User;
@@ -94,15 +95,15 @@ public class GT0011SccpStackImplTest extends SccpHarness {
 		SccpAddress primary2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack1PC(),
 				GlobalTitle.getInstance("-/-/-"), getSSN());
 
-		super.router1.addPrimaryAddress(22, primary1SccpAddress);
-		super.router2.addPrimaryAddress(33, primary2SccpAddress);
+		super.router1.addRoutingAddress(22, primary1SccpAddress);
+		super.router2.addRoutingAddress(33, primary2SccpAddress);
 
 		SccpAddress rule1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0011(0,
 				NumberingPlan.ISDN_TELEPHONY, GT2_pattern_digits), getSSN());
 		SccpAddress rule2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0011(0,
 				NumberingPlan.ISDN_MOBILE, GT1_pattern_digits), getSSN());
-		super.router1.addRule(1, RuleType.Solitary, LoadSharingAlgorithm.Undefined, rule1SccpAddress, "K/R/K", 22, -1);
-		super.router2.addRule(1, RuleType.Solitary, LoadSharingAlgorithm.Undefined, rule2SccpAddress, "R/R/R", 33, -1);
+		super.router1.addRule(1, RuleType.Solitary, LoadSharingAlgorithm.Undefined, OriginationType.All, rule1SccpAddress, "K/R/K", 22, -1, null);
+		super.router2.addRule(1, RuleType.Solitary, LoadSharingAlgorithm.Undefined, OriginationType.All, rule2SccpAddress, "R/R/R", 33, -1, null);
 
 		// now create users, we need to override matchX methods, since our rules
 		// do kinky stuff with digits, plus
@@ -163,15 +164,15 @@ public class GT0011SccpStackImplTest extends SccpHarness {
 				getStack2PC(), GlobalTitle.getInstance("-/-/-"), getSSN());
 		SccpAddress primary2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE,
 				getStack1PC(), GlobalTitle.getInstance("-/-/-"), getSSN());
-		super.router1.addPrimaryAddress(22, primary1SccpAddress);
-		super.router2.addPrimaryAddress(33, primary2SccpAddress);
+		super.router1.addRoutingAddress(22, primary1SccpAddress);
+		super.router2.addRoutingAddress(33, primary2SccpAddress);
 		
 		SccpAddress rule1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0011(0,
 				NumberingPlan.ISDN_TELEPHONY, GT2_pattern_digits), getSSN());
 		SccpAddress rule2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0011(0,
 				NumberingPlan.ISDN_MOBILE, GT1_pattern_digits), getSSN());
-		super.router1.addRule(1, RuleType.Solitary, LoadSharingAlgorithm.Undefined, rule1SccpAddress, "K/R/K", 22, -1);
-		super.router2.addRule(1, RuleType.Solitary, LoadSharingAlgorithm.Undefined, rule2SccpAddress, "R/K/R", 33, -1);
+		super.router1.addRule(1, RuleType.Solitary, LoadSharingAlgorithm.Undefined, OriginationType.All, rule1SccpAddress, "K/R/K", 22, -1, null);
+		super.router2.addRule(1, RuleType.Solitary, LoadSharingAlgorithm.Undefined, OriginationType.All, rule2SccpAddress, "R/K/R", 33, -1, null);
 
 		// add rules for incoming messages,
 
@@ -181,15 +182,15 @@ public class GT0011SccpStackImplTest extends SccpHarness {
 				GlobalTitle.getInstance("-/-/-"), getSSN());
 		primary2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(),
 				GlobalTitle.getInstance("-/-"), getSSN());
-		super.router1.addPrimaryAddress(44, primary1SccpAddress);
-		super.router2.addPrimaryAddress(66, primary2SccpAddress);
+		super.router1.addRoutingAddress(44, primary1SccpAddress);
+		super.router2.addRoutingAddress(66, primary2SccpAddress);
 		// 2. add rules to make translation to above
 		rule1SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0011(0,
 				NumberingPlan.ISDN_MOBILE, "23456/?/8"), getSSN());
 		rule2SccpAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, new GT0011(0,
 				NumberingPlan.ISDN_TELEPHONY, "02/?"), getSSN());
-		super.router1.addRule(2, RuleType.Solitary, LoadSharingAlgorithm.Undefined, rule1SccpAddress, "K/K/K", 44, -1);
-		super.router2.addRule(2, RuleType.Solitary, LoadSharingAlgorithm.Undefined, rule2SccpAddress, "K/K", 66, -1);
+		super.router1.addRule(2, RuleType.Solitary, LoadSharingAlgorithm.Undefined, OriginationType.All, rule1SccpAddress, "K/K/K", 44, -1, null);
+		super.router2.addRule(2, RuleType.Solitary, LoadSharingAlgorithm.Undefined, OriginationType.All, rule2SccpAddress, "K/K", 66, -1, null);
 
 		// now create users, we need to override matchX methods, since our rules
 		// do kinky stuff with digits, plus

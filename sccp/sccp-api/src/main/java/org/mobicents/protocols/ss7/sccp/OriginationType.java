@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,38 +20,40 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.sccp.message;
-
-import org.mobicents.protocols.ss7.sccp.parameter.HopCounter;
-import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+package org.mobicents.protocols.ss7.sccp;
 
 /**
- * 
- * This interface represents a SCCP message that addressed with Called/CallingPartyAddresses
- * 
+ *
  * @author sergey vetyutnev
  * 
  */
-public interface SccpAddressedMessage extends SccpMessage {
+public enum OriginationType {
+	LocalOriginated("LocalOriginated"), RemoteOriginated("RemoteOriginated"), All("All");
 
-	public SccpAddress getCalledPartyAddress();
+	private static final String LOCAL_ORIGINATED = "LocalOriginated";
+	private static final String REMOTE_ORIGINATED = "RemoteOriginated";
+	private static final String ALL = "All";
 
-	public SccpAddress getCallingPartyAddress();
+	private final String type;
 
-	public boolean getReturnMessageOnError();
+	private OriginationType(String type) {
+		this.type = type;
+	}
 
-	public void clearReturnMessageOnError();
+	public static OriginationType getInstance(String type) {
+		if (LOCAL_ORIGINATED.equalsIgnoreCase(type)) {
+			return LocalOriginated;
+		} else if (REMOTE_ORIGINATED.equalsIgnoreCase(type)) {
+			return RemoteOriginated;
+		} else if (ALL.equalsIgnoreCase(type)) {
+			return All;
+		}
 
-	public boolean getSccpCreatesSls();
-
-	public HopCounter getHopCounter();
-
-	public void setCalledPartyAddress(SccpAddress v);
-
-	public void setCallingPartyAddress(SccpAddress v);
-
-	public void setHopCounter(HopCounter hopCounter);
-
-	public boolean reduceHopCounter();
+		return null;
+	}
+	
+	public String getType(){
+		return this.type;
+	}
 
 }

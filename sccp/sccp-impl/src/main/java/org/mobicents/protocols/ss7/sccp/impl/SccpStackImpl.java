@@ -520,11 +520,11 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
 	private int getMaxUserDataLengthForGT(SccpAddress calledPartyAddress, SccpAddress callingPartyAddress) {
 
-		Rule rule = this.router.findRule(calledPartyAddress);
+		Rule rule = this.router.findRule(calledPartyAddress, false);
 		if (rule == null) {
 			return 0;
 		}
-		SccpAddress translationAddressPri = this.router.getPrimaryAddress(rule.getPrimaryAddressId());
+		SccpAddress translationAddressPri = this.router.getRoutingAddress(rule.getPrimaryAddressId());
 		if (translationAddressPri == null) {
 			return 0;
 		}

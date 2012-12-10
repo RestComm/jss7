@@ -27,6 +27,7 @@ import static org.testng.Assert.assertEquals;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
 import org.mobicents.protocols.ss7.sccp.LongMessageRuleType;
+import org.mobicents.protocols.ss7.sccp.OriginationType;
 import org.mobicents.protocols.ss7.sccp.RuleType;
 import org.mobicents.protocols.ss7.sccp.impl.Mtp3UserPartImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
@@ -70,10 +71,10 @@ public class GetMaxUserDataLengthTest {
 
 		SccpAddress primaryAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 2,
 				GlobalTitle.getInstance(0, "1122334455"), 18);
-		stack.getRouter().addPrimaryAddress(1, primaryAddress);
+		stack.getRouter().addRoutingAddress(1, primaryAddress);
 		SccpAddress pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 2,
 				GlobalTitle.getInstance(0, "1122334455"), 18);
-		stack.getRouter().addRule(1, RuleType.Solitary, LoadSharingAlgorithm.Undefined, pattern, "K", 1, -1);
+		stack.getRouter().addRule(1, RuleType.Solitary, LoadSharingAlgorithm.Undefined, OriginationType.All, pattern, "K", 1, -1, null);
 
 		int len = stack.getSccpProvider().getMaxUserDataLength(a1, a2);
 		assertEquals(len, 248);
