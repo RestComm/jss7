@@ -59,7 +59,7 @@ public class TCAPFunctionalTest extends SccpHarness {
     public TCAPFunctionalTest(){
     	
     }
-    
+    	    
 	@BeforeClass
 	public void setUpClass() {
 		this.sccpStack1Name = "TCAPFunctionalTestSccpStack1";
@@ -110,7 +110,7 @@ public class TCAPFunctionalTest extends SccpHarness {
 
 	@Test(groups = { "functional.flow"})
     public void simpleTCWithDialogTest() throws Exception{
-    	
+
         long stamp = System.currentTimeMillis();
         List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
         TestEvent te = TestEvent.createSentEvent(EventType.Begin, null, 0,stamp);

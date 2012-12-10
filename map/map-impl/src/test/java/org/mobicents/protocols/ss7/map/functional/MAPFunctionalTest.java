@@ -1110,6 +1110,10 @@ public class MAPFunctionalTest extends SccpHarness {
 
 		};
 
+		// !!!! ---
+//		this.saveTrafficInFile();
+//		 !!!! ---
+
 		long stamp = System.currentTimeMillis();
 		int count = 0;
 		// Client side events

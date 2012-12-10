@@ -369,9 +369,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 	public void release(DialogImpl d) {
 	    Long did = d.getDialogId();
 
-		if (d.getPreviewMode()) {
-			this.removePreviewDialog(d);
-		} else {
+		if (!d.getPreviewMode()) {
 			synchronized (this.dialogs) {
 				this.dialogs.remove(did);
 			}
@@ -836,7 +834,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 		}
 	}
 
-	private void removePreviewDialog(DialogImpl di) {
+	protected void removePreviewDialog(DialogImpl di) {
 		synchronized (this.dialogPreviewList) {
 			this.dialogPreviewList.remove(di.prevewDialogData.prevewDialogDataKey1);
 			this.dialogPreviewList.remove(di.prevewDialogData.prevewDialogDataKey2);

@@ -1787,6 +1787,9 @@ public class DialogImpl implements Dialog {
 					startIdleTimer();
 				} else {
 					d.release();
+					if (d.getPreviewMode()) {
+						provider.removePreviewDialog(d);
+					}
 				}
 
 			} finally {
