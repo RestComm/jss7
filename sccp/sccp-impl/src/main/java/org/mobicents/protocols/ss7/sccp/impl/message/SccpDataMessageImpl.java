@@ -92,6 +92,11 @@ public class SccpDataMessageImpl extends SccpDataNoticeTemplateMessageImpl imple
 			return false;
 	}
 
+	public void clearReturnMessageOnError() {
+		if (this.protocolClass != null)
+			this.protocolClass.clearReturnMessageOnError();
+	}
+
 	public boolean getSccpCreatesSls() {
 		if (this.protocolClass == null || this.protocolClass.getProtocolClass() == 0)
 			return true;

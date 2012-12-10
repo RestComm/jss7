@@ -32,25 +32,25 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  */
 public interface Router {
 
-	public void addPrimaryAddress(int id, SccpAddress primaryAddress) throws Exception;
+	public void addRoutingAddress(int id, SccpAddress routingAddress) throws Exception;
 
-	public void removePrimaryAddress(int id) throws Exception;
+	public void removeRoutingAddress(int id) throws Exception;
 
-	public void modifyPrimaryAddress(int primAddressId, SccpAddress primaryAddress) throws Exception;
+	public void modifyRoutingAddress(int routingAddressId, SccpAddress routingAddress) throws Exception;
 
-	public Map<Integer, SccpAddress> getPrimaryAddresses();
+	public Map<Integer, SccpAddress> getRoutingAddresses();
 	
-	public SccpAddress getPrimaryAddress(int id);
+	public SccpAddress getRoutingAddress(int id);
 
-	public void addBackupAddress(int id, SccpAddress backupAddress) throws Exception;
-
-	public void modifyBackupAddress(int id, SccpAddress backupAddress) throws Exception;
-
-	public void removeBackupAddress(int id) throws Exception;
-
-	public Map<Integer, SccpAddress> getBackupAddresses();
-	
-	public SccpAddress getBackupAddress(int id);
+//	public void addBackupAddress(int id, SccpAddress backupAddress) throws Exception;
+//
+//	public void modifyBackupAddress(int id, SccpAddress backupAddress) throws Exception;
+//
+//	public void removeBackupAddress(int id) throws Exception;
+//
+//	public Map<Integer, SccpAddress> getBackupAddresses();
+//	
+//	public SccpAddress getBackupAddress(int id);
 
 	public void addMtp3ServiceAccessPoint(int id, int mtp3Id, int opc, int ni) throws Exception;
 
@@ -80,11 +80,11 @@ public interface Router {
 
 	public Map<Integer, LongMessageRule> getLongMessageRules();
 
-	public void addRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, SccpAddress pattern, String mask,
-			int pAddressId, int sAddressId) throws Exception;
+	public void addRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, OriginationType originationType, SccpAddress pattern, String mask,
+			int pAddressId, int sAddressId, Integer newCallingPartyAddressAddressId) throws Exception;
 
-	public void modifyRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, SccpAddress pattern, String mask,
-			int pAddressId, int sAddressId) throws Exception;
+	public void modifyRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, OriginationType originationType, SccpAddress pattern, String mask,
+			int pAddressId, int sAddressId, Integer newCallingPartyAddressAddressId) throws Exception;
 	
 	public Rule getRule(int id);
 

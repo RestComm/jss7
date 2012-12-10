@@ -1,6 +1,6 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012.
- * and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -49,7 +49,15 @@ public interface Dialog {
 	 * 
 	 * @return
 	 */
-	public Long getDialogId();
+	public Long getLocalDialogId();
+
+	/**
+	 * return the remote Dialog Id. This will be null if Dialog is locally
+	 * originated and not confirmed yet
+	 * 
+	 * @return
+	 */
+	public Long getRemoteDialogId();
 
 	/**
 	 * Gets local sccp address
@@ -93,7 +101,8 @@ public interface Dialog {
 	 * Cancels INVOKE pending to be sent. It is equivalent to TC-U-CANCEL.
 	 * 
 	 * @return <ul>
-	 *         <li><b>true</b> - if operation has been success and invoke id has been return to pool of available ids.</li>
+	 *         <li><b>true</b> - if operation has been success and invoke id has
+	 *         been return to pool of available ids.</li>
 	 *         <li><b>false</b> -</li>
 	 *         </ul>
 	 * @throws TCAPException
@@ -125,38 +134,56 @@ public interface Dialog {
 	// Sender methods //
 	// //////////////////
 	/**
-	 * Schedules component for sending. All components on list are queued. Components are sent once message primitive is issued.
+	 * Schedules component for sending. All components on list are queued.
+	 * Components are sent once message primitive is issued.
 	 * 
 	 * @param componentRequest
 	 * @throws TCAPSendException
 	 */
 	public void sendComponent(Component componentRequest) throws TCAPSendException;
+
 	/**
-	 * Send initial primitive for Structured dialog. 
+	 * Send initial primitive for Structured dialog.
+	 * 
 	 * @param event
-	 * @throws TCAPSendException - thrown if dialog is in bad state, ie. Being has already been sent or dialog has been removed.
+	 * @throws TCAPSendException
+	 *             - thrown if dialog is in bad state, ie. Being has already
+	 *             been sent or dialog has been removed.
 	 */
 	public void send(TCBeginRequest event) throws TCAPSendException;
+
 	/**
 	 * Sends intermediate primitive for Structured dialog.
+	 * 
 	 * @param event
-	 * @throws TCAPSendException - thrown if dialog is in bad state, ie. Begin has not been sent or dialog has been removed.
+	 * @throws TCAPSendException
+	 *             - thrown if dialog is in bad state, ie. Begin has not been
+	 *             sent or dialog has been removed.
 	 */
 	public void send(TCContinueRequest event) throws TCAPSendException;
+
 	/**
 	 * Sends dialog end request.
+	 * 
 	 * @param event
-	 * @throws TCAPSendException - thrown if dialog is in bad state, ie. Begin has not been sent or dialog has been removed.
+	 * @throws TCAPSendException
+	 *             - thrown if dialog is in bad state, ie. Begin has not been
+	 *             sent or dialog has been removed.
 	 */
 	public void send(TCEndRequest event) throws TCAPSendException;
+
 	/**
 	 * Sends Abort primitive with indication to user as source of termination.
+	 * 
 	 * @param event
 	 * @throws TCAPSendException
 	 */
 	public void send(TCUserAbortRequest event) throws TCAPSendException;
+
 	/**
-	 * Sends unstructured dialog primitive. After this method returns dialog is expunged from stack as its life cycle reaches end.
+	 * Sends unstructured dialog primitive. After this method returns dialog is
+	 * expunged from stack as its life cycle reaches end.
+	 * 
 	 * @param event
 	 * @throws TCAPSendException
 	 */
@@ -166,9 +193,10 @@ public interface Dialog {
 	 * Programmer hook to release.
 	 */
 	public void release();
-	
+
 	/**
 	 * Resets timeout timer for particular operation.
+	 * 
 	 * @param invokeId
 	 * @throws TCAPException
 	 */
@@ -189,7 +217,9 @@ public interface Dialog {
 	public TRPseudoState getState();
 
 	/**
-	 * Return the maximum TCAP message length (in bytes) that are allowed for this dialog
+	 * Return the maximum TCAP message length (in bytes) that are allowed for
+	 * this dialog
+	 * 
 	 * @return
 	 */
 	public int getMaxUserDataLength();
@@ -197,6 +227,7 @@ public interface Dialog {
 	/**
 	 * Return the TCAP message length (in bytes) that will be after encoding
 	 * This value must not exceed getMaxUserDataLength() value
+	 * 
 	 * @param event
 	 * @return
 	 */
@@ -205,6 +236,7 @@ public interface Dialog {
 	/**
 	 * Return the TCAP message length (in bytes) that will be after encoding
 	 * This value must not exceed getMaxUserDataLength() value
+	 * 
 	 * @param event
 	 * @return
 	 */
@@ -213,19 +245,21 @@ public interface Dialog {
 	/**
 	 * Return the TCAP message length (in bytes) that will be after encoding
 	 * This value must not exceed getMaxUserDataLength() value
+	 * 
 	 * @param event
 	 * @return
 	 */
 	public int getDataLength(TCEndRequest event) throws TCAPSendException;
-	
+
 	/**
 	 * Return the TCAP message length (in bytes) that will be after encoding
 	 * This value must not exceed getMaxUserDataLength() value
+	 * 
 	 * @param event
 	 * @return
 	 */
 	public int getDataLength(TCUniRequest event) throws TCAPSendException;
-	
+
 	/**
 	 * Getting from the Dialog a user-defined object to save relating to the
 	 * Dialog information
@@ -235,8 +269,8 @@ public interface Dialog {
 	public Object getUserObject();
 
 	/**
-	 * Store in the Dialog a user-defined object to save relating to the
-	 * Dialog information
+	 * Store in the Dialog a user-defined object to save relating to the Dialog
+	 * information
 	 * 
 	 * @param userObject
 	 */
