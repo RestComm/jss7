@@ -57,19 +57,19 @@ public abstract class TesterBase implements MAPDialogListener, MAPServiceListene
 
 	@Override
 	public void onErrorComponent(MAPDialog dlg, Long invokeId, MAPErrorMessage msg) {
-		String uData = msg.toString() + ", dlgId=" + dlg.getDialogId() + ", invokeId=" + invokeId;
+		String uData = msg.toString() + ", dlgId=" + dlg.getLocalDialogId() + ", invokeId=" + invokeId;
 		this.testerHost.sendNotif(this.className, "Rcvd: Error component", uData, Level.DEBUG);
 	}
 
 	@Override
 	public void onProviderErrorComponent(MAPDialog mapDialog, Long invokeId, MAPProviderError providerError) {
-		String uData = providerError + ", dlgId=" + mapDialog.getDialogId() + ", InvokeId=" + invokeId;
+		String uData = providerError + ", dlgId=" + mapDialog.getLocalDialogId() + ", InvokeId=" + invokeId;
 		this.testerHost.sendNotif(this.className, "Rcvd: ProviderErrorComponent", uData, Level.DEBUG);
 	}
 
 	@Override
 	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem) {
-		String uData = problem.toString() + ", dlgId=" + mapDialog.getDialogId() + ", InvokeId=" + invokeId;
+		String uData = problem.toString() + ", dlgId=" + mapDialog.getLocalDialogId() + ", InvokeId=" + invokeId;
 		this.testerHost.sendNotif(this.className, "Rcvd: RejectComponent", uData, Level.DEBUG);
 	}
 
@@ -97,7 +97,7 @@ public abstract class TesterBase implements MAPDialogListener, MAPServiceListene
 
 	@Override
 	public void onDialogNotice(MAPDialog mapDialog, MAPNoticeProblemDiagnostic notice) {
-		String uData = "dialogNotice=" + notice.toString() + ", dlgId=" + mapDialog.getDialogId();
+		String uData = "dialogNotice=" + notice.toString() + ", dlgId=" + mapDialog.getLocalDialogId();
 		this.testerHost.sendNotif(this.className, "Rcvd: DialogNotice", uData, Level.DEBUG);
 	}
 
@@ -105,7 +105,7 @@ public abstract class TesterBase implements MAPDialogListener, MAPServiceListene
 	public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason, MAPAbortSource abortSource,
 			MAPExtensionContainer extensionContainer) {
 		String uData = "abortProviderReason=" + abortProviderReason + ", abortSource=" + abortSource + ", dlgId="
-				+ mapDialog.getDialogId();
+				+ mapDialog.getLocalDialogId();
 		this.testerHost.sendNotif(this.className, "Rcvd: DialogProviderAbort", uData, Level.DEBUG);
 	}
 
@@ -113,7 +113,7 @@ public abstract class TesterBase implements MAPDialogListener, MAPServiceListene
 	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
 			ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
 		String uData = "refuseReason=" + refuseReason + ", providerError=" + providerError + ", alternativeApplicationContext=" + alternativeApplicationContext
-				+ ", dlgId=" + mapDialog.getDialogId();
+				+ ", dlgId=" + mapDialog.getLocalDialogId();
 		this.testerHost.sendNotif(this.className, "Rcvd: DialogReject", uData, Level.DEBUG);
 	}
 
@@ -137,7 +137,7 @@ public abstract class TesterBase implements MAPDialogListener, MAPServiceListene
 
 	@Override
 	public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason, MAPExtensionContainer extensionContainer) {
-		String uData = "userReason=" + userReason + ", dlgId=" + mapDialog.getDialogId();
+		String uData = "userReason=" + userReason + ", dlgId=" + mapDialog.getLocalDialogId();
 		this.testerHost.sendNotif(this.className, "Rcvd: DialogUserAbort", uData, Level.DEBUG);
 	}
 

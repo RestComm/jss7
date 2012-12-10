@@ -395,7 +395,7 @@ public class ClientDialogic implements MAPDialogListener, MAPServiceSmsListener 
 	public void onForwardShortMessageResponse(ForwardShortMessageResponse forwSmRespInd) {
 		// TODO Auto-generated method stub
 
-		logger.error("onForwardShortMessageRespIndication: " + forwSmRespInd.getMAPDialog().getDialogId());
+		logger.error("onForwardShortMessageRespIndication: " + forwSmRespInd.getMAPDialog().getLocalDialogId());
 
 		decrementNbConcurrentDialogs();
 		synchronized (this) {

@@ -32,6 +32,8 @@ import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
+import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
+import org.mobicents.protocols.ss7.sccp.OriginationType;
 import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.RemoteSubSystem;
 import org.mobicents.protocols.ss7.sccp.Router;
@@ -373,16 +375,18 @@ public class SccpMan implements SccpManMBean, Stoppable {
 		if (this.routeOnGtMode) {
 			this.router = this.sccpStack.getRouter();
 
-			this.router.addPrimaryAddress(1, new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, dpc, this.createGlobalTitle(""), 0));
-			this.router.addPrimaryAddress(2, new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, opc, this.createGlobalTitle(""), localSsn));
+			this.router.addRoutingAddress(1, new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, dpc, this.createGlobalTitle(""), 0));
+			this.router.addRoutingAddress(2, new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, opc, this.createGlobalTitle(""), localSsn));
 
 			SccpAddress pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, this.createGlobalTitle("*"), 0);
 			String mask = "K";
-			((RouterImpl)this.router).addRule(1, RuleType.Solitary, null, pattern, mask, 1, -1);
+			((RouterImpl)this.router).addRule(1, RuleType.Solitary, null, null, pattern, mask, 1, -1, null);
+//			int id, RuleType ruleType, LoadSharingAlgorithm algo, OriginationType originationType, SccpAddress pattern, String mask,
+//			int pAddressId, int sAddressId, Integer newCallingPartyAddressAddressId
 
 			pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, this.createGlobalTitle(callingPartyAddressDigits), 0);
 			mask = "R";
-			((RouterImpl)this.router).addRule(2, RuleType.Solitary, null, pattern, mask, 2, -1);
+			((RouterImpl)this.router).addRule(2, RuleType.Solitary, null, null, pattern, mask, 2, -1, null);
 
 			if (extraLocalAddressDigits != null && !extraLocalAddressDigits.equals("")) {
 				String[] ss = extraLocalAddressDigits.split(",");
@@ -392,7 +396,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 					s = s.trim();
 					pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, this.createGlobalTitle(s), 0);
 					mask = "R";
-					((RouterImpl)this.router).addRule(ruleNum, RuleType.Solitary, null, pattern, mask, 2, -1);
+					((RouterImpl)this.router).addRule(ruleNum, RuleType.Solitary, null, null, pattern, mask, 2, -1, null);
 					ruleNum++;
 				}
 			}

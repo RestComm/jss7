@@ -277,7 +277,7 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 		sb.append(": CurDialog=");
 		MAPDialogSupplementary curDialog = currentDialog;
 		if (curDialog != null)
-			sb.append(curDialog.getDialogId());
+			sb.append(curDialog.getLocalDialogId());
 		else
 			sb.append("No");
 		sb.append(", Pending dialogs=");
@@ -443,7 +443,7 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 				this.testerHost.sendNotif(SOURCE_NAME, "Sent: procUnstrSsResp: " + (countProcUnstRespNot * 100) + " messages sent", "", Level.DEBUG);
 			}
 		} else {
-			String uData = this.createUssdMessageData(curDialog.getDialogId(), this.dataCodingScheme, null, null);
+			String uData = this.createUssdMessageData(curDialog.getLocalDialogId(), this.dataCodingScheme, null, null);
 			this.testerHost.sendNotif(SOURCE_NAME, "Sent: procUnstrSsResp: " + msg, uData, Level.DEBUG);
 		}
 
@@ -482,7 +482,7 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 			dd.currentRequestDef = currentRequestDef;
 		}
 		this.countUnstReq++;
-		String uData = this.createUssdMessageData(curDialog.getDialogId(), this.dataCodingScheme, null, null);
+		String uData = this.createUssdMessageData(curDialog.getLocalDialogId(), this.dataCodingScheme, null, null);
 		this.testerHost.sendNotif(SOURCE_NAME, "Sent: unstrSsReq: " + msg, uData, Level.DEBUG);
 
 		return "UnstructuredSSRequest has been sent";
@@ -577,7 +577,7 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 			dlg.send();
 
 			this.countUnstNotifReq++;
-			String uData = this.createUssdMessageData(dlg.getDialogId(), this.dataCodingScheme, msisdn, alPattern);
+			String uData = this.createUssdMessageData(dlg.getLocalDialogId(), this.dataCodingScheme, msisdn, alPattern);
 			this.testerHost.sendNotif(SOURCE_NAME, "Sent: unstrSsNotify: " + msg, uData, Level.DEBUG);
 
 			return "UnstructuredSSNotify has been sent";
@@ -618,7 +618,7 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 		}
 		this.countProcUnstReq++;
 		if (!this.oneNotificationFor100Dialogs) {
-			String uData = this.createUssdMessageData(ind.getMAPDialog().getDialogId(), ind.getDataCodingScheme().getCode(), ind.getMSISDNAddressString(),
+			String uData = this.createUssdMessageData(ind.getMAPDialog().getLocalDialogId(), ind.getDataCodingScheme().getCode(), ind.getMSISDNAddressString(),
 					ind.getAlertingPattern());
 			try {
 				this.sendRcvdNotice("Rcvd: procUnstrSsReq: " + ind.getUSSDString().getString(null), pref, uData);
@@ -688,7 +688,7 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 			currentRequestDef = dd.currentRequestDef;
 		String pref = "CurDialog: ";
 		this.countUnstResp++;
-		String uData = this.createUssdMessageData(ind.getMAPDialog().getDialogId(), ind.getDataCodingScheme().getCode(), null, null);
+		String uData = this.createUssdMessageData(ind.getMAPDialog().getLocalDialogId(), ind.getDataCodingScheme().getCode(), null, null);
 		try {
 			this.sendRcvdNotice("Rcvd: unstrSsResp: " + ind.getUSSDString().getString(null), pref, uData);
 		} catch (MAPException e) {

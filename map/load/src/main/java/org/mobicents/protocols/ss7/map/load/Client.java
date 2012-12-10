@@ -331,7 +331,7 @@ public class Client extends TestHarness {
 	 */
 	@Override
 	public void onErrorComponent(MAPDialog mapDialog, Long invokeId, MAPErrorMessage mapErrorMessage) {
-		logger.error(String.format("onErrorComponent for Dialog=%d and invokeId=%d MAPErrorMessage=%s", mapDialog.getDialogId(), invokeId, mapErrorMessage));
+		logger.error(String.format("onErrorComponent for Dialog=%d and invokeId=%d MAPErrorMessage=%s", mapDialog.getLocalDialogId(), invokeId, mapErrorMessage));
 	}
 
 	/*
@@ -344,7 +344,7 @@ public class Client extends TestHarness {
 	 */
 	@Override
 	public void onProviderErrorComponent(MAPDialog mapDialog, Long invokeId, MAPProviderError providerError) {
-		logger.error(String.format("onProviderErrorComponent for Dialog=%d and invokeId=%d MAPProviderError=%s", mapDialog.getDialogId(), invokeId,
+		logger.error(String.format("onProviderErrorComponent for Dialog=%d and invokeId=%d MAPProviderError=%s", mapDialog.getLocalDialogId(), invokeId,
 				providerError));
 	}
 
@@ -358,7 +358,7 @@ public class Client extends TestHarness {
 	 */
 	@Override
 	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem) {
-		logger.error(String.format("onRejectComponent for Dialog=%d and invokeId=%d Problem=%s", mapDialog.getDialogId(), invokeId, problem));
+		logger.error(String.format("onRejectComponent for Dialog=%d and invokeId=%d Problem=%s", mapDialog.getLocalDialogId(), invokeId, problem));
 	}
 
 	/*
@@ -370,7 +370,7 @@ public class Client extends TestHarness {
 	 */
 	@Override
 	public void onInvokeTimeout(MAPDialog mapDialog, Long invokeId) {
-		logger.error(String.format("onInvokeTimeout for Dialog=%d and invokeId=%d", mapDialog.getDialogId(), invokeId));
+		logger.error(String.format("onInvokeTimeout for Dialog=%d and invokeId=%d", mapDialog.getLocalDialogId(), invokeId));
 
 	}
 
@@ -387,7 +387,7 @@ public class Client extends TestHarness {
 	public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 		// This error condition. Client should never receive the
 		// ProcessUnstructuredSSRequestIndication
-		logger.error(String.format("onProcessUnstructuredSSRequestIndication for Dialog=%d and invokeId=%d", procUnstrReqInd.getMAPDialog().getDialogId(),
+		logger.error(String.format("onProcessUnstructuredSSRequestIndication for Dialog=%d and invokeId=%d", procUnstrReqInd.getMAPDialog().getLocalDialogId(),
 				procUnstrReqInd.getInvokeId()));
 	}
 
@@ -437,7 +437,7 @@ public class Client extends TestHarness {
 			mapDialog.send();
 
 		} catch (MAPException e) {
-			logger.error(String.format("Error while sending UnstructuredSSResponse for Dialog=%d", mapDialog.getDialogId()));
+			logger.error(String.format("Error while sending UnstructuredSSResponse for Dialog=%d", mapDialog.getLocalDialogId()));
 		}
 	}
 
@@ -454,7 +454,7 @@ public class Client extends TestHarness {
 	public void onUnstructuredSSResponse(UnstructuredSSResponse unstrResInd) {
 		// This error condition. Client should never receive the
 		// UnstructuredSSResponseIndication
-		logger.error(String.format("onUnstructuredSSResponseIndication for Dialog=%d and invokeId=%d", unstrResInd.getMAPDialog().getDialogId(),
+		logger.error(String.format("onUnstructuredSSResponseIndication for Dialog=%d and invokeId=%d", unstrResInd.getMAPDialog().getLocalDialogId(),
 				unstrResInd.getInvokeId()));
 	}
 
@@ -471,14 +471,14 @@ public class Client extends TestHarness {
 	public void onUnstructuredSSNotifyRequest(UnstructuredSSNotifyRequest unstrNotifyInd) {
 		// This error condition. Client should never receive the
 		// UnstructuredSSNotifyRequestIndication
-		logger.error(String.format("onUnstructuredSSNotifyRequestIndication for Dialog=%d and invokeId=%d", unstrNotifyInd.getMAPDialog().getDialogId(),
+		logger.error(String.format("onUnstructuredSSNotifyRequestIndication for Dialog=%d and invokeId=%d", unstrNotifyInd.getMAPDialog().getLocalDialogId(),
 				unstrNotifyInd.getInvokeId()));
 	}
 
 	public void onUnstructuredSSNotifyResponseIndication(UnstructuredSSNotifyResponse unstrNotifyInd) {
 		// This error condition. Client should never receive the
 		// UnstructuredSSNotifyRequestIndication
-		logger.error(String.format("onUnstructuredSSNotifyResponseIndication for Dialog=%d and invokeId=%d", unstrNotifyInd.getMAPDialog().getDialogId(),
+		logger.error(String.format("onUnstructuredSSNotifyResponseIndication for Dialog=%d and invokeId=%d", unstrNotifyInd.getMAPDialog().getLocalDialogId(),
 				unstrNotifyInd.getInvokeId()));
 	}
 
@@ -492,7 +492,7 @@ public class Client extends TestHarness {
 	@Override
 	public void onDialogDelimiter(MAPDialog mapDialog) {
 		if (logger.isDebugEnabled()) {
-			logger.debug(String.format("onDialogDelimiter for DialogId=%d", mapDialog.getDialogId()));
+			logger.debug(String.format("onDialogDelimiter for DialogId=%d", mapDialog.getLocalDialogId()));
 		}
 	}
 
@@ -510,7 +510,7 @@ public class Client extends TestHarness {
 	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, AddressString origReference, MAPExtensionContainer extensionContainer) {
 		if (logger.isDebugEnabled()) {
 			logger.debug(String.format("onDialogRequest for DialogId=%d DestinationReference=%s OriginReference=%s MAPExtensionContainer=%s",
-					mapDialog.getDialogId(), destReference, origReference, extensionContainer));
+					mapDialog.getLocalDialogId(), destReference, origReference, extensionContainer));
 		}
 	}
 
@@ -528,7 +528,7 @@ public class Client extends TestHarness {
 	@Override
 	public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, AddressString origReference, IMSI arg3, AddressString arg4) {
 		if (logger.isDebugEnabled()) {
-			logger.debug(String.format("onDialogRequest for DialogId=%d DestinationReference=%s OriginReference=%s ", mapDialog.getDialogId(), destReference,
+			logger.debug(String.format("onDialogRequest for DialogId=%d DestinationReference=%s OriginReference=%s ", mapDialog.getLocalDialogId(), destReference,
 					origReference));
 		}
 	}
@@ -544,7 +544,7 @@ public class Client extends TestHarness {
 	@Override
 	public void onDialogAccept(MAPDialog mapDialog, MAPExtensionContainer extensionContainer) {
 		if (logger.isDebugEnabled()) {
-			logger.debug(String.format("onDialogAccept for DialogId=%d MAPExtensionContainer=%s", mapDialog.getDialogId(), extensionContainer));
+			logger.debug(String.format("onDialogAccept for DialogId=%d MAPExtensionContainer=%s", mapDialog.getLocalDialogId(), extensionContainer));
 		}
 	}
 
@@ -563,7 +563,7 @@ public class Client extends TestHarness {
 	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
 			ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
 		logger.error(String.format("onDialogReject for DialogId=%d MAPRefuseReason=%s MAPProviderError=%s ApplicationContextName=%s MAPExtensionContainer=%s",
-				mapDialog.getDialogId(), refuseReason, providerError, alternativeApplicationContext, extensionContainer));
+				mapDialog.getLocalDialogId(), refuseReason, providerError, alternativeApplicationContext, extensionContainer));
 	}
 
 	/*
@@ -577,7 +577,7 @@ public class Client extends TestHarness {
 	 */
 	@Override
 	public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason, MAPExtensionContainer extensionContainer) {
-		logger.error(String.format("onDialogUserAbort for DialogId=%d MAPUserAbortChoice=%s MAPExtensionContainer=%s", mapDialog.getDialogId(), userReason,
+		logger.error(String.format("onDialogUserAbort for DialogId=%d MAPUserAbortChoice=%s MAPExtensionContainer=%s", mapDialog.getLocalDialogId(), userReason,
 				extensionContainer));
 	}
 
@@ -595,7 +595,7 @@ public class Client extends TestHarness {
 	public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason, MAPAbortSource abortSource,
 			MAPExtensionContainer extensionContainer) {
 		logger.error(String.format("onDialogProviderAbort for DialogId=%d MAPAbortProviderReason=%s MAPAbortSource=%s MAPExtensionContainer=%s",
-				mapDialog.getDialogId(), abortProviderReason, abortSource, extensionContainer));
+				mapDialog.getLocalDialogId(), abortProviderReason, abortSource, extensionContainer));
 	}
 
 	/*
@@ -608,7 +608,7 @@ public class Client extends TestHarness {
 	@Override
 	public void onDialogClose(MAPDialog mapDialog) {
 		if (logger.isDebugEnabled()) {
-			logger.debug(String.format("DialogClose for Dialog=%d", mapDialog.getDialogId()));
+			logger.debug(String.format("DialogClose for Dialog=%d", mapDialog.getLocalDialogId()));
 		}
 
 	}
@@ -623,7 +623,7 @@ public class Client extends TestHarness {
 	 */
 	@Override
 	public void onDialogNotice(MAPDialog mapDialog, MAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
-		logger.error(String.format("onDialogNotice for DialogId=%d MAPNoticeProblemDiagnostic=%s ", mapDialog.getDialogId(), noticeProblemDiagnostic));
+		logger.error(String.format("onDialogNotice for DialogId=%d MAPNoticeProblemDiagnostic=%s ", mapDialog.getLocalDialogId(), noticeProblemDiagnostic));
 	}
 
 	/*
@@ -636,7 +636,7 @@ public class Client extends TestHarness {
 	@Override
 	public void onDialogRelease(MAPDialog mapDialog) {
 		if (logger.isDebugEnabled()) {
-			logger.debug(String.format("onDialogResease for DialogId=%d", mapDialog.getDialogId()));
+			logger.debug(String.format("onDialogResease for DialogId=%d", mapDialog.getLocalDialogId()));
 		}
 
 		int ndialogs = nbConcurrentDialogs.decrementAndGet();
@@ -673,7 +673,7 @@ public class Client extends TestHarness {
 	 */
 	@Override
 	public void onDialogTimeout(MAPDialog mapDialog) {
-		logger.error(String.format("onDialogTimeout for DialogId=%d", mapDialog.getDialogId()));
+		logger.error(String.format("onDialogTimeout for DialogId=%d", mapDialog.getLocalDialogId()));
 	}
 
 	@Override

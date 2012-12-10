@@ -456,7 +456,7 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 			curDialog.addSendRoutingInfoForSMRequest(msisdn, true, serviceCentreAddress, null, false, null, null, null);
 			curDialog.send();
 
-			String sriData = createSriData(curDialog.getDialogId(), destIsdnNumber, serviceCentreAddr);
+			String sriData = createSriData(curDialog.getLocalDialogId(), destIsdnNumber, serviceCentreAddr);
 			currentRequestDef += "Sent SriReq;";
 			this.countSriReq++;
 			this.testerHost.sendNotif(SOURCE_NAME, "Sent: sriReq", sriData, Level.DEBUG);
@@ -574,7 +574,7 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 				curDialog.addMtForwardShortMessageRequest(da, oa, si, false, null);
 			curDialog.send();
 
-			String mtData = createMtData(curDialog.getDialogId(), destImsi, vlrNumber, origIsdnNumber, serviceCentreAddr);
+			String mtData = createMtData(curDialog.getLocalDialogId(), destImsi, vlrNumber, origIsdnNumber, serviceCentreAddr);
 			currentRequestDef += "Sent mtReq;";
 			this.countMtFsmReq++;
 			this.testerHost.sendNotif(SOURCE_NAME, "Sent: mtReq: " + msg, mtData, Level.DEBUG);
@@ -635,7 +635,7 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 		this.countMtFsmResp++;
 
 		MAPDialogSms curDialog = ind.getMAPDialog();
-		long invokeId = curDialog.getDialogId();
+		long invokeId = curDialog.getLocalDialogId();
 		currentRequestDef += "Rsvd mtResp;";
 		this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: mtResp", "", Level.DEBUG);
 	}
@@ -699,7 +699,7 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 					}
 				}
 			}
-			String uData = this.createMoData(curDialog.getDialogId(), destIsdnNumber, origIsdnNumber, serviceCentreAddr);
+			String uData = this.createMoData(curDialog.getLocalDialogId(), destIsdnNumber, origIsdnNumber, serviceCentreAddr);
 			this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: moReq: " + msg, uData, Level.DEBUG);
 		} catch (MAPException e) {
 			this.testerHost.sendNotif(SOURCE_NAME, "Exception when decoding MoForwardShortMessageRequest tpdu : " + e.getMessage(), e, Level.ERROR);
@@ -740,7 +740,7 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 		this.countMtFsmResp++;
 
 		MAPDialogSms curDialog = ind.getMAPDialog();
-		long invokeId = curDialog.getDialogId();
+		long invokeId = curDialog.getLocalDialogId();
 		currentRequestDef += "Rsvd mtResp;";
 		this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: mtResp", "", Level.DEBUG);
 	}
@@ -759,7 +759,7 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 		this.countSriResp++;
 
 		MAPDialogSms curDialog = ind.getMAPDialog();
-		long invokeId = curDialog.getDialogId();
+		long invokeId = curDialog.getLocalDialogId();
 		LocationInfoWithLMSI li = ind.getLocationInfoWithLMSI();
 		String vlrNum = "";
 		if (li != null && li.getNetworkNodeNumber() != null)
