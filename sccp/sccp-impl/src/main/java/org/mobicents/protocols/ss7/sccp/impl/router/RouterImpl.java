@@ -22,34 +22,46 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.router;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Map;
 
 import javolution.text.TextBuilder;
 import javolution.util.FastMap;
+import javolution.xml.XMLBinding;
 import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
 import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.sccp.ConcernedSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
 import org.mobicents.protocols.ss7.sccp.LongMessageRule;
 import org.mobicents.protocols.ss7.sccp.LongMessageRuleType;
 import org.mobicents.protocols.ss7.sccp.Mtp3ServiceAccessPoint;
 import org.mobicents.protocols.ss7.sccp.OriginationType;
+import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
+import org.mobicents.protocols.ss7.sccp.RemoteSubSystem;
 import org.mobicents.protocols.ss7.sccp.Router;
 import org.mobicents.protocols.ss7.sccp.Rule;
 import org.mobicents.protocols.ss7.sccp.RuleType;
 import org.mobicents.protocols.ss7.sccp.SccpStack;
+import org.mobicents.protocols.ss7.sccp.impl.ConcernedSignalingPointCodeMap;
+import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCodeMap;
+import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystemMap;
 import org.mobicents.protocols.ss7.sccp.impl.oam.SccpOAMMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0001;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0010;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0011;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0100;
+import org.mobicents.protocols.ss7.sccp.parameter.NoGlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
@@ -233,6 +245,7 @@ public class RouterImpl implements Router {
 		binding.setAlias(GT0010.class, "GT0010");
 		binding.setAlias(GT0011.class, "GT0011");
 		binding.setAlias(GT0100.class, "GT0100");
+		binding.setAlias(NoGlobalTitle.class, "NoGlobalTitle");
 	}
 
 	public String getName() {
@@ -260,11 +273,7 @@ public class RouterImpl implements Router {
 
 		logger.info(String.format("SCCP Router configuration file path %s", persistFile.toString()));
 
-		try {
-			this.load();
-		} catch (FileNotFoundException e) {
-			logger.warn(String.format("Failed to load the SS7 configuration file. \n%s", e.getMessage()));
-		}
+		this.load();
 
 		logger.info("Started SCCP Router");
 	}
@@ -798,22 +807,186 @@ public class RouterImpl implements Router {
 	 * 
 	 * @throws Exception
 	 */
-	public void load() throws FileNotFoundException {
+	private void load() {
 
-		XMLObjectReader reader = null;
 		try {
-			reader = XMLObjectReader.newInstance(new FileInputStream(persistFile.toString()));
-
-			reader.setBinding(binding);
-			rulesMap = reader.read(RULE, RuleMap.class);
-			routingAddresses = reader.read(ROUTING_ADDRESS, SccpAddressMap.class);
-//			backupAddresses = reader.read(BACKUP_ADDRESS, SccpAddressMap.class);
-
-			longMessageRules = reader.read(LONG_MESSAGE_RULE, LongMessageRuleMap.class);
-			saps = reader.read(MTP3_SERVICE_ACCESS_POINT, Mtp3ServiceAccessPointMap.class);
+			File f = new File(persistFile.toString());
+			if (f.exists()) {
+				// we have V3 config
+				loadVer3(persistFile.toString());
+			} else {
+				String s1 = persistFile.toString().replace("2.xml", ".xml");
+				f = new File(s1);
+				
+				if (f.exists()) {
+					if (!loadVer1(s1)) {
+						loadVer2(s1);
+					}
+				}
+				
+				this.store();
+				f.delete();
+			}
 		} catch (XMLStreamException ex) {
-			// this.logger.info(
-			// "Error while re-creating Linksets from persisted file", ex);
+			logger.error(String.format("Failed to load the SS7 configuration file. \n%s", ex.getMessage()));
+		} catch (FileNotFoundException e) {
+			logger.warn(String.format("Failed to load the SS7 configuration file. \n%s", e.getMessage()));
+		} catch (IOException e) {
+			logger.error(String.format("Failed to load the SS7 configuration file. \n%s", e.getMessage()));
 		}
 	}
+
+	private void moveBackupToRoutingAddress(SccpAddressMap<Integer, SccpAddress> backupAddresses) {
+		FastMap<Integer, Integer> lstChange = new FastMap<Integer, Integer>();
+		for (Integer bId : backupAddresses.keySet()) {
+			SccpAddress addr = backupAddresses.get(bId);
+			
+			int i1 = bId + 100;
+			while (true) {
+				if (routingAddresses.get(i1) == null)
+					break;
+				i1++;
+			}
+			routingAddresses.putEntry(i1, addr);
+			lstChange.putEntry(bId, i1);
+		}
+
+		for (Rule rule : rulesMap.values()) {
+			Integer newVal = lstChange.get(rule.getSecondaryAddressId());
+			if (newVal != null) {
+				((RuleImpl) rule).setSecondaryAddressId(newVal);
+			}
+		}
+	}
+
+	private boolean loadVer1(String fn) throws XMLStreamException, IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fn)));
+		StringBuilder sb = new StringBuilder(); 
+		while (true) {
+			String s1 = br.readLine();
+			if (s1 == null)
+				break;
+			sb.append(s1);
+            sb.append("\n");
+		}
+		br.close();
+		String s2 = sb.toString();
+		s2 = s2.replace("type=\"org.mobicents.protocols.ss7.sccp.parameter.NoGlobalTitle\"", "type=\"NoGlobalTitle\"");
+
+		s2 = s2.replace("type=\"rule\"", "");
+		s2 = s2.replace("pattern type=\"org.mobicents.protocols.ss7.sccp.parameter.SccpAddress\"", "patternSccpAddress");
+		s2 = s2.replace("ai type=\"org.mobicents.protocols.ss7.indicator.AddressIndicator\" ai=", "ai value=");
+		s2 = s2.replace("gt type=\"org.mobicents.protocols.ss7.sccp.parameter.", "gt type=\"");
+		s2 = s2.replace("Key type=\"java.lang.Integer\"", "id");
+		s2 = s2.replace("Value", "value");
+		s2 = s2.replace("/pattern", "/patternSccpAddress");
+		s2 = s2.replace("value type=\"org.mobicents.protocols.ss7.sccp.parameter.SccpAddress\"", "sccpAddress");
+		s2 = s2.replace("</value>\r\n</primaryAddress>", "</sccpAddress>\r\n</primaryAddress>");
+		s2 = s2.replace("</value>\n</primaryAddress>", "</sccpAddress>\n</primaryAddress>");
+		s2 = s2.replace("</value>\r\n</backupAddress>", "</sccpAddress>\r\n</backupAddress>");
+		s2 = s2.replace("</value>\n</backupAddress>", "</sccpAddress>\n</backupAddress>");
+		s2 = s2.replace("type=\"org.mobicents.protocols.ss7.sccp.parameter.", "type=\"");
+		s2 = s2.replace("type=\"org.mobicents.protocols.ss7.sccp.impl.router.Mtp3ServiceAccessPoint\"", "");
+		s2 = s2.replace("javolution.util.FastMap", "mtp3DestinationMap");
+		s2 = s2.replace("type=\"org.mobicents.protocols.ss7.sccp.impl.router.Mtp3Destination\"", "");
+//		s2 = s2.replace("", "");
+
+		StringReader sr = new StringReader(s2);
+		XMLObjectReader reader = XMLObjectReader.newInstance(sr);
+
+		reader.setBinding(binding);
+
+//		String REMOTE_SSN_V1 = "remoteSsn";
+//		String REMOTE_SPC_V1 = "remoteSpc";
+//		String CONCERNED_SPC_V1 = "concernedSpc";
+		XMLBinding binding2 = new XMLBinding();
+		binding2.setClassAttribute(CLASS_ATTRIBUTE);
+
+		String BACKUP_ADDRESS_V2 = "backupAddress";
+		String ROUTING_ADDRESS_V2 = "primaryAddress";
+
+		try {
+			rulesMap = reader.read(RULE, RuleMap.class);
+		} catch (XMLStreamException e) {
+			return false;
+		}
+		routingAddresses = reader.read(ROUTING_ADDRESS_V2, SccpAddressMap.class);
+		SccpAddressMap<Integer, SccpAddress> backupAddresses = reader.read(BACKUP_ADDRESS_V2, SccpAddressMap.class);
+
+		longMessageRules = reader.read(LONG_MESSAGE_RULE, LongMessageRuleMap.class);
+		saps = reader.read(MTP3_SERVICE_ACCESS_POINT, Mtp3ServiceAccessPointMap.class);
+
+		reader.close();
+
+		moveBackupToRoutingAddress(backupAddresses);
+
+		return true;
+	}
+
+	private void loadVer2(String fn) throws XMLStreamException, IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fn)));
+		StringBuilder sb = new StringBuilder(); 
+		while (true) {
+			String s1 = br.readLine();
+			if (s1 == null)
+				break;
+			sb.append(s1);
+            sb.append("\n");
+		}
+		br.close();
+		String s2 = sb.toString();
+		s2 = s2.replace("type=\"org.mobicents.protocols.ss7.sccp.parameter.NoGlobalTitle\"", "type=\"NoGlobalTitle\"");
+
+		StringReader sr = new StringReader(s2);
+		XMLObjectReader reader = XMLObjectReader.newInstance(sr);
+
+		String ROUTING_ADDRESS_V2 = "primaryAddress";
+		String BACKUP_ADDRESS_V2 = "backupAddress";
+		
+		reader.setBinding(binding);
+		rulesMap = reader.read(RULE, RuleMap.class);
+		routingAddresses = reader.read(ROUTING_ADDRESS_V2, SccpAddressMap.class);
+		SccpAddressMap<Integer, SccpAddress>  backupAddresses = reader.read(BACKUP_ADDRESS_V2, SccpAddressMap.class);
+
+		longMessageRules = reader.read(LONG_MESSAGE_RULE, LongMessageRuleMap.class);
+		saps = reader.read(MTP3_SERVICE_ACCESS_POINT, Mtp3ServiceAccessPointMap.class);
+
+		reader.close();
+
+		moveBackupToRoutingAddress(backupAddresses);
+	}
+
+	private void loadVer3(String fn) throws XMLStreamException, FileNotFoundException {
+		XMLObjectReader reader = XMLObjectReader.newInstance(new FileInputStream(fn));
+
+		reader.setBinding(binding);
+		rulesMap = reader.read(RULE, RuleMap.class);
+		routingAddresses = reader.read(ROUTING_ADDRESS, SccpAddressMap.class);
+
+		longMessageRules = reader.read(LONG_MESSAGE_RULE, LongMessageRuleMap.class);
+		saps = reader.read(MTP3_SERVICE_ACCESS_POINT, Mtp3ServiceAccessPointMap.class);
+
+		reader.close();
+	}
+
+	
+	
+//	public void load() throws FileNotFoundException {
+//
+//		XMLObjectReader reader = null;
+//		try {
+//			reader = XMLObjectReader.newInstance(new FileInputStream(persistFile.toString()));
+//
+//			reader.setBinding(binding);
+//			rulesMap = reader.read(RULE, RuleMap.class);
+//			routingAddresses = reader.read(ROUTING_ADDRESS, SccpAddressMap.class);
+////			backupAddresses = reader.read(BACKUP_ADDRESS, SccpAddressMap.class);
+//
+//			longMessageRules = reader.read(LONG_MESSAGE_RULE, LongMessageRuleMap.class);
+//			saps = reader.read(MTP3_SERVICE_ACCESS_POINT, Mtp3ServiceAccessPointMap.class);
+//		} catch (XMLStreamException ex) {
+//			// this.logger.info(
+//			// "Error while re-creating Linksets from persisted file", ex);
+//		}
+//	}
 }
