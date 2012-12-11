@@ -762,6 +762,10 @@ public class MAPFunctionalTest extends SccpHarness {
 		// Server side events
 		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
 
+		// !!!! ---
+//		this.saveTrafficInFile();
+//		 !!!! ---
+
 		client.actionA();
 		waitForEnd();
 		client.compareEvents(clientExpectedEvents);
@@ -1109,10 +1113,6 @@ public class MAPFunctionalTest extends SccpHarness {
 			}
 
 		};
-
-		// !!!! ---
-//		this.saveTrafficInFile();
-//		 !!!! ---
 
 		long stamp = System.currentTimeMillis();
 		int count = 0;

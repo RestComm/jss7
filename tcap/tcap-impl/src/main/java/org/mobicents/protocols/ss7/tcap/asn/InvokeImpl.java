@@ -378,6 +378,9 @@ public class InvokeImpl implements Invoke {
 	}
 
 	public synchronized void startTimer() {
+		if (this.dialog == null || this.dialog.getPreviewMode())
+			return;
+
 		this.stopTimer();
 		if (this.invokeTimeout > 0)
 			this.timerFuture = this.provider.createOperationTimer(this.operationTimerTask, this.invokeTimeout);

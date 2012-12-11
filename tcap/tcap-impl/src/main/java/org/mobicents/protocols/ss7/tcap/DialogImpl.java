@@ -139,6 +139,7 @@ public class DialogImpl implements Dialog {
 
 	// only originating side keeps FSM, see: Q.771 - 3.1.5
 	protected InvokeImpl[] operationsSent = new InvokeImpl[invokeIDTable.length];
+	protected InvokeImpl[] operationsSentA = new InvokeImpl[invokeIDTable.length];
 	private ScheduledExecutorService executor;
 
 	// scheduled components list
@@ -164,10 +165,18 @@ public class DialogImpl implements Dialog {
 		return new Long(tmp);
 	}
 
-	// DialogImpl(SccpAddress localAddress, SccpAddress remoteAddress, Long
-	// origTransactionId, ScheduledExecutorService executor,
-	// TCAProviderImpl provider, ApplicationContextName acn, UserInformation[]
-	// ui) {
+	/**
+	 * Creating a Dialog for normal mode
+	 * 
+	 * @param localAddress
+	 * @param remoteAddress
+	 * @param origTransactionId
+	 * @param structured
+	 * @param executor
+	 * @param provider
+	 * @param seqControl
+	 * @param previewMode
+	 */
 	protected DialogImpl(SccpAddress localAddress, SccpAddress remoteAddress, Long origTransactionId,
 			boolean structured, ScheduledExecutorService executor, TCAPProviderImpl provider, int seqControl,
 			boolean previewMode) {
@@ -192,8 +201,20 @@ public class DialogImpl implements Dialog {
 		startIdleTimer();
 	}
 
-	protected DialogImpl(long dialogId, SccpAddress localAddress, SccpAddress remoteAddress, int seqControl,
-			ScheduledExecutorService executor, TCAPProviderImpl provider, PrevewDialogData prevewDialogData) {
+	/**
+	 * Create a Dialog for previewMode
+	 * 
+	 * @param dialogId
+	 * @param localAddress
+	 * @param remoteAddress
+	 * @param seqControl
+	 * @param executor
+	 * @param provider
+	 * @param pdd
+	 * @param sideB
+	 */
+	protected DialogImpl(long dialogId, SccpAddress localAddress, SccpAddress remoteAddress, int seqControl, ScheduledExecutorService executor,
+			TCAPProviderImpl provider, PrevewDialogData pdd, boolean sideB) {
 		this.localAddress = localAddress;
 		this.remoteAddress = remoteAddress;
 		this.localTransactionId = dialogId;
@@ -207,23 +228,38 @@ public class DialogImpl implements Dialog {
 		TCAPStack stack = this.provider.getStack();
 		this.idleTaskTimeout = stack.getDialogIdleTimeout();
 
-		this.prevewDialogData = prevewDialogData;
-		this.lastACN = prevewDialogData.getLastACN();
-		if (prevewDialogData.getOperationsSent() != null)
-			this.operationsSent = prevewDialogData.getOperationsSent();
+		this.prevewDialogData = pdd;
+		this.lastACN = pdd.getLastACN();
+		if (sideB) {
+			if (pdd.getOperationsSentA() != null)
+				this.operationsSent = pdd.getOperationsSentA();
+			if (pdd.getOperationsSentB() != null)
+				this.operationsSentA = pdd.getOperationsSentB();
+		} else {
+			if (pdd.getOperationsSentA() != null)
+				this.operationsSentA = pdd.getOperationsSentA();
+			if (pdd.getOperationsSentB() != null)
+				this.operationsSent = pdd.getOperationsSentB();
+		}
 
-		// start
-		startIdleTimer();
+		for (InvokeImpl invoke : this.operationsSent) {
+			if (invoke != null) {
+				invoke.setDialog(this);
+			}
+		}
 	}
 
 	public void release() {
-		for (int i = 0; i < this.operationsSent.length; i++) {
-			InvokeImpl invokeImpl = this.operationsSent[i];
-			if (invokeImpl != null) {
-				invokeImpl.setState(OperationState.Idle);
-				// TODO whether to call operationTimedOut or not is still not
-				// clear
-				// operationTimedOut(invokeImpl);
+		if (!this.previewMode) {
+			for (int i = 0; i < this.operationsSent.length; i++) {
+				InvokeImpl invokeImpl = this.operationsSent[i];
+				if (invokeImpl != null) {
+					invokeImpl.setState(OperationState.Idle);
+					// TODO whether to call operationTimedOut or not is still
+					// not
+					// clear
+					// operationTimedOut(invokeImpl);
+				}
 			}
 		}
 
@@ -1719,7 +1755,9 @@ public class DialogImpl implements Dialog {
 
 			if (this.previewMode) {
 				if (ci.getType() == ComponentType.Invoke) {
-					this.operationsSent[index] = (InvokeImpl) ci;
+					this.operationsSentA[index] = (InvokeImpl) ci;
+					((InvokeImpl) ci).setDialog(this);
+					((InvokeImpl) ci).setState(OperationState.Sent);
 				}
 			}
 
@@ -1756,8 +1794,8 @@ public class DialogImpl implements Dialog {
 	private void startIdleTimer() {
 		if (!this.structured)
 			return;
-		// if (this.previewMode)
-		// return;
+		if (this.previewMode)
+			return;
 
 		try {
 			this.dialogLock.lock();
@@ -1807,13 +1845,10 @@ public class DialogImpl implements Dialog {
 				d.idleTimerInvoked = true;
 				provider.timeout(d);
 				// send abort
-				if (d.idleTimerActionTaken && !getPreviewMode()) {
+				if (d.idleTimerActionTaken) {
 					startIdleTimer();
 				} else {
 					d.release();
-					if (d.getPreviewMode()) {
-						provider.removePreviewDialog(d);
-					}
 				}
 
 			} finally {

@@ -106,7 +106,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 									// mapping, but not described
 	// explicitly...
 	private transient Map<Long, DialogImpl> dialogs = new HashMap<Long, DialogImpl>();
-	private transient Map<PrevewDialogDataKey, PrevewDialogData> dialogPreviewList = new HashMap<PrevewDialogDataKey, PrevewDialogData>();
+	protected transient Map<PrevewDialogDataKey, PrevewDialogData> dialogPreviewList = new HashMap<PrevewDialogDataKey, PrevewDialogData>();
 	
 	private int seqControl = 0;
 	private int ssn;
@@ -373,8 +373,12 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 			synchronized (this.dialogs) {
 				this.dialogs.remove(did);
 			}
+
+			this.doRelease(d);
 		}
-		
+	}
+
+	private void doRelease(DialogImpl d) {
 		try {
 			for (TCListener lst : this.tcListeners) {
 				lst.onDialogReleased(d);
@@ -575,9 +579,9 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 				} else {
 					di.processContinue(tcm, localAddress, remoteAddress);
 
-					if (this.stack.getPreviewMode()) {
-						di.release();
-					}
+//					if (this.stack.getPreviewMode()) {
+//						di.release();
+//					}
 				}
 
 				break;
@@ -632,8 +636,9 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
 				if (this.stack.getPreviewMode()) {
 					di.getPrevewDialogData().setLastACN(di.getApplicationContextName());
-					di.getPrevewDialogData().setOperationsSent(di.operationsSent);
-					di.release();
+					di.getPrevewDialogData().setOperationsSentB(di.operationsSent);
+					di.getPrevewDialogData().setOperationsSentA(di.operationsSentA);
+//					di.release();
 				}
 
 				break;
@@ -663,7 +668,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
 					if (this.stack.getPreviewMode()) {
 						this.removePreviewDialog(di);
-						di.release();
+//						di.release();
 					}
 				}
 				break;
@@ -694,7 +699,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
 					if (this.stack.getPreviewMode()) {
 						this.removePreviewDialog(di);
-						di.release();
+//						di.release();
 					}
 				}
 				break;
@@ -797,12 +802,18 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 		
 	}
 
-	private Dialog createPreviewDialog(PrevewDialogDataKey ky, SccpAddress localAddress, SccpAddress remoteAddress, int seqControl) {
+	private Dialog createPreviewDialog(PrevewDialogDataKey ky, SccpAddress localAddress, SccpAddress remoteAddress, int seqControl) throws TCAPException {
 		synchronized (this.dialogPreviewList) {
-			PrevewDialogData pdd = new PrevewDialogData();
+			if (this.dialogPreviewList.size() >= this.stack.getMaxDialogs())
+				throw new TCAPException("Current dialog count exceeds its maximum value");
+
+			PrevewDialogData pdd = new PrevewDialogData(this);
 			this.dialogPreviewList.put(ky, pdd);
-			DialogImpl di = new DialogImpl(0, localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd);
-			pdd.prevewDialogDataKey1 = ky;
+			DialogImpl di = new DialogImpl(0, localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd, false);
+			pdd.setPrevewDialogDataKey1(ky);
+			
+			pdd.startIdleTimer();
+			
 			return di;
 		}
 	}
@@ -811,23 +822,28 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 		synchronized (this.dialogPreviewList) {
 			PrevewDialogData pdd = this.dialogPreviewList.get(ky1);
 			DialogImpl di = null;
+			boolean sideB = false;
 			if (pdd != null) {
-				di = new DialogImpl(0, localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd);
+				sideB = pdd.getPrevewDialogDataKey1().equals(ky1);
+				di = new DialogImpl(0, localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd, sideB);
 			} else {
 				pdd = this.dialogPreviewList.get(ky2);
 				if (pdd != null) {
-					di = new DialogImpl(0, localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd);
+					sideB = pdd.getPrevewDialogDataKey1().equals(ky1);
+					di = new DialogImpl(0, localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd, sideB);
 				} else {
 					return null;
 				}
 			}
+			
+			pdd.restartIdleTimer();
 
-			if (pdd.prevewDialogDataKey2 == null && ky2 != null) {
-				if (pdd.prevewDialogDataKey1.equals(ky1))
-					pdd.prevewDialogDataKey2 = ky2;
+			if (pdd.getPrevewDialogDataKey2() == null && ky2 != null) {
+				if (pdd.getPrevewDialogDataKey1().equals(ky1))
+					pdd.setPrevewDialogDataKey2(ky2);
 				else
-					pdd.prevewDialogDataKey2 = ky1;
-				this.dialogPreviewList.put(pdd.prevewDialogDataKey2, pdd);
+					pdd.setPrevewDialogDataKey2(ky1);
+				this.dialogPreviewList.put(pdd.getPrevewDialogDataKey2(), pdd);
 			}
 
 			return di;
@@ -835,12 +851,29 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 	}
 
 	protected void removePreviewDialog(DialogImpl di) {
+		PrevewDialogData pdd = this.dialogPreviewList.get(di.prevewDialogData.getPrevewDialogDataKey1());
 		synchronized (this.dialogPreviewList) {
-			this.dialogPreviewList.remove(di.prevewDialogData.prevewDialogDataKey1);
-			this.dialogPreviewList.remove(di.prevewDialogData.prevewDialogDataKey2);
+			pdd = this.dialogPreviewList.get(di.prevewDialogData.getPrevewDialogDataKey1());
+			if (pdd == null) {
+				pdd = this.dialogPreviewList.get(di.prevewDialogData.getPrevewDialogDataKey2());
+			}
 		}
+
+		if (pdd != null)
+			removePreviewDialog(pdd);
+
+		this.doRelease(di);
 	}
 
+	protected void removePreviewDialog(PrevewDialogData pdd) {
+		synchronized (this.dialogPreviewList) {
+			this.dialogPreviewList.remove(pdd.getPrevewDialogDataKey1());
+			this.dialogPreviewList.remove(pdd.getPrevewDialogDataKey2());
+		}
+		pdd.stopIdleTimer();
+		
+		// TODO ??? : create Dialog and invoke "this.doRelease(di);"
+	}
 
 	protected class PrevewDialogDataKey {
 		public int dpc;

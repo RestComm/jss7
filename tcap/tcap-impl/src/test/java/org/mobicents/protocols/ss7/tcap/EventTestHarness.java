@@ -277,11 +277,14 @@ public abstract class EventTestHarness implements TCListener {
 		return observerdEvents;
 	}
 
-
 	public void compareEvents(List<TestEvent> expectedEvents) {
+		doCompareEvents(this.observerdEvents, expectedEvents);
+	}
 
-		if (expectedEvents.size() != this.observerdEvents.size()) {
-			fail("Size of received events: " + this.observerdEvents.size() + ", does not equal expected events: " + expectedEvents.size() + "\n"
+	public static void doCompareEvents(List<TestEvent> observerdEvents, List<TestEvent> expectedEvents) {
+
+		if (expectedEvents.size() != observerdEvents.size()) {
+			fail("Size of received events: " + observerdEvents.size() + ", does not equal expected events: " + expectedEvents.size() + "\n"
 					+ doStringCompare(expectedEvents, observerdEvents));
 		}
 
@@ -290,7 +293,7 @@ public abstract class EventTestHarness implements TCListener {
 		}
 	}
 
-	protected String doStringCompare(List lst1, List lst2) {
+	protected static String doStringCompare(List lst1, List lst2) {
 		StringBuilder sb = new StringBuilder();
 		int size1 = lst1.size();
 		int size2 = lst2.size();
