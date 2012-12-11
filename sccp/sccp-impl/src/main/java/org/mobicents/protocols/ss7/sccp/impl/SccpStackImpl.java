@@ -49,6 +49,7 @@ import org.mobicents.protocols.ss7.sccp.Mtp3ServiceAccessPoint;
 import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.Router;
 import org.mobicents.protocols.ss7.sccp.Rule;
+import org.mobicents.protocols.ss7.sccp.SccpManagementEventListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.SccpResource;
 import org.mobicents.protocols.ss7.sccp.SccpStack;
@@ -333,6 +334,14 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 			mup.addMtp3UserPartListener(this);
 		}
 
+		for (SccpManagementEventListener lstr : this.sccpProvider.managementEventListeners) {
+			try {
+				lstr.onServiceStarted();
+			} catch (Throwable ee) {
+				logger.error("Exception while invoking onServiceStarted", ee);
+			}
+		}
+
 		this.state = State.RUNNING;
 	}
 
@@ -350,6 +359,14 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		// executor = null;
 		//
 		// layer3exec = null;
+
+		for (SccpManagementEventListener lstr : this.sccpProvider.managementEventListeners) {
+			try {
+				lstr.onServiceStopped();
+			} catch (Throwable ee) {
+				logger.error("Exception while invoking onServiceStopped", ee);
+			}
+		}
 
 		for (FastMap.Entry<Integer, Mtp3UserPart> e = this.mtp3UserParts.head(), end = this.mtp3UserParts.tail(); (e = e.getNext()) != end;) {
 			Mtp3UserPart mup = e.getValue();
@@ -544,6 +561,14 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		
 		this.router.removeAllResourses();
 		this.sccpResource.removeAllResourses();
+
+		for (SccpManagementEventListener lstr : this.sccpProvider.managementEventListeners) {
+			try {
+				lstr.onRemoveAllResources();
+			} catch (Throwable ee) {
+				logger.error("Exception while invoking onRemoveAllResources", ee);
+			}
+		}
 	}
 	
 	public void onMtp3PauseMessage(Mtp3PausePrimitive msg) {

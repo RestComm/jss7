@@ -41,6 +41,7 @@ import org.mobicents.protocols.ss7.sccp.Mtp3ServiceAccessPoint;
 import org.mobicents.protocols.ss7.sccp.RemoteSccpStatus;
 import org.mobicents.protocols.ss7.sccp.RemoteSubSystem;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
+import org.mobicents.protocols.ss7.sccp.SccpManagementEventListener;
 import org.mobicents.protocols.ss7.sccp.SignallingPointStatus;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
@@ -375,13 +376,16 @@ public class SccpManagement {
 				if (!remoteSsn.isRemoteSsnProhibited()) {
 					remoteSsn.setRemoteSsnProhibited(true);
 
-					for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1
-							.getNext()) != end1;) {
-						try {
-							e1.getValue().onState(affectedPc, remoteSsn.getRemoteSsn(), false, 0);
-						} catch (Exception ee) {
-						}
-					}
+					setRemoteSsnState(remoteSsn, false);
+
+//					for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1
+//							.getNext()) != end1;) {
+//						try {
+//							e1.getValue().onState(affectedPc, remoteSsn.getRemoteSsn(), false, 0);
+//						} catch (Exception ee) {
+//							logger.error("Exception while invoking onState", ee);
+//						}
+//					}
 				}
 			}
 		}
@@ -400,26 +404,32 @@ public class SccpManagement {
 						remoteSsn.setRemoteSsnProhibited(true);
 						this.startSst(affectedPc, remoteSsn.getRemoteSsn());
 
-						for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1
-								.getNext()) != end1;) {
-							try {
-								e1.getValue().onState(affectedPc, remoteSsn.getRemoteSsn(), false, 0);
-							} catch (Exception ee) {
-							}
-						}
+						setRemoteSsnState(remoteSsn, false);
+						
+//						for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1
+//								.getNext()) != end1;) {
+//							try {
+//								e1.getValue().onState(affectedPc, remoteSsn.getRemoteSsn(), false, 0);
+//							} catch (Throwable ee) {
+//								logger.error("Exception while invoking onState", ee);
+//							}
+//						}
 					}
 
 				} else {
 					if (remoteSsn.isRemoteSsnProhibited()) {
 						remoteSsn.setRemoteSsnProhibited(false);
 
-						for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1
-								.getNext()) != end1;) {
-							try {
-								e1.getValue().onState(affectedPc, remoteSsn.getRemoteSsn(), true, 0);
-							} catch (Exception ee) {
-							}
-						}
+						setRemoteSsnState(remoteSsn, true);
+
+//						for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1
+//								.getNext()) != end1;) {
+//							try {
+//								e1.getValue().onState(affectedPc, remoteSsn.getRemoteSsn(), true, 0);
+//							} catch (Exception ee) {
+//								logger.error("Exception while invoking onState", ee);
+//							}
+//						}
 					}
 				}
 			}
@@ -431,6 +441,8 @@ public class SccpManagement {
 		RemoteSignalingPointCodeImpl remoteSpc = (RemoteSignalingPointCodeImpl) this.sccpStackImpl.getSccpResource()
 				.getRemoteSpcByPC(affectedPc);
 		if (remoteSpc != null) {
+			boolean oldRemoteSpcProhibited = remoteSpc.isRemoteSpcProhibited();
+			boolean oldRemoteSccpProhibited = remoteSpc.isRemoteSccpProhibited();
 			if (spcChanging)
 				remoteSpc.setRemoteSpcProhibited(true);
 			if (remoteSccpStatus != null && remoteSccpStatus != RemoteSccpStatus.available)
@@ -439,11 +451,28 @@ public class SccpManagement {
 			FastMap<Integer, SccpListener> lstrs = this.sccpProviderImpl.getAllSccpListeners();
 			for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1.getNext()) != end1;) {
 				try {
-					e1.getValue().onPcState(
-							affectedPc,
-							(remoteSpc.isRemoteSpcProhibited() ? SignallingPointStatus.inaccessible
-									: SignallingPointStatus.accessible), 0, remoteSccpStatus);
+					e1.getValue().onPcState(affectedPc,
+							(remoteSpc.isRemoteSpcProhibited() ? SignallingPointStatus.inaccessible : SignallingPointStatus.accessible), 0, remoteSccpStatus);
 				} catch (Exception ee) {
+					logger.error("Exception while invoking onPcState", ee);
+				}
+			}
+
+			for (SccpManagementEventListener lstr : this.sccpProviderImpl.managementEventListeners) {
+				try {
+					if (remoteSpc.isRemoteSpcProhibited() != oldRemoteSpcProhibited) {
+						lstr.onRemoteSpcDown(remoteSpc);
+					}
+				} catch (Throwable ee) {
+					logger.error("Exception while invoking onRemoteSpcDown", ee);
+				}
+
+				try {
+					if (remoteSpc.isRemoteSccpProhibited() != oldRemoteSccpProhibited) {
+						lstr.onRemoteSccpDown(remoteSpc);
+					}
+				} catch (Throwable ee) {
+					logger.error("Exception while invoking onRemoteSccpDown", ee);
 				}
 			}
 		}
@@ -456,6 +485,8 @@ public class SccpManagement {
 		RemoteSignalingPointCodeImpl remoteSpc = (RemoteSignalingPointCodeImpl) this.sccpStackImpl.getSccpResource()
 				.getRemoteSpcByPC(affectedPc);
 		if (remoteSpc != null) {
+			boolean oldRemoteSpcProhibited = remoteSpc.isRemoteSpcProhibited();
+			boolean oldRemoteSccpProhibited = remoteSpc.isRemoteSccpProhibited();
 			if (spcChanging)
 				remoteSpc.setRemoteSpcProhibited(false);
 			if (remoteSccpStatus != null && remoteSccpStatus == RemoteSccpStatus.available)
@@ -466,6 +497,25 @@ public class SccpManagement {
 				try {
 					e1.getValue().onPcState(affectedPc, SignallingPointStatus.accessible, 0, remoteSccpStatus);
 				} catch (Exception ee) {
+					logger.error("Exception while invoking onPcState", ee);
+				}
+			}
+
+			for (SccpManagementEventListener lstr : this.sccpProviderImpl.managementEventListeners) {
+				try {
+					if (remoteSpc.isRemoteSpcProhibited() != oldRemoteSpcProhibited) {
+						lstr.onRemoteSpcUp(remoteSpc);
+					}
+				} catch (Throwable ee) {
+					logger.error("Exception while invoking onRemoteSpcUp", ee);
+				}
+
+				try {
+					if (remoteSpc.isRemoteSccpProhibited() != oldRemoteSccpProhibited) {
+						lstr.onRemoteSccpUp(remoteSpc);
+					}
+				} catch (Throwable ee) {
+					logger.error("Exception while invoking onRemoteSccpUp", ee);
 				}
 			}
 		}
@@ -475,23 +525,39 @@ public class SccpManagement {
 
 	private void prohibitSsn(int affectedPc, int ssn) {
 
-		FastMap<Integer, SccpListener> lstrs = this.sccpProviderImpl.getAllSccpListeners();
 		FastMap<Integer, RemoteSubSystem> remoteSsns = this.sccpStackImpl.sccpResource.remoteSsns;
 		for (FastMap.Entry<Integer, RemoteSubSystem> e = remoteSsns.head(), end = remoteSsns.tail(); (e = e.getNext()) != end;) {
 			RemoteSubSystemImpl remoteSsn = (RemoteSubSystemImpl) e.getValue();
 			if (remoteSsn.getRemoteSpc() == affectedPc && remoteSsn.getRemoteSsn() == ssn) {
 				if (!remoteSsn.isRemoteSsnProhibited()) {
-					remoteSsn.setRemoteSsnProhibited(true);
-
-					for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1
-							.getNext()) != end1;) {
-						try {
-							e1.getValue().onState(affectedPc, remoteSsn.getRemoteSsn(), false, 0);
-						} catch (Exception ee) {
-						}
-					}
+					setRemoteSsnState(remoteSsn, false);
 				}
 				break;
+			}
+		}
+	}
+
+	private void setRemoteSsnState(RemoteSubSystemImpl remoteSsn, boolean isEnabled) {
+		remoteSsn.setRemoteSsnProhibited(!isEnabled);
+
+		FastMap<Integer, SccpListener> lstrs = this.sccpProviderImpl.getAllSccpListeners();
+
+		for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1.getNext()) != end1;) {
+			try {
+				e1.getValue().onState(remoteSsn.getRemoteSpc(), remoteSsn.getRemoteSsn(), isEnabled, 0);
+			} catch (Exception ee) {
+				logger.error("Exception while invoking onState", ee);
+			}
+		}
+
+		for (SccpManagementEventListener lstr : this.sccpProviderImpl.managementEventListeners) {
+			try {
+				if (isEnabled)
+					lstr.onRemoteSubSystemUp(remoteSsn);
+				else
+					lstr.onRemoteSubSystemDown(remoteSsn);
+			} catch (Throwable ee) {
+				logger.error("Exception while invoking onRemoteSubSystemUp/Down", ee);
 			}
 		}
 	}
@@ -506,13 +572,16 @@ public class SccpManagement {
 				if (remoteSsn.isRemoteSsnProhibited()) {
 					remoteSsn.setRemoteSsnProhibited(false);
 
-					for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1
-							.getNext()) != end1;) {
-						try {
-							e1.getValue().onState(affectedPc, remoteSsn.getRemoteSsn(), true, 0);
-						} catch (Exception ee) {
-						}
-					}
+					setRemoteSsnState(remoteSsn, true);
+
+//					for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1
+//							.getNext()) != end1;) {
+//						try {
+//							e1.getValue().onState(affectedPc, remoteSsn.getRemoteSsn(), true, 0);
+//						} catch (Exception ee) {
+//							logger.error("Exception while invoking onState", ee);
+//						}
+//					}
 				}
 				break;
 			}

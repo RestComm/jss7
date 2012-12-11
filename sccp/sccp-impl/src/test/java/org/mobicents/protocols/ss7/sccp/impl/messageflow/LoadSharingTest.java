@@ -103,7 +103,7 @@ public class LoadSharingTest extends SccpHarness {
 
 		a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack1PC(), null, 8);
 		a2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(), null, 8);
-		
+
 		User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
 		User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
 

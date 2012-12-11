@@ -25,6 +25,8 @@ package org.mobicents.protocols.ss7.sccp;
 import java.io.IOException;
 import java.io.Serializable;
 
+import javolution.util.FastList;
+
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
@@ -62,6 +64,10 @@ public interface SccpProvider extends Serializable {
 	 * Removes listener
 	 */
 	public void deregisterSccpListener(int ssn);
+
+	public void registerManagementEventListener(SccpManagementEventListener listener);
+
+	public void deregisterManagementEventListener(SccpManagementEventListener listener);
 
 	/**
 	 * Sends message.
