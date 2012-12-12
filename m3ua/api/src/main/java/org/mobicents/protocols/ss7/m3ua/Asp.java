@@ -31,8 +31,16 @@ import org.mobicents.protocols.ss7.m3ua.parameter.ASPIdentifier;
 public interface Asp {
 
 	public String getName();
-	
+
+	public boolean isStarted();
+
+	public boolean isConnected();
+
+	public boolean isUp();
+
 	public As getAs();
+
+	public AspFactory getAspFactory();
 	
 	public ASPIdentifier getASPIdentifier();
 	

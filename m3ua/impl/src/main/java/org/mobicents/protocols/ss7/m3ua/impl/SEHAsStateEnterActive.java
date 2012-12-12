@@ -23,6 +23,7 @@ package org.mobicents.protocols.ss7.m3ua.impl;
 
 import javolution.util.FastList;
 
+import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.m3ua.M3UAManagementEventListener;
 import org.mobicents.protocols.ss7.m3ua.State;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSMState;
@@ -35,6 +36,8 @@ import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSMStateEventHandler;
  */
 public abstract class SEHAsStateEnterActive implements FSMStateEventHandler {
 
+	private static final Logger logger = Logger.getLogger(SEHAsStateEnterActive.class);
+
 	private AsImpl asImpl;
 
 	public SEHAsStateEnterActive(AsImpl asImpl) {
@@ -45,6 +48,7 @@ public abstract class SEHAsStateEnterActive implements FSMStateEventHandler {
 	public void onEvent(FSMState state) {
 		// Call listener and indicate of state change only if not already done
 		if (!this.asImpl.state.getName().equals(State.STATE_ACTIVE)) {
+			AsState oldState = AsState.getState(this.asImpl.state.getName());
 			this.asImpl.state = AsState.ACTIVE;
 
 			FastList<M3UAManagementEventListener> managementEventListenersTmp = this.asImpl.m3UAManagementImpl.managementEventListeners;
@@ -52,7 +56,11 @@ public abstract class SEHAsStateEnterActive implements FSMStateEventHandler {
 			for (FastList.Node<M3UAManagementEventListener> n = managementEventListenersTmp.head(), end = managementEventListenersTmp
 					.tail(); (n = n.getNext()) != end;) {
 				M3UAManagementEventListener m3uaManagementEventListener = n.getValue();
-				m3uaManagementEventListener.onAsActive(this.asImpl);
+				try {
+					m3uaManagementEventListener.onAsActive(this.asImpl, oldState);
+				} catch (Throwable ee) {
+					logger.error("Exception while invoking onAsActive", ee);
+				}
 			}
 		}
 	}

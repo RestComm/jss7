@@ -53,6 +53,7 @@ public abstract class SEHAsStateEnterPen implements FSMStateEventHandler {
 		}
 		
 		if (!this.asImpl.state.getName().equals(State.STATE_PENDING)) {
+			AsState oldState = AsState.getState(this.asImpl.state.getName());
 			this.asImpl.state = AsState.PENDING;
 
 			FastList<M3UAManagementEventListener> managementEventListenersTmp = this.asImpl.m3UAManagementImpl.managementEventListeners;
@@ -60,7 +61,11 @@ public abstract class SEHAsStateEnterPen implements FSMStateEventHandler {
 			for (FastList.Node<M3UAManagementEventListener> n = managementEventListenersTmp.head(), end = managementEventListenersTmp
 					.tail(); (n = n.getNext()) != end;) {
 				M3UAManagementEventListener m3uaManagementEventListener = n.getValue();
-				m3uaManagementEventListener.onAsPending(this.asImpl);
+				try {
+					m3uaManagementEventListener.onAsPending(this.asImpl, oldState);
+				} catch (Throwable ee) {
+					logger.error("Exception while invoking onAsPending", ee);
+				}
 			}
 		}
 	}

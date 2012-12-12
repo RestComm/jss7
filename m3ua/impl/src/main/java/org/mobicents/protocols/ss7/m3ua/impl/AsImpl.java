@@ -343,6 +343,14 @@ public class AsImpl implements XMLSerializable, As {
 		return this.name;
 	}
 
+	public boolean isConnected() {
+		return this.isUp();
+	}
+
+	public boolean isUp() {
+		return this.state.getName().equals(State.STATE_ACTIVE);
+	}
+
 	public State getState() {
 		return this.state;
 	}

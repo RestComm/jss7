@@ -23,39 +23,47 @@ package org.mobicents.protocols.ss7.m3ua;
 
 /**
  * @author amit bhayani
+ * @author sergey vetyutnev
  *
  */
 public interface M3UAManagementEventListener {
-	
-	public void onAsCreated(As as);
-	
-	public void onAsDestroyed(As as);
-	
-	public void onAspFactoryCreated(AspFactory aspFactory);
-	
-	public void onAspFactoryDestroyed(AspFactory aspFactory);
-	
-	public void onAspAssignedToAs(As as, Asp asp);
-	
-	public void onAspUnassignedFromAs(As as, Asp asp);
+
+	public void onServiceStarted();
+
+	public void onServiceStopped();
 
 	public void onRemoveAllResources();
-	
+
+
+	public void onAsCreated(As as);
+
+	public void onAsDestroyed(As as);
+
+	public void onAspFactoryCreated(AspFactory aspFactory);
+
+	public void onAspFactoryDestroyed(AspFactory aspFactory);
+
+	public void onAspAssignedToAs(As as, Asp asp);
+
+	public void onAspUnassignedFromAs(As as, Asp asp);
+
 	public void onAspFactoryStarted(AspFactory aspFactory);
-	
+
 	public void onAspFactoryStopped(AspFactory aspFactory);
-	
-	public void onAspActive(Asp asp);
-	
-	public void onAspInactive(Asp asp);
-	
-	public void onAspDown(Asp asp);
-	
-	public void onAsActive(As as);
-	
-	public void onAsPending(As as);
-	
-	public void onAsInactive(As as);
-	
-	public void onAsDown(As as);
+
+
+	public void onAspActive(Asp asp, State oldState);
+
+	public void onAspInactive(Asp asp, State oldState);
+
+	public void onAspDown(Asp asp, State oldState);
+
+	public void onAsActive(As as, State oldState);
+
+	public void onAsPending(As as, State oldState);
+
+	public void onAsInactive(As as, State oldState);
+
+	public void onAsDown(As as, State oldState);
+
 }

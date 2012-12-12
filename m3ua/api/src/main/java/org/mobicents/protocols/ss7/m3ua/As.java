@@ -37,6 +37,10 @@ public interface As {
 
 	public String getName();
 
+	public boolean isConnected();
+
+	public boolean isUp();
+
 	public RoutingContext getRoutingContext();
 
 	public Functionality getFunctionality();

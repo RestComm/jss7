@@ -33,7 +33,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
  * 
  */
 public interface M3UAManagement {
-
+	
 	public String getName();
 
 	public String getPersistDir();
@@ -51,6 +51,8 @@ public interface M3UAManagement {
 	public void start() throws Exception;
 
 	public void stop() throws Exception;
+
+	public boolean isStarted();
 
 	public List<As> getAppServers();
 

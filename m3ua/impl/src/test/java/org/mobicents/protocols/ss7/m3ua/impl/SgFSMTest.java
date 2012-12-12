@@ -1790,49 +1790,49 @@ public class SgFSMTest {
 		}
 
 		@Override
-		public void onAspActive(Asp asp) {
+		public void onAspActive(Asp asp, State oldState) {
 			TestEvent testEvent = new TestEvent(TestEventType.AspActive, System.currentTimeMillis(),
 					new Object[] { asp }, sequence++);
 			this.testEvents.add(testEvent);
 		}
 
 		@Override
-		public void onAspInactive(Asp asp) {
+		public void onAspInactive(Asp asp, State oldState) {
 			TestEvent testEvent = new TestEvent(TestEventType.AspInactive, System.currentTimeMillis(),
 					new Object[] { asp }, sequence++);
 			this.testEvents.add(testEvent);
 		}
 
 		@Override
-		public void onAspDown(Asp asp) {
+		public void onAspDown(Asp asp, State oldState) {
 			TestEvent testEvent = new TestEvent(TestEventType.AspDown, System.currentTimeMillis(),
 					new Object[] { asp }, sequence++);
 			this.testEvents.add(testEvent);
 		}
 
 		@Override
-		public void onAsActive(As as) {
+		public void onAsActive(As as, State oldState) {
 			TestEvent testEvent = new TestEvent(TestEventType.AsActive, System.currentTimeMillis(),
 					new Object[] { as }, sequence++);
 			this.testEvents.add(testEvent);
 		}
 
 		@Override
-		public void onAsPending(As as) {
+		public void onAsPending(As as, State oldState) {
 			TestEvent testEvent = new TestEvent(TestEventType.AsPending, System.currentTimeMillis(),
 					new Object[] { as }, sequence++);
 			this.testEvents.add(testEvent);
 		}
 
 		@Override
-		public void onAsInactive(As as) {
+		public void onAsInactive(As as, State oldState) {
 			TestEvent testEvent = new TestEvent(TestEventType.AsInactive, System.currentTimeMillis(),
 					new Object[] { as }, sequence++);
 			this.testEvents.add(testEvent);
 		}
 
 		@Override
-		public void onAsDown(As as) {
+		public void onAsDown(As as, State oldState) {
 			TestEvent testEvent = new TestEvent(TestEventType.AsDown, System.currentTimeMillis(), new Object[] { as },
 					sequence++);
 			this.testEvents.add(testEvent);
@@ -1848,6 +1848,18 @@ public class SgFSMTest {
 
 			return testEventExpected.equals(testEventActual);
 
+		}
+
+		@Override
+		public void onServiceStarted() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onServiceStopped() {
+			// TODO Auto-generated method stub
+			
 		}
 
 	}
