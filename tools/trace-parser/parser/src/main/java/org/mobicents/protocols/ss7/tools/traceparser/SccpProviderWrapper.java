@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.tools.traceparser;
 import java.io.IOException;
 
 import org.mobicents.protocols.ss7.sccp.SccpListener;
+import org.mobicents.protocols.ss7.sccp.SccpManagementEventListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
@@ -80,6 +81,18 @@ public class SccpProviderWrapper implements SccpProvider {
 
 	@Override
 	public void send(SccpDataMessage arg0) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void registerManagementEventListener(SccpManagementEventListener listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deregisterManagementEventListener(SccpManagementEventListener listener) {
 		// TODO Auto-generated method stub
 		
 	}

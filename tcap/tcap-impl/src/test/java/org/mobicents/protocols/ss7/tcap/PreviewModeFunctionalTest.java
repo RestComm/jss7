@@ -31,6 +31,7 @@ import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
+import org.mobicents.protocols.ss7.sccp.SccpManagementEventListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
@@ -537,6 +538,18 @@ public class PreviewModeFunctionalTest {
 			// we check here that no messages go from TCAP previewMode
 
 			fail("No message must go from TCAP previewMode");
+		}
+
+		@Override
+		public void registerManagementEventListener(SccpManagementEventListener listener) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void deregisterManagementEventListener(SccpManagementEventListener listener) {
+			// TODO Auto-generated method stub
+			
 		}
 	}
 
