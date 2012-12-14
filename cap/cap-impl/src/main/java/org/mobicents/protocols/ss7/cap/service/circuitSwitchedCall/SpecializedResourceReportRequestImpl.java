@@ -34,6 +34,7 @@ import org.mobicents.protocols.ss7.cap.api.CAPOperationCode;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequest;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 
 /**
  * 
@@ -46,6 +47,9 @@ public class SpecializedResourceReportRequestImpl extends CircuitSwitchedCallMes
 	public static final int _ID_firstAnnouncementStarted = 51;
 
 	public static final String _PrimitiveName = "SpecializedResourceReportRequestIndication";
+
+	private Long linkedId;
+	private Invoke linkedInvoke;
 
 	private boolean isAllAnnouncementsComplete;
 	private boolean isFirstAnnouncementStarted;
@@ -71,6 +75,26 @@ public class SpecializedResourceReportRequestImpl extends CircuitSwitchedCallMes
 	@Override
 	public int getOperationCode() {
 		return CAPOperationCode.specializedResourceReport;
+	}
+
+	@Override
+	public Long getLinkedId() {
+		return linkedId;
+	}
+
+	@Override
+	public void setLinkedId(Long val) {
+		linkedId = val;
+	}
+
+	@Override
+	public Invoke getLinkedInvoke() {
+		return linkedInvoke;
+	}
+
+	@Override
+	public void setLinkedInvoke(Invoke val) {
+		linkedInvoke = val;
 	}
 
 	@Override
@@ -201,6 +225,11 @@ public class SpecializedResourceReportRequestImpl extends CircuitSwitchedCallMes
 		sb.append(_PrimitiveName);
 		sb.append(" [");
 
+		if (this.linkedId != null) {
+			sb.append("linkedId=");
+			sb.append(this.linkedId);
+			sb.append(", ");
+		}
 		if (this.isAllAnnouncementsComplete) {
 			sb.append("isAllAnnouncementsComplete");
 		}
@@ -212,5 +241,6 @@ public class SpecializedResourceReportRequestImpl extends CircuitSwitchedCallMes
 
 		return sb.toString();
 	}
+
 }
 

@@ -24,9 +24,7 @@ package org.mobicents.protocols.ss7.tcap;
 
 
 
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.fail;
+import static org.testng.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +32,18 @@ import java.util.List;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.api.TCListener;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCNoticeIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCPAbortIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUniIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TerminationType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -57,7 +66,8 @@ public class TCAPFunctionalTest extends SccpHarness {
     private SccpAddress peer2Address;
     private Client client;
     private Server server;
-    
+    private TCAPListenerWrapper tcapListenerWrapper;
+
     public TCAPFunctionalTest(){
     	
     }
@@ -87,6 +97,9 @@ public class TCAPFunctionalTest extends SccpHarness {
         
         this.tcapStack1 = new TCAPStackImpl(this.sccpProvider1, 8);
         this.tcapStack2 = new TCAPStackImpl(this.sccpProvider2, 8);
+        
+        this.tcapListenerWrapper = new TCAPListenerWrapper();
+        this.tcapStack1.getProvider().addTCListener(tcapListenerWrapper);
         
         this.tcapStack1.setInvokeTimeout(0);
         this.tcapStack2.setInvokeTimeout(0);
@@ -187,5 +200,84 @@ public class TCAPFunctionalTest extends SccpHarness {
         } catch (InterruptedException e) {
             fail("Interrupted on wait!");
         }
+    }
+    
+    private class TCAPListenerWrapper implements TCListener {
+
+		@Override
+		public void onTCUni(TCUniIndication ind) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onTCBegin(TCBeginIndication ind) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onTCContinue(TCContinueIndication ind) {
+			assertEquals(ind.getComponents().length, 2);
+			ReturnResultLast rrl = (ReturnResultLast)ind.getComponents()[0];
+			Invoke inv = (Invoke)ind.getComponents()[1];
+
+			// operationCode is not sent via ReturnResultLast because it does not contain a Parameter
+			// so operationCode is taken from a sent Invoke 
+			assertEquals((long)rrl.getInvokeId(), 1);
+			assertEquals((long)rrl.getOperationCode().getLocalOperationCode(), 12);
+
+			// second Invoke has its own operationCode and it has linkedId to the second sent Invoke
+			assertEquals((long)inv.getInvokeId(), 1);
+			assertEquals((long)inv.getOperationCode().getLocalOperationCode(), 14);
+			assertEquals((long)inv.getLinkedId(), 2);
+
+			// we should see operationCode of the second sent Invoke
+			Invoke linkedInv = inv.getLinkedInvoke();
+			assertEquals((long)linkedInv.getOperationCode().getLocalOperationCode(), 13);
+		}
+
+		@Override
+		public void onTCEnd(TCEndIndication ind) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onTCUserAbort(TCUserAbortIndication ind) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onTCPAbort(TCPAbortIndication ind) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onTCNotice(TCNoticeIndication ind) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onDialogReleased(Dialog d) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onInvokeTimeout(Invoke tcInvokeRequest) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onDialogTimeout(Dialog d) {
+			// TODO Auto-generated method stub
+			
+		}
+    	
     }
 }

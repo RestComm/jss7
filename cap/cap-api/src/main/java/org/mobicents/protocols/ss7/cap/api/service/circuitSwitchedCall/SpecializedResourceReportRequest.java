@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall;
 
+import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
+
 /**
 *
 
@@ -52,6 +54,14 @@ public interface SpecializedResourceReportRequest extends CircuitSwitchedCallMes
 	public boolean getAllAnnouncementsComplete();
 
 	public boolean getFirstAnnouncementStarted();
+
+	public Long getLinkedId();
+
+	public void setLinkedId(Long val);
+
+	public Invoke getLinkedInvoke ();
+
+	public void setLinkedInvoke (Invoke  val);
 
 }
 

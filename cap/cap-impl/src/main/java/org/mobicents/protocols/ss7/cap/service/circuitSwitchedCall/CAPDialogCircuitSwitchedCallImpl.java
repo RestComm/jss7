@@ -1046,19 +1046,19 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 	}
 
 	@Override
-	public Long addSpecializedResourceReportRequest_CapV23() throws CAPException {
+	public Long addSpecializedResourceReportRequest_CapV23(Long linkedId) throws CAPException {
 
-		return addSpecializedResourceReportRequest_CapV23(_Timer_Default);
+		return addSpecializedResourceReportRequest_CapV23(linkedId, _Timer_Default);
 	}
 
 	@Override
-	public Long addSpecializedResourceReportRequest_CapV4(boolean isAllAnnouncementsComplete, boolean isFirstAnnouncementStarted) throws CAPException {
+	public Long addSpecializedResourceReportRequest_CapV4(Long linkedId, boolean isAllAnnouncementsComplete, boolean isFirstAnnouncementStarted) throws CAPException {
 
-		return addSpecializedResourceReportRequest_CapV4(_Timer_Default, isAllAnnouncementsComplete, isFirstAnnouncementStarted);
+		return addSpecializedResourceReportRequest_CapV4(linkedId, _Timer_Default, isAllAnnouncementsComplete, isFirstAnnouncementStarted);
 	}
 
 	@Override
-	public Long addSpecializedResourceReportRequest_CapV23(int customInvokeTimeout) throws CAPException {
+	public Long addSpecializedResourceReportRequest_CapV23(Long linkedId, int customInvokeTimeout) throws CAPException {
 
 		if (this.appCntx != CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF && this.appCntx != CAPApplicationContext.CapV3_gsmSSF_scfGeneric
 				&& this.appCntx != CAPApplicationContext.CapV2_assistGsmSSF_to_gsmSCF && this.appCntx != CAPApplicationContext.CapV3_gsmSSF_scfAssistHandoff
@@ -1096,13 +1096,15 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 			throw new CAPException(e.getMessage(), e);
 		}
 
+		invoke.setLinkedId(linkedId);
+
 		this.sendInvokeComponent(invoke);
 		
 		return invokeId;
 	}
 
 	@Override
-	public Long addSpecializedResourceReportRequest_CapV4(int customInvokeTimeout, boolean isAllAnnouncementsComplete, boolean isFirstAnnouncementStarted)
+	public Long addSpecializedResourceReportRequest_CapV4(Long linkedId, int customInvokeTimeout, boolean isAllAnnouncementsComplete, boolean isFirstAnnouncementStarted)
 			throws CAPException {
 
 		if (this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric && this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfAssistHandoff
@@ -1138,6 +1140,8 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 		} catch (TCAPException e) {
 			throw new CAPException(e.getMessage(), e);
 		}
+
+		invoke.setLinkedId(linkedId);
 
 		this.sendInvokeComponent(invoke);
 		

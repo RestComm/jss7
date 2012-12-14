@@ -141,9 +141,8 @@ public class MAPServiceCallHandlingImpl extends MAPServiceBaseImpl implements MA
 	}
 
 	@Override
-	public void processComponent(ComponentType compType, OperationCode oc,
-			Parameter parameter, MAPDialog mapDialog, Long invokeId,
-			Long linkedId) throws MAPParsingComponentException {
+	public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog, Long invokeId, Long linkedId,
+			Invoke linkedInvoke) throws MAPParsingComponentException {
 		
 		if (compType == ComponentType.Invoke && this.mapProviderImpl.isCongested()) {
 			// we reject all supplementary services when congestion
@@ -177,7 +176,7 @@ public class MAPServiceCallHandlingImpl extends MAPServiceBaseImpl implements MA
 			new MAPParsingComponentException("", MAPParsingComponentExceptionReason.UnrecognizedOperation);
 		}
 	}
-	
+
 	private void sendRoutingInformationRequest(Parameter parameter, MAPDialogCallHandlingImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
 		long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
 		SendRoutingInformationRequestImpl ind = new SendRoutingInformationRequestImpl(version);
@@ -247,7 +246,8 @@ public class MAPServiceCallHandlingImpl extends MAPServiceBaseImpl implements MA
 		}
 	}
 
-	private void provideRoamingNumberRequest(Parameter parameter, MAPDialogCallHandlingImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
+	private void provideRoamingNumberRequest(Parameter parameter, MAPDialogCallHandlingImpl mapDialogImpl, Long invokeId)
+			throws MAPParsingComponentException {
 		long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
 		ProvideRoamingNumberRequestImpl ind = new ProvideRoamingNumberRequestImpl(version);
 		

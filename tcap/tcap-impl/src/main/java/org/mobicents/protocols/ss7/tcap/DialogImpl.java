@@ -58,6 +58,8 @@ import org.mobicents.protocols.ss7.tcap.asn.DialogServiceUserType;
 import org.mobicents.protocols.ss7.tcap.asn.DialogUniAPDU;
 import org.mobicents.protocols.ss7.tcap.asn.InvokeImpl;
 import org.mobicents.protocols.ss7.tcap.asn.ParseException;
+import org.mobicents.protocols.ss7.tcap.asn.ProblemImpl;
+import org.mobicents.protocols.ss7.tcap.asn.RejectImpl;
 import org.mobicents.protocols.ss7.tcap.asn.Result;
 import org.mobicents.protocols.ss7.tcap.asn.ResultSourceDiagnostic;
 import org.mobicents.protocols.ss7.tcap.asn.ResultType;
@@ -73,7 +75,11 @@ import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 import org.mobicents.protocols.ss7.tcap.asn.Utils;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.InvokeProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnErrorProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCAbortMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage;
@@ -1681,7 +1687,11 @@ public class DialogImpl implements Dialog {
 
 		List<Component> resultingIndications = new ArrayList<Component>();
 		for (Component ci : components) {
-			Long invokeId = ci.getInvokeId();
+			Long invokeId;
+			if (ci.getType() == ComponentType.Invoke)
+				invokeId = ((InvokeImpl) ci).getLinkedId();
+			else
+				invokeId = ci.getInvokeId();			
 			InvokeImpl invoke = null;
 			int index = 0;
 			if (invokeId != null) {
@@ -1691,11 +1701,36 @@ public class DialogImpl implements Dialog {
 
 			switch (ci.getType()) {
 
+			case Invoke:
+				resultingIndications.add(ci);
+				if (invoke != null) {
+					((InvokeImpl) ci).setLinkedInvoke(invoke);
+				}
+
+				if (this.previewMode) {
+					index = getIndexFromInvokeId(ci.getInvokeId());
+					this.operationsSentA[index] = (InvokeImpl) ci;
+					((InvokeImpl) ci).setDialog(this);
+					((InvokeImpl) ci).setState(OperationState.Sent);
+				}
+				break;
+
 			case ReturnResult:
 
 				if (invoke == null) {
-					// FIXME: send something back?
 					logger.error(String.format("Rx : %s but there is no corresponding Invoke", ci));
+
+					try {
+						Reject rej = new RejectImpl();
+						rej.setInvokeId(ci.getInvokeId());
+						Problem p = new ProblemImpl();
+						p.setType(ProblemType.ReturnResult);
+						p.setReturnResultProblemType(ReturnResultProblemType.UnrecognizedInvokeID);
+						rej.setProblem(p);
+						this.sendComponent(rej);
+					} catch (TCAPSendException e) {
+						logger.error(String.format("Error sending Reject component", e));
+					}
 				} else {
 					resultingIndications.add(ci);
 					ReturnResultImpl rri = (ReturnResultImpl) ci;
@@ -1707,8 +1742,19 @@ public class DialogImpl implements Dialog {
 			case ReturnResultLast:
 
 				if (invoke == null) {
-					// FIXME: send something back?
 					logger.error(String.format("Rx : %s but there is no corresponding Invoke", ci));
+
+					try {
+						Reject rej = new RejectImpl();
+						rej.setInvokeId(ci.getInvokeId());
+						Problem p = new ProblemImpl();
+						p.setType(ProblemType.ReturnResult);
+						p.setReturnResultProblemType(ReturnResultProblemType.UnrecognizedInvokeID);
+						rej.setProblem(p);
+						this.sendComponent(rej);
+					} catch (TCAPSendException e) {
+						logger.error(String.format("Error sending Reject component", e));
+					}
 				} else {
 					invoke.onReturnResultLast();
 					if (invoke.isSuccessReported()) {
@@ -1720,15 +1766,21 @@ public class DialogImpl implements Dialog {
 				}
 				break;
 
-			// case Reject_U:
-			// break;
-			// case Reject_R:
-			// break;
-
 			case ReturnError:
 				if (invoke == null) {
-					// FIXME: send something back?
 					logger.error(String.format("Rx : %s but there is no corresponding Invoke", ci));
+
+					try {
+						Reject rej = new RejectImpl();
+						rej.setInvokeId(ci.getInvokeId());
+						Problem p = new ProblemImpl();
+						p.setType(ProblemType.ReturnError);
+						p.setReturnErrorProblemType(ReturnErrorProblemType.UnrecognizedInvokeID);
+						rej.setProblem(p);
+						this.sendComponent(rej);
+					} catch (TCAPSendException e) {
+						logger.error(String.format("Error sending Reject component", e));
+					}
 				} else {
 					invoke.onError();
 					if (invoke.isErrorReported()) {
@@ -1751,14 +1803,6 @@ public class DialogImpl implements Dialog {
 			default:
 				resultingIndications.add(ci);
 				break;
-			}
-
-			if (this.previewMode) {
-				if (ci.getType() == ComponentType.Invoke) {
-					this.operationsSentA[index] = (InvokeImpl) ci;
-					((InvokeImpl) ci).setDialog(this);
-					((InvokeImpl) ci).setState(OperationState.Sent);
-				}
 			}
 
 		}

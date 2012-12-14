@@ -46,6 +46,7 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
@@ -164,8 +165,8 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 	 * java.lang.Long)
 	 */
 	@Override
-	public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog, Long invokeId, Long linkedId)
-			throws MAPParsingComponentException {
+	public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog, Long invokeId, Long linkedId,
+			Invoke linkedInvoke) throws MAPParsingComponentException {
 
 		// if an application-context-name different from version 1 is
 		// received in a syntactically correct TC-
@@ -223,15 +224,15 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 
 		byte[] buf = param.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		ProvideSubscriberLocationRequestImpl provideSubsLoctReqInd = new ProvideSubscriberLocationRequestImpl();
-		provideSubsLoctReqInd.decodeData(ais, buf.length);
+		ProvideSubscriberLocationRequestImpl ind = new ProvideSubscriberLocationRequestImpl();
+		ind.decodeData(ais, buf.length);
 
-		provideSubsLoctReqInd.setInvokeId(invokeId);
-		provideSubsLoctReqInd.setMAPDialog(mapDialogImpl);
+		ind.setInvokeId(invokeId);
+		ind.setMAPDialog(mapDialogImpl);
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
-			serLis.onMAPMessage(provideSubsLoctReqInd);
-			((MAPServiceLsmListener) serLis).onProvideSubscriberLocationRequest(provideSubsLoctReqInd);
+			serLis.onMAPMessage(ind);
+			((MAPServiceLsmListener) serLis).onProvideSubscriberLocationRequest(ind);
 		}
 
 	}
@@ -260,7 +261,8 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 
 	}
 
-	private void subscriberLocationReportReq(Parameter parameter, MAPDialogLsmImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
+	private void subscriberLocationReportReq(Parameter parameter, MAPDialogLsmImpl mapDialogImpl, Long invokeId)
+			throws MAPParsingComponentException {
 		if (parameter == null) {
 			throw new MAPParsingComponentException("Error while decoding subscriberLocationReport: Parameter is mandatory but not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
@@ -271,15 +273,15 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		SubscriberLocationReportRequestImpl reqInd = new SubscriberLocationReportRequestImpl();
-		reqInd.decodeData(ais, buf.length);
+		SubscriberLocationReportRequestImpl ind = new SubscriberLocationReportRequestImpl();
+		ind.decodeData(ais, buf.length);
 
-		reqInd.setInvokeId(invokeId);
-		reqInd.setMAPDialog(mapDialogImpl);
+		ind.setInvokeId(invokeId);
+		ind.setMAPDialog(mapDialogImpl);
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
-			serLis.onMAPMessage(reqInd);
-			((MAPServiceLsmListener) serLis).onSubscriberLocationReportRequest(reqInd);
+			serLis.onMAPMessage(ind);
+			((MAPServiceLsmListener) serLis).onSubscriberLocationReportRequest(ind);
 		}
 	}
 
@@ -306,7 +308,8 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 		}
 	}
 
-	private void sendRoutingInfoForLCSReq(Parameter parameter, MAPDialogLsmImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
+	private void sendRoutingInfoForLCSReq(Parameter parameter, MAPDialogLsmImpl mapDialogImpl, Long invokeId)
+			throws MAPParsingComponentException {
 		if (parameter == null) {
 			throw new MAPParsingComponentException("Error while decoding sendRoutingInfoForLCS: Parameter is mandatory but not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
@@ -317,15 +320,15 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 
 		byte[] buf = parameter.getData();
 		AsnInputStream ais = new AsnInputStream(buf);
-		SendRoutingInfoForLCSRequestImpl reqInd = new SendRoutingInfoForLCSRequestImpl();
-		reqInd.decodeData(ais, buf.length);
+		SendRoutingInfoForLCSRequestImpl ind = new SendRoutingInfoForLCSRequestImpl();
+		ind.decodeData(ais, buf.length);
 
-		reqInd.setInvokeId(invokeId);
-		reqInd.setMAPDialog(mapDialogImpl);
+		ind.setInvokeId(invokeId);
+		ind.setMAPDialog(mapDialogImpl);
 
 		for (MAPServiceListener serLis : this.serviceListeners) {
-			serLis.onMAPMessage(reqInd);
-			((MAPServiceLsmListener) serLis).onSendRoutingInfoForLCSRequest(reqInd);
+			serLis.onMAPMessage(ind);
+			((MAPServiceLsmListener) serLis).onSendRoutingInfoForLCSRequest(ind);
 		}
 	}
 

@@ -119,7 +119,7 @@ public abstract class EventTestHarness implements TCListener {
 		this.observerdEvents.add(TestEvent.createSentEvent(EventType.Begin, tcbr, sequence++));
 	}
 
-	public void sendContinue() throws TCAPSendException {
+	public void sendContinue() throws TCAPSendException, TCAPException {
 		System.err.println(this+" T["+System.currentTimeMillis()+"]send CONTINUE");
 		// send end
 		TCContinueRequest con = this.tcapProvider.getDialogPrimitiveFactory().createContinue(dialog);

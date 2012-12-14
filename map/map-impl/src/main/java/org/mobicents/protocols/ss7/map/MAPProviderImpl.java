@@ -1407,194 +1407,228 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 	 */
 	private void processComponents(MAPDialogImpl mapDialogImpl, Component[] components) {
 
-		// Getting the MAP Service that serves the MAP Dialog
-		MAPServiceBaseImpl perfSer = (MAPServiceBaseImpl)mapDialogImpl.getService();
-
-		// FIXME: Amit DOUBLE CHECK!
 		// Now let us decode the Components
 		for (Component c : components) {
 
-			try {
-				ComponentType compType = c.getType();
+			doProcessComponent(mapDialogImpl, c);
+		} 
+	}
 
-				Long invokeId = c.getInvokeId();
+	private void doProcessComponent(MAPDialogImpl mapDialogImpl, Component c) {
 
-				Parameter parameter;
-				OperationCode oc;
-				Long linkedId = 0L;
+		// Getting the MAP Service that serves the MAP Dialog
+		MAPServiceBaseImpl perfSer = (MAPServiceBaseImpl)mapDialogImpl.getService();
+
+		try {
+			ComponentType compType = c.getType();
+
+			Long invokeId = c.getInvokeId();
+
+			Parameter parameter;
+			OperationCode oc;
+			Long linkedId = 0L;
+			Invoke linkedInvoke = null;
+
+			switch (compType) {
+			case Invoke: {
+				Invoke comp = (Invoke) c;
+				oc = comp.getOperationCode();
+				parameter = comp.getParameter();
+				linkedId = comp.getLinkedId();
 				
-				switch (compType) {
-				case Invoke: {
-					Invoke comp = (Invoke) c;
-					oc = comp.getOperationCode();
-					parameter = comp.getParameter();
-					linkedId = comp.getLinkedId();
+				// Checking if the invokeId is not duplicated
+				if (!this.getTCAPProvider().getPreviewMode() && !mapDialogImpl.addIncomingInvokeId(invokeId)) {
+					this.deliverDialogNotice(mapDialogImpl, MAPNoticeProblemDiagnostic.AbnormalEventReceivedFromThePeer);
 					
-					// Checking if the invokeId is not duplicated
-					if (!mapDialogImpl.addIncomingInvokeId(invokeId)) {
+					Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
+					problem.setInvokeProblemType(InvokeProblemType.DuplicateInvokeID);
+					mapDialogImpl.sendRejectComponent(null, problem);
+
+					return;
+				}
+				
+				if (linkedId != null) {
+					// linkedId exists Checking if the linkedId exists
+					if (comp.getLinkedInvoke() == null) {
+						this.deliverDialogNotice(mapDialogImpl, MAPNoticeProblemDiagnostic.AbnormalEventReceivedFromThePeer);
+
+						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
+						problem.setInvokeProblemType(InvokeProblemType.UnrechognizedLinkedID);
+						mapDialogImpl.sendRejectComponent(invokeId, problem);
+
+						return;
+					}
+					linkedInvoke = comp.getLinkedInvoke();
+
+					long[] lstInv = perfSer.getLinkedOperationList(linkedInvoke.getOperationCode().getLocalOperationCode());
+					if (lstInv == null) {
+						this.deliverDialogNotice(mapDialogImpl, MAPNoticeProblemDiagnostic.AbnormalEventReceivedFromThePeer);
+
+						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
+						problem.setInvokeProblemType(InvokeProblemType.LinkedResponseUnexpected);
+						mapDialogImpl.sendRejectComponent(invokeId, problem);
+
+						return;
+					}
+
+					boolean found = false;
+					if (lstInv != null) {
+						for (long l : lstInv) {
+							if (l == comp.getOperationCode().getLocalOperationCode()) {
+								found = true;
+								break;
+							}
+						}
+					}
+					if (!found) {
+						this.deliverDialogNotice(mapDialogImpl, MAPNoticeProblemDiagnostic.AbnormalEventReceivedFromThePeer);
+
+						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
+						problem.setInvokeProblemType(InvokeProblemType.UnexpectedLinkedOperation);
+						mapDialogImpl.sendRejectComponent(invokeId, problem);
+
+						return;
+					}
+				}
+			}
+				break;
+
+			case ReturnResult: {
+				ReturnResult comp = (ReturnResult) c;
+				oc = comp.getOperationCode();
+				parameter = comp.getParameter();
+			}
+				break;
+
+			case ReturnResultLast: {
+				ReturnResultLast comp = (ReturnResultLast) c;
+				oc = comp.getOperationCode();
+				parameter = comp.getParameter();
+			}
+				break;
+
+			case ReturnError: {
+				ReturnError comp = (ReturnError) c;
+				
+				long errorCode = 0;
+				if (comp.getErrorCode() != null && comp.getErrorCode().getErrorType() == ErrorCodeType.Local)
+					errorCode = comp.getErrorCode().getLocalErrorCode();
+				if (errorCode < MAPErrorCode.minimalCodeValue || errorCode > MAPErrorCode.maximumCodeValue) {
+					// Not Local error code and not MAP error code received
+					perfSer.deliverProviderErrorComponent(mapDialogImpl, invokeId, MAPProviderError.InvalidResponseReceived);
+
+					Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnError);
+					problem.setReturnErrorProblemType(ReturnErrorProblemType.UnrecognizedError);
+					mapDialogImpl.sendRejectComponent(invokeId, problem);
+					
+					return;
+				}
+				
+				MAPErrorMessage msgErr = this.mapErrorMessageFactory.createMessageFromErrorCode(errorCode);
+				try {
+					//msgErr.decodeParameter(comp.getParameter());
+					Parameter p = comp.getParameter();
+					if (p != null && p.getData() != null) {
+						byte[] data = p.getData();
+						AsnInputStream ais = new AsnInputStream(data, p.getTagClass(), p.isPrimitive(), p.getTag());
+						((MAPErrorMessageImpl)msgErr).decodeData(ais, data.length);
+					}
+				} catch ( MAPParsingComponentException e) {
+					// Failed when parsing the component - send TC-U-REJECT
+					perfSer.deliverProviderErrorComponent(mapDialogImpl, invokeId, MAPProviderError.InvalidResponseReceived);
+
+					Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnError);
+					problem.setReturnErrorProblemType(ReturnErrorProblemType.MistypedParameter);
+					mapDialogImpl.sendRejectComponent(invokeId, problem);
+
+					return;
+				}
+				perfSer.deliverErrorComponent(mapDialogImpl, comp.getInvokeId(), msgErr);
+				
+				return;
+			}
+
+			case Reject: {
+				Reject comp = (Reject) c;
+				perfSer.deliverRejectComponent(mapDialogImpl, comp.getInvokeId(), comp.getProblem());
+				
+				return;
+			}
+			
+			default:
+				return;
+			}
+			
+			try {
+				
+				perfSer.processComponent(compType, oc, parameter, mapDialogImpl, invokeId, linkedId, linkedInvoke);
+				
+			} catch (MAPParsingComponentException e) {
+				
+				loger.error("MAPParsingComponentException when parsing components: " + e.getReason().toString() + " - " + e.getMessage(), e);
+				
+				switch (e.getReason()) {
+				case UnrecognizedOperation:
+					// Component does not supported - send TC-U-REJECT
+					if (compType == ComponentType.Invoke) {
 						this.deliverDialogNotice(mapDialogImpl, MAPNoticeProblemDiagnostic.AbnormalEventReceivedFromThePeer);
 						
 						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
-						problem.setInvokeProblemType(InvokeProblemType.DuplicateInvokeID);
-						mapDialogImpl.sendRejectComponent(null, problem);
-
-						return;
-					}
-					
-					if (linkedId != null) {
-						// linkedId exists Checking if the linkedId exists
-						if (!mapDialogImpl.checkIncomingInvokeIdExists(linkedId)) {
-							this.deliverDialogNotice(mapDialogImpl, MAPNoticeProblemDiagnostic.AbnormalEventReceivedFromThePeer);
-
-							Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
-							problem.setInvokeProblemType(InvokeProblemType.UnrechognizedLinkedID);
-							mapDialogImpl.sendRejectComponent(invokeId, problem);
-
-							return;
-						}
-					}
-				}
-					break;
-
-				case ReturnResult: {
-					ReturnResult comp = (ReturnResult) c;
-					oc = comp.getOperationCode();
-					parameter = comp.getParameter();
-				}
-					break;
-
-				case ReturnResultLast: {
-					ReturnResultLast comp = (ReturnResultLast) c;
-					oc = comp.getOperationCode();
-					parameter = comp.getParameter();
-				}
-					break;
-
-				case ReturnError: {
-					ReturnError comp = (ReturnError) c;
-					
-					long errorCode = 0;
-					if (comp.getErrorCode() != null && comp.getErrorCode().getErrorType() == ErrorCodeType.Local)
-						errorCode = comp.getErrorCode().getLocalErrorCode();
-					if (errorCode < MAPErrorCode.minimalCodeValue || errorCode > MAPErrorCode.maximumCodeValue) {
-						// Not Local error code and not MAP error code received
-						perfSer.deliverProviderErrorComponent(mapDialogImpl, invokeId, MAPProviderError.InvalidResponseReceived);
-
-						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnError);
-						problem.setReturnErrorProblemType(ReturnErrorProblemType.UnrecognizedError);
+						problem.setInvokeProblemType(InvokeProblemType.UnrecognizedOperation);
 						mapDialogImpl.sendRejectComponent(invokeId, problem);
+					} else {
+						perfSer.deliverProviderErrorComponent(mapDialogImpl, invokeId, MAPProviderError.InvalidResponseReceived);
 						
-						return;
-					}
-					
-					MAPErrorMessage msgErr = this.mapErrorMessageFactory.createMessageFromErrorCode(errorCode);
-					try {
-						//msgErr.decodeParameter(comp.getParameter());
-						Parameter p = comp.getParameter();
-						if (p != null && p.getData() != null) {
-							byte[] data = p.getData();
-							AsnInputStream ais = new AsnInputStream(data, p.getTagClass(), p.isPrimitive(), p.getTag());
-							((MAPErrorMessageImpl)msgErr).decodeData(ais, data.length);
-						}
-					} catch ( MAPParsingComponentException e) {
-						// Failed when parsing the component - send TC-U-REJECT
-						perfSer.deliverProviderErrorComponent(mapDialogImpl, invokeId, MAPProviderError.InvalidResponseReceived);
-
-						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnError);
-						problem.setReturnErrorProblemType(ReturnErrorProblemType.MistypedParameter);
+						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnResult);
+						problem.setReturnResultProblemType(ReturnResultProblemType.MistypedParameter);
 						mapDialogImpl.sendRejectComponent(invokeId, problem);
-
-						return;
 					}
-					perfSer.deliverErrorComponent(mapDialogImpl, comp.getInvokeId(), msgErr);
-					
-					return;
-				}
+					break;
 
-				case Reject: {
-					Reject comp = (Reject) c;
-					perfSer.deliverRejectComponent(mapDialogImpl, comp.getInvokeId(), comp.getProblem());
-					
-					return;
-				}
-				
-				default:
-					return;
-				}
-				
-				try {
-					
-					perfSer.processComponent(compType, oc, parameter, mapDialogImpl, invokeId, linkedId);
-					
-				} catch (MAPParsingComponentException e) {
-					
-					loger.error("MAPParsingComponentException when parsing components: " + e.getReason().toString() + " - " + e.getMessage(), e);
-					
-					switch (e.getReason()) {
-					case UnrecognizedOperation:
-						// Component does not supported - send TC-U-REJECT
-						if (compType == ComponentType.Invoke) {
-							this.deliverDialogNotice(mapDialogImpl, MAPNoticeProblemDiagnostic.AbnormalEventReceivedFromThePeer);
-							
-							Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
-							problem.setInvokeProblemType(InvokeProblemType.UnrecognizedOperation);
-							mapDialogImpl.sendRejectComponent(invokeId, problem);
-						} else {
-							perfSer.deliverProviderErrorComponent(mapDialogImpl, invokeId, MAPProviderError.InvalidResponseReceived);
-							
-							Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnResult);
-							problem.setReturnResultProblemType(ReturnResultProblemType.MistypedParameter);
-							mapDialogImpl.sendRejectComponent(invokeId, problem);
-						}
-						break;
-
-					case MistypedParameter:
-						// Failed when parsing the component - send TC-U-REJECT
-						if (compType == ComponentType.Invoke) {
-							this.deliverDialogNotice(mapDialogImpl, MAPNoticeProblemDiagnostic.AbnormalEventReceivedFromThePeer);
-							
-							Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
-							problem.setInvokeProblemType(InvokeProblemType.MistypedParameter);
-							mapDialogImpl.sendRejectComponent(invokeId, problem);
-						} else {
-							perfSer.deliverProviderErrorComponent(mapDialogImpl, invokeId, MAPProviderError.InvalidResponseReceived);
-							
-							Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnResult);
-							problem.setReturnResultProblemType(ReturnResultProblemType.MistypedParameter);
-							mapDialogImpl.sendRejectComponent(invokeId, problem);
-						}
-						break;
-
-					case LinkedResponseUnexpected:
-						// Failed when parsing the component - send TC-U-REJECT
-						if (compType == ComponentType.Invoke) {
-							this.deliverDialogNotice(mapDialogImpl, MAPNoticeProblemDiagnostic.AbnormalEventReceivedFromThePeer);
-							
-							Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
-							problem.setInvokeProblemType(InvokeProblemType.LinkedResponseUnexpected);
-							mapDialogImpl.sendRejectComponent(invokeId, problem);
-						}
-						break;
-
-					case UnexpectedLinkedOperation:
-						// Failed when parsing the component - send TC-U-REJECT
-						if (compType == ComponentType.Invoke) {
-							this.deliverDialogNotice(mapDialogImpl, MAPNoticeProblemDiagnostic.AbnormalEventReceivedFromThePeer);
-							
-							Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
-							problem.setInvokeProblemType(InvokeProblemType.UnexpectedLinkedOperation);
-							mapDialogImpl.sendRejectComponent(invokeId, problem);
-						}
-						break;
+				case MistypedParameter:
+					// Failed when parsing the component - send TC-U-REJECT
+					if (compType == ComponentType.Invoke) {
+						this.deliverDialogNotice(mapDialogImpl, MAPNoticeProblemDiagnostic.AbnormalEventReceivedFromThePeer);
+						
+						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
+						problem.setInvokeProblemType(InvokeProblemType.MistypedParameter);
+						mapDialogImpl.sendRejectComponent(invokeId, problem);
+					} else {
+						perfSer.deliverProviderErrorComponent(mapDialogImpl, invokeId, MAPProviderError.InvalidResponseReceived);
+						
+						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnResult);
+						problem.setReturnResultProblemType(ReturnResultProblemType.MistypedParameter);
+						mapDialogImpl.sendRejectComponent(invokeId, problem);
 					}
+					break;
 
+				case LinkedResponseUnexpected:
+					// Failed when parsing the component - send TC-U-REJECT
+					if (compType == ComponentType.Invoke) {
+						this.deliverDialogNotice(mapDialogImpl, MAPNoticeProblemDiagnostic.AbnormalEventReceivedFromThePeer);
+						
+						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
+						problem.setInvokeProblemType(InvokeProblemType.LinkedResponseUnexpected);
+						mapDialogImpl.sendRejectComponent(invokeId, problem);
+					}
+					break;
+
+				case UnexpectedLinkedOperation:
+					// Failed when parsing the component - send TC-U-REJECT
+					if (compType == ComponentType.Invoke) {
+						this.deliverDialogNotice(mapDialogImpl, MAPNoticeProblemDiagnostic.AbnormalEventReceivedFromThePeer);
+						
+						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
+						problem.setInvokeProblemType(InvokeProblemType.UnexpectedLinkedOperation);
+						mapDialogImpl.sendRejectComponent(invokeId, problem);
+					}
+					break;
 				}
-			} catch (MAPException e) {
-				loger.error("Error sending the RejectComponent: " + e.getMessage(), e);
+
 			}
-			
-		} 
-
+		} catch (MAPException e) {
+			loger.error("Error processing a Component: " + e.getMessage() + "\nComponent" + c, e);
+		}
 	}
 
 	public void onTCNotice(TCNoticeIndication ind) {

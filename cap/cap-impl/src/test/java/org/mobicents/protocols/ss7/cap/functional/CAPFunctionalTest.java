@@ -43,9 +43,11 @@ import org.mobicents.protocols.ss7.cap.CAPStackImpl;
 import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.cap.api.CAPOperationCode;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAnswerSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPNoticeProblemDiagnostic;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageSystemFailure;
@@ -114,6 +116,7 @@ import org.mobicents.protocols.ss7.tcap.api.MessageType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.InvokeProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ProblemType;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -809,6 +812,8 @@ public class CAPFunctionalTest extends SccpHarness {
 				assertNull(ind.getServiceInteractionIndicatorsTwo());
 			}
 
+			private long playAnnounsmentInvokeId;
+
 			public void onPlayAnnouncementRequest(PlayAnnouncementRequest ind) {
 				super.onPlayAnnouncementRequest(ind);
 
@@ -819,6 +824,8 @@ public class CAPFunctionalTest extends SccpHarness {
 				assertFalse(ind.getRequestAnnouncementStartedNotification());
 				assertNull(ind.getCallSegmentID());
 				assertNull(ind.getExtensions());
+				
+				playAnnounsmentInvokeId = ind.getInvokeId();
 
 				dialogStep = 1;
 			}
@@ -850,7 +857,7 @@ public class CAPFunctionalTest extends SccpHarness {
 				try {
 					switch (dialogStep) {
 					case 1: // after PlayAnnouncementRequest
-						dlg.addSpecializedResourceReportRequest_CapV23();
+						dlg.addSpecializedResourceReportRequest_CapV23(playAnnounsmentInvokeId);
 						this.observerdEvents.add(TestEvent.createSentEvent(EventType.SpecializedResourceReportRequest, null, sequence++));
 						dlg.send();
 
@@ -882,8 +889,13 @@ public class CAPFunctionalTest extends SccpHarness {
 				assertFalse(ind.getFirstAnnouncementStarted());
 				assertFalse(ind.getAllAnnouncementsComplete());
 
+				assertEquals((long) ind.getLinkedId(), playAnnounsmentInvokeId);
+				assertEquals((long) ind.getLinkedInvoke().getOperationCode().getLocalOperationCode(), CAPOperationCode.playAnnouncement);
+
 				dialogStep = 2;
 			}
+
+			private long playAnnounsmentInvokeId;
 
 			@Override
 			public void onDialogDelimiter(CAPDialog capDialog) {
@@ -911,7 +923,8 @@ public class CAPFunctionalTest extends SccpHarness {
 
 						Tone tone = this.capParameterFactory.createTone(10, 100);
 						InformationToSend informationToSend = this.capParameterFactory.createInformationToSend(tone);
-						dlg.addPlayAnnouncementRequest(informationToSend, true, true, null, null, invokeTimeoutSuppressed);
+
+						playAnnounsmentInvokeId = dlg.addPlayAnnouncementRequest(informationToSend, true, true, null, null, invokeTimeoutSuppressed);
 						this.observerdEvents.add(TestEvent.createSentEvent(EventType.PlayAnnouncementRequest, null, sequence++));
 						dlg.send();
 
@@ -1041,8 +1054,8 @@ public class CAPFunctionalTest extends SccpHarness {
 	 * TC-BEGIN + AssistRequestInstructionsRequest
 	 *   TC-CONTINUE + ResetTimerRequest
 	 *   TC-CONTINUE + PromptAndCollectUserInformationRequest
-	 * TC-CONTINUE + PromptAndCollectUserInformationResponse
 	 * TC-CONTINUE + SpecializedResourceReportRequest
+	 * TC-CONTINUE + PromptAndCollectUserInformationResponse
 	 *   TC-END + CancelRequest
 	 */
 	@Test(groups = { "functional.flow", "dialog" })
@@ -1107,6 +1120,10 @@ public class CAPFunctionalTest extends SccpHarness {
 				try {
 					switch (dialogStep) {
 					case 1: // after PromptAndCollectUserInformationRequest
+						dlg.addSpecializedResourceReportRequest_CapV4(promptAndCollectUserInformationInvokeId, false, true);
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.SpecializedResourceReportRequest, null, sequence++));
+						dlg.send();
+
 						GenericNumber genericNumber = this.isupParameterFactory.createGenericNumber();
 						genericNumber.setAddress("444422220000");
 						genericNumber.setAddressRepresentationRestrictedIndicator(GenericNumber._APRI_ALLOWED);
@@ -1117,10 +1134,6 @@ public class CAPFunctionalTest extends SccpHarness {
 						Digits digitsResponse = this.capParameterFactory.createDigits(genericNumber);
 						dlg.addPromptAndCollectUserInformationResponse_DigitsResponse(promptAndCollectUserInformationInvokeId, digitsResponse);
 						this.observerdEvents.add(TestEvent.createSentEvent(EventType.PromptAndCollectUserInformationResponse, null, sequence++));
-						dlg.send();
-
-						dlg.addSpecializedResourceReportRequest_CapV4(false, true);
-						this.observerdEvents.add(TestEvent.createSentEvent(EventType.SpecializedResourceReportRequest, null, sequence++));
 						dlg.send();
 						
 						dialogStep = 0;
@@ -1135,6 +1148,7 @@ public class CAPFunctionalTest extends SccpHarness {
 
 		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
 			private int dialogStep = 0;
+			private long PromptAndCollectUserInformationRequestInvokeId;
 
 			public void onAssistRequestInstructionsRequest(AssistRequestInstructionsRequest ind) {
 				super.onAssistRequestInstructionsRequest(ind);
@@ -1179,6 +1193,8 @@ public class CAPFunctionalTest extends SccpHarness {
 				} catch (CAPException e) {
 					this.error("Error while checking PromptAndCollectUserInformationResponse", e);
 				}
+
+				dialogStep = 2;
 			}
 
 			public void onSpecializedResourceReportRequest(SpecializedResourceReportRequest ind) {
@@ -1186,8 +1202,9 @@ public class CAPFunctionalTest extends SccpHarness {
 
 				assertFalse(ind.getAllAnnouncementsComplete());
 				assertTrue(ind.getFirstAnnouncementStarted());
-
-				dialogStep = 2;
+				
+				assertEquals((long) ind.getLinkedId(), PromptAndCollectUserInformationRequestInvokeId);
+				assertEquals((long) ind.getLinkedInvoke().getOperationCode().getLocalOperationCode(), CAPOperationCode.promptAndCollectUserInformation);
 			}
 
 			public void onDialogDelimiter(CAPDialog capDialog) {
@@ -1205,7 +1222,7 @@ public class CAPFunctionalTest extends SccpHarness {
 						CollectedDigits collectedDigits = this.capParameterFactory.createCollectedDigits(1, 11, null, null, null, null, null, null, null, null,
 								null);
 						CollectedInfo collectedInfo = this.capParameterFactory.createCollectedInfo(collectedDigits);
-						dlg.addPromptAndCollectUserInformationRequest(collectedInfo, true, null, null, null, null);
+						PromptAndCollectUserInformationRequestInvokeId = dlg.addPromptAndCollectUserInformationRequest(collectedInfo, true, null, null, null, null);
 						this.observerdEvents.add(TestEvent.createSentEvent(EventType.PromptAndCollectUserInformationRequest, null, sequence++));
 						dlg.send();
 
@@ -1254,10 +1271,10 @@ public class CAPFunctionalTest extends SccpHarness {
 		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
 		clientExpectedEvents.add(te);
 
-		te = TestEvent.createSentEvent(EventType.PromptAndCollectUserInformationResponse, null, count++, stamp);
+		te = TestEvent.createSentEvent(EventType.SpecializedResourceReportRequest, null, count++, stamp);
 		clientExpectedEvents.add(te);
 
-		te = TestEvent.createSentEvent(EventType.SpecializedResourceReportRequest, null, count++, stamp);
+		te = TestEvent.createSentEvent(EventType.PromptAndCollectUserInformationResponse, null, count++, stamp);
 		clientExpectedEvents.add(te);
 
 		te = TestEvent.createReceivedEvent(EventType.CancelRequest, null, count++, stamp);
@@ -1294,13 +1311,13 @@ public class CAPFunctionalTest extends SccpHarness {
 		te = TestEvent.createSentEvent(EventType.PromptAndCollectUserInformationRequest, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
-		te = TestEvent.createReceivedEvent(EventType.PromptAndCollectUserInformationResponse, null, count++, stamp);
+		te = TestEvent.createReceivedEvent(EventType.SpecializedResourceReportRequest, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
 		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
-		te = TestEvent.createReceivedEvent(EventType.SpecializedResourceReportRequest, null, count++, stamp);
+		te = TestEvent.createReceivedEvent(EventType.PromptAndCollectUserInformationResponse, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
 		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
@@ -2525,6 +2542,178 @@ public class CAPFunctionalTest extends SccpHarness {
 		serverExpectedEvents.add(te);
 		
 		client.sendInitialDp3();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+	}
+
+	/** 
+	 * Testing for some special error cases:
+	 *   - linkedId to an operation that does not support linked operations
+	 *   - linkedId to a missed operation
+	 * 
+	 * TC-BEGIN + initialDPRequest + playAnnouncement
+	 *   TC-CONTINUE + SpecializedResourceReportRequest to initialDPRequest (unsupported) + 
+	 *     SpecializedResourceReportRequest to a missed operation (linkedId==bad==50) +
+	 *     SpecializedResourceReportRequest to a correct operation
+	 * TC-END
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testBadInvokeLinkedId() throws Exception {
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			int dialogStep = 0;
+
+			@Override
+			public void onDialogNotice(CAPDialog capDialog, CAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
+				super.onDialogNotice(capDialog, noticeProblemDiagnostic);
+
+				dialogStep++;
+
+				switch (dialogStep) {
+				case 1:
+					assertEquals(noticeProblemDiagnostic, CAPNoticeProblemDiagnostic.LinkedResponseUnexpected);
+					break;
+				case 2:
+					assertEquals(noticeProblemDiagnostic, CAPNoticeProblemDiagnostic.UnknownLinkedIdReceived);
+					break;
+				}
+			}
+
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall) capDialog;
+
+				try {
+					dlg.close(false);
+				} catch (CAPException e) {
+					this.error("Error while trying to send/close() Dialog", e);
+				}
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			int dialogStep = 0;
+			long invokeId1;
+			long invokeId2;
+
+			public void onInitialDPRequest(InitialDPRequest ind) {
+				super.onInitialDPRequest(ind);
+
+				invokeId1 = ind.getInvokeId();
+			}
+
+			public void onPlayAnnouncementRequest(PlayAnnouncementRequest ind) {
+				super.onPlayAnnouncementRequest(ind);
+
+				invokeId2 = ind.getInvokeId();
+			}
+
+			public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem) {
+				super.onRejectComponent(capDialog, invokeId, problem);
+
+				dialogStep++;
+
+				switch (dialogStep) {
+				case 1:
+					assertEquals(problem.getType(), ProblemType.Invoke);
+					assertEquals(problem.getInvokeProblemType(), InvokeProblemType.LinkedResponseUnexpected);
+					break;
+				case 2:
+					assertEquals(problem.getType(), ProblemType.Invoke);
+					assertEquals(problem.getInvokeProblemType(), InvokeProblemType.UnrechognizedLinkedID);
+					break;
+				}
+			}
+
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall) capDialog;
+
+				try {
+					dlg.addSpecializedResourceReportRequest_CapV23(invokeId1);
+					dlg.addSpecializedResourceReportRequest_CapV23((long) 50);
+					dlg.addSpecializedResourceReportRequest_CapV23(invokeId2);
+
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.SpecializedResourceReportRequest, null, sequence++));
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.SpecializedResourceReportRequest, null, sequence++));
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.SpecializedResourceReportRequest, null, sequence++));
+
+					dlg.send();
+				} catch (CAPException e) {
+					this.error("Error while trying to send/close() Dialog", e);
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.InitialDpRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.PlayAnnouncementRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogNotice, null, count++, (stamp));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogNotice, null, count++, (stamp));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.SpecializedResourceReportRequest, null, count++, (stamp));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+		
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.InitialDpRequest, null, count++, (stamp));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.PlayAnnouncementRequest, null, count++, (stamp));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.SpecializedResourceReportRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.SpecializedResourceReportRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.SpecializedResourceReportRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.RejectComponent, null, count++, (stamp));
+		serverExpectedEvents.add(te);
+		
+		te = TestEvent.createReceivedEvent(EventType.RejectComponent, null, count++, (stamp));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+		
+		client.sendInitialDp_playAnnouncement();
 		waitForEnd();
 		client.compareEvents(clientExpectedEvents);
 		server.compareEvents(serverExpectedEvents);

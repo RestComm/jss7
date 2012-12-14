@@ -424,9 +424,12 @@ public class DialogIdleEndTest extends SccpHarness {
 					//send continue
 					try {
 						sendContinue();
+					} catch (TCAPException e) {
+						e.printStackTrace();
+						fail("Received exception. Message: " + e.getMessage());
 					} catch (TCAPSendException e) {
 						e.printStackTrace();
-						fail("Received exception. Message: "+e.getMessage());
+						fail("Received exception. Message: " + e.getMessage());
 					}
 					sendContinue = true;
 				}

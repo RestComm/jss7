@@ -40,6 +40,7 @@ import org.mobicents.protocols.ss7.map.dialog.ServingCheckDataImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
@@ -95,8 +96,8 @@ public class MAPServicePdpContextActivationImpl extends MAPServiceBaseImpl imple
 		return new ServingCheckDataImpl(ServingCheckResult.AC_NotServing);
 	}
 
-	public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog, Long invokeId, Long linkedId)
-			throws MAPParsingComponentException {
+	public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog, Long invokeId, Long linkedId,
+			Invoke linkedInvoke) throws MAPParsingComponentException {
 		// TODO Implement it
 	}
 }

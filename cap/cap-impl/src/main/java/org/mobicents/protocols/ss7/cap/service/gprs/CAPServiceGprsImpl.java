@@ -39,6 +39,7 @@ import org.mobicents.protocols.ss7.cap.dialog.ServingCheckDataImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
@@ -98,8 +99,8 @@ public class CAPServiceGprsImpl extends CAPServiceBaseImpl implements CAPService
 	}
 
 	@Override
-	public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, CAPDialog capDialog, Long invokeId, Long linkedId)
-			throws CAPParsingComponentException {
+	public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, CAPDialog capDialog, Long invokeId, Long linkedId,
+			Invoke linkedInvoke) throws CAPParsingComponentException {
 		// TODO Auto-generated method stub
 		
 	}

@@ -162,7 +162,10 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.InvokeProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Reject;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResult;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
@@ -4596,7 +4599,7 @@ public class MAPFunctionalTest extends SccpHarness {
 
 
 	/**
-	 * TC-BEGIN + cancelLocation MAV V2
+	 * TC-BEGIN + cancelLocationRequest MAV V2
 	 * TC-END + cancleLocationResponse
 	 */
 	@Test(groups = { "functional.flow", "dialog" })
@@ -4869,7 +4872,7 @@ public class MAPFunctionalTest extends SccpHarness {
 
 
 	/**
-	 * TC-BEGIN + provideRoamingNumber V2
+	 * TC-BEGIN + provideRoamingNumberRequest V2
 	 * TC-END + provideRoamingNumberResponse
 	 */
 	@Test(groups = { "functional.flow", "dialog" })
@@ -5012,6 +5015,150 @@ public class MAPFunctionalTest extends SccpHarness {
 		serverExpectedEvents.add(te);
 
 		client.sendProvideRoamingNumber_V2();
+		
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}	
+
+
+	/**
+	 * TC-BEGIN + sendRoutingInfoForSMRequest + reportSMDeliveryStatusRequest
+	 *   TC-CONTINUE sendRoutingInfoForSMResponse + sendRoutingInfoForSMResponse for the same InvokeId (doubled InvokeId) 
+	 * TC-END + Reject(bad invokeId)
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testBadInvokeLinkedId() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending the TC-CONTINUE", e);
+					fail("Error while sending the TC-CONTINUE");
+				}
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+
+			int step = 0;
+			long invokeId1;
+			long invokeId2;
+
+			@Override
+			public void onSendRoutingInfoForSMRequest(SendRoutingInfoForSMRequest ind) {
+				super.onSendRoutingInfoForSMRequest(ind);
+				invokeId1 = ind.getInvokeId();
+			}
+
+			@Override
+			public void onReportSMDeliveryStatusRequest(ReportSMDeliveryStatusRequest ind) {
+				super.onReportSMDeliveryStatusRequest(ind);
+				invokeId2 = ind.getInvokeId();
+			}
+
+			@Override
+			public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem) {
+				super.onRejectComponent(mapDialog, invokeId, problem);
+
+				assertEquals((long)invokeId, invokeId1);
+				assertEquals(problem.getType(), ProblemType.ReturnResult);
+				assertEquals(problem.getReturnResultProblemType(), ReturnResultProblemType.UnrecognizedInvokeID);
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					step++;
+					MAPDialogSms clientDialogSms = (MAPDialogSms) mapDialog;
+
+					switch(step) {
+					case 1:
+
+						ISDNAddressString msisdn = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "11223344");
+//						AddressString serviceCentreAddress = this.mapParameterFactory.createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "1122334455");
+						IMSI imsi = this.mapParameterFactory.createIMSI("777222");
+						LocationInfoWithLMSI locationInfoWithLMSI = this.mapParameterFactory.createLocationInfoWithLMSI(msisdn, null, null, null, null);
+						clientDialogSms.addSendRoutingInfoForSMResponse(invokeId1, imsi, locationInfoWithLMSI, null, null);
+
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.SendRoutingInfoForSMRespIndication, null, sequence++));
+
+						imsi = this.mapParameterFactory.createIMSI("777222222");
+						clientDialogSms.addSendRoutingInfoForSMResponse(invokeId1, imsi, locationInfoWithLMSI, null, null);
+
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.SendRoutingInfoForSMRespIndication, null, sequence++));
+
+						mapDialog.send();
+						break;
+					}
+
+				} catch (MAPException e) {
+					this.error("Error while sending TC-CONTINUE or TC-END", e);
+					fail("Error while sending TC-CONTINUE or TC-END");
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.SendRoutingInfoForSMIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ReportSMDeliveryStatusIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.SendRoutingInfoForSMRespIndication, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.SendRoutingInfoForSMIndication, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ReportSMDeliveryStatusIndication, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.SendRoutingInfoForSMRespIndication, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.SendRoutingInfoForSMRespIndication, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.RejectComponent, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.send_sendRoutingInfoForSMRequest_reportSMDeliveryStatusRequest();
 		
 		waitForEnd();
 		client.compareEvents(clientExpectedEvents);

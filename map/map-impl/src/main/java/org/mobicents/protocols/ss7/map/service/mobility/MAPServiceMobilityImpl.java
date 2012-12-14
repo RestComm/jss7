@@ -231,8 +231,8 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 	}
 
 	@Override
-	public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog, Long invokeId, Long linkedId)
-			throws MAPParsingComponentException {
+	public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog, Long invokeId, Long linkedId,
+			Invoke linkedInvoke) throws MAPParsingComponentException {
 
 		// if an application-context-name different from version 1 is
 		// received in a syntactically correct TC-
@@ -383,9 +383,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 		}
 	}
 
-	private void cancelLocationRequest(Parameter parameter,
-			MAPDialogMobilityImpl mapDialogImpl, Long invokeId)
-			throws MAPParsingComponentException {
+	private void cancelLocationRequest(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
 
 		long version = mapDialogImpl.getApplicationContext()
 				.getApplicationContextVersion().getVersion();
@@ -618,8 +616,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 	}
 	
 	// - IMEI services
-	private void processCheckImeiRequest(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId) 
-			throws MAPParsingComponentException {
+	private void processCheckImeiRequest(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
 		
 		if (parameter == null)
 			throw new MAPParsingComponentException("Error while decoding CheckImeiRequest: Parameter is mandatory but not found",
@@ -696,7 +693,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 	}
 
 	// - Subscriber management services
-	private void processInsertSubscriberDataRequest(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId) 
+	private void processInsertSubscriberDataRequest(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId)
 			throws MAPParsingComponentException {
 		
 		if (parameter == null)

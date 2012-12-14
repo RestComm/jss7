@@ -204,13 +204,13 @@ public interface CAPDialogCircuitSwitchedCall extends CAPDialog {
 	public Long addSendChargingInformationRequest(int customInvokeTimeout, SCIBillingChargingCharacteristics sciBillingChargingCharacteristics,
 			SendingSideID partyToCharge, CAPExtensions extensions) throws CAPException;
 
-	public Long addSpecializedResourceReportRequest_CapV23() throws CAPException;
+	public Long addSpecializedResourceReportRequest_CapV23(Long linkedId) throws CAPException;
 
-	public Long addSpecializedResourceReportRequest_CapV4(boolean isAllAnnouncementsComplete, boolean isFirstAnnouncementStarted) throws CAPException;
+	public Long addSpecializedResourceReportRequest_CapV4(Long linkedId, boolean isAllAnnouncementsComplete, boolean isFirstAnnouncementStarted) throws CAPException;
 
-	public Long addSpecializedResourceReportRequest_CapV23(int customInvokeTimeout) throws CAPException;
+	public Long addSpecializedResourceReportRequest_CapV23(Long linkedId, int customInvokeTimeout) throws CAPException;
 
-	public Long addSpecializedResourceReportRequest_CapV4(int customInvokeTimeout, boolean isAllAnnouncementsComplete, boolean isFirstAnnouncementStarted) throws CAPException;
+	public Long addSpecializedResourceReportRequest_CapV4(Long linkedId, int customInvokeTimeout, boolean isAllAnnouncementsComplete, boolean isFirstAnnouncementStarted) throws CAPException;
 
 	public Long addPlayAnnouncementRequest(InformationToSend informationToSend, Boolean disconnectFromIPForbidden,
 			Boolean requestAnnouncementCompleteNotification, CAPExtensions extensions, Integer callSegmentID, Boolean requestAnnouncementStartedNotification)

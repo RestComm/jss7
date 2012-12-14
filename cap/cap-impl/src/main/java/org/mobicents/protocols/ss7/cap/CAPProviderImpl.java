@@ -840,197 +840,235 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
 	private void processComponents(CAPDialogImpl capDialogImpl, Component[] components) {
 
-		// Getting the CAP Service that serves the CAP Dialog
-		CAPServiceBaseImpl perfSer = (CAPServiceBaseImpl)capDialogImpl.getService();
-
 		// Now let us decode the Components
 		for (Component c : components) {
 
-			try {
-				ComponentType compType = c.getType();
+			doProcessComponent(capDialogImpl, c);
+		} 
+	}
 
-				Long invokeId = c.getInvokeId();
+	private void doProcessComponent(CAPDialogImpl capDialogImpl, Component c) {
 
-				Parameter parameter;
-				OperationCode oc;
-				Long linkedId = 0L;
+		// Getting the CAP Service that serves the CAP Dialog
+		CAPServiceBaseImpl perfSer = (CAPServiceBaseImpl)capDialogImpl.getService();
+
+		try {
+			ComponentType compType = c.getType();
+
+			Long invokeId = c.getInvokeId();
+
+			Parameter parameter;
+			OperationCode oc;
+			Long linkedId = 0L;
+			Invoke linkedInvoke = null;
+			
+			switch (compType) {
+			case Invoke: {
+				Invoke comp = (Invoke) c;
+				oc = comp.getOperationCode();
+				parameter = comp.getParameter();
+				linkedId = comp.getLinkedId();
 				
-				switch (compType) {
-				case Invoke: {
-					Invoke comp = (Invoke) c;
-					oc = comp.getOperationCode();
-					parameter = comp.getParameter();
-					linkedId = comp.getLinkedId();
-					
-					// Checking if the invokeId is not duplicated
-					if (!capDialogImpl.addIncomingInvokeId(invokeId)) {
-						this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.DuplicatedInvokeIdReceived);
-						
-						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
-						problem.setInvokeProblemType(InvokeProblemType.DuplicateInvokeID);
-						capDialogImpl.sendRejectComponent(null, problem);
-
-						return;
-					}
-					
-					if (linkedId != null) {
-						// linkedId exists Checking if the linkedId exists
-						if (!capDialogImpl.checkIncomingInvokeIdExists(linkedId)) {
-							this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.UnknownLinkedIdReceived);
-
-							Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
-							problem.setInvokeProblemType(InvokeProblemType.UnrechognizedLinkedID);
-							capDialogImpl.sendRejectComponent(invokeId, problem);
-
-							return;
-						}
-					}
-				}
-					break;
-
-				case ReturnResult: {
-					// ReturnResult is not supported by CAMEL
-					this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalComponentReceivedFromThePeer);
+				// Checking if the invokeId is not duplicated
+				if (!this.getTCAPProvider().getPreviewMode() && !capDialogImpl.addIncomingInvokeId(invokeId)) {
+					this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.DuplicatedInvokeIdReceived);
 					
 					Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
-					problem.setInvokeProblemType(InvokeProblemType.UnrecognizedOperation);
+					problem.setInvokeProblemType(InvokeProblemType.DuplicateInvokeID);
 					capDialogImpl.sendRejectComponent(null, problem);
 
 					return;
 				}
 
-				case ReturnResultLast: {
-					ReturnResultLast comp = (ReturnResultLast) c;
-					oc = comp.getOperationCode();
-					parameter = comp.getParameter();
+				if (linkedId != null) {
+					// linkedId exists Checking if the linkedId exists
+					if (comp.getLinkedInvoke() == null) {
+						this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.UnknownLinkedIdReceived);
+
+						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
+						problem.setInvokeProblemType(InvokeProblemType.UnrechognizedLinkedID);
+						capDialogImpl.sendRejectComponent(invokeId, problem);
+
+						return;
+					}
+
+					linkedInvoke = comp.getLinkedInvoke();
+
+					long[] lstInv = perfSer.getLinkedOperationList(linkedInvoke.getOperationCode().getLocalOperationCode());
+					if (lstInv == null) {
+						this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.LinkedResponseUnexpected);
+
+						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
+						problem.setInvokeProblemType(InvokeProblemType.LinkedResponseUnexpected);
+						capDialogImpl.sendRejectComponent(invokeId, problem);
+
+						return;
+					}
+
+					boolean found = false;
+					if (lstInv != null) {
+						for (long l : lstInv) {
+							if (l == comp.getOperationCode().getLocalOperationCode()) {
+								found = true;
+								break;
+							}
+						}
+					}
+					if (!found) {
+						this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.UnexpectedLinkedOperation);
+
+						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
+						problem.setInvokeProblemType(InvokeProblemType.UnexpectedLinkedOperation);
+						capDialogImpl.sendRejectComponent(invokeId, problem);
+
+						return;
+					}
 				}
+			}
+				break;
+
+			case ReturnResult: {
+				// ReturnResult is not supported by CAMEL
+				this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalComponentReceivedFromThePeer);
+				
+				Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
+				problem.setInvokeProblemType(InvokeProblemType.UnrecognizedOperation);
+				capDialogImpl.sendRejectComponent(null, problem);
+
+				return;
+			}
+
+			case ReturnResultLast: {
+				ReturnResultLast comp = (ReturnResultLast) c;
+				oc = comp.getOperationCode();
+				parameter = comp.getParameter();
+			}
+				break;
+
+			case ReturnError: {
+				ReturnError comp = (ReturnError) c;
+				
+				long errorCode = 0;
+				if (comp.getErrorCode() != null && comp.getErrorCode().getErrorType() == ErrorCodeType.Local)
+					errorCode = comp.getErrorCode().getLocalErrorCode();
+				if (errorCode < CAPErrorCode.minimalCodeValue || errorCode > CAPErrorCode.maximumCodeValue) {
+					// Not Local error code and not CAP error code received
+					perfSer.deliverProviderErrorComponent(capDialogImpl, invokeId, CAPComponentErrorReason.InvalidErrorComponentReceived);
+
+					Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnError);
+					problem.setReturnErrorProblemType(ReturnErrorProblemType.UnrecognizedError);
+					capDialogImpl.sendRejectComponent(invokeId, problem);
+					
+					return;
+				}
+
+				CAPErrorMessage msgErr = this.capErrorMessageFactory.createMessageFromErrorCode(errorCode);
+				try {
+					Parameter p = comp.getParameter();
+					if (p != null && p.getData() != null) {
+						byte[] data = p.getData();
+						AsnInputStream ais = new AsnInputStream(data, p.getTagClass(), p.isPrimitive(), p.getTag());
+						((CAPErrorMessageImpl)msgErr).decodeData(ais, data.length);
+					}
+				} catch ( CAPParsingComponentException e) {
+					// Failed when parsing the component - send TC-U-REJECT
+					perfSer.deliverProviderErrorComponent(capDialogImpl, invokeId, CAPComponentErrorReason.InvalidErrorComponentReceived);
+
+					Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnError);
+					problem.setReturnErrorProblemType(ReturnErrorProblemType.MistypedParameter);
+					capDialogImpl.sendRejectComponent(invokeId, problem);
+
+					return;
+				}
+				perfSer.deliverErrorComponent(capDialogImpl, comp.getInvokeId(), msgErr);
+				
+				return;
+			}
+
+			case Reject: {
+				Reject comp = (Reject) c;
+				perfSer.deliverRejectComponent(capDialogImpl, comp.getInvokeId(), comp.getProblem());
+				
+				return;
+			}
+			
+			default:
+				return;
+			}
+			
+			try {
+				
+				perfSer.processComponent(compType, oc, parameter, capDialogImpl, invokeId, linkedId, linkedInvoke);
+				
+			} catch (CAPParsingComponentException e) {
+				
+				loger.error("CAPParsingComponentException when parsing components: " + e.getReason().toString() + " - " + e.getMessage(), e);
+				
+				switch (e.getReason()) {
+				case UnrecognizedOperation:
+					// Component does not supported - send TC-U-REJECT
+					if (compType == ComponentType.Invoke) {
+						this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.UnrecognizedOperation);
+
+						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
+						problem.setInvokeProblemType(InvokeProblemType.UnrecognizedOperation);
+						capDialogImpl.sendRejectComponent(invokeId, problem);
+					} else {
+						perfSer.deliverProviderErrorComponent(capDialogImpl, invokeId, CAPComponentErrorReason.UnrecognizedOperation);
+						
+						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnResult);
+						problem.setReturnResultProblemType(ReturnResultProblemType.MistypedParameter);
+						capDialogImpl.sendRejectComponent(invokeId, problem);
+					}
 					break;
 
-				case ReturnError: {
-					ReturnError comp = (ReturnError) c;
-					
-					long errorCode = 0;
-					if (comp.getErrorCode() != null && comp.getErrorCode().getErrorType() == ErrorCodeType.Local)
-						errorCode = comp.getErrorCode().getLocalErrorCode();
-					if (errorCode < CAPErrorCode.minimalCodeValue || errorCode > CAPErrorCode.maximumCodeValue) {
-						// Not Local error code and not CAP error code received
-						perfSer.deliverProviderErrorComponent(capDialogImpl, invokeId, CAPComponentErrorReason.InvalidErrorComponentReceived);
-
-						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnError);
-						problem.setReturnErrorProblemType(ReturnErrorProblemType.UnrecognizedError);
-						capDialogImpl.sendRejectComponent(invokeId, problem);
+				case MistypedParameter:
+					// Failed when parsing the component - send TC-U-REJECT
+					if (compType == ComponentType.Invoke) {
+						this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalComponentReceivedFromThePeer);
 						
-						return;
-					}
-
-					CAPErrorMessage msgErr = this.capErrorMessageFactory.createMessageFromErrorCode(errorCode);
-					try {
-						Parameter p = comp.getParameter();
-						if (p != null && p.getData() != null) {
-							byte[] data = p.getData();
-							AsnInputStream ais = new AsnInputStream(data, p.getTagClass(), p.isPrimitive(), p.getTag());
-							((CAPErrorMessageImpl)msgErr).decodeData(ais, data.length);
-						}
-					} catch ( CAPParsingComponentException e) {
-						// Failed when parsing the component - send TC-U-REJECT
-						perfSer.deliverProviderErrorComponent(capDialogImpl, invokeId, CAPComponentErrorReason.InvalidErrorComponentReceived);
-
-						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnError);
-						problem.setReturnErrorProblemType(ReturnErrorProblemType.MistypedParameter);
+						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
+						problem.setInvokeProblemType(InvokeProblemType.MistypedParameter);
 						capDialogImpl.sendRejectComponent(invokeId, problem);
-
-						return;
+					} else {
+						if (compType == ComponentType.Reject)
+							perfSer.deliverProviderErrorComponent(capDialogImpl, invokeId, CAPComponentErrorReason.InvalidRejectReceived);
+						else
+							perfSer.deliverProviderErrorComponent(capDialogImpl, invokeId, CAPComponentErrorReason.InvalidReturnResultComponentReceived);
+						
+						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnResult);
+						problem.setReturnResultProblemType(ReturnResultProblemType.MistypedParameter);
+						capDialogImpl.sendRejectComponent(invokeId, problem);
 					}
-					perfSer.deliverErrorComponent(capDialogImpl, comp.getInvokeId(), msgErr);
-					
-					return;
-				}
+					break;
 
-				case Reject: {
-					Reject comp = (Reject) c;
-					perfSer.deliverRejectComponent(capDialogImpl, comp.getInvokeId(), comp.getProblem());
-					
-					return;
-				}
-				
-				default:
-					return;
-				}
-				
-				try {
-					
-					perfSer.processComponent(compType, oc, parameter, capDialogImpl, invokeId, linkedId);
-					
-				} catch (CAPParsingComponentException e) {
-					
-					loger.error("CAPParsingComponentException when parsing components: " + e.getReason().toString() + " - " + e.getMessage(), e);
-					
-					switch (e.getReason()) {
-					case UnrecognizedOperation:
-						// Component does not supported - send TC-U-REJECT
-						if (compType == ComponentType.Invoke) {
-							this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.UnrecognizedOperation);
-
-							Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
-							problem.setInvokeProblemType(InvokeProblemType.UnrecognizedOperation);
-							capDialogImpl.sendRejectComponent(invokeId, problem);
-						} else {
-							perfSer.deliverProviderErrorComponent(capDialogImpl, invokeId, CAPComponentErrorReason.UnrecognizedOperation);
-							
-							Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnResult);
-							problem.setReturnResultProblemType(ReturnResultProblemType.MistypedParameter);
-							capDialogImpl.sendRejectComponent(invokeId, problem);
-						}
-						break;
-
-					case MistypedParameter:
-						// Failed when parsing the component - send TC-U-REJECT
-						if (compType == ComponentType.Invoke) {
-							this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalComponentReceivedFromThePeer);
-							
-							Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
-							problem.setInvokeProblemType(InvokeProblemType.MistypedParameter);
-							capDialogImpl.sendRejectComponent(invokeId, problem);
-						} else {
-							if (compType == ComponentType.Reject)
-								perfSer.deliverProviderErrorComponent(capDialogImpl, invokeId, CAPComponentErrorReason.InvalidRejectReceived);
-							else
-								perfSer.deliverProviderErrorComponent(capDialogImpl, invokeId, CAPComponentErrorReason.InvalidReturnResultComponentReceived);
-							
-							Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnResult);
-							problem.setReturnResultProblemType(ReturnResultProblemType.MistypedParameter);
-							capDialogImpl.sendRejectComponent(invokeId, problem);
-						}
-						break;
-
-					case LinkedResponseUnexpected:
-						// Failed when parsing the component - send TC-U-REJECT
-						if (compType == ComponentType.Invoke) {
-							this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.LinkedResponseUnexpected);
-							
-							Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
-							problem.setInvokeProblemType(InvokeProblemType.LinkedResponseUnexpected);
-							capDialogImpl.sendRejectComponent(invokeId, problem);
-						}
-						break;
-
-					case UnexpectedLinkedOperation:
-						// Failed when parsing the component - send TC-U-REJECT
-						if (compType == ComponentType.Invoke) {
-							this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.UnexpectedLinkedOperation);
-							
-							Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
-							problem.setInvokeProblemType(InvokeProblemType.UnexpectedLinkedOperation);
-							capDialogImpl.sendRejectComponent(invokeId, problem);
-						}
-						break;
+				case LinkedResponseUnexpected:
+					// Failed when parsing the component - send TC-U-REJECT
+					if (compType == ComponentType.Invoke) {
+						this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.LinkedResponseUnexpected);
+						
+						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
+						problem.setInvokeProblemType(InvokeProblemType.LinkedResponseUnexpected);
+						capDialogImpl.sendRejectComponent(invokeId, problem);
 					}
+					break;
 
+				case UnexpectedLinkedOperation:
+					// Failed when parsing the component - send TC-U-REJECT
+					if (compType == ComponentType.Invoke) {
+						this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.UnexpectedLinkedOperation);
+						
+						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
+						problem.setInvokeProblemType(InvokeProblemType.UnexpectedLinkedOperation);
+						capDialogImpl.sendRejectComponent(invokeId, problem);
+					}
+					break;
 				}
-			} catch (CAPException e) {
-				loger.error("Error sending the RejectComponent: " + e.getMessage(), e);
+
 			}
-		} 
+		} catch (CAPException e) {
+			loger.error("Error processing a Component: " + e.getMessage() + "\nComponent" + c, e);
+		}
 	}
 
 	private void deliverDialogDelimiter(CAPDialog capDialog) {

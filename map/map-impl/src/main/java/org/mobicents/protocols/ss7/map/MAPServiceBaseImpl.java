@@ -90,8 +90,8 @@ public abstract class MAPServiceBaseImpl implements MAPServiceBase {
 	}
 
 	
-	public abstract void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog, Long invokeId, Long linkedId)
-			throws MAPParsingComponentException;
+	public abstract void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog, Long invokeId, Long linkedId,
+			Invoke linkedInvoke) throws MAPParsingComponentException;
 	
 	/**
 	 * Adding MAP Dialog into MAPProviderImpl.dialogs Used when creating a new
@@ -116,7 +116,18 @@ public abstract class MAPServiceBaseImpl implements MAPServiceBase {
 	public MAPApplicationContext getMAPv1ApplicationContext(int operationCode, Invoke invoke) {
 		return null;
 	}
-	
+
+	/**
+	 * 
+	 * Returns a list of linked operations for operCode operation
+	 * 
+	 * @param operCode
+	 * @return
+	 */
+	public long[] getLinkedOperationList(long operCode) {
+		return null;
+	}
+
 	/**
 	 * This method is invoked when MAPProviderImpl.onInvokeTimeOut() is invoked.
 	 * An InvokeTimeOut may be a normal situation for the component class 2, 3,

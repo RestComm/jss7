@@ -91,9 +91,18 @@ public abstract class CAPServiceBaseImpl implements CAPServiceBase {
 		}
 	}
 
-	
-	public abstract void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, CAPDialog capDialog, Long invokeId, Long linkedId)
-			throws CAPParsingComponentException;
+	public abstract void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, CAPDialog capDialog, Long invokeId, Long linkedId,
+			Invoke linkedInvoke) throws CAPParsingComponentException;
+
+	/**
+	 * Returns a list of linked operations for operCode operation
+	 * 
+	 * @param operCode
+	 * @return
+	 */
+	public long[] getLinkedOperationList(long operCode) {
+		return null;
+	}
 	
 	/**
 	 * Adding CAP Dialog into CAPProviderImpl.dialogs Used when creating a new
@@ -112,7 +121,7 @@ public abstract class CAPServiceBaseImpl implements CAPServiceBase {
 	protected void removeCAPServiceListener(CAPServiceListener capServiceListener) {
 		this.serviceListeners.remove(capServiceListener);
 	}
-	
+
 	/**
 	 * This method is invoked when CAPProviderImpl.onInvokeTimeOut() is invoked.
 	 * An InvokeTimeOut may be a normal situation for the component class 2, 3,

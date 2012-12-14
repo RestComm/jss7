@@ -41,9 +41,11 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPServic
 import org.mobicents.protocols.ss7.cap.api.dialog.ServingCheckData;
 import org.mobicents.protocols.ss7.cap.api.dialog.ServingCheckResult;
 import org.mobicents.protocols.ss7.cap.dialog.ServingCheckDataImpl;
+import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
@@ -112,9 +114,17 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		return new ServingCheckDataImpl(ServingCheckResult.AC_NotServing);
 	}
 
+	public long[] getLinkedOperationList(long operCode) {
+		if (operCode == CAPOperationCode.playAnnouncement || operCode == CAPOperationCode.promptAndCollectUserInformation) {
+			return new long[] { CAPOperationCode.specializedResourceReport };
+		}
+
+		return null;
+	}
+
 	@Override
-	public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, CAPDialog capDialog, Long invokeId, Long linkedId)
-			throws CAPParsingComponentException {
+	public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, CAPDialog capDialog, Long invokeId, Long linkedId,
+			Invoke linkedInvoke) throws CAPParsingComponentException {
 
 		CAPDialogCircuitSwitchedCallImpl capDialogCircuitSwitchedCallImpl = (CAPDialogCircuitSwitchedCallImpl) capDialog;
 
@@ -315,7 +325,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 					|| acn == CAPApplicationContext.CapV4_scf_gsmSSFGeneric || acn == CAPApplicationContext.CapV2_gsmSRF_to_gsmSCF
 					|| acn == CAPApplicationContext.CapV3_gsmSRF_gsmSCF || acn == CAPApplicationContext.CapV4_gsmSRF_gsmSCF) {
 				if (compType == ComponentType.Invoke) {
-					specializedResourceReportRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
+					specializedResourceReportRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId, linkedId, linkedInvoke);
 				}
 			}
 			break;
@@ -480,7 +490,8 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		}
 	}
 
-	private void continueRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
+	private void continueRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId)
+			throws CAPParsingComponentException {
 
 		ContinueRequestImpl ind = new ContinueRequestImpl();
 
@@ -497,7 +508,8 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		}
 	}
 
-	private void applyChargingReportRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
+	private void applyChargingReportRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId)
+			throws CAPParsingComponentException {
 
 		if (parameter == null)
 			throw new CAPParsingComponentException("Error while decoding applyChargingReportRequest: Parameter is mandatory but not found",
@@ -584,7 +596,8 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		}
 	}
 
-	private void callInformationRequestRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
+	private void callInformationRequestRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId)
+			throws CAPParsingComponentException {
 
 		if (parameter == null)
 			throw new CAPParsingComponentException("Error while decoding callInformationRequestRequest: Parameter is mandatory but not found",
@@ -613,7 +626,8 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		}
 	}
 
-	private void callInformationReportRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
+	private void callInformationReportRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId)
+			throws CAPParsingComponentException {
 
 		if (parameter == null)
 			throw new CAPParsingComponentException("Error while decoding callInformationReportRequest: Parameter is mandatory but not found",
@@ -676,7 +690,8 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		}
 	}
 
-	private void assistRequestInstructionsRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
+	private void assistRequestInstructionsRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId)
+			throws CAPParsingComponentException {
 
 		if (parameter == null)
 			throw new CAPParsingComponentException("Error while decoding assistRequestInstructionsRequest: Parameter is mandatory but not found",
@@ -705,7 +720,8 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		}
 	}
 
-	private void establishTemporaryConnectionRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
+	private void establishTemporaryConnectionRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId)
+			throws CAPParsingComponentException {
 
 		if (parameter == null)
 			throw new CAPParsingComponentException("Error while decoding establishTemporaryConnectionRequest: Parameter is mandatory but not found",
@@ -735,7 +751,8 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		}
 	}
 	
-	private void disconnectForwardConnectionRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
+	private void disconnectForwardConnectionRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId)
+			throws CAPParsingComponentException {
 
 		DisconnectForwardConnectionRequestImpl ind = new DisconnectForwardConnectionRequestImpl();
 
@@ -752,7 +769,8 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		}
 	}
 
-	private void connectToResourceRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
+	private void connectToResourceRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId)
+			throws CAPParsingComponentException {
 
 		if (parameter == null)
 			throw new CAPParsingComponentException("Error while decoding connectToResourceRequest: Parameter is mandatory but not found",
@@ -810,7 +828,8 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		}
 	}
 
-	private void furnishChargingInformationRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
+	private void furnishChargingInformationRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId)
+			throws CAPParsingComponentException {
 
 		if (parameter == null)
 			throw new CAPParsingComponentException("Error while decoding furnishChargingInformationRequest: Parameter is mandatory but not found",
@@ -839,7 +858,8 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		}
 	}
 
-	private void sendChargingInformationRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
+	private void sendChargingInformationRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId)
+			throws CAPParsingComponentException {
 
 		if (parameter == null)
 			throw new CAPParsingComponentException("Error while decoding sendChargingInformationRequest: Parameter is mandatory but not found",
@@ -868,7 +888,8 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		}
 	}
 
-	private void specializedResourceReportRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
+	private void specializedResourceReportRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId, Long linkedId,
+			Invoke linkedInvoke) throws CAPParsingComponentException {
 
 		if (parameter == null)
 			throw new CAPParsingComponentException("Error while decoding specializedResourceReportRequest: Parameter is mandatory but not found",
@@ -893,6 +914,8 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		ind.decodeData(ais, buf.length);
 
 		ind.setInvokeId(invokeId);
+		ind.setLinkedId(linkedId);
+		ind.setLinkedInvoke(linkedInvoke);
 		ind.setCAPDialog(capDialogImpl);
 
 		for (CAPServiceListener serLis : this.serviceListeners) {
@@ -905,7 +928,8 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 		}
 	}
 
-	private void playAnnouncementRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
+	private void playAnnouncementRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId)
+			throws CAPParsingComponentException {
 
 		if (parameter == null)
 			throw new CAPParsingComponentException("Error while decoding playAnnouncementRequest: Parameter is mandatory but not found",

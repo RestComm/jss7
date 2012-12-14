@@ -71,6 +71,10 @@ public interface Invoke extends Component {
 
 	public Long getLinkedId();
 
+	public Invoke getLinkedInvoke();
+
+	public void setLinkedInvoke(Invoke val);
+
 	// mandatory
 	public void setOperationCode(OperationCode i);
 

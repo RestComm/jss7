@@ -167,8 +167,8 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 	}
 	
 	@Override
-	public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog, Long invokeId, Long linkedId)
-			throws MAPParsingComponentException {
+	public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog, Long invokeId, Long linkedId,
+			Invoke linkedInvoke) throws MAPParsingComponentException {
 		
 		// if an application-context-name different from version 1 is
 		// received in a syntactically correct TC-
@@ -260,7 +260,8 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 		}
 	}
 
-	private void forwardShortMessageRequest(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
+	private void forwardShortMessageRequest(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId)
+			throws MAPParsingComponentException {
 		
 		if (parameter == null)
 			throw new MAPParsingComponentException("Error while decoding forwardShortMessageRequest: Parameter is mandatory but not found",
@@ -306,8 +307,9 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 			}			
 		}
 	}
-	
-	private void moForwardShortMessageRequest(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
+
+	private void moForwardShortMessageRequest(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId)
+			throws MAPParsingComponentException {
 		
 		if (parameter == null)
 			throw new MAPParsingComponentException("Error while decoding moForwardShortMessageRequest: Parameter is mandatory but not found",
@@ -335,7 +337,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 			}
 		}
 	}
-	
+
 	private void moForwardShortMessageResponse(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
 		
 		MoForwardShortMessageResponseImpl ind = new MoForwardShortMessageResponseImpl();
@@ -539,7 +541,8 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 		}
 	}
 	
-	private void informServiceCentreRequest(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
+	private void informServiceCentreRequest(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId)
+			throws MAPParsingComponentException {
 
 		if (parameter == null)
 			throw new MAPParsingComponentException("Error while decoding informServiceCentreRequest: Parameter is mandatory but not found",
@@ -568,7 +571,8 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 		}
 	}
 	
-	private void alertServiceCentreRequest(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId, int operationCode) throws MAPParsingComponentException {
+	private void alertServiceCentreRequest(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId, int operationCode)
+			throws MAPParsingComponentException {
 
 		if (parameter == null)
 			throw new MAPParsingComponentException("Error while decoding alertServiceCentreRequest: Parameter is mandatory but not found",

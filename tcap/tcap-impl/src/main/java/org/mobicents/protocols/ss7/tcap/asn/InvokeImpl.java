@@ -77,6 +77,7 @@ public class InvokeImpl implements Invoke {
 
 	// optional
 	private Long linkedId;
+	private Invoke linkedInvoke;
 
 	// mandatory
 	private OperationCode operationCode;
@@ -102,6 +103,15 @@ public class InvokeImpl implements Invoke {
 	public Long getLinkedId() {
 
 		return this.linkedId;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.protocols.ss7.tcap.asn.comp.Invoke#getLinkedInvoke()
+	 */
+	public Invoke getLinkedInvoke() {
+		return linkedInvoke;
 	}
 
 	/*
@@ -151,6 +161,10 @@ public class InvokeImpl implements Invoke {
 			throw new IllegalArgumentException("Invoke ID our of range: <-128,127>: " + i);
 		}
 		this.linkedId = i;
+	}
+
+	public void setLinkedInvoke(Invoke val) {
+		this.linkedInvoke = val;
 	}
 
 	/*

@@ -49,6 +49,7 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
@@ -129,8 +130,16 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 		return new ServingCheckDataImpl(ServingCheckResult.AC_NotServing);
 	}
 
-	public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog, Long invokeId, Long linkedId)
-			throws MAPParsingComponentException {
+	public long[] getLinkedOperationList(long operCode) {
+		if (operCode == MAPOperationCode.registerPassword) {
+			return new long[] { MAPOperationCode.getPassword };
+		}
+
+		return null;
+	}
+
+	public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog, Long invokeId, Long linkedId,
+			Invoke linkedInvoke)			throws MAPParsingComponentException {
 
 		// if an application-context-name different from version 1 is
 		// received in a syntactically correct TC-
@@ -174,7 +183,8 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 		}
 	}
 
-	private void unstructuredSSNotifyRequest(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
+	private void unstructuredSSNotifyRequest(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId)
+			throws MAPParsingComponentException {
 		if (parameter == null)
 			throw new MAPParsingComponentException("Error while decoding unstructuredSSNotifyIndication: Parameter is mandatory but not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
@@ -218,7 +228,8 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 		}
 	}
 
-	private void unstructuredSSRequest(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
+	private void unstructuredSSRequest(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId)
+			throws MAPParsingComponentException {
 		if (parameter == null)
 			throw new MAPParsingComponentException("Error while decoding UnstructuredSSRequestIndication: Parameter is mandatory but not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
