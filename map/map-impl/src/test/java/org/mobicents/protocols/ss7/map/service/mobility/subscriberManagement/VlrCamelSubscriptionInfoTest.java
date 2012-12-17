@@ -105,10 +105,10 @@ public class VlrCamelSubscriptionInfoTest {
 				-90, 106, -96, 58, 48, 56, -128, 1, 1, -127, 1, 3, -126, 4,
 				-111, 34, 50, -11, -125, 1, 0, -92, 39, -96, 32, 48, 10, 6, 3,
 				42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6,
-				3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -126,
-				1, 8, -93, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14,
+				3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -127,
+				1, 8, -94, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14,
 				15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23,
-				24, 25, 26, -95, 3, 31, 32, 33, -123, 0, -89, 22, 48, 17, 48,
+				24, 25, 26, -95, 3, 31, 32, 33, -124, 0, -89, 22, 48, 17, 48,
 				15, 10, 1, 12, 2, 1, 3, -128, 4, -111, 34, 50, -11, -127, 1, 1,
 				-128, 1, 2, -88, 21, 48, 19, 10, 1, 13, -96, 6, -126, 1, 22,
 				-125, 1, 0, -95, 6, 4, 1, 7, 4, 1, 6, -87, 111, -96, 61, 48,
@@ -122,10 +122,10 @@ public class VlrCamelSubscriptionInfoTest {
 				-128, 1, 1, -127, 1, 3, -126, 4, -111, 34, 50, -11, -125, 1, 0,
 				-92, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15,
 				48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24,
-				25, 26, -95, 3, 31, 32, 33, -126, 1, 8, -93, 39, -96, 32, 48,
+				25, 26, -95, 3, 31, 32, 33, -127, 1, 8, -94, 39, -96, 32, 48,
 				10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6,
 				48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32,
-				33, -123, 0, -85, 13, 48, 11, 10, 1, 1, -96, 6, 10, 1, 0, 10,
+				33, -124, 0, -85, 13, 48, 11, 10, 1, 1, -96, 6, 10, 1, 0, 10,
 				1, 2 };
 	};
 	
@@ -172,7 +172,7 @@ public class VlrCamelSubscriptionInfoTest {
 		assertEquals(ssEventList.size(),1);
 		SSCode one = ssEventList.get(0);
 		assertNotNull(one);
-		assertEquals(one.getData(),SupplementaryCodeValue.allFacsimileTransmissionServices.getCode());
+		assertEquals(one.getSupplementaryCodeValue(),SupplementaryCodeValue.allFacsimileTransmissionServices);
 		ISDNAddressString gsmSCFAddress = ssCamelData.getGsmSCFAddress();
 		assertTrue(gsmSCFAddress.getAddress().equals("22235"));
 		assertEquals(gsmSCFAddress.getAddressNature(), AddressNature.international_number);
@@ -211,7 +211,7 @@ public class VlrCamelSubscriptionInfoTest {
 		assertEquals(destinationNumberLengthList.get(0).intValue(),2);
 		assertEquals(destinationNumberLengthList.get(1).intValue(),4);
 		assertEquals(destinationNumberLengthList.get(2).intValue(),1);
-		assertEquals(oBcsmCamelTdpCriteria.getOBcsmTriggerDetectionPoint().getCode(), OBcsmTriggerDetectionPoint.collectedInfo.getCode());
+		assertEquals(oBcsmCamelTdpCriteria.getOBcsmTriggerDetectionPoint(), OBcsmTriggerDetectionPoint.collectedInfo);
 		assertNotNull(oBcsmCamelTdpCriteria.getBasicServiceCriteria());
 		assertEquals(oBcsmCamelTdpCriteria.getBasicServiceCriteria().size(),2);
 		ExtBasicServiceCode basicServiceOne = oBcsmCamelTdpCriteria.getBasicServiceCriteria().get(0);
@@ -222,7 +222,7 @@ public class VlrCamelSubscriptionInfoTest {
 		assertNotNull(basicServiceTwo);
 		assertEquals(basicServiceTwo.getExtTeleservice().getTeleserviceCodeValue(),TeleserviceCodeValue.allServices);
 				
-		assertEquals(oBcsmCamelTdpCriteria.getCallTypeCriteria().getCode() ,CallTypeCriteria.forwarded.getCode());
+		assertEquals(oBcsmCamelTdpCriteria.getCallTypeCriteria() ,CallTypeCriteria.forwarded);
 		ArrayList<CauseValue> oCauseValueCriteria = oBcsmCamelTdpCriteria.getOCauseValueCriteria();
 		assertNotNull(oCauseValueCriteria);
 		assertEquals(oCauseValueCriteria.size(),1);
@@ -239,12 +239,12 @@ public class VlrCamelSubscriptionInfoTest {
 		assertEquals(mobilityTriggers.size(),2);
 		MMCode mmCode = mobilityTriggers.get(0);
 		assertNotNull(mmCode);
-		assertEquals(MMCodeValue.GPRSAttach.getCode() , mmCode.getMMCodeValue().getCode());
+		assertEquals(MMCodeValue.GPRSAttach, mmCode.getMMCodeValue());
 		MMCode mmCode2 = mobilityTriggers.get(1);
 		assertNotNull(mmCode2);
-		assertEquals(MMCodeValue.IMSIAttach.getCode() , mmCode2.getMMCodeValue().getCode());
+		assertEquals(MMCodeValue.IMSIAttach , mmCode2.getMMCodeValue());
 		assertNotNull(mCsi.getServiceKey());
-		assertEquals(mCsi.getServiceKey().intValue() ,3);
+		assertEquals(mCsi.getServiceKey() ,3);
 		ISDNAddressString gsmSCFAddressTwo = mCsi.getGsmSCFAddress();
 		assertTrue(gsmSCFAddressTwo.getAddress().equals("22235"));
 		assertEquals(gsmSCFAddressTwo.getAddressNature(), AddressNature.international_number);
@@ -262,12 +262,12 @@ public class VlrCamelSubscriptionInfoTest {
 		SMSCAMELTDPData smsCAMELTDPData = smsCamelTdpDataList.get(0);
 		assertNotNull(smsCAMELTDPData);
 		assertEquals(smsCAMELTDPData.getServiceKey(),3);
-		assertEquals(smsCAMELTDPData.getSMSTriggerDetectionPoint().getCode() , SMSTriggerDetectionPoint.smsCollectedInfo.getCode());
+		assertEquals(smsCAMELTDPData.getSMSTriggerDetectionPoint() , SMSTriggerDetectionPoint.smsCollectedInfo);
 		ISDNAddressString gsmSCFAddressSmsCAMELTDPData = smsCAMELTDPData.getGsmSCFAddress();
 		assertTrue(gsmSCFAddressSmsCAMELTDPData.getAddress().equals("22235"));
 		assertEquals(gsmSCFAddressSmsCAMELTDPData.getAddressNature(), AddressNature.international_number);
 		assertEquals(gsmSCFAddressSmsCAMELTDPData.getNumberingPlan(), NumberingPlan.ISDN);
-		assertEquals(smsCAMELTDPData.getDefaultSMSHandling().getCode() , DefaultSMSHandling.continueTransaction.getCode());
+		assertEquals(smsCAMELTDPData.getDefaultSMSHandling() , DefaultSMSHandling.continueTransaction);
 		assertNotNull(smsCAMELTDPData.getExtensionContainer());
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(smsCAMELTDPData.getExtensionContainer()));
 		assertTrue(smsCsi.getCsiActive());
@@ -297,7 +297,7 @@ public class VlrCamelSubscriptionInfoTest {
 		assertEquals(tBcsmCamelTdpCriteriaList.size(), 1);
 		assertNotNull(tBcsmCamelTdpCriteriaList.get(0));
 		TBcsmCamelTdpCriteria tbcsmCamelTdpCriteria = tBcsmCamelTdpCriteriaList.get(0);
-		assertEquals(tbcsmCamelTdpCriteria.getTBcsmTriggerDetectionPoint().getCode() , TBcsmTriggerDetectionPoint.tBusy.getCode());
+		assertEquals(tbcsmCamelTdpCriteria.getTBcsmTriggerDetectionPoint() , TBcsmTriggerDetectionPoint.tBusy);
 		assertNotNull(tbcsmCamelTdpCriteria.getBasicServiceCriteria());
 		assertEquals(tbcsmCamelTdpCriteria.getBasicServiceCriteria().size(),2);
 		assertNotNull(tbcsmCamelTdpCriteria.getBasicServiceCriteria().get(0));
@@ -326,7 +326,7 @@ public class VlrCamelSubscriptionInfoTest {
 		assertTrue(gsmSCFAddressDp.getAddress().equals("22235"));
 		assertEquals(gsmSCFAddressDp.getAddressNature(), AddressNature.international_number);
 		assertEquals(gsmSCFAddressDp.getNumberingPlan(), NumberingPlan.ISDN);
-		assertEquals(dpAnalysedInfoCriterium.getDefaultCallHandling().getCode() , DefaultCallHandling.continueCall.getCode());
+		assertEquals(dpAnalysedInfoCriterium.getDefaultCallHandling() , DefaultCallHandling.continueCall);
 		assertNotNull(dCsi.getExtensionContainer());
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(dCsi.getExtensionContainer()));
 		assertEquals(dCsi.getCamelCapabilityHandling().intValue(),2);
@@ -341,12 +341,12 @@ public class VlrCamelSubscriptionInfoTest {
 		SMSCAMELTDPData smsCAMELTDPDataOfMtSmsCSI = smsCamelTdpDataListOfmtSmsCSI.get(0);
 		assertNotNull(smsCAMELTDPDataOfMtSmsCSI);
 		assertEquals(smsCAMELTDPDataOfMtSmsCSI.getServiceKey(),3);
-		assertEquals(smsCAMELTDPDataOfMtSmsCSI.getSMSTriggerDetectionPoint().getCode() , SMSTriggerDetectionPoint.smsCollectedInfo.getCode());
+		assertEquals(smsCAMELTDPDataOfMtSmsCSI.getSMSTriggerDetectionPoint() , SMSTriggerDetectionPoint.smsCollectedInfo);
 		ISDNAddressString gsmSCFAddressOfMtSmsCSI = smsCAMELTDPDataOfMtSmsCSI.getGsmSCFAddress();
 		assertTrue(gsmSCFAddressOfMtSmsCSI.getAddress().equals("22235"));
 		assertEquals(gsmSCFAddressOfMtSmsCSI.getAddressNature(), AddressNature.international_number);
 		assertEquals(gsmSCFAddressOfMtSmsCSI.getNumberingPlan(), NumberingPlan.ISDN);
-		assertEquals(smsCAMELTDPDataOfMtSmsCSI.getDefaultSMSHandling().getCode() , DefaultSMSHandling.continueTransaction.getCode());
+		assertEquals(smsCAMELTDPDataOfMtSmsCSI.getDefaultSMSHandling() , DefaultSMSHandling.continueTransaction);
 		assertNotNull(smsCAMELTDPDataOfMtSmsCSI.getExtensionContainer());
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(smsCAMELTDPDataOfMtSmsCSI.getExtensionContainer()));
 		assertNotNull(mtSmsCSI.getExtensionContainer());
@@ -365,13 +365,13 @@ public class VlrCamelSubscriptionInfoTest {
 		assertEquals(tPDUTypeCriterion.size(),2);
 		MTSMSTPDUType mtSMSTPDUTypeOne = tPDUTypeCriterion.get(0);
 		assertNotNull(mtSMSTPDUTypeOne);
-		assertTrue(mtSMSTPDUTypeOne.getCode() == MTSMSTPDUType.smsDELIVER.getCode());
+		assertEquals(mtSMSTPDUTypeOne , MTSMSTPDUType.smsDELIVER);
 		
 		MTSMSTPDUType mtSMSTPDUTypeTwo = tPDUTypeCriterion.get(1);
 		assertNotNull(mtSMSTPDUTypeTwo);
-		assertTrue(mtSMSTPDUTypeTwo.getCode() == MTSMSTPDUType.smsSTATUSREPORT.getCode());
-		assertEquals(mtsmsCAMELTDPCriteria.getSMSTriggerDetectionPoint().getCode() ,  
-				SMSTriggerDetectionPoint.smsCollectedInfo.getCode());
+		assertTrue(mtSMSTPDUTypeTwo == MTSMSTPDUType.smsSTATUSREPORT);
+		assertEquals(mtsmsCAMELTDPCriteria.getSMSTriggerDetectionPoint() ,  
+				SMSTriggerDetectionPoint.smsCollectedInfo);
 		
 	}
 	
@@ -497,7 +497,7 @@ public class VlrCamelSubscriptionInfoTest {
 		
 		AsnOutputStream asn = new AsnOutputStream();
 		prim.encodeAll(asn);
-		
+
 		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
 	}
 }

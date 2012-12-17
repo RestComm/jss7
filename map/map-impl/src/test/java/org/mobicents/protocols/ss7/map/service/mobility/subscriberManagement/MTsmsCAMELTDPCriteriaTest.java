@@ -63,13 +63,13 @@ public class MTsmsCAMELTDPCriteriaTest {
 		assertEquals(tPDUTypeCriterion.size(),2);
 		MTSMSTPDUType one = tPDUTypeCriterion.get(0);
 		assertNotNull(one);
-		assertEquals(one.getCode() , MTSMSTPDUType.smsDELIVER.getCode());
+		assertEquals(one , MTSMSTPDUType.smsDELIVER);
 		
 		MTSMSTPDUType two = tPDUTypeCriterion.get(1);
 		assertNotNull(two);
-		assertEquals(two.getCode() , MTSMSTPDUType.smsSTATUSREPORT.getCode());
-		assertEquals(prim.getSMSTriggerDetectionPoint().getCode() ,  
-				SMSTriggerDetectionPoint.smsCollectedInfo.getCode());
+		assertEquals(two , MTSMSTPDUType.smsSTATUSREPORT);
+		assertEquals(prim.getSMSTriggerDetectionPoint() ,  
+				SMSTriggerDetectionPoint.smsCollectedInfo);
 
 		
 	}

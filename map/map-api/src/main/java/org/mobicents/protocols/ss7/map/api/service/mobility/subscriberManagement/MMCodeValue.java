@@ -66,13 +66,13 @@ public enum MMCodeValue {
 	NetworkInitiatedIMSIDetach(4), // '00000100'B
 
 	// -- PS domain MM events:
-	RouteingAreaUpdateInSameSGSN(-128 + 0), // '10000000'B
-	RouteingAreaUpdateToOtherSGSNUpdateFromNewSGSN(-128 + 1), // '10000001'B
-	RouteingAreaUpdateToOtherSGSNDisconnectByDetach(-128 + 2), // '10000010'B
-	GPRSAttach(-128 + 3), // '10000011'B
-	MSInitiatedGPRSDetach(-128 + 4), // '10000100'B
-	NetworkInitiatedGPRSDetach(-128 + 5), // '10000101'B
-	NetworkInitiatedTransferToMSNotReachableForPaging(-128 + 6); // '10000110'B
+	RouteingAreaUpdateInSameSGSN(128 + 0), // '10000000'B
+	RouteingAreaUpdateToOtherSGSNUpdateFromNewSGSN(128 + 1), // '10000001'B
+	RouteingAreaUpdateToOtherSGSNDisconnectByDetach(128 + 2), // '10000010'B
+	GPRSAttach(128 + 3), // '10000011'B
+	MSInitiatedGPRSDetach(128 + 4), // '10000100'B
+	NetworkInitiatedGPRSDetach(128 + 5), // '10000101'B
+	NetworkInitiatedTransferToMSNotReachableForPaging(128 + 6); // '10000110'B
 
 	private int code;
 
@@ -97,19 +97,19 @@ public enum MMCodeValue {
 		case 4:
 			return MMCodeValue.NetworkInitiatedIMSIDetach;
 
-		case -128 + 0:
+		case 128 + 0:
 			return MMCodeValue.RouteingAreaUpdateInSameSGSN;
-		case -128 + 1:
+		case 128 + 1:
 			return MMCodeValue.RouteingAreaUpdateToOtherSGSNUpdateFromNewSGSN;
-		case -128 + 2:
+		case 128 + 2:
 			return MMCodeValue.RouteingAreaUpdateToOtherSGSNDisconnectByDetach;
-		case -128 + 3:
+		case 128 + 3:
 			return MMCodeValue.GPRSAttach;
-		case -128 + 4:
+		case 128 + 4:
 			return MMCodeValue.MSInitiatedGPRSDetach;
-		case -128 + 5:
+		case 128 + 5:
 			return MMCodeValue.NetworkInitiatedGPRSDetach;
-		case -128 + 6:
+		case 128 + 6:
 			return MMCodeValue.NetworkInitiatedTransferToMSNotReachableForPaging;
 
 		default:

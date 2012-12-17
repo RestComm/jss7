@@ -32,7 +32,6 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.DPAnalysedInfoCriterium;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.DestinationNumberCriteria;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.MatchType;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
@@ -177,12 +176,22 @@ public class DestinationNumberCriteriaImpl  extends SequenceBase implements Dest
 		if (this.matchType == null)
 			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parament matchType is mandatory but does not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
+		
+		if (this.destinationNumberList == null && this.destinationNumberLengthList == null) {
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ". Parament destinationNumberList or " +
+					"destinationNumberLengthList or both should be present but does not found",MAPParsingComponentExceptionReason.MistypedParameter);
+		}
 	}
 	
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 		if (this.matchType == null) {
 			throw new MAPException("Error while encoding " + _PrimitiveName + " the mandatory parameter matchType is not defined");
+		}
+		
+		if (this.destinationNumberList == null && this.destinationNumberLengthList == null) {
+			throw new MAPException("Error while encoding " + _PrimitiveName + ". one or both of destinationNumberList and " +
+					"destinationNumberLengthList needs to be present");
 		}
 		
 		if (this.destinationNumberList != null && (this.destinationNumberList.size() < 1 || this.destinationNumberList.size() > 10)) {

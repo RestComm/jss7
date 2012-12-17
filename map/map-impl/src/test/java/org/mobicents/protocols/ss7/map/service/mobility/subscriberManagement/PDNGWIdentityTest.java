@@ -1,0 +1,100 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
+import java.util.Arrays;
+
+import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.FQDN;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.PDPAddress;
+import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
+import org.testng.annotations.Test;
+
+/**
+ * 
+ * @author Lasith Waruna Perera
+ * 
+ */
+public class PDNGWIdentityTest {
+	
+	public byte[] getData() {
+		return new byte[] { 48, 63, -128, 3, 5, 6, 7, -127, 3, 5, 6, 7, -126,
+				10, 4, 1, 6, 8, 3, 2, 5, 6, 1, 7, -93, 39, -96, 32, 48, 10, 6,
+				3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11,
+				6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
+	};
+	
+	public byte[] getPDPAddressData(){
+		return new byte[] { 5 ,6 ,7 };
+	};
+	
+	public byte[] getFQDNData(){
+		return new byte[] { 4, 1, 6, 8, 3, 2, 5, 6, 1, 7 };
+	};
+	
+	@Test(groups = { "functional.decode", "primitives" })
+	public void testDecode() throws Exception {
+		byte[] data = this.getData();
+		AsnInputStream asn = new AsnInputStream(data);
+		int tag = asn.readTag();
+		PDNGWIdentityImpl prim = new PDNGWIdentityImpl();
+		
+		prim.decodeAll(asn);
+		
+		assertEquals(tag, Tag.SEQUENCE);
+		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
+		
+		PDPAddress pdnGwIpv4Address = prim.getPdnGwIpv4Address();
+		assertNotNull(pdnGwIpv4Address);
+		assertTrue(Arrays.equals(this.getPDPAddressData(), pdnGwIpv4Address.getData()));
+		PDPAddress pdnGwIpv6Address = prim.getPdnGwIpv6Address();
+		assertNotNull(pdnGwIpv6Address);
+		assertTrue(Arrays.equals(this.getPDPAddressData(), pdnGwIpv6Address.getData()));
+		FQDN pdnGwName = prim.getPdnGwName();
+		assertNotNull(pdnGwName);
+		assertTrue(Arrays.equals(this.getFQDNData(), pdnGwName.getData()));
+	
+		MAPExtensionContainer extensionContainer = prim.getExtensionContainer();	
+		assertNotNull(extensionContainer);
+		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+	}
+	
+	@Test(groups = { "functional.encode", "primitives" })
+	public void testEncode() throws Exception {
+		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
+		PDPAddress pdnGwIpv4Address = new PDPAddressImpl(this.getPDPAddressData());
+		PDPAddress pdnGwIpv6Address = new PDPAddressImpl(this.getPDPAddressData());
+		FQDN pdnGwName = new FQDNImpl(this.getFQDNData());
+		PDNGWIdentityImpl prim = new PDNGWIdentityImpl(pdnGwIpv4Address, pdnGwIpv6Address, pdnGwName, extensionContainer);
+		AsnOutputStream asn = new AsnOutputStream();
+		prim.encodeAll(asn);
+		
+		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+	}
+}

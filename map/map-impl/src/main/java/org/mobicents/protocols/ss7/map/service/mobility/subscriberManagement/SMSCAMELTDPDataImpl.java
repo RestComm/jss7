@@ -22,7 +22,6 @@
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -34,7 +33,6 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.DefaultSMSHandling;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.MMCode;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SMSCAMELTDPData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SMSTriggerDetectionPoint;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
@@ -107,7 +105,7 @@ public class SMSCAMELTDPDataImpl extends SequenceBase implements SMSCAMELTDPData
 			throws MAPParsingComponentException, IOException, AsnException {
 
 		this.smsTriggerDetectionPoint = null;
-		this.serviceKey = 0;
+		this.serviceKey = -1;
 		this.gsmSCFAddress = null;
 		this.defaultSMSHandling = null;
 		this.extensionContainer = null;
@@ -182,6 +180,11 @@ public class SMSCAMELTDPDataImpl extends SequenceBase implements SMSCAMELTDPData
 		
 		if (this.defaultSMSHandling == null) {
 			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parament defaultSMSHandling is mandatory but does not found",
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+		
+		if (this.serviceKey == -1) {
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parament serviceKey is mandatory but does not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}

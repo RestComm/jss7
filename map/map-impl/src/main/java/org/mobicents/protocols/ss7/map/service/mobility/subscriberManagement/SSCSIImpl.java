@@ -31,7 +31,6 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SMSCAMELTDPData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SSCSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SSCamelData;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;

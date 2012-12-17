@@ -62,7 +62,7 @@ public class ODBGeneralDataImpl  extends BitStringBase  implements ODBGeneralDat
 	private static final int _INDEX_registrationInternationalCFBarred = 28;
 	
 	public ODBGeneralDataImpl() {
-		super(15, 32, 28, "ODBGeneralData");
+		super(15, 32, 29, "ODBGeneralData");
 	}
 
 	public ODBGeneralDataImpl(
@@ -90,7 +90,7 @@ public class ODBGeneralDataImpl  extends BitStringBase  implements ODBGeneralDat
 			boolean registrationInterzonalCFBarred,
 			boolean registrationInterzonalCFNotToHPLMNBarred,
 			boolean registrationInternationalCFBarred) {
-		super(15, 32, 28, "ODBGeneralData");
+		super(15, 32, 29, "ODBGeneralData");
 		
 		if ( allOGCallsBarred)
 			this.bitString.set(_INDEX_allOGCallsBarred);

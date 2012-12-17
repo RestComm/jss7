@@ -33,7 +33,6 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.DPAnalysedInfoCriterium;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.MCSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.MMCode;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
@@ -53,7 +52,7 @@ public class MCSIImpl  extends SequenceBase implements MCSI{
 	private static final int _TAG_csiActive = 3;
 
 	private ArrayList<MMCode> mobilityTriggers;
-	private Long serviceKey;
+	private long serviceKey;
 	private ISDNAddressString gsmSCFAddress;
 	private MAPExtensionContainer extensionContainer;
 	private boolean notificationToCSE;
@@ -82,7 +81,7 @@ public class MCSIImpl  extends SequenceBase implements MCSI{
 	}
 
 	@Override
-	public Long getServiceKey() {
+	public long getServiceKey() {
 		return this.serviceKey;
 	}
 
@@ -111,11 +110,11 @@ public class MCSIImpl  extends SequenceBase implements MCSI{
 			throws MAPParsingComponentException, IOException, AsnException {
 
 		this.mobilityTriggers = null;
-		this.serviceKey = null;
 		this.gsmSCFAddress = null;
 		this.extensionContainer = null;
 		this.notificationToCSE = false;
 		this.csiActive = false;
+		this.serviceKey = -1;
 
 		AsnInputStream ais = asnIS.readSequenceStreamData(length);
 
@@ -219,13 +218,13 @@ public class MCSIImpl  extends SequenceBase implements MCSI{
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 		
-		if (this.serviceKey == null) {
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parament serviceKey is mandatory but does not found",
+		if (this.gsmSCFAddress == null) {
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parament gsmSCFAddress is mandatory but does not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 		
-		if (this.gsmSCFAddress == null) {
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parament gsmSCFAddress is mandatory but does not found",
+		if (this.serviceKey == -1) {
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parament serviceKey is mandatory but does not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -236,9 +235,7 @@ public class MCSIImpl  extends SequenceBase implements MCSI{
 		if (this.mobilityTriggers == null) {
 			throw new MAPException("Error while encoding " + _PrimitiveName + " the mandatory parameter mobilityTriggers is not defined");
 		}
-		if (this.serviceKey == null) {
-			throw new MAPException("Error while encoding " + _PrimitiveName + " the mandatory parameter serviceKey is not defined");
-		}
+
 		if (this.gsmSCFAddress == null) {
 			throw new MAPException("Error while encoding " + _PrimitiveName + " the mandatory parameter gsmSCFAddress is not defined");
 		}
@@ -256,7 +253,7 @@ public class MCSIImpl  extends SequenceBase implements MCSI{
 			}
 			asnOs.FinalizeContent(pos);
 			
-			asnOs.writeInteger(serviceKey.longValue());
+			asnOs.writeInteger(serviceKey);
 			
 			((ISDNAddressStringImpl) this.gsmSCFAddress).encodeAll(asnOs,Tag.CLASS_CONTEXT_SPECIFIC, _TAG_gsmSCFAddress);
 			
@@ -294,11 +291,11 @@ public class MCSIImpl  extends SequenceBase implements MCSI{
 			sb.append("], ");
 		}
 
-		if (this.serviceKey != null) {
-			sb.append("serviceKey=");
-			sb.append(this.serviceKey.toString());
-			sb.append(", ");
-		}
+		
+		sb.append("serviceKey=");
+		sb.append(this.serviceKey);
+		sb.append(", ");
+		
 		
 		if (this.gsmSCFAddress != null) {
 			sb.append("gsmSCFAddress=");

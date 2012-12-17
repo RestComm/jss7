@@ -33,7 +33,6 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CauseValue;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SMSCAMELTDPData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TBcsmCamelTdpCriteria;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TBcsmTriggerDetectionPoint;
 import org.mobicents.protocols.ss7.map.primitives.SequenceBase;
@@ -127,11 +126,6 @@ public class TBcsmCamelTdpCriteriaImpl  extends SequenceBase implements TBcsmCam
 							break;
 
 						int tag2 = ais2.readTag();
-						if (!(tag2 == ExtBasicServiceCodeImpl._ID_ext_BearerService || tag2 == ExtBasicServiceCodeImpl._ID_ext_Teleservice)
-								|| ais2.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais2.isTagPrimitive())
-							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-									+ ": bad tag or tagClass or is not primitive ", MAPParsingComponentExceptionReason.MistypedParameter);
-
 						extBasicServiceCode = new ExtBasicServiceCodeImpl();
 						((ExtBasicServiceCodeImpl) extBasicServiceCode).decodeAll(ais2);
 						this.basicServiceCriteria.add(extBasicServiceCode);

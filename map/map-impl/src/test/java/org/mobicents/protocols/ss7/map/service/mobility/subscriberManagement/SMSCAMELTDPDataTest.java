@@ -68,7 +68,7 @@ public class SMSCAMELTDPDataTest {
 		assertEquals(prim.getServiceKey(),4);
 		assertTrue(prim.getSMSTriggerDetectionPoint().getCode() == SMSTriggerDetectionPoint.smsCollectedInfo.getCode());
 		ISDNAddressString gsmSCFAddress = prim.getGsmSCFAddress();
-		assertEquals(gsmSCFAddress.getAddress(),"22235");
+		assertTrue(gsmSCFAddress.getAddress().equals("22235"));
 		assertEquals(gsmSCFAddress.getAddressNature(), AddressNature.international_number);
 		assertEquals(gsmSCFAddress.getNumberingPlan(), NumberingPlan.ISDN);
 		assertEquals(prim.getDefaultSMSHandling().getCode() , DefaultSMSHandling.continueTransaction.getCode());

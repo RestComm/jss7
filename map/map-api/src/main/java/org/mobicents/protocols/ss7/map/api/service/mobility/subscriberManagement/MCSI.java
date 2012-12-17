@@ -54,7 +54,7 @@ public interface MCSI {
 
 	public ArrayList<MMCode> getMobilityTriggers();
 
-	public Long getServiceKey();
+	public long getServiceKey();
 
 	public ISDNAddressString getGsmSCFAddress();
 

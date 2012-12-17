@@ -66,5 +66,20 @@ public class AdditionalSubscriptionsImpl  extends BitStringBase implements Addit
 	public boolean getEmergencyReset() {
 		return this.bitString.get(_INDEX_EmergencyReset);
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+		if (this.getPrivilegedUplinkRequest())
+			sb.append("PrivilegedUplinkRequest, ");
+		if (this.getEmergencyUplinkRequest())
+			sb.append("EmergencyUplinkRequest, ");
+		if (this.getEmergencyReset())
+			sb.append("EmergencyReset ");
+		sb.append("]");
+		return sb.toString();
+	}
 
 }

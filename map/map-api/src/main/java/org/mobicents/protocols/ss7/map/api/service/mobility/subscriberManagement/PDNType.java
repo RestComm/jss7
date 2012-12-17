@@ -36,5 +36,7 @@ PDN-Type ::= OCTET STRING (SIZE (1))
 public interface PDNType {
 
 	public int getData();
+	
+	public PDNTypeValue getPDNTypeValue();
 
 }

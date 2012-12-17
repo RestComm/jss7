@@ -81,15 +81,15 @@ public class OBcsmCamelTdpCriteriaTest {
 		assertEquals(destinationNumberList.size(),2);
 		ISDNAddressString destinationNumberOne = destinationNumberList.get(0);
 		assertNotNull(destinationNumberOne);
-		assertEquals(destinationNumberOne.getAddress(),"22234");
+		assertTrue(destinationNumberOne.getAddress().equals("22234"));
 		assertEquals(destinationNumberOne.getAddressNature(), AddressNature.international_number);
 		assertEquals(destinationNumberOne.getNumberingPlan(), NumberingPlan.ISDN);
 		ISDNAddressString destinationNumberTwo = destinationNumberList.get(1);
 		assertNotNull(destinationNumberTwo);
-		assertEquals(destinationNumberTwo.getAddress(),"22235");
+		assertTrue(destinationNumberTwo.getAddress().equals("22235"));
 		assertEquals(destinationNumberTwo.getAddressNature(), AddressNature.international_number);
 		assertEquals(destinationNumberTwo.getNumberingPlan(), NumberingPlan.ISDN);
-		assertEquals(destinationNumberCriteria.getMatchType().getCode(), MatchType.enabling.getCode());
+		assertEquals(destinationNumberCriteria.getMatchType(), MatchType.enabling);
 		ArrayList<Integer> destinationNumberLengthList  = destinationNumberCriteria.getDestinationNumberLengthList();
 		assertNotNull(destinationNumberLengthList);
 		assertEquals(destinationNumberLengthList.size(),3);
@@ -97,14 +97,14 @@ public class OBcsmCamelTdpCriteriaTest {
 		assertEquals(destinationNumberLengthList.get(1).intValue(),4);
 		assertEquals(destinationNumberLengthList.get(2).intValue(),1);
 		
-		assertEquals(prim.getOBcsmTriggerDetectionPoint().getCode() ,OBcsmTriggerDetectionPoint.collectedInfo.getCode());
+		assertEquals(prim.getOBcsmTriggerDetectionPoint() ,OBcsmTriggerDetectionPoint.collectedInfo);
 		
 		assertNotNull(prim.getBasicServiceCriteria());
 		assertEquals(prim.getBasicServiceCriteria().size() ,1);
 		ExtBasicServiceCode basicService = prim.getBasicServiceCriteria().get(0);
 		assertNotNull(basicService);
 		assertEquals(basicService.getExtBearerService().getBearerServiceCodeValue(), BearerServiceCodeValue.Asynchronous9_6kbps);
-		assertEquals(prim.getCallTypeCriteria().getCode() , CallTypeCriteria.forwarded.getCode());
+		assertEquals(prim.getCallTypeCriteria() , CallTypeCriteria.forwarded);
 		ArrayList<CauseValue> oCauseValueCriteria = prim.getOCauseValueCriteria();
 		assertNotNull(oCauseValueCriteria);
 		assertEquals(oCauseValueCriteria.size() , 1);

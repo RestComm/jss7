@@ -65,8 +65,8 @@ public class VoiceGroupCallDataTest {
 		assertEquals(tag, Tag.SEQUENCE);
 		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
 		
-		assertEquals( prim.getGroupId().getGroupId(),"4");
-		assertEquals( prim.getLongGroupId().getLongGroupId(),"5");
+		assertTrue( prim.getGroupId().getGroupId().equals("4"));
+		assertTrue( prim.getLongGroupId().getLongGroupId().equals("5"));
 		assertNotNull(prim.getExtensionContainer());
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(prim.getExtensionContainer()));
 		assertTrue(prim.getAdditionalSubscriptions().getEmergencyReset());

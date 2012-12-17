@@ -23,6 +23,9 @@
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
+import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -68,7 +71,7 @@ public class ZoneCodeTest {
 		
 		assertEquals(tag, Tag.STRING_OCTET);
 		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
-		assertEquals(prim.getData(), this.getZoneCodeData());
+		assertTrue(Arrays.equals(prim.getData(), this.getZoneCodeData()));
 	}
 
 	@Test(groups = { "functional.encode","primitives"})
@@ -77,12 +80,12 @@ public class ZoneCodeTest {
 		ZoneCodeImpl prim = new ZoneCodeImpl(2);
 		AsnOutputStream asn = new AsnOutputStream();
 		prim.encodeAll(asn);
-		assertEquals(asn.toByteArray(), this.getData());
+		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
 		
 		prim = new ZoneCodeImpl(this.getZoneCodeData());
 		asn = new AsnOutputStream();
 		prim.encodeAll(asn);
-		assertEquals(asn.toByteArray(), this.getData1());
+		assertTrue(Arrays.equals(asn.toByteArray(), this.getData1()));
 		
 	}
 }

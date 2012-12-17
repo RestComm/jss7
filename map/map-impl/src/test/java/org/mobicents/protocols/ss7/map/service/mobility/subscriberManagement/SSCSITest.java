@@ -78,10 +78,10 @@ public class SSCSITest {
 		assertEquals(ssEventList.size(),1);
 		SSCode one = ssEventList.get(0);
 		assertNotNull(one);
-		assertTrue(one.getData()==SupplementaryCodeValue.allFacsimileTransmissionServices.getCode());
+		assertEquals(one.getSupplementaryCodeValue() ,SupplementaryCodeValue.allFacsimileTransmissionServices);
 	
 		ISDNAddressString gsmSCFAddress = ssCamelData.getGsmSCFAddress();
-		assertEquals(gsmSCFAddress.getAddress(),"22235");
+		assertTrue(gsmSCFAddress.getAddress().equals("22235"));
 		assertEquals(gsmSCFAddress.getAddressNature(), AddressNature.international_number);
 		assertEquals(gsmSCFAddress.getNumberingPlan(), NumberingPlan.ISDN);
 		assertNotNull(ssCamelData.getExtensionContainer());

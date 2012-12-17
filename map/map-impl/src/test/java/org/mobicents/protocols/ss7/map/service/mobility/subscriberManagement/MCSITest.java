@@ -71,16 +71,15 @@ public class MCSITest {
 		assertEquals(mobilityTriggers.size(),2);
 		MMCode one = mobilityTriggers.get(0);
 		assertNotNull(one);
-		assertEquals(MMCodeValue.GPRSAttach.getCode() , one.getMMCodeValue().getCode());
+		assertEquals(MMCodeValue.GPRSAttach , one.getMMCodeValue());
 		MMCode two = mobilityTriggers.get(1);
 		assertNotNull(two);
-		assertEquals(MMCodeValue.IMSIAttach.getCode() , two.getMMCodeValue().getCode());
-		
-		assertNotNull(prim.getServiceKey());
-		assertEquals(prim.getServiceKey().intValue(),3);
+		assertEquals(MMCodeValue.IMSIAttach , two.getMMCodeValue());
+
+		assertEquals(prim.getServiceKey(),3);
 		
 		ISDNAddressString gsmSCFAddress = prim.getGsmSCFAddress();
-		assertEquals(gsmSCFAddress.getAddress(),"22235");
+		assertTrue(gsmSCFAddress.getAddress().equals("22235"));
 		assertEquals(gsmSCFAddress.getAddressNature(), AddressNature.international_number);
 		assertEquals(gsmSCFAddress.getNumberingPlan(), NumberingPlan.ISDN);
 
@@ -101,6 +100,7 @@ public class MCSITest {
 		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
 		boolean notificationToCSE = false;
 		boolean csiActive = true;
+
 		mobilityTriggers.add(new MMCodeImpl(MMCodeValue.GPRSAttach));
 		mobilityTriggers.add(new MMCodeImpl(MMCodeValue.IMSIAttach));
 		

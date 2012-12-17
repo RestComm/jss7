@@ -130,11 +130,44 @@ public class GPRSSubscriptionDataTest {
 		ArrayList<PDPContext> gprsDataList = prim.getGPRSDataList();
 		assertNotNull(gprsDataList);
 		assertEquals(gprsDataList.size(), 1);
-		assertNotNull(gprsDataList.get(0));		 
+		PDPContext pdpContext = gprsDataList.get(0);
+		assertNotNull(pdpContext);		 
+		APN apn= pdpContext.getAPN();
+		assertTrue(Arrays.equals(apn.getData(), this.getAPNData()));
+		APNOIReplacement apnoiReplacement = pdpContext.getAPNOIReplacement();
+		assertTrue(Arrays.equals(apnoiReplacement.getData(), this.getAPNOIReplacementData()));
+		ChargingCharacteristics chargingCharacteristics = pdpContext.getChargingCharacteristics();
+		assertTrue(Arrays.equals(chargingCharacteristics.getData(), this.getChargingCharacteristicsData()));
+		
+		Ext2QoSSubscribed ext2QoSSubscribed = pdpContext.getExt2QoSSubscribed(); 
+		assertTrue(Arrays.equals(ext2QoSSubscribed.getData(), this.getExt2QoSSubscribedData()));
+		Ext3QoSSubscribed ext3QoSSubscribed = pdpContext.getExt3QoSSubscribed(); 
+		assertTrue(Arrays.equals(ext3QoSSubscribed.getData(), this.getExt3QoSSubscribedData()));
+		Ext4QoSSubscribed ext4QoSSubscribed = pdpContext.getExt4QoSSubscribed(); 
+		assertEquals(ext4QoSSubscribed.getData(), 2);
+		MAPExtensionContainer pdpContextExtensionContainer = pdpContext.getExtensionContainer();
+		assertNotNull(pdpContextExtensionContainer);
+		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(pdpContextExtensionContainer));
+		PDPAddress extpdpAddress = pdpContext.getExtPDPAddress();
+		assertTrue(Arrays.equals(extpdpAddress.getData(), this.getPDPAddressData2()));
+		ExtPDPType extpdpType =  pdpContext.getExtPDPType();
+		assertTrue(Arrays.equals(extpdpType.getData(), this.getExtPDPTypeData()));
+		ExtQoSSubscribed extQoSSubscribed = pdpContext.getExtQoSSubscribed();
+		assertTrue(Arrays.equals(extQoSSubscribed.getData(), this.getExtQoSSubscribedData()));	
+		assertEquals(pdpContext.getLIPAPermission(),LIPAPermission.lipaConditional);
+		PDPAddress pdpAddress = pdpContext.getPDPAddress();
+		assertTrue(Arrays.equals(pdpAddress.getData(), this.getPDPAddressData()));
+		assertEquals(pdpContext.getPDPContextId(),1);
+		PDPType pdpType = pdpContext.getPDPType();
+		assertTrue(Arrays.equals(pdpType.getData(), this.getPDPTypeData()));
+		QoSSubscribed qosSubscribed = pdpContext.getQoSSubscribed();
+		assertTrue(Arrays.equals(qosSubscribed.getData(), this.getQoSSubscribedData()));
+		assertEquals(pdpContext.getSIPTOPermission(),SIPTOPermission.siptoAllowed);
+		
 		MAPExtensionContainer extensionContainer = prim.getExtensionContainer();
 		APNOIReplacement apnOiReplacement = prim.getApnOiReplacement();
 		assertNotNull(apnOiReplacement);
-		assertEquals(apnOiReplacement.getData(), this.getAPNOIReplacementData());
+		assertTrue(Arrays.equals(apnOiReplacement.getData(), this.getAPNOIReplacementData()));
 		assertNotNull(extensionContainer);
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
 	}

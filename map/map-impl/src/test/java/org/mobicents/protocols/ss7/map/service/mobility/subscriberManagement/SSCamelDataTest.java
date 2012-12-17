@@ -72,10 +72,10 @@ public class SSCamelDataTest {
 		assertEquals(ssEventList.size(),1);
 		SSCode one = ssEventList.get(0);
 		assertNotNull(one);
-		assertEquals(one.getData(),SupplementaryCodeValue.allFacsimileTransmissionServices.getCode());
+		assertEquals(one.getSupplementaryCodeValue(),SupplementaryCodeValue.allFacsimileTransmissionServices);
 	
 		ISDNAddressString gsmSCFAddress = prim.getGsmSCFAddress();
-		assertEquals(gsmSCFAddress.getAddress(),"22235");
+		assertTrue(gsmSCFAddress.getAddress().equals("22235"));
 		assertEquals(gsmSCFAddress.getAddressNature(), AddressNature.international_number);
 		assertEquals(gsmSCFAddress.getNumberingPlan(), NumberingPlan.ISDN);
 		assertNotNull(prim.getExtensionContainer());

@@ -32,7 +32,6 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.MMCode;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SMSCAMELTDPData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SMSCSI;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
@@ -46,10 +45,10 @@ import org.mobicents.protocols.ss7.map.primitives.SequenceBase;
 public class SMSCSIImpl extends SequenceBase implements  SMSCSI{
 
 	public static final int _TAG_smsCamelTdpDataList = 0;
-	public static final int _TAG_camelCapabilityHandling = 2;
-	public static final int _TAG_extensionContainer = 3;
-	public static final int _TAG_notificationToCSE = 4;
-	public static final int _TAG_csiActive = 5;
+	public static final int _TAG_camelCapabilityHandling = 1;
+	public static final int _TAG_extensionContainer = 2;
+	public static final int _TAG_notificationToCSE = 3;
+	public static final int _TAG_csiActive = 4;
 	
 	private ArrayList<SMSCAMELTDPData> smsCamelTdpDataList;
 	private Integer camelCapabilityHandling;
@@ -61,8 +60,6 @@ public class SMSCSIImpl extends SequenceBase implements  SMSCSI{
 		super("SMSCSI");
 	}
 	
-	
-
 	public SMSCSIImpl(
 			ArrayList<SMSCAMELTDPData> smsCamelTdpDataList,
 			Integer camelCapabilityHandling,
@@ -75,8 +72,6 @@ public class SMSCSIImpl extends SequenceBase implements  SMSCSI{
 		this.notificationToCSE = notificationToCSE;
 		this.csiActive = csiActive;
 	}
-
-
 
 	@Override
 	public ArrayList<SMSCAMELTDPData> getSmsCamelTdpDataList() {
@@ -139,7 +134,7 @@ public class SMSCSIImpl extends SequenceBase implements  SMSCSI{
 						int tag2 = ais2.readTag();
 						if (tag2 != Tag.SEQUENCE || ais2.getTagClass() != Tag.CLASS_UNIVERSAL || ais2.isTagPrimitive())
 							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-									+ ": bad callBarringFeature tag or tagClass or is primitive ", MAPParsingComponentExceptionReason.MistypedParameter);
+									+ ": bad tag or tagClass or is primitive when decoding SMSCAMELTDPData", MAPParsingComponentExceptionReason.MistypedParameter);
 
 						smsCAMELTDPData = new SMSCAMELTDPDataImpl();
 						((SMSCAMELTDPDataImpl) smsCAMELTDPData).decodeAll(ais2);
@@ -195,9 +190,8 @@ public class SMSCSIImpl extends SequenceBase implements  SMSCSI{
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-		//check this .. how many values should be in the lise and do we need to contained values..
 		if (this.smsCamelTdpDataList != null && (this.smsCamelTdpDataList.size() < 1 || this.smsCamelTdpDataList.size() > 10)) {
-			throw new MAPException("Error while encoding " + _PrimitiveName + ": Parameter mobilityTriggers size must be from 1 to 10, found: "
+			throw new MAPException("Error while encoding " + _PrimitiveName + ": Parameter smsCamelTdpDataList size must be from 1 to 10, found: "
 					+ this.smsCamelTdpDataList.size());
 		}
 

@@ -31,7 +31,6 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.MMCode;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ODBData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ODBGeneralData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ODBHPLMNData;

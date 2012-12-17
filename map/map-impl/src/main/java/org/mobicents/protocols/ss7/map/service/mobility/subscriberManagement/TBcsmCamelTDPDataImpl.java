@@ -101,7 +101,7 @@ public class TBcsmCamelTDPDataImpl extends SequenceBase implements TBcsmCamelTDP
 	protected void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
 		this.tBcsmTriggerDetectionPoint = null;
-		this.serviceKey = 0;
+		this.serviceKey = -1;
 		this.gsmSCFAddress = null;
 		this.defaultCallHandling = null;
 		this.extensionContainer = null;
@@ -172,10 +172,15 @@ public class TBcsmCamelTDPDataImpl extends SequenceBase implements TBcsmCamelTDP
 
 			num++;
 		}
-
-		if (num < 2) {
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-					+ ": Paraments t-BcsmTriggerDetectionPoint and serviceKey are mandatory but do not found", MAPParsingComponentExceptionReason.MistypedParameter);
+		
+		if (this.tBcsmTriggerDetectionPoint == null) {
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parament tBcsmTriggerDetectionPoint is mandatory but does not found",
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+		
+		if (this.serviceKey == -1) {
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parament serviceKey is mandatory but does not found",
+					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 

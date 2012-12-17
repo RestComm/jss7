@@ -61,7 +61,7 @@ public class TBcsmCamelTdpCriteriaTest {
 		assertEquals(tag, Tag.SEQUENCE);
 		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
 		
-		assertTrue(prim.getTBcsmTriggerDetectionPoint().getCode()== TBcsmTriggerDetectionPoint.tBusy.getCode());
+		assertEquals(prim.getTBcsmTriggerDetectionPoint(), TBcsmTriggerDetectionPoint.tBusy);
 		
 		assertNotNull(prim.getBasicServiceCriteria());
 		assertEquals(prim.getBasicServiceCriteria().size(),2);
@@ -71,7 +71,7 @@ public class TBcsmCamelTdpCriteriaTest {
 		
 		ExtBasicServiceCode basicServiceTwo =  prim.getBasicServiceCriteria().get(1);
 		assertNotNull(basicServiceTwo);
-		assertEquals(basicServiceTwo.getExtTeleservice().getTeleserviceCodeValue().getCode(),TeleserviceCodeValue.allSpeechTransmissionServices.getCode());
+		assertEquals(basicServiceTwo.getExtTeleservice().getTeleserviceCodeValue(),TeleserviceCodeValue.allSpeechTransmissionServices);
 		
 		ArrayList<CauseValue> oCauseValueCriteria = prim.getTCauseValueCriteria();
 		assertNotNull(oCauseValueCriteria);

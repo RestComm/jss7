@@ -29,6 +29,7 @@ import java.util.Arrays;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.InterCUGRestrictionsValue;
 import org.testng.annotations.Test;
 
 /**
@@ -53,12 +54,12 @@ public class InterCUGRestrictionsTest {
 		assertEquals(tag, Tag.STRING_OCTET);
 		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
 		
-		assertEquals(prim.getData(), 2);
+		assertEquals(prim.getInterCUGRestrictionsValue(), InterCUGRestrictionsValue.CUGWithIncomingAccess);
 	}
 	
 	@Test(groups = { "functional.encode", "primitives" })
 	public void testEncode() throws Exception {
-		InterCUGRestrictionsImpl prim = new InterCUGRestrictionsImpl(2);
+		InterCUGRestrictionsImpl prim = new InterCUGRestrictionsImpl(InterCUGRestrictionsValue.CUGWithIncomingAccess);
 		AsnOutputStream asn = new AsnOutputStream();
 		prim.encodeAll(asn);
 		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));

@@ -66,15 +66,15 @@ public class DPAnalysedInfoCriteriumTest {
 		
 		MAPExtensionContainer extensionContainer = prim.getExtensionContainer();
 		ISDNAddressString dialledNumber = prim.getDialledNumber();
-		assertEquals(dialledNumber.getAddress(),"22234");
+		assertTrue(dialledNumber.getAddress().equals("22234"));
 		assertEquals(dialledNumber.getAddressNature(), AddressNature.international_number);
 		assertEquals(dialledNumber.getNumberingPlan(), NumberingPlan.ISDN);
 		assertEquals(prim.getServiceKey() , 7);
 		ISDNAddressString gsmSCFAddress = prim.getGsmSCFAddress();
-		assertEquals(gsmSCFAddress.getAddress(),"22235");
+		assertTrue(gsmSCFAddress.getAddress().equals("22235"));
 		assertEquals(gsmSCFAddress.getAddressNature(), AddressNature.international_number);
 		assertEquals(gsmSCFAddress.getNumberingPlan(), NumberingPlan.ISDN);
-		assertEquals(prim.getDefaultCallHandling().getCode() , DefaultCallHandling.continueCall.getCode());
+		assertEquals(prim.getDefaultCallHandling() , DefaultCallHandling.continueCall);
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
 	}
 	

@@ -97,7 +97,7 @@ public class DPAnalysedInfoCriteriumImpl extends SequenceBase implements DPAnaly
 	protected void _decode(AsnInputStream asnIS, int length)
 			throws MAPParsingComponentException, IOException, AsnException {
 		this.dialledNumber = null;
-		this.serviceKey = 0;
+		this.serviceKey = -1;
 		this.gsmSCFAddress = null;
 		this.defaultCallHandling = null;
 		this.extensionContainer = null;
@@ -169,9 +169,24 @@ public class DPAnalysedInfoCriteriumImpl extends SequenceBase implements DPAnaly
 			num++;
 		}
 
-		if (num <4) {
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-					+ ": Paraments dialledNumber, serviceKey, gsmSCFAddress and defaultCallHandling mandatory but do not found", MAPParsingComponentExceptionReason.MistypedParameter);
+		if (this.dialledNumber == null) {
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parament dialledNumber is mandatory but does not found",
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+		
+		if (this.gsmSCFAddress == null) {
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parament gsmSCFAddress is mandatory but does not found",
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+		
+		if (this.defaultCallHandling == null) {
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parament defaultCallHandling is mandatory but does not found",
+					MAPParsingComponentExceptionReason.MistypedParameter);
+		}
+		
+		if (this.serviceKey == -1) {
+			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parament serviceKey is mandatory but does not found",
+					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 

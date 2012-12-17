@@ -172,7 +172,7 @@ public class ExtSSInfoTest {
 		
 		ISDNAddressString forwardedToNumber = extForwFeature.getForwardedToNumber();
 		assertNotNull(forwardedToNumber);
-		assertEquals(forwardedToNumber.getAddress(),"22228");
+		assertTrue(forwardedToNumber.getAddress().equals("22228"));
 		assertEquals(forwardedToNumber.getAddressNature(), AddressNature.international_number);
 		assertEquals(forwardedToNumber.getNumberingPlan(), NumberingPlan.ISDN);
 		
@@ -181,13 +181,13 @@ public class ExtSSInfoTest {
 		assertTrue(extForwFeature.getForwardingOptions().getNotificationToCallingParty());
 		assertTrue(extForwFeature.getForwardingOptions().getNotificationToForwardingParty());
 		assertTrue(!extForwFeature.getForwardingOptions().getRedirectingPresentation());
-		assertEquals(extForwFeature.getForwardingOptions().getExtForwOptionsForwardingReason().getCode()
-				, ExtForwOptionsForwardingReason.msBusy.getCode());
+		assertEquals(extForwFeature.getForwardingOptions().getExtForwOptionsForwardingReason()
+				, ExtForwOptionsForwardingReason.msBusy);
 		assertNotNull(extForwFeature.getNoReplyConditionTime());
 		assertEquals(extForwFeature.getNoReplyConditionTime().intValue(),2);
 		FTNAddressString longForwardedToNumber = extForwFeature.getLongForwardedToNumber();
 		assertNotNull(longForwardedToNumber);
-		assertEquals(longForwardedToNumber.getAddress() ,"22227");
+		assertTrue(longForwardedToNumber.getAddress().equals("22227"));
 		assertEquals(longForwardedToNumber.getAddressNature(), AddressNature.international_number);
 		assertEquals(longForwardedToNumber.getNumberingPlan(), NumberingPlan.ISDN);
 		assertNotNull(extensionContainer);
@@ -216,7 +216,7 @@ public class ExtSSInfoTest {
 		assertNull(emlppInfo);	
 		
 		extensionContainer = callBarringInfo.getExtensionContainer();
-		assertEquals(callBarringInfo.getSsCode().getData() , SupplementaryCodeValue.allServices.getCode());
+		assertEquals(callBarringInfo.getSsCode().getSupplementaryCodeValue(), SupplementaryCodeValue.allServices);
 		assertNotNull(callBarringInfo.getCallBarringFeatureList());
 		assertEquals(callBarringInfo.getCallBarringFeatureList().size() , 1);
 		assertNotNull(callBarringInfo.getCallBarringFeatureList().get(0));
@@ -276,7 +276,7 @@ public class ExtSSInfoTest {
 		assertNull(emlppInfo);
 		
 		extensionContainer = ssData.getExtensionContainer();
-		assertEquals(ssData.getSsCode().getData() , SupplementaryCodeValue.allServices.getCode());
+		assertEquals(ssData.getSsCode().getSupplementaryCodeValue() , SupplementaryCodeValue.allServices);
 		assertNotNull(ssData.getSsStatus());
 		assertTrue(ssData.getSsStatus().getBitA());
 		assertTrue(!ssData.getSsStatus().getBitP());
@@ -284,7 +284,7 @@ public class ExtSSInfoTest {
 		assertTrue(ssData.getSsStatus().getBitR());
 		assertNotNull(ssData.getSSSubscriptionOption());
 		assertNotNull(ssData.getSSSubscriptionOption().getCliRestrictionOption());
-		assertEquals(ssData.getSSSubscriptionOption().getCliRestrictionOption().getCode() , CliRestrictionOption.permanent.getCode() );
+		assertEquals(ssData.getSSSubscriptionOption().getCliRestrictionOption() , CliRestrictionOption.permanent );
 		assertNull(ssData.getSSSubscriptionOption().getOverrideCategory());
 		assertNotNull(extensionContainer);
 		

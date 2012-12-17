@@ -49,13 +49,12 @@ import org.testng.annotations.Test;
  */
 public class SMSCSITest {
 
-
 	public byte[] getData() {
 		return new byte[] { 48, 104, -96, 58, 48, 56, -128, 1, 1, -127, 1, 4,
 				-126, 4, -111, 34, 50, -11, -125, 1, 0, -92, 39, -96, 32, 48,
 				10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6,
 				48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32,
-				33, -126, 1, 8, -93, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11,
+				33, -127, 1, 8, -94, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11,
 				12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5,
 				21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
 	};
@@ -77,12 +76,12 @@ public class SMSCSITest {
 		SMSCAMELTDPData one = smsCamelTdpDataList.get(0);
 		assertNotNull(one);
 		assertEquals(one.getServiceKey() ,4);
-		assertEquals(one.getSMSTriggerDetectionPoint().getCode() , SMSTriggerDetectionPoint.smsCollectedInfo.getCode());
+		assertEquals(one.getSMSTriggerDetectionPoint() , SMSTriggerDetectionPoint.smsCollectedInfo);
 		ISDNAddressString gsmSCFAddress = one.getGsmSCFAddress();
-		assertEquals(gsmSCFAddress.getAddress(),"22235");
+		assertTrue(gsmSCFAddress.getAddress().equals("22235"));
 		assertEquals(gsmSCFAddress.getAddressNature(), AddressNature.international_number);
 		assertEquals(gsmSCFAddress.getNumberingPlan(), NumberingPlan.ISDN);
-		assertEquals(one.getDefaultSMSHandling().getCode() ,DefaultSMSHandling.continueTransaction.getCode());
+		assertEquals(one.getDefaultSMSHandling() ,DefaultSMSHandling.continueTransaction);
 		assertNotNull(one.getExtensionContainer());
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(one.getExtensionContainer()));
 	
@@ -119,6 +118,7 @@ public class SMSCSITest {
 		AsnOutputStream asn = new AsnOutputStream();
 		prim.encodeAll(asn);
 		
+
 		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
 	}
 

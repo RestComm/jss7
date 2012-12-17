@@ -67,12 +67,12 @@ public class DestinationNumberCriteriaTest {
 		assertEquals(destinationNumberList.size(),2);
 		ISDNAddressString destinationNumberOne = destinationNumberList.get(0);
 		assertNotNull(destinationNumberOne);
-		assertEquals(destinationNumberOne.getAddress(),"22234");
+		assertTrue(destinationNumberOne.getAddress().equals("22234"));
 		assertEquals(destinationNumberOne.getAddressNature(), AddressNature.international_number);
 		assertEquals(destinationNumberOne.getNumberingPlan(), NumberingPlan.ISDN);
 		ISDNAddressString destinationNumberTwo = destinationNumberList.get(1);
 		assertNotNull(destinationNumberTwo);
-		assertEquals(destinationNumberTwo.getAddress(),"22235");
+		assertTrue(destinationNumberTwo.getAddress().equals("22235"));
 		assertEquals(destinationNumberTwo.getAddressNature(), AddressNature.international_number);
 		assertEquals(destinationNumberTwo.getNumberingPlan(), NumberingPlan.ISDN);
 		assertEquals(prim.getMatchType().getCode() ,MatchType.enabling.getCode());
