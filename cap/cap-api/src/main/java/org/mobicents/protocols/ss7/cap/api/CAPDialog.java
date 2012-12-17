@@ -43,6 +43,7 @@ public interface CAPDialog {
 	// Invoke timers
 	public static int _Timer_CircuitSwitchedCallControl_Short = 6000; // 1 - 10 sec
 	public static int _Timer_CircuitSwitchedCallControl_Medium = 30000; // 1 - 60 sec
+	public static int _Timer_CircuitSwitchedCallControl_Long = 300000; // 1 s - 30 minutes
 	public static int _Timer_Sms_Short = 10000; // 1 - 20 sec
 	public static int _Timer_Gprs_Short = 10000; // 1 - 20 sec
 	
