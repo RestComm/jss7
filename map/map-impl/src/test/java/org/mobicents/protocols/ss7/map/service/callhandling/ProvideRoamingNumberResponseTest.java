@@ -170,7 +170,7 @@ public class ProvideRoamingNumberResponseTest {
 	    assertFalse(releaseResourcesSupported);
 	    assertNull(vmscAddress);
 		
-		System.out.println("Success");
+		//System.out.println("Success");
 	 }
 
 	@Test(groups = { "functional.encode", "service.callhandling" })
@@ -193,7 +193,7 @@ public class ProvideRoamingNumberResponseTest {
 		AsnOutputStream asnOS = new AsnOutputStream();
 		prn.encodeAll(asnOS);
 		byte[] encodedData = asnOS.toByteArray();
-		System.out.println("0   :   " + Arrays.toString(encodedData));
+		//System.out.println("0   :   " + Arrays.toString(encodedData));
 		assertTrue(Arrays.equals(getEncodedData(), encodedData));
 
 
@@ -206,7 +206,7 @@ public class ProvideRoamingNumberResponseTest {
 		prn.encodeAll(asnOS);
 
 		encodedData = asnOS.toByteArray();
-		System.out.println("0   :   " + Arrays.toString(encodedData));
+		//System.out.println("0   :   " + Arrays.toString(encodedData));
 		assertTrue(Arrays.equals(getEncodedDataFull(), encodedData));
 
 		
@@ -219,7 +219,7 @@ public class ProvideRoamingNumberResponseTest {
 		prn.encodeAll(asnOS);
 
 		encodedData = asnOS.toByteArray();
-		System.out.println("1   :   " + Arrays.toString(encodedData));
+		//System.out.println("1   :   " + Arrays.toString(encodedData));
 		assertTrue(Arrays.equals(getEncodedData1(), encodedData));
 
 	}

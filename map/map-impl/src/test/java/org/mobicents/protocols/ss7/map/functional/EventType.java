@@ -26,12 +26,15 @@ public enum EventType {
 	
 	// mobility.subscriberInformation EventType
 	AnyTimeInterrogation, AnyTimeInterrogationResp,
+	
+	// mobility.SubscriberManagementServices EventType
+	InsertSubscriberData, InsertSubscriberDataResp,
 
 	// mobility.imei EventType
 	CheckImei, CheckImeiResp,
 
 	//Call Handling Service 
-	ProvideRoamingNumber, ProvideRoamingNumberResp,
+	ProvideRoamingNumber, ProvideRoamingNumberResp, SendRoutingInformation, SendRoutingInformationResp,
 	
 	// lsm EventType
 	ProvideSubscriberLocation, ProvideSubscriberLocationResp, SubscriberLocationReport, SubscriberLocationReportResp, SendRoutingInfoForLCS, SendRoutingInfoForLCSResp;

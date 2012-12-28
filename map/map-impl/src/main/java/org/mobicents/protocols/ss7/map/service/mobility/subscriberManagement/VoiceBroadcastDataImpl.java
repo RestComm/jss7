@@ -174,7 +174,11 @@ public class VoiceBroadcastDataImpl extends SequenceBase implements VoiceBroadca
 			throw new MAPException("Error while encoding" + _PrimitiveName + ": groupId must not be null");
 
 		try{
-			((GroupIdImpl) this.groupId).encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET);			
+			if(this.longGroupId != null){
+				(new GroupIdImpl("")).encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET);
+			}else{
+				((GroupIdImpl) this.groupId).encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET);
+			}		
 	
 			if (broadcastInitEntitlement)
 				asnOs.writeNull();

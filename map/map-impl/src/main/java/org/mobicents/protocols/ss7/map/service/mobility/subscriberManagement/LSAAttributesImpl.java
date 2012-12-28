@@ -22,6 +22,7 @@
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
 
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.LSAAttributes;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.LSAIdentificationPriorityValue;
 import org.mobicents.protocols.ss7.map.primitives.OctetStringLength1Base;
 
 /**
@@ -39,9 +40,28 @@ public class LSAAttributesImpl extends OctetStringLength1Base implements LSAAttr
 		super("LSAAttributes", data);
 	}
 	
+	public LSAAttributesImpl(LSAIdentificationPriorityValue value,boolean preferentialAccessAvailable,boolean activeModeSupportAvailable) {
+		super("LSAAttributes",value.getCode() | (preferentialAccessAvailable?0x10:0) | (activeModeSupportAvailable?0x20:0));
+	}
+	
 	@Override
 	public int getData() {
 		return data;
 	}
+	
+	@Override
+	public LSAIdentificationPriorityValue getLSAIdentificationPriority(){
+		return LSAIdentificationPriorityValue.getInstance(data & 0x0F);
+	}
+	
+	@Override
+	public boolean isPreferentialAccessAvailable(){
+		return ((data & 0x10 ) == 0x10);
+	}
+	
+	@Override
+	public boolean isActiveModeSupportAvailable(){
+		return ((data & 0x20 ) == 0x20);
+	} 
 
 }

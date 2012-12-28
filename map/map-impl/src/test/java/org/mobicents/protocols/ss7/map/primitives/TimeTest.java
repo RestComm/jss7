@@ -19,10 +19,9 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
+package org.mobicents.protocols.ss7.map.primitives;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -30,8 +29,6 @@ import java.util.Arrays;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.testng.annotations.Test;
 
 /**
@@ -39,41 +36,64 @@ import org.testng.annotations.Test;
  * @author Lasith Waruna Perera
  * 
  */
-public class AllocationRetentionPriorityTest {
+public class TimeTest {
 	
 	public byte[] getData() {
-		return new byte[] { 48, 50, -128, 1, 1, -127, 1, -1, -126, 1, -1, -93,
-				39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5,
-				6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26,
-				-95, 3, 31, 32, 33 };
+		return new byte[] {4, 4, -95, 16, -24, 70};
 	};
+
+	public byte[] getData2() {
+		return new byte[] {4, 4, 127, -2, -92, -58};
+	}
 	
 	@Test(groups = { "functional.decode", "primitives" })
 	public void testDecode() throws Exception {
+		//option 1
 		byte[] data = this.getData();
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
-		AllocationRetentionPriorityImpl prim = new AllocationRetentionPriorityImpl();
+		TimeImpl prim = new TimeImpl();
 		prim.decodeAll(asn);
 		
-		assertEquals(tag, Tag.SEQUENCE);
+		assertEquals(tag, Tag.STRING_OCTET);
 		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
 		
-		MAPExtensionContainer extensionContainer = prim.getExtensionContainer();
-		assertEquals(prim.getPriorityLevel(), 1);
-		assertTrue(prim.getPreEmptionCapability());
-		assertTrue(prim.getPreEmptionVulnerability());
-		assertNotNull(extensionContainer);
-		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+		assertEquals(prim.getYear(),1985);
+		assertEquals(prim.getMonth(),8);
+		assertEquals(prim.getDay(),19);
+		assertEquals(prim.getHour(),3);
+		assertEquals(prim.getMinute(),40);
+		assertEquals(prim.getSecond(),14);
+		
+		//option 2
+		data = this.getData2();
+		asn = new AsnInputStream(data);
+		tag = asn.readTag();
+		prim = new TimeImpl();
+		prim.decodeAll(asn);
+		
+		assertEquals(tag, Tag.STRING_OCTET);
+		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
+		
+		assertEquals(prim.getYear(),2104);
+		assertEquals(prim.getMonth(),2);
+		assertEquals(prim.getDay(),25);
+		assertEquals(prim.getHour(),14);
+		assertEquals(prim.getMinute(),30);
+		assertEquals(prim.getSecond(),54);
+		
 	}
 	
 	@Test(groups = { "functional.encode", "primitives" })
 	public void testEncode() throws Exception {
-		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
-		AllocationRetentionPriorityImpl prim = new AllocationRetentionPriorityImpl(1, true, true, extensionContainer);
+		TimeImpl prim = new TimeImpl(1985, 8, 19, 3, 40, 14);
 		AsnOutputStream asn = new AsnOutputStream();
 		prim.encodeAll(asn);
-
 		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+
+		prim = new TimeImpl(2104, 2, 25, 14, 30, 54);
+		asn = new AsnOutputStream();
+		prim.encodeAll(asn);
+		assertTrue(Arrays.equals(asn.toByteArray(), this.getData2()));
 	}
 }

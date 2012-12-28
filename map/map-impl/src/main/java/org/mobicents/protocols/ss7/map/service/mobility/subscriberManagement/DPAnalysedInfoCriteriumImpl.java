@@ -232,6 +232,7 @@ public class DPAnalysedInfoCriteriumImpl extends SequenceBase implements DPAnaly
 			sb.append(", ");
 		}
 		
+		sb.append("serviceKey=");
 		sb.append(this.serviceKey);
 		sb.append(", ");
 		

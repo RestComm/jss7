@@ -47,6 +47,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
 import org.mobicents.protocols.ss7.map.service.mobility.MobilityMessageImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.SupportedFeaturesImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.SSCodeImpl;
 
 /**
@@ -335,9 +336,8 @@ public class InsertSubscriberDataResponseImpl extends MobilityMessageImpl implem
 					if (!ais.isTagPrimitive())
 						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
 								+ ".odbGeneralData: Parameter odbGeneralData is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-					// TODO: implement it
-//					this.odbGeneralData = new ODBGeneralDataImpl();
-//					((ODBGeneralDataImpl) this.odbGeneralData).decodeAll(ais);
+					this.odbGeneralData = new ODBGeneralDataImpl();
+					((ODBGeneralDataImpl) this.odbGeneralData).decodeAll(ais);
 					break;
 				case _TAG_regionalSubscriptionResponse:
 					if (!ais.isTagPrimitive()) {
@@ -375,9 +375,8 @@ public class InsertSubscriberDataResponseImpl extends MobilityMessageImpl implem
 					if (!ais.isTagPrimitive())
 						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
 								+ ".supportedFeatures: Parameter supportedFeatures is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-					// TODO: implement it
-//					this.supportedFeatures = new SupportedFeaturesImpl();
-//					((SupportedFeaturesImpl) this.supportedFeatures).decodeAll(ais);
+					this.supportedFeatures = new SupportedFeaturesImpl();
+					((SupportedFeaturesImpl) this.supportedFeatures).decodeAll(ais);
 					break;
 
 				default:
@@ -465,8 +464,7 @@ public class InsertSubscriberDataResponseImpl extends MobilityMessageImpl implem
 			}
 		}
 		if (this.odbGeneralData != null) {
-			// TODO: implement it
-//			((ODBGeneralDataImpl) this.odbGeneralData).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_odb_GeneralData);
+			((ODBGeneralDataImpl) this.odbGeneralData).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_odb_GeneralData);
 		}
 
 		if (mapProtocolVersion >= 2) {
@@ -491,8 +489,7 @@ public class InsertSubscriberDataResponseImpl extends MobilityMessageImpl implem
 				((OfferedCamel4CSIsImpl) this.offeredCamel4CSIs).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_offeredCamel4CSIs);
 			}
 			if (this.supportedFeatures != null) {
-				// TODO: implement it
-//				((SupportedFeaturesImpl) this.supportedFeatures).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_supportedFeatures);
+				((SupportedFeaturesImpl) this.supportedFeatures).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_supportedFeatures);
 			}
 		}
 	}

@@ -19,10 +19,9 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
+package org.mobicents.protocols.ss7.map.service.callhandling;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -30,8 +29,7 @@ import java.util.Arrays;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.CallDiversionTreatmentIndicatorValue;
 import org.testng.annotations.Test;
 
 /**
@@ -39,41 +37,31 @@ import org.testng.annotations.Test;
  * @author Lasith Waruna Perera
  * 
  */
-public class AllocationRetentionPriorityTest {
+public class CallDiversionTreatmentIndicatorTest {
 	
 	public byte[] getData() {
-		return new byte[] { 48, 50, -128, 1, 1, -127, 1, -1, -126, 1, -1, -93,
-				39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5,
-				6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26,
-				-95, 3, 31, 32, 33 };
+		return new byte[] { 4, 1, 2 };
 	};
-	
+
 	@Test(groups = { "functional.decode", "primitives" })
 	public void testDecode() throws Exception {
 		byte[] data = this.getData();
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
-		AllocationRetentionPriorityImpl prim = new AllocationRetentionPriorityImpl();
+		CallDiversionTreatmentIndicatorImpl prim = new CallDiversionTreatmentIndicatorImpl();
 		prim.decodeAll(asn);
 		
-		assertEquals(tag, Tag.SEQUENCE);
+		assertEquals(tag, Tag.STRING_OCTET);
 		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
-		
-		MAPExtensionContainer extensionContainer = prim.getExtensionContainer();
-		assertEquals(prim.getPriorityLevel(), 1);
-		assertTrue(prim.getPreEmptionCapability());
-		assertTrue(prim.getPreEmptionVulnerability());
-		assertNotNull(extensionContainer);
-		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+		assertEquals(prim.getCallDiversionTreatmentIndicatorValue(),CallDiversionTreatmentIndicatorValue.callDiversionNotAllowed);
 	}
 	
 	@Test(groups = { "functional.encode", "primitives" })
 	public void testEncode() throws Exception {
-		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
-		AllocationRetentionPriorityImpl prim = new AllocationRetentionPriorityImpl(1, true, true, extensionContainer);
+		
+		CallDiversionTreatmentIndicatorImpl prim = new CallDiversionTreatmentIndicatorImpl(CallDiversionTreatmentIndicatorValue.callDiversionNotAllowed);
 		AsnOutputStream asn = new AsnOutputStream();
 		prim.encodeAll(asn);
-
 		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
 	}
 }

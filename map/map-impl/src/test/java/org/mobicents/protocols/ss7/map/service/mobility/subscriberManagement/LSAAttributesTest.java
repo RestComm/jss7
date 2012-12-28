@@ -22,19 +22,15 @@
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertFalse;
 
 import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.GroupId;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.LongGroupId;
-import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.LSAIdentificationPriorityValue;
 import org.testng.annotations.Test;
 
 /**
@@ -42,73 +38,61 @@ import org.testng.annotations.Test;
  * @author Lasith Waruna Perera
  * 
  */
-public class VoiceBroadcastDataTest {
+public class LSAAttributesTest {
 
 	public byte[] getData() {
-		return new byte[] { 48, 54, 4, 3, -1, -1, -1, 5, 0, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -128, 4, 33, 67, 101, -121 };
+		return new byte[] { 4, 1, 57 };
 	};
 	
 	public byte[] getData2() {
-		return new byte[] { 48, 48, 4, 3, 33, 67, 101, 5, 0, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33};
+		return new byte[] { 4, 1, 15 };
 	};
+	
 	
 	@Test(groups = { "functional.decode", "primitives" })
 	public void testDecode() throws Exception {
-		//Option 1
+		//option 1
 		byte[] data = this.getData();
 		AsnInputStream asn = new AsnInputStream(data);
 		int tag = asn.readTag();
-		VoiceBroadcastDataImpl prim = new VoiceBroadcastDataImpl();
+		LSAAttributesImpl prim = new LSAAttributesImpl();
 		prim.decodeAll(asn);
-		
-		assertEquals(tag, Tag.SEQUENCE);
+		assertEquals(tag, Tag.STRING_OCTET);
 		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
 		
-		assertTrue( prim.getGroupId().getGroupId().equals(""));
-		assertTrue( prim.getLongGroupId().getLongGroupId().equals("12345678"));
-		assertTrue(prim.getBroadcastInitEntitlement());
-		assertNotNull(prim.getExtensionContainer());
-		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(prim.getExtensionContainer()));
+		assertTrue( prim.isActiveModeSupportAvailable());
+		assertTrue( prim.isPreferentialAccessAvailable());
+		assertEquals(prim.getLSAIdentificationPriority(), LSAIdentificationPriorityValue.Priority_10);
 		
-		//Option 2
+		//option 2
 		data = this.getData2();
 		asn = new AsnInputStream(data);
 		tag = asn.readTag();
-		prim = new VoiceBroadcastDataImpl();
+		prim = new LSAAttributesImpl();
 		prim.decodeAll(asn);
-		
-		assertEquals(tag, Tag.SEQUENCE);
+		assertEquals(tag, Tag.STRING_OCTET);
 		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
-		
-		assertTrue(prim.getGroupId().getGroupId().equals("123456"));
-		assertNull(prim.getLongGroupId());
-		assertTrue(prim.getBroadcastInitEntitlement());
-		assertNotNull(prim.getExtensionContainer());
-		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(prim.getExtensionContainer()));
+		assertFalse( prim.isActiveModeSupportAvailable());
+		assertFalse( prim.isPreferentialAccessAvailable());
+		assertEquals(prim.getLSAIdentificationPriority(), LSAIdentificationPriorityValue.Priority_16);
 		
 	}
 	
 	@Test(groups = { "functional.encode", "primitives" })
 	public void testEncode() throws Exception {
 		//option 1
-		GroupId groupId = new GroupIdImpl("123456");
-		boolean broadcastInitEntitlement = true;
-		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
-		LongGroupId longGroupId = new LongGroupIdImpl("12345678");
-
-		VoiceBroadcastDataImpl prim = new VoiceBroadcastDataImpl(groupId, broadcastInitEntitlement,
-				extensionContainer, longGroupId);
-		
+		LSAAttributesImpl prim = new LSAAttributesImpl(LSAIdentificationPriorityValue.Priority_10, true, true);
 		AsnOutputStream asn = new AsnOutputStream();
 		prim.encodeAll(asn);
 		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
 		
 		//option 2
-		prim = new VoiceBroadcastDataImpl(groupId, broadcastInitEntitlement,
-				extensionContainer, null);
+		prim = new LSAAttributesImpl(LSAIdentificationPriorityValue.Priority_16, false, false);
 		asn = new AsnOutputStream();
 		prim.encodeAll(asn);
 		assertTrue(Arrays.equals(asn.toByteArray(), this.getData2()));
+		
+		
 	}
 
 }

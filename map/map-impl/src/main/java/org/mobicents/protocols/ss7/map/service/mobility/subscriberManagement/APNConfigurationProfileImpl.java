@@ -154,7 +154,7 @@ public class APNConfigurationProfileImpl extends SequenceBase implements APNConf
 							((APNConfigurationImpl)elem).decodeAll(ais2);
 							this.ePSDataList.add(elem);
 
-							if (this.ePSDataList.size() < 1 || this.ePSDataList.size() > 10)
+							if (this.ePSDataList.size() < 1 || this.ePSDataList.size() > 50)
 								throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
 										+ ".ePSDataList: elements count must be from 1 to 50, found: " + this.ePSDataList.size(),
 										MAPParsingComponentExceptionReason.MistypedParameter);
@@ -210,15 +210,13 @@ public class APNConfigurationProfileImpl extends SequenceBase implements APNConf
 			if (this.completeDataListIncluded)
 				asnOs.writeNull();
 			
-			if(ePSDataList != null){
-				asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG_ePSDataList);
-				int pos = asnOs.StartContentDefiniteLength();
-				for (APNConfiguration be : this.ePSDataList) {
-					APNConfigurationImpl bee = (APNConfigurationImpl) be;
-					bee.encodeAll(asnOs);
-				}
-				asnOs.FinalizeContent(pos);	
+			asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG_ePSDataList);
+			int pos = asnOs.StartContentDefiniteLength();
+			for (APNConfiguration be : this.ePSDataList) {
+				APNConfigurationImpl bee = (APNConfigurationImpl) be;
+				bee.encodeAll(asnOs);
 			}
+			asnOs.FinalizeContent(pos);	
 			
 			if (this.extensionContainer != null)
 				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs,Tag.CLASS_CONTEXT_SPECIFIC, _TAG_extensionContainer);

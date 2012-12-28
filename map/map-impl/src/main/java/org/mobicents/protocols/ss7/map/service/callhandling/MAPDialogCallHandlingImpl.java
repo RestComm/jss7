@@ -91,10 +91,41 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements
 		super(appCntx, tcapDialog, mapProviderImpl, mapService, origReference,
 				destReference);
 	}
+	
+	public Long addSendRoutingInformationRequest(ISDNAddressString msisdn, 
+			CUGCheckInfo cugCheckInfo, Integer numberOfForwarding,ExternalSignalInfo networkSignalInfo) throws MAPException{
+		return this.addSendRoutingInformationRequest(_Timer_Default,
+				 msisdn, cugCheckInfo, numberOfForwarding,
+				null, false, null, null,
+				null, null, null,
+				networkSignalInfo, null, false,
+				null, null, false,
+				null, null, null,
+				false, null,
+				false, false, false,
+				false, null, null,
+				null, false, null);
+	}
+	
+	public Long addSendRoutingInformationRequest(int customInvokeTimeout,ISDNAddressString msisdn, 
+			CUGCheckInfo cugCheckInfo, Integer numberOfForwarding,ExternalSignalInfo networkSignalInfo) throws MAPException{
+		
+		return this.addSendRoutingInformationRequest(customInvokeTimeout,
+				 msisdn, cugCheckInfo, numberOfForwarding,
+				null, false, null, null,
+				null, null, null,
+				networkSignalInfo, null, false,
+				null, null, false,
+				null, null, null,
+				false, null,
+				false, false, false,
+				false, null, null,
+				null, false, null);
+		
+	}
 
-	// TODO: implement methods to send request/response
 	@Override
-	public Long addSendRoutingInformationRequest(long mapProtocolVersion,
+	public Long addSendRoutingInformationRequest(
 			ISDNAddressString msisdn, CUGCheckInfo cugCheckInfo,
 			Integer numberOfForwarding, InterrogationType interrogationType,
 			boolean orInterrogation, Integer orCapability,
@@ -119,7 +150,7 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements
 			throws MAPException {
 
 		return this.addSendRoutingInformationRequest(_Timer_Default,
-				mapProtocolVersion, msisdn, cugCheckInfo, numberOfForwarding,
+				 msisdn, cugCheckInfo, numberOfForwarding,
 				interrogationType, orInterrogation, orCapability, gmscAddress,
 				callReferenceNumber, forwardingReason, basicServiceGroup,
 				networkSignalInfo, camelInfo, suppressionOfAnnouncement,
@@ -133,7 +164,7 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements
 
 	@Override
 	public Long addSendRoutingInformationRequest(int customInvokeTimeout,
-			long mapProtocolVersion, ISDNAddressString msisdn,
+			ISDNAddressString msisdn,
 			CUGCheckInfo cugCheckInfo, Integer numberOfForwarding,
 			InterrogationType interrogationType, boolean orInterrogation,
 			Integer orCapability, ISDNAddressString gmscAddress,
@@ -178,7 +209,7 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements
 
 		if (true) { // validate parameters here...
 			SendRoutingInformationRequestImpl req = new SendRoutingInformationRequestImpl(
-					mapProtocolVersion, msisdn, cugCheckInfo,
+					this.appCntx.getApplicationContextVersion().getVersion(), msisdn, cugCheckInfo,
 					numberOfForwarding, interrogationType, orInterrogation,
 					orCapability, gmscAddress, callReferenceNumber,
 					forwardingReason, basicServiceGroup, networkSignalInfo,
@@ -213,10 +244,19 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements
 		this.sendInvokeComponent(invoke);
 		return invokeId;
 	}
-
+	
+	public void addSendRoutingInformationResponse(
+			long invokeId, IMSI imsi, CUGCheckInfo cugCheckInfo, RoutingInfo routingInfo2) throws MAPException{
+		this.addSendRoutingInformationResponse(invokeId, imsi, null, cugCheckInfo,
+				false, null, null, null, false, 
+				null, null, null, null, null, null, 
+				null, null, null, routingInfo2, null, null, 
+				null, null, false, null);
+	}
+	
 	@Override
 	public void addSendRoutingInformationResponse(long invokeId,
-			long mapProtocolVersion, IMSI imsi,
+			IMSI imsi,
 			ExtendedRoutingInfo extRoutingInfo, CUGCheckInfo cugCheckInfo,
 			boolean cugSubscriptionFlag, SubscriberInfo subscriberInfo,
 			ArrayList<SSCode> ssList, ExtBasicServiceCode basicService,
@@ -254,7 +294,7 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements
 
 		if (true) { // validate parameters here...
 			SendRoutingInformationResponseImpl res = new SendRoutingInformationResponseImpl(
-					mapProtocolVersion, imsi, extRoutingInfo, cugCheckInfo,
+					this.appCntx.getApplicationContextVersion().getVersion(), imsi, extRoutingInfo, cugCheckInfo,
 					cugSubscriptionFlag, subscriberInfo, ssList, basicService,
 					forwardingInterrogationRequired, vmscAddress,
 					extensionContainer, naeaPreferredCI, ccbsIndicators,

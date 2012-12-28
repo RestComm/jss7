@@ -22,7 +22,7 @@
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
 
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.LongGroupId;
-import org.mobicents.protocols.ss7.map.primitives.TbcdString;
+import org.mobicents.protocols.ss7.map.primitives.TbcdStringWithFiller;
 
 
 /**
@@ -30,7 +30,7 @@ import org.mobicents.protocols.ss7.map.primitives.TbcdString;
  * @author Lasith Waruna Perera
  * 
  */
-public class LongGroupIdImpl  extends TbcdString implements LongGroupId {
+public class LongGroupIdImpl  extends TbcdStringWithFiller implements LongGroupId {
 	public LongGroupIdImpl() {
 		super(1, 4, "LongGroupId");
 	}

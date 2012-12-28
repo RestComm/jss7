@@ -22,14 +22,14 @@
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
 
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.GroupId;
-import org.mobicents.protocols.ss7.map.primitives.TbcdString;
+import org.mobicents.protocols.ss7.map.primitives.TbcdStringWithFiller;
 
 /**
  * 
  * @author Lasith Waruna Perera
  * 
  */
-public class GroupIdImpl extends TbcdString implements GroupId {
+public class GroupIdImpl extends TbcdStringWithFiller implements GroupId {
 
 	public GroupIdImpl() {
 		super(1, 3, "GroupId");

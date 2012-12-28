@@ -34,5 +34,7 @@ LSAIdentity ::= OCTET STRING (SIZE (3))
 public interface LSAIdentity {
 
 	public byte[] getData();
+	
+	public boolean isPlmnSignificantLSA();
 
 }

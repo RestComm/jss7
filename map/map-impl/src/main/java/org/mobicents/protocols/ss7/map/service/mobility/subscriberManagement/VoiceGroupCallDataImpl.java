@@ -190,8 +190,12 @@ public class VoiceGroupCallDataImpl  extends SequenceBase implements VoiceGroupC
 		if (this.groupId == null)
 			throw new MAPException("Error while encoding" + _PrimitiveName + ": groupId must not be null");
 
-		((GroupIdImpl) this.groupId).encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET);			
-
+		if(this.longGroupId != null){
+			(new GroupIdImpl("")).encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET);
+		}else{
+			((GroupIdImpl) this.groupId).encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET);
+		}
+			
 		if (this.extensionContainer != null)
 			((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 		

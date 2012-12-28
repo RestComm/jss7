@@ -234,6 +234,7 @@ public class SMSCAMELTDPDataImpl extends SequenceBase implements SMSCAMELTDPData
 			sb.append(", ");
 		}
 		
+		sb.append("serviceKey=");
 		sb.append(this.serviceKey);
 		sb.append(", ");
 		

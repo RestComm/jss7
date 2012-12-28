@@ -217,7 +217,7 @@ public class LSAInformationImpl extends SequenceBase implements LSAInformation{
 		sb.append(_PrimitiveName + " [");
 		
 		if (this.completeDataListIncluded) {
-			sb.append("completeDataListIncluded ");
+			sb.append("completeDataListIncluded, ");
 		}
 		
 		if (this.lsaOnlyAccessIndicator != null) {

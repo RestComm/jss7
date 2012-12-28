@@ -39,7 +39,10 @@ import org.mobicents.protocols.ss7.map.api.MAPStack;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingCategory;
+import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
+import org.mobicents.protocols.ss7.map.api.primitives.DiameterIdentity;
 import org.mobicents.protocols.ss7.map.api.primitives.EMLPPPriority;
+import org.mobicents.protocols.ss7.map.api.primitives.ExtExternalSignalInfo;
 import org.mobicents.protocols.ss7.map.api.primitives.ExtProtocolId;
 import org.mobicents.protocols.ss7.map.api.primitives.ExternalSignalInfo;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
@@ -48,12 +51,19 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
+import org.mobicents.protocols.ss7.map.api.primitives.NAEAPreferredCI;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.primitives.ProtocolId;
 import org.mobicents.protocols.ss7.map.api.primitives.SignalInfo;
 import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.CUGCheckInfo;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.CallDiversionTreatmentIndicator;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.CallReferenceNumber;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.CamelInfo;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.InterrogationType;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.MAPDialogCallHandling;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.SuppressMTSS;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientID;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientType;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSEvent;
@@ -65,13 +75,39 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.MAPDialogMobility;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.RequestingNodeType;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.RequestedEquipmentInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.AgeIndicator;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancellationType;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.IMSIWithLMSI;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ISTSupportIndicator;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LocationArea;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.TypeOfUpdate;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.AccessRestrictionData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BearerServiceCodeValue;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CSAllocationRetentionPriority;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CSGSubscriptionData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.Category;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ChargingCharacteristics;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.EPSSubscriptionData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBearerServiceCode;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtSSInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtTeleserviceCode;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.GPRSSubscriptionData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.LCSInformation;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.LSAInformation;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.MCSSInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.NetworkAccessMode;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ODBData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SGSNCAMELSubscriptionInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SubscriberStatus;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TeleserviceCode;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TeleserviceCodeValue;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.VlrCamelSubscriptionInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.VoiceBroadcastData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.VoiceGroupCallData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ZoneCode;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPDialogSms;
 import org.mobicents.protocols.ss7.map.api.service.sms.SMDeliveryOutcome;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
@@ -79,6 +115,7 @@ import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_MTI;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_SMEA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SmsSignalInfo;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.ForwardingReason;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
 import org.mobicents.protocols.ss7.map.api.smstpdu.NumberingPlanIdentification;
 import org.mobicents.protocols.ss7.map.api.smstpdu.TypeOfNumber;
@@ -96,6 +133,9 @@ import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.IMSIW
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.LACImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.LocationAreaImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.PagingAreaImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.CategoryImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtBearerServiceCodeImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtTeleserviceCodeImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.OfferedCamel4CSIsImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.SupportedCamelPhasesImpl;
 import org.mobicents.protocols.ss7.map.service.sms.AlertServiceCentreRequestImpl;
@@ -673,7 +713,7 @@ public class Client extends EventTestHarness {
 
 	public void sendProvideRoamingNumber() throws Exception {
 
-		this.mapProvider.getMAPServiceMobility().acivate();
+		this.mapProvider.getMAPServiceCallHandling().acivate();
 
 		MAPApplicationContext appCnt = null;
 
@@ -763,7 +803,7 @@ public class Client extends EventTestHarness {
 
 	public void sendProvideRoamingNumber_V2() throws Exception {
 
-		this.mapProvider.getMAPServiceMobility().acivate();
+		this.mapProvider.getMAPServiceCallHandling().acivate();
 
 		MAPApplicationContext appCnt = null;
 
@@ -1007,7 +1047,180 @@ public class Client extends EventTestHarness {
 		clientDialogSms.send();
 //		 * TC-BEGIN + sendRoutingInfoForSMRequest + reportSMDeliveryStatusRequest
 	}
+	
+	
+	
+	public void sendInsertSubscriberData_V3() throws Exception {
 
+		this.mapProvider.getMAPServiceMobility().acivate();
+
+		MAPApplicationContext appCnt = null;
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.subscriberDataMngtContext, MAPApplicationContextVersion.version3);
+
+		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
+		
+		IMSI imsi = new IMSIImpl("1111122222");
+		ISDNAddressString msisdn =  new ISDNAddressStringImpl(AddressNature.international_number, 
+				NumberingPlan.ISDN, "22234");
+		Category category = new CategoryImpl(5);
+		SubscriberStatus subscriberStatus = SubscriberStatus.operatorDeterminedBarring;
+		ArrayList<ExtBearerServiceCode> bearerServiceList = new ArrayList<ExtBearerServiceCode>();
+		ExtBearerServiceCodeImpl extBearerServiceCode = new ExtBearerServiceCodeImpl(BearerServiceCodeValue.Asynchronous9_6kbps);
+		bearerServiceList.add(extBearerServiceCode);
+		ArrayList<ExtTeleserviceCode> teleserviceList = new ArrayList<ExtTeleserviceCode>();
+		ExtTeleserviceCode extTeleservice = new ExtTeleserviceCodeImpl(TeleserviceCodeValue.allSpeechTransmissionServices);
+		teleserviceList.add(extTeleservice);
+		boolean roamingRestrictionDueToUnsupportedFeature = true;
+		ISDNAddressString sgsnNumber =  new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "22228");
+		ArrayList<ExtSSInfo> provisionedSS = null;
+		ODBData odbData = null;
+		ArrayList<ZoneCode> regionalSubscriptionData = null;
+		ArrayList<VoiceBroadcastData> vbsSubscriptionData = null;
+		ArrayList<VoiceGroupCallData> vgcsSubscriptionData = null;
+		VlrCamelSubscriptionInfo vlrCamelSubscriptionInfo = null ;
+		NAEAPreferredCI naeaPreferredCI = null;
+		GPRSSubscriptionData gprsSubscriptionData =null;
+		boolean roamingRestrictedInSgsnDueToUnsupportedFeature = true;
+		NetworkAccessMode networkAccessMode = null;
+		LSAInformation lsaInformation = null;
+		boolean lmuIndicator = true;
+		LCSInformation lcsInformation = null ;
+		Integer istAlertTimer = null;
+		AgeIndicator superChargerSupportedInHLR = null;
+		MCSSInfo mcSsInfo = null;
+		CSAllocationRetentionPriority csAllocationRetentionPriority = null;
+		SGSNCAMELSubscriptionInfo sgsnCamelSubscriptionInfo = null;
+		ChargingCharacteristics chargingCharacteristics = null;
+		AccessRestrictionData accessRestrictionData = null;
+		Boolean icsIndicator = null;
+		EPSSubscriptionData epsSubscriptionData = null;
+		ArrayList<CSGSubscriptionData> csgSubscriptionDataList = null;
+		boolean ueReachabilityRequestIndicator = true;
+		DiameterIdentity mmeName = null;
+		Long subscribedPeriodicRAUTAUtimer =null;
+		boolean vplmnLIPAAllowed = true;
+		Boolean mdtUserConsent = null;
+		Long subscribedPeriodicLAUtimer = null;
+		
+		clientDialogMobility.addInsertSubscriberDataRequest(imsi, msisdn, category, subscriberStatus,
+				bearerServiceList, teleserviceList, provisionedSS, odbData, roamingRestrictionDueToUnsupportedFeature,
+				regionalSubscriptionData, vbsSubscriptionData, vgcsSubscriptionData, vlrCamelSubscriptionInfo, extensionContainer,
+				naeaPreferredCI, gprsSubscriptionData, roamingRestrictedInSgsnDueToUnsupportedFeature, networkAccessMode,
+				lsaInformation, lmuIndicator, lcsInformation, istAlertTimer, superChargerSupportedInHLR, mcSsInfo,
+				csAllocationRetentionPriority, sgsnCamelSubscriptionInfo, chargingCharacteristics, accessRestrictionData,
+				icsIndicator, epsSubscriptionData, csgSubscriptionDataList, ueReachabilityRequestIndicator, sgsnNumber, mmeName, 
+				subscribedPeriodicRAUTAUtimer, vplmnLIPAAllowed, mdtUserConsent, subscribedPeriodicLAUtimer);
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.InsertSubscriberData, null, sequence++));
+		clientDialogMobility.send();
+
+	}
+
+	
+	public void sendInsertSubscriberData_V2() throws Exception {
+		this.mapProvider.getMAPServiceMobility().acivate();
+		MAPApplicationContext appCnt = null;
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.subscriberDataMngtContext, MAPApplicationContextVersion.version2);
+
+		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+
+		IMSI imsi = new IMSIImpl("1111122222");
+		ISDNAddressString msisdn =  new ISDNAddressStringImpl(AddressNature.international_number, 
+				NumberingPlan.ISDN, "22234");
+		Category category = new CategoryImpl(5);
+		SubscriberStatus subscriberStatus = SubscriberStatus.operatorDeterminedBarring;
+		ArrayList<ExtBearerServiceCode> bearerServiceList = new ArrayList<ExtBearerServiceCode>();
+		ExtBearerServiceCodeImpl extBearerServiceCode = new ExtBearerServiceCodeImpl(BearerServiceCodeValue.Asynchronous9_6kbps);
+		bearerServiceList.add(extBearerServiceCode);
+		ArrayList<ExtTeleserviceCode> teleserviceList = new ArrayList<ExtTeleserviceCode>();
+		ExtTeleserviceCode extTeleservice = new ExtTeleserviceCodeImpl(TeleserviceCodeValue.allSpeechTransmissionServices);
+		teleserviceList.add(extTeleservice);
+		boolean roamingRestrictionDueToUnsupportedFeature = true;
+		ArrayList<ExtSSInfo> provisionedSS = null;
+		ODBData odbData = null;
+		ArrayList<ZoneCode> regionalSubscriptionData = null;
+		ArrayList<VoiceBroadcastData> vbsSubscriptionData = null;
+		ArrayList<VoiceGroupCallData> vgcsSubscriptionData = null;
+		VlrCamelSubscriptionInfo vlrCamelSubscriptionInfo = null ;
+		
+		clientDialogMobility.addInsertSubscriberDataRequest(imsi, msisdn, category, subscriberStatus,
+				bearerServiceList, teleserviceList, provisionedSS, odbData, roamingRestrictionDueToUnsupportedFeature, 
+				regionalSubscriptionData, vbsSubscriptionData, vgcsSubscriptionData, vlrCamelSubscriptionInfo);
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.InsertSubscriberData, null, sequence++));
+		clientDialogMobility.send();
+
+	}
+	
+	public void sendSendRoutingInformation_V3() throws Exception {
+		this.mapProvider.getMAPServiceCallHandling().acivate();
+		MAPApplicationContext appCnt = null;
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.locationInfoRetrievalContext, MAPApplicationContextVersion.version3);
+
+		clientDialogCallHandling = this.mapProvider.getMAPServiceCallHandling().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+
+		InterrogationType interrogationType = InterrogationType.forwarding;
+		ISDNAddressString msisdn = new ISDNAddressStringImpl(AddressNature.international_number, 
+															 NumberingPlan.ISDN, "29113123311");
+		ISDNAddressString gmscAddress = new ISDNAddressStringImpl(AddressNature.international_number, 
+				 										   NumberingPlan.ISDN, "49883700292");
+		CUGCheckInfo cugCheckInfo = null;
+		Integer numberOfForwarding = null;
+		boolean orInterrogation = false;
+		Integer orCapability = null;
+		CallReferenceNumber callReferenceNumber= null;
+		ForwardingReason forwardingReason = null;
+		ExtBasicServiceCode basicServiceGroup = null;
+		ExternalSignalInfo networkSignalInfo = null;
+		CamelInfo camelInfo = null;
+		boolean suppressionOfAnnouncement = false;
+		MAPExtensionContainer extensionContainer  = null;
+		AlertingPattern alertingPattern = null;
+		boolean ccbsCall = false;
+		Integer supportedCCBSPhase = null;
+		ExtExternalSignalInfo additionalSignalInfo  = null;
+		ISTSupportIndicator istSupportIndicator = null;
+		boolean prePagingSupported = false;
+		CallDiversionTreatmentIndicator callDiversionTreatmentIndicator = null;
+		boolean longFTNSupported = false;
+		boolean suppressVtCSI = false;
+		boolean suppressIncomingCallBarring = false;
+		boolean gsmSCFInitiatedCall = false;
+		ExtBasicServiceCode basicServiceGroup2  = null;
+		ExternalSignalInfo networkSignalInfo2 = null;
+		SuppressMTSS suppressMTSS = null;
+		boolean mtRoamingRetrySupported = false;
+		EMLPPPriority callPriority = null;
+
+		clientDialogCallHandling.addSendRoutingInformationRequest(msisdn, cugCheckInfo, numberOfForwarding,
+				interrogationType, orInterrogation, orCapability, gmscAddress, callReferenceNumber, forwardingReason, 
+				basicServiceGroup, networkSignalInfo, camelInfo, suppressionOfAnnouncement, extensionContainer, 
+				alertingPattern, ccbsCall, supportedCCBSPhase, additionalSignalInfo, istSupportIndicator, 
+				prePagingSupported, callDiversionTreatmentIndicator, longFTNSupported, suppressVtCSI, 
+				suppressIncomingCallBarring, gsmSCFInitiatedCall, basicServiceGroup2, networkSignalInfo2, 
+				suppressMTSS, mtRoamingRetrySupported, callPriority);
+	
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.SendRoutingInformation, null, sequence++));
+		clientDialogCallHandling.send();
+
+	}
+	
+	public void sendSendRoutingInformation_V2() throws Exception {
+		this.mapProvider.getMAPServiceCallHandling().acivate();
+		MAPApplicationContext appCnt = null;
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.locationInfoRetrievalContext,
+				MAPApplicationContextVersion.version2);
+
+		clientDialogCallHandling = this.mapProvider.getMAPServiceCallHandling().createNewDialog(appCnt,
+				this.thisAddress, null, this.remoteAddress, null);
+		ISDNAddressString msisdn = new ISDNAddressStringImpl(AddressNature.international_number, 
+															 NumberingPlan.ISDN, "29113123311");
+
+		clientDialogCallHandling.addSendRoutingInformationRequest(msisdn, null, null, null);
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.SendRoutingInformation, null, sequence++));
+		clientDialogCallHandling.send();
+
+	}
+	
 	public MAPDialog getMapDialog() {
 		return this.clientDialog;
 	}

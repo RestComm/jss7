@@ -21,54 +21,47 @@
  */
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
 
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CauseValue;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
+import java.util.Arrays;
+
+import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CauseValueCodeValue;
-import org.mobicents.protocols.ss7.map.primitives.OctetStringLength1Base;
+import org.testng.annotations.Test;
 
 /**
  * 
  * @author Lasith Waruna Perera
  * 
  */
-public class CauseValueImpl extends OctetStringLength1Base implements CauseValue {
+public class CauseValueTest {
 	
-	public CauseValueImpl() {
-		super("CauseValue");
-	}
+	public byte[] getData() {
+		return new byte[] { 4, 1, 83 };
+	};
 
-	public CauseValueImpl(int data) {
-		super("CauseValue", data);
-	}
-	
-	public CauseValueImpl(CauseValueCodeValue value) {
-		super("CauseValue", value != null ? value.getCode() : 0);
-	}
-
-	@Override
-	public CauseValueCodeValue getCauseValueCodeValue() {
-		return CauseValueCodeValue.getInstance(this.data);
-	}
-	
-	@Override
-	public int getData() {
-		return data;
-	}
-	
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(this._PrimitiveName);
-		sb.append(" [");
+	@Test(groups = { "functional.decode", "primitives" })
+	public void testDecode() throws Exception {
+		byte[] data = this.getData();
+		AsnInputStream asn = new AsnInputStream(data);
+		int tag = asn.readTag();
+		CauseValueImpl prim = new CauseValueImpl();
+		prim.decodeAll(asn);
 		
-		sb.append("Value=");
-		sb.append(this.getCauseValueCodeValue());
-
-		sb.append(", Data=");
-		sb.append(this.data);
-
-		sb.append("]");
-
-		return sb.toString();
+		assertEquals(tag, Tag.STRING_OCTET);
+		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
+		assertEquals(prim.getCauseValueCodeValue(),CauseValueCodeValue.ASuspendedCallExists);
 	}
-
+	
+	@Test(groups = { "functional.encode", "primitives" })
+	public void testEncode() throws Exception {
+		
+		CauseValueImpl prim = new CauseValueImpl(CauseValueCodeValue.ASuspendedCallExists);
+		AsnOutputStream asn = new AsnOutputStream();
+		prim.encodeAll(asn);
+		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+	}
 }

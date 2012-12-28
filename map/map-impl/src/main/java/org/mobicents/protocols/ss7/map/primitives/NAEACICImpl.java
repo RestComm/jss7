@@ -19,27 +19,28 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.mobicents.protocols.ss7.map.primitives;
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
+import org.mobicents.protocols.ss7.map.api.primitives.NAEACIC;
 
 /**
  * 
-
-LSAAttributes ::= OCTET STRING (SIZE (1))
-	-- Octets are coded according to TS 3GPP TS 48.008 [49]
-
- * 
- * 
- * @author sergey vetyutnev
+ * @author Lasith Waruna Perera
  * 
  */
-public interface LSAAttributes {
+public class NAEACICImpl extends OctetStringBase implements NAEACIC{
+	
+	public NAEACICImpl() {
+		super(3, 3, "NAEACIC");
+	}
 
-	public int getData();
-	
-	public LSAIdentificationPriorityValue getLSAIdentificationPriority();
-	
-	public boolean isPreferentialAccessAvailable();
-	
-	public boolean isActiveModeSupportAvailable(); 
+	public NAEACICImpl(byte[] data) {
+		super(3, 3, "NAEACIC", data);
+	}
+
+	@Override
+	public byte[] getData() {
+		return data;
+	}
+
 }

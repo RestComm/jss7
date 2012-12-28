@@ -37,5 +37,7 @@ CauseValue ::= OCTET STRING (SIZE(1))
 public interface CauseValue {
 
 	public int getData();
+	
+	public CauseValueCodeValue getCauseValueCodeValue();
 
 }

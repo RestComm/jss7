@@ -36,5 +36,17 @@ Time ::= OCTET STRING (SIZE (4))
 public interface Time {
 
 	public byte[] getData();
+	
+	public int getYear();
+
+	public int getMonth();
+
+	public int getDay();
+
+	public int getHour();
+
+	public int getMinute();
+
+	public int getSecond();
 
 }

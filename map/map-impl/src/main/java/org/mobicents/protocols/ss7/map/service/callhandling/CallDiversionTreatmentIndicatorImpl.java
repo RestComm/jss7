@@ -19,10 +19,10 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
+package org.mobicents.protocols.ss7.map.service.callhandling;
 
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CauseValue;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CauseValueCodeValue;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.CallDiversionTreatmentIndicator;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.CallDiversionTreatmentIndicatorValue;
 import org.mobicents.protocols.ss7.map.primitives.OctetStringLength1Base;
 
 /**
@@ -30,28 +30,28 @@ import org.mobicents.protocols.ss7.map.primitives.OctetStringLength1Base;
  * @author Lasith Waruna Perera
  * 
  */
-public class CauseValueImpl extends OctetStringLength1Base implements CauseValue {
+public class CallDiversionTreatmentIndicatorImpl extends OctetStringLength1Base  implements CallDiversionTreatmentIndicator{
+
+	public CallDiversionTreatmentIndicatorImpl() {
+		super("CallDiversionTreatmentIndicator");
+	}
 	
-	public CauseValueImpl() {
-		super("CauseValue");
+	public CallDiversionTreatmentIndicatorImpl(int data) {
+		super("CallDiversionTreatmentIndicator", data);
+	}
+	
+	public CallDiversionTreatmentIndicatorImpl(CallDiversionTreatmentIndicatorValue value) {
+		super("CallDiversionTreatmentIndicator", value != null ? value.getCode() : 0);
 	}
 
-	public CauseValueImpl(int data) {
-		super("CauseValue", data);
-	}
-	
-	public CauseValueImpl(CauseValueCodeValue value) {
-		super("CauseValue", value != null ? value.getCode() : 0);
-	}
-
-	@Override
-	public CauseValueCodeValue getCauseValueCodeValue() {
-		return CauseValueCodeValue.getInstance(this.data);
-	}
-	
 	@Override
 	public int getData() {
 		return data;
+	}
+
+	@Override
+	public CallDiversionTreatmentIndicatorValue getCallDiversionTreatmentIndicatorValue() {
+		return CallDiversionTreatmentIndicatorValue.getInstance(this.data);
 	}
 	
 	@Override
@@ -59,9 +59,9 @@ public class CauseValueImpl extends OctetStringLength1Base implements CauseValue
 		StringBuilder sb = new StringBuilder();
 		sb.append(this._PrimitiveName);
 		sb.append(" [");
-		
+
 		sb.append("Value=");
-		sb.append(this.getCauseValueCodeValue());
+		sb.append(this.getCallDiversionTreatmentIndicatorValue());
 
 		sb.append(", Data=");
 		sb.append(this.data);

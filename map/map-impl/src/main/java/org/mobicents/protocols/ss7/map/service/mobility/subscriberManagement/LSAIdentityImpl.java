@@ -42,5 +42,10 @@ public class LSAIdentityImpl extends OctetStringBase implements LSAIdentity {
 
 	public byte[] getData() {
 		return data;
+	}
+
+	@Override
+	public boolean isPlmnSignificantLSA() {
+		 return ((this.data[2] & 0x01) ==0x01); 
 	}	
 }

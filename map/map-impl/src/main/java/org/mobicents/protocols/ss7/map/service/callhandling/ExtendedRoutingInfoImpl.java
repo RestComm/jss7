@@ -46,7 +46,7 @@ public class ExtendedRoutingInfoImpl implements ExtendedRoutingInfo, MAPAsnPrimi
 	private RoutingInfo routingInfo = null;
 	private CamelRoutingInfo camelRoutingInfo = null;
 	
-	private static final int TAG_camel = 8;
+	public static final int TAG_camel = 8;
 	private static final String _PrimitiveName = "ExtendedRoutingInfo";
 	
 	

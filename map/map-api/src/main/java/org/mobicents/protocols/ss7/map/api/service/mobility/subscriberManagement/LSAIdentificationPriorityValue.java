@@ -19,7 +19,6 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
 /**
@@ -27,14 +26,28 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
  * @author Lasith Waruna Perera
  * 
  */
-public enum PDNTypeValue {
-	IPv4(0x01), 
-	IPv6(0x02), 
-	IPv4v6(0x03); 
+public enum LSAIdentificationPriorityValue {
+
+	Priority_1(0),
+	Priority_2(0x01),
+	Priority_3(0x02),
+	Priority_4(0x03),
+	Priority_5(0x04),
+	Priority_6(0x05),
+	Priority_7(0x06),
+	Priority_8(0x07),
+	Priority_9(0x08),
+	Priority_10(0x09),
+	Priority_11(0x0A),
+	Priority_12(0x0B),
+	Priority_13(0x0C),
+	Priority_14(0x0D),
+	Priority_15(0x0D),
+	Priority_16(0x0F);
 
 	private int code;
 
-	private PDNTypeValue(int code) {
+	private LSAIdentificationPriorityValue(int code) {
 		this.code = code;
 	}
 
@@ -42,16 +55,25 @@ public enum PDNTypeValue {
 		return this.code;
 	}
 
-	public static PDNTypeValue getInstance(int code) {
+	public static LSAIdentificationPriorityValue getInstance(int code) {
 		switch (code) {
-		case 0x01:
-			return PDNTypeValue.IPv4;
-		case 0x02:
-			return PDNTypeValue.IPv6;
-		case 0x03:
-			return PDNTypeValue.IPv4v6;
-		default:
-			return null;
+			case 0:    return Priority_1;
+			case 0x01: return Priority_2;
+			case 0x02: return Priority_3;
+			case 0x03: return Priority_4;
+			case 0x04: return Priority_5;
+			case 0x05: return Priority_6;
+			case 0x06: return Priority_7;
+			case 0x07: return Priority_8;
+			case 0x08: return Priority_9;
+			case 0x09: return Priority_10;
+			case 0x0A: return Priority_11;
+			case 0x0B: return Priority_12;
+			case 0x0C: return Priority_13;
+			case 0x0D: return Priority_14;
+			case 0x0E: return Priority_15;
+			case 0x0F: return Priority_16;
+			default:   return null;
 		}
 	}
 }

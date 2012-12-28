@@ -307,7 +307,6 @@ public class EventTestHarness implements MAPDialogListener, MAPServiceSupplement
 	
 	
 	public void compareEvents(List<TestEvent> expectedEvents) {
-
 		if (expectedEvents.size() != this.observerdEvents.size()) {
 			fail("Size of received events: " + this.observerdEvents.size() + ", does not equal expected events: " + expectedEvents.size() + "\n"
 					+ doStringCompare(expectedEvents, observerdEvents));
@@ -496,27 +495,31 @@ public class EventTestHarness implements MAPDialogListener, MAPServiceSupplement
 	@Override
 	public void onSendRoutingInformationRequest(
 			SendRoutingInformationRequest request) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("onSendRoutingInformationRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.SendRoutingInformation, request, sequence++);
+		this.observerdEvents.add(te);
 	}
 
 	@Override
 	public void onSendRoutingInformationResponse(
 			SendRoutingInformationResponse response) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("onSendRoutingInformationResponse");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.SendRoutingInformationResp, response, sequence++);
+		this.observerdEvents.add(te);
 	}
 
 	@Override
 	public void onInsertSubscriberDataRequest(InsertSubscriberDataRequest request) {
-		// TODO Auto-generated method stub
-		
+		this.logger.debug("onInsertSubscriberDataRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.InsertSubscriberData, request, sequence++);
+		this.observerdEvents.add(te);
 	}
 
 	@Override
-	public void onInsertSubscriberDataResponse(InsertSubscriberDataResponse request) {
-		// TODO Auto-generated method stub
-		
+	public void onInsertSubscriberDataResponse(InsertSubscriberDataResponse response) {
+		this.logger.debug("onInsertSubscriberDataResponse");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.InsertSubscriberDataResp, response, sequence++);
+		this.observerdEvents.add(te);
 	}
 }
 

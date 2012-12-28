@@ -190,8 +190,6 @@ public class ExtSSInfoTest {
 		assertTrue(longForwardedToNumber.getAddress().equals("22227"));
 		assertEquals(longForwardedToNumber.getAddressNature(), AddressNature.international_number);
 		assertEquals(longForwardedToNumber.getNumberingPlan(), NumberingPlan.ISDN);
-		assertNotNull(extensionContainer);
-		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
 
 		//option 2
 		data = this.getData1();

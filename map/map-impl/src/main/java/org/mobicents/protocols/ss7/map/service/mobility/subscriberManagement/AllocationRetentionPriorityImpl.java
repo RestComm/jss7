@@ -90,6 +90,7 @@ public class AllocationRetentionPriorityImpl extends SequenceBase implements All
 		this.preEmptionCapability = null;
 		this.preEmptionVulnerability = null;
 		this.extensionContainer = null;
+		boolean isPriorityLevelSet = false;
 
 		AsnInputStream ais = asnIS.readSequenceStreamData(length);
 
@@ -106,6 +107,7 @@ public class AllocationRetentionPriorityImpl extends SequenceBase implements All
 					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".priorityLevel: Parameter bad tag, tag class or not primitive",
 							MAPParsingComponentExceptionReason.MistypedParameter);
 				this.priorityLevel = (int) ais.readInteger();
+				isPriorityLevelSet = true;
 				break;
 			default:
 				switch (ais.getTagClass()) {
@@ -115,15 +117,14 @@ public class AllocationRetentionPriorityImpl extends SequenceBase implements All
 						if (!ais.isTagPrimitive())
 							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
 									+ ".preEmptionCapability: Parameter is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-						this.preEmptionCapability = true;
-						ais.readNull();
+						this.preEmptionCapability = ais.readBoolean();
 						break;
 					case _TAG_preEmptionVulnerability:
 						if (!ais.isTagPrimitive())
 							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
 									+ ".preEmptionVulnerability: Parameter is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-						this.preEmptionVulnerability = true;
-						ais.readNull();
+						
+						this.preEmptionVulnerability = ais.readBoolean();
 						break;
 					case _TAG_extensionContainer:
 						if (ais.isTagPrimitive())
@@ -147,7 +148,7 @@ public class AllocationRetentionPriorityImpl extends SequenceBase implements All
 			num++;
 		}
 
-		if (this.priorityLevel == -1) {
+		if (!isPriorityLevelSet) {
 			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parament priorityLevel is mandatory but does not found",
 					MAPParsingComponentExceptionReason.MistypedParameter);
 		}
@@ -160,10 +161,10 @@ public class AllocationRetentionPriorityImpl extends SequenceBase implements All
 			asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_priorityLevel, this.priorityLevel);
 			
 			if (this.preEmptionCapability != null && this.preEmptionCapability.equals(Boolean.TRUE))
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_preEmptionCapability);
+				asnOs.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_preEmptionCapability, preEmptionCapability.booleanValue());
 			
-			if (this.preEmptionVulnerability != null && this.preEmptionVulnerability.equals(Boolean.TRUE))
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_preEmptionVulnerability);
+			if (this.preEmptionVulnerability != null)
+				asnOs.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_preEmptionVulnerability, preEmptionVulnerability.booleanValue());
 			
 			if (this.extensionContainer != null)
 				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_extensionContainer);

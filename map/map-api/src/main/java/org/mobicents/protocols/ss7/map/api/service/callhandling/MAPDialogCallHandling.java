@@ -52,8 +52,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
  * 
  */
 public interface MAPDialogCallHandling extends MAPDialog {
-	public Long addSendRoutingInformationRequest(
-			long mapProtocolVersion, ISDNAddressString msisdn, 
+	public Long addSendRoutingInformationRequest(ISDNAddressString msisdn, 
 			CUGCheckInfo cugCheckInfo, Integer numberOfForwarding,
 			InterrogationType interrogationType, boolean orInterrogation, Integer orCapability,
 			ISDNAddressString gmscAddress, CallReferenceNumber callReferenceNumber,
@@ -69,9 +68,14 @@ public interface MAPDialogCallHandling extends MAPDialog {
 			ExternalSignalInfo networkSignalInfo2, SuppressMTSS supressMTSS,
 			boolean mtRoamingRetrySupported, EMLPPPriority callPriority) throws MAPException;
 	
+	public Long addSendRoutingInformationRequest(ISDNAddressString msisdn, 
+			CUGCheckInfo cugCheckInfo, Integer numberOfForwarding,ExternalSignalInfo networkSignalInfo) throws MAPException;
+	
+	public Long addSendRoutingInformationRequest(int customInvokeTimeout,ISDNAddressString msisdn, 
+			CUGCheckInfo cugCheckInfo, Integer numberOfForwarding,ExternalSignalInfo networkSignalInfo) throws MAPException;
+
 	public Long addSendRoutingInformationRequest(
-			int customInvokeTimeout,
-			long mapProtocolVersion, ISDNAddressString msisdn, 
+			int customInvokeTimeout,ISDNAddressString msisdn, 
 			CUGCheckInfo cugCheckInfo, Integer numberOfForwarding,
 			InterrogationType interrogationType, boolean orInterrogation, Integer orCapability,
 			ISDNAddressString gmscAddress, CallReferenceNumber callReferenceNumber,
@@ -88,7 +92,7 @@ public interface MAPDialogCallHandling extends MAPDialog {
 			boolean mtRoamingRetrySupported, EMLPPPriority callPriority) throws MAPException;
 	
 	public void addSendRoutingInformationResponse(
-			long invokeId, long mapProtocolVersion, 
+			long invokeId, 
 			IMSI imsi, ExtendedRoutingInfo extRoutingInfo, CUGCheckInfo cugCheckInfo,
 			boolean cugSubscriptionFlag, SubscriberInfo subscriberInfo, ArrayList<SSCode> ssList,
 			ExtBasicServiceCode basicService, boolean forwardingInterrogationRequired,
@@ -100,6 +104,9 @@ public interface MAPDialogCallHandling extends MAPDialog {
 			ExtBasicServiceCode basicService2, AllowedServices allowedServices,
 			UnavailabilityCause unavailabilityCause, boolean releaseResourcesSupported,
 			ExternalSignalInfo gsmBearerCapability) throws MAPException;
+	
+	public void addSendRoutingInformationResponse(
+			long invokeId, IMSI imsi, CUGCheckInfo cugCheckInfo, RoutingInfo routingInfo2) throws MAPException;
 	
 	
 	public Long addProvideRoamingNumberRequest( IMSI imsi, ISDNAddressString mscNumber,
