@@ -22,9 +22,6 @@
 
 package org.mobicents.protocols.ss7.map;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
@@ -88,7 +85,7 @@ public abstract class MAPDialogImpl implements MAPDialog {
 
 	protected MAPDialogState state = MAPDialogState.IDLE;
 
-	private Set<Long> incomingInvokeList = new HashSet<Long>();
+//	private Set<Long> incomingInvokeList = new HashSet<Long>();
 
 	protected boolean eriStyle;
 	protected IMSI eriImsi;
@@ -173,28 +170,28 @@ public abstract class MAPDialogImpl implements MAPDialog {
 	 * @param invokeId
 	 * @return false: failure - this invokeId already present in the list
 	 */
-	public boolean addIncomingInvokeId(Long invokeId) {
-		synchronized (this.incomingInvokeList) {
-			if (this.incomingInvokeList.contains(invokeId))
-				return false;
-			else {
-				this.incomingInvokeList.add(invokeId);
-				return true;
-			}
-		}
-	}
-
-	public void removeIncomingInvokeId(Long invokeId) {
-		synchronized (this.incomingInvokeList) {
-			this.incomingInvokeList.remove(invokeId);
-		}
-	}
-
-	public Boolean checkIncomingInvokeIdExists(Long invokeId) {
-		synchronized (this.incomingInvokeList) {
-			return this.incomingInvokeList.contains(invokeId);
-		}
-	}
+//	public boolean addIncomingInvokeId(Long invokeId) {
+//		synchronized (this.incomingInvokeList) {
+//			if (this.incomingInvokeList.contains(invokeId))
+//				return false;
+//			else {
+//				this.incomingInvokeList.add(invokeId);
+//				return true;
+//			}
+//		}
+//	}
+//
+//	public void removeIncomingInvokeId(Long invokeId) {
+//		synchronized (this.incomingInvokeList) {
+//			this.incomingInvokeList.remove(invokeId);
+//		}
+//	}
+//
+//	public Boolean checkIncomingInvokeIdExists(Long invokeId) {
+//		synchronized (this.incomingInvokeList) {
+//			return this.incomingInvokeList.contains(invokeId);
+//		}
+//	}
 
 	public AddressString getReceivedOrigReference() {
 		return receivedOrigReference;
@@ -396,6 +393,14 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		// }
 	}
 
+	public void processInvokeWithoutAnswer(Long invokeId) {
+
+		if (this.tcapDialog.getPreviewMode())
+			return;
+
+		this.tcapDialog.processInvokeWithoutAnswer(invokeId);
+	}
+
 	public void sendInvokeComponent(Invoke invoke) throws MAPException {
 
 		if (this.tcapDialog.getPreviewMode())
@@ -425,7 +430,7 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		if (this.tcapDialog.getPreviewMode())
 			return;
 
-		this.removeIncomingInvokeId(returnResultLast.getInvokeId());
+//		this.removeIncomingInvokeId(returnResultLast.getInvokeId());
 
 		try {
 			this.tcapDialog.sendComponent(returnResultLast);
@@ -441,7 +446,7 @@ public abstract class MAPDialogImpl implements MAPDialog {
 
 		MAPErrorMessageImpl mapErrorMessage = (MAPErrorMessageImpl) mem;
 
-		this.removeIncomingInvokeId(invokeId);
+//		this.removeIncomingInvokeId(invokeId);
 
 		ReturnError returnError = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
 				.createTCReturnErrorRequest();
@@ -478,8 +483,8 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		if (this.tcapDialog.getPreviewMode())
 			return;
 
-		if (invokeId != null && problem != null && problem.getInvokeProblemType() != null)
-			this.removeIncomingInvokeId(invokeId);
+//		if (invokeId != null && problem != null && problem.getInvokeProblemType() != null)
+//			this.removeIncomingInvokeId(invokeId);
 
 		Reject reject = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCRejectRequest();
 

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -32,7 +32,6 @@ import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPServiceBase;
 import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
@@ -168,17 +167,17 @@ public abstract class MAPServiceBaseImpl implements MAPServiceBase {
 		}
 	}
 
-	protected void deliverRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem) {
+	protected void deliverRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem, boolean isLocalOriginated) {
 		for (MAPServiceListener serLis : this.serviceListeners) {
-			serLis.onRejectComponent(mapDialog, invokeId, problem);
+			serLis.onRejectComponent(mapDialog, invokeId, problem, isLocalOriginated);
 		}
 	}
 
-	protected void deliverProviderErrorComponent(MAPDialog mapDialog, Long invokeId, MAPProviderError providerError) {
-		for (MAPServiceListener serLis : this.serviceListeners) {
-			serLis.onProviderErrorComponent(mapDialog, invokeId, providerError);
-		}
-	}
+//	protected void deliverProviderErrorComponent(MAPDialog mapDialog, Long invokeId, MAPProviderError providerError) {
+//		for (MAPServiceListener serLis : this.serviceListeners) {
+//			serLis.onProviderErrorComponent(mapDialog, invokeId, providerError);
+//		}
+//	}
 
 	protected void deliverInvokeTimeout(MAPDialog mapDialog, Invoke invoke) {
 		for (MAPServiceListener serLis : this.serviceListeners) {

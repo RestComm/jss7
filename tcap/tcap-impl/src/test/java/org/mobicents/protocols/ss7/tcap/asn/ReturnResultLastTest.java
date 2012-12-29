@@ -133,7 +133,7 @@ public class ReturnResultLastTest  {
 	}
 	
 	@Test(groups = { "functional.decode" })
-	public void testEncode() throws IOException, ParseException {
+	public void testEncode() throws IOException, EncodeException {
 
 		byte[] expected = this.getLDataEmpty();
 		ReturnResultLast rrl = TcapFactory.createComponentReturnResultLast();

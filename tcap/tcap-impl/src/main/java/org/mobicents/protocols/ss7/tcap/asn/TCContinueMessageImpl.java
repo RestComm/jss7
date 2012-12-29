@@ -31,6 +31,7 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
+import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage;
 
 /**
@@ -155,14 +156,14 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 
 			int tag = localAis.readTag();
 			if (tag != _TAG_OTX || localAis.getTagClass() != Tag.CLASS_APPLICATION)
-				throw new ParseException("Error decoding TC-Continue: Expected OriginatingTransactionId, found tag: " + tag);
-//			this.originatingTransactionId = Utils.readTransactionId(localAis);
+				throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
+						"Error decoding TC-Continue: Expected OriginatingTransactionId, found tag: " + tag);
 			this.originatingTransactionId = localAis.readOctetString();
 
 			tag = localAis.readTag();
 			if (tag != _TAG_DTX || localAis.getTagClass() != Tag.CLASS_APPLICATION)
-				throw new ParseException("Error decoding TC-Continue: Expected DestinationTransactionId, found tag: " + tag);
-//			this.destinationTransactionId = Utils.readTransactionId(localAis);
+				throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
+						"Error decoding TC-Continue: Expected DestinationTransactionId, found tag: " + tag);
 			this.destinationTransactionId = localAis.readOctetString();
 
 			if (localAis.available() == 0)
@@ -174,7 +175,7 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 
 				tag = localAis.readTag();
 				if (localAis.isTagPrimitive() || localAis.getTagClass() != Tag.CLASS_APPLICATION)
-					throw new ParseException(
+					throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
 							"Error decoding TC-Continue: DialogPortion and Component portion must be constructive and has tag class CLASS_APPLICATION");
 
 				switch (tag) {
@@ -199,13 +200,14 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 					break;
 
 				default:
-					throw new ParseException("Error decoding TC-Continue: DialogPortion and Componebt parsing: bad tag - " + tag);
+					throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
+							"Error decoding TC-Continue: DialogPortion and Componebt parsing: bad tag - " + tag);
 				}
 			}
 		} catch (IOException e) {
-			throw new ParseException("IOException while decoding TC-Continue: " + e.getMessage(), e);
+			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "IOException while decoding TC-Continue: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException("AsnException while decoding TC-Continue: " + e.getMessage(), e);
+			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "AsnException while decoding TC-Continue: " + e.getMessage(), e);
 		}
 
 	}
@@ -217,19 +219,12 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols
 	 * .asn.AsnOutputStream)
 	 */
-	public void encode(AsnOutputStream aos) throws ParseException {
-		
-//		if (this.originatingTransactionId == null)
-//			throw new ParseException("Error encoding TC-Continue: Originating transaction ID must not be null");
-//		if (this.destinationTransactionId == null)
-//			throw new ParseException("Error encoding TC-Continue: Destination transaction ID must not be null");
+	public void encode(AsnOutputStream aos) throws EncodeException {
 
 		try {
 			aos.writeTag(Tag.CLASS_APPLICATION, false, _TAG);
 			int pos = aos.StartContentDefiniteLength();
 
-//			Utils.writeTransactionId(aos, this.originatingTransactionId, Tag.CLASS_APPLICATION, _TAG_OTX);
-//			Utils.writeTransactionId(aos, this.destinationTransactionId, Tag.CLASS_APPLICATION, _TAG_DTX);
 			aos.writeOctetString(Tag.CLASS_APPLICATION, _TAG_OTX, this.originatingTransactionId);
 			aos.writeOctetString(Tag.CLASS_APPLICATION, _TAG_DTX, this.destinationTransactionId);
 
@@ -248,9 +243,9 @@ public class TCContinueMessageImpl implements TCContinueMessage {
 			aos.FinalizeContent(pos);
 			
 		} catch (IOException e) {
-			throw new ParseException("IOException while encoding TC-Continue: " + e.getMessage(), e);
+			throw new EncodeException("IOException while encoding TC-Continue: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException("AsnException while encoding TC-Continue: " + e.getMessage(), e);
+			throw new EncodeException("AsnException while encoding TC-Continue: " + e.getMessage(), e);
 		}
 
 	}

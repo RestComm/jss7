@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,9 +20,6 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * 
- */
 package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.IOException;
@@ -31,6 +28,7 @@ import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 
 /**
  * @author baranowb
@@ -101,8 +99,8 @@ public class DialogAbortAPDUImpl implements DialogAbortAPDU {
 
 			int tag = localAis.readTag();
 			if (tag != AbortSource._TAG || localAis.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
-				throw new ParseException("Error decoding DialogAbortAPDU.abort-source: bad tag or tagClass, found tag=" + tag + ", tagClass="
-						+ localAis.getTagClass());
+				throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
+						"Error decoding DialogAbortAPDU.abort-source: bad tag or tagClass, found tag=" + tag + ", tagClass=" + localAis.getTagClass());
 			this.abortSource = TcapFactory.createAbortSource(localAis);
 
 			// optional sequence.
@@ -111,14 +109,14 @@ public class DialogAbortAPDUImpl implements DialogAbortAPDU {
 
 			tag = localAis.readTag();
 			if (tag != UserInformation._TAG || localAis.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
-				throw new ParseException("Error decoding DialogAbortAPDU.user-information: bad tag or tagClass, found tag=" + tag + ", tagClass="
-						+ localAis.getTagClass());
+				throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
+						"Error decoding DialogAbortAPDU.user-information: bad tag or tagClass, found tag=" + tag + ", tagClass=" + localAis.getTagClass());
 			this.userInformation = TcapFactory.createUserInformation(localAis);
-			
+
 		} catch (IOException e) {
-			throw new ParseException("IOException while decoding DialogAbortAPDU: " + e.getMessage(), e);
+			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "IOException while decoding DialogAbortAPDU: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException("AsnException while decoding DialogAbortAPDU: " + e.getMessage(), e);
+			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "AsnException while decoding DialogAbortAPDU: " + e.getMessage(), e);
 		}
 
 	}
@@ -126,10 +124,10 @@ public class DialogAbortAPDUImpl implements DialogAbortAPDU {
 	/* (non-Javadoc)
 	 * @see org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols.asn.AsnOutputStream)
 	 */
-	public void encode(AsnOutputStream aos) throws ParseException {
+	public void encode(AsnOutputStream aos) throws EncodeException {
 		
 		if (abortSource == null)
-			throw new ParseException("Error encoding DialogAbortAPDU: Abort Source Name must not be null");
+			throw new EncodeException("Error encoding DialogAbortAPDU: Abort Source Name must not be null");
 		
 		try {
 			
@@ -144,7 +142,7 @@ public class DialogAbortAPDUImpl implements DialogAbortAPDU {
 			aos.FinalizeContent(pos);
 
 		} catch (AsnException e) {
-			throw new ParseException("AsnException while encoding DialogAbortAPDU: " + e.getMessage(), e);
+			throw new EncodeException("AsnException while encoding DialogAbortAPDU: " + e.getMessage(), e);
 		}
 	}
 

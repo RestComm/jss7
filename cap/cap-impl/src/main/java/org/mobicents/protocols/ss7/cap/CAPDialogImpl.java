@@ -22,9 +22,6 @@
 
 package org.mobicents.protocols.ss7.cap;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
@@ -77,7 +74,7 @@ public abstract class CAPDialogImpl implements CAPDialog {
 
 	// protected boolean normalDialogShutDown = false;
 
-	private Set<Long> incomingInvokeList = new HashSet<Long>();
+//	private Set<Long> incomingInvokeList = new HashSet<Long>();
 
 	boolean returnMessageOnError = false;
 	protected MessageType tcapMessageType;
@@ -160,28 +157,28 @@ public abstract class CAPDialogImpl implements CAPDialog {
 	 * @param invokeId
 	 * @return false: failure - this invokeId already present in the list
 	 */
-	public boolean addIncomingInvokeId(Long invokeId) {
-		synchronized (this.incomingInvokeList) {
-			if (this.incomingInvokeList.contains(invokeId))
-				return false;
-			else {
-				this.incomingInvokeList.add(invokeId);
-				return true;
-			}
-		}
-	}
-
-	public void removeIncomingInvokeId(Long invokeId) {
-		synchronized (this.incomingInvokeList) {
-			this.incomingInvokeList.remove(invokeId);
-		}
-	}
-
-	public Boolean checkIncomingInvokeIdExists(Long invokeId) {
-		synchronized (this.incomingInvokeList) {
-			return this.incomingInvokeList.contains(invokeId);
-		}
-	}
+//	public boolean addIncomingInvokeId(Long invokeId) {
+//		synchronized (this.incomingInvokeList) {
+//			if (this.incomingInvokeList.contains(invokeId))
+//				return false;
+//			else {
+//				this.incomingInvokeList.add(invokeId);
+//				return true;
+//			}
+//		}
+//	}
+//
+//	public void removeIncomingInvokeId(Long invokeId) {
+//		synchronized (this.incomingInvokeList) {
+//			this.incomingInvokeList.remove(invokeId);
+//		}
+//	}
+//
+//	public Boolean checkIncomingInvokeIdExists(Long invokeId) {
+//		synchronized (this.incomingInvokeList) {
+//			return this.incomingInvokeList.contains(invokeId);
+//		}
+//	}
 
 	public CAPDialogState getState() {
 		return state;
@@ -362,6 +359,15 @@ public abstract class CAPDialogImpl implements CAPDialog {
 	}
 
 	@Override
+	public void processInvokeWithoutAnswer(Long invokeId) {
+
+		if (this.tcapDialog.getPreviewMode())
+			return;
+
+		this.tcapDialog.processInvokeWithoutAnswer(invokeId);
+	}
+
+	@Override
 	public void sendInvokeComponent(Invoke invoke) throws CAPException {
 
 		if (this.tcapDialog.getPreviewMode())
@@ -380,7 +386,7 @@ public abstract class CAPDialogImpl implements CAPDialog {
 		if (this.tcapDialog.getPreviewMode())
 			return;
 
-		this.removeIncomingInvokeId(returnResultLast.getInvokeId());
+//		this.removeIncomingInvokeId(returnResultLast.getInvokeId());
 
 		try {
 			this.tcapDialog.sendComponent(returnResultLast);
@@ -397,7 +403,7 @@ public abstract class CAPDialogImpl implements CAPDialog {
 
 		CAPErrorMessageImpl capErrorMessage = (CAPErrorMessageImpl) mem;
 
-		this.removeIncomingInvokeId(invokeId);
+//		this.removeIncomingInvokeId(invokeId);
 
 		ReturnError returnError = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
 				.createTCReturnErrorRequest();
@@ -435,8 +441,8 @@ public abstract class CAPDialogImpl implements CAPDialog {
 		if (this.tcapDialog.getPreviewMode())
 			return;
 
-		if (invokeId != null && problem != null && problem.getInvokeProblemType() != null)
-			this.removeIncomingInvokeId(invokeId);
+//		if (invokeId != null && problem != null && problem.getInvokeProblemType() != null)
+//			this.removeIncomingInvokeId(invokeId);
 
 		Reject reject = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCRejectRequest();
 

@@ -202,7 +202,7 @@ public class TCAPAbnormalTest extends SccpHarness {
         client.compareEvents(clientExpectedEvents);
         server.compareEvents(serverExpectedEvents);
 
-		assertEquals(client.pAbortCauseType, PAbortCauseType.BadlyFormattedTxPortion);
+		assertEquals(client.pAbortCauseType, PAbortCauseType.IncorrectTxPortion);
     }
 
 	@Test(groups = { "functional.flow"})

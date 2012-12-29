@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,9 +20,6 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * 
- */
 package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.IOException;
@@ -32,6 +29,7 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.GeneralProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Reject;
@@ -47,8 +45,12 @@ public class RejectImpl implements Reject {
 
 	// this can actaully be null in this case.
 	private Long invokeId;
+	private boolean localOriginated = false;
 
 	private Problem problem;
+
+	public RejectImpl() {
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -103,6 +105,16 @@ public class RejectImpl implements Reject {
 		return ComponentType.Reject;
 	}
 
+	@Override
+	public boolean isLocalOriginated() {
+		return localOriginated;
+	}
+
+	@Override
+	public void setLocalOriginated(boolean p) {
+		localOriginated = p;
+	}
+
 	
 	public String toString() {
 		return "Reject[invokeId=" + invokeId + ", problem=" + problem + "]";
@@ -118,11 +130,15 @@ public class RejectImpl implements Reject {
 	public void decode(AsnInputStream ais) throws ParseException {
 
 		try {
+			this.setLocalOriginated(false);
+
 			AsnInputStream localAis = ais.readSequenceStream();
 
 			int tag = localAis.readTag();
-			if (localAis.getTagClass() != Tag.CLASS_UNIVERSAL)
-				throw new ParseException("Error while decoding Reject: bad tag class for InvokeID or NULL: tagClass = " + localAis.getTagClass());
+			if (localAis.getTagClass() != Tag.CLASS_UNIVERSAL) {
+				throw new ParseException(null, GeneralProblemType.MistypedComponent,
+						"Error while decoding Reject: bad tag class for InvokeID or NULL: tagClass = " + localAis.getTagClass());
+			}
 			switch(tag) {
 			case _TAG_IID:
 				this.invokeId = localAis.readInteger();
@@ -133,17 +149,20 @@ public class RejectImpl implements Reject {
 			}
 
 			tag = localAis.readTag();
-			if (localAis.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
-				throw new ParseException("Error while decoding Reject: bad tag class for a problem: tagClass = " + localAis.getTagClass());
+			if (localAis.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC) {
+				throw new ParseException(null, GeneralProblemType.MistypedComponent, "Error while decoding Reject: bad tag class for a problem: tagClass = "
+						+ localAis.getTagClass());
+			}
 			ProblemType pt = ProblemType.getFromInt(tag);
-			if (pt == null)
-				throw new ParseException("Error while decoding Reject: ProblemType not found");
+			if (pt == null) {
+				throw new ParseException(null, GeneralProblemType.MistypedComponent, "Error while decoding Reject: ProblemType not found");
+			}
 			this.problem = TcapFactory.createProblem(pt, localAis);
 			
 		} catch (IOException e) {
-			throw new ParseException("IOException while decoding Reject: " + e.getMessage(), e);
+			throw new ParseException(null, GeneralProblemType.BadlyStructuredComponent, "IOException while decoding Reject: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException("AsnException while decoding Reject: " + e.getMessage(), e);
+			throw new ParseException(null, GeneralProblemType.BadlyStructuredComponent, "AsnException while decoding Reject: " + e.getMessage(), e);
 		}
 
 	}
@@ -155,10 +174,10 @@ public class RejectImpl implements Reject {
 	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols
 	 * .asn.AsnOutputStream)
 	 */
-	public void encode(AsnOutputStream aos) throws ParseException {
+	public void encode(AsnOutputStream aos) throws EncodeException {
 
 		if (this.problem == null) {
-			throw new ParseException("Problem not set!");
+			throw new EncodeException("Problem not set!");
 		}
 		try {
 			aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG);
@@ -173,9 +192,9 @@ public class RejectImpl implements Reject {
 			aos.FinalizeContent(pos);
 			
 		} catch (IOException e) {
-			throw new ParseException("IOException while encoding Reject: " + e.getMessage(), e);
+			throw new EncodeException("IOException while encoding Reject: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException("AsnException while encoding Reject: " + e.getMessage(), e);
+			throw new EncodeException("AsnException while encoding Reject: " + e.getMessage(), e);
 		}
 
 	}

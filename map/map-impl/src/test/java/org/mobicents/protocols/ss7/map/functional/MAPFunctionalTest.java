@@ -48,7 +48,6 @@ import org.mobicents.protocols.ss7.map.api.MAPStack;
 import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.dialog.ProcedureCancellationReason;
@@ -163,7 +162,6 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ProblemType;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Reject;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResult;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
 import org.testng.Assert;
@@ -643,9 +641,9 @@ public class MAPFunctionalTest extends SccpHarness {
 
 		Client client = new Client(stack1, this, peer1Address, peer2Address) {
 			@Override
-			public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
+			public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, 
 					ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
-				super.onDialogReject(mapDialog, refuseReason, providerError, alternativeApplicationContext, extensionContainer);
+				super.onDialogReject(mapDialog, refuseReason, alternativeApplicationContext, extensionContainer);
 				assertEquals(refuseReason, MAPRefuseReason.InvalidDestinationReference);
 				assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
 
@@ -736,9 +734,9 @@ public class MAPFunctionalTest extends SccpHarness {
 
 		Client client = new Client(stack1, this, peer1Address, peer2Address) {
 			@Override
-			public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
+			public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, 
 					ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
-				super.onDialogReject(mapDialog, refuseReason, providerError, alternativeApplicationContext, extensionContainer);
+				super.onDialogReject(mapDialog, refuseReason, alternativeApplicationContext, extensionContainer);
 				assertEquals(refuseReason, MAPRefuseReason.ApplicationContextNotSupported);
 				assertNotNull(alternativeApplicationContext);
 				assertTrue(Arrays.equals(alternativeApplicationContext.getOid(), new long[] { 1, 2, 3 }));
@@ -1454,8 +1452,8 @@ public class MAPFunctionalTest extends SccpHarness {
 		Client client = new Client(stack1, this, peer1Address, peer2Address) {
 
 			@Override
-			public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem) {
-				super.onRejectComponent(mapDialog, invokeId, problem);
+			public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem, boolean isLocalOriginated) {
+				super.onRejectComponent(mapDialog, invokeId, problem, isLocalOriginated);
 				InvokeProblemType invokeProblemType = problem.getInvokeProblemType();
 				assertNotNull(invokeProblemType);
 				assertEquals(invokeProblemType, InvokeProblemType.DuplicateInvokeID);
@@ -1656,8 +1654,8 @@ public class MAPFunctionalTest extends SccpHarness {
 		Client client = new Client(stack1, this, peer1Address, peer2Address) {
 
 			@Override
-			public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem) {
-				super.onRejectComponent(mapDialog, invokeId, problem);
+			public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem, boolean isLocalOriginated) {
+				super.onRejectComponent(mapDialog, invokeId, problem, isLocalOriginated);
 				GeneralProblemType generalProblemType = problem.getGeneralProblemType();
 				assertNotNull(generalProblemType);
 				assertEquals(generalProblemType, GeneralProblemType.MistypedComponent);
@@ -1935,9 +1933,9 @@ public class MAPFunctionalTest extends SccpHarness {
 
 		Client client = new Client(stack1, this, peer1Address, peer2Address) {
 			@Override
-			public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
+			public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, 
 					ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
-				super.onDialogReject(mapDialog, refuseReason, providerError, alternativeApplicationContext, extensionContainer);
+				super.onDialogReject(mapDialog, refuseReason, alternativeApplicationContext, extensionContainer);
 				assertNotNull(refuseReason);
 				assertEquals(refuseReason, MAPRefuseReason.PotentialVersionIncompatibility);
 				assertEquals(mapDialog.getTCAPMessageType(), MessageType.Abort);
@@ -1976,9 +1974,9 @@ public class MAPFunctionalTest extends SccpHarness {
 
 		Client client = new Client(stack1, this, peer1Address, peer2Address) {
 			@Override
-			public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
+			public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, 
 					ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
-				super.onDialogReject(mapDialog, refuseReason, providerError, alternativeApplicationContext, extensionContainer);
+				super.onDialogReject(mapDialog, refuseReason, alternativeApplicationContext, extensionContainer);
 				assertNotNull(refuseReason);
 				assertEquals(refuseReason, MAPRefuseReason.PotentialVersionIncompatibility);
 				assertEquals(mapDialog.getTCAPMessageType(), MessageType.Abort);
@@ -2064,7 +2062,7 @@ public class MAPFunctionalTest extends SccpHarness {
 					MAPAbortSource abortSource, MAPExtensionContainer extensionContainer) {
 				super.onDialogProviderAbort(mapDialog, abortProviderReason, abortSource, extensionContainer);
 				
-				Assert.assertEquals(abortProviderReason, MAPAbortProviderReason.AbnormalMAPDialogue);
+				Assert.assertEquals(abortProviderReason, MAPAbortProviderReason.AbnormalMAPDialogueLocal);
 				assertEquals(mapDialog.getTCAPMessageType(), MessageType.Abort);
 			}
 
@@ -5025,13 +5023,23 @@ public class MAPFunctionalTest extends SccpHarness {
 
 	/**
 	 * TC-BEGIN + sendRoutingInfoForSMRequest + reportSMDeliveryStatusRequest
-	 *   TC-CONTINUE sendRoutingInfoForSMResponse + sendRoutingInfoForSMResponse for the same InvokeId (doubled InvokeId) 
-	 * TC-END + Reject(bad invokeId)
+	 *   TC-CONTINUE sendRoutingInfoForSMResponse + sendRoutingInfoForSMResponse for the same InvokeId 
+	 * TC-END + Reject(UnrecognizedInvokeID)
 	 */
 	@Test(groups = { "functional.flow", "dialog" })
 	public void testBadInvokeLinkedId() throws Exception {
 
 		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+
+			@Override
+			public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem, boolean isLocalOriginated) {
+				super.onRejectComponent(mapDialog, invokeId, problem, isLocalOriginated);
+
+//				assertEquals((long)invokeId, invokeId1);
+				assertEquals(problem.getType(), ProblemType.ReturnResult);
+				assertEquals(problem.getReturnResultProblemType(), ReturnResultProblemType.UnrecognizedInvokeID);
+				assertTrue(isLocalOriginated);
+			}
 
 			@Override
 			public void onDialogDelimiter(MAPDialog mapDialog) {
@@ -5064,12 +5072,13 @@ public class MAPFunctionalTest extends SccpHarness {
 			}
 
 			@Override
-			public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem) {
-				super.onRejectComponent(mapDialog, invokeId, problem);
+			public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem, boolean isLocalOriginated) {
+				super.onRejectComponent(mapDialog, invokeId, problem, isLocalOriginated);
 
 				assertEquals((long)invokeId, invokeId1);
 				assertEquals(problem.getType(), ProblemType.ReturnResult);
 				assertEquals(problem.getReturnResultProblemType(), ReturnResultProblemType.UnrecognizedInvokeID);
+				assertFalse(isLocalOriginated);
 			}
 
 			@Override
@@ -5120,6 +5129,9 @@ public class MAPFunctionalTest extends SccpHarness {
 		clientExpectedEvents.add(te);
 
 		te = TestEvent.createReceivedEvent(EventType.SendRoutingInfoForSMRespIndication, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.RejectComponent, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
 		clientExpectedEvents.add(te);
 
 		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));

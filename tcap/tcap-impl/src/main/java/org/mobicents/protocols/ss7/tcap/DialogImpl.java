@@ -23,7 +23,9 @@
 package org.mobicents.protocols.ss7.tcap;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -35,6 +37,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
+import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.OperationState;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.TRPseudoState;
@@ -56,10 +59,9 @@ import org.mobicents.protocols.ss7.tcap.asn.DialogResponseAPDU;
 import org.mobicents.protocols.ss7.tcap.asn.DialogServiceProviderType;
 import org.mobicents.protocols.ss7.tcap.asn.DialogServiceUserType;
 import org.mobicents.protocols.ss7.tcap.asn.DialogUniAPDU;
+import org.mobicents.protocols.ss7.tcap.asn.EncodeException;
 import org.mobicents.protocols.ss7.tcap.asn.InvokeImpl;
-import org.mobicents.protocols.ss7.tcap.asn.ParseException;
 import org.mobicents.protocols.ss7.tcap.asn.ProblemImpl;
-import org.mobicents.protocols.ss7.tcap.asn.RejectImpl;
 import org.mobicents.protocols.ss7.tcap.asn.Result;
 import org.mobicents.protocols.ss7.tcap.asn.ResultSourceDiagnostic;
 import org.mobicents.protocols.ss7.tcap.asn.ResultType;
@@ -146,6 +148,7 @@ public class DialogImpl implements Dialog {
 	// only originating side keeps FSM, see: Q.771 - 3.1.5
 	protected InvokeImpl[] operationsSent = new InvokeImpl[invokeIDTable.length];
 	protected InvokeImpl[] operationsSentA = new InvokeImpl[invokeIDTable.length];
+	private Set<Long> incomingInvokeList = new HashSet<Long>();
 	private ScheduledExecutorService executor;
 
 	// scheduled components list
@@ -261,9 +264,7 @@ public class DialogImpl implements Dialog {
 				InvokeImpl invokeImpl = this.operationsSent[i];
 				if (invokeImpl != null) {
 					invokeImpl.setState(OperationState.Idle);
-					// TODO whether to call operationTimedOut or not is still
-					// not
-					// clear
+					// TODO whether to call operationTimedOut or not is still not clear
 					// operationTimedOut(invokeImpl);
 				}
 			}
@@ -443,6 +444,28 @@ public class DialogImpl implements Dialog {
 	public UserInformation getUserInformation() {
 		return lastUI;
 	}
+	/**
+	 * Adding the new incoming invokeId into incomingInvokeList list
+	 * 
+	 * @param invokeId
+	 * @return false: failure - this invokeId already present in the list
+	 */
+	private boolean addIncomingInvokeId(Long invokeId) {
+		synchronized (this.incomingInvokeList) {
+			if (this.incomingInvokeList.contains(invokeId))
+				return false;
+			else {
+				this.incomingInvokeList.add(invokeId);
+				return true;
+			}
+		}
+	}
+
+	private void removeIncomingInvokeId(Long invokeId) {
+		synchronized (this.incomingInvokeList) {
+			this.incomingInvokeList.remove(invokeId);
+		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -503,6 +526,7 @@ public class DialogImpl implements Dialog {
 				this.scheduledComponentList.clear();
 			} catch (Throwable e) {
 				// FIXME: remove freshly added invokes to free invoke ID??
+				// TODO: should we release this dialog because TC-BEGIN sending has been failed
 				if (logger.isEnabledFor(Level.ERROR)) {
 					logger.error("Failed to send message: ", e);
 				}
@@ -601,8 +625,6 @@ public class DialogImpl implements Dialog {
 
 				}
 
-				// FIXME: SPECS SAY HERE UI/ACN CAN BE SENT, HOOOOOOOWWW!?
-
 				AsnOutputStream aos = new AsnOutputStream();
 				try {
 					tcbm.encode(aos);
@@ -610,7 +632,7 @@ public class DialogImpl implements Dialog {
 							this.localAddress, this.seqControl);
 					this.scheduledComponentList.clear();
 				} catch (Exception e) {
-					// FIXME: add proper handling here. TC-NOTICE ?
+					// FIXME: remove freshly added invokes to free invoke ID??
 					if (logger.isEnabledFor(Level.ERROR)) {
 						logger.error("Failed to send message: ", e);
 					}
@@ -716,15 +738,13 @@ public class DialogImpl implements Dialog {
 				// transaction).
 
 				// Don't set the Application Context or Dialogue Portion in
-				// Active
-				// state
+				// Active state
 
 			} else {
 				throw new TCAPSendException(String.format("State is not %s or %s: it is %s", TRPseudoState.Active,
 						TRPseudoState.InitialReceived, this.state));
 			}
 
-			// FIXME: SPECS SAY HERE UI/ACN CAN BE SENT, HOOOOOOOWWW!?
 			AsnOutputStream aos = new AsnOutputStream();
 			try {
 				tcbm.encode(aos);
@@ -793,13 +813,12 @@ public class DialogImpl implements Dialog {
 						this.localAddress, this.seqControl);
 				this.scheduledComponentList.clear();
 			} catch (Exception e) {
-				// FIXME: remove freshly added invokes to free invoke ID??
 				if (logger.isEnabledFor(Level.ERROR)) {
 					logger.error("Failed to send message: ", e);
 				}
 				throw new TCAPSendException("Failed to send TC-Uni message: " + e.getMessage(), e);
-				// } finally {
-				// release();
+			} finally {
+				release();
 			}
 		} finally {
 			this.dialogLock.unlock();
@@ -925,11 +944,6 @@ public class DialogImpl implements Dialog {
 				// check if its taken!
 				int invokeIndex = this.getIndexFromInvokeId(invoke.getInvokeId());
 				if (this.operationsSent[invokeIndex] != null) {
-					// This is TC-L-REJECT?
-					// TC-L-REJECT (local reject): Informs the local TC-user
-					// that a
-					// Component sublayer detected
-					// invalid component was received. <-- who wrote this?
 					throw new TCAPSendException("There is already operation with such invoke id!");
 				}
 
@@ -941,12 +955,24 @@ public class DialogImpl implements Dialog {
 				// default value
 				if (invoke.getTimeout() == TCAPStackImpl._EMPTY_INVOKE_TIMEOUT)
 					invoke.setTimeout(this.provider.getStack().getInvokeTimeout());
+			} else {
+				if (componentRequest.getType() != ComponentType.ReturnResult) {
+					// we are sending a response and removing invokeId from
+					// incomingInvokeList
+					this.removeIncomingInvokeId(componentRequest.getInvokeId());
+				}
 			}
 			this.scheduledComponentList.add(componentRequest);
 		} finally {
 			this.dialogLock.unlock();
-
 		}
+	}
+
+	public void processInvokeWithoutAnswer(Long invokeId) {
+		if (this.previewMode)
+			return;
+
+		this.removeIncomingInvokeId(invokeId);
 	}
 
 	private void prepareComponents(Component[] res) {
@@ -954,19 +980,15 @@ public class DialogImpl implements Dialog {
 		int index = 0;
 		while (this.scheduledComponentList.size() > index) {
 			Component cr = this.scheduledComponentList.get(index);
-			// FIXME: add more ?
 			if (cr.getType() == ComponentType.Invoke) {
 				InvokeImpl in = (InvokeImpl) cr;
-				// check not null?
+				// FIXME: check not null?
 				this.operationsSent[this.getIndexFromInvokeId(in.getInvokeId())] = in;
-				// FIXME: deffer this ?
 				in.setState(OperationState.Sent);
 			}
 
 			res[index++] = cr;
-
 		}
-
 	}
 
 	public int getMaxUserDataLength() {
@@ -1003,7 +1025,7 @@ public class DialogImpl implements Dialog {
 		AsnOutputStream aos = new AsnOutputStream();
 		try {
 			tcbm.encode(aos);
-		} catch (ParseException e) {
+		} catch (EncodeException e) {
 			if (logger.isEnabledFor(Level.ERROR)) {
 				logger.error("Failed to encode message while length testing: ", e);
 			}
@@ -1234,6 +1256,7 @@ public class DialogImpl implements Dialog {
 			// this.release();
 
 		} finally {
+			this.release();
 			this.dialogLock.unlock();
 		}
 	}
@@ -1420,8 +1443,7 @@ public class DialogImpl implements Dialog {
 
 				} else if (state == TRPseudoState.Active) {
 					restartIdleTimer();
-					// XXX: here NO APDU will be present, hence, no ACN/UI
-					// change
+					// XXX: here NO APDU will be present, hence, no ACN/UI change
 					tcContinueIndication = (TCContinueIndicationImpl) ((DialogPrimitiveFactoryImpl) this.provider
 							.getDialogPrimitiveFactory()).createContinueIndication(this);
 
@@ -1702,16 +1724,32 @@ public class DialogImpl implements Dialog {
 			switch (ci.getType()) {
 
 			case Invoke:
-				resultingIndications.add(ci);
-				if (invoke != null) {
-					((InvokeImpl) ci).setLinkedInvoke(invoke);
-				}
+				if (invokeId != null && invoke == null) {
+					logger.error(String.format("Rx : %s but no sent Invoke for linkedId exists", ci));
 
-				if (this.previewMode) {
-					index = getIndexFromInvokeId(ci.getInvokeId());
-					this.operationsSentA[index] = (InvokeImpl) ci;
-					((InvokeImpl) ci).setDialog(this);
-					((InvokeImpl) ci).setState(OperationState.Sent);
+					Problem p = new ProblemImpl();
+					p.setInvokeProblemType(InvokeProblemType.UnrechognizedLinkedID);
+					this.addReject(resultingIndications, ci.getInvokeId(), p);
+				} else {
+					resultingIndications.add(ci);
+					if (invoke != null) {
+						((InvokeImpl) ci).setLinkedInvoke(invoke);
+					}
+
+					if (this.previewMode) {
+						index = getIndexFromInvokeId(ci.getInvokeId());
+						this.operationsSentA[index] = (InvokeImpl) ci;
+						((InvokeImpl) ci).setDialog(this);
+						((InvokeImpl) ci).setState(OperationState.Sent);
+					} else {
+						if (!this.addIncomingInvokeId(ci.getInvokeId())) {
+							logger.error(String.format("Rx : %s but there is already Invoke with this invokeId", ci));
+
+							Problem p = new ProblemImpl();
+							p.setInvokeProblemType(InvokeProblemType.DuplicateInvokeID);
+							this.addReject(resultingIndications, ci.getInvokeId(), p);
+						}
+					}
 				}
 				break;
 
@@ -1720,17 +1758,15 @@ public class DialogImpl implements Dialog {
 				if (invoke == null) {
 					logger.error(String.format("Rx : %s but there is no corresponding Invoke", ci));
 
-					try {
-						Reject rej = new RejectImpl();
-						rej.setInvokeId(ci.getInvokeId());
-						Problem p = new ProblemImpl();
-						p.setType(ProblemType.ReturnResult);
-						p.setReturnResultProblemType(ReturnResultProblemType.UnrecognizedInvokeID);
-						rej.setProblem(p);
-						this.sendComponent(rej);
-					} catch (TCAPSendException e) {
-						logger.error(String.format("Error sending Reject component", e));
-					}
+					Problem p = new ProblemImpl();
+					p.setReturnResultProblemType(ReturnResultProblemType.UnrecognizedInvokeID);
+					this.addReject(resultingIndications, ci.getInvokeId(), p);
+				} else if (invoke.getInvokeClass() != InvokeClass.Class1 && invoke.getInvokeClass() != InvokeClass.Class3) {
+					logger.error(String.format("Rx : %s but Invoke class is not 1 or 3", ci));
+
+					Problem p = new ProblemImpl();
+					p.setReturnResultProblemType(ReturnResultProblemType.ReturnResultUnexpected);
+					this.addReject(resultingIndications, ci.getInvokeId(), p);
 				} else {
 					resultingIndications.add(ci);
 					ReturnResultImpl rri = (ReturnResultImpl) ci;
@@ -1744,17 +1780,16 @@ public class DialogImpl implements Dialog {
 				if (invoke == null) {
 					logger.error(String.format("Rx : %s but there is no corresponding Invoke", ci));
 
-					try {
-						Reject rej = new RejectImpl();
-						rej.setInvokeId(ci.getInvokeId());
-						Problem p = new ProblemImpl();
-						p.setType(ProblemType.ReturnResult);
-						p.setReturnResultProblemType(ReturnResultProblemType.UnrecognizedInvokeID);
-						rej.setProblem(p);
-						this.sendComponent(rej);
-					} catch (TCAPSendException e) {
-						logger.error(String.format("Error sending Reject component", e));
-					}
+					Problem p = new ProblemImpl();
+					p.setType(ProblemType.ReturnResult);
+					p.setReturnResultProblemType(ReturnResultProblemType.UnrecognizedInvokeID);
+					this.addReject(resultingIndications, ci.getInvokeId(), p);
+				} else if (invoke.getInvokeClass() != InvokeClass.Class1 && invoke.getInvokeClass() != InvokeClass.Class3) {
+					logger.error(String.format("Rx : %s but Invoke class is not 1 or 3", ci));
+
+					Problem p = new ProblemImpl();
+					p.setReturnResultProblemType(ReturnResultProblemType.ReturnResultUnexpected);
+					this.addReject(resultingIndications, ci.getInvokeId(), p);
 				} else {
 					invoke.onReturnResultLast();
 					if (invoke.isSuccessReported()) {
@@ -1770,17 +1805,15 @@ public class DialogImpl implements Dialog {
 				if (invoke == null) {
 					logger.error(String.format("Rx : %s but there is no corresponding Invoke", ci));
 
-					try {
-						Reject rej = new RejectImpl();
-						rej.setInvokeId(ci.getInvokeId());
-						Problem p = new ProblemImpl();
-						p.setType(ProblemType.ReturnError);
-						p.setReturnErrorProblemType(ReturnErrorProblemType.UnrecognizedInvokeID);
-						rej.setProblem(p);
-						this.sendComponent(rej);
-					} catch (TCAPSendException e) {
-						logger.error(String.format("Error sending Reject component", e));
-					}
+					Problem p = new ProblemImpl();
+					p.setReturnErrorProblemType(ReturnErrorProblemType.UnrecognizedInvokeID);
+					this.addReject(resultingIndications, ci.getInvokeId(), p);
+				} else if (invoke.getInvokeClass() != InvokeClass.Class1 && invoke.getInvokeClass() != InvokeClass.Class2) {
+					logger.error(String.format("Rx : %s but Invoke class is not 1 or 2", ci));
+
+					Problem p = new ProblemImpl();
+					p.setReturnErrorProblemType(ReturnErrorProblemType.ReturnErrorUnexpected);
+					this.addReject(resultingIndications, ci.getInvokeId(), p);
 				} else {
 					invoke.onError();
 					if (invoke.isErrorReported()) {
@@ -1793,8 +1826,9 @@ public class DialogImpl implements Dialog {
 				if (invoke != null) {
 					// If the Reject Problem is the InvokeProblemType we
 					// should move the invoke to the idle state
-					Problem problem = ((Reject) ci).getProblem();
-					if (problem.getInvokeProblemType() != null)
+					Reject rej = (Reject) ci;
+					Problem problem = rej.getProblem();
+					if (!rej.isLocalOriginated() && problem.getInvokeProblemType() != null)
 						invoke.onReject();
 				}
 				resultingIndications.add(ci);
@@ -1813,6 +1847,20 @@ public class DialogImpl implements Dialog {
 
 	}
 
+	private void addReject(List<Component> resultingIndications, Long invokeId, Problem p) {
+		try {
+			Reject rej = TcapFactory.createComponentReject();
+			rej.setLocalOriginated(true);
+			rej.setInvokeId(invokeId);
+			rej.setProblem(p);
+
+			resultingIndications.add(rej);
+			this.sendComponent(rej);
+		} catch (TCAPSendException e) {
+			logger.error(String.format("Error sending Reject component", e));
+		}
+	}
+
 	protected synchronized void setState(TRPseudoState newState) {
 		try {
 			this.dialogLock.lock();
@@ -1823,10 +1871,6 @@ public class DialogImpl implements Dialog {
 			this.state = newState;
 			if (newState == TRPseudoState.Expunged) {
 				stopIdleTimer();
-				// RemovalTimerTask rtt = new RemovalTimerTask();
-				// rtt.d = this;
-				// this.executor.schedule(rtt, removeTaskTimeout,
-				// TimeUnit.MILLISECONDS);
 				provider.release(this);
 			}
 		} finally {

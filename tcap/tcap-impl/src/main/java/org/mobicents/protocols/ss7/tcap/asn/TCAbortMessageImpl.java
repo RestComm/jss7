@@ -129,20 +129,21 @@ public class TCAbortMessageImpl implements TCAbortMessage {
 
 			int tag = localAis.readTag();
 			if (tag != _TAG_DTX || localAis.getTagClass() != Tag.CLASS_APPLICATION)
-				throw new ParseException("Error decoding TC-Abort: Expected DestinationTransactionId, found tag: " + tag);
-//			this.destTxId = Utils.readTransactionId(localAis);
+				throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
+						"Error decoding TC-Abort: Expected DestinationTransactionId, found tag: " + tag);
 			this.destTxId = localAis.readOctetString();
 
 			if (localAis.available() == 0)
 				return;
 			tag = localAis.readTag();
 			if (localAis.getTagClass() != Tag.CLASS_APPLICATION)
-				throw new ParseException("Error decoding TC-Abort: DialogPortion and P-AbortCause portion must has tag class CLASS_APPLICATION");
+				throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
+						"Error decoding TC-Abort: DialogPortion and P-AbortCause portion must has tag class CLASS_APPLICATION");
 			
 			switch( tag ) {
 			case DialogPortion._TAG:
 				if (localAis.isTagPrimitive())
-					throw new ParseException("Error decoding TC-End: DialogPortion must be constructive");
+					throw new ParseException(PAbortCauseType.IncorrectTxPortion, null, "Error decoding TC-End: DialogPortion must be constructive");
 				this.dp = TcapFactory.createDialogPortion(localAis);
 				break;
 				
@@ -152,16 +153,17 @@ public class TCAbortMessageImpl implements TCAbortMessage {
 				break;
 				
 			default:
-				throw new ParseException("Error decoding TC-Abort: bad tag while parsing DialogPortion and P-AbortCause portion: " + tag);
+				throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
+						"Error decoding TC-Abort: bad tag while parsing DialogPortion and P-AbortCause portion: " + tag);
 			}
 			
 			if (localAis.available() > 0)
-				throw new ParseException("Error decoding TC-Abort: too mych data");
+				throw new ParseException(PAbortCauseType.IncorrectTxPortion, null, "Error decoding TC-Abort: too mych data");
 			
 		} catch (IOException e) {
-			throw new ParseException("IOException while decoding TC-Abort: " + e.getMessage(), e);
+			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "IOException while decoding TC-Abort: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException("AsnException while decoding TC-Abort: " + e.getMessage(), e);
+			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "AsnException while decoding TC-Abort: " + e.getMessage(), e);
 		}
 
 	}
@@ -173,16 +175,12 @@ public class TCAbortMessageImpl implements TCAbortMessage {
 	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols
 	 * .asn.AsnOutputStream)
 	 */
-	public void encode(AsnOutputStream aos) throws ParseException {
-
-//		if (this.destTxId == null)
-//			throw new ParseException("Error encoding TC-Abort: destTxId must not be null");
+	public void encode(AsnOutputStream aos) throws EncodeException {
 
 		try {
 			aos.writeTag(Tag.CLASS_APPLICATION, false, _TAG);
 			int pos = aos.StartContentDefiniteLength();
 
-//			Utils.writeTransactionId(aos, this.destTxId, Tag.CLASS_APPLICATION, _TAG_DTX);
 			aos.writeOctetString(Tag.CLASS_APPLICATION, _TAG_DTX, this.destTxId);
 
 			if (this.type != null)
@@ -193,9 +191,9 @@ public class TCAbortMessageImpl implements TCAbortMessage {
 			aos.FinalizeContent(pos);
 			
 		} catch (IOException e) {
-			throw new ParseException("IOException while encoding TC-Abort: " + e.getMessage(), e);
+			throw new EncodeException("IOException while encoding TC-Abort: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException("AsnException while encoding TC-Abort: " + e.getMessage(), e);
+			throw new EncodeException("AsnException while encoding TC-Abort: " + e.getMessage(), e);
 		}
 
 	}

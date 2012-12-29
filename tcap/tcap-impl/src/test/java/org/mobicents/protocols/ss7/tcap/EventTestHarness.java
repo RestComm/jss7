@@ -186,8 +186,8 @@ public abstract class EventTestHarness implements TCListener {
 		ApplicationContextName acn = this.tcapProvider.getDialogPrimitiveFactory().createApplicationContextName(_ACN_);
 		TCUniRequest tcur = this.tcapProvider.getDialogPrimitiveFactory().createUni(this.dialog);
 		tcur.setApplicationContextName(acn);
-		this.dialog.send(tcur);
 		this.observerdEvents.add(TestEvent.createSentEvent(EventType.Uni, tcur, sequence++));
+		this.dialog.send(tcur);
 	}
 
 	public void onTCUni(TCUniIndication ind) {

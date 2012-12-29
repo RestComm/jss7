@@ -133,8 +133,7 @@ public class DialogPortionTest {
 	}
 
 	@Test(groups = { "functional.encode","functional.decode" })
-	public void testDialogPortion_DialogRequestAPDU() throws IOException,
-			ParseException {
+	public void testDialogPortion_DialogRequestAPDU() throws Exception {
 		// trace
 		byte[] b = new byte[] { 107, 30, 40, 28, 6, 7, 0, 17, (byte) 134, 5, 1,
 				1, 1, (byte) 160, 17, 0x60, 15, (byte) 128, 2, 7, (byte) 128,
@@ -161,21 +160,18 @@ public class DialogPortionTest {
 		byte[] encoded = aso.toByteArray();
 		assertTrue(Arrays.equals(b, encoded));
 
-		try {
-			dpi.getEncodeBitStringType();
-			fail();
-		} catch (UnsupportedOperationException e) {
-
-		}
+//		try {
+//			dpi.getEncodeBitStringType();
+//			fail();
+//		} catch (UnsupportedOperationException e) {
+//
+//		}
 		try {
 			encoded = null;
 			encoded = dpi.getEncodeType();
 			assertNotNull(encoded);
 
-		} catch (UnsupportedOperationException e) {
-			fail();
-			e.printStackTrace();
-		} catch (AsnException e) {
+		} catch (Exception e) {
 			fail();
 			e.printStackTrace();
 		}
@@ -198,8 +194,7 @@ public class DialogPortionTest {
 	}
 
 	@Test(groups = { "functional.encode","functional.decode" })
-	public void testDialogPortion_DialogAbortAPDU() throws IOException,
-			ParseException {
+	public void testDialogPortion_DialogAbortAPDU() throws Exception {
 
 		// trace
 		byte[] b = new byte[] { 0x6B, 0x12, 0x28, 0x10, 0x06, 0x07, 0x00, 0x11,
@@ -214,21 +209,18 @@ public class DialogPortionTest {
 		byte[] encoded = aso.toByteArray();
 		assertTrue(Arrays.equals(b, encoded));
 
-		try {
-			dpi.getEncodeBitStringType();
-			fail();
-		} catch (UnsupportedOperationException e) {
-
-		}
+//		try {
+//			dpi.getEncodeBitStringType();
+//			fail();
+//		} catch (UnsupportedOperationException e) {
+//
+//		}
 		try {
 			encoded = null;
 			encoded = dpi.getEncodeType();
 			assertNotNull(encoded);
 
-		} catch (UnsupportedOperationException e) {
-			fail();
-			e.printStackTrace();
-		} catch (AsnException e) {
+		} catch (Exception e) {
 			fail();
 			e.printStackTrace();
 		}

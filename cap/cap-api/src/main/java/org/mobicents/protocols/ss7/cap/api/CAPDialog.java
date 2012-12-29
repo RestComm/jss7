@@ -174,6 +174,15 @@ public interface CAPDialog {
 	public void abort(CAPUserAbortReason abortReason) throws CAPException;
 
 	/**
+	 * If a CAP user will not answer to an incoming Invoke
+	 * with Response, Error or Reject components
+	 * it should invoke this method to remove the incoming Invoke from a pending incoming Invokes list 
+	 * 
+	 * @param invokeId
+	 */
+	public void processInvokeWithoutAnswer(Long invokeId);
+
+	/**
 	 * Sends the TC-INVOKE component
 	 * 
 	 * @param invoke

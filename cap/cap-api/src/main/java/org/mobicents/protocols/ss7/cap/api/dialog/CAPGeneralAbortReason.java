@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -28,20 +28,24 @@ package org.mobicents.protocols.ss7.cap.api.dialog;
  * 
  */
 public enum CAPGeneralAbortReason {
-	// Received data is absent or unrecognizable
-	BadReceivedData(0),
-	// TCAP Dialog is destroyed when CapDialog is alive and not shutting down
-	TcapDialogDestroyedData(1),
-	// Application context name does not supported
-	ACNNotSupported(2),
-	// Other part has been refused the Dialog with AARE apdu with
-	// abortReason=null or abortReason=no-reason-given
-	DialogRefused(3),
-	// Other part has been refused the Dialog with AARE apdu with
-	// abortReason=null or abortReason=NoCommonDialogPortion
-	NoCommonDialogPortionReceived(4),
-	// User abort, CAPUserAbortReason is present in the message
-	UserSpecific(5);
+	/**
+	 * Application context name does not supported
+	 */
+	ACNNotSupported(0),
+	/**
+	 * Other part has been refused the Dialog with AARE apdu with
+	 * abortReason=null or abortReason=no-reason-given
+	 */
+	DialogRefused(1),
+	/**
+	 * Other part has been refused the Dialog with AARE apdu with
+	 * abortReason=null or abortReason=NoCommonDialogPortion
+	 */
+	NoCommonDialogPortionReceived(2),
+	/**
+	 * User abort, CAPUserAbortReason is present in the message
+	 */
+	UserSpecific(3);
 
 	private int code;
 
@@ -52,16 +56,12 @@ public enum CAPGeneralAbortReason {
 	public static CAPGeneralAbortReason getInstance(int code) {
 		switch (code) {
 		case 0:
-			return CAPGeneralAbortReason.BadReceivedData;
-		case 1:
-			return CAPGeneralAbortReason.TcapDialogDestroyedData;
-		case 2:
 			return CAPGeneralAbortReason.ACNNotSupported;
-		case 3:
+		case 1:
 			return CAPGeneralAbortReason.DialogRefused;
-		case 4:
+		case 2:
 			return CAPGeneralAbortReason.NoCommonDialogPortionReceived;
-		case 5:
+		case 3:
 			return CAPGeneralAbortReason.UserSpecific;
 		default:
 			return null;

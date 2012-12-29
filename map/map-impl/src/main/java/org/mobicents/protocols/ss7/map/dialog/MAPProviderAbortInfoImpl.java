@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -38,9 +38,16 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
  * 
+ MAP-ProviderAbortInfo ::= SEQUENCE {
+	map-ProviderAbortReason	MAP-ProviderAbortReason,
+	...,
+	extensionContainer	ExtensionContainer	OPTIONAL
+	-- extensionContainer must not be used in version 2
+	}
+ * 
  * @author amit bhayani
  * @author sergey vetyutnev
- * 
+ *
  */
 public class MAPProviderAbortInfoImpl implements MAPAsnPrimitive {
 
@@ -112,23 +119,6 @@ public class MAPProviderAbortInfoImpl implements MAPAsnPrimitive {
 	}
 	
 	private void _decode(AsnInputStream ais, int length) throws MAPParsingComponentException, IOException, AsnException {
-		// MAP-ProviderAbortInfo ::= SEQUENCE {
-		// map-ProviderAbortReason ENUMERATED {
-		// abnormalDialogue ( 0 ),
-		// invalidPDU ( 1 ) },
-		// ... ,
-		// extensionContainer SEQUENCE {
-		// privateExtensionList [0] IMPLICIT SEQUENCE ( SIZE( 1 .. 10 ) ) OF
-		// SEQUENCE {
-		// extId MAP-EXTENSION .&extensionId ( {
-		// ,
-		// ...} ) ,
-		// extType MAP-EXTENSION .&ExtensionType ( {
-		// ,
-		// ...} { @extId } ) OPTIONAL} OPTIONAL,
-		// pcs-Extensions [1] IMPLICIT SEQUENCE {
-		// ... } OPTIONAL,
-		// ... } OPTIONAL}
 
 		this.setMAPProviderAbortReason(null);
 		this.setExtensionContainer(null);

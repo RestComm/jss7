@@ -42,7 +42,7 @@ import org.mobicents.protocols.asn.BitSetStrictLength;
 public class UserInformationTest  {
 
 	@Test(groups = { "functional.decode" })
-	public void testUserInformationDecode() throws IOException, AsnException {
+	public void testUserInformationDecode() throws Exception {
 
 		// This raw data is from wireshark trace of TCAP - MAP
 		byte[] data = new byte[] { (byte) 0xbe, 0x25, 0x28, 0x23, 0x06, 0x07,
@@ -78,7 +78,7 @@ public class UserInformationTest  {
 	
 
 	@Test(groups = { "functional.encode" })
-	public void testUserInformationEncode() throws IOException, ParseException {
+	public void testUserInformationEncode() throws IOException, EncodeException {
 		
 		byte[] encodedData = new byte[] { (byte) 0xbe, 0x25, 0x28, 0x23, 0x06, 0x07,
 				0x04, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, (byte) 0xa0, 0x18,

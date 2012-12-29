@@ -56,7 +56,7 @@ public class TcBeginTest  {
 	 * @throws ParseException
 	 */
 	@Test(groups = { "functional.encode" })
-	public void testBasicTCBeginEncode() throws IOException, ParseException {
+	public void testBasicTCBeginEncode() throws IOException, EncodeException, ParseException {
 		TCBeginMessage tcm = TcapFactory.createTCBeginMessage();
 //		tcm.setOriginatingTransactionId(1358955064L);
 		tcm.setOriginatingTransactionId(new byte[] { 0x51, 0x00, 0x02, 0x38 });
@@ -138,7 +138,7 @@ public class TcBeginTest  {
 	}
 
 	@Test(groups = { "functional.encode","functional.decode" })
-	public void testBasicTCBegin() throws IOException, ParseException {
+	public void testBasicTCBegin() throws IOException, EncodeException, ParseException {
 
 		// no idea how to check rest...?
 
@@ -194,7 +194,7 @@ public class TcBeginTest  {
 	}
 
 	@Test
-	public void testBasicTCBegin1() throws IOException, ParseException {
+	public void testBasicTCBegin1() throws IOException, EncodeException, ParseException {
 
 		// no idea how to check rest...?
 
@@ -245,7 +245,7 @@ public class TcBeginTest  {
 	}
 
 	@Test
-	public void testTCBeginMessage_No_Dialog() throws IOException, ParseException {
+	public void testTCBeginMessage_No_Dialog() throws IOException, EncodeException, ParseException {
 
 		// no idea how to check rest...?
 
@@ -328,7 +328,7 @@ public class TcBeginTest  {
 	}
 
 	@Test
-	public void testTCBeginMessage_No_Component() throws IOException, ParseException {
+	public void testTCBeginMessage_No_Component() throws IOException, EncodeException, ParseException {
 
 		// created by hand
 		byte[] b = new byte[] {
@@ -402,7 +402,7 @@ public class TcBeginTest  {
 	}
 
 	@Test
-	public void testTCBeginMessage_No_Nothing() throws IOException, ParseException {
+	public void testTCBeginMessage_No_Nothing() throws IOException, EncodeException, ParseException {
 
 		// no idea how to check rest...?
 
@@ -436,7 +436,7 @@ public class TcBeginTest  {
 	}
 
 	@Test
-	public void testTCBeginMessage_All() throws IOException, ParseException {
+	public void testTCBeginMessage_All() throws IOException, EncodeException, ParseException {
 
 		// no idea how to check rest...?
 
@@ -649,7 +649,7 @@ public class TcBeginTest  {
 
 	
 	@Test(groups = { "functional.encode" })
-	public void testA() throws IOException, ParseException {
+	public void testA() throws IOException, EncodeException, ParseException {
 		TCBeginMessage tcm = TcapFactory.createTCBeginMessage();
 //		tcm.setOriginatingTransactionId(1358955064L);
 		tcm.setOriginatingTransactionId(new byte[] { 0x51, 0x00, 0x02, 0x38 });

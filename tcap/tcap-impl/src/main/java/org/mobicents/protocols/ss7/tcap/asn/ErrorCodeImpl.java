@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -30,6 +30,9 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCodeType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.GeneralProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ProblemType;
 
 /**
  * @author baranowb
@@ -98,14 +101,14 @@ public class ErrorCodeImpl implements ErrorCode {
 				this.localErrorCode = ais.readInteger();
 			} else
 			{
-				throw new ParseException();
+				throw new ParseException(null, GeneralProblemType.MistypedComponent);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new ParseException("IOException while parsing ErrorCode: " + e.getMessage(), e);
+			throw new ParseException(null, GeneralProblemType.BadlyStructuredComponent, "IOException while parsing ErrorCode: " + e.getMessage(), e);
 		} catch (AsnException e) {
 			e.printStackTrace();
-			throw new ParseException("AsnException while parsing ErrorCode: " + e.getMessage(), e);
+			throw new ParseException(null, GeneralProblemType.BadlyStructuredComponent, "AsnException while parsing ErrorCode: " + e.getMessage(), e);
 		}
 	}
 
@@ -116,11 +119,11 @@ public class ErrorCodeImpl implements ErrorCode {
 	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols
 	 * .asn.AsnOutputStream)
 	 */
-	public void encode(AsnOutputStream aos) throws ParseException {
-		
+	public void encode(AsnOutputStream aos) throws EncodeException {
+
 		if (this.localErrorCode == null && this.globalErrorCode == null)
-			throw new ParseException("Error code: No error code set!");
-		
+			throw new EncodeException("Error code: No error code set!");
+
 		try {
 			if( this.type == ErrorCodeType.Local ) {
 				aos.writeInteger(this.localErrorCode);
@@ -128,13 +131,13 @@ public class ErrorCodeImpl implements ErrorCode {
 				aos.writeObjectIdentifier(this.globalErrorCode);
 			} else
 			{
-				throw new ParseException();
+				throw new EncodeException();
 			}
 
 		} catch (IOException e) {
-			throw new ParseException(e);
+			throw new EncodeException(e);
 		} catch (AsnException e) {
-			throw new ParseException(e);
+			throw new EncodeException(e);
 		}
 	}
 

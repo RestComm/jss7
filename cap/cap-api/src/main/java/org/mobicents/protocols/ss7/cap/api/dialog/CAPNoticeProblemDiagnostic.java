@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -28,18 +28,20 @@ package org.mobicents.protocols.ss7.cap.api.dialog;
  * 
  */
 public enum CAPNoticeProblemDiagnostic {
-	AbnormalComponentReceivedFromThePeer(0), 
-	MessageCannotBeDeliveredToThePeer(1),
-	DuplicatedInvokeIdReceived(2),
-	UnknownLinkedIdReceived(3),
-	UnrecognizedOperation(4),
-	LinkedResponseUnexpected(5),
-	UnexpectedLinkedOperation(6),
+	/**
+	 * TC-NOTICE is received for a sent outgoing message has not been delivered to a peer
+	 * because of network issue.
+	 * In Dialog initiating state (TC-BEGIN has been sent) this leads Dialog releasing
+	 */
+	MessageCannotBeDeliveredToThePeer(0),
+
+	/**
+	 * Some abnormal dialog processing occurs when receiving a message from a peer.
+	 * (no or bad APC received).
+	 * A Dialog will be released
+	 */
 	AbnormalDialogAction(7);
 
-//	AbnormalEventDetectedByThePeer(0), 
-//	ResponseRejectedByThePeer(1), 
-	
 	private int code;
 
 	private CAPNoticeProblemDiagnostic(int code) {

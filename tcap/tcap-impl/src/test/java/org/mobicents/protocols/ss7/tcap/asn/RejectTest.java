@@ -83,7 +83,7 @@ public class RejectTest  {
 	
 	
 	@Test(groups = { "functional.encode" })
-	public void testEncode() throws IOException, ParseException {
+	public void testEncode() throws IOException, EncodeException {
 
 		byte[] expected = this.getData();
 		Reject rej = TcapFactory.createComponentReject();

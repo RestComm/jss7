@@ -54,7 +54,7 @@ public class TCAbortTest  {
 	}
 
 	private byte[] getDataAbortCause() {
-		return new byte[] { 103, 9, 73, 4, 123, -91, 52, 19, 74, 1, 125 };
+		return new byte[] { 103, 9, 73, 4, 123, -91, 52, 19, 74, 1, 126 };
 	}
 
 	private byte[] getDestTrId() {
@@ -62,7 +62,7 @@ public class TCAbortTest  {
 	}
 	
 	@Test(groups = { "functional.encode" })
-	public void testBasicTCAbortTestEncode() throws IOException, ParseException {
+	public void testBasicTCAbortTestEncode() throws IOException, EncodeException, ParseException {
 
 		//This Raw data is taken from ussd-abort- from msc2.txt
 		byte[] expected = getDataDialogPort();
@@ -106,7 +106,7 @@ public class TCAbortTest  {
 
 		tcAbortMessage = new TCAbortMessageImpl();
 		tcAbortMessage.setDestinationTransactionId(getDestTrId());
-		tcAbortMessage.setPAbortCause(PAbortCauseType.DialogueIdleTimeout);
+		tcAbortMessage.setPAbortCause(PAbortCauseType.AbnormalDialogue);
 
 		aos = new AsnOutputStream();
 		tcAbortMessage.encode(aos);
@@ -154,7 +154,7 @@ public class TCAbortTest  {
 
 		dp = impl.getDialogPortion();
 		assertNull(dp);
-		assertEquals(PAbortCauseType.DialogueIdleTimeout, impl.getPAbortCause());
+		assertEquals(PAbortCauseType.AbnormalDialogue, impl.getPAbortCause());
 	}
 
 	public final static String dump(byte[] buff, int size, boolean asBits) {

@@ -11,7 +11,6 @@ import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
@@ -100,12 +99,7 @@ public class UssdServerExample implements MAPDialogListener, MAPServiceSupplemen
 		
 	}
 
-	public void onProviderErrorComponent(MAPDialog mapDialog, Long invokeId, MAPProviderError providerError) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem) {
+	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem, boolean isLocalOriginated) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -160,7 +154,7 @@ public class UssdServerExample implements MAPDialogListener, MAPServiceSupplemen
 		
 	}
 
-	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
+	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason,
 			ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
 		

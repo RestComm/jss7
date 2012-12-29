@@ -31,6 +31,7 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
+import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage;
 
 /**
@@ -130,8 +131,8 @@ public class TCBeginMessageImpl implements TCBeginMessage {
 
 			int tag = localAis.readTag();
 			if (tag != _TAG_OTX || localAis.getTagClass() != Tag.CLASS_APPLICATION)
-				throw new ParseException("Error decoding TC-Begin: Expected OriginatingTransactionId, found tag: " + tag);
-//			this.originatingTransactionId = Utils.readTransactionId(localAis);
+				throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
+						"Error decoding TC-Begin: Expected OriginatingTransactionId, found tag: " + tag);
 			this.originatingTransactionId = localAis.readOctetString();
 
 			while (true) {
@@ -140,7 +141,7 @@ public class TCBeginMessageImpl implements TCBeginMessage {
 				
 				tag = localAis.readTag();
 				if (localAis.isTagPrimitive() || localAis.getTagClass() != Tag.CLASS_APPLICATION)
-					throw new ParseException(
+					throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
 							"Error decoding TC-Begin: DialogPortion and Component portion must be constructive and has tag class CLASS_APPLICATION");
 				
 				switch(tag) {
@@ -166,14 +167,15 @@ public class TCBeginMessageImpl implements TCBeginMessage {
 					break;
 					
 				default:
-					throw new ParseException("Error decoding TC-Begin: DialogPortion and Componebt parsing: bad tag - " + tag);
+					throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
+							"Error decoding TC-Begin: DialogPortion and Componebt parsing: bad tag - " + tag);
 				}
 			}
-			
+
 		} catch (IOException e) {
-			throw new ParseException("IOException while decoding TC-Begin: " + e.getMessage(), e);
+			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "IOException while decoding TC-Begin: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException("AsnException while decoding TC-Begin: " + e.getMessage(), e);
+			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "AsnException while decoding TC-Begin: " + e.getMessage(), e);
 		}
 
 	}
@@ -185,7 +187,7 @@ public class TCBeginMessageImpl implements TCBeginMessage {
 	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols
 	 * .asn.AsnOutputStream)
 	 */
-	public void encode(AsnOutputStream aos) throws ParseException {
+	public void encode(AsnOutputStream aos) throws EncodeException {
 		
 //		if (this.originatingTransactionId == null)
 //			throw new ParseException("Error encoding TC-Begin: originatingTransactionId must not be null");
@@ -212,9 +214,9 @@ public class TCBeginMessageImpl implements TCBeginMessage {
 			aos.FinalizeContent(pos);
 			
 		} catch (IOException e) {
-			throw new ParseException("IOException while encoding TC-Begin: " + e.getMessage(), e);
+			throw new EncodeException("IOException while encoding TC-Begin: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException("AsnException while encoding TC-Begin: " + e.getMessage(), e);
+			throw new EncodeException("AsnException while encoding TC-Begin: " + e.getMessage(), e);
 		}
 
 	}

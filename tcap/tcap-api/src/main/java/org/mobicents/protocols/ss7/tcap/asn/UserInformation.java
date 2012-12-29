@@ -22,8 +22,6 @@
 
 package org.mobicents.protocols.ss7.tcap.asn;
 
-import java.util.BitSet;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.BitSetStrictLength;
 import org.mobicents.protocols.asn.Tag;

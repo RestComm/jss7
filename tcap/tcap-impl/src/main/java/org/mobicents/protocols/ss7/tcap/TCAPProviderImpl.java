@@ -57,6 +57,7 @@ import org.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDUImpl;
 import org.mobicents.protocols.ss7.tcap.asn.DialogResponseAPDU;
 import org.mobicents.protocols.ss7.tcap.asn.DialogServiceProviderType;
 import org.mobicents.protocols.ss7.tcap.asn.InvokeImpl;
+import org.mobicents.protocols.ss7.tcap.asn.ParseException;
 import org.mobicents.protocols.ss7.tcap.asn.Result;
 import org.mobicents.protocols.ss7.tcap.asn.ResultSourceDiagnostic;
 import org.mobicents.protocols.ss7.tcap.asn.ResultType;
@@ -237,7 +238,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 	private Dialog _getDialog(SccpAddress localAddress, SccpAddress remoteAddress, boolean structured, int seqControl) throws TCAPException {
 
 		if (this.stack.getPreviewMode()) {
-			throw new NullPointerException("Can not create a Dialog in a PreviewMode");
+			throw new TCAPException("Can not create a Dialog in a PreviewMode");
 		}
 
 		if (localAddress == null) {
@@ -543,8 +544,8 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 				TCContinueMessage tcm = null;
 				try {
 					tcm = TcapFactory.createTCContinueMessage(ais);
-				} catch (Exception e) {
-					logger.error("Exception when parsing TCContinueMessage: " + e.toString(), e);
+				} catch (ParseException e) {
+					logger.error("ParseException when parsing TCContinueMessage: " + e.toString(), e);
 
 					// parsing OriginatingTransactionId
 					ais = new AsnInputStream(data);
@@ -552,8 +553,13 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 					TCUnidentifiedMessage tcUnidentified = new TCUnidentifiedMessage();
 					tcUnidentified.decode(ais);
 					if (tcUnidentified.getOriginatingTransactionId() != null) {
-						this.sendProviderAbort(PAbortCauseType.BadlyFormattedTxPortion, tcUnidentified.getOriginatingTransactionId(), remoteAddress,
-								localAddress, message.getSls());
+						if (e.getPAbortCauseType() != null) {
+							this.sendProviderAbort(e.getPAbortCauseType(), tcUnidentified.getOriginatingTransactionId(), remoteAddress, localAddress,
+									message.getSls());
+						} else {
+							this.sendProviderAbort(PAbortCauseType.BadlyFormattedTxPortion, tcUnidentified.getOriginatingTransactionId(), remoteAddress,
+									localAddress, message.getSls());
+						}
 					}
 					return;
 				}
@@ -578,10 +584,6 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 							message.getSls());
 				} else {
 					di.processContinue(tcm, localAddress, remoteAddress);
-
-//					if (this.stack.getPreviewMode()) {
-//						di.release();
-//					}
 				}
 
 				break;
@@ -590,8 +592,8 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 				TCBeginMessage tcb = null;
 				try {
 					tcb = TcapFactory.createTCBeginMessage(ais);
-				} catch (Exception e) {
-					logger.error("Exception when parsing TCBeginMessage: " + e.toString(), e);
+				} catch (ParseException e) {
+					logger.error("ParseException when parsing TCBeginMessage: " + e.toString(), e);
 
 					// parsing OriginatingTransactionId
 					ais = new AsnInputStream(data);
@@ -599,8 +601,13 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 					TCUnidentifiedMessage tcUnidentified = new TCUnidentifiedMessage();
 					tcUnidentified.decode(ais);
 					if (tcUnidentified.getOriginatingTransactionId() != null) {
-						this.sendProviderAbort(PAbortCauseType.BadlyFormattedTxPortion, tcUnidentified.getOriginatingTransactionId(), remoteAddress,
-								localAddress, message.getSls());
+						if (e.getPAbortCauseType() != null) {
+							this.sendProviderAbort(e.getPAbortCauseType(), tcUnidentified.getOriginatingTransactionId(), remoteAddress, localAddress,
+									message.getSls());
+						} else {
+							this.sendProviderAbort(PAbortCauseType.BadlyFormattedTxPortion, tcUnidentified.getOriginatingTransactionId(), remoteAddress,
+									localAddress, message.getSls());
+						}
 					}
 					return;
 				}
@@ -638,7 +645,6 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 					di.getPrevewDialogData().setLastACN(di.getApplicationContextName());
 					di.getPrevewDialogData().setOperationsSentB(di.operationsSent);
 					di.getPrevewDialogData().setOperationsSentA(di.operationsSentA);
-//					di.release();
 				}
 
 				break;
@@ -647,8 +653,8 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 				TCEndMessage teb = null;
 				try {
 					teb = TcapFactory.createTCEndMessage(ais);
-				} catch (Exception e) {
-					logger.error("Exception when parsing TCEndMessage: " + e.toString(), e);
+				} catch (ParseException e) {
+					logger.error("ParseException when parsing TCEndMessage: " + e.toString(), e);
 					return;
 				}
 
@@ -677,8 +683,8 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 				TCAbortMessage tub = null;
 				try {
 					tub = TcapFactory.createTCAbortMessage(ais);
-				} catch (Exception e) {
-					logger.error("Exception when parsing TCAbortMessage: " + e.toString(), e);
+				} catch (ParseException e) {
+					logger.error("ParseException when parsing TCAbortMessage: " + e.toString(), e);
 					return;
 				}
 
@@ -699,13 +705,19 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
 					if (this.stack.getPreviewMode()) {
 						this.removePreviewDialog(di);
-//						di.release();
 					}
 				}
 				break;
 			
 			case TCUniMessage._TAG:
-				TCUniMessage tcuni = TcapFactory.createTCUniMessage(ais);
+				TCUniMessage tcuni;
+				try {
+					tcuni = TcapFactory.createTCUniMessage(ais);
+				} catch (ParseException e) {
+					logger.error("ParseException when parsing TCUniMessage: " + e.toString(), e);
+					return;
+				}
+
 				DialogImpl uniDialog = (DialogImpl) this.getNewUnstructuredDialog(localAddress, remoteAddress);
 				uniDialog.processUni(tcuni, localAddress, remoteAddress);
 				break;

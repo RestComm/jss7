@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,26 +20,28 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.dialog;
+package org.mobicents.protocols.ss7.tcap.asn;
 
 /**
- * 
+ * Thrown to indicate problems at encode time.
  * @author sergey vetyutnev
- * 
+ *
  */
-public enum CAPComponentErrorReason {
-	UnrecognizedOperation(0),
-	InvalidReturnResultComponentReceived(1),
-	InvalidErrorComponentReceived(2),
-	InvalidRejectReceived(3);
-	
-	private int code;
+public class EncodeException extends Exception {
 
-	private CAPComponentErrorReason(int code) {
-		this.code = code;
+	public EncodeException() {
 	}
 
-	public int getCode() {
-		return this.code;
+	public EncodeException(String message) {
+		super(message);
 	}
+
+	public EncodeException(Throwable cause) {
+		super(cause);
+	}
+
+	public EncodeException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
 }

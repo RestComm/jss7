@@ -39,6 +39,7 @@ import java.util.Properties;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.mobicents.protocols.ss7.cap.CAPProviderImpl;
 import org.mobicents.protocols.ss7.cap.CAPStackImpl;
 import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
@@ -47,7 +48,6 @@ import org.mobicents.protocols.ss7.cap.api.CAPOperationCode;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAnswerSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
-import org.mobicents.protocols.ss7.cap.api.dialog.CAPNoticeProblemDiagnostic;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageSystemFailure;
@@ -102,6 +102,7 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeInformation;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.Tone;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.CAPDialogGprs;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCallImpl;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfoMessageType;
@@ -113,7 +114,12 @@ import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.MessageType;
+import org.mobicents.protocols.ss7.tcap.api.TCAPException;
+import org.mobicents.protocols.ss7.tcap.asn.InvokeImpl;
+import org.mobicents.protocols.ss7.tcap.asn.OperationCodeImpl;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.InvokeProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ProblemType;
@@ -1535,8 +1541,8 @@ public class CAPFunctionalTest extends SccpHarness {
 				}
 			}
 
-			public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem) {
-				super.onRejectComponent(capDialog, invokeId, problem);
+			public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem, boolean isLocalOriginated) {
+				super.onRejectComponent(capDialog, invokeId, problem, isLocalOriginated);
 
 				assertEquals(resetTimerRequestInvokeId, (long) invokeId);
 				assertEquals(problem.getInvokeProblemType(), InvokeProblemType.MistypedParameter);
@@ -1917,8 +1923,8 @@ public class CAPFunctionalTest extends SccpHarness {
 			public void onDialogUserAbort(CAPDialog capDialog, CAPGeneralAbortReason generalReason, CAPUserAbortReason userReason) {
 				super.onDialogUserAbort(capDialog, generalReason, userReason);
 
-				assertEquals(generalReason, CAPGeneralAbortReason.BadReceivedData);
-				assertNull(userReason);
+				assertEquals(generalReason, CAPGeneralAbortReason.UserSpecific);
+				assertEquals(userReason, CAPUserAbortReason.abnormal_processing);
 				assertEquals(capDialog.getTCAPMessageType(), MessageType.Abort);
 			}
 			
@@ -2169,9 +2175,9 @@ public class CAPFunctionalTest extends SccpHarness {
 
 			public void onDialogUserAbort(CAPDialog capDialog, CAPGeneralAbortReason generalReason, CAPUserAbortReason userReason) {
 				super.onDialogUserAbort(capDialog, generalReason, userReason);
-				
-				assertEquals(generalReason, CAPGeneralAbortReason.BadReceivedData);
-				assertNull(userReason);
+
+				assertEquals(generalReason, CAPGeneralAbortReason.UserSpecific);
+				assertEquals(userReason, CAPUserAbortReason.abnormal_processing);
 				assertEquals(capDialog.getTCAPMessageType(), MessageType.Abort);
 			}
 
@@ -2553,9 +2559,10 @@ public class CAPFunctionalTest extends SccpHarness {
 	 *   - linkedId to a missed operation
 	 * 
 	 * TC-BEGIN + initialDPRequest + playAnnouncement
-	 *   TC-CONTINUE + SpecializedResourceReportRequest to initialDPRequest (unsupported) + 
-	 *     SpecializedResourceReportRequest to a missed operation (linkedId==bad==50) +
-	 *     SpecializedResourceReportRequest to a correct operation
+	 *   TC-CONTINUE + SpecializedResourceReportRequest to initialDPRequest (-> LinkedResponseUnexpected) + 
+	 *     SpecializedResourceReportRequest to a missed operation (linkedId==bad==50 -> UnrechognizedLinkedID) +
+	 *     ContinueRequest to a playAnnouncement operation (-> UnexpectedLinkedOperation) +
+	 *     SpecializedResourceReportRequest to a playAnnouncement operation (-> normal case)
 	 * TC-END
 	 */
 	@Test(groups = { "functional.flow", "dialog" })
@@ -2564,17 +2571,23 @@ public class CAPFunctionalTest extends SccpHarness {
 			int dialogStep = 0;
 
 			@Override
-			public void onDialogNotice(CAPDialog capDialog, CAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
-				super.onDialogNotice(capDialog, noticeProblemDiagnostic);
+			public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem, boolean isLocalOriginated) {
+				super.onRejectComponent(capDialog, invokeId, problem, isLocalOriginated);
 
 				dialogStep++;
 
 				switch (dialogStep) {
 				case 1:
-					assertEquals(noticeProblemDiagnostic, CAPNoticeProblemDiagnostic.LinkedResponseUnexpected);
+					assertEquals(problem.getInvokeProblemType(), InvokeProblemType.LinkedResponseUnexpected);
+					assertTrue(isLocalOriginated);
 					break;
 				case 2:
-					assertEquals(noticeProblemDiagnostic, CAPNoticeProblemDiagnostic.UnknownLinkedIdReceived);
+					assertEquals(problem.getInvokeProblemType(), InvokeProblemType.UnrechognizedLinkedID);
+					assertTrue(isLocalOriginated);
+					break;
+				case 3:
+					assertEquals(problem.getInvokeProblemType(), InvokeProblemType.UnexpectedLinkedOperation);
+					assertTrue(isLocalOriginated);
 					break;
 				}
 			}
@@ -2597,6 +2610,10 @@ public class CAPFunctionalTest extends SccpHarness {
 			int dialogStep = 0;
 			long invokeId1;
 			long invokeId2;
+			long outInvokeId1;
+			long outInvokeId2;
+			long outInvokeId3;
+			long outInvokeId4;
 
 			public void onInitialDPRequest(InitialDPRequest ind) {
 				super.onInitialDPRequest(ind);
@@ -2610,20 +2627,21 @@ public class CAPFunctionalTest extends SccpHarness {
 				invokeId2 = ind.getInvokeId();
 			}
 
-			public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem) {
-				super.onRejectComponent(capDialog, invokeId, problem);
+			public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem, boolean isLocalOriginated) {
+				super.onRejectComponent(capDialog, invokeId, problem, isLocalOriginated);
 
-				dialogStep++;
-
-				switch (dialogStep) {
-				case 1:
+				if (invokeId == outInvokeId1) {
 					assertEquals(problem.getType(), ProblemType.Invoke);
 					assertEquals(problem.getInvokeProblemType(), InvokeProblemType.LinkedResponseUnexpected);
-					break;
-				case 2:
+					assertFalse(isLocalOriginated);
+				} else if (invokeId == outInvokeId2) {
 					assertEquals(problem.getType(), ProblemType.Invoke);
 					assertEquals(problem.getInvokeProblemType(), InvokeProblemType.UnrechognizedLinkedID);
-					break;
+					assertFalse(isLocalOriginated);
+				} else if (invokeId == outInvokeId3) {
+					assertEquals(problem.getType(), ProblemType.Invoke);
+					assertEquals(problem.getInvokeProblemType(), InvokeProblemType.UnexpectedLinkedOperation);
+					assertFalse(isLocalOriginated);
 				}
 			}
 
@@ -2631,15 +2649,34 @@ public class CAPFunctionalTest extends SccpHarness {
 			public void onDialogDelimiter(CAPDialog capDialog) {
 				super.onDialogDelimiter(capDialog);
 
-				CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall) capDialog;
+				CAPDialogCircuitSwitchedCallImpl dlg = (CAPDialogCircuitSwitchedCallImpl) capDialog;
 
 				try {
-					dlg.addSpecializedResourceReportRequest_CapV23(invokeId1);
-					dlg.addSpecializedResourceReportRequest_CapV23((long) 50);
-					dlg.addSpecializedResourceReportRequest_CapV23(invokeId2);
+					outInvokeId1 = dlg.addSpecializedResourceReportRequest_CapV23(invokeId1);
+					outInvokeId2 = dlg.addSpecializedResourceReportRequest_CapV23((long) 50);
+
+					Invoke invoke = ((CAPProviderImpl)this.capProvider).getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+					invoke.setTimeout(2000);
+					OperationCode oc = new OperationCodeImpl(); 
+					oc.setLocalOperationCode((long)CAPOperationCode.continueCode);
+					invoke.setOperationCode(oc);
+
+					Long invokeId;
+					try {
+						invokeId = dlg.getTcapDialog().getNewInvokeId();
+						invoke.setInvokeId(invokeId);
+						invoke.setLinkedId(invokeId2);
+					} catch (TCAPException e) {
+						throw new CAPException(e.getMessage(), e);
+					}
+					outInvokeId3 = invoke.getInvokeId();
+					dlg.sendInvokeComponent(invoke);
+
+					outInvokeId4 = dlg.addSpecializedResourceReportRequest_CapV23(invokeId2);
 
 					this.observerdEvents.add(TestEvent.createSentEvent(EventType.SpecializedResourceReportRequest, null, sequence++));
 					this.observerdEvents.add(TestEvent.createSentEvent(EventType.SpecializedResourceReportRequest, null, sequence++));
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.ContinueRequest, null, sequence++));
 					this.observerdEvents.add(TestEvent.createSentEvent(EventType.SpecializedResourceReportRequest, null, sequence++));
 
 					dlg.send();
@@ -2662,10 +2699,13 @@ public class CAPFunctionalTest extends SccpHarness {
 		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp));
 		clientExpectedEvents.add(te);
 
-		te = TestEvent.createReceivedEvent(EventType.DialogNotice, null, count++, (stamp));
+		te = TestEvent.createReceivedEvent(EventType.RejectComponent, null, count++, (stamp));
 		clientExpectedEvents.add(te);
 
-		te = TestEvent.createReceivedEvent(EventType.DialogNotice, null, count++, (stamp));
+		te = TestEvent.createReceivedEvent(EventType.RejectComponent, null, count++, (stamp));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.RejectComponent, null, count++, (stamp));
 		clientExpectedEvents.add(te);
 
 		te = TestEvent.createReceivedEvent(EventType.SpecializedResourceReportRequest, null, count++, (stamp));
@@ -2698,12 +2738,18 @@ public class CAPFunctionalTest extends SccpHarness {
 		te = TestEvent.createSentEvent(EventType.SpecializedResourceReportRequest, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
+		te = TestEvent.createSentEvent(EventType.ContinueRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
 		te = TestEvent.createSentEvent(EventType.SpecializedResourceReportRequest, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
 		te = TestEvent.createReceivedEvent(EventType.RejectComponent, null, count++, (stamp));
 		serverExpectedEvents.add(te);
-		
+
+		te = TestEvent.createReceivedEvent(EventType.RejectComponent, null, count++, (stamp));
+		serverExpectedEvents.add(te);
+
 		te = TestEvent.createReceivedEvent(EventType.RejectComponent, null, count++, (stamp));
 		serverExpectedEvents.add(te);
 

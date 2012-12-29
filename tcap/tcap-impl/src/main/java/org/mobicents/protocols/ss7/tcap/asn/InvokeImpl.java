@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,9 +20,6 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * 
- */
 package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.IOException;
@@ -38,9 +35,12 @@ import org.mobicents.protocols.ss7.tcap.TCAPStackImpl;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.OperationState;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.GeneralProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ProblemType;
 
 /**
  * @author baranowb
@@ -216,9 +216,10 @@ public class InvokeImpl implements Invoke {
 			
 			// invokeId
 			int tag = localAis.readTag();
-			if (tag != _TAG_IID || localAis.getTagClass() != Tag.CLASS_UNIVERSAL)
-				throw new ParseException("Error while decoding Invoke: bad tag or tag class for InvokeID: tag=" + tag + ", tagClass = "
-						+ localAis.getTagClass());
+			if (tag != _TAG_IID || localAis.getTagClass() != Tag.CLASS_UNIVERSAL) {
+				throw new ParseException(null, GeneralProblemType.MistypedComponent, "Error while decoding Invoke: bad tag or tag class for InvokeID: tag="
+						+ tag + ", tagClass = " + localAis.getTagClass());
+			}
 			this.invokeId = localAis.readInteger();
 
 			tag = localAis.readTag();
@@ -229,9 +230,10 @@ public class InvokeImpl implements Invoke {
 			}
 
 			// operationCode
-			if (tag != OperationCode._TAG_GLOBAL && tag != OperationCode._TAG_LOCAL || localAis.getTagClass() != Tag.CLASS_UNIVERSAL)
-				throw new ParseException("Error while decoding Invoke: bad tag or tag class for operationCode: tag=" + tag + ", tagClass = "
-						+ localAis.getTagClass());
+			if (tag != OperationCode._TAG_GLOBAL && tag != OperationCode._TAG_LOCAL || localAis.getTagClass() != Tag.CLASS_UNIVERSAL) {
+				throw new ParseException(null, GeneralProblemType.MistypedComponent,
+						"Error while decoding Invoke: bad tag or tag class for operationCode: tag=" + tag + ", tagClass = " + localAis.getTagClass());
+			}
 			this.operationCode = TcapFactory.createOperationCode(tag, localAis);
 
 			// It could be PARAMETER
@@ -241,9 +243,12 @@ public class InvokeImpl implements Invoke {
 			this.parameter = TcapFactory.createParameter(tag, localAis, true);
 
 		} catch (IOException e) {
-			throw new ParseException("IOException while decoding Invoke: " + e.getMessage(), e);
+			throw new ParseException(null, GeneralProblemType.BadlyStructuredComponent, "IOException while decoding Invoke: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException("AsnException while decoding Invoke: " + e.getMessage(), e);
+			throw new ParseException(null, GeneralProblemType.BadlyStructuredComponent, "AsnException while decoding Invoke: " + e.getMessage(), e);
+		} catch (ParseException e) {
+			e.setInvokeId(this.invokeId);
+			throw e;
 		}
 	}
 
@@ -254,11 +259,11 @@ public class InvokeImpl implements Invoke {
 	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols
 	 * .asn.AsnOutputStream)
 	 */
-	public void encode(AsnOutputStream aos) throws ParseException {
+	public void encode(AsnOutputStream aos) throws EncodeException {
 		if (this.invokeId == null)
-			throw new ParseException("Invoke ID not set!");
+			throw new EncodeException("Invoke ID not set!");
 		if (this.operationCode == null)
-			throw new ParseException("Operation Code not set!");
+			throw new EncodeException("Operation Code not set!");
 
 		try {
 			aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG);
@@ -275,9 +280,9 @@ public class InvokeImpl implements Invoke {
 			aos.FinalizeContent(pos);
 			
 		} catch (IOException e) {
-			throw new ParseException("IOException while encoding Invoke: " + e.getMessage(), e);
+			throw new EncodeException("IOException while encoding Invoke: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException("AsnException while encoding Invoke: " + e.getMessage(), e);
+			throw new EncodeException("AsnException while encoding Invoke: " + e.getMessage(), e);
 		}
 	}
 

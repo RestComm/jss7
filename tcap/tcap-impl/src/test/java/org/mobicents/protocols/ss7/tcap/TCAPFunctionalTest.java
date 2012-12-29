@@ -180,10 +180,14 @@ public class TCAPFunctionalTest extends SccpHarness {
         List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
 		TestEvent te = TestEvent.createSentEvent(EventType.Uni, null, 0, stamp);
 		clientExpectedEvents.add(te);
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 1, stamp);
+		clientExpectedEvents.add(te);
 
         List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
         te = TestEvent.createReceivedEvent(EventType.Uni, null, 0,stamp);
         serverExpectedEvents.add(te);
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 1, stamp);
+		serverExpectedEvents.add(te);
 
     	client.startUniDialog();
         client.sendUni();

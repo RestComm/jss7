@@ -42,7 +42,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage;
 public class TcContinueTest  {
 	
 	@Test(groups = { "functional.encode","functional.decode" })
-	public void testBasicTCContinue() throws IOException, ParseException {
+	public void testBasicTCContinue() throws IOException, EncodeException, ParseException {
 
 		
 		//OrigTran ID (full)............ 145031169
@@ -118,7 +118,7 @@ public class TcContinueTest  {
 	
 	
 	@Test(groups = { "functional.encode","functional.decode" })
-	public void testBasicTCContinue_Long() throws IOException, ParseException {
+	public void testBasicTCContinue_Long() throws IOException, EncodeException, ParseException {
 
 		//trace
 		byte[] b = new byte[]{
@@ -252,7 +252,7 @@ public class TcContinueTest  {
 	
 	
 	@Test(groups = { "functional.encode","functional.decode" })
-	public void testTCContinueMessage_No_Dialog() throws IOException, ParseException {
+	public void testTCContinueMessage_No_Dialog() throws IOException, EncodeException, ParseException {
 
 		
 		
@@ -399,7 +399,7 @@ public class TcContinueTest  {
 	}
 
 	@Test(groups = { "functional.encode","functional.decode" })
-	public void testTCContinueMessage_No_Component() throws IOException, ParseException {
+	public void testTCContinueMessage_No_Component() throws IOException, EncodeException, ParseException {
 
 		
 		
@@ -521,7 +521,7 @@ public class TcContinueTest  {
 	}
 	
 	@Test(groups = { "functional.encode","functional.decode" })
-	public void testTCContinueMessage_No_Nothing() throws IOException, ParseException {
+	public void testTCContinueMessage_No_Nothing() throws IOException, EncodeException, ParseException {
 
 		
 		
@@ -575,7 +575,7 @@ public class TcContinueTest  {
 	}
 	
 	@Test
-	public void testTCContinueMessage_All() throws IOException, ParseException {
+	public void testTCContinueMessage_All() throws IOException, EncodeException, ParseException {
 
 		
 		

@@ -167,7 +167,7 @@ public class ReturnErrorTest  {
 	
 	
 	@Test(groups = { "functional.encode" })
-	public void testEncode() throws IOException, ParseException {
+	public void testEncode() throws IOException, EncodeException {
 
 		byte[] expected = this.getDataWithoutParameter();
 		ReturnError re = TcapFactory.createComponentReturnError();

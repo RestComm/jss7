@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -32,8 +32,51 @@ package org.mobicents.protocols.ss7.map.api.dialog;
  * 
  */
 public enum MAPAbortProviderReason {
-	ProviderMalfunction(0), SupportingDialogueTransactionReleased(1), ResourceLimitation(2), MaintenanceActivity(3), VersionIncompatibility(
-			4), AbnormalMAPDialogue(5), InvalidPDU(6);
+	/**
+	 * This option is used when other PAbortCauseType options is received from a peer
+	 * except UnrecognizedTxID or ResourceLimitation
+	 */
+	ProviderMalfunction(0), 
+
+	/**
+	 * This option is used when PAbortCauseType.UnrecognizedTxID is received from a peer 
+	 * (a Dialog has already released at a peer side)
+	 */
+	SupportingDialogueTransactionReleased(1), 
+
+	/**
+	 * This option is used when PAbortCauseType.ResourceLimitation is received from a peer
+	 */
+	ResourceLimitation(2), 
+
+	/**
+	 * This option is not used now.
+	 */
+	MaintenanceActivity(3), 
+
+	/**
+	 * This option is not used now.
+	 * If a potential version incompatibility is detected (when we should try to use MAP V1)
+	 * MAPDialogListener.onDialogRequest() is issued with MAPRefuseReason==PotentialVersionIncompatibility
+	 */
+	VersionIncompatibility(4), 
+
+	/**
+	 * Used when local problems with a Dialog detected:
+	 * - no or bad ACN received at the first TC-CONTINUE or TC-END  
+	 * - no or bad user info is received at the TC-U-ABORT
+	 */
+	AbnormalMAPDialogueLocal(5), 
+
+	/**
+	 * Used when receiving MAP-ProviderAbortInfo from a peer with MAP-ProviderAbortReason = abnormalDialogue
+	 */
+	AbnormalMAPDialogueFromPeer(6), 
+
+	/**
+	 * Used when receiving MAP-ProviderAbortInfo from a peer with MAP-ProviderAbortReason = invalidPDU 
+	 */
+	InvalidPDU(7);
 
 	private int code;
 

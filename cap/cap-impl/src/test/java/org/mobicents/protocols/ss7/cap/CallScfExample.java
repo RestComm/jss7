@@ -9,7 +9,6 @@ import org.mobicents.protocols.ss7.cap.api.CAPMessage;
 import org.mobicents.protocols.ss7.cap.api.CAPParameterFactory;
 import org.mobicents.protocols.ss7.cap.api.CAPProvider;
 import org.mobicents.protocols.ss7.cap.api.CAPStack;
-import org.mobicents.protocols.ss7.cap.api.dialog.CAPComponentErrorReason;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPNoticeProblemDiagnostic;
@@ -217,13 +216,7 @@ public class CallScfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	}
 
 	@Override
-	public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onProviderErrorComponent(CAPDialog capDialog, Long invokeId, CAPComponentErrorReason providerError) {
+	public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem, boolean isLocalOriginated) {
 		// TODO Auto-generated method stub
 		
 	}
