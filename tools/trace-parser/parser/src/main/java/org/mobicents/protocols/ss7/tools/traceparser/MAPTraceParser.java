@@ -41,7 +41,6 @@ import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPDialogListener;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPMessage;
-import org.mobicents.protocols.ss7.cap.api.dialog.CAPComponentErrorReason;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPNoticeProblemDiagnostic;
@@ -83,7 +82,6 @@ import org.mobicents.protocols.ss7.map.api.MAPMessage;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
@@ -1288,8 +1286,8 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	}
 
 	@Override
-	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
-			ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
+	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, ApplicationContextName alternativeApplicationContext,
+			MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -1427,13 +1425,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	}
 
 	@Override
-	public void onProviderErrorComponent(MAPDialog mapDialog, Long invokeId, MAPProviderError providerError) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem) {
+	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem, boolean isLocalOriginated) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -1658,13 +1650,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	}
 
 	@Override
-	public void onProviderErrorComponent(CAPDialog arg0, Long arg1, CAPComponentErrorReason arg2) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onRejectComponent(CAPDialog arg0, Long arg1, Problem arg2) {
+	public void onRejectComponent(CAPDialog arg0, Long arg1, Problem arg2, boolean isLocalOriginated) {
 		// TODO Auto-generated method stub
 		
 	}

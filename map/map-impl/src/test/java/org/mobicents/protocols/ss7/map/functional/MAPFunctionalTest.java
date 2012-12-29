@@ -1443,7 +1443,7 @@ public class MAPFunctionalTest extends SccpHarness {
 	 * Responses as Reject (DuplicateInvokeID) component from the Server as a response to ProcessUnstructuredSSRequest
 	 * 
 	 * TC-BEGIN + addProcessUnstructuredSSRequest
-	 * TC-END + Reject (invokeProblem)  
+	 * TC-END + Reject (ResourceLimitation) - manually sent Reject  
 	 */
 	@Test(groups = { "functional.flow", "dialog" })
 	public void testComponentDuplicateInvokeID() throws Exception {
@@ -1456,10 +1456,11 @@ public class MAPFunctionalTest extends SccpHarness {
 				super.onRejectComponent(mapDialog, invokeId, problem, isLocalOriginated);
 				InvokeProblemType invokeProblemType = problem.getInvokeProblemType();
 				assertNotNull(invokeProblemType);
-				assertEquals(invokeProblemType, InvokeProblemType.DuplicateInvokeID);
+				assertEquals(invokeProblemType, InvokeProblemType.ResourceLimitation);
 				assertTrue(problem.getGeneralProblemType() == null);
 				assertTrue(problem.getReturnErrorProblemType() == null);
 				assertTrue(problem.getReturnResultProblemType() == null);
+				assertFalse(isLocalOriginated);
 				assertEquals((long) invokeId, 1);
 			}
 
@@ -1476,7 +1477,7 @@ public class MAPFunctionalTest extends SccpHarness {
 					assertEquals(MAPFunctionalTest.USSD_STRING, ussdString);
 					MAPDialogSupplementary mapDialog = procUnstrReqInd.getMAPDialog();
 
-					Problem problem = this.mapProvider.getMAPParameterFactory().createProblemInvoke(InvokeProblemType.DuplicateInvokeID);
+					Problem problem = this.mapProvider.getMAPParameterFactory().createProblemInvoke(InvokeProblemType.ResourceLimitation);
 
 					mapDialog.sendRejectComponent(procUnstrReqInd.getInvokeId(), problem);
 				} catch (MAPException e) {
@@ -1662,6 +1663,7 @@ public class MAPFunctionalTest extends SccpHarness {
 				assertTrue(problem.getInvokeProblemType() == null);
 				assertTrue(problem.getReturnErrorProblemType() == null);
 				assertTrue(problem.getReturnResultProblemType() == null);
+				assertFalse(isLocalOriginated);
 				assertNull(invokeId);
 			}
 

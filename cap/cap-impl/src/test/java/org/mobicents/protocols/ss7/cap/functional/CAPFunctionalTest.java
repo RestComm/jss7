@@ -115,7 +115,6 @@ import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.MessageType;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
-import org.mobicents.protocols.ss7.tcap.asn.InvokeImpl;
 import org.mobicents.protocols.ss7.tcap.asn.OperationCodeImpl;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.InvokeProblemType;
@@ -1513,7 +1512,7 @@ public class CAPFunctionalTest extends SccpHarness {
 	 * TC-CONTINUE + CancelRequest + cancelInvocation() -> CancelRequest will not go to Server
 	 * TC-CONTINUE + ResetTimerRequest
 	 *   reject ResetTimerRequest
-	 * DialogUserAbort: AbortReason=not_allowed_procedures
+	 * DialogUserAbort: AbortReason=missing_reference
 	 */
 	@Test(groups = { "functional.flow", "dialog" })
 	public void testAbnormal() throws Exception {
@@ -1546,6 +1545,7 @@ public class CAPFunctionalTest extends SccpHarness {
 
 				assertEquals(resetTimerRequestInvokeId, (long) invokeId);
 				assertEquals(problem.getInvokeProblemType(), InvokeProblemType.MistypedParameter);
+				assertFalse(isLocalOriginated);
 
 				dialogStep = 1;
 			}
