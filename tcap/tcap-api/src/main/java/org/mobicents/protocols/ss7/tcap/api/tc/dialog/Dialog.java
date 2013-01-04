@@ -65,6 +65,13 @@ public interface Dialog {
 	 * @return
 	 */
 	public SccpAddress getLocalAddress();
+	
+	/**
+	 * Sets local Sccp Address.
+	 * 
+	 * @param localAddress
+	 */
+	public void setLocalAddress(SccpAddress localAddress);
 
 	/**
 	 * Gets remote sccp address
@@ -72,6 +79,13 @@ public interface Dialog {
 	 * @return
 	 */
 	public SccpAddress getRemoteAddress();
+	
+	/**
+	 * Sets remote Sccp Address
+	 * 
+	 * @param remoteAddress
+	 */
+	public void setRemoteAddress(SccpAddress remoteAddress);
 
 	/**
 	 * Last sent/received ACN

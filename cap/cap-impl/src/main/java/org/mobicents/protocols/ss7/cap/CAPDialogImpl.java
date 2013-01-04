@@ -94,9 +94,17 @@ public abstract class CAPDialogImpl implements CAPDialog {
 	public SccpAddress getLocalAddress() {
 		return this.tcapDialog.getLocalAddress();
 	}
+	
+	public void setLocalAddress(SccpAddress localAddress){
+		this.tcapDialog.setLocalAddress(localAddress);
+	}
 
 	public SccpAddress getRemoteAddress() {
 		return this.tcapDialog.getRemoteAddress();
+	}
+	
+	public void setRemoteAddress(SccpAddress remoteAddress){
+		this.tcapDialog.setRemoteAddress(remoteAddress);
 	}
 
 	@Override

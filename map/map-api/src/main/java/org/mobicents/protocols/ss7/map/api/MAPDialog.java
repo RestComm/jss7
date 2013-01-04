@@ -57,18 +57,32 @@ public interface MAPDialog {
 	 * @return
 	 */
 	public MAPDialogState getState();
-	
-    /**
-     * 
-     * @return - local sccp address.
-     */
-    public SccpAddress getLocalAddress();
 
-    /**
-         * 
-         * @return - remote sccp address which represents remote peer
-         */
-    public SccpAddress getRemoteAddress(); 
+	/**
+	 * 
+	 * @return - local sccp address.
+	 */
+	public SccpAddress getLocalAddress();
+	
+	/**
+	 * Sets local Sccp Address.
+	 * 
+	 * @param localAddress
+	 */
+	public void setLocalAddress(SccpAddress localAddress);
+
+	/**
+	 * 
+	 * @return - remote sccp address which represents remote peer
+	 */
+	public SccpAddress getRemoteAddress();
+	
+	/**
+	 * Sets remote Sccp Address
+	 * 
+	 * @param remoteAddress
+	 */
+	public void setRemoteAddress(SccpAddress remoteAddress);
 
 	/**
 	 * Setting this property to true lead that all sent to TCAP messages of this
@@ -81,32 +95,40 @@ public interface MAPDialog {
 
 	/**
 	 * If returnMessageOnError is set to true
+	 * 
 	 * @return
 	 */
 	public boolean getReturnMessageOnError();
 
 	/**
-	 * Returns the type of the last incoming TCAP primitive (TC-BEGIN, TC-CONTINUE, TC-END or TC-ABORT)
-	 * It will be equal null if we have just created a Dialog and no messages has income
+	 * Returns the type of the last incoming TCAP primitive (TC-BEGIN,
+	 * TC-CONTINUE, TC-END or TC-ABORT) It will be equal null if we have just
+	 * created a Dialog and no messages has income
 	 * 
 	 * @return
 	 */
 	public MessageType getTCAPMessageType();
 
 	/**
-	 * Return received OrigReference from MAPOpenInfo or null if no OrigReference has been received
+	 * Return received OrigReference from MAPOpenInfo or null if no
+	 * OrigReference has been received
+	 * 
 	 * @return
 	 */
 	public AddressString getReceivedOrigReference();
 
 	/**
-	 * Return received DestReference from MAPOpenInfo or null if no OrigReference has been received
+	 * Return received DestReference from MAPOpenInfo or null if no
+	 * OrigReference has been received
+	 * 
 	 * @return
 	 */
 	public AddressString getReceivedDestReference();
 
 	/**
-	 * Return received ExtensionContainer from MAPOpenInfo or null if no OrigReference has been received
+	 * Return received ExtensionContainer from MAPOpenInfo or null if no
+	 * OrigReference has been received
+	 * 
 	 * @return
 	 */
 	public MAPExtensionContainer getReceivedExtensionContainer();
@@ -131,10 +153,10 @@ public interface MAPDialog {
 	 * @return
 	 */
 	public Long getLocalDialogId();
-	
+
 	/**
-	 * Returns this Dialog's remote ID. This ID is actually TCAP's remote Dialog ID.
-	 * {@link org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog}
+	 * Returns this Dialog's remote ID. This ID is actually TCAP's remote Dialog
+	 * ID. {@link org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog}
 	 * 
 	 * @return
 	 */
@@ -182,31 +204,32 @@ public interface MAPDialog {
 	public void close(boolean prearrangedEnd) throws MAPException;
 
 	/**
-	 * This method makes the same as send() method.
-	 * But when invoking it from events of parsing incoming components
-	 * real sending will occur only when all incoming components events 
-	 * and onDialogDelimiter() or onDialogClose() would be processed 
+	 * This method makes the same as send() method. But when invoking it from
+	 * events of parsing incoming components real sending will occur only when
+	 * all incoming components events and onDialogDelimiter() or onDialogClose()
+	 * would be processed
 	 * 
-	 * If you are receiving several primitives you can invoke sendDelayed()
-	 * in several processing components events - the result will be sent after
+	 * If you are receiving several primitives you can invoke sendDelayed() in
+	 * several processing components events - the result will be sent after
 	 * onDialogDelimiter() in a single TC-CONTINUE message
 	 */
 	public void sendDelayed() throws MAPException;
 
 	/**
-	 * This method makes the same as close() method.
-	 * But when invoking it from events of parsing incoming components
-	 * real sending and dialog closing will occur only when all incoming components events 
-	 * and onDialogDelimiter() or onDialogClose() would be processed 
+	 * This method makes the same as close() method. But when invoking it from
+	 * events of parsing incoming components real sending and dialog closing
+	 * will occur only when all incoming components events and
+	 * onDialogDelimiter() or onDialogClose() would be processed
 	 * 
-	 * If you are receiving several primitives you can invoke closeDelayed()
-	 * in several processing components events - the result will be sent 
-	 * and the dialog will be closed after onDialogDelimiter() in a single TC-END message
+	 * If you are receiving several primitives you can invoke closeDelayed() in
+	 * several processing components events - the result will be sent and the
+	 * dialog will be closed after onDialogDelimiter() in a single TC-END
+	 * message
 	 * 
-	 * If both of sendDelayed() and closeDelayed() have been invoked
-	 * TC-END will be issued and the dialog will be closed
-	 * If sendDelayed() or closeDelayed() were invoked, TC-CONTINUE/TC-END were not sent
-	 * and abort() or release() are invoked - no TC-CONTINUE/TC-END messages will be sent
+	 * If both of sendDelayed() and closeDelayed() have been invoked TC-END will
+	 * be issued and the dialog will be closed If sendDelayed() or
+	 * closeDelayed() were invoked, TC-CONTINUE/TC-END were not sent and abort()
+	 * or release() are invoked - no TC-CONTINUE/TC-END messages will be sent
 	 */
 	public void closeDelayed(boolean prearrangedEnd) throws MAPException;
 

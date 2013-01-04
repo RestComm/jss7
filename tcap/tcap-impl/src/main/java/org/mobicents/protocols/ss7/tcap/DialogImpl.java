@@ -1174,7 +1174,7 @@ public class DialogImpl implements Dialog {
 	 * @param localAddress
 	 *            the localAddress to set
 	 */
-	void setLocalAddress(SccpAddress localAddress) {
+	public void setLocalAddress(SccpAddress localAddress) {
 		this.localAddress = localAddress;
 	}
 
@@ -1182,7 +1182,7 @@ public class DialogImpl implements Dialog {
 	 * @param remoteAddress
 	 *            the remoteAddress to set
 	 */
-	void setRemoteAddress(SccpAddress remoteAddress) {
+	public void setRemoteAddress(SccpAddress remoteAddress) {
 		this.remoteAddress = remoteAddress;
 	}
 

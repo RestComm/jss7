@@ -59,8 +59,22 @@ public interface CAPDialog {
 	public boolean getReturnMessageOnError();
 
 	public SccpAddress getLocalAddress();
+	
+	/**
+	 * Sets local Sccp Address.
+	 * 
+	 * @param localAddress
+	 */
+	public void setLocalAddress(SccpAddress localAddress);	
 
     public SccpAddress getRemoteAddress();
+    
+	/**
+	 * Sets remote Sccp Address
+	 * 
+	 * @param remoteAddress
+	 */
+	public void setRemoteAddress(SccpAddress remoteAddress);
 	
 	/**
 	 * This method can be called on timeout of dialog, inside
