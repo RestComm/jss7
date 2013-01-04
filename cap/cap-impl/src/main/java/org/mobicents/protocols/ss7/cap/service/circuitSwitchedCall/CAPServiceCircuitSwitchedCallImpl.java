@@ -370,7 +370,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 			break;
 
 		default:
-			new CAPParsingComponentException("", CAPParsingComponentExceptionReason.UnrecognizedOperation);
+			throw new CAPParsingComponentException("", CAPParsingComponentExceptionReason.UnrecognizedOperation);
 		}
 	}
 

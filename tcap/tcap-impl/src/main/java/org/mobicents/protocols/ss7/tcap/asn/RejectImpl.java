@@ -117,7 +117,7 @@ public class RejectImpl implements Reject {
 
 	
 	public String toString() {
-		return "Reject[invokeId=" + invokeId + ", problem=" + problem + "]";
+		return "Reject[invokeId=" + invokeId + (this.isLocalOriginated() ? ", localOriginated" : ", remoteOriginated") + ", problem=" + problem + "]";
 	}
 
 	/*

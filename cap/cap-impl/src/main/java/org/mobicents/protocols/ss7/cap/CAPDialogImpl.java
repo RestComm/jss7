@@ -220,11 +220,11 @@ public abstract class CAPDialogImpl implements CAPDialog {
 				ApplicationContextName acn = this.capProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
 						.createApplicationContextName(this.appCntx.getOID());
 
+				this.setState(CAPDialogState.InitialSent);
+
 				this.capProviderImpl.fireTCBegin(this.getTcapDialog(), acn, this.gprsReferenceNumber,
 						this.getReturnMessageOnError());
 				this.gprsReferenceNumber = null;
-
-				this.setState(CAPDialogState.InitialSent);
 				break;
 
 			case Active:

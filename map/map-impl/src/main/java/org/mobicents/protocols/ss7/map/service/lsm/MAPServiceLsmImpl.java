@@ -209,7 +209,7 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
 			}
 			break;
 		default:
-			new MAPParsingComponentException("", MAPParsingComponentExceptionReason.UnrecognizedOperation);
+			throw new MAPParsingComponentException("", MAPParsingComponentExceptionReason.UnrecognizedOperation);
 		}
 	}
 

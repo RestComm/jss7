@@ -92,6 +92,8 @@ public class CallScfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 		this.cc = new CallContent();
 		this.cc.idp = ind;
 		this.cc.step = Step.initialDPRecieved;
+
+		ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
 	}
 
 	@Override
@@ -108,6 +110,8 @@ public class CallScfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 				break;
 			}
 		}
+
+		ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
 	}
 
 	@Override

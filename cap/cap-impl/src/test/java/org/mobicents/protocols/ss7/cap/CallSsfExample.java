@@ -132,6 +132,7 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 
 			// initiating BCSM events processing
 		}
+		ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
 	}
 
 	@Override
@@ -150,6 +151,7 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	@Override
 	public void onContinueRequest(ContinueRequest ind) {
 		this.cc.step = Step.callAllowed;
+		ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
 		// sending Continue to use the original calledPartyAddress
 	}
 
@@ -157,6 +159,7 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	public void onConnectRequest(ConnectRequest ind) {
 		this.cc.step = Step.callAllowed;
 		this.cc.destinationRoutingAddress = ind.getDestinationRoutingAddress();
+		ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
 		// sending Connect to force routing the call to a new  number
 	}
 

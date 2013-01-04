@@ -50,6 +50,6 @@ public interface TCPAbortIndication extends DialogIndication{
 	 * 
 	 * @return
 	 */
-	public boolean isLocalProviderOriginated();
+//	public boolean isLocalProviderOriginated();
 
 }

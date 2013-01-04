@@ -814,7 +814,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		synchronized (capDialogImpl) {
 			this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.MessageCannotBeDeliveredToThePeer);
 
-			if (capDialogImpl.getState() == CAPDialogState.InitialReceived) {
+			if (capDialogImpl.getState() == CAPDialogState.InitialSent) {
 //				capDialogImpl.setNormalDialogShutDown();
 				capDialogImpl.setState(CAPDialogState.Expunged);
 			}

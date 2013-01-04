@@ -139,7 +139,7 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 	}
 
 	public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog, Long invokeId, Long linkedId,
-			Invoke linkedInvoke)			throws MAPParsingComponentException {
+			Invoke linkedInvoke) throws MAPParsingComponentException {
 
 		// if an application-context-name different from version 1 is
 		// received in a syntactically correct TC-
@@ -179,7 +179,7 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 				this.unstructuredSSNotifyResponse(parameter, mapDialogSupplementaryImpl, invokeId);
 				break;
 		default:
-			new MAPParsingComponentException("", MAPParsingComponentExceptionReason.UnrecognizedOperation);
+			throw new MAPParsingComponentException("", MAPParsingComponentExceptionReason.UnrecognizedOperation);
 		}
 	}
 

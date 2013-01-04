@@ -85,8 +85,8 @@ public interface MAPDialogListener {
 	 * When T_ABORT received NOT as the response to T_BEGIN
 	 * 
 	 */
-	public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason,
-			MAPAbortSource abortSource, MAPExtensionContainer extensionContainer);
+	public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason, MAPAbortSource abortSource,
+			MAPExtensionContainer extensionContainer);
 
 	/**
 	 * When T_CLOSE received If T_CLOSE is the response to T-BEGIN,

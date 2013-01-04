@@ -1143,8 +1143,8 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			// Table 16.1/1: Mapping of P-Abort cause in TC-P-ABORT indication
 			// on to provider-reason in MAP-P-ABORT indication
 			// TC P-Abort cause MAP provider-reason
-			// unrecognised message type provider malfunction
-			// unrecognised transaction Id supporting dialogue released
+			// unrecognized message type provider malfunction
+			// unrecognized transaction Id supporting dialogue released
 			// badlyFormattedTransactionPortion provider malfunction
 			// incorrectTransactionPortion provider malfunction (note)
 			// resourceLimitation resource limitation
@@ -1591,7 +1591,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		}
 
 		synchronized (mapDialogImpl) {
-			if (mapDialogImpl.getState() == MAPDialogState.INITIAL_RECEIVED) {
+			if (mapDialogImpl.getState() == MAPDialogState.INITIAL_SENT) {
 				// If a TC-NOTICE indication primitive is received before the
 				// dialogue has been confirmed (i.e. no backward message is
 				// received by the dialogue initiator node), the MAP PM shall

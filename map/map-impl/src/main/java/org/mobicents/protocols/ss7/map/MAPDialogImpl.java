@@ -321,11 +321,11 @@ public abstract class MAPDialogImpl implements MAPDialog {
 				ApplicationContextName acn = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
 						.createApplicationContextName(this.appCntx.getOID());
 
+				this.setState(MAPDialogState.INITIAL_SENT);
+
 				this.mapProviderImpl.fireTCBegin(this.getTcapDialog(), acn, destReference, origReference,
 						this.extContainer, this.eriStyle, this.eriImsi, this.eriVlrNo, this.getReturnMessageOnError());
 				this.extContainer = null;
-
-				this.setState(MAPDialogState.INITIAL_SENT);
 				break;
 
 			case Active:

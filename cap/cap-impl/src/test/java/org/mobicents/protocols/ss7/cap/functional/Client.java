@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -35,30 +35,23 @@ import org.mobicents.protocols.ss7.cap.api.CAPParameterFactory;
 import org.mobicents.protocols.ss7.cap.api.CAPProvider;
 import org.mobicents.protocols.ss7.cap.api.CAPStack;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.ODisconnectSpecificInfo;
-import org.mobicents.protocols.ss7.cap.api.dialog.CAPDialogState;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
-import org.mobicents.protocols.ss7.cap.api.isup.CallingPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
 import org.mobicents.protocols.ss7.cap.api.isup.Digits;
-import org.mobicents.protocols.ss7.cap.api.isup.LocationNumberCap;
-import org.mobicents.protocols.ss7.cap.api.isup.OriginalCalledNumberCap;
 import org.mobicents.protocols.ss7.cap.api.primitives.BCSMEvent;
-import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
 import org.mobicents.protocols.ss7.cap.api.primitives.MonitorMode;
 import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
-import org.mobicents.protocols.ss7.cap.api.primitives.ScfID;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCall;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestReportBCSMEventRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.Carrier;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CollectedDigits;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CollectedInfo;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSM;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.IPSSPCapabilities;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.InformationToSend;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.NAOliInfo;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.RequestedInformationType;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ServiceInteractionIndicatorsTwo;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.Tone;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.CAPDialogGprs;
 import org.mobicents.protocols.ss7.cap.api.service.sms.CAPDialogSms;
@@ -68,6 +61,7 @@ import org.mobicents.protocols.ss7.inap.api.INAPParameterFactory;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfoMessageType;
+import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
@@ -78,8 +72,6 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
-import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
-import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextNameImpl;
 
 /**
  * 
@@ -503,6 +495,90 @@ public class Client extends EventTestHarness  {
 		this.observerdEvents.add(TestEvent.createSentEvent(EventType.PlayAnnouncementRequest, null, sequence++));
 		clientCscDialog.send();
 	}
+
+	public void sendInvokesForUnexpectedResultError() throws CAPException {
+
+		CAPApplicationContext appCnt = CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF;
+		clientCscDialog = this.capProvider.getCAPServiceCircuitSwitchedCall().createNewDialog(appCnt, this.thisAddress, this.remoteAddress);
+
+		InitialDPRequest initialDp = getTestInitialDp();
+		clientCscDialog.addInitialDPRequest(1000000, initialDp.getServiceKey(), initialDp.getCalledPartyNumber(), initialDp.getCallingPartyNumber(),
+				initialDp.getCallingPartysCategory(), initialDp.getCGEncountered(), initialDp.getIPSSPCapabilities(), initialDp.getLocationNumber(),
+				initialDp.getOriginalCalledPartyID(), initialDp.getExtensions(), initialDp.getHighLayerCompatibility(),
+				initialDp.getAdditionalCallingPartyNumber(), initialDp.getBearerCapability(), initialDp.getEventTypeBCSM(), initialDp.getRedirectingPartyID(),
+				initialDp.getRedirectionInformation(), initialDp.getCause(), initialDp.getServiceInteractionIndicatorsTwo(), initialDp.getCarrier(),
+				initialDp.getCugIndex(), initialDp.getCugInterlock(), initialDp.getCugOutgoingAccess(), initialDp.getIMSI(), initialDp.getSubscriberState(),
+				initialDp.getLocationInformation(), initialDp.getExtBasicServiceCode(), initialDp.getCallReferenceNumber(), initialDp.getMscAddress(),
+				initialDp.getCalledPartyBCDNumber(), initialDp.getTimeAndTimezone(), initialDp.getCallForwardingSSPending(),
+				initialDp.getInitialDPArgExtension());
+		clientCscDialog.addInitialDPRequest(1000000, initialDp.getServiceKey(), initialDp.getCalledPartyNumber(), initialDp.getCallingPartyNumber(),
+				initialDp.getCallingPartysCategory(), initialDp.getCGEncountered(), initialDp.getIPSSPCapabilities(), initialDp.getLocationNumber(),
+				initialDp.getOriginalCalledPartyID(), initialDp.getExtensions(), initialDp.getHighLayerCompatibility(),
+				initialDp.getAdditionalCallingPartyNumber(), initialDp.getBearerCapability(), initialDp.getEventTypeBCSM(), initialDp.getRedirectingPartyID(),
+				initialDp.getRedirectionInformation(), initialDp.getCause(), initialDp.getServiceInteractionIndicatorsTwo(), initialDp.getCarrier(),
+				initialDp.getCugIndex(), initialDp.getCugInterlock(), initialDp.getCugOutgoingAccess(), initialDp.getIMSI(), initialDp.getSubscriberState(),
+				initialDp.getLocationInformation(), initialDp.getExtBasicServiceCode(), initialDp.getCallReferenceNumber(), initialDp.getMscAddress(),
+				initialDp.getCalledPartyBCDNumber(), initialDp.getTimeAndTimezone(), initialDp.getCallForwardingSSPending(),
+				initialDp.getInitialDPArgExtension());
+
+		CollectedDigits collectedDigits = this.capParameterFactory.createCollectedDigits(2, 3, null, null, null, null, null,
+				null, null, null, null);
+		CollectedInfo collectedInfo = this.capParameterFactory.createCollectedInfo(collectedDigits);
+		clientCscDialog.addPromptAndCollectUserInformationRequest(collectedInfo, null, null, null, null, null);
+		clientCscDialog.addPromptAndCollectUserInformationRequest(collectedInfo, null, null, null, null, null);
+
+		clientCscDialog.addActivityTestRequest();
+		clientCscDialog.addActivityTestRequest();
+
+		CauseIndicators causeIndicators = this.isupParameterFactory.createCauseIndicators();
+		causeIndicators.setLocation(CauseIndicators._LOCATION_USER);
+		causeIndicators.setCodingStandard(CauseIndicators._CODING_STANDARD_ITUT);
+		causeIndicators.setCauseValue(CauseIndicators._CV_ALL_CLEAR);
+		CauseCap releaseCause = this.capParameterFactory.createCauseCap(causeIndicators);
+		clientCscDialog.addReleaseCallRequest(releaseCause);
+		clientCscDialog.addReleaseCallRequest(releaseCause);
+
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.InitialDpRequest, null, sequence++));
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.InitialDpRequest, null, sequence++));
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.PromptAndCollectUserInformationRequest, null, sequence++));
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.PromptAndCollectUserInformationRequest, null, sequence++));
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.ActivityTestRequest, null, sequence++));
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.ActivityTestRequest, null, sequence++));
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.ReleaseCallRequest, null, sequence++));
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.ReleaseCallRequest, null, sequence++));
+
+		clientCscDialog.send();
+	}
+
+	public void sendDummyMessage() throws CAPException {
+
+		CAPApplicationContext appCnt = CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF;
+		SccpAddress dummyAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 3333, null, 6);
+		clientCscDialog = this.capProvider.getCAPServiceCircuitSwitchedCall().createNewDialog(appCnt, this.thisAddress, dummyAddress);
+
+		clientCscDialog.send();
+	}
+
+	public void actionB() throws CAPException {
+		CAPApplicationContext appCnt = CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF;
+		SccpAddress dummyAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 3333, null, 6);
+		clientCscDialog = this.capProvider.getCAPServiceCircuitSwitchedCall().createNewDialog(appCnt, this.thisAddress, dummyAddress);
+		clientCscDialog.setReturnMessageOnError(true);
+
+		clientCscDialog.send();
+	}
+
+//	public void sendEmpty() throws CAPException, TCAPSendException {
+//		CAPApplicationContext appCnt = CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF;
+//		clientCscDialog = this.capProvider.getCAPServiceCircuitSwitchedCall().createNewDialog(appCnt, this.thisAddress, this.remoteAddress);
+//
+//		TCBeginRequest req = ((CAPProviderImpl)((CAPDialogImpl)clientCscDialog).getService().getCAPProvider()).getTCAPProvider().getDialogPrimitiveFactory().createBegin(((CAPDialogImpl)clientCscDialog).getTcapDialog());
+//		req.setDestinationAddress(this.remoteAddress);
+//		req.setOriginatingAddress(this.thisAddress);
+//		((CAPDialogImpl)clientCscDialog).getTcapDialog().send(req);
+//
+////		clientCscDialog.send();
+//	}
 
 	public void debug(String message) {
 		this.logger.debug(message);

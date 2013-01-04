@@ -173,7 +173,7 @@ public class MAPServiceCallHandlingImpl extends MAPServiceBaseImpl implements MA
 				this.provideRoamingNumberResponse(parameter, mapDialogImpl, invokeId);
 			break;
 		default:
-			new MAPParsingComponentException("", MAPParsingComponentExceptionReason.UnrecognizedOperation);
+			throw new MAPParsingComponentException("", MAPParsingComponentExceptionReason.UnrecognizedOperation);
 		}
 	}
 

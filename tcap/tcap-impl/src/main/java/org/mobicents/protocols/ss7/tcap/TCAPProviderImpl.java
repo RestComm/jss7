@@ -736,15 +736,22 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
 					if (tcUnidentified.getDestinationTransactionId() != null) {
 						Long dtid = Utils.decodeTransactionId(tcUnidentified.getDestinationTransactionId());
-						di = this.dialogs.get(dtid);
-						if (di == null) {
-							this.sendProviderAbort(PAbortCauseType.UnrecognizedMessageType, otid, remoteAddress, localAddress, message.getSls());
-						} else {
-							di.sendProviderAbort(PAbortCauseType.UnrecognizedMessageType);
-						}
+						this.sendProviderAbort(PAbortCauseType.UnrecognizedMessageType, otid, remoteAddress, localAddress, message.getSls());
+
+//						di = this.dialogs.get(dtid);
+//						if (di == null) {
+//							this.sendProviderAbort(PAbortCauseType.UnrecognizedMessageType, otid, remoteAddress, localAddress, message.getSls());
+//						} else {
+//							if (((DialogImpl) di).getRemoteDialogId() == null) {
+//								((DialogImpl) di).setRemoteTransactionId(tcUnidentified.getOriginatingTransactionId());
+//							}
+//							di.sendProviderAbort(PAbortCauseType.UnrecognizedMessageType);
+//						}
 					} else {
 						this.sendProviderAbort(PAbortCauseType.UnrecognizedMessageType, otid, remoteAddress, localAddress, message.getSls());
 					}
+				} else {
+					this.sendProviderAbort(PAbortCauseType.UnrecognizedMessageType, new byte[0], remoteAddress, localAddress, message.getSls());
 				}
 				break;
 			}

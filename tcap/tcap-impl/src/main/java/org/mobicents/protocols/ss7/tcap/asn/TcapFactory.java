@@ -24,9 +24,11 @@ package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.IOException;
 
+import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCodeType;
@@ -304,12 +306,15 @@ public final class TcapFactory {
 					c.decode(localAis);
 					break;
 				default:
+					localAis.advanceElement();
 					throw new ParseException(null, GeneralProblemType.UnrecognizedComponent, "Error decoding a component: bad tag: " + tag);
 				}
 
 				return c;
 			} catch (IOException e) {
 				throw new ParseException(null, GeneralProblemType.BadlyStructuredComponent, "IOException while decoding a component: " + e.getMessage(), e);
+			} catch (AsnException e) {
+				throw new ParseException(null, GeneralProblemType.BadlyStructuredComponent, "AsnException while decoding a component: " + e.getMessage(), e);
 			}
 		} catch (ParseException e) {
 			if (e.getProblem() != null) {

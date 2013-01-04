@@ -26,6 +26,7 @@ import static org.testng.Assert.*;
 import java.util.ArrayList;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.map.MAPDialogImpl;
 import org.mobicents.protocols.ss7.map.MAPProviderImpl;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
@@ -33,6 +34,7 @@ import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.MAPStack;
@@ -71,13 +73,11 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.L
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.TypeOfUpdate;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TeleserviceCode;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPDialogSms;
 import org.mobicents.protocols.ss7.map.api.service.sms.SMDeliveryOutcome;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_MTI;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_OA;
-import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_SMEA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SmsSignalInfo;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
 import org.mobicents.protocols.ss7.map.api.smstpdu.NumberingPlanIdentification;
@@ -107,7 +107,9 @@ import org.mobicents.protocols.ss7.map.smstpdu.ProtocolIdentifierImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.SmsSubmitTpduImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.UserDataImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.ValidityPeriodImpl;
+import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.asn.OperationCodeImpl;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
@@ -133,7 +135,7 @@ public class Client extends EventTestHarness {
 	// private boolean finished = true;
 	private String unexpected = "";
 
-	private MAPDialogSupplementary clientDialog;
+	protected MAPDialogSupplementary clientDialog;
 	protected MAPDialogSms clientDialogSms;
 	protected MAPDialogMobility clientDialogMobility;
 	protected MAPDialogLsm clientDialogLsm;
@@ -1006,6 +1008,133 @@ public class Client extends EventTestHarness {
 
 		clientDialogSms.send();
 //		 * TC-BEGIN + sendRoutingInfoForSMRequest + reportSMDeliveryStatusRequest
+	}
+
+	public void sendUnrecognizedOperation() throws MAPException {
+		this.mapProvider.getMAPServiceSupplementary().acivate();
+
+		MAPApplicationContext appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext,
+				MAPApplicationContextVersion.version2);
+
+		AddressString orgiReference = this.mapParameterFactory.createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628968300");
+		AddressString destReference = this.mapParameterFactory.createAddressString(AddressNature.international_number, NumberingPlan.land_mobile,
+				"204208300008002");
+
+		ISDNAddressString msisdn = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628838002");
+
+		clientDialog = this.mapProvider.getMAPServiceSupplementary()
+				.createNewDialog(appCnt, this.thisAddress, orgiReference, this.remoteAddress, destReference);
+		clientDialog.setExtentionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
+
+		Invoke invoke = ((MAPProviderImpl) clientDialog.getService().getMAPProvider()).getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		invoke.setInvokeId(10L);
+		OperationCode opCode = new OperationCodeImpl();
+		opCode.setLocalOperationCode(1000L);
+		invoke.setOperationCode(opCode);
+		clientDialog.sendInvokeComponent(invoke);
+
+		USSDString ussdString = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_STRING);
+
+		clientDialog.addProcessUnstructuredSSRequest(new CBSDataCodingSchemeImpl( 0x0f), ussdString, null, msisdn);
+
+		logger.debug("Sending USSDString" + MAPFunctionalTest.USSD_STRING);
+
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.ProcessUnstructuredSSRequestIndication, null, sequence++));
+		clientDialog.send();
+	}
+
+	public void sendMystypedParameter() throws MAPException {
+		this.mapProvider.getMAPServiceSupplementary().acivate();
+
+		MAPApplicationContext appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext,
+				MAPApplicationContextVersion.version2);
+
+		AddressString orgiReference = this.mapParameterFactory.createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628968300");
+		AddressString destReference = this.mapParameterFactory.createAddressString(AddressNature.international_number, NumberingPlan.land_mobile,
+				"204208300008002");
+
+		ISDNAddressString msisdn = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628838002");
+
+		clientDialog = this.mapProvider.getMAPServiceSupplementary()
+				.createNewDialog(appCnt, this.thisAddress, orgiReference, this.remoteAddress, destReference);
+		clientDialog.setExtentionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
+
+		Invoke invoke = ((MAPProviderImpl) clientDialog.getService().getMAPProvider()).getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		invoke.setInvokeId(10L);
+		OperationCode opCode = new OperationCodeImpl();
+		opCode.setLocalOperationCode((long)MAPOperationCode.processUnstructuredSS_Request);
+		invoke.setOperationCode(opCode);
+
+		Parameter par = ((MAPProviderImpl) clientDialog.getService().getMAPProvider()).getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+		par.setData(new byte[] { 1, 1, 1, 1, 1 });
+		invoke.setParameter(par);
+		
+		clientDialog.sendInvokeComponent(invoke);
+
+		USSDString ussdString = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_STRING);
+
+		clientDialog.addProcessUnstructuredSSRequest(new CBSDataCodingSchemeImpl( 0x0f), ussdString, null, msisdn);
+
+		logger.debug("Sending USSDString" + MAPFunctionalTest.USSD_STRING);
+
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.ProcessUnstructuredSSRequestIndication, null, sequence++));
+		clientDialog.send();
+	}
+
+	public void actionAAA() throws MAPException {
+		this.mapProvider.getMAPServiceSupplementary().acivate();
+
+		MAPApplicationContext appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext,
+				MAPApplicationContextVersion.version2);
+
+		AddressString orgiReference = this.mapParameterFactory.createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628968300");
+		AddressString destReference = this.mapParameterFactory.createAddressString(AddressNature.international_number, NumberingPlan.land_mobile,
+				"204208300008002");
+
+		ISDNAddressString msisdn = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628838002");
+
+		clientDialog = this.mapProvider.getMAPServiceSupplementary()
+				.createNewDialog(appCnt, this.thisAddress, orgiReference, this.remoteAddress, destReference);
+		clientDialog.setExtentionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
+
+		USSDString ussdString = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_STRING);
+
+		clientDialog.addProcessUnstructuredSSRequest(new CBSDataCodingSchemeImpl( 0x0f), ussdString, null, msisdn);
+		clientDialog.addProcessUnstructuredSSRequest(new CBSDataCodingSchemeImpl( 0x0f), ussdString, null, msisdn);
+		clientDialog.addProcessUnstructuredSSRequest(new CBSDataCodingSchemeImpl( 0x0f), ussdString, null, msisdn);
+
+		logger.debug("Sending USSDString" + MAPFunctionalTest.USSD_STRING);
+		logger.debug("Sending USSDString" + MAPFunctionalTest.USSD_STRING);
+		logger.debug("Sending USSDString" + MAPFunctionalTest.USSD_STRING);
+
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.ProcessUnstructuredSSRequestIndication, null, sequence++));
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.ProcessUnstructuredSSRequestIndication, null, sequence++));
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.ProcessUnstructuredSSRequestIndication, null, sequence++));
+		clientDialog.send();
+	}
+
+	public void actionB() throws MAPException {
+		this.mapProvider.getMAPServiceSupplementary().acivate();
+
+		MAPApplicationContext appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext,
+				MAPApplicationContextVersion.version2);
+
+		AddressString orgiReference = this.mapParameterFactory.createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628968300");
+		AddressString destReference = this.mapParameterFactory.createAddressString(AddressNature.international_number, NumberingPlan.land_mobile,
+				"204208300008002");
+
+		ISDNAddressString msisdn = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628838002");
+
+		SccpAddress badAddr = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 3333, null, 6);
+		clientDialog = this.mapProvider.getMAPServiceSupplementary()
+				.createNewDialog(appCnt, this.thisAddress, orgiReference, badAddr, destReference);
+		clientDialog.setReturnMessageOnError(true);
+
+		USSDString ussdString = this.mapParameterFactory.createUSSDString(MAPFunctionalTest.USSD_STRING);
+		clientDialog.addProcessUnstructuredSSRequest(new CBSDataCodingSchemeImpl( 0x0f), ussdString, null, msisdn);
+
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.ProcessUnstructuredSSRequestIndication, null, sequence++));
+		clientDialog.send();
 	}
 
 	public MAPDialog getMapDialog() {

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -83,6 +83,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGInterlock;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
+import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
@@ -136,7 +137,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 			throw new CAPException(
 					"Bad application context name for addInitialDPRequest: must be CapV1_gsmSSF_to_gsmSCF, CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric or CapV4_gsmSSF_scfGeneric");
 
-		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class2);
 		if (customInvokeTimeout == _Timer_Default)
 			invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
 		else
@@ -188,7 +189,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 			throw new CAPException(
 					"Bad application context name for addApplyChargingReportRequest: must be CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric, CapV4_gsmSSF_scfGeneric or CapV4_gsmSSF_scfGeneric");
 
-		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class2);
 		if (customInvokeTimeout == _Timer_Default)
 			invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
 		else
@@ -238,7 +239,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 			throw new CAPException(
 					"Bad application context name for addApplyChargingRequest: must be CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric, CapV4_gsmSSF_scfGeneric or CapV4_gsmSSF_scfGeneric");
 
-		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class2);
 		if (customInvokeTimeout == _Timer_Default)
 			invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
 		else
@@ -289,7 +290,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 			throw new CAPException(
 					"Bad application context name for addCallInformationReportRequest: must be CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric, CapV4_gsmSSF_scfGeneric or CapV4_gsmSSF_scfGeneric");
 
-		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class4);
 		if (customInvokeTimeout == _Timer_Default)
 			invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
 		else
@@ -339,7 +340,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 			throw new CAPException(
 					"Bad application context name for addCallInformationRequestRequest: must be CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric, CapV4_gsmSSF_scfGeneric or CapV4_gsmSSF_scfGeneric");
 
-		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class2);
 		if (customInvokeTimeout == _Timer_Default)
 			invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
 		else
@@ -400,7 +401,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 			throw new CAPException(
 					"Bad application context name for addConnectRequest: must be CapV1_gsmSSF_to_gsmSCF, CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric, CapV4_gsmSSF_scfGeneric or CapV4_scf_gsmSSFGeneric");
 		
-		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class2);
 		if (customInvokeTimeout == _Timer_Default)
 			invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
 		else
@@ -451,7 +452,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 			throw new CAPException(
 					"Bad application context name for addContinueRequest: must be CapV1_gsmSSF_to_gsmSCF, CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric, CapV4_gsmSSF_scfGeneric or CapV4_scf_gsmSSFGeneric");
 		
-		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class4);
 		if (customInvokeTimeout == _Timer_Default)
 			invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
 		else
@@ -491,7 +492,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 			throw new CAPException(
 					"Bad application context name for addEventReportBCSMRequest: must be CapV1_gsmSSF_to_gsmSCF, CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric, CapV4_gsmSSF_scfGeneric or CapV4_scf_gsmSSFGeneric");
 		
-		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class4);
 		if (customInvokeTimeout == _Timer_Default)
 			invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
 		else
@@ -541,7 +542,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 			throw new CAPException(
 					"Bad application context name for addRequestReportBCSMEventRequest: must be CapV1_gsmSSF_to_gsmSCF, CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric, CapV4_gsmSSF_scfGeneric or CapV4_scf_gsmSSFGeneric");
 		
-		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class2);
 		if (customInvokeTimeout == _Timer_Default)
 			invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
 		else
@@ -590,7 +591,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 			throw new CAPException(
 					"Bad application context name for addReleaseCallRequest: must be CapV1_gsmSSF_to_gsmSCF, CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric, CapV4_gsmSSF_scfGeneric or CapV4_scf_gsmSSFGeneric");
 		
-		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class4);
 		if (customInvokeTimeout == _Timer_Default)
 			invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
 		else
@@ -644,7 +645,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 							+ "CapV2_assistGsmSSF_to_gsmSCF, CapV3_gsmSSF_scfAssistHandoff, CapV4_gsmSSF_scfAssistHandoff, CapV2_gsmSRF_to_gsmSCF, CapV3_gsmSRF_gsmSCF, CapV4_gsmSRF_gsmSCF "
 							+ "or CapV4_scf_gsmSSFGeneric");
 
-		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class3);
 		if (customInvokeTimeout == _Timer_Default)
 			invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
 		else
@@ -709,7 +710,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 							+ "CapV2_assistGsmSSF_to_gsmSCF, CapV3_gsmSSF_scfAssistHandoff, CapV4_gsmSSF_scfAssistHandoff, CapV2_gsmSRF_to_gsmSCF, CapV3_gsmSRF_gsmSCF  "
 							+ "or CapV4_gsmSRF_gsmSCF");
 		
-		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class2);
 		if (customInvokeTimeout == _Timer_Default)
 			invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
 		else
@@ -763,7 +764,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 			throw new CAPException(
 					"Bad application context name for addEstablishTemporaryConnectionRequest: must be CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric, CapV4_gsmSSF_scfGeneric or CapV4_scf_gsmSSFGeneric");
 		
-		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class2);
 		if (customInvokeTimeout == _Timer_Default)
 			invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Medium);
 		else
@@ -816,7 +817,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 					"Bad application context name for addDisconnectForwardConnectionRequest: must be CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric, CapV4_gsmSSF_scfGeneric, "
 							+ "CapV2_assistGsmSSF_to_gsmSCF, CapV3_gsmSSF_scfAssistHandoff, CapV4_gsmSSF_scfAssistHandoff or CapV4_scf_gsmSSFGeneric");
 		
-		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class2);
 		if (customInvokeTimeout == _Timer_Default)
 			invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
 		else
@@ -859,7 +860,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 					"Bad application context name for addConnectToResourceRequest: must be CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric, CapV4_gsmSSF_scfGeneric, "
 							+ "CapV2_assistGsmSSF_to_gsmSCF, CapV3_gsmSSF_scfAssistHandoff, CapV4_gsmSSF_scfAssistHandoff or CapV4_scf_gsmSSFGeneric");
 		
-		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class2);
 		if (customInvokeTimeout == _Timer_Default)
 			invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
 		else
@@ -912,7 +913,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 					"Bad application context name for addResetTimerRequest: must be CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric, CapV4_gsmSSF_scfGeneric, "
 							+ "CapV2_assistGsmSSF_to_gsmSCF, CapV3_gsmSSF_scfAssistHandoff, CapV4_gsmSSF_scfAssistHandoff or CapV4_scf_gsmSSFGeneric");
 		
-		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class2);
 		if (customInvokeTimeout == _Timer_Default)
 			invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
 		else
@@ -960,7 +961,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 			throw new CAPException(
 					"Bad application context name for addFurnishChargingInformationRequest: must be CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric, CapV4_gsmSSF_scfGeneric or CapV4_scf_gsmSSFGeneric");
 		
-		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class2);
 		if (customInvokeTimeout == _Timer_Default)
 			invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
 		else
@@ -1010,7 +1011,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 			throw new CAPException(
 					"Bad application context name for addSendChargingInformationRequest: must be CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric or CapV4_scf_gsmSSFGeneric");
 		
-		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class2);
 		if (customInvokeTimeout == _Timer_Default)
 			invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
 		else
@@ -1067,7 +1068,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 					"Bad application context name for addSpecializedResourceReportRequest_CapV23: must be "
 							+ "CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric, CapV2_assistGsmSSF_to_gsmSCF, CapV3_gsmSSF_scfAssistHandoff, CapV2_gsmSRF_to_gsmSCF or CapV3_gsmSRF_gsmSCF");
 		
-		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class4);
 		if (customInvokeTimeout == _Timer_Default)
 			invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
 		else
@@ -1112,7 +1113,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 			throw new CAPException("Bad application context name for addSpecializedResourceReportRequest_CapV4: "
 					+ "must be CapV4_gsmSSF_scfGeneric, CapV4_gsmSSF_scfAssistHandoff, CapV4_scf_gsmSSFGeneric or CapV4_gsmSRF_gsmSCF");
 		
-		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class4);
 		if (customInvokeTimeout == _Timer_Default)
 			invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
 		else
@@ -1172,7 +1173,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 					+ "CapV2_assistGsmSSF_to_gsmSCF, CapV3_gsmSSF_scfAssistHandoff, CapV4_gsmSSF_scfAssistHandoff, CapV4_scf_gsmSSFGeneric"
 					+ ", CapV2_gsmSRF_to_gsmSCF, CapV3_gsmSRF_gsmSCF or CapV4_gsmSRF_gsmSCF");
 
-		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class2);
 		if (customInvokeTimeout == _Timer_Default)
 			invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Long);
 		else
@@ -1230,7 +1231,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 					+ "CapV2_assistGsmSSF_to_gsmSCF, CapV3_gsmSSF_scfAssistHandoff, CapV4_gsmSSF_scfAssistHandoff, CapV4_scf_gsmSSFGeneric"
 					+ ", CapV2_gsmSRF_to_gsmSCF, CapV3_gsmSRF_gsmSCF or CapV4_gsmSRF_gsmSCF");
 
-		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class1);
 		if (customInvokeTimeout == _Timer_Default)
 			invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Long);
 		else
@@ -1352,7 +1353,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 					+ "CapV2_assistGsmSSF_to_gsmSCF, CapV3_gsmSSF_scfAssistHandoff, CapV4_gsmSSF_scfAssistHandoff, CapV4_scf_gsmSSFGeneric"
 					+ ", CapV2_gsmSRF_to_gsmSCF, CapV3_gsmSRF_gsmSCF or CapV4_gsmSRF_gsmSCF");
 
-		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class2);
 		if (customInvokeTimeout == _Timer_Default)
 			invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
 		else

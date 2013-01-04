@@ -520,9 +520,9 @@ public class DialogImpl implements Dialog {
 			AsnOutputStream aos = new AsnOutputStream();
 			try {
 				tcbm.encode(aos);
+				this.setState(TRPseudoState.InitialSent);
 				this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress,
 						this.localAddress, this.seqControl);
-				this.setState(TRPseudoState.InitialSent);
 				this.scheduledComponentList.clear();
 			} catch (Throwable e) {
 				// FIXME: remove freshly added invokes to free invoke ID??
@@ -1660,7 +1660,7 @@ public class DialogImpl implements Dialog {
 				tcAbortIndication = (TCPAbortIndicationImpl) ((DialogPrimitiveFactoryImpl) this.provider
 						.getDialogPrimitiveFactory()).createPAbortIndication(this);
 				tcAbortIndication.setPAbortCause(PAbortCauseType.AbnormalDialogue);
-				tcAbortIndication.setLocalProviderOriginated(true);
+//				tcAbortIndication.setLocalProviderOriginated(true);
 
 				this.provider.deliver(this, tcAbortIndication);
 			} finally {
@@ -1672,35 +1672,35 @@ public class DialogImpl implements Dialog {
 		}
 	}
 
-	protected void sendProviderAbort(PAbortCauseType pAbortCause) {
-
-		if (this.previewMode)
-			return;
-
-		TCPAbortIndicationImpl tcAbortIndication = null;
-		try {
-			this.dialogLock.lock();
-
-			try {
-				// sending to the remote side
-				this.provider.sendProviderAbort(pAbortCause, this.remoteTransactionId, this.remoteAddress,
-						this.localAddress, this.seqControl);
-
-				// sending to the local side
-				tcAbortIndication = (TCPAbortIndicationImpl) ((DialogPrimitiveFactoryImpl) this.provider
-						.getDialogPrimitiveFactory()).createPAbortIndication(this);
-				tcAbortIndication.setPAbortCause(pAbortCause);
-				tcAbortIndication.setLocalProviderOriginated(true);
-
-				this.provider.deliver(this, tcAbortIndication);
-			} finally {
-				this.release();
-				// this.scheduledComponentList.clear();
-			}
-		} finally {
-			this.dialogLock.unlock();
-		}
-	}
+//	protected void sendProviderAbort(PAbortCauseType pAbortCause) {
+//
+//		if (this.previewMode)
+//			return;
+//
+//		TCPAbortIndicationImpl tcAbortIndication = null;
+//		try {
+//			this.dialogLock.lock();
+//
+//			try {
+//				// sending to the remote side
+//				this.provider.sendProviderAbort(pAbortCause, this.remoteTransactionId, this.remoteAddress,
+//						this.localAddress, this.seqControl);
+//
+//				// sending to the local side
+//				tcAbortIndication = (TCPAbortIndicationImpl) ((DialogPrimitiveFactoryImpl) this.provider
+//						.getDialogPrimitiveFactory()).createPAbortIndication(this);
+//				tcAbortIndication.setPAbortCause(pAbortCause);
+//				tcAbortIndication.setLocalProviderOriginated(true);
+//
+//				this.provider.deliver(this, tcAbortIndication);
+//			} finally {
+//				this.release();
+//				// this.scheduledComponentList.clear();
+//			}
+//		} finally {
+//			this.dialogLock.unlock();
+//		}
+//	}
 
 	protected Component[] processOperationsState(Component[] components) {
 		if (components == null) {
@@ -1731,12 +1731,12 @@ public class DialogImpl implements Dialog {
 					p.setInvokeProblemType(InvokeProblemType.UnrechognizedLinkedID);
 					this.addReject(resultingIndications, ci.getInvokeId(), p);
 				} else {
-					resultingIndications.add(ci);
 					if (invoke != null) {
 						((InvokeImpl) ci).setLinkedInvoke(invoke);
 					}
 
 					if (this.previewMode) {
+						resultingIndications.add(ci);
 						index = getIndexFromInvokeId(ci.getInvokeId());
 						this.operationsSentA[index] = (InvokeImpl) ci;
 						((InvokeImpl) ci).setDialog(this);
@@ -1748,6 +1748,8 @@ public class DialogImpl implements Dialog {
 							Problem p = new ProblemImpl();
 							p.setInvokeProblemType(InvokeProblemType.DuplicateInvokeID);
 							this.addReject(resultingIndications, ci.getInvokeId(), p);
+						} else {
+							resultingIndications.add(ci);
 						}
 					}
 				}
@@ -1823,13 +1825,22 @@ public class DialogImpl implements Dialog {
 				break;
 
 			case Reject:
+				Reject rej = (Reject) ci;
 				if (invoke != null) {
 					// If the Reject Problem is the InvokeProblemType we
 					// should move the invoke to the idle state
-					Reject rej = (Reject) ci;
 					Problem problem = rej.getProblem();
 					if (!rej.isLocalOriginated() && problem.getInvokeProblemType() != null)
 						invoke.onReject();
+				}
+				if (rej.isLocalOriginated() && this.isStructured()) {
+					try {
+						// this is a local originated Reject - we are rejecting an incoming component
+						// we need to send a Reject also to a peer
+						this.sendComponent(rej);
+					} catch (TCAPSendException e) {
+						logger.error("TCAPSendException when sending Reject component : Dialog: " + this, e);
+					}
 				}
 				resultingIndications.add(ci);
 				break;
@@ -1855,7 +1866,9 @@ public class DialogImpl implements Dialog {
 			rej.setProblem(p);
 
 			resultingIndications.add(rej);
-			this.sendComponent(rej);
+
+			if (this.isStructured())
+				this.sendComponent(rej);
 		} catch (TCAPSendException e) {
 			logger.error(String.format("Error sending Reject component", e));
 		}

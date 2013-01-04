@@ -312,7 +312,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 			break;
 
 		default:
-			new MAPParsingComponentException("", MAPParsingComponentExceptionReason.UnrecognizedOperation);
+			throw new MAPParsingComponentException("", MAPParsingComponentExceptionReason.UnrecognizedOperation);
 		}
 	}
 
