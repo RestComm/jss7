@@ -75,8 +75,7 @@ public class M3UARouteManagement {
 
 	private M3UAManagementImpl m3uaManagement = null;
 
-	private final int msbMask;
-	private final int lsbMask;
+	private final int asSelectionMask;
 	private int asSlsShiftPlaces = 0x00;
 
 	/**
@@ -98,26 +97,66 @@ public class M3UARouteManagement {
 		this.m3uaManagement = m3uaManagement;
 
 		RoutingLabelFormat routingLabelFormat = this.m3uaManagement.getRoutingLabelFormat();
-		this.msbMask = routingLabelFormat.getSlsMsbMask();
-		this.lsbMask = routingLabelFormat.getSlsLsbMask();
-		
-		if (this.m3uaManagement.isUseLsbForLinksetSelection()) {
-			this.asSlsShiftPlaces = 0x00;
-		} else {			
-			switch (routingLabelFormat.getMaxSls()) {
-			case 256:
+
+		switch (this.m3uaManagement.getMaxAsForRoute()) {
+		case 1:
+		case 2:
+			if (this.m3uaManagement.isUseLsbForLinksetSelection()) {
+				this.asSelectionMask = 0x01;
+				this.asSlsShiftPlaces = 0x00;
+			} else {
+				this.asSelectionMask = 0x80;
 				this.asSlsShiftPlaces = 0x07;
-				break;
-			case 32:
-				this.asSlsShiftPlaces = 0x04;
-				break;
-			case 16:
-				this.asSlsShiftPlaces = 0x03;
-				break;
-			default:
-				this.asSlsShiftPlaces = 0x03;
-				break;
 			}
+			break;
+		case 3:
+		case 4:
+			if (this.m3uaManagement.isUseLsbForLinksetSelection()) {
+				this.asSelectionMask = 0x03;
+				this.asSlsShiftPlaces = 0x00;
+			} else {
+				this.asSelectionMask = 0xc0;
+				this.asSlsShiftPlaces = 0x06;
+			}
+			break;
+		case 5:
+		case 6:
+		case 7:
+		case 8:
+			if (this.m3uaManagement.isUseLsbForLinksetSelection()) {
+				this.asSelectionMask = 0x07;
+				this.asSlsShiftPlaces = 0x00;
+			} else {
+				this.asSelectionMask = 0xe0;
+				this.asSlsShiftPlaces = 0x05;
+			}
+			break;
+		case 9:
+		case 10:
+		case 11:
+		case 12:
+		case 13:
+		case 14:
+		case 15:
+		case 16:
+			if (this.m3uaManagement.isUseLsbForLinksetSelection()) {
+				this.asSelectionMask = 0x0f;
+				this.asSlsShiftPlaces = 0x00;
+			} else {
+				this.asSelectionMask = 0xf0;
+				this.asSlsShiftPlaces = 0x04;
+			}
+			break;
+		default:
+			if (this.m3uaManagement.isUseLsbForLinksetSelection()) {
+				this.asSelectionMask = 0x01;
+				this.asSlsShiftPlaces = 0x00;
+			} else {
+				this.asSelectionMask = 0x80;
+				this.asSlsShiftPlaces = 0x07;
+			}
+			break;
+
 		}
 	}
 
@@ -298,34 +337,29 @@ public class M3UARouteManagement {
 			return null;
 		}
 
-		int count = 0;
-
-		if (this.m3uaManagement.isUseLsbForLinksetSelection()) {
-			count = (sls & this.lsbMask);
-		} else {
-			count = (sls & this.msbMask);
-		}
-
+		int count = (sls & this.asSelectionMask);
 		count = (count >> this.asSlsShiftPlaces);
-		
+
 		// First attempt
 		AsImpl asImpl = asArray[count];
 		if (this.isAsActive(asImpl)) {
 			return asImpl;
 		}
 
-		// Second Attempt
-		if (count == BIT_ONE) {
-			count = 0;
-		} else {
-			count = BIT_ONE;
-		}
-		
-		asImpl = asArray[count];
-		if (this.isAsActive(asImpl)) {
-			return asImpl;
-		}
+		// Second recursive Attempt
+		for (int i = 0; i < this.m3uaManagement.getMaxAsForRoute(); i++) {
+			count = count + 1;
+			if (count == this.m3uaManagement.getMaxAsForRoute()) {
+				// If count reaches same value as total As available for route,
+				// restart from 0
+				count = 0;
+			}
+			asImpl = asArray[count];
+			if (this.isAsActive(asImpl)) {
+				return asImpl;
+			}
 
+		}
 		return null;
 	}
 

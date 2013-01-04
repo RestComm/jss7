@@ -122,8 +122,6 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 	 */
 	private int maxSequenceNumber = MAX_SEQUENCE_NUMBER;
 
-	private int[] seqContrlVsSlsTable = null;
-
 	public M3UAManagementImpl(String name) {
 		this.name = name;
 		binding.setClassAttribute(CLASS_ATTRIBUTE);
@@ -223,21 +221,17 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 		fsmTicker = Executors.newSingleThreadScheduledExecutor();
 		fsmTicker.scheduleAtFixedRate(m3uaScheduler, 500, 500, TimeUnit.MILLISECONDS);
 
-		// Reset the Sequence Control Vs SLS Table
-		this.seqContrlVsSlsTable = new int[this.maxSequenceNumber];
-		this.resetSeqControlVsSlsTable();
-
-		logger.info("Started M3UAManagement");
-
 		for (FastList.Node<M3UAManagementEventListener> n = this.managementEventListeners.head(), end = this.managementEventListeners
 				.tail(); (n = n.getNext()) != end;) {
 			M3UAManagementEventListener m3uaManagementEventListener = n.getValue();
 			try {
 				m3uaManagementEventListener.onServiceStarted();
 			} catch (Throwable ee) {
-				logger.error("Exception while invoking onServiceStarted", ee);
+				logger.error("Exception while invoking M3UAManagementEventListener.onServiceStarted", ee);
 			}
 		}
+		
+		logger.info("Started M3UAManagement");
 	}
 
 	public void stop() throws Exception {
@@ -996,7 +990,7 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 	public void sendMessage(Mtp3TransferPrimitive mtp3TransferPrimitive) throws IOException {
 		ProtocolData data = this.parameterFactory.createProtocolData(mtp3TransferPrimitive.getOpc(),
 				mtp3TransferPrimitive.getDpc(), mtp3TransferPrimitive.getSi(), mtp3TransferPrimitive.getNi(),
-				mtp3TransferPrimitive.getMp(), this.seqContrlVsSlsTable[mtp3TransferPrimitive.getSls()],
+				mtp3TransferPrimitive.getMp(), mtp3TransferPrimitive.getSls(),
 				mtp3TransferPrimitive.getData());
 
 		PayloadData payload = (PayloadData) messageFactory.createMessage(MessageClass.TRANSFER_MESSAGES,
@@ -1012,18 +1006,4 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 		payload.setRoutingContext(asImpl.getRoutingContext());
 		asImpl.write(payload);
 	}
-
-	/**
-	 * regenerate the SLS table
-	 */
-	private void resetSeqControlVsSlsTable() {
-		int sls = 0;
-		for (int count = 0; count < this.maxSequenceNumber; count++) {
-			if (sls >= this.getRoutingLabelFormat().getMaxSls()) {
-				sls = 0;
-			}
-			this.seqContrlVsSlsTable[count] = sls++;
-		}
-	}
-
 }

@@ -111,8 +111,7 @@ public class AsImpl implements XMLSerializable, As {
 	private IPSPType ipspType = null;
 	private NetworkAppearance networkAppearance = null;
 
-	private int[] slsVsAspTable = null;
-	private int maxAsps = 0;
+	private final int[] slsVsAspTable = new int[256];
 
 	private int aspSlsMask = 0x07;
 	private int aspSlsShiftPlaces = 0x00;
@@ -360,45 +359,65 @@ public class AsImpl implements XMLSerializable, As {
 
 		RoutingLabelFormat routingLabelFormat = this.m3UAManagementImpl.getRoutingLabelFormat();
 
-		// TODO : Its assumed that 1 bit of SLS is always used for AS
-		// loadsharing. But what if there is no loadsharing among AS and all
-		// bits are to be used for ASP loadsharing?
-		this.maxAsps = (routingLabelFormat.getMaxSls() >> 1);
-
-		this.slsVsAspTable = new int[this.maxAsps];
-
-		if (this.m3UAManagementImpl.isUseLsbForLinksetSelection()) {
-			this.aspSlsShiftPlaces = 0x01;
-			switch (routingLabelFormat.getMaxSls()) {
-			case 256:
+		switch (this.m3UAManagementImpl.getMaxAsForRoute()) {
+		case 1:
+		case 2:
+			if (this.m3UAManagementImpl.isUseLsbForLinksetSelection()) {
 				this.aspSlsMask = 0xfe;
-				break;
-			case 32:
-				this.aspSlsMask = 0x1e;
-				break;
-			case 16:
-				this.aspSlsMask = 0x0e;
-				break;
-			default:
-				this.aspSlsMask = 0x0e;
-				break;
-			}
-		} else {
-			this.aspSlsShiftPlaces = 0x0;
-			switch (routingLabelFormat.getMaxSls()) {
-			case 256:
+				this.aspSlsShiftPlaces = 0x01;
+			} else {
 				this.aspSlsMask = 0x7f;
-				break;
-			case 32:
-				this.aspSlsMask = 0x0f;
-				break;
-			case 16:
-				this.aspSlsMask = 0x07;
-				break;
-			default:
-				this.aspSlsMask = 0x07;
-				break;
+				this.aspSlsShiftPlaces = 0x00;
 			}
+			break;
+		case 3:
+		case 4:
+			if (this.m3UAManagementImpl.isUseLsbForLinksetSelection()) {
+				this.aspSlsMask = 0xfc;
+				this.aspSlsShiftPlaces = 0x02;
+			} else {
+				this.aspSlsMask = 0x3f;
+				this.aspSlsShiftPlaces = 0x00;
+			}
+			break;
+		case 5:
+		case 6:
+		case 7:
+		case 8:
+			if (this.m3UAManagementImpl.isUseLsbForLinksetSelection()) {
+				this.aspSlsMask = 0xf8;
+				this.aspSlsShiftPlaces = 0x04;
+			} else {
+				this.aspSlsMask = 0x1f;
+				this.aspSlsShiftPlaces = 0x00;
+			}
+			break;
+		case 9:
+		case 10:
+		case 11:
+		case 12:
+		case 13:
+		case 14:
+		case 15:
+		case 16:
+			if (this.m3UAManagementImpl.isUseLsbForLinksetSelection()) {
+				this.aspSlsMask = 0xf0;
+				this.aspSlsShiftPlaces = 0x04;
+			} else {
+				this.aspSlsMask = 0x0f;
+				this.aspSlsShiftPlaces = 0x00;
+			}
+			break;
+		default:
+			if (this.m3UAManagementImpl.isUseLsbForLinksetSelection()) {
+				this.aspSlsMask = 0xfe;
+				this.aspSlsShiftPlaces = 0x01;
+			} else {
+				this.aspSlsMask = 0x7f;
+				this.aspSlsShiftPlaces = 0x00;
+			}
+			break;
+
 		}
 	}
 
@@ -530,8 +549,8 @@ public class AsImpl implements XMLSerializable, As {
 	protected void addAppServerProcess(AspImpl aspImpl) throws Exception {
 		aspImpl.setAs(this);
 		appServerProcs.add(aspImpl);
-
-		this.resetSlsVsAspTable();
+		
+		 this.resetSlsVsAspTable();
 	}
 
 	protected AspImpl removeAppServerProcess(String aspName) throws Exception {
@@ -580,7 +599,7 @@ public class AsImpl implements XMLSerializable, As {
 		if (aspPeerFSM != null) {
 			aspPeerFSM.cancel();
 		}
-
+		
 		this.resetSlsVsAspTable();
 
 		return aspImpl;
@@ -619,14 +638,9 @@ public class AsImpl implements XMLSerializable, As {
 			int aspIndex = (sls & this.aspSlsMask);
 			aspIndex = (aspIndex >> this.aspSlsShiftPlaces);
 
-			int aspNumber = this.slsVsAspTable[aspIndex];
-
 			for (int i = 0; i < this.appServerProcs.size(); i++) {
-				if (aspNumber >= this.appServerProcs.size()) {
-					aspNumber = 0;
-				}
-
-				AspImpl aspTemp = (AspImpl) this.appServerProcs.get(aspNumber++);
+				
+				AspImpl aspTemp = (AspImpl) this.appServerProcs.get(this.slsVsAspTable[aspIndex++]);
 
 				FSM aspFsm = null;
 
@@ -785,7 +799,7 @@ public class AsImpl implements XMLSerializable, As {
 
 	private void resetSlsVsAspTable() {
 		int aspNumber = 0;
-		for (int count = 0; count < this.maxAsps; count++) {
+		for (int count = 0; count < 256; count++) {
 			if (aspNumber >= this.appServerProcs.size()) {
 				aspNumber = 0;
 			}
