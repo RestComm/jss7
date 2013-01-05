@@ -45,7 +45,6 @@ import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
@@ -337,28 +336,15 @@ public class Client extends TestHarness {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.mobicents.protocols.ss7.map.api.MAPServiceListener#
-	 * onProviderErrorComponent(org.mobicents.protocols.ss7.map.api.MAPDialog,
-	 * java.lang.Long,
-	 * org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError)
-	 */
-	@Override
-	public void onProviderErrorComponent(MAPDialog mapDialog, Long invokeId, MAPProviderError providerError) {
-		logger.error(String.format("onProviderErrorComponent for Dialog=%d and invokeId=%d MAPProviderError=%s", mapDialog.getLocalDialogId(), invokeId,
-				providerError));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * org.mobicents.protocols.ss7.map.api.MAPServiceListener#onRejectComponent
 	 * (org.mobicents.protocols.ss7.map.api.MAPDialog, java.lang.Long,
 	 * org.mobicents.protocols.ss7.tcap.asn.comp.Problem)
 	 */
 	@Override
-	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem) {
-		logger.error(String.format("onRejectComponent for Dialog=%d and invokeId=%d Problem=%s", mapDialog.getLocalDialogId(), invokeId, problem));
+	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem, boolean isLocalOriginated) {
+		logger.error(String.format("onRejectComponent for Dialog=%d and invokeId=%d Problem=%s isLocalOriginated=%s", mapDialog.getLocalDialogId(), invokeId,
+				problem, isLocalOriginated));
 	}
 
 	/*
@@ -560,10 +546,10 @@ public class Client extends TestHarness {
 	 * org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer)
 	 */
 	@Override
-	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
+	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason,
 			ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
-		logger.error(String.format("onDialogReject for DialogId=%d MAPRefuseReason=%s MAPProviderError=%s ApplicationContextName=%s MAPExtensionContainer=%s",
-				mapDialog.getLocalDialogId(), refuseReason, providerError, alternativeApplicationContext, extensionContainer));
+		logger.error(String.format("onDialogReject for DialogId=%d MAPRefuseReason=%s ApplicationContextName=%s MAPExtensionContainer=%s",
+				mapDialog.getLocalDialogId(), refuseReason, alternativeApplicationContext, extensionContainer));
 	}
 
 	/*

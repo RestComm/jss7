@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.tcap.asn;
 import java.util.BitSet;
 
 import org.mobicents.protocols.asn.AsnException;
+import org.mobicents.protocols.asn.BitSetStrictLength;
 import org.mobicents.protocols.asn.Tag;
 
 /**
@@ -93,8 +94,8 @@ public interface DialogPortion extends Encodable {
 
 	public void setArbitrary(boolean arbitrary);
 
-	public BitSet getEncodeBitStringType();
+	public BitSetStrictLength getEncodeBitStringType() throws AsnException;
 
-	public void setEncodeBitStringType(BitSet data);
+	public void setEncodeBitStringType(BitSetStrictLength data);
 
 }

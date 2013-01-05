@@ -30,7 +30,6 @@ import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPDialogListener;
 import org.mobicents.protocols.ss7.cap.api.CAPMessage;
-import org.mobicents.protocols.ss7.cap.api.dialog.CAPComponentErrorReason;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPNoticeProblemDiagnostic;
@@ -186,7 +185,7 @@ public class EventTestHarness implements CAPDialogListener, CAPServiceCircuitSwi
 	}
 
 	@Override
-	public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem) {
+	public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem, boolean isLocalOriginated) {
 		this.logger.debug("onRejectComponent");
 		TestEvent te = TestEvent.createReceivedEvent(EventType.RejectComponent, capDialog, sequence++);
 		this.observerdEvents.add(te);
@@ -199,13 +198,6 @@ public class EventTestHarness implements CAPDialogListener, CAPServiceCircuitSwi
 			TestEvent te = TestEvent.createReceivedEvent(EventType.InvokeTimeout, capDialog, sequence++);
 			this.observerdEvents.add(te);
 		}
-	}
-
-	@Override
-	public void onProviderErrorComponent(CAPDialog capDialog, Long invokeId, CAPComponentErrorReason providerError) {
-		this.logger.debug("onProviderErrorComponent");
-		TestEvent te = TestEvent.createReceivedEvent(EventType.ProviderErrorComponent, capDialog, sequence++);
-		this.observerdEvents.add(te);
 	}
 
 	@Override

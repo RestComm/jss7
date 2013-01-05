@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,9 +20,6 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * 
- */
 package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.IOException;
@@ -32,6 +29,7 @@ import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 
 /**
  * @author baranowb
@@ -54,14 +52,14 @@ public class ApplicationContextNameImpl implements ApplicationContextName {
 			AsnInputStream localAis = ais.readSequenceStream();
 			int tag = localAis.readTag();
 			if (tag != Tag.OBJECT_IDENTIFIER || localAis.getTagClass() != Tag.CLASS_UNIVERSAL)
-				throw new ParseException("Error decoding ApplicationContextName: bad tag or tagClass, found tag=" + tag + ", tagClass="
-						+ localAis.getTagClass());
+				throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
+						"Error decoding ApplicationContextName: bad tag or tagClass, found tag=" + tag + ", tagClass=" + localAis.getTagClass());
 			this.oid = localAis.readObjectIdentifier();
-			
+
 		} catch (IOException e) {
-			throw new ParseException("IOException while decoding ApplicationContextName: " + e.getMessage(), e);
+			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "IOException while decoding ApplicationContextName: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException("AsnException while decoding ApplicationContextName: " + e.getMessage(), e);
+			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "AsnException while decoding ApplicationContextName: " + e.getMessage(), e);
 		}
 
 	}
@@ -73,10 +71,10 @@ public class ApplicationContextNameImpl implements ApplicationContextName {
 	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols
 	 * .asn.AsnOutputStream)
 	 */
-	public void encode(AsnOutputStream aos) throws ParseException {
+	public void encode(AsnOutputStream aos) throws EncodeException {
 		
 		if (this.oid == null)
-			throw new ParseException("Error while decoding ApplicationContextName: No OID value set");
+			throw new EncodeException("Error while decoding ApplicationContextName: No OID value set");
 		
 		try {
 			aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG);
@@ -87,9 +85,9 @@ public class ApplicationContextNameImpl implements ApplicationContextName {
 			aos.FinalizeContent(pos);
 			
 		} catch (IOException e) {
-			throw new ParseException("IOException while encoding ApplicationContextName: " + e.getMessage(), e);
+			throw new EncodeException("IOException while encoding ApplicationContextName: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException("IOException while encoding ApplicationContextName: " + e.getMessage(), e);
+			throw new EncodeException("IOException while encoding ApplicationContextName: " + e.getMessage(), e);
 		}
 
 	}

@@ -28,5 +28,5 @@ package org.mobicents.protocols.ss7.cap.api;
  * 
  */
 public enum CAPParsingComponentExceptionReason {
-	UnrecognizedOperation, MistypedParameter, LinkedResponseUnexpected , UnexpectedLinkedOperation;
+	UnrecognizedOperation, MistypedParameter;
 }

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,9 +20,6 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * 
- */
 package org.mobicents.protocols.ss7.tcap.asn.comp;
 
 import org.mobicents.protocols.asn.Tag;
@@ -34,11 +31,8 @@ import org.mobicents.protocols.ss7.tcap.asn.ParseException;
  */
 public enum ProblemType {
 
+	General(0), Invoke(1), ReturnResult(2), ReturnError(3);
 
-	
-	General(0),Invoke(1),ReturnResult(2),ReturnError(3);
-	
-	
 	private long typeTag = -1;
 	
 	public static final int _TAG_CLASS = Tag.CLASS_APPLICATION;
@@ -71,6 +65,6 @@ public enum ProblemType {
 			return ReturnError;
 		} 
 
-		throw new ParseException("Wrong value of type: " + t);
+		throw new ParseException(null, null, "Wrong value of type: " + t);
 	}
 }

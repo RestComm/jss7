@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,15 +20,13 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * 
- */
 package org.mobicents.protocols.ss7.tcap.asn.comp;
 
 import org.mobicents.protocols.asn.Tag;
 
 /**
  * @author baranowb
+ * @author sergey vetyutnev
  *
  */
 public interface Reject extends Component {
@@ -44,5 +42,13 @@ public interface Reject extends Component {
 
 	public Problem getProblem();
 	public void setProblem(Problem p);
+
+	/**
+	 * @return
+	 * true:  local originated Reject (rejecting a bad incoming primitive by a local side) 
+	 * false: remote originated Reject (rejecting a bad outgoing primitive by a peer) 
+	 */
+	public boolean isLocalOriginated();
+	public void setLocalOriginated(boolean p);
 	
 }

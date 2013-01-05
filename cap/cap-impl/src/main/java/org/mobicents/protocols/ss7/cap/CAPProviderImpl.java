@@ -43,7 +43,6 @@ import org.mobicents.protocols.ss7.cap.api.CAPParameterFactory;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPProvider;
 import org.mobicents.protocols.ss7.cap.api.CAPServiceBase;
-import org.mobicents.protocols.ss7.cap.api.dialog.CAPComponentErrorReason;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPDialogState;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
@@ -303,7 +302,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			loger.warn("onTCBegin: Received TCBeginIndication without application context name");
 
 			try {
-				this.fireTCAbort(tcBeginIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null, false);
+				this.fireTCAbort(tcBeginIndication.getDialog(), CAPGeneralAbortReason.UserSpecific, CAPUserAbortReason.abnormal_processing, false);
 			} catch (CAPException e) {
 				loger.error("Error while firing TC-U-ABORT. ", e);
 			}
@@ -325,7 +324,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			referenceNumber = ParseUserInfo(userInfo, tcBeginIndication.getDialog());
 			if (referenceNumber == null) {
 				try {
-					this.fireTCAbort(tcBeginIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null, false);
+					this.fireTCAbort(tcBeginIndication.getDialog(), CAPGeneralAbortReason.UserSpecific, CAPUserAbortReason.abnormal_processing, false);
 				} catch (CAPException e) {
 					loger.error("Error while firing TC-U-ABORT. ", e);
 				}
@@ -435,7 +434,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		if (capDialogImpl == null) {
 			loger.warn("CAP Dialog not found for Dialog Id " + tcapDialog.getLocalDialogId());
 			try {
-				this.fireTCAbort(tcContinueIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null, false);
+				this.fireTCAbort(tcContinueIndication.getDialog(), CAPGeneralAbortReason.UserSpecific, CAPUserAbortReason.abnormal_processing, false);
 			} catch (CAPException e) {
 				loger.error("Error while firing TC-U-ABORT. ", e);
 			}
@@ -469,13 +468,11 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 					if (acn == null) {
 						loger.warn("CAP Dialog is in InitialSent state but no application context name is received");
 						try {
-							this.fireTCAbort(tcContinueIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null,
+							this.fireTCAbort(tcContinueIndication.getDialog(), CAPGeneralAbortReason.UserSpecific, CAPUserAbortReason.abnormal_processing,
 									capDialogImpl.getReturnMessageOnError());
 						} catch (CAPException e) {
 							loger.error("Error while firing TC-U-ABORT. ", e);
 						}
-
-						// capDialogImpl.setNormalDialogShutDown();
 
 						this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
 						capDialogImpl.setState(CAPDialogState.Expunged);
@@ -488,13 +485,11 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 						loger.warn(String.format("Received first TC-CONTINUE. But the received ACN is not the equal to the original ACN"));
 
 						try {
-							this.fireTCAbort(tcContinueIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null,
+							this.fireTCAbort(tcContinueIndication.getDialog(), CAPGeneralAbortReason.UserSpecific, CAPUserAbortReason.abnormal_processing,
 									capDialogImpl.getReturnMessageOnError());
 						} catch (CAPException e) {
 							loger.error("Error while firing TC-U-ABORT. ", e);
 						}
-
-						// capDialogImpl.setNormalDialogShutDown();
 
 						this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
 						capDialogImpl.setState(CAPDialogState.Expunged);
@@ -556,11 +551,6 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
 		if (capDialogImpl == null) {
 			loger.warn("CAP Dialog not found for Dialog Id " + tcapDialog.getLocalDialogId());
-			try {
-				this.fireTCAbort(tcEndIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null, false);
-			} catch (CAPException e) {
-				loger.error("Error while firing TC-U-ABORT. ", e);
-			}
 			return;
 		}
 		capDialogImpl.tcapMessageType = MessageType.End;
@@ -597,13 +587,6 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
 					if (acn == null) {
 						loger.warn("CAP Dialog is in InitialSent state but no application context name is received");
-						try {
-							this.fireTCAbort(tcEndIndication.getDialog(), CAPGeneralAbortReason.BadReceivedData, null, capDialogImpl.getReturnMessageOnError());
-						} catch (CAPException e) {
-							loger.error("Error while firing TC-U-ABORT. ", e);
-						}
-
-						// capDialogImpl.setNormalDialogShutDown();
 
 						this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
 						capDialogImpl.setState(CAPDialogState.Expunged);
@@ -751,7 +734,8 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		capDialogImpl.tcapMessageType = MessageType.Abort;
 
 		synchronized (capDialogImpl) {
-			CAPGeneralAbortReason generalReason = CAPGeneralAbortReason.BadReceivedData;
+			CAPGeneralAbortReason generalReason = null;
+//			CAPGeneralAbortReason generalReason = CAPGeneralAbortReason.BadReceivedData;
 			CAPUserAbortReason userReason = null;
 
 			if (tcUserAbortIndication.IsAareApdu()) {
@@ -805,7 +789,6 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 				}
 			}
 
-//			capDialogImpl.setNormalDialogShutDown();
 			this.deliverDialogUserAbort(capDialogImpl, generalReason, userReason);
 
 			capDialogImpl.setState(CAPDialogState.Expunged);
@@ -831,7 +814,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		synchronized (capDialogImpl) {
 			this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.MessageCannotBeDeliveredToThePeer);
 
-			if (capDialogImpl.getState() == CAPDialogState.InitialReceived) {
+			if (capDialogImpl.getState() == CAPDialogState.InitialSent) {
 //				capDialogImpl.setNormalDialogShutDown();
 				capDialogImpl.setState(CAPDialogState.Expunged);
 			}
@@ -870,37 +853,16 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 				linkedId = comp.getLinkedId();
 				
 				// Checking if the invokeId is not duplicated
-				if (!this.getTCAPProvider().getPreviewMode() && !capDialogImpl.addIncomingInvokeId(invokeId)) {
-					this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.DuplicatedInvokeIdReceived);
-					
-					Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
-					problem.setInvokeProblemType(InvokeProblemType.DuplicateInvokeID);
-					capDialogImpl.sendRejectComponent(null, problem);
-
-					return;
-				}
-
 				if (linkedId != null) {
 					// linkedId exists Checking if the linkedId exists
-					if (comp.getLinkedInvoke() == null) {
-						this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.UnknownLinkedIdReceived);
-
-						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
-						problem.setInvokeProblemType(InvokeProblemType.UnrechognizedLinkedID);
-						capDialogImpl.sendRejectComponent(invokeId, problem);
-
-						return;
-					}
-
 					linkedInvoke = comp.getLinkedInvoke();
 
 					long[] lstInv = perfSer.getLinkedOperationList(linkedInvoke.getOperationCode().getLocalOperationCode());
 					if (lstInv == null) {
-						this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.LinkedResponseUnexpected);
-
 						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
 						problem.setInvokeProblemType(InvokeProblemType.LinkedResponseUnexpected);
 						capDialogImpl.sendRejectComponent(invokeId, problem);
+						perfSer.deliverRejectComponent(capDialogImpl, invokeId, problem, true);
 
 						return;
 					}
@@ -915,11 +877,10 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 						}
 					}
 					if (!found) {
-						this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.UnexpectedLinkedOperation);
-
 						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
 						problem.setInvokeProblemType(InvokeProblemType.UnexpectedLinkedOperation);
 						capDialogImpl.sendRejectComponent(invokeId, problem);
+						perfSer.deliverRejectComponent(capDialogImpl, invokeId, problem, true);
 
 						return;
 					}
@@ -929,11 +890,10 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
 			case ReturnResult: {
 				// ReturnResult is not supported by CAMEL
-				this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalComponentReceivedFromThePeer);
-				
-				Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
-				problem.setInvokeProblemType(InvokeProblemType.UnrecognizedOperation);
+				Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnResult);
+				problem.setReturnResultProblemType(ReturnResultProblemType.ReturnResultUnexpected);
 				capDialogImpl.sendRejectComponent(null, problem);
+				perfSer.deliverRejectComponent(capDialogImpl, invokeId, problem, true);
 
 				return;
 			}
@@ -953,12 +913,11 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 					errorCode = comp.getErrorCode().getLocalErrorCode();
 				if (errorCode < CAPErrorCode.minimalCodeValue || errorCode > CAPErrorCode.maximumCodeValue) {
 					// Not Local error code and not CAP error code received
-					perfSer.deliverProviderErrorComponent(capDialogImpl, invokeId, CAPComponentErrorReason.InvalidErrorComponentReceived);
-
 					Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnError);
 					problem.setReturnErrorProblemType(ReturnErrorProblemType.UnrecognizedError);
 					capDialogImpl.sendRejectComponent(invokeId, problem);
-					
+					perfSer.deliverRejectComponent(capDialogImpl, invokeId, problem, true);
+
 					return;
 				}
 
@@ -972,11 +931,10 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 					}
 				} catch ( CAPParsingComponentException e) {
 					// Failed when parsing the component - send TC-U-REJECT
-					perfSer.deliverProviderErrorComponent(capDialogImpl, invokeId, CAPComponentErrorReason.InvalidErrorComponentReceived);
-
 					Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnError);
 					problem.setReturnErrorProblemType(ReturnErrorProblemType.MistypedParameter);
 					capDialogImpl.sendRejectComponent(invokeId, problem);
+					perfSer.deliverRejectComponent(capDialogImpl, invokeId, problem, true);
 
 					return;
 				}
@@ -987,80 +945,51 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
 			case Reject: {
 				Reject comp = (Reject) c;
-				perfSer.deliverRejectComponent(capDialogImpl, comp.getInvokeId(), comp.getProblem());
-				
+				perfSer.deliverRejectComponent(capDialogImpl, comp.getInvokeId(), comp.getProblem(), comp.isLocalOriginated());
+
 				return;
 			}
-			
+
 			default:
 				return;
 			}
-			
+
 			try {
-				
+
 				perfSer.processComponent(compType, oc, parameter, capDialogImpl, invokeId, linkedId, linkedInvoke);
-				
+
 			} catch (CAPParsingComponentException e) {
-				
+
 				loger.error("CAPParsingComponentException when parsing components: " + e.getReason().toString() + " - " + e.getMessage(), e);
-				
+
 				switch (e.getReason()) {
 				case UnrecognizedOperation:
 					// Component does not supported - send TC-U-REJECT
 					if (compType == ComponentType.Invoke) {
-						this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.UnrecognizedOperation);
-
 						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
 						problem.setInvokeProblemType(InvokeProblemType.UnrecognizedOperation);
 						capDialogImpl.sendRejectComponent(invokeId, problem);
+						perfSer.deliverRejectComponent(capDialogImpl, invokeId, problem, true);
 					} else {
-						perfSer.deliverProviderErrorComponent(capDialogImpl, invokeId, CAPComponentErrorReason.UnrecognizedOperation);
-						
 						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnResult);
 						problem.setReturnResultProblemType(ReturnResultProblemType.MistypedParameter);
 						capDialogImpl.sendRejectComponent(invokeId, problem);
+						perfSer.deliverRejectComponent(capDialogImpl, invokeId, problem, true);
 					}
 					break;
 
 				case MistypedParameter:
 					// Failed when parsing the component - send TC-U-REJECT
 					if (compType == ComponentType.Invoke) {
-						this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalComponentReceivedFromThePeer);
-						
 						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
 						problem.setInvokeProblemType(InvokeProblemType.MistypedParameter);
 						capDialogImpl.sendRejectComponent(invokeId, problem);
+						perfSer.deliverRejectComponent(capDialogImpl, invokeId, problem, true);
 					} else {
-						if (compType == ComponentType.Reject)
-							perfSer.deliverProviderErrorComponent(capDialogImpl, invokeId, CAPComponentErrorReason.InvalidRejectReceived);
-						else
-							perfSer.deliverProviderErrorComponent(capDialogImpl, invokeId, CAPComponentErrorReason.InvalidReturnResultComponentReceived);
-						
 						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnResult);
 						problem.setReturnResultProblemType(ReturnResultProblemType.MistypedParameter);
 						capDialogImpl.sendRejectComponent(invokeId, problem);
-					}
-					break;
-
-				case LinkedResponseUnexpected:
-					// Failed when parsing the component - send TC-U-REJECT
-					if (compType == ComponentType.Invoke) {
-						this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.LinkedResponseUnexpected);
-						
-						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
-						problem.setInvokeProblemType(InvokeProblemType.LinkedResponseUnexpected);
-						capDialogImpl.sendRejectComponent(invokeId, problem);
-					}
-					break;
-
-				case UnexpectedLinkedOperation:
-					// Failed when parsing the component - send TC-U-REJECT
-					if (compType == ComponentType.Invoke) {
-						this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.UnexpectedLinkedOperation);
-						
-						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
-						problem.setInvokeProblemType(InvokeProblemType.UnexpectedLinkedOperation);
-						capDialogImpl.sendRejectComponent(invokeId, problem);
+						perfSer.deliverRejectComponent(capDialogImpl, invokeId, problem, true);
 					}
 					break;
 				}
@@ -1288,12 +1217,12 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			tcUserAbort.setUserInformation(userInformation);
 			break;
 
-		case DialogRefused:
-			if (tcapDialog.getApplicationContextName() != null) {
-				tcUserAbort.setDialogServiceUserType(DialogServiceUserType.NoReasonGive);
-				tcUserAbort.setApplicationContextName(tcapDialog.getApplicationContextName());
-			}
-			break;
+//		case DialogRefused:
+//			if (tcapDialog.getApplicationContextName() != null) {
+//				tcUserAbort.setDialogServiceUserType(DialogServiceUserType.NoReasonGive);
+//				tcUserAbort.setApplicationContextName(tcapDialog.getApplicationContextName());
+//			}
+//			break;
 
 		default:
 			break;

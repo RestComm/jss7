@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,10 +20,9 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * 
- */
 package org.mobicents.protocols.ss7.tcap.asn;
+
+import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 
 /**
  * @author baranowb
@@ -54,6 +53,6 @@ public enum ResultType {
 			return RejectedPermanent;
 		}
 
-		throw new ParseException("Wrong value of response: " + t);
+		throw new ParseException(PAbortCauseType.IncorrectTxPortion, null, "Wrong value of response: " + t);
 	}
 }

@@ -57,7 +57,7 @@ public class DialogResponseAPDUTest {
 	}
 	
 	@Test(groups = { "functional.encode","functional.decode" })
-	public void testResponseAPDU() throws IOException, ParseException, AsnException {
+	public void testResponseAPDU() throws Exception {
 
 		byte[] b = getData();
 		AsnInputStream asnIs = new AsnInputStream(b);

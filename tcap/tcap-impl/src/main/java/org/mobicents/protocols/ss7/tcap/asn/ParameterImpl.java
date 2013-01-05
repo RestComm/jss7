@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,9 +20,6 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * 
- */
 package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.IOException;
@@ -33,7 +30,10 @@ import java.util.List;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.ss7.tcap.asn.comp.GeneralProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ProblemType;
 
 /**
  * @author baranowb
@@ -208,9 +208,9 @@ public class ParameterImpl implements Parameter {
 			}
 
 		} catch (IOException e) {
-			throw new ParseException("IOException while decoding the parameter: " + e.getMessage(), e);
+			throw new ParseException(null, GeneralProblemType.BadlyStructuredComponent, "IOException while decoding the parameter: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException("AsnException while decoding the parameter: " + e.getMessage(), e);
+			throw new ParseException(null, GeneralProblemType.BadlyStructuredComponent, "AsnException while decoding the parameter: " + e.getMessage(), e);
 		}
 	}
 
@@ -221,9 +221,9 @@ public class ParameterImpl implements Parameter {
 	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols
 	 * .asn.AsnOutputStream)
 	 */
-	public void encode(AsnOutputStream aos) throws ParseException {
+	public void encode(AsnOutputStream aos) throws EncodeException {
 		if (data == null && parameters == null) {
-			throw new ParseException("Parameter data not set.");
+			throw new EncodeException("Parameter data not set.");
 		}
 
 		try {
@@ -243,9 +243,9 @@ public class ParameterImpl implements Parameter {
 				aos.writeLength(data.length);
 			aos.write(data);
 		} catch (IOException e) {
-			throw new ParseException(e);
+			throw new EncodeException(e);
 		} catch (AsnException e) {
-			throw new ParseException(e);
+			throw new EncodeException(e);
 		}
 	}
 

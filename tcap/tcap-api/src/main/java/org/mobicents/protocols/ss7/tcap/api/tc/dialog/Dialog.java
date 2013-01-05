@@ -36,9 +36,10 @@ import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 
 /**
- * Inteface for class representing Dialog/Transaction.
+ * Interface for class representing Dialog/Transaction.
  * 
  * @author baranowb
+ * @author sergey vetyutnev
  * 
  */
 public interface Dialog {
@@ -155,6 +156,15 @@ public interface Dialog {
 	 * @throws TCAPSendException
 	 */
 	public void sendComponent(Component componentRequest) throws TCAPSendException;
+
+	/**
+	 * If a TCAP user will not answer to an incoming Invoke
+	 * with Response, Error or Reject components
+	 * it should invoke this method to remove the incoming Invoke from a pending incoming Invokes list 
+	 * 
+	 * @param invokeId
+	 */
+	public void processInvokeWithoutAnswer(Long invokeId);
 
 	/**
 	 * Send initial primitive for Structured dialog.

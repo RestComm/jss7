@@ -42,7 +42,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.TCEndMessage;
 public class TcEndTest  {
 	
 	@Test(groups = { "functional.encode","functional.decode" })
-	public void testTCEndMessage_No_Dialog() throws IOException, ParseException {
+	public void testTCEndMessage_No_Dialog() throws IOException, ParseException, EncodeException {
 
 		//no idea how to check rest...?
 		
@@ -177,7 +177,7 @@ public class TcEndTest  {
 	}
 
 	@Test(groups = { "functional.encode","functional.decode" })
-	public void testTCEndMessage_No_Component() throws IOException, ParseException {
+	public void testTCEndMessage_No_Component() throws IOException, EncodeException, ParseException {
 
 		
 		
@@ -289,7 +289,7 @@ public class TcEndTest  {
 	}
 	
 	@Test(groups = { "functional.encode","functional.decode" })
-	public void testTCEndMessage_No_Nothing() throws IOException, ParseException {
+	public void testTCEndMessage_No_Nothing() throws IOException, EncodeException, ParseException {
 
 		
 		
@@ -334,7 +334,7 @@ public class TcEndTest  {
 	}
 	
 	@Test(groups = { "functional.encode","functional.decode" })
-	public void testTCEndMessage_All() throws IOException, ParseException {
+	public void testTCEndMessage_All() throws IOException, EncodeException, ParseException {
 
 		
 		

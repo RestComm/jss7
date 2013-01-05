@@ -31,7 +31,6 @@ import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPProvider;
 import org.mobicents.protocols.ss7.cap.api.CAPServiceBase;
 import org.mobicents.protocols.ss7.cap.api.CAPServiceListener;
-import org.mobicents.protocols.ss7.cap.api.dialog.CAPComponentErrorReason;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
@@ -162,21 +161,15 @@ public abstract class CAPServiceBaseImpl implements CAPServiceBase {
 		}
 	}
 
-	protected void deliverRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem) {
+	protected void deliverRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem, boolean isLocalOriginated) {
 		for (CAPServiceListener serLis : this.serviceListeners) {
-			serLis.onRejectComponent(capDialog, invokeId, problem);
+			serLis.onRejectComponent(capDialog, invokeId, problem, isLocalOriginated);
 		}
 	}
 
 	protected void deliverInvokeTimeout(CAPDialog capDialog, Invoke invoke) {
 		for (CAPServiceListener serLis : this.serviceListeners) {
 			serLis.onInvokeTimeout(capDialog, invoke.getInvokeId());
-		}
-	}
-
-	protected void deliverProviderErrorComponent(CAPDialog mapDialog, Long invokeId, CAPComponentErrorReason providerError) {
-		for (CAPServiceListener serLis : this.serviceListeners) {
-			serLis.onProviderErrorComponent(mapDialog, invokeId, providerError);
 		}
 	}
 }

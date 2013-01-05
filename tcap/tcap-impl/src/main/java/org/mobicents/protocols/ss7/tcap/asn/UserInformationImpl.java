@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,9 +20,6 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * 
- */
 package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.IOException;
@@ -30,8 +27,10 @@ import java.io.IOException;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.BitSetStrictLength;
 import org.mobicents.protocols.asn.External;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 
 /**
  * <p>
@@ -51,7 +50,9 @@ import org.mobicents.protocols.asn.Tag;
  * @author amit bhayani
  * 
  */
-public class UserInformationImpl extends External implements UserInformation {
+public class UserInformationImpl implements UserInformation {
+	
+	private External ext = new External();
 
 	/*
 	 * (non-Javadoc)
@@ -68,11 +69,11 @@ public class UserInformationImpl extends External implements UserInformation {
 			if (tag != Tag.EXTERNAL || localAis.getTagClass() != Tag.CLASS_UNIVERSAL)
 				throw new AsnException("Error decoding UserInformation.sequence: wrong tag or tag class: tag=" + tag + ", tagClass=" + localAis.getTagClass());
 
-			super.decode(localAis);
+			ext.decode(localAis);
 		} catch (IOException e) {
-			throw new ParseException("IOException when decoding UserInformation: " + e.getMessage(), e);
+			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "IOException when decoding UserInformation: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException("AsnException when decoding UserInformation: " + e.getMessage(), e);
+			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "AsnException when decoding UserInformation: " + e.getMessage(), e);
 		}
 	}
 
@@ -82,18 +83,128 @@ public class UserInformationImpl extends External implements UserInformation {
 	 * @see org.mobicents.protocols.asn.External#encode(org.mobicents.protocols.asn.AsnOutputStream)
 	 */
 	
-	public void encode(AsnOutputStream aos) throws ParseException {
+	public void encode(AsnOutputStream aos) throws EncodeException {
 
 		try {
 			aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG);
 			int pos = aos.StartContentDefiniteLength();
 
-			super.encode(aos);
+			ext.encode(aos);
 			
 			aos.FinalizeContent(pos);
 			
 		} catch (AsnException e) {
-			throw new ParseException("AsnException when encoding UserInformation: " + e.getMessage(), e);
+			throw new EncodeException("AsnException when encoding UserInformation: " + e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public byte[] getEncodeType() throws AsnException {
+		return ext.getEncodeType();
+	}
+
+	@Override
+	public void setEncodeType(byte[] data) {
+		ext.setEncodeType(data);
+	}
+
+	@Override
+	public BitSetStrictLength getEncodeBitStringType() throws AsnException {
+		return ext.getEncodeBitStringType();
+	}
+
+	@Override
+	public void setEncodeBitStringType(BitSetStrictLength data) {
+		ext.setEncodeBitStringType(data);
+	}
+
+	@Override
+	public boolean isOid() {
+		return ext.isOid();
+	}
+
+	@Override
+	public void setOid(boolean oid) {
+		ext.setOid(oid);
+	}
+
+	@Override
+	public boolean isInteger() {
+		return ext.isInteger();
+	}
+
+	@Override
+	public void setInteger(boolean integer) {
+		ext.setInteger(integer);
+	}
+
+	@Override
+	public boolean isObjDescriptor() {
+		return ext.isObjDescriptor();
+	}
+
+	@Override
+	public void setObjDescriptor(boolean objDescriptor) {
+		ext.setObjDescriptor(objDescriptor);
+	}
+
+	@Override
+	public long[] getOidValue() {
+		return ext.getOidValue();
+	}
+
+	@Override
+	public void setOidValue(long[] oidValue) {
+		ext.setOidValue(oidValue);
+	}
+
+	@Override
+	public long getIndirectReference() {
+		return ext.getIndirectReference();
+	}
+
+	@Override
+	public void setIndirectReference(long indirectReference) {
+		ext.setIndirectReference(indirectReference);
+	}
+
+	@Override
+	public String getObjDescriptorValue() {
+		return ext.getObjDescriptorValue();
+	}
+
+	@Override
+	public void setObjDescriptorValue(String objDescriptorValue) {
+		ext.setObjDescriptorValue(objDescriptorValue);
+	}
+
+	@Override
+	public boolean isAsn() {
+		return ext.isAsn();
+	}
+
+	@Override
+	public void setAsn(boolean asn) {
+		ext.setAsn(asn);
+	}
+
+	@Override
+	public boolean isOctet() {
+		return ext.isOctet();
+	}
+
+	@Override
+	public void setOctet(boolean octet) {
+		ext.setOctet(octet);
+	}
+
+	@Override
+	public boolean isArbitrary() {
+		return ext.isArbitrary();
+	}
+
+	@Override
+	public void setArbitrary(boolean arbitrary) {
+		ext.setArbitrary(arbitrary);
 	}
 }

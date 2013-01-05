@@ -1,19 +1,19 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
- * 
+ *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; either version 2.1 of
  * the License, or (at your option) any later version.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
@@ -42,6 +42,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
  * @author baranowb
+ * @author sergey vetyutnev
  *
  */
 public class Client extends EventTestHarness{
@@ -136,5 +137,29 @@ public class Client extends EventTestHarness{
 		invoke.setParameter(pm);
 		
 		return invoke;
+	}
+
+	public void sendInvokeSet(Long[] lstInvokeId) throws Exception {
+//		System.err.println(this+" T["+System.currentTimeMillis()+"]send BEGIN");
+//		ApplicationContextName acn = this.tcapProvider.getDialogPrimitiveFactory().createApplicationContextName(_ACN_);
+//		TCBeginRequest tcbr = this.tcapProvider.getDialogPrimitiveFactory().createBegin(this.dialog);
+//		tcbr.setApplicationContextName(acn);
+//		
+//		GlobalTitle gt = GlobalTitle.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.INTERNATIONAL, "93702994006");
+//		((DialogImpl) this.dialog).setRemoteAddress(new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, gt, 8));
+
+		for (Long invokeId : lstInvokeId) {
+			Invoke invoke = this.tcapProvider.getComponentPrimitiveFactory().createTCInvokeRequest();
+			invoke.setInvokeId(invokeId);
+			OperationCode opCode = this.tcapProvider.getComponentPrimitiveFactory().createOperationCode();
+			opCode.setLocalOperationCode(0L);
+			invoke.setOperationCode(opCode);
+			this.dialog.sendComponent(invoke);
+		}
+
+//		this.observerdEvents.add(TestEvent.createSentEvent(EventType.Begin, tcbr, sequence++));
+//		this.dialog.send(tcbr);
+		
+		this.sendBegin();
 	}
 }

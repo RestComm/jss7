@@ -59,8 +59,8 @@ public class TCUnidentifiedMessage implements Encodable {
 		return destinationTransactionId;
 	}
 
-	public void encode(AsnOutputStream aos) throws ParseException {
-		throw new ParseException("Not Supported");
+	public void encode(AsnOutputStream aos) throws EncodeException {
+		throw new EncodeException("Not Supported");
 	}
 
 	public void decode(AsnInputStream ais) throws ParseException {

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,9 +20,6 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * 
- */
 package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.IOException;
@@ -36,6 +33,7 @@ import org.mobicents.protocols.ss7.tcap.asn.DialogAPDUType;
 import org.mobicents.protocols.ss7.tcap.asn.ParseException;
 import org.mobicents.protocols.ss7.tcap.asn.ProtocolVersion;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
+import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 
 /**
  * @author baranowb
@@ -149,23 +147,23 @@ public class DialogUniAPDUImpl implements DialogUniAPDU {
 
 			// now there is mandatory part
 			if (tag != ApplicationContextName._TAG || localAis.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
-				throw new ParseException("Error decoding DialogUniAPDU.application-context-name: bad tag or tagClass, found tag=" + tag + ", tagClass="
-						+ localAis.getTagClass());
+				throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
+						"Error decoding DialogUniAPDU.application-context-name: bad tag or tagClass, found tag=" + tag + ", tagClass=" + localAis.getTagClass());
 			this.acn = TcapFactory.createApplicationContextName(localAis);
 
 			// optional sequence.
 			if (localAis.available() > 0) {
 				tag = localAis.readTag();
 				if (tag != UserInformation._TAG || localAis.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
-					throw new ParseException("Error decoding DialogUniAPDU.user-information: bad tag or tagClass, found tag=" + tag + ", tagClass="
-							+ localAis.getTagClass());
+					throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
+							"Error decoding DialogUniAPDU.user-information: bad tag or tagClass, found tag=" + tag + ", tagClass=" + localAis.getTagClass());
 				this.ui = TcapFactory.createUserInformation(localAis);
 			}
 			
 		} catch (IOException e) {
-			throw new ParseException("IOException while decoding DialogUniAPDU: " + e.getMessage(), e);
+			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "IOException while decoding DialogUniAPDU: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException("AsnException while decoding DialogUniAPDU: " + e.getMessage(), e);
+			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "AsnException while decoding DialogUniAPDU: " + e.getMessage(), e);
 		}
 	}
 
@@ -176,10 +174,10 @@ public class DialogUniAPDUImpl implements DialogUniAPDU {
 	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols
 	 * .asn.AsnOutputStream)
 	 */
-	public void encode(AsnOutputStream aos) throws ParseException {
+	public void encode(AsnOutputStream aos) throws EncodeException {
 
 		if (acn == null)
-			throw new ParseException("Error encoding DialogUniAPDU: Application Context Name must not be null");
+			throw new EncodeException("Error encoding DialogUniAPDU: Application Context Name must not be null");
 		
 		try {
 			
@@ -198,7 +196,7 @@ public class DialogUniAPDUImpl implements DialogUniAPDU {
 			aos.FinalizeContent(pos);
 
 		} catch (AsnException e) {
-			throw new ParseException("AsnException while encoding DialogUniAPDU: " + e.getMessage(), e);
+			throw new EncodeException("AsnException while encoding DialogUniAPDU: " + e.getMessage(), e);
 		}
 	}
 }

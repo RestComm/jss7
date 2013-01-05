@@ -31,6 +31,7 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
+import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCEndMessage;
 
 /**
@@ -130,8 +131,8 @@ public class TCEndMessageImpl implements TCEndMessage {
 
 			int tag = localAis.readTag();
 			if (tag != _TAG_DTX || localAis.getTagClass() != Tag.CLASS_APPLICATION)
-				throw new ParseException("Error decoding TC-End: Expected DestinationTransactionId, found tag: " + tag);
-//			this.destinationTransactionId = Utils.readTransactionId(localAis);
+				throw new ParseException(PAbortCauseType.IncorrectTxPortion, null, "Error decoding TC-End: Expected DestinationTransactionId, found tag: "
+						+ tag);
 			this.destinationTransactionId = localAis.readOctetString();
 
 			while (true) {
@@ -140,7 +141,7 @@ public class TCEndMessageImpl implements TCEndMessage {
 				
 				tag = localAis.readTag();
 				if (localAis.isTagPrimitive() || localAis.getTagClass() != Tag.CLASS_APPLICATION)
-					throw new ParseException(
+					throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
 							"Error decoding TC-End: DialogPortion and Component portion must be constructive and has tag class CLASS_APPLICATION");
 				
 				switch(tag) {
@@ -166,14 +167,15 @@ public class TCEndMessageImpl implements TCEndMessage {
 					break;
 					
 				default:
-					throw new ParseException("Error decoding TC-End: DialogPortion and Componebt parsing: bad tag - " + tag);
+					throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
+							"Error decoding TC-End: DialogPortion and Componebt parsing: bad tag - " + tag);
 				}
 			}
 
 		} catch (IOException e) {
-			throw new ParseException("IOException while decoding TC-End: " + e.getMessage(), e);
+			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "IOException while decoding TC-End: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException("AsnException while decoding TC-End: " + e.getMessage(), e);
+			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "AsnException while decoding TC-End: " + e.getMessage(), e);
 		}
 
 	}
@@ -185,16 +187,12 @@ public class TCEndMessageImpl implements TCEndMessage {
 	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols
 	 * .asn.AsnOutputStream)
 	 */
-	public void encode(AsnOutputStream aos) throws ParseException {
-		
-//		if (this.destinationTransactionId == null)
-//			throw new ParseException("Error while encoding TC-End: destinationTransactionId must not be null");
-		
+	public void encode(AsnOutputStream aos) throws EncodeException {
+
 		try {
 			aos.writeTag(Tag.CLASS_APPLICATION, false, _TAG);
 			int pos = aos.StartContentDefiniteLength();
 
-//			Utils.writeTransactionId(aos, this.destinationTransactionId, Tag.CLASS_APPLICATION, _TAG_DTX);
 			aos.writeOctetString(Tag.CLASS_APPLICATION, _TAG_DTX, this.destinationTransactionId);
 
 			if (this.dp != null)
@@ -212,9 +210,9 @@ public class TCEndMessageImpl implements TCEndMessage {
 			aos.FinalizeContent(pos);
 			
 		} catch (IOException e) {
-			throw new ParseException("IOException while encoding TC-End: " + e.getMessage(), e);
+			throw new EncodeException("IOException while encoding TC-End: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException("AsnException while encoding TC-End: " + e.getMessage(), e);
+			throw new EncodeException("AsnException while encoding TC-End: " + e.getMessage(), e);
 		}
 
 	}

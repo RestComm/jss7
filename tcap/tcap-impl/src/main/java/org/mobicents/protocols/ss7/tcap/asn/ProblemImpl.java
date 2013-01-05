@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,9 +20,6 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * 
- */
 package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.IOException;
@@ -180,56 +177,56 @@ public class ProblemImpl implements Problem {
 				break;
 			default:
 				// should not happen
-				throw new ParseException();
+				throw new ParseException(null, GeneralProblemType.MistypedComponent);
 			}
-			
+
 		} catch (IOException e) {
-			throw new ParseException("IOException while decoding Problem: " + e.getMessage(), e);
+			throw new ParseException(null, GeneralProblemType.BadlyStructuredComponent, "IOException while decoding Problem: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException("AsnException while decoding Problem: " + e.getMessage(), e);
+			throw new ParseException(null, GeneralProblemType.BadlyStructuredComponent, "AsnException while decoding Problem: " + e.getMessage(), e);
 		}
 
 	}
 
-	public void encode(AsnOutputStream aos) throws ParseException {
+	public void encode(AsnOutputStream aos) throws EncodeException {
 		
 		try {
 			
 			switch (type) {
 			case General:
 				if(this.generalProblemType == null)
-					throw new ParseException("Problem Type is General, no specific type set");
+					throw new EncodeException("Problem Type is General, no specific type set");
 				
 				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, (int) type.getTypeTag(), this.generalProblemType.getType());
 				break;
 				
 			case Invoke:
 				if(this.invokeProblemType == null)
-					throw new ParseException("Problem Type is Invoke, no specific type set");
+					throw new EncodeException("Problem Type is Invoke, no specific type set");
 				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, (int) type.getTypeTag(), this.invokeProblemType.getType());
 				break;
 				
 			case ReturnError:
 				if(this.returnErrorProblemType == null)
-					throw new ParseException("Problem Type is ReturnError, no specific type set");
+					throw new EncodeException("Problem Type is ReturnError, no specific type set");
 				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, (int) type.getTypeTag(), this.returnErrorProblemType.getType());
 				break;
 				
 			case ReturnResult:
 				if(this.returnResultProblemType == null)
-					throw new ParseException("Problem Type is Result, no specific type set");
+					throw new EncodeException("Problem Type is Result, no specific type set");
 				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, (int) type.getTypeTag(), this.returnResultProblemType.getType());
 				break;
 				
 			default:
 				// should not happen
-				throw new ParseException();
+				throw new EncodeException();
 			}
 			
 		} catch (IOException e) {
-			throw new ParseException("IOException while encoding Problem: " + e.getMessage(), e);
+			throw new EncodeException("IOException while encoding Problem: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException("AsnException while encoding Problem: " + e.getMessage(), e);
+			throw new EncodeException("AsnException while encoding Problem: " + e.getMessage(), e);
 		}
 
 	}

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,32 +22,59 @@
 
 package org.mobicents.protocols.ss7.tcap.asn;
 
-import org.mobicents.protocols.asn.AsnException;
+import org.mobicents.protocols.ss7.tcap.asn.comp.GeneralProblemType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 
 /**
  * Thrown to indicate problems at parse time.
  * @author baranowb
+ * @author sergey vetyutnev
  *
  */
-public class ParseException extends AsnException {
+public class ParseException extends Exception {
 
-	public ParseException() {
-		// TODO Auto-generated constructor stub
+	private GeneralProblemType problem;
+	private PAbortCauseType pAbortCauseType;
+	private Long invokeId;
+
+	public ParseException(PAbortCauseType pAbortCauseType, GeneralProblemType problem) {
+		this.problem = problem;
+		this.pAbortCauseType = pAbortCauseType;
 	}
 
-	public ParseException(String message) {
+	public ParseException(PAbortCauseType pAbortCauseType, GeneralProblemType problem, String message) {
 		super(message);
-		// TODO Auto-generated constructor stub
+		this.problem = problem;
+		this.pAbortCauseType = pAbortCauseType;
 	}
 
-	public ParseException(Throwable cause) {
+	public ParseException(PAbortCauseType pAbortCauseType, GeneralProblemType problem, Throwable cause) {
 		super(cause);
-		// TODO Auto-generated constructor stub
+		this.problem = problem;
+		this.pAbortCauseType = pAbortCauseType;
 	}
 
-	public ParseException(String message, Throwable cause) {
+	public ParseException(PAbortCauseType pAbortCauseType, GeneralProblemType problem, String message, Throwable cause) {
 		super(message, cause);
-		// TODO Auto-generated constructor stub
+		this.problem = problem;
+		this.pAbortCauseType = pAbortCauseType;
+	}
+
+	public GeneralProblemType getProblem() {
+		return problem;
+	}
+
+	public PAbortCauseType getPAbortCauseType() {
+		return pAbortCauseType;
+	}
+
+	public Long getInvokeId() {
+		return invokeId;
+	}
+
+	public void setInvokeId(Long val) {
+		invokeId = val;
 	}
 
 }
+

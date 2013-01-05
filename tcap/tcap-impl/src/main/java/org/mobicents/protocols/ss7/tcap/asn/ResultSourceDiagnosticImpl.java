@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,9 +20,6 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * 
- */
 package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.IOException;
@@ -31,6 +28,7 @@ import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 
 /**
  * @author baranowb
@@ -109,15 +107,17 @@ public class ResultSourceDiagnosticImpl implements ResultSourceDiagnostic {
 			// int make read whole thing?
 			int tag = localAis.readTag();
 			if (localAis.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
-				throw new ParseException("Error while decoding AARE-apdu.result-dource-diagnostic sequence part: bad tag class: tagClass=" + localAis.getTagClass());
+				throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
+						"Error while decoding AARE-apdu.result-dource-diagnostic sequence part: bad tag class: tagClass=" + localAis.getTagClass());
 
 			switch (tag) {
 			case _TAG_U:
 				AsnInputStream localAis2 = localAis.readSequenceStream();
 				tag = localAis2.readTag();
 				if (tag != Tag.INTEGER || localAis2.getTagClass() != Tag.CLASS_UNIVERSAL)
-					throw new ParseException("Error while decoding AARE-apdu.result-dource-diagnostic integer part: bad tag or tag class class: tagClass="
-							+ localAis.getTagClass() + ", tag=" + tag);
+					throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
+							"Error while decoding AARE-apdu.result-dource-diagnostic integer part: bad tag or tag class class: tagClass="
+									+ localAis.getTagClass() + ", tag=" + tag);
 				long t = localAis2.readInteger();
 				this.userType = DialogServiceUserType.getFromInt(t);
 				break;
@@ -126,19 +126,21 @@ public class ResultSourceDiagnosticImpl implements ResultSourceDiagnostic {
 				localAis2 = localAis.readSequenceStream();
 				tag = localAis2.readTag();
 				if (tag != Tag.INTEGER || localAis2.getTagClass() != Tag.CLASS_UNIVERSAL)
-					throw new ParseException("Error while decoding AARE-apdu.result-dource-diagnostic integer part: bad tag or tag class class: tagClass="
-							+ localAis.getTagClass() + ", tag=" + tag);
+					throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
+							"Error while decoding AARE-apdu.result-dource-diagnostic integer part: bad tag or tag class class: tagClass="
+									+ localAis.getTagClass() + ", tag=" + tag);
 				t = localAis2.readInteger();
 				this.providerType = DialogServiceProviderType.getFromInt(t);
 				break;
 
 			default:
-				throw new ParseException("Error while decoding AARE-apdu.result-dource-diagnostic sequence part: bad tag: tag=" + tag);
+				throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
+						"Error while decoding AARE-apdu.result-dource-diagnostic sequence part: bad tag: tag=" + tag);
 			}
 		} catch (IOException e) {
-			throw new ParseException("IOException while decoding ResultSourceDiagnostic: " + e.getMessage(), e);
+			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "IOException while decoding ResultSourceDiagnostic: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException("AsnException while decoding ResultSourceDiagnostic: " + e.getMessage(), e);
+			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "AsnException while decoding ResultSourceDiagnostic: " + e.getMessage(), e);
 		}
 
 		// tag can have on of two values =
@@ -151,9 +153,9 @@ public class ResultSourceDiagnosticImpl implements ResultSourceDiagnostic {
 	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols
 	 * .asn.AsnOutputStream)
 	 */
-	public void encode(AsnOutputStream aos) throws ParseException {
+	public void encode(AsnOutputStream aos) throws EncodeException {
 		if (this.userType == null && this.providerType == null)
-			throw new ParseException("Error encoding ResultSourceDiagnostic: Value not set");
+			throw new EncodeException("Error encoding ResultSourceDiagnostic: Value not set");
 		
 		try {
 			aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG);
@@ -174,9 +176,9 @@ public class ResultSourceDiagnosticImpl implements ResultSourceDiagnostic {
 			aos.FinalizeContent(pos);
 			
 		} catch (IOException e) {
-			throw new ParseException("IOException while encoding ResultSourceDiagnostic: " + e.getMessage(), e);
+			throw new EncodeException("IOException while encoding ResultSourceDiagnostic: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException("AsnException while encoding ResultSourceDiagnostic: " + e.getMessage(), e);
+			throw new EncodeException("AsnException while encoding ResultSourceDiagnostic: " + e.getMessage(), e);
 		}
 
 	}

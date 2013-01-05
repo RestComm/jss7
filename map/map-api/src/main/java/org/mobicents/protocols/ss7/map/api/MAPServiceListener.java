@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -23,13 +23,13 @@
 package org.mobicents.protocols.ss7.map.api;
 
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 
 
 /**
  * 
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public interface MAPServiceListener {
@@ -49,7 +49,7 @@ public interface MAPServiceListener {
 	 * @param invokeId
 	 * @param providerError
 	 */
-	public void onProviderErrorComponent(MAPDialog mapDialog, Long invokeId, MAPProviderError providerError);
+//	public void onProviderErrorComponent(MAPDialog mapDialog, Long invokeId, MAPProviderError providerError);
 
 	/**
 	 * Invoked when TC-U-REJECT primitive is received from the other peer
@@ -57,8 +57,11 @@ public interface MAPServiceListener {
 	 * @param invokeId
 	 *            This parameter is optional and may be the null
 	 * @param problem
+	 * @param isLocalOriginated
+	 *            true:  local originated Reject (rejecting a bad incoming primitive by a local side) 
+	 *            false: remote originated Reject (rejecting a bad outgoing primitive by a peer) 
 	 */
-	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem);
+	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem, boolean isLocalOriginated);
 
 	/**
 	 * Invoked when no answer from the other peer for a long time - for sending

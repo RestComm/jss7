@@ -30,7 +30,6 @@ import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
@@ -62,13 +61,7 @@ public abstract class TesterBase implements MAPDialogListener, MAPServiceListene
 	}
 
 	@Override
-	public void onProviderErrorComponent(MAPDialog mapDialog, Long invokeId, MAPProviderError providerError) {
-		String uData = providerError + ", dlgId=" + mapDialog.getLocalDialogId() + ", InvokeId=" + invokeId;
-		this.testerHost.sendNotif(this.className, "Rcvd: ProviderErrorComponent", uData, Level.DEBUG);
-	}
-
-	@Override
-	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem) {
+	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem, boolean isLocalOriginated) {
 		String uData = problem.toString() + ", dlgId=" + mapDialog.getLocalDialogId() + ", InvokeId=" + invokeId;
 		this.testerHost.sendNotif(this.className, "Rcvd: RejectComponent", uData, Level.DEBUG);
 	}
@@ -110,9 +103,9 @@ public abstract class TesterBase implements MAPDialogListener, MAPServiceListene
 	}
 
 	@Override
-	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
+	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, 
 			ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
-		String uData = "refuseReason=" + refuseReason + ", providerError=" + providerError + ", alternativeApplicationContext=" + alternativeApplicationContext
+		String uData = "refuseReason=" + refuseReason + ", alternativeApplicationContext=" + alternativeApplicationContext
 				+ ", dlgId=" + mapDialog.getLocalDialogId();
 		this.testerHost.sendNotif(this.className, "Rcvd: DialogReject", uData, Level.DEBUG);
 	}

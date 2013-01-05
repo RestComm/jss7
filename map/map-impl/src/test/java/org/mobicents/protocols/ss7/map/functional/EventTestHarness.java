@@ -13,7 +13,6 @@ import org.mobicents.protocols.ss7.map.api.MAPMessage;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
@@ -105,7 +104,7 @@ public class EventTestHarness implements MAPDialogListener, MAPServiceSupplement
 		this.observerdEvents.add(te);
 	}
 
-	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
+	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, 
 			ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
 		this.logger.debug("onDialogReject");
 		TestEvent te = TestEvent.createReceivedEvent(EventType.DialogReject, mapDialog, sequence++);
@@ -156,13 +155,7 @@ public class EventTestHarness implements MAPDialogListener, MAPServiceSupplement
 		this.observerdEvents.add(te);
 	}
 
-	public void onProviderErrorComponent(MAPDialog mapDialog, Long invokeId, MAPProviderError providerError) {
-		this.logger.debug("onProviderErrorComponent");
-		TestEvent te = TestEvent.createReceivedEvent(EventType.ProviderErrorComponent, mapDialog, sequence++);
-		this.observerdEvents.add(te);
-	}
-
-	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem) {
+	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem, boolean isLocalOriginated) {
 		this.logger.debug("onRejectComponent");
 		TestEvent te = TestEvent.createReceivedEvent(EventType.RejectComponent, mapDialog, sequence++);
 		this.observerdEvents.add(te);

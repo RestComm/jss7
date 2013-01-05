@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,7 +22,6 @@
 
 package org.mobicents.protocols.ss7.cap.api;
 
-import org.mobicents.protocols.ss7.cap.api.dialog.CAPComponentErrorReason;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 
@@ -48,8 +47,11 @@ public interface CAPServiceListener {
 	 * @param invokeId
 	 *            This parameter is optional and may be the null
 	 * @param problem
+	 * @param isLocalOriginated
+	 *            true:  local originated Reject (rejecting a bad incoming primitive by a local side) 
+	 *            false: remote originated Reject (rejecting a bad outgoing primitive by a peer) 
 	 */
-	public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem);
+	public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem, boolean isLocalOriginated);
 
 	/**
 	 * Invoked when no answer from the other peer for a long time - for sending
@@ -59,15 +61,6 @@ public interface CAPServiceListener {
 	 * @param invokeId
 	 */
 	public void onInvokeTimeout(CAPDialog capDialog, Long invokeId);
-	
-	/**
-	 * Invoked when bad component has beed received from the peer
-	 *  
-	 * @param mapDialog
-	 * @param invokeId
-	 * @param providerError
-	 */
-	public void onProviderErrorComponent(CAPDialog mapDialog, Long invokeId, CAPComponentErrorReason providerError);
 
 	/**
 	 * Called when any CAPMessage received (Invoke, ReturnResult, ReturnResultLast components)

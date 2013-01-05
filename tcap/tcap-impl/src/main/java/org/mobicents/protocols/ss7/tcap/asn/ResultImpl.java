@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,9 +20,6 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * 
- */
 package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.IOException;
@@ -31,6 +28,7 @@ import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 
 /**
  * @author baranowb
@@ -82,15 +80,16 @@ public class ResultImpl implements Result {
 
 			int tag = localAis.readTag();
 			if (tag != Tag.INTEGER && localAis.getTagClass() != Tag.CLASS_UNIVERSAL)
-				throw new ParseException("Error while decoding AARE-apdu.result: bad tag or tag class: tag=" + tag + ", tagClass=" + localAis.getTagClass());
+				throw new ParseException(PAbortCauseType.IncorrectTxPortion, null, "Error while decoding AARE-apdu.result: bad tag or tag class: tag="
+						+ tag + ", tagClass=" + localAis.getTagClass());
 			
 			// y, its a bit of enum, should be ok to cast :)
 			long t = localAis.readInteger();
 			this.resultType = ResultType.getFromInt(t);
 		} catch (IOException e) {
-			throw new ParseException("IOException while decoding Result: " + e.getMessage(), e);
+			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "IOException while decoding Result: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException("AsnException while decoding Result: " + e.getMessage(), e);
+			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "AsnException while decoding Result: " + e.getMessage(), e);
 		}
 	}
 
@@ -101,10 +100,10 @@ public class ResultImpl implements Result {
 	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols
 	 * .asn.AsnOutputStream)
 	 */
-	public void encode(AsnOutputStream aos) throws ParseException {
+	public void encode(AsnOutputStream aos) throws EncodeException {
 		
 		if (resultType == null)
-			throw new ParseException("Error encoding Result: ResultType must not be null");
+			throw new EncodeException("Error encoding Result: ResultType must not be null");
 		
 		try {
 			aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG);
@@ -113,9 +112,9 @@ public class ResultImpl implements Result {
 			aos.FinalizeContent(pos);
 
 		} catch (IOException e) {
-			throw new ParseException("IOException while encoding Result: " + e.getMessage(), e);
+			throw new EncodeException("IOException while encoding Result: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException("AsnException while encoding Result: " + e.getMessage(), e);
+			throw new EncodeException("AsnException while encoding Result: " + e.getMessage(), e);
 		}
 	}
 

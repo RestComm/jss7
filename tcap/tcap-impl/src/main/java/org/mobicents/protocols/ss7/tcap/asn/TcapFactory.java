@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,15 +24,19 @@ package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.IOException;
 
+import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCodeType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.GeneralProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCodeType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ProblemType;
@@ -67,12 +71,13 @@ public final class TcapFactory {
 	public static DialogAPDU createDialogAPDU(AsnInputStream ais, int tag, boolean unidirectional) throws ParseException {
 
 		if (ais.getTagClass() != Tag.CLASS_APPLICATION)
-			throw new ParseException("Error decoding dialog APDU: wrong tag class for APDU, found: " + ais.getTagClass());
+			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "Error decoding dialog APDU: wrong tag class for APDU, found: "
+					+ ais.getTagClass());
 		
 		if (unidirectional) {
 			// only one
 			if (tag != DialogAPDU._TAG_UNIDIRECTIONAL) {
-				throw new ParseException("Error decoding dialog APDU: wrong tag for APDU, found: " + tag);
+				throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "Error decoding dialog APDU: wrong tag for APDU, found: " + tag);
 			} else {
 				// create UNIPDU
 
@@ -100,7 +105,7 @@ public final class TcapFactory {
 				return da;
 			}
 
-			throw new ParseException("Wrong tag for APDU, found: " + tag);
+			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "Wrong tag for APDU, found: " + tag);
 		}
 	}
 	
@@ -271,41 +276,59 @@ public final class TcapFactory {
 	public static Component createComponent(AsnInputStream localAis) throws ParseException {
 
 		try {
+			try {
+				int tag = localAis.readTag();
 
-			int tag = localAis.readTag();
+				Component c = null;
+				if (localAis.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC) {
+					throw new ParseException(null, GeneralProblemType.UnrecognizedComponent, "Error decoding a component: bad tag class: " + localAis.getTagClass());
+				}
 
-			Component c = null;
-			if (localAis.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
-				throw new ParseException("Error decoding a component: bad tag class: " + localAis.getTagClass());
+				switch (tag) {
+				case Invoke._TAG:
+					c = createComponentInvoke();
+					c.decode(localAis);
+					break;
+				case ReturnResult._TAG:
+					c = createComponentReturnResult();
+					c.decode(localAis);
+					break;
+				case ReturnResultLast._TAG:
+					c = createComponentReturnResultLast();
+					c.decode(localAis);
+					break;
+				case ReturnError._TAG:
+					c = createComponentReturnError();
+					c.decode(localAis);
+					break;
+				case Reject._TAG:
+					c = createComponentReject();
+					c.decode(localAis);
+					break;
+				default:
+					localAis.advanceElement();
+					throw new ParseException(null, GeneralProblemType.UnrecognizedComponent, "Error decoding a component: bad tag: " + tag);
+				}
 
-			switch (tag) {
-			case Invoke._TAG:
-				c = createComponentInvoke();
-				c.decode(localAis);
-				break;
-			case ReturnResult._TAG:
-				c = createComponentReturnResult();
-				c.decode(localAis);
-				break;
-			case ReturnResultLast._TAG:
-				c = createComponentReturnResultLast();
-				c.decode(localAis);
-				break;
-			case ReturnError._TAG:
-				c = createComponentReturnError();
-				c.decode(localAis);
-				break;
-			case Reject._TAG:
-				c = createComponentReject();
-				c.decode(localAis);
-				break;
-			default:
-				throw new ParseException("Error decoding a component: bad tag: " + tag);
+				return c;
+			} catch (IOException e) {
+				throw new ParseException(null, GeneralProblemType.BadlyStructuredComponent, "IOException while decoding a component: " + e.getMessage(), e);
+			} catch (AsnException e) {
+				throw new ParseException(null, GeneralProblemType.BadlyStructuredComponent, "AsnException while decoding a component: " + e.getMessage(), e);
 			}
-			
-			return c;
-		} catch (IOException e) {
-			throw new ParseException("IOException while decoding a component: " + e.getMessage(), e);
+		} catch (ParseException e) {
+			if (e.getProblem() != null) {
+				Reject rej = TcapFactory.createComponentReject();
+				rej.setLocalOriginated(true);
+				rej.setInvokeId(e.getInvokeId());
+				Problem problem = new ProblemImpl();
+				problem.setGeneralProblemType(e.getProblem());
+				rej.setProblem(problem);
+
+				return rej;
+			} else {
+				throw e;
+			}
 		}
 	}
 

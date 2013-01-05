@@ -10,7 +10,6 @@ import org.mobicents.protocols.ss7.cap.api.CAPProvider;
 import org.mobicents.protocols.ss7.cap.api.CAPStack;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAnswerSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.ODisconnectSpecificInfo;
-import org.mobicents.protocols.ss7.cap.api.dialog.CAPComponentErrorReason;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPNoticeProblemDiagnostic;
@@ -133,6 +132,7 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 
 			// initiating BCSM events processing
 		}
+		ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
 	}
 
 	@Override
@@ -151,6 +151,7 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	@Override
 	public void onContinueRequest(ContinueRequest ind) {
 		this.cc.step = Step.callAllowed;
+		ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
 		// sending Continue to use the original calledPartyAddress
 	}
 
@@ -158,6 +159,7 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	public void onConnectRequest(ConnectRequest ind) {
 		this.cc.step = Step.callAllowed;
 		this.cc.destinationRoutingAddress = ind.getDestinationRoutingAddress();
+		ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
 		// sending Connect to force routing the call to a new  number
 	}
 
@@ -192,19 +194,13 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	}
 
 	@Override
-	public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem) {
+	public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem, boolean isLocalOriginated) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void onInvokeTimeout(CAPDialog capDialog, Long invokeId) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onProviderErrorComponent(CAPDialog capDialog, Long invokeId, CAPComponentErrorReason providerError) {
 		// TODO Auto-generated method stub
 		
 	}

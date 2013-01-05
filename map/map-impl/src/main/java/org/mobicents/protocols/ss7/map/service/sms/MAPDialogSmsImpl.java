@@ -520,7 +520,11 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 				|| (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version1 && this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2))
 			throw new MAPException("Bad application context name for addAlertServiceCentreRequest: must be shortMsgAlertContext_V1 or V2");
 		
-		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+		Invoke invoke;
+		if (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version1)
+			invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class4);
+		else
+			invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
 		if (customInvokeTimeout == _Timer_Default)
 			invoke.setTimeout(_Timer_s);
 		else

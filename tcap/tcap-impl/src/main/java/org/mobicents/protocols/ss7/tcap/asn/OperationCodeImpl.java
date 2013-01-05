@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,9 +20,6 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * 
- */
 package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.IOException;
@@ -31,8 +28,11 @@ import java.util.Arrays;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.ss7.tcap.asn.comp.GeneralProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCodeType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ProblemType;
 
 /**
  * @author baranowb
@@ -114,14 +114,14 @@ public class OperationCodeImpl implements OperationCode {
 				this.localOperationCode = ais.readInteger();
 			} else
 			{
-				throw new ParseException();
+				throw new ParseException(null, GeneralProblemType.MistypedComponent);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new ParseException("IOException while parsing OperationCode: " + e.getMessage(), e);
+			throw new ParseException(null, GeneralProblemType.BadlyStructuredComponent, "IOException while parsing OperationCode: " + e.getMessage(), e);
 		} catch (AsnException e) {
 			e.printStackTrace();
-			throw new ParseException("AsnException while parsing OperationCode: " + e.getMessage(), e);
+			throw new ParseException(null, GeneralProblemType.BadlyStructuredComponent, "AsnException while parsing OperationCode: " + e.getMessage(), e);
 		}
 	}
 
@@ -132,11 +132,11 @@ public class OperationCodeImpl implements OperationCode {
 	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols
 	 * .asn.AsnOutputStream)
 	 */
-	public void encode(AsnOutputStream aos) throws ParseException {
-		
+	public void encode(AsnOutputStream aos) throws EncodeException {
+
 		if (this.localOperationCode == null && this.globalOperationCode == null)
-			throw new ParseException("Operation code: No Operation code set!");
-		
+			throw new EncodeException("Operation code: No Operation code set!");
+
 		try {
 			if( this.type == OperationCodeType.Local ) {
 				aos.writeInteger(this.localOperationCode);
@@ -144,13 +144,13 @@ public class OperationCodeImpl implements OperationCode {
 				aos.writeObjectIdentifier(this.globalOperationCode);
 			} else
 			{
-				throw new ParseException();
+				throw new EncodeException();
 			}
 
 		} catch (IOException e) {
-			throw new ParseException(e);
+			throw new EncodeException(e);
 		} catch (AsnException e) {
-			throw new ParseException(e);
+			throw new EncodeException(e);
 		}
 	}
 

@@ -35,6 +35,7 @@ import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
+import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
@@ -50,7 +51,6 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPDialogState;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderAbortReason;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.dialog.Reason;
@@ -88,6 +88,7 @@ import org.mobicents.protocols.ss7.tcap.api.MessageType;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.TCListener;
+import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
@@ -421,16 +422,23 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			// indicating "abnormalDialogue"
 			// shall be issued. The local MAP-user shall not be informed.
 
-			// TODO : From where do we know id userInfo is required for a
-			// give
-			// application-context-name?
-			// May be if neither destinationReference nor
-			// originationReference is needed
-			// then no userInfo is needed (there is an
-			// ApplicationContextName list in the specification)
-
-			// TODO: Make a checking if MAP-OPEN is not needed -> continue
-			// without sending TC-U-ABORT - how?
+			// We demand User-information mandatory now for ACNs
+			// that demand destination/origination reference presence
+			// They are: callCompletionContext(8), networkFunctionalSsContext(18)
+			// and networkUnstructuredSsContext(19)
+			// TODO: I am not absolutely sure that it is correct
+			if (mapAppCtx.getApplicationContextName() == MAPApplicationContextName.callCompletionContext
+					|| mapAppCtx.getApplicationContextName() == MAPApplicationContextName.networkFunctionalSsContext
+					|| mapAppCtx.getApplicationContextName() == MAPApplicationContextName.networkUnstructuredSsContext) {
+				loger.error("When parsing TC-BEGIN: userInfo is mandatory for ACN==" + mapAppCtx.getApplicationContextName() + " but not found");
+				try {
+					this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.abnormalDialogue, null, false);
+				} catch (MAPException e) {
+					loger.error("Error while firing TC-U-ABORT. ", e);
+				}
+				return;
+			}
+			
 		} else {
 			// if an application-context-name different from version 1 is
 			// included in the primitive and if User-
@@ -447,7 +455,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			if (!userInfo.isOid()) {
 				loger.error("When parsing TC-BEGIN: userInfo.isOid() check failed");
 				try {
-					this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.abnormalDialogue, null, false);
+					this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.invalidPDU, null, false);
 				} catch (MAPException e) {
 					loger.error("Error while firing TC-U-ABORT. ", e);
 				}
@@ -461,7 +469,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			if (mapDialAs == null) {
 				loger.error("When parsing TC-BEGIN: Expected MAPDialogueAS.MAP_DialogueAS but is null");
 				try {
-					this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.abnormalDialogue, null, false);
+					this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.invalidPDU, null, false);
 				} catch (MAPException e) {
 					loger.error("Error while firing TC-U-ABORT. ", e);
 				}
@@ -471,7 +479,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			if (!userInfo.isAsn()) {
 				loger.error("When parsing TC-BEGIN: userInfo.isAsn() check failed");
 				try {
-					this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.abnormalDialogue, null, false);
+					this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.invalidPDU, null, false);
 				} catch (MAPException e) {
 					loger.error("Error while firing TC-U-ABORT. ", e);
 				}
@@ -489,7 +497,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				if (tag != MAPOpenInfoImpl.MAP_OPEN_INFO_TAG) {
 					loger.error("When parsing TC-BEGIN: MAP-OPEN dialog PDU must be received");
 					try {
-						this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.abnormalDialogue, null, false);
+						this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.invalidPDU, null, false);
 					} catch (MAPException e) {
 						loger.error("Error while firing TC-U-ABORT. ", e);
 					}
@@ -508,7 +516,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				e.printStackTrace();
 				loger.error("AsnException when parsing MAP-OPEN Pdu: " + e.getMessage(), e);
 				try {
-					this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.abnormalDialogue, null, false);
+					this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.invalidPDU, null, false);
 				} catch (MAPException e1) {
 					loger.error("Error while firing TC-U-ABORT. ", e1);
 				}
@@ -517,7 +525,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				e.printStackTrace();
 				loger.error("IOException when parsing MAP-OPEN Pdu: " + e.getMessage());
 				try {
-					this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.abnormalDialogue, null, false);
+					this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.invalidPDU, null, false);
 				} catch (MAPException e1) {
 					loger.error("Error while firing TC-U-ABORT. ", e1);
 				}
@@ -526,7 +534,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				e.printStackTrace();
 				loger.error("MAPException when parsing MAP-OPEN Pdu: " + e.getMessage());
 				try {
-					this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.abnormalDialogue, null, false);
+					this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.invalidPDU, null, false);
 				} catch (MAPException e1) {
 					loger.error("Error while firing TC-U-ABORT. ", e1);
 				}
@@ -579,7 +587,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		// MAPService is not activated
 		if (!perfSer.isActivated()) {
 			StringBuffer s = new StringBuffer();
-			s.append("ApplicationContextName of not activated MAPService is received: ");
+			s.append("ApplicationContextName of non activated MAPService is received: ");
 			for (long l : acn.getOid()) {
 				s.append(l).append(", ");
 			}
@@ -665,7 +673,6 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		}
 
 		if (mapDialogImpl == null) {
-			// TODO : ABort TCAP?
 			loger.error("MAP Dialog not found for Dialog Id " + tcapDialog.getLocalDialogId());
 			try {
 				this.fireTCAbortProvider(tcapDialog, MAPProviderAbortReason.abnormalDialogue, null, false);
@@ -674,9 +681,10 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			}
 			return;
 		}
-		mapDialogImpl.tcapMessageType = MessageType.Continue;
 
 		synchronized (mapDialogImpl) {
+			mapDialogImpl.tcapMessageType = MessageType.Continue;
+
 			if (this.getTCAPProvider().getPreviewMode()) {
 				MAPExtensionContainer extensionContainer = null;
 
@@ -751,11 +759,10 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 					if (acn == null) {
 
-						// if MAP V1 - no acn included
+						// if MAP V1 - no ACN included
 						if (mapDialogImpl.getApplicationContext().getApplicationContextVersion() != MAPApplicationContextVersion.version1) {
 
 							loger.error(String.format("Received first TC-CONTINUE for MAPDialog=%s. But no application-context-name included", mapDialogImpl));
-							// this.dialogs.remove(mapDialogImpl.getDialogId());
 							try {
 								this.fireTCAbortProvider(tcapDialog, MAPProviderAbortReason.abnormalDialogue, null, mapDialogImpl.getReturnMessageOnError());
 
@@ -763,7 +770,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 								loger.error("Error while firing TC-U-ABORT. ", e);
 							}
 
-							this.deliverDialogProviderAbort(mapDialogImpl, MAPAbortProviderReason.AbnormalMAPDialogue, MAPAbortSource.MAPProblem, null);
+							this.deliverDialogProviderAbort(mapDialogImpl, MAPAbortProviderReason.AbnormalMAPDialogueLocal, MAPAbortSource.MAPProblem, null);
 							mapDialogImpl.setState(MAPDialogState.EXPUNGED);
 
 							return;
@@ -772,16 +779,15 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 						MAPApplicationContext mapAcn = MAPApplicationContext.getInstance(acn.getOid());
 						if (mapAcn == null || !mapAcn.equals(mapDialogImpl.getApplicationContext())) {
-							loger.error(String.format("Received first TC-CONTINUE. MAPDialog=%s. But MAPApplicationContext=%s", mapDialogImpl, mapAcn));
 
-							// this.dialogs.remove(mapDialogImpl.getDialogId());
+							loger.error(String.format("Received first TC-CONTINUE. MAPDialog=%s. But MAPApplicationContext=%s", mapDialogImpl, mapAcn));
 							try {
 								this.fireTCAbortProvider(tcapDialog, MAPProviderAbortReason.abnormalDialogue, null, mapDialogImpl.getReturnMessageOnError());
 							} catch (MAPException e) {
 								loger.error("Error while firing TC-U-ABORT. ", e);
 							}
 
-							this.deliverDialogProviderAbort(mapDialogImpl, MAPAbortProviderReason.AbnormalMAPDialogue, MAPAbortSource.MAPProblem, null);
+							this.deliverDialogProviderAbort(mapDialogImpl, MAPAbortProviderReason.AbnormalMAPDialogueLocal, MAPAbortSource.MAPProblem, null);
 							mapDialogImpl.setState(MAPDialogState.EXPUNGED);
 
 							return;
@@ -790,8 +796,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 					MAPExtensionContainer extensionContainer = null;
 
-					// Parse MapAcceptInfo if it exists - we ignore all errors
-					// this
+					// Parse MapAcceptInfo if it exists - we ignore all errors here
 					UserInformation userInfo = tcContinueIndication.getUserInformation();
 					if (userInfo != null) {
 						MAPAcceptInfoImpl mapAcceptInfoImpl = new MAPAcceptInfoImpl();
@@ -877,9 +882,10 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			loger.error("MAP Dialog not found for Dialog Id " + tcapDialog.getLocalDialogId());
 			return;
 		}
-		mapDialogImpl.tcapMessageType = MessageType.End;
 
 		synchronized (mapDialogImpl) {
+			mapDialogImpl.tcapMessageType = MessageType.End;
+
 			if (this.getTCAPProvider().getPreviewMode()) {
 				MAPExtensionContainer extensionContainer = null;
 				UserInformation userInfo = tcEndIndication.getUserInformation();
@@ -897,8 +903,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 								int tag = ais.readTag();
 
-								// It should be MAP_ACCEPT Tag or MAP_CLOSE
-								// Tag
+								// It should be MAP_ACCEPT Tag or MAP_CLOSE Tag
 								if (tag == MAPAcceptInfoImpl.MAP_ACCEPT_INFO_TAG) {
 									MAPAcceptInfoImpl mapAcceptInfoImpl = new MAPAcceptInfoImpl();
 									mapAcceptInfoImpl.decodeAll(ais);
@@ -956,22 +961,22 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 					if (acn == null) {
 
-						// if MAP V1 - no acn included
+						// if MAP V1 - no ACN included
 						if (mapDialogImpl.getApplicationContext().getApplicationContextVersion() != MAPApplicationContextVersion.version1) {
 
 							// for MAP version >= 2 - accepts only if only ERROR
 							// & REJECT components are present
-							boolean onlyErrorReject = false;
+							boolean notOnlyErrorReject = false;
 							for (Component c : tcEndIndication.getComponents()) {
 								if (c.getType() != ComponentType.ReturnError && c.getType() != ComponentType.Reject) {
-									onlyErrorReject = true;
+									notOnlyErrorReject = true;
 									break;
 								}
 							}
-							if (onlyErrorReject) {
+							if (notOnlyErrorReject) {
 								loger.error(String.format("Received first TC-END for MAPDialog=%s. But no application-context-name included", mapDialogImpl));
 
-								this.deliverDialogProviderAbort(mapDialogImpl, MAPAbortProviderReason.AbnormalMAPDialogue, MAPAbortSource.MAPProblem, null);
+								this.deliverDialogProviderAbort(mapDialogImpl, MAPAbortProviderReason.AbnormalMAPDialogueLocal, MAPAbortSource.MAPProblem, null);
 								mapDialogImpl.setState(MAPDialogState.EXPUNGED);
 
 								return;
@@ -984,29 +989,23 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 						if (mapAcn == null || !mapAcn.equals(mapDialogImpl.getApplicationContext())) {
 							loger.error(String.format("Received first TC-END. MAPDialog=%s. But MAPApplicationContext=%s", mapDialogImpl, mapAcn));
 
-							this.deliverDialogProviderAbort(mapDialogImpl, MAPAbortProviderReason.AbnormalMAPDialogue, MAPAbortSource.MAPProblem, null);
+							this.deliverDialogProviderAbort(mapDialogImpl, MAPAbortProviderReason.AbnormalMAPDialogueLocal, MAPAbortSource.MAPProblem, null);
 							mapDialogImpl.setState(MAPDialogState.EXPUNGED);
 
 							return;
 						}
 					}
 
-					// Otherwise it shall issue a MAP-OPEN confirm primitive
-					// with
-					// the
-					// result
-					// parameter set to "accepted" and process the following TC
-					// component
-					// handling indication primitives as described in clause
-					// 12.6;
+					// Otherwise it shall issue a MAP-OPEN confirm primitive with the result
+					// parameter set to "accepted" and process the following TC component
+					// handling indication primitives as described in clause 12.6;
 
 					// Fire MAPAcceptInfo
 					mapDialogImpl.setState(MAPDialogState.ACTIVE);
 
 					MAPExtensionContainer extensionContainer = null;
 					// Parse MapAcceptInfo or MapCloseInfo if it exists - we
-					// ignore
-					// all errors this
+					// ignore all errors here
 					UserInformation userInfo = tcEndIndication.getUserInformation();
 					if (userInfo != null) {
 
@@ -1022,8 +1021,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 									int tag = ais.readTag();
 
-									// It should be MAP_ACCEPT Tag or MAP_CLOSE
-									// Tag
+									// It should be MAP_ACCEPT Tag or MAP_CLOSE Tag
 									if (tag == MAPAcceptInfoImpl.MAP_ACCEPT_INFO_TAG) {
 										MAPAcceptInfoImpl mapAcceptInfoImpl = new MAPAcceptInfoImpl();
 										mapAcceptInfoImpl.decodeAll(ais);
@@ -1072,8 +1070,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 	}
 
 	public void onTCUni(TCUniIndication arg0) {
-		// TODO Throw Exception or Ignore? This should never happen for MAP
-
+		// MAP do not use TCUni - we just ignore them
 	}
 
 	public void onInvokeTimeout(Invoke invoke) {
@@ -1086,10 +1083,11 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 					// Getting the MAP Service that serves the MAP Dialog
 					MAPServiceBaseImpl perfSer = (MAPServiceBaseImpl)mapDialogImpl.getService();
-					
-					// Check if the InvokeTimeout in this situation is normal (may be for a class 2,3,4 components)
-					// TODO: ................................
-					
+
+					// We do not send invokeTimeout for Class 4 invokes
+					if (invoke.getInvokeClass() == InvokeClass.Class4)
+						return;
+
 					perfSer.deliverInvokeTimeout(mapDialogImpl, invoke);
 				}
 			}
@@ -1135,9 +1133,9 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			return;
 		}
 
-		mapDialogImpl.tcapMessageType = MessageType.Abort;
-
 		synchronized (mapDialogImpl) {
+			mapDialogImpl.tcapMessageType = MessageType.Abort;
+
 			PAbortCauseType pAbortCause = tcPAbortIndication.getPAbortCause();
 			MAPAbortProviderReason abortProviderReason = MAPAbortProviderReason.ProviderMalfunction;
 			MAPAbortSource abortSource = MAPAbortSource.TCProblem;
@@ -1145,8 +1143,8 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			// Table 16.1/1: Mapping of P-Abort cause in TC-P-ABORT indication
 			// on to provider-reason in MAP-P-ABORT indication
 			// TC P-Abort cause MAP provider-reason
-			// unrecognised message type provider malfunction
-			// unrecognised transaction Id supporting dialogue released
+			// unrecognized message type provider malfunction
+			// unrecognized transaction Id supporting dialogue released
 			// badlyFormattedTransactionPortion provider malfunction
 			// incorrectTransactionPortion provider malfunction (note)
 			// resourceLimitation resource limitation
@@ -1179,10 +1177,8 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				// indicating "Incorrect Transaction Portion", the MAP PM shall
 				// issue a MAP-OPEN confirm primitive with
 				// the result parameter indicating "Dialogue Refused" and the
-				// refuse
-				// reason parameter indicating "Potential
-				// Version Incompatibility"."
-				this.deliverDialogReject(mapDialogImpl, MAPRefuseReason.PotentialVersionIncompatibility, null, null, null);
+				// refuse reason parameter indicating "Potential Version Incompatibility"."
+				this.deliverDialogReject(mapDialogImpl, MAPRefuseReason.PotentialVersionIncompatibility, null, null);
 			else
 				this.deliverDialogProviderAbort(mapDialogImpl, abortProviderReason, abortSource, null);
 
@@ -1208,16 +1204,17 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			loger.error("MAP Dialog not found for Dialog Id " + tcapDialog.getLocalDialogId());
 			return;
 		}
-		mapDialogImpl.tcapMessageType = MessageType.Abort;
 
 		synchronized (mapDialogImpl) {
+			mapDialogImpl.tcapMessageType = MessageType.Abort;
+
 			// Trying to parse an userInfo APDU if it exists
 			UserInformation userInfo = tcUserAbortIndication.getUserInformation();
 			ParsePduResult parsePduResult = ParsePduResult.NoUserInfo;
 			MAPRefuseReason mapRefuseReason = MAPRefuseReason.NoReasonGiven;
 			MAPUserAbortChoice mapUserAbortChoice = null;
 			MAPProviderAbortReason mapProviderAbortReason = null;
-			MAPAbortProviderReason abortProviderReason = MAPAbortProviderReason.AbnormalMAPDialogue;
+			MAPAbortProviderReason abortProviderReason = MAPAbortProviderReason.AbnormalMAPDialogueFromPeer;
 			MAPExtensionContainer extensionContainer = null;
 
 			if (userInfo != null) {
@@ -1247,15 +1244,11 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 							switch (tag) {
 							case MAPRefuseInfoImpl.MAP_REFUSE_INFO_TAG:
-								// On receipt of a TC-U-ABORT indication
-								// primitive in the
-								// "Dialogue Initiated" state with an
-								// abort-reason
-								// parameter indicating "User Specific" and a
-								// MAP-Refuse PDU
+								// On receipt of a TC-U-ABORT indication primitive in the
+								// "Dialogue Initiated" state with an abort-reason
+								// parameter indicating "User Specific" and a MAP-Refuse PDU
 								// included as user information, the MAP PM
-								// shall issue a MAP-OPEN confirm primitive with
-								// the result
+								// shall issue a MAP-OPEN confirm primitive with the result
 								// set to refused and the refuse reason set as
 								// received in the MAP Refuse PDU.
 								MAPRefuseInfoImpl mapRefuseInfoImpl = new MAPRefuseInfoImpl();
@@ -1290,7 +1283,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 								mapProviderAbortReason = mapProviderAbortInfoImpl.getMAPProviderAbortReason();
 								switch (mapProviderAbortReason) {
 								case abnormalDialogue:
-									abortProviderReason = MAPAbortProviderReason.AbnormalMAPDialogue;
+									abortProviderReason = MAPAbortProviderReason.AbnormalMAPDialogueFromPeer;
 									break;
 								case invalidPDU:
 									abortProviderReason = MAPAbortProviderReason.InvalidPDU;
@@ -1321,15 +1314,14 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				}
 			}
 
-			// special cases: AareApdu + ApplicationContextNotSupported or
-			// NoCommonDialogPortion
+			// special cases: AareApdu + ApplicationContextNotSupported or NoCommonDialogPortion
 			if (tcUserAbortIndication.IsAareApdu()) {
 				ResultSourceDiagnostic resultSourceDiagnostic = tcUserAbortIndication.getResultSourceDiagnostic();
 				if (resultSourceDiagnostic != null) {
 					// ACN_Not_Supported
 					if (resultSourceDiagnostic.getDialogServiceUserType() == DialogServiceUserType.AcnNotSupported) {
 						if (mapDialogImpl.getState() == MAPDialogState.INITIAL_SENT) {
-							this.deliverDialogReject(mapDialogImpl, MAPRefuseReason.ApplicationContextNotSupported, null,
+							this.deliverDialogReject(mapDialogImpl, MAPRefuseReason.ApplicationContextNotSupported,
 									tcUserAbortIndication.getApplicationContextName(), extensionContainer);
 
 							mapDialogImpl.setState(MAPDialogState.EXPUNGED);
@@ -1340,7 +1332,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 					} else if (resultSourceDiagnostic.getDialogServiceProviderType() == DialogServiceProviderType.NoCommonDialogPortion) {
 						if (mapDialogImpl.getState() == MAPDialogState.INITIAL_SENT) {
 							// NoCommonDialogPortion
-							this.deliverDialogReject(mapDialogImpl, MAPRefuseReason.PotentialVersionIncompatibility, null, null, null);
+							this.deliverDialogReject(mapDialogImpl, MAPRefuseReason.PotentialVersionIncompatibility, null, null);
 
 							mapDialogImpl.setState(MAPDialogState.EXPUNGED);
 							return;
@@ -1364,13 +1356,13 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				// parameter indicating "Potential Version Incompatibility".
 
 				if (mapDialogImpl.getState() == MAPDialogState.INITIAL_SENT)
-					this.deliverDialogReject(mapDialogImpl, MAPRefuseReason.PotentialVersionIncompatibility, null, null, null);
+					this.deliverDialogReject(mapDialogImpl, MAPRefuseReason.PotentialVersionIncompatibility, null, null);
 				else
-					this.deliverDialogProviderAbort(mapDialogImpl, MAPAbortProviderReason.AbnormalMAPDialogue, MAPAbortSource.MAPProblem, null);
+					this.deliverDialogProviderAbort(mapDialogImpl, MAPAbortProviderReason.AbnormalMAPDialogueLocal, MAPAbortSource.MAPProblem, null);
 				break;
 
 			case BadUserInfo:
-				this.deliverDialogProviderAbort(mapDialogImpl, MAPAbortProviderReason.AbnormalMAPDialogue, MAPAbortSource.MAPProblem, null);
+				this.deliverDialogProviderAbort(mapDialogImpl, MAPAbortProviderReason.AbnormalMAPDialogueLocal, MAPAbortSource.MAPProblem, null);
 				break;
 
 			case MapRefuse:
@@ -1382,10 +1374,10 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 					// shall issue a MAP-OPEN confirm primitive with the result
 					// set to refused and the refuse reason set as
 					// received in the MAP Refuse PDU.
-					this.deliverDialogReject(mapDialogImpl, mapRefuseReason, null, null, extensionContainer);
+					this.deliverDialogReject(mapDialogImpl, mapRefuseReason, null, extensionContainer);
 				} else {
 					// MAPRefuseInfo in a wrong Dialog state
-					this.deliverDialogProviderAbort(mapDialogImpl, MAPAbortProviderReason.AbnormalMAPDialogue, MAPAbortSource.MAPProblem, null);
+					this.deliverDialogProviderAbort(mapDialogImpl, MAPAbortProviderReason.AbnormalMAPDialogueLocal, MAPAbortSource.MAPProblem, null);
 				}
 				break;
 
@@ -1435,38 +1427,17 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				oc = comp.getOperationCode();
 				parameter = comp.getParameter();
 				linkedId = comp.getLinkedId();
-				
-				// Checking if the invokeId is not duplicated
-				if (!this.getTCAPProvider().getPreviewMode() && !mapDialogImpl.addIncomingInvokeId(invokeId)) {
-					this.deliverDialogNotice(mapDialogImpl, MAPNoticeProblemDiagnostic.AbnormalEventReceivedFromThePeer);
-					
-					Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
-					problem.setInvokeProblemType(InvokeProblemType.DuplicateInvokeID);
-					mapDialogImpl.sendRejectComponent(null, problem);
 
-					return;
-				}
-				
 				if (linkedId != null) {
 					// linkedId exists Checking if the linkedId exists
-					if (comp.getLinkedInvoke() == null) {
-						this.deliverDialogNotice(mapDialogImpl, MAPNoticeProblemDiagnostic.AbnormalEventReceivedFromThePeer);
-
-						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
-						problem.setInvokeProblemType(InvokeProblemType.UnrechognizedLinkedID);
-						mapDialogImpl.sendRejectComponent(invokeId, problem);
-
-						return;
-					}
 					linkedInvoke = comp.getLinkedInvoke();
 
 					long[] lstInv = perfSer.getLinkedOperationList(linkedInvoke.getOperationCode().getLocalOperationCode());
 					if (lstInv == null) {
-						this.deliverDialogNotice(mapDialogImpl, MAPNoticeProblemDiagnostic.AbnormalEventReceivedFromThePeer);
-
 						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
 						problem.setInvokeProblemType(InvokeProblemType.LinkedResponseUnexpected);
 						mapDialogImpl.sendRejectComponent(invokeId, problem);
+						perfSer.deliverRejectComponent(mapDialogImpl, invokeId, problem, true);
 
 						return;
 					}
@@ -1481,11 +1452,10 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 						}
 					}
 					if (!found) {
-						this.deliverDialogNotice(mapDialogImpl, MAPNoticeProblemDiagnostic.AbnormalEventReceivedFromThePeer);
-
 						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
 						problem.setInvokeProblemType(InvokeProblemType.UnexpectedLinkedOperation);
 						mapDialogImpl.sendRejectComponent(invokeId, problem);
+						perfSer.deliverRejectComponent(mapDialogImpl, invokeId, problem, true);
 
 						return;
 					}
@@ -1515,18 +1485,16 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 					errorCode = comp.getErrorCode().getLocalErrorCode();
 				if (errorCode < MAPErrorCode.minimalCodeValue || errorCode > MAPErrorCode.maximumCodeValue) {
 					// Not Local error code and not MAP error code received
-					perfSer.deliverProviderErrorComponent(mapDialogImpl, invokeId, MAPProviderError.InvalidResponseReceived);
-
 					Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnError);
 					problem.setReturnErrorProblemType(ReturnErrorProblemType.UnrecognizedError);
 					mapDialogImpl.sendRejectComponent(invokeId, problem);
-					
+					perfSer.deliverRejectComponent(mapDialogImpl, invokeId, problem, true);
+
 					return;
 				}
 				
 				MAPErrorMessage msgErr = this.mapErrorMessageFactory.createMessageFromErrorCode(errorCode);
 				try {
-					//msgErr.decodeParameter(comp.getParameter());
 					Parameter p = comp.getParameter();
 					if (p != null && p.getData() != null) {
 						byte[] data = p.getData();
@@ -1535,11 +1503,10 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 					}
 				} catch ( MAPParsingComponentException e) {
 					// Failed when parsing the component - send TC-U-REJECT
-					perfSer.deliverProviderErrorComponent(mapDialogImpl, invokeId, MAPProviderError.InvalidResponseReceived);
-
 					Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnError);
 					problem.setReturnErrorProblemType(ReturnErrorProblemType.MistypedParameter);
 					mapDialogImpl.sendRejectComponent(invokeId, problem);
+					perfSer.deliverRejectComponent(mapDialogImpl, invokeId, problem, true);
 
 					return;
 				}
@@ -1549,8 +1516,8 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			}
 
 			case Reject: {
-				Reject comp = (Reject) c;
-				perfSer.deliverRejectComponent(mapDialogImpl, comp.getInvokeId(), comp.getProblem());
+				Reject rej = (Reject) c;
+				perfSer.deliverRejectComponent(mapDialogImpl, rej.getInvokeId(), rej.getProblem(), rej.isLocalOriginated());
 				
 				return;
 			}
@@ -1571,60 +1538,33 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				case UnrecognizedOperation:
 					// Component does not supported - send TC-U-REJECT
 					if (compType == ComponentType.Invoke) {
-						this.deliverDialogNotice(mapDialogImpl, MAPNoticeProblemDiagnostic.AbnormalEventReceivedFromThePeer);
-						
 						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
 						problem.setInvokeProblemType(InvokeProblemType.UnrecognizedOperation);
 						mapDialogImpl.sendRejectComponent(invokeId, problem);
+						perfSer.deliverRejectComponent(mapDialogImpl, invokeId, problem, true);
 					} else {
-						perfSer.deliverProviderErrorComponent(mapDialogImpl, invokeId, MAPProviderError.InvalidResponseReceived);
-						
 						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnResult);
 						problem.setReturnResultProblemType(ReturnResultProblemType.MistypedParameter);
 						mapDialogImpl.sendRejectComponent(invokeId, problem);
+						perfSer.deliverRejectComponent(mapDialogImpl, invokeId, problem, true);
 					}
 					break;
 
 				case MistypedParameter:
 					// Failed when parsing the component - send TC-U-REJECT
 					if (compType == ComponentType.Invoke) {
-						this.deliverDialogNotice(mapDialogImpl, MAPNoticeProblemDiagnostic.AbnormalEventReceivedFromThePeer);
-						
 						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
 						problem.setInvokeProblemType(InvokeProblemType.MistypedParameter);
 						mapDialogImpl.sendRejectComponent(invokeId, problem);
+						perfSer.deliverRejectComponent(mapDialogImpl, invokeId, problem, true);
 					} else {
-						perfSer.deliverProviderErrorComponent(mapDialogImpl, invokeId, MAPProviderError.InvalidResponseReceived);
-						
 						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.ReturnResult);
 						problem.setReturnResultProblemType(ReturnResultProblemType.MistypedParameter);
 						mapDialogImpl.sendRejectComponent(invokeId, problem);
-					}
-					break;
-
-				case LinkedResponseUnexpected:
-					// Failed when parsing the component - send TC-U-REJECT
-					if (compType == ComponentType.Invoke) {
-						this.deliverDialogNotice(mapDialogImpl, MAPNoticeProblemDiagnostic.AbnormalEventReceivedFromThePeer);
-						
-						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
-						problem.setInvokeProblemType(InvokeProblemType.LinkedResponseUnexpected);
-						mapDialogImpl.sendRejectComponent(invokeId, problem);
-					}
-					break;
-
-				case UnexpectedLinkedOperation:
-					// Failed when parsing the component - send TC-U-REJECT
-					if (compType == ComponentType.Invoke) {
-						this.deliverDialogNotice(mapDialogImpl, MAPNoticeProblemDiagnostic.AbnormalEventReceivedFromThePeer);
-						
-						Problem problem = this.getTCAPProvider().getComponentPrimitiveFactory().createProblem(ProblemType.Invoke);
-						problem.setInvokeProblemType(InvokeProblemType.UnexpectedLinkedOperation);
-						mapDialogImpl.sendRejectComponent(invokeId, problem);
+						perfSer.deliverRejectComponent(mapDialogImpl, invokeId, problem, true);
 					}
 					break;
 				}
-
 			}
 		} catch (MAPException e) {
 			loger.error("Error processing a Component: " + e.getMessage() + "\nComponent" + c, e);
@@ -1651,14 +1591,14 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		}
 
 		synchronized (mapDialogImpl) {
-			if (mapDialogImpl.getState() == MAPDialogState.INITIAL_RECEIVED) {
+			if (mapDialogImpl.getState() == MAPDialogState.INITIAL_SENT) {
 				// If a TC-NOTICE indication primitive is received before the
 				// dialogue has been confirmed (i.e. no backward message is
 				// received by the dialogue initiator node), the MAP PM shall
 				// issue a MAP-OP EN Cnf primitive with the result parameter
 				// indicating Refused and a refuse reason Remote node not
 				// reachable�.
-				this.deliverDialogReject(mapDialogImpl, MAPRefuseReason.RemoteNodeNotReachable, null, null, null);
+				this.deliverDialogReject(mapDialogImpl, MAPRefuseReason.RemoteNodeNotReachable, null, null);
 				mapDialogImpl.setState(MAPDialogState.EXPUNGED);
 			} else if (mapDialogImpl.getState() == MAPDialogState.ACTIVE) {
 				// If a TC-NOTICE indication primitive is received after the
@@ -1694,10 +1634,10 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		}
 	}
 
-	private void deliverDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
-			ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
+	private void deliverDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, ApplicationContextName alternativeApplicationContext,
+			MAPExtensionContainer extensionContainer) {
 		for (MAPDialogListener listener : this.dialogListeners) {
-			listener.onDialogReject(mapDialog, refuseReason, providerError, alternativeApplicationContext, extensionContainer);
+			listener.onDialogReject(mapDialog, refuseReason, alternativeApplicationContext, extensionContainer);
 		}
 	}
 
@@ -2093,8 +2033,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 	 * Issue TC-U-ABORT without any apdu - for MAP V1
 	 * 
 	 * @param tcapDialog
-	 * @param mapProviderAbortReason
-	 * @param mapExtensionContainer
+	 * @param returnMessageOnError
 	 * @throws MAPException
 	 */
 	protected void fireTCAbortV1(Dialog tcapDialog, boolean returnMessageOnError) throws MAPException {

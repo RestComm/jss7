@@ -37,7 +37,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 public class TCPAbortIndicationImpl extends DialogIndicationImpl implements TCPAbortIndication {
 	//This indication is used to inform user of abnormal cases.
 	private PAbortCauseType cause;
-	private boolean localProviderOriginated = false;
+//	private boolean localProviderOriginated = false;
 	
 	TCPAbortIndicationImpl() {
 		super(EventType.PAbort);
@@ -58,12 +58,12 @@ public class TCPAbortIndicationImpl extends DialogIndicationImpl implements TCPA
 		this.cause = t;
 	}
 
-	public boolean isLocalProviderOriginated() {
-		return localProviderOriginated;
-	}
-
-	public void setLocalProviderOriginated(boolean val) {
-		localProviderOriginated = val;
-	}
+//	public boolean isLocalProviderOriginated() {
+//		return localProviderOriginated;
+//	}
+//
+//	public void setLocalProviderOriginated(boolean val) {
+//		localProviderOriginated = val;
+//	}
 }
 

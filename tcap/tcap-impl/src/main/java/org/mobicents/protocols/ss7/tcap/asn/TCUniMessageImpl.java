@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,9 +20,6 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * 
- */
 package org.mobicents.protocols.ss7.tcap.asn;
 
 import java.io.IOException;
@@ -34,6 +31,7 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
+import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCUniMessage;
 
 /**
@@ -109,7 +107,7 @@ public class TCUniMessageImpl implements TCUniMessage {
 				
 				int tag = localAis.readTag();
 				if (localAis.isTagPrimitive() || localAis.getTagClass() != Tag.CLASS_APPLICATION)
-					throw new ParseException(
+					throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
 							"Error decoding TC-Uni: DialogPortion and Component portion must be constructive and has tag class CLASS_APPLICATION");
 				
 				switch(tag) {
@@ -135,13 +133,14 @@ public class TCUniMessageImpl implements TCUniMessage {
 					break;
 					
 				default:
-					throw new ParseException("Error decoding TC-Uni: DialogPortion and Componebt parsing: bad tag - " + tag);
+					throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
+							"Error decoding TC-Uni: DialogPortion and Componebt parsing: bad tag - " + tag);
 				}
 			}
 		} catch (IOException e) {
-			throw new ParseException("IOException while decoding TC-Uni: " + e.getMessage(), e);
+			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "IOException while decoding TC-Uni: " + e.getMessage(), e);
 		} catch (AsnException e) {
-			throw new ParseException("AsnException while decoding TC-Uni: " + e.getMessage(), e);
+			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "AsnException while decoding TC-Uni: " + e.getMessage(), e);
 		}
 
 	}
@@ -153,10 +152,10 @@ public class TCUniMessageImpl implements TCUniMessage {
 	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols
 	 * .asn.AsnOutputStream)
 	 */
-	public void encode(AsnOutputStream aos) throws ParseException {
+	public void encode(AsnOutputStream aos) throws EncodeException {
 		
 		if (this.component == null || this.component.length == 0)
-			throw new ParseException("Error encoding TC-Uni: Component portion is mandatory but not defined");
+			throw new EncodeException("Error encoding TC-Uni: Component portion is mandatory but not defined");
 		
 		try {
 			
@@ -176,7 +175,7 @@ public class TCUniMessageImpl implements TCUniMessage {
 			aos.FinalizeContent(pos);
 			
 		} catch (AsnException e) {
-			throw new ParseException("AsnException while encoding TC-Uni: " + e.getMessage(), e);
+			throw new EncodeException("AsnException while encoding TC-Uni: " + e.getMessage(), e);
 		}
 
 	}
