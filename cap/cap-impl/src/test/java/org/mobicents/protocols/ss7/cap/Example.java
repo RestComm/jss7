@@ -63,56 +63,71 @@ public class Example {
 
 		int serviceKey = 1;
 
-		CalledPartyNumber calledPartyNumber = client.getCAPProvider().getISUPParameterFactory().createCalledPartyNumber();
+		CalledPartyNumber calledPartyNumber = client.getCAPProvider().getISUPParameterFactory()
+			.createCalledPartyNumber();
 		calledPartyNumber.setAddress("552348762");
 		calledPartyNumber.setNatureOfAddresIndicator(NAINumber._NAI_INTERNATIONAL_NUMBER);
 		calledPartyNumber.setNumberingPlanIndicator(CalledPartyNumber._NPI_ISDN);
 		calledPartyNumber.setInternalNetworkNumberIndicator(CalledPartyNumber._INN_ROUTING_ALLOWED);
-		CalledPartyNumberCap calledPartyNumberCap = client.getCAPProvider().getCAPParameterFactory().createCalledPartyNumberCap(calledPartyNumber);
+		CalledPartyNumberCap calledPartyNumberCap = client.getCAPProvider()
+			.getCAPParameterFactory().createCalledPartyNumberCap(calledPartyNumber);
 
-		CallingPartyNumber callingPartyNumber = client.getCAPProvider().getISUPParameterFactory().createCallingPartyNumber();
+		CallingPartyNumber callingPartyNumber = client.getCAPProvider().getISUPParameterFactory()
+			.createCallingPartyNumber();
 		callingPartyNumber.setAddress("55998223");
 		callingPartyNumber.setNatureOfAddresIndicator(NAINumber._NAI_INTERNATIONAL_NUMBER);
 		callingPartyNumber.setNumberingPlanIndicator(CalledPartyNumber._NPI_ISDN);
 		callingPartyNumber.setAddressRepresentationREstrictedIndicator(CallingPartyNumber._APRI_ALLOWED);
 		callingPartyNumber.setScreeningIndicator(CallingPartyNumber._SI_NETWORK_PROVIDED);
-		CallingPartyNumberCap callingPartyNumberCap = client.getCAPProvider().getCAPParameterFactory().createCallingPartyNumberCap(callingPartyNumber);
+		CallingPartyNumberCap callingPartyNumberCap = client.getCAPProvider()
+			.getCAPParameterFactory().createCallingPartyNumberCap(callingPartyNumber);
 
-		LocationNumber locationNumber = client.getCAPProvider().getISUPParameterFactory().createLocationNumber();
+		LocationNumber locationNumber = client.getCAPProvider().getISUPParameterFactory()
+		.createLocationNumber();
 		locationNumber.setAddress("55200001");
 		locationNumber.setNatureOfAddresIndicator(NAINumber._NAI_INTERNATIONAL_NUMBER);
 		locationNumber.setNumberingPlanIndicator(LocationNumber._NPI_ISDN);
 		locationNumber.setAddressRepresentationRestrictedIndicator(LocationNumber._APRI_ALLOWED);
 		locationNumber.setScreeningIndicator(LocationNumber._SI_NETWORK_PROVIDED);
 		locationNumber.setInternalNetworkNumberIndicator(LocationNumber._INN_ROUTING_ALLOWED);
-		LocationNumberCap locationNumberCap = client.getCAPProvider().getCAPParameterFactory().createLocationNumberCap(locationNumber);
+		LocationNumberCap locationNumberCap = client.getCAPProvider().getCAPParameterFactory()
+			.createLocationNumberCap(locationNumber);
 
 		ISDNAddressString vlrNumber = client.getCAPProvider().getMAPParameterFactory()
-				.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "552000002");
+				.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, 
+						"552000002");
 		LocationInformation locationInformation = client.getCAPProvider().getMAPParameterFactory()
-				.createLocationInformation(10, null, vlrNumber, null, null, null, null, vlrNumber, null, false, false, null, null);
+				.createLocationInformation(10, null, vlrNumber, null, null, null, null, 
+						vlrNumber, null, false, false, null, null);
 
-		client.sendInitialDP(origAddress, destAddress, serviceKey, calledPartyNumberCap, callingPartyNumberCap, locationNumberCap, EventTypeBCSM.collectedInfo,
+		client.sendInitialDP(origAddress, destAddress, serviceKey, calledPartyNumberCap, 
+				callingPartyNumberCap, locationNumberCap, EventTypeBCSM.collectedInfo,
 				locationInformation);
 		
 		// sending oAnswer in 5 sec
 		Thread.sleep(5000);
 		OAnswerSpecificInfo oAnswerSpecificInfo = client.getCAPProvider().getCAPParameterFactory()
 				.createOAnswerSpecificInfo(null, false, false, null, null, null);
-		ReceivingSideID legID = client.getCAPProvider().getCAPParameterFactory().createReceivingSideID(LegType.leg2);
-		MiscCallInfo miscCallInfo = client.getCAPProvider().getINAPParameterFactory().createMiscCallInfo(MiscCallInfoMessageType.notification, null);
+		ReceivingSideID legID = client.getCAPProvider().getCAPParameterFactory()
+			.createReceivingSideID(LegType.leg2);
+		MiscCallInfo miscCallInfo = client.getCAPProvider().getINAPParameterFactory()
+			.createMiscCallInfo(MiscCallInfoMessageType.notification, null);
 		client.sendEventReportBCSM_OAnswer(oAnswerSpecificInfo, legID, miscCallInfo);
 		
 		// sending oDisconnect in 20 sec
 		Thread.sleep(20000);
-		CauseIndicators causeIndicators = client.getCAPProvider().getISUPParameterFactory().createCauseIndicators();
+		CauseIndicators causeIndicators = client.getCAPProvider().getISUPParameterFactory()
+			.createCauseIndicators();
 		causeIndicators.setLocation(CauseIndicators._LOCATION_USER);
 		causeIndicators.setCodingStandard(CauseIndicators._CODING_STANDARD_ITUT);
 		causeIndicators.setCauseValue(CauseIndicators._CV_ALL_CLEAR);
-		CauseCap releaseCause = client.getCAPProvider().getCAPParameterFactory().createCauseCap(causeIndicators);
-		ODisconnectSpecificInfo oDisconnectSpecificInfo = client.getCAPProvider().getCAPParameterFactory().createODisconnectSpecificInfo(releaseCause);
+		CauseCap releaseCause = client.getCAPProvider().getCAPParameterFactory()
+			.createCauseCap(causeIndicators);
+		ODisconnectSpecificInfo oDisconnectSpecificInfo = client.getCAPProvider()
+			.getCAPParameterFactory().createODisconnectSpecificInfo(releaseCause);
 		legID = client.getCAPProvider().getCAPParameterFactory().createReceivingSideID(LegType.leg1);
-		miscCallInfo = client.getCAPProvider().getINAPParameterFactory().createMiscCallInfo(MiscCallInfoMessageType.notification, null);
+		miscCallInfo = client.getCAPProvider().getINAPParameterFactory()
+			.createMiscCallInfo(MiscCallInfoMessageType.notification, null);
 		client.sendEventReportBCSM_ODisconnect(oDisconnectSpecificInfo, legID, miscCallInfo);
 		
 		// wait for answer

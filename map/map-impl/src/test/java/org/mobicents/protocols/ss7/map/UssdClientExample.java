@@ -70,11 +70,15 @@ public class UssdClientExample implements MAPDialogListener, MAPServiceSupplemen
 		mapStack.stop();
 	}
 
-	public void sendProcessUssdRequest(SccpAddress origAddress, AddressString origReference, SccpAddress remoteAddress, AddressString destReference,
-			String ussdMessage, AlertingPattern alertingPattern, ISDNAddressString msisdn) throws MAPException {
+	public void sendProcessUssdRequest(SccpAddress origAddress, AddressString origReference, 
+			SccpAddress remoteAddress, AddressString destReference,
+			String ussdMessage, AlertingPattern alertingPattern, ISDNAddressString msisdn) 
+	throws MAPException {
 		// First create Dialog
 		currentMapDialog = mapProvider.getMAPServiceSupplementary().createNewDialog(
-				MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext, MAPApplicationContextVersion.version2), origAddress,
+				MAPApplicationContext.getInstance(
+						MAPApplicationContextName.networkUnstructuredSsContext, 
+						MAPApplicationContextVersion.version2), origAddress,
 				destReference, remoteAddress, destReference);
 
 		CBSDataCodingScheme ussdDataCodingScheme = new CBSDataCodingSchemeImpl(0x0f);
@@ -83,7 +87,8 @@ public class UssdClientExample implements MAPDialogListener, MAPServiceSupplemen
 		// impl of Charset
 		USSDString ussdString = paramFact.createUSSDString(ussdMessage, null, null);
 
-		currentMapDialog.addProcessUnstructuredSSRequest(ussdDataCodingScheme, ussdString, alertingPattern, msisdn);
+		currentMapDialog.addProcessUnstructuredSSRequest(ussdDataCodingScheme, ussdString, 
+				alertingPattern, msisdn);
 		// This will initiate the TC-BEGIN with INVOKE component
 		currentMapDialog.send();
 	}	
@@ -102,12 +107,14 @@ public class UssdClientExample implements MAPDialogListener, MAPServiceSupplemen
 	}
 
 
-	public void onErrorComponent(MAPDialog mapDialog, Long invokeId, MAPErrorMessage mapErrorMessage) {
+	public void onErrorComponent(MAPDialog mapDialog, Long invokeId, 
+			MAPErrorMessage mapErrorMessage) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem, boolean isLocalOriginated) {
+	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, 
+			Problem problem, boolean isLocalOriginated) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -152,12 +159,14 @@ public class UssdClientExample implements MAPDialogListener, MAPServiceSupplemen
 		
 	}
 
-	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, AddressString origReference, MAPExtensionContainer extensionContainer) {
+	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, 
+			AddressString origReference, MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, AddressString origReference, IMSI eriImsi, AddressString eriVlrNo) {
+	public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, 
+			AddressString origReference, IMSI eriImsi, AddressString eriVlrNo) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -167,13 +176,14 @@ public class UssdClientExample implements MAPDialogListener, MAPServiceSupplemen
 		
 	}
 
-	public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason, MAPExtensionContainer extensionContainer) {
+	public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason, 
+			MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason, MAPAbortSource abortSource,
-			MAPExtensionContainer extensionContainer) {
+	public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason, 
+			MAPAbortSource abortSource, MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -183,7 +193,8 @@ public class UssdClientExample implements MAPDialogListener, MAPServiceSupplemen
 		
 	}
 
-	public void onDialogNotice(MAPDialog mapDialog, MAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
+	public void onDialogNotice(MAPDialog mapDialog, 
+			MAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -198,7 +209,8 @@ public class UssdClientExample implements MAPDialogListener, MAPServiceSupplemen
 	}
 
 	@Override
-	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, ApplicationContextName alternativeApplicationContext,
+	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, 
+			ApplicationContextName alternativeApplicationContext,
 			MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
 		

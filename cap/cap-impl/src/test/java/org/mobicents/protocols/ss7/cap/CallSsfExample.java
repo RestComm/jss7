@@ -89,15 +89,21 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 		capStack.stop();
 	}
 
-	public void sendInitialDP(SccpAddress origAddress, SccpAddress remoteAddress, int serviceKey, CalledPartyNumberCap calledPartyNumber,
-			CallingPartyNumberCap callingPartyNumber, LocationNumberCap locationNumber, EventTypeBCSM eventTypeBCSM, LocationInformation locationInformation)
+	public void sendInitialDP(SccpAddress origAddress, SccpAddress remoteAddress, 
+			int serviceKey, CalledPartyNumberCap calledPartyNumber,
+			CallingPartyNumberCap callingPartyNumber, LocationNumberCap locationNumber, 
+			EventTypeBCSM eventTypeBCSM, LocationInformation locationInformation)
 			throws CAPException {
 		// First create Dialog
 		CAPApplicationContext acn = CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF; 
-		currentCapDialog = capProvider.getCAPServiceCircuitSwitchedCall().createNewDialog(acn, origAddress, remoteAddress);
+		currentCapDialog = capProvider.getCAPServiceCircuitSwitchedCall().createNewDialog(
+				acn, origAddress, remoteAddress);
 
-		currentCapDialog.addInitialDPRequest(serviceKey, calledPartyNumber, callingPartyNumber, null, null, null, locationNumber, null, null, null, null, null,
-				eventTypeBCSM, null, null, null, null, null, null, null, false, null, null, locationInformation, null, null, null, null, null, false, null);
+		currentCapDialog.addInitialDPRequest(serviceKey, calledPartyNumber, 
+				callingPartyNumber, null, null, null, locationNumber, null, null, 
+				null, null, null,
+				eventTypeBCSM, null, null, null, null, null, null, null, false, 
+				null, null, locationInformation, null, null, null, null, null, false, null);
 		// This will initiate the TC-BEGIN with INVOKE component
 		currentCapDialog.send();
 
@@ -107,19 +113,27 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	
 	}
 
-	public void sendEventReportBCSM_OAnswer(OAnswerSpecificInfo oAnswerSpecificInfo, ReceivingSideID legID, MiscCallInfo miscCallInfo) throws CAPException {
+	public void sendEventReportBCSM_OAnswer(OAnswerSpecificInfo oAnswerSpecificInfo, 
+			ReceivingSideID legID, MiscCallInfo miscCallInfo) throws CAPException {
 		if (currentCapDialog != null && this.cc != null) {
-			EventSpecificInformationBCSM eventSpecificInformationBCSM = this.capProvider.getCAPParameterFactory().createEventSpecificInformationBCSM(oAnswerSpecificInfo);
-			currentCapDialog.addEventReportBCSMRequest(EventTypeBCSM.oAnswer, eventSpecificInformationBCSM, legID, miscCallInfo, null);
+			EventSpecificInformationBCSM eventSpecificInformationBCSM = 
+				this.capProvider.getCAPParameterFactory().createEventSpecificInformationBCSM(
+						oAnswerSpecificInfo);
+			currentCapDialog.addEventReportBCSMRequest(EventTypeBCSM.oAnswer, 
+					eventSpecificInformationBCSM, legID, miscCallInfo, null);
 			currentCapDialog.send();
 			this.cc.step = Step.answered;
 		}
 	}
 
-	public void sendEventReportBCSM_ODisconnect(ODisconnectSpecificInfo oDisconnectSpecificInfo, ReceivingSideID legID, MiscCallInfo miscCallInfo) throws CAPException {
+	public void sendEventReportBCSM_ODisconnect(ODisconnectSpecificInfo oDisconnectSpecificInfo, 
+			ReceivingSideID legID, MiscCallInfo miscCallInfo) throws CAPException {
 		if (currentCapDialog != null && this.cc != null) {
-			EventSpecificInformationBCSM eventSpecificInformationBCSM = this.capProvider.getCAPParameterFactory().createEventSpecificInformationBCSM(oDisconnectSpecificInfo);
-			currentCapDialog.addEventReportBCSMRequest(EventTypeBCSM.oDisconnect, eventSpecificInformationBCSM, legID, miscCallInfo, null);
+			EventSpecificInformationBCSM eventSpecificInformationBCSM = 
+				this.capProvider.getCAPParameterFactory().createEventSpecificInformationBCSM(
+						oDisconnectSpecificInfo);
+			currentCapDialog.addEventReportBCSMRequest(EventTypeBCSM.oDisconnect, 
+					eventSpecificInformationBCSM, legID, miscCallInfo, null);
 			currentCapDialog.send();
 			this.cc.step = Step.disconnected;
 		}
@@ -194,7 +208,8 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	}
 
 	@Override
-	public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem, boolean isLocalOriginated) {
+	public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem, 
+			boolean isLocalOriginated) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -338,7 +353,8 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	}
 
 	@Override
-	public void onDialogUserAbort(CAPDialog capDialog, CAPGeneralAbortReason generalReason, CAPUserAbortReason userReason) {
+	public void onDialogUserAbort(CAPDialog capDialog, CAPGeneralAbortReason generalReason, 
+			CAPUserAbortReason userReason) {
 		// TODO Auto-generated method stub
 		
 	}

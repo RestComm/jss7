@@ -41,14 +41,18 @@ public class Example {
 
 		SccpAddress origAddress = createLocalAddress();
 		ISDNAddressString origReference = client.getMAPProvider().getMAPParameterFactory()
-				.createISDNAddressString(AddressNature.international_number, NumberingPlan.land_mobile, "31628968300");
+				.createISDNAddressString(AddressNature.international_number, 
+						NumberingPlan.land_mobile, "31628968300");
 		SccpAddress destAddress = createRemoteAddress();
 		ISDNAddressString destReference = client.getMAPProvider().getMAPParameterFactory()
-				.createISDNAddressString(AddressNature.international_number, NumberingPlan.land_mobile, "204208300008002");
+				.createISDNAddressString(AddressNature.international_number, 
+						NumberingPlan.land_mobile, "204208300008002");
 
 		ISDNAddressString msisdn = client.getMAPProvider().getMAPParameterFactory()
-				.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628838002");
-		client.sendProcessUssdRequest(origAddress, origReference, destAddress, destReference, "*123#", null, msisdn);
+				.createISDNAddressString(AddressNature.international_number, 
+						NumberingPlan.ISDN, "31628838002");
+		client.sendProcessUssdRequest(origAddress, origReference, destAddress, destReference, 
+				"*123#", null, msisdn);
 		
 		// wait for answer
 		Thread.sleep(600000);

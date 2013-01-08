@@ -76,7 +76,8 @@ public class UssdServerExample implements MAPDialogListener, MAPServiceSupplemen
 			CBSDataCodingScheme ussdDataCodingScheme = new CBSDataCodingSchemeImpl(0x0f);
 			USSDString ussdResponse = paramFact.createUSSDString(response, null, null);
 
-			currentMapDialog.addProcessUnstructuredSSResponse(ind.getInvokeId(), ussdDataCodingScheme, ussdResponse);
+			currentMapDialog.addProcessUnstructuredSSResponse(ind.getInvokeId(), 
+					ussdDataCodingScheme, ussdResponse);
 		} catch (MAPException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -94,12 +95,14 @@ public class UssdServerExample implements MAPDialogListener, MAPServiceSupplemen
 	}
 
 
-	public void onErrorComponent(MAPDialog mapDialog, Long invokeId, MAPErrorMessage mapErrorMessage) {
+	public void onErrorComponent(MAPDialog mapDialog, Long invokeId, 
+			MAPErrorMessage mapErrorMessage) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem, boolean isLocalOriginated) {
+	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem, 
+			boolean isLocalOriginated) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -139,12 +142,14 @@ public class UssdServerExample implements MAPDialogListener, MAPServiceSupplemen
 		
 	}
 
-	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, AddressString origReference, MAPExtensionContainer extensionContainer) {
+	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, 
+			AddressString origReference, MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, AddressString origReference, IMSI eriImsi, AddressString eriVlrNo) {
+	public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, 
+			AddressString origReference, IMSI eriImsi, AddressString eriVlrNo) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -155,17 +160,20 @@ public class UssdServerExample implements MAPDialogListener, MAPServiceSupplemen
 	}
 
 	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason,
-			ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
+			ApplicationContextName alternativeApplicationContext, 
+			MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason, MAPExtensionContainer extensionContainer) {
+	public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason, 
+			MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason, MAPAbortSource abortSource,
+	public void onDialogProviderAbort(MAPDialog mapDialog, 
+			MAPAbortProviderReason abortProviderReason, MAPAbortSource abortSource,
 			MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
 		
@@ -176,7 +184,8 @@ public class UssdServerExample implements MAPDialogListener, MAPServiceSupplemen
 		
 	}
 
-	public void onDialogNotice(MAPDialog mapDialog, MAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
+	public void onDialogNotice(MAPDialog mapDialog, 
+			MAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
 		// TODO Auto-generated method stub
 		
 	}

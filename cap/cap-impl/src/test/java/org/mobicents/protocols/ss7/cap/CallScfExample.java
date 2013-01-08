@@ -122,40 +122,61 @@ public class CallScfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 				case initialDPRecieved:
 					// informing SSF of BCSM events processing
 					ArrayList<BCSMEvent> bcsmEventList = new ArrayList<BCSMEvent>();
-					BCSMEvent ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.routeSelectFailure, MonitorMode.notifyAndContinue,
+					BCSMEvent ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(
+							EventTypeBCSM.routeSelectFailure, MonitorMode.notifyAndContinue,
 							null, null, false);
 					bcsmEventList.add(ev);
-					ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oCalledPartyBusy, MonitorMode.interrupted, null, null, false);
+					ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(
+							EventTypeBCSM.oCalledPartyBusy, MonitorMode.interrupted, null, 
+							null, false);
 					bcsmEventList.add(ev);
-					ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oNoAnswer, MonitorMode.interrupted, null, null, false);
+					ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(
+							EventTypeBCSM.oNoAnswer, MonitorMode.interrupted, null, null, false);
 					bcsmEventList.add(ev);
-					ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oAnswer, MonitorMode.notifyAndContinue, null, null, false);
+					ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(
+							EventTypeBCSM.oAnswer, MonitorMode.notifyAndContinue, null, 
+							null, false);
 					bcsmEventList.add(ev);
-					LegID legId = this.capProvider.getINAPParameterFactory().createLegID(true, LegType.leg1);
+					LegID legId = this.capProvider.getINAPParameterFactory().createLegID(
+							true, LegType.leg1);
 					ev = this.capProvider.getCAPParameterFactory()
-							.createBCSMEvent(EventTypeBCSM.oDisconnect, MonitorMode.notifyAndContinue, legId, null, false);
+							.createBCSMEvent(EventTypeBCSM.oDisconnect, 
+									MonitorMode.notifyAndContinue, legId, null, false);
 					bcsmEventList.add(ev);
-					legId = this.capProvider.getINAPParameterFactory().createLegID(true, LegType.leg2);
-					ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oDisconnect, MonitorMode.interrupted, legId, null, false);
+					legId = this.capProvider.getINAPParameterFactory().createLegID(true, 
+							LegType.leg2);
+					ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(
+							EventTypeBCSM.oDisconnect, MonitorMode.interrupted, legId, 
+							null, false);
 					bcsmEventList.add(ev);
-					ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oAbandon, MonitorMode.notifyAndContinue, null, null, false);
+					ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(
+							EventTypeBCSM.oAbandon, MonitorMode.notifyAndContinue, null, 
+							null, false);
 					bcsmEventList.add(ev);
 					currentCapDialog.addRequestReportBCSMEventRequest(bcsmEventList, null);
 
-					String newNumber = "22123124"; // calculating here a new called party number if it is needed
+					// calculating here a new called party number if it is needed
+					String newNumber = "22123124"; 
 					if (newNumber != null) {
 						// sending Connect to force routing the call to a new  number
-						ArrayList<CalledPartyNumberCap> calledPartyNumber = new ArrayList<CalledPartyNumberCap>();
-						CalledPartyNumber cpn = this.capProvider.getISUPParameterFactory().createCalledPartyNumber();
+						ArrayList<CalledPartyNumberCap> calledPartyNumber = 
+							new ArrayList<CalledPartyNumberCap>();
+						CalledPartyNumber cpn = this.capProvider.getISUPParameterFactory()
+							.createCalledPartyNumber();
 						cpn.setAddress("5599999988");
 						cpn.setNatureOfAddresIndicator(NAINumber._NAI_INTERNATIONAL_NUMBER);
 						cpn.setNumberingPlanIndicator(CalledPartyNumber._NPI_ISDN);
-						cpn.setInternalNetworkNumberIndicator(CalledPartyNumber._INN_ROUTING_ALLOWED);
-						CalledPartyNumberCap cpnc = this.capProvider.getCAPParameterFactory().createCalledPartyNumberCap(cpn);
+						cpn.setInternalNetworkNumberIndicator(
+								CalledPartyNumber._INN_ROUTING_ALLOWED);
+						CalledPartyNumberCap cpnc = this.capProvider.getCAPParameterFactory()
+						.createCalledPartyNumberCap(cpn);
 						calledPartyNumber.add(cpnc);
-						DestinationRoutingAddress destinationRoutingAddress = this.capProvider.getCAPParameterFactory().createDestinationRoutingAddress(
+						DestinationRoutingAddress destinationRoutingAddress = this.capProvider
+							.getCAPParameterFactory().createDestinationRoutingAddress(
 								calledPartyNumber);
-						currentCapDialog.addConnectRequest(destinationRoutingAddress, null, null, null, null, null, null, null, null, null, null, null, null,
+						currentCapDialog.addConnectRequest(destinationRoutingAddress, null, 
+								null, null, null, null, null, null, null, null, null, 
+								null, null,
 								false, false, false, null, false);
 					} else {
 						// sending Continue to use the original calledPartyAddress
@@ -179,7 +200,8 @@ public class CallScfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 
 	@Override
 	public void onDialogTimeout(CAPDialog capDialog) {
-		if (currentCapDialog != null && this.cc != null && this.cc.step != Step.disconnected && this.cc.activityTestInvokeId == null) {
+		if (currentCapDialog != null && this.cc != null && this.cc.step != Step.disconnected 
+				&& this.cc.activityTestInvokeId == null) {
 			// check the SSF if the call is still alive
 			currentCapDialog.keepAlive();
 			try {
@@ -214,13 +236,15 @@ public class CallScfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	}
 
 	@Override
-	public void onErrorComponent(CAPDialog capDialog, Long invokeId, CAPErrorMessage capErrorMessage) {
+	public void onErrorComponent(CAPDialog capDialog, Long invokeId, 
+			CAPErrorMessage capErrorMessage) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem, boolean isLocalOriginated) {
+	public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem, 
+			boolean isLocalOriginated) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -370,7 +394,8 @@ public class CallScfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	}
 
 	@Override
-	public void onDialogUserAbort(CAPDialog capDialog, CAPGeneralAbortReason generalReason, CAPUserAbortReason userReason) {
+	public void onDialogUserAbort(CAPDialog capDialog, CAPGeneralAbortReason generalReason, 
+			CAPUserAbortReason userReason) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -394,7 +419,8 @@ public class CallScfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	}
 
 	@Override
-	public void onDialogNotice(CAPDialog capDialog, CAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
+	public void onDialogNotice(CAPDialog capDialog, 
+			CAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
 		// TODO Auto-generated method stub
 		
 	}
