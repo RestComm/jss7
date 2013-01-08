@@ -51,16 +51,40 @@ public interface Time {
 
 	public byte[] getData();
 	
+	/**  
+	 * Returns the value in UTC
+	 * 
+	 */
 	public int getYear();
 
+	/**  
+	 * Returns the value in UTC
+	 * 
+	 */
 	public int getMonth();
 
+	/**  
+	 * Returns the value in UTC
+	 * 
+	 */
 	public int getDay();
 
+	/**  
+	 * Returns the value in UTC
+	 * 
+	 */
 	public int getHour();
 
+	/**  
+	 * Returns the value in UTC
+	 * 
+	 */
 	public int getMinute();
 
+	/**  
+	 * Returns the value in UTC
+	 * 
+	 */
 	public int getSecond();
 
 }

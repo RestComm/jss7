@@ -6416,16 +6416,10 @@ public class MAPFunctionalTest extends SccpHarness {
 				SendRoutingInformationResponseImpl ind =(SendRoutingInformationResponseImpl)response;
 				
 				IMSI imsi = ind.getIMSI();
-				ExtendedRoutingInfo extRoutingInfo = ind.getExtendedRoutingInfo();
-				RoutingInfo routingInfo = extRoutingInfo.getRoutingInfo();
-				ISDNAddressString roamingNumber = routingInfo.getRoamingNumber();
+				assertNull(ind.getExtendedRoutingInfo());
 				
 				assertNotNull(imsi);
-				assertEquals(imsi.getData(), "011220200198227");
-				assertNotNull(roamingNumber);
-				assertEquals(roamingNumber.getAddressNature(), AddressNature.international_number);
-				assertEquals(roamingNumber.getNumberingPlan(), NumberingPlan.ISDN);
-				assertEquals(roamingNumber.getAddress(), "79273605819");	
+				assertEquals(imsi.getData(), "011220200198227");	
 				
 				long mapProtocolVersion = ind.getMapProtocolVersion();
 				assertEquals(mapProtocolVersion, 2);

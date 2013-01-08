@@ -39,11 +39,11 @@ import org.testng.annotations.Test;
 public class TimeTest {
 	
 	public byte[] getData() {
-		return new byte[] {4, 4, -95, 16, -24, 70};
+		return new byte[] {4, 4, -95, 17, 53, -98};
 	};
 
 	public byte[] getData2() {
-		return new byte[] {4, 4, 127, -2, -92, -58};
+		return new byte[] {4, 4, 127, -2, -14, 30};
 	}
 	
 	@Test(groups = { "functional.decode", "primitives" })
