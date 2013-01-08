@@ -32,11 +32,11 @@ import org.mobicents.protocols.ss7.map.primitives.TbcdStringWithFiller;
  */
 public class LongGroupIdImpl  extends TbcdStringWithFiller implements LongGroupId {
 	public LongGroupIdImpl() {
-		super(1, 4, "LongGroupId");
+		super(4, 4, "LongGroupId");
 	}
 
 	public LongGroupIdImpl(String data) {
-		super(1, 4, "LongGroupId", data);
+		super(4, 4, "LongGroupId", data);
 	}
 	
 	@Override

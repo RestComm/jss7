@@ -32,11 +32,11 @@ import org.mobicents.protocols.ss7.map.primitives.TbcdStringWithFiller;
 public class GroupIdImpl extends TbcdStringWithFiller implements GroupId {
 
 	public GroupIdImpl() {
-		super(1, 3, "GroupId");
+		super(3, 3, "GroupId");
 	}
 
 	public GroupIdImpl(String data) {
-		super(1, 3, "GroupId", data);
+		super(3, 3, "GroupId", data);
 	}
 	
 	@Override

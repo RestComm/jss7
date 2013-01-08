@@ -32,6 +32,11 @@ import org.mobicents.protocols.ss7.map.primitives.OctetStringLength1Base;
  */
 public class LSAAttributesImpl extends OctetStringLength1Base implements LSAAttributes{
 
+	static private int preferentialAccess_mask = 0x10;
+	static private int activeModeSupport_mask = 0x20;
+	static private int lsaIdentificationPriority_mask = 0x0F;
+
+
 	public LSAAttributesImpl() {
 		super("LSAAttributes");
 	}
@@ -41,7 +46,7 @@ public class LSAAttributesImpl extends OctetStringLength1Base implements LSAAttr
 	}
 	
 	public LSAAttributesImpl(LSAIdentificationPriorityValue value,boolean preferentialAccessAvailable,boolean activeModeSupportAvailable) {
-		super("LSAAttributes",value.getCode() | (preferentialAccessAvailable?0x10:0) | (activeModeSupportAvailable?0x20:0));
+		super("LSAAttributes",value.getCode() | (preferentialAccessAvailable?preferentialAccess_mask:0) | (activeModeSupportAvailable?activeModeSupport_mask:0));
 	}
 	
 	@Override
@@ -51,17 +56,42 @@ public class LSAAttributesImpl extends OctetStringLength1Base implements LSAAttr
 	
 	@Override
 	public LSAIdentificationPriorityValue getLSAIdentificationPriority(){
-		return LSAIdentificationPriorityValue.getInstance(data & 0x0F);
+		return LSAIdentificationPriorityValue.getInstance(data & lsaIdentificationPriority_mask);
 	}
 	
 	@Override
 	public boolean isPreferentialAccessAvailable(){
-		return ((data & 0x10 ) == 0x10);
+		return ((data & preferentialAccess_mask ) == preferentialAccess_mask);
 	}
 	
 	@Override
 	public boolean isActiveModeSupportAvailable(){
-		return ((data & 0x20 ) == 0x20);
+		return ((data & activeModeSupport_mask ) == activeModeSupport_mask);
 	} 
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(this._PrimitiveName);
+		sb.append(" [");
+
+		sb.append("  LSAIdentificationPriorityValue=");
+		sb.append(this.getLSAIdentificationPriority());
+
+		if(this.isPreferentialAccessAvailable()){
+			sb.append(" , PreferentialAccessAvailable ");
+		}
+
+		if(this.isActiveModeSupportAvailable()){
+			sb.append(" , ActiveModeSupportAvailable ");
+		}
+
+		sb.append(", Data=");
+		sb.append(this.data);
+
+		sb.append("]");
+
+		return sb.toString();
+	}
 
 }

@@ -42,4 +42,10 @@ public interface NAEACIC {
 
 	public byte[] getData();
 
+	public String getCarrierCode();
+
+	public NetworkIdentificationPlanValue getNetworkIdentificationPlanValue();
+
+	public NetworkIdentificationTypeValue getNetworkIdentificationTypeValue();
+
 }

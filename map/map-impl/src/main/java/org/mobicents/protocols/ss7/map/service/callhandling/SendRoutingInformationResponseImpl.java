@@ -426,7 +426,7 @@ public class SendRoutingInformationResponseImpl extends CallHandlingMessageImpl 
 					break;
 
 				default:
-					if (tag == TAG_cugCheckInfo && ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+					if (tag == Tag.SEQUENCE && ais.getTagClass() == Tag.CLASS_UNIVERSAL && !ais.isTagPrimitive() ) {
 						this.cugCheckInfo = new CUGCheckInfoImpl();
 						((CUGCheckInfoImpl) this.cugCheckInfo).decodeAll(ais);
 						break;
@@ -538,8 +538,8 @@ public class SendRoutingInformationResponseImpl extends CallHandlingMessageImpl 
 						}
 						break;
 					case TAG_basicService: // explicit tag encoding
-						if (!ais.isTagPrimitive()) {
-							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".basicService: is not primitive",
+						if (ais.isTagPrimitive()) {
+							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".basicService: is primitive",
 									MAPParsingComponentExceptionReason.MistypedParameter);
 						}
 						AsnInputStream ais1 = ais.readSequenceStream();
@@ -565,7 +565,7 @@ public class SendRoutingInformationResponseImpl extends CallHandlingMessageImpl 
 						break; 
 					case TAG_extensionContainer: 
 						if (ais.isTagPrimitive()) {
-							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: not primitive",
+							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive",
 									MAPParsingComponentExceptionReason.MistypedParameter);
 						}
 						this.extensionContainer = new MAPExtensionContainerImpl();
@@ -627,6 +627,9 @@ public class SendRoutingInformationResponseImpl extends CallHandlingMessageImpl 
 						((OfferedCamel4CSIsImpl) this.offeredCamel4CSIs).decodeAll(ais);
 						break; 
 					case TAG_routingInfo2: 
+						if (ais.isTagPrimitive())
+							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".routingInfo2: primitive",
+									MAPParsingComponentExceptionReason.MistypedParameter);
 						AsnInputStream ais0 = ais.readSequenceStream();
 						ais0.readTag();
 						this.routingInfo2 = new RoutingInfoImpl();
@@ -659,8 +662,8 @@ public class SendRoutingInformationResponseImpl extends CallHandlingMessageImpl 
 						}
 						break;
 					case TAG_basicService2: // explicit tag encoding
-						if (!ais.isTagPrimitive()) {
-							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".basicService2: is not primitive",
+						if (ais.isTagPrimitive()) {
+							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".basicService2: is primitive",
 									MAPParsingComponentExceptionReason.MistypedParameter);
 						}
 						AsnInputStream ais2 = ais.readSequenceStream();
@@ -761,7 +764,7 @@ public class SendRoutingInformationResponseImpl extends CallHandlingMessageImpl 
 				}
 
 				if (this.cugCheckInfo != null) {
-					((CUGCheckInfoImpl) this.cugCheckInfo).encodeAll(asnOs);
+					((CUGCheckInfoImpl) this.cugCheckInfo).encodeAll(asnOs ,Tag.CLASS_CONTEXT_SPECIFIC, TAG_cugCheckInfo);
 				}
 
 				if (this.cugSubscriptionFlag)

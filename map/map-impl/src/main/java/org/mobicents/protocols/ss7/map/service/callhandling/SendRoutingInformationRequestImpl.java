@@ -148,7 +148,6 @@ public class SendRoutingInformationRequestImpl extends CallHandlingMessageImpl i
 		this.interrogationType = interrogationType;
 		this.extensionContainer = extensionContainer;
 		this.mapProtocolVersion = mapProtocolVersion;
-		
 	}
 	
 	public SendRoutingInformationRequestImpl(long mapProtocolVersion, ISDNAddressString msisdn, 
@@ -525,8 +524,8 @@ public class SendRoutingInformationRequestImpl extends CallHandlingMessageImpl i
 					this.forwardingReason = ForwardingReason.getForwardingReason(i);
 					break;
 				case TAG_basicServiceGroup: // explicit tag encoding
-					if (!ais.isTagPrimitive()) {
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".basicServiceGroup: is not primitive",
+					if (ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".basicServiceGroup: is  primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					}
 					AsnInputStream ais1 = ais.readSequenceStream();
@@ -560,7 +559,7 @@ public class SendRoutingInformationRequestImpl extends CallHandlingMessageImpl i
 					break;
 				case TAG_extensionContainer:
 					if (ais.isTagPrimitive()) {
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is not primitive",
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					}
 					this.extensionContainer = new MAPExtensionContainerImpl();
@@ -654,8 +653,8 @@ public class SendRoutingInformationRequestImpl extends CallHandlingMessageImpl i
 					this.gsmSCFInitiatedCall = true;
 					break;
 				case TAG_basicServiceGroup2: // explicit tag encoding
-					if (!ais.isTagPrimitive()) {
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".basicServiceGroup2: is not primitive",
+					if (ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".basicServiceGroup2: is primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					}
 					AsnInputStream ais2 = ais.readSequenceStream();
@@ -664,8 +663,8 @@ public class SendRoutingInformationRequestImpl extends CallHandlingMessageImpl i
 					((ExtBasicServiceCodeImpl) this.basicServiceGroup2).decodeAll(ais2);
 					break;
 				case TAG_networkSignalInfo2:
-					if (!ais.isTagPrimitive()) {
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".networkSignalInfo2: is not primitive",
+					if (ais.isTagPrimitive()) {
+						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".networkSignalInfo2: is primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					}
 					this.networkSignalInfo2 = new ExternalSignalInfoImpl();

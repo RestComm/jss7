@@ -23,6 +23,14 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
 
 /**
  * 
+--Bits 1 to 4 of octet (x+1) define the priority of the LSA identification.
+--Bit 4321
+--	0000 priority 1 = lowest priority
+--	0001 priority 2 = second lowest priority
+--	: : : :
+--	1111 priority 16= highest priority
+
+ *
  * @author Lasith Waruna Perera
  * 
  */

@@ -187,7 +187,7 @@ public class VoiceGroupCallDataImpl  extends SequenceBase implements VoiceGroupC
 	
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		if (this.groupId == null)
+		if (this.groupId == null && this.longGroupId ==null )
 			throw new MAPException("Error while encoding" + _PrimitiveName + ": groupId must not be null");
 
 		if(this.longGroupId != null){

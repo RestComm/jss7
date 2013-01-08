@@ -52,6 +52,10 @@ public class VoiceBroadcastDataTest {
 		return new byte[] { 48, 48, 4, 3, 33, 67, 101, 5, 0, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33};
 	};
 	
+	public byte[] getData3() {
+		return new byte[] {48, 54, 4, 3, -1, -1, -1, 5, 0, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -128, 4, 33, 67, 101, -121};
+	};
+
 	@Test(groups = { "functional.decode", "primitives" })
 	public void testDecode() throws Exception {
 		//Option 1
@@ -86,6 +90,23 @@ public class VoiceBroadcastDataTest {
 		assertNotNull(prim.getExtensionContainer());
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(prim.getExtensionContainer()));
 		
+
+		//Option 3
+		data = this.getData3();
+		asn = new AsnInputStream(data);
+		tag = asn.readTag();
+		prim = new VoiceBroadcastDataImpl();
+		prim.decodeAll(asn);
+
+		assertEquals(tag, Tag.SEQUENCE);
+		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
+
+		assertTrue( prim.getGroupId().getGroupId().equals(""));
+		assertTrue( prim.getLongGroupId().getLongGroupId().equals("12345678"));
+		assertTrue(prim.getBroadcastInitEntitlement());
+		assertNotNull(prim.getExtensionContainer());
+		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(prim.getExtensionContainer()));
+
 	}
 	
 	@Test(groups = { "functional.encode", "primitives" })
@@ -109,6 +130,13 @@ public class VoiceBroadcastDataTest {
 		asn = new AsnOutputStream();
 		prim.encodeAll(asn);
 		assertTrue(Arrays.equals(asn.toByteArray(), this.getData2()));
+
+		//option 3
+		prim = new VoiceBroadcastDataImpl(null, broadcastInitEntitlement,
+				extensionContainer, longGroupId);
+		asn = new AsnOutputStream();
+		prim.encodeAll(asn);
+		assertTrue(Arrays.equals(asn.toByteArray(), this.getData3()));
 	}
 
 }

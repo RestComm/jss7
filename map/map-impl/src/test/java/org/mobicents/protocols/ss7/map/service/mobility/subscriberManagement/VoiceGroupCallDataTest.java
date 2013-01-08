@@ -56,7 +56,9 @@ public class VoiceGroupCallDataTest {
 		return new byte[] {48, 54, 4, 3, -12, -1, -1, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, 3, 2, 5, -96, -128, 2, 7, -128};
 	};
 	
-	
+	public byte[] getData3() {
+		return new byte[] { 48, 60, 4, 3, -1, -1, -1, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, 3, 2, 5, -96, -128, 2, 7, -128, -127, 4, -11, -1, -1, -1 };
+	};
 	
 	@Test(groups = { "functional.decode", "primitives" })
 	public void testDecode() throws Exception {
@@ -100,6 +102,26 @@ public class VoiceGroupCallDataTest {
 		assertNotNull(prim.getAdditionalInfo());
 		assertTrue(prim.getAdditionalInfo().getData().get(0));
 		
+		//Option 3
+		data = this.getData3();
+		asn = new AsnInputStream(data);
+		tag = asn.readTag();
+		prim = new VoiceGroupCallDataImpl();
+		prim.decodeAll(asn);
+
+		assertEquals(tag, Tag.SEQUENCE);
+		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
+
+		assertTrue( prim.getGroupId().getGroupId().equals(""));
+		assertTrue( prim.getLongGroupId().getLongGroupId().equals("5"));
+		assertNotNull(prim.getExtensionContainer());
+		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(prim.getExtensionContainer()));
+		assertTrue(prim.getAdditionalSubscriptions().getEmergencyReset());
+		assertFalse(prim.getAdditionalSubscriptions().getEmergencyUplinkRequest());
+		assertTrue(prim.getAdditionalSubscriptions().getPrivilegedUplinkRequest());
+		assertNotNull(prim.getAdditionalInfo());
+		assertTrue(prim.getAdditionalInfo().getData().get(0));
+
 	}
 	
 	@Test(groups = { "functional.encode", "primitives" })
@@ -127,6 +149,13 @@ public class VoiceGroupCallDataTest {
 		asn = new AsnOutputStream();
 		prim.encodeAll(asn);
 		assertTrue(Arrays.equals(asn.toByteArray(), this.getData2()));
+
+		//Option 3
+		prim = new VoiceGroupCallDataImpl( null, extensionContainer,
+				additionalSubscriptions, additionalInfo, longGroupId);
+		asn = new AsnOutputStream();
+		prim.encodeAll(asn);
+		assertTrue(Arrays.equals(asn.toByteArray(), this.getData3()));
 	}
 
 }

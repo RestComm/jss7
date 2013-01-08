@@ -167,5 +167,29 @@ public class TimeImpl extends OctetStringBase implements Time {
         }
         return new String(hexChars);
     }
-	
+
+	@Override
+	public String toString() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName);
+		sb.append(" [");
+		if (data != null) {
+			sb.append("year=");
+			sb.append(this.getYear());
+			sb.append(", month=");
+			sb.append(this.getMonth());
+			sb.append(", day=");
+			sb.append(this.getDay());
+			sb.append(", hour=");
+			sb.append(this.getHour());
+			sb.append(", minite=");
+			sb.append(this.getMinute());
+			sb.append(", second=");
+			sb.append(this.getSecond());
+		}
+		sb.append("]");
+
+		return sb.toString();
+	}
 }

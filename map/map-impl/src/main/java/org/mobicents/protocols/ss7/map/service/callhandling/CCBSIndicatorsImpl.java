@@ -152,4 +152,28 @@ public class CCBSIndicatorsImpl extends SequenceBase implements CCBSIndicators{
 		}
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName + " [");
+
+		if (this.ccbsPossible) {
+			sb.append("ccbsPossible, ");
+		}
+
+		if (this.keepCCBSCallIndicator) {
+			sb.append("keepCCBSCallIndicator, ");
+		}
+
+		if (this.mapExtensionContainer != null) {
+			sb.append("mapExtensionContainer=");
+			sb.append(this.mapExtensionContainer.toString());
+			sb.append(" ");
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
+
 }

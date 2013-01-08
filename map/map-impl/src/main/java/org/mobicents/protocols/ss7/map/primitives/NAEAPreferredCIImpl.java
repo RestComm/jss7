@@ -133,4 +133,27 @@ public class NAEAPreferredCIImpl extends SequenceBase implements NAEAPreferredCI
 		
 	}
 
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName + " [");
+
+		if (this.naeaPreferredCIC != null) {
+			sb.append("naeaPreferredCIC=");
+			sb.append(this.naeaPreferredCIC.toString());
+			sb.append(", ");
+		}
+
+		if (this.extensionContainer != null) {
+			sb.append("extensionContainer=");
+			sb.append(this.extensionContainer.toString());
+			sb.append(" ");
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
+
 }

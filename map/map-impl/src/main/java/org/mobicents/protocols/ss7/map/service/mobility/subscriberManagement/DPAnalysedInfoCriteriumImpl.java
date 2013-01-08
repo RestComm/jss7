@@ -125,7 +125,7 @@ public class DPAnalysedInfoCriteriumImpl extends SequenceBase implements DPAnaly
 				if (tag != Tag.INTEGER || ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive())
 					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName 
 							+ ".serviceKey :Parameter is bad tag, tag class or not primitive",	MAPParsingComponentExceptionReason.MistypedParameter);
-				this.serviceKey = (int)ais.readInteger();
+				this.serviceKey = (long)ais.readInteger();
 				break;
 			case 2:
 				if (tag != Tag.STRING_OCTET || ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive())

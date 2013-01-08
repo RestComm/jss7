@@ -170,7 +170,8 @@ public class VoiceBroadcastDataImpl extends SequenceBase implements VoiceBroadca
 	
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		if (this.groupId == null)
+
+		if (this.groupId == null && this.longGroupId == null)
 			throw new MAPException("Error while encoding" + _PrimitiveName + ": groupId must not be null");
 
 		try{

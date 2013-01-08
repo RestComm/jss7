@@ -21,8 +21,25 @@
  */
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+
 /**
  * 
+ *
+-- The cause value is divided in to two fields, a class (bits 5 through 7)
+-- and a value within the class (bits 1 through4). The class indicates
+-- the general nature of the event.
+
+-- ex:   _______________________________________________________________________
+--      | Class |  value within | decimal  |                                    |
+--	    |       |   the class   |  value   |          Description               |
+--      |_______|_______________|__________|____________________________________|
+--      | 000   |   0001        |   1      |   UnallocatedOrUnassignedNumber    |
+--      |_______|_______________|_________ |____________________________________|
+--
+-- For the use of cause value refer to ITU-T Recommendation Q.850.
+
+
+ *
  * @author Lasith Waruna Perera
  * 
  */
