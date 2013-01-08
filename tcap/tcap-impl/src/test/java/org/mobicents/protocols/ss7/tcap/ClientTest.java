@@ -65,7 +65,8 @@ public class ClientTest implements TCListener {
 		invoke.setOperationCode(oc);
 		// no parameter
 		this.clientDialog.sendComponent(invoke);
-		ApplicationContextName acn = this.tcapProvider.getDialogPrimitiveFactory().createApplicationContextName(_ACN_);
+		ApplicationContextName acn = this.tcapProvider.getDialogPrimitiveFactory()
+			.createApplicationContextName(_ACN_);
 		// UI is optional!
 		TCBeginRequest tcbr = this.tcapProvider.getDialogPrimitiveFactory().createBegin(this.clientDialog);
 		tcbr.setApplicationContextName(acn);
@@ -118,8 +119,10 @@ public class ClientTest implements TCListener {
 	}
 
 	public static void main(String[] args) {
-		SccpAddress localAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 1, null, 8);
-		SccpAddress remoteAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2, null, 8);
+		SccpAddress localAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 1, 
+				null, 8);
+		SccpAddress remoteAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2, 
+				null, 8);
 		try {
 			ClientTest c = new ClientTest(getSccpProvider(), localAddress, remoteAddress);
 		} catch (NamingException e) {
