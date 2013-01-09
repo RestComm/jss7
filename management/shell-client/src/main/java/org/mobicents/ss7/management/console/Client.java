@@ -86,10 +86,10 @@ public class Client {
         	return provider.getMessageFactory().createMessage("Not yet connected");
         }
 
-        int count = 3;
+        int count = 300;
         wrote = false;
 
-        // Wait for 3 secs to get message
+        // Wait for 300 secs to get message
         while (count > 0) {
             FastSet<ChannelSelectionKey> keys = selector.selectNow();
 
