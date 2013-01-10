@@ -106,7 +106,8 @@
 	<section
 		id="design_overview_ss7_service">
 		<title>SS7 Service Elements</title>
-				<para>SS7 Service creates an instance of higher layer of the &THIS.PLATFORM; Stack and binds the instance to JNDI. SS7 Service is a JMX based service deployed in JBoss Application Server. It hides the underlying details like whether Level 4 and above are connected to peer via <literal>M3UA</literal> or if connected to the SS7 Hardware installed in the same machine as Level 4.
+				<para>SS7 Service creates an instance of higher layer of the &THIS.PLATFORM; Stack and binds the instance to JNDI. SS7 Service is a JMX based service deployed in JBoss Application Server. 
+				It hides the underlying details like whether Level 4 and above are connected to peer via <literal>M3UA</literal> or if connected to the SS7 Hardware installed in the same machine as Level 4.
 				</para>
 				<para>Following services are bound:</para>
 				<table frame="all" pgwide="1">
@@ -115,6 +116,7 @@
 						<colspec colnum="1" colname="c0" colwidth="3*" />
 						<colspec colnum="2" colname="c3" colwidth="3*" />
 						<colspec colnum="3" colname="c6" colwidth="3*" />
+						<colspec colnum="4" colname="c6" colwidth="3*" />
 						<thead>
 							<row>
 								<entry>Stack Name</entry>
@@ -123,6 +125,11 @@
 							</row>
 						</thead>
 						<tbody>
+							<row>
+								<entry>TCAP</entry>
+								<entry>java:/mobicents/ss7/tcap</entry>
+								<entry>Exposes TCAP Stack via JNDI</entry>
+							</row>
 							<row>
 								<entry>MAP</entry>
 								<entry>java:/mobicents/ss7/map</entry>

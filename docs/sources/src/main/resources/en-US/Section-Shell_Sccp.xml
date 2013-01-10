@@ -303,11 +303,13 @@ Destination definition successfully deleted
 			<title>Create Rule</title>
 			<para>Rule can be created by issuing command with following structure:</para>
 			<programlisting>
-sccp rule create &lt;id&gt; &lt;mask&gt; &lt;address-indicator&gt; &lt;point-code&gt; &lt;subsystem-number&gt; &lt;translation-type&gt; &lt;numbering-plan&gt;  
-&lt;nature-of-address-indicator&gt; &lt;digits&gt; &lt;ruleType&gt; &lt;primary-address-id&gt; &lt;backup-address-id&gt; &lt;loadsharing-algorithm&gt;
+sccp rule create &lt;id&gt; &lt;mask&gt; &lt;address-indicator&gt; &lt;point-code&gt; &lt;subsystem-number&gt; &lt;translation-type&gt; 
+&lt;numbering-plan&gt; &lt;nature-of-address-indicator&gt; &lt;digits&gt; &lt;ruleType&gt; &lt;primary-address-id&gt; 
+backup-addressid &lt;backup-address-id&gt; loadsharing-algo &lt;loadsharing-algorithm&gt; 
+newcgparty-addressid &lt;new-callingPartyAddress-id&gt; origination-type &lt;originationType&gt;
 </programlisting>
-			<para>This command should be specified after <command>primary_add</command> and <command>backup_add</command> are configured. 
-			Please refer  <xref linkend="address_management"/> on how to configure <command>primary_add</command> and <command>backup_add</command></para>
+			<para>This command should be specified after <command>sccp address</command> are configured. 
+			Please refer  <xref linkend="address_management"/> on how to configure <command>sccp address</command></para>
 			<variablelist>
 				<varlistentry>
 					<term>&lt;id&gt;</term>
@@ -471,6 +473,109 @@ sccp rule create &lt;id&gt; &lt;mask&gt; &lt;address-indicator&gt; &lt;point-cod
 					<listitem>
 						<para>The Number Plan (NP) field specifies the numbering plan that the address information follows. 
 						This is ignored if GT Indicator is 0000, 0001 or 0010</para>
+						<table frame="all" pgwide="1">
+							<title>Number Plan Values</title>
+							<tgroup colsep="1" cols="2">
+								<colspec colnum="1" colname="c0" colwidth="3*"/>
+								<colspec colnum="1" colname="c0" colwidth="3*"/>
+								<thead>
+									<row>
+										<entry>Value</entry>
+										<entry>Description</entry>
+									</row>
+								</thead>
+								<tbody>
+									<row>
+										<entry>
+											0
+										</entry>														
+										<entry>
+											Unknown
+										</entry>
+									</row>
+									<row>
+										<entry>
+											1
+										</entry>														
+										<entry>
+											ISDN/Telephony Number Plan (Recommendations E.163 and E.164)
+										</entry>
+									</row>
+									<row>
+										<entry>
+											2
+										</entry>														
+										<entry>
+											Generic Numbering Plan
+										</entry>
+									</row>
+									<row>
+										<entry>
+											3
+										</entry>														
+										<entry>
+											Data Numbering Plan (Recommendations X.121)
+										</entry>
+									</row>	
+									<row>
+										<entry>
+											4
+										</entry>														
+										<entry>
+											Telex Numbering Plan (Recommendations F.69)
+										</entry>
+									</row>
+									<row>
+										<entry>
+											5
+										</entry>														
+										<entry>
+											Maritime Mobile Numbering Plan (Recommendations E.210, E.211)
+										</entry>
+									</row>		
+									<row>
+										<entry>
+											6
+										</entry>														
+										<entry>
+											Land Mobile Numbering Plan (recommendations E.212)
+										</entry>
+									</row>	
+									<row>
+										<entry>
+											7
+										</entry>														
+										<entry>
+											ISDN/Mobile Numbering Plan (recommendations E.214)
+										</entry>
+									</row>	
+									<row>
+										<entry>
+											8 to 13
+										</entry>														
+										<entry>
+											Spare
+										</entry>
+									</row>	
+									<row>
+										<entry>
+											14
+										</entry>														
+										<entry>
+											Private Network or Network-Specific Numbering Plan
+										</entry>
+									</row>		
+									<row>
+										<entry>
+											15
+										</entry>														
+										<entry>
+											Reseerved
+										</entry>
+									</row>																																																								
+								</tbody>
+							</tgroup>							
+						</table> 							
 					</listitem>
 				</varlistentry>		
 				<varlistentry>
@@ -478,6 +583,69 @@ sccp rule create &lt;id&gt; &lt;mask&gt; &lt;address-indicator&gt; &lt;point-cod
 					<listitem>
 						<para>The Nature of Address Indicator (NAI) field defines the address range for a specific numbering plan. 
 						This is only used if GT Indicator is 0100</para>
+						<table frame="all" pgwide="1">
+							<title>Nature of Address Indicator Values</title>
+							<tgroup colsep="1" cols="2">
+								<colspec colnum="1" colname="c0" colwidth="3*"/>
+								<colspec colnum="1" colname="c0" colwidth="3*"/>
+								<thead>
+									<row>
+										<entry>Value</entry>
+										<entry>Description</entry>
+									</row>
+								</thead>
+								<tbody>
+									<row>
+										<entry>
+											0
+										</entry>														
+										<entry>
+											Unknown
+										</entry>
+									</row>
+									<row>
+										<entry>
+											1
+										</entry>														
+										<entry>
+											Subscriber Number
+										</entry>
+									</row>
+									<row>
+										<entry>
+											2
+										</entry>														
+										<entry>
+											Reserved for National use
+										</entry>
+									</row>
+									<row>
+										<entry>
+											3
+										</entry>														
+										<entry>
+											National Significant Number
+										</entry>
+									</row>	
+									<row>
+										<entry>
+											4
+										</entry>														
+										<entry>
+											International Number
+										</entry>
+									</row>
+									<row>
+										<entry>
+											5 to 127
+										</entry>														
+										<entry>
+											Spare
+										</entry>
+									</row>	
+								</tbody>
+							</tgroup>							
+						</table> 						
 					</listitem>
 				</varlistentry>	
 				<varlistentry>
@@ -578,6 +746,15 @@ sccp rule create &lt;id&gt; &lt;mask&gt; &lt;address-indicator&gt; &lt;point-cod
 											The &lt;loadsharing-algorithm&gt; should be configured in this case.
 										</entry>
 									</row>
+									<row>
+										<entry>
+											broadcast
+										</entry>														
+										<entry>
+											Both (primary and backup) addresses are used and mandatory.
+											All messages are routed to both addresses even all of them are avalable.
+										</entry>
+									</row>									
 								</tbody>
 							</tgroup>							
 						</table> 						
@@ -592,13 +769,15 @@ sccp rule create &lt;id&gt; &lt;mask&gt; &lt;address-indicator&gt; &lt;point-cod
 				<varlistentry>
 					<term>&lt;backup-address-id&gt;</term>
 					<listitem>
+						<para>Optional.</para>
 						<para>Identifies the SCCP Address used as the backup translation in case if pointcode specified by primary address is not available.
-						Backup address is used only dominant and loadshared address types</para>
+						Backup address is optional and used only dominant and loadshared address types</para>
 					</listitem>
 				</varlistentry>					
 				<varlistentry>
 					<term>&lt;loadsharing-algorithm&gt;</term>
 					<listitem>
+						<para>Optional.</para>
 						<para>This parameter is mandatory if &lt;ruleType&gt; parameter is "loadshared".
 						Loadsharing algorithm is configired here. Possible values of the parameter: 						
 						</para>
@@ -667,7 +846,28 @@ sccp rule create &lt;id&gt; &lt;mask&gt; &lt;address-indicator&gt; &lt;point-cod
 							</tgroup>							
 						</table> 						
 					</listitem>
-				</varlistentry>					
+				</varlistentry>	
+				<varlistentry>
+					<term>&lt;new-callingPartyAddress-id&gt;</term>
+					<listitem>
+						<para>Optional.</para>
+						<para>callingPartyAddresses of messages that fit a rule will be replaced with this address</para>
+					</listitem>
+				</varlistentry>	
+				<varlistentry>
+					<term>origination-type &lt;originationType&gt;</term>
+					<listitem>
+						<para>Optional.</para>
+						<para>origination-type can be "localOriginated" or "remoteOriginated"</para>
+						<para>If this parameter is "localOriginated" than a rule applies only for messages that are originated 
+						from local SCCP users (for example a local TCAP stack)</para>
+						<para>If this parameter is "remoteOriginated" than a rule applies only for messages that are NOT originated 
+						from local SCCP users but come from SS7 network</para>
+						<para>
+							If this parameter is absent a rule applies to all messages regardless of there originating
+						</para>
+					</listitem>
+				</varlistentry>												
 			</variablelist>	
 	
 			<example>
