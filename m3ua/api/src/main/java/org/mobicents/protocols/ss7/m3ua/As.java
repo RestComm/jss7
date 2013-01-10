@@ -28,6 +28,15 @@ import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 
 /**
+ * <p>
+ * Application Server (AS) is a logical entity serving a specific Routing Key.
+ * An example of an Application Server is a virtual switch element handling all
+ * call processing for a signalling relation, identified by an SS7 DPC/OPC.
+ * Another example is a virtual database element, handling all HLR transactions
+ * for a particular SS7 SIO/DPC/OPC combination. The AS contains a set of one or
+ * more unique Application Server Processes, of which one or more is normally
+ * actively processing traffic
+ * </p>
  * 
  * @author amit bhayani
  * 
@@ -35,30 +44,102 @@ import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 
 public interface As {
 
+	/**
+	 * Each As in M3UA stack is uniquely identified by its name
+	 * 
+	 * @return name of this As
+	 */
 	public String getName();
 
+	/**
+	 * Returns true if atleast one {@link Asp} in this As is ACTIVE and
+	 * exchanging payload
+	 * 
+	 * @return
+	 */
 	public boolean isConnected();
 
+	/**
+	 * Returns true if state of this As is ACTIVE
+	 * 
+	 * @return
+	 */
 	public boolean isUp();
 
+	/**
+	 * {@link RoutingContext} associated with this As. Configuring routing
+	 * context is optional and can return null if not configured. Note that
+	 * there is a 1:1 relationship between an AS and a Routing Key
+	 * 
+	 * @return Routing Key
+	 */
 	public RoutingContext getRoutingContext();
 
+	/**
+	 * The {@link Functionality} of this As
+	 * 
+	 * @return
+	 */
 	public Functionality getFunctionality();
 
+	/**
+	 * {@link ExchangeType} for this As
+	 * 
+	 * @return
+	 */
 	public ExchangeType getExchangeType();
 
+	/**
+	 * {@link IPSPType} for this As. This is useful only if
+	 * {@link Functionality} for this As is IPSP
+	 * 
+	 * @return
+	 */
 	public IPSPType getIpspType();
 
+	/**
+	 * {@link NetworkAppearance} for this As
+	 * 
+	 * @return
+	 */
 	public NetworkAppearance getNetworkAppearance();
 
+	/**
+	 * {@link TrafficModeType} for this As
+	 * 
+	 * @return
+	 */
 	public TrafficModeType getTrafficModeType();
 
+	/**
+	 * Default {@link TrafficModeType} that this As will assume if
+	 * TrafficModeType is not negotiated or not set when defining this As
+	 * 
+	 * @return
+	 */
 	public TrafficModeType getDefaultTrafficModeType();
 
+	/**
+	 * The minimu number of {@link Asp} that should be ACTIVE before this As
+	 * becomes ACTIVE. This value is useful only if {@link TrafficModeType} is
+	 * loadshare
+	 * 
+	 * @return
+	 */
 	public int getMinAspActiveForLb();
 
+	/**
+	 * Number of {@link Asp} assigned to this As
+	 * 
+	 * @return
+	 */
 	public List<Asp> getAspList();
-	
+
+	/**
+	 * Current state of this As
+	 * 
+	 * @return
+	 */
 	public State getState();
 
 }
