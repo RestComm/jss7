@@ -870,7 +870,7 @@ newcgparty-addressid &lt;new-callingPartyAddress-id&gt; origination-type &lt;ori
 			<para>
 				When you define Rules, a comparison function imposes ordering the collection of SCCP Rules using a sorting algorithm that is based on the GT digits. The algorithm is defined below:
 				<orderedlist>
-				<listitem><para>Rules defined with OriginationType==localOriginated or OriginationType==remoteOriginated, are always at the top of the list. Rules defined with OriginationType==All are always at the bottom of the list.</para> <para>Among rules with the same values for OriginationType (All or localOriginated/remoteOriginated), the sorting is done using the below rules. </listitem>
+				<listitem><para>Rules defined with OriginationType==localOriginated or OriginationType==remoteOriginated, are always at the top of the list. Rules defined with OriginationType==All are always at the bottom of the list.</para> <para>Among rules with the same values for OriginationType (All or localOriginated/remoteOriginated), the sorting is done using the below rules. </para></listitem>
 				<listitem><para>Rules with GT digits having no wildcard (* or ?) are always at the top of the list. Between
  two Rules with GT digits, both having no wildcards, the one with the shortest length is at the top
  of the list. For example, Digit1 "123456" will be above Digit2 "1234567890" and this will be above Digit3 "999/*</para></listitem>
