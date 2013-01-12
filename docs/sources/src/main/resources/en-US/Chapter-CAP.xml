@@ -26,7 +26,7 @@
 	</important>
 	<note>
 		<para>&THIS.PLATFORM; &THIS.APPLICATION;
-				CAP has full implementation for Phase 1 and Phase 2 we welcome any contribution to implement
+				CAP has full implementation for Phase 1 and Phase 2 and we welcome any contribution to implement
 				other Phases. We will provide you with all the guidance you may require.
 			The list of implemented operations can be found at
 			<ulink type="http" url="http://code.google.com/p/jss7/source/browse/cap/CAPMessagesImplemented.ods">CAPMessagesImplemented.ods</ulink>.
@@ -60,16 +60,16 @@ You can find the list of implemented operations here: <ulink type="http" url="ht
 			interface defines the methods required to represent CAP Protocol Stack.
 			CAPStack exposes <classname>org.mobicents.protocols.ss7.cap.api.CAPProvider</classname>
 			that interacts directly with CAPStack. 
-			This interface defines the methods that will be used by any registered CAP User application.
-			CAP user application must implement interfaces to listen CAP messages and dialogue and component handling primitives.
+			This interface defines the methods that will be used by any registered CAP-User application.
+			CAP-User application must implement interfaces to listen for CAP messages and for dialogue and component handling primitives.
 			One interface is <classname>org.mobicents.protocols.ss7.cap.api.CAPDialogListener</classname> 
 			(listening associated with dialog events).
 			Others are one or more interfaces for listening to messages associated with component events based on 
-			<classname>org.mobicents.protocols.ss7.cap.api.CAPServiceListener interface.</classname>
+			<classname>org.mobicents.protocols.ss7.cap.api.CAPServiceListener</classname> interface.
 		</para>
 
 		<para>
-			Each CAP-User interested in listening to messages specific to CAP Service implements specific <classname>CAPServiceListener</classname>.
+			Each CAP-User interested in listening to messages specific to a CAP Service must implement the specific <classname>CAPServiceListener</classname>.
 			<itemizedlist> 
 				<listitem>
 					<para>
@@ -88,7 +88,7 @@ You can find the list of implemented operations here: <ulink type="http" url="ht
 					</para>
 				</listitem>				
 			</itemizedlist>
-			CAP-User interested in all the services must implement all the service listener class.
+			CAP-User interested in all the services must implement all the service listener classes.
 		</para>
 		<!--  <para>
 		The class diagram looks like
@@ -113,8 +113,8 @@ You can find the list of implemented operations here: <ulink type="http" url="ht
 
 		<para>
 			The <classname>org.mobicents.protocols.ss7.cap.CAPStackImpl</classname> 
-			is concrete implementation of <classname>CAPStack.</classname>
-			The CAP User application gets access to <classname>CAPProvider</classname> by doing JNDI look-up as explained in <xref linkend="design_overview_ss7_service"/>. 
+			is a concrete implementation of <classname>CAPStack.</classname>
+			The CAP-User application gets access to <classname>CAPProvider</classname> by doing a JNDI look-up as explained in <xref linkend="design_overview_ss7_service"/>. 
 		</para>
 
 		<programlisting
@@ -125,9 +125,9 @@ this.capProvider = ((CAPProvider) ctx.lookup(providerJndiName));
 		</programlisting>
 
 		<para>
-			The CAP User application should register the concrete implementation of <classname>CAPDialogListener</classname> 
+			The CAP-User application should register the concrete implementation of <classname>CAPDialogListener</classname> 
 			with <classname>CAPProvider</classname> to listen for incoming CAP Dialog and CAP Primitive messages. 
-			The CAP User application should register the concrete implementation of <classname>CAPServiceListener</classname> 
+			The CAP-User application should register the concrete implementation of <classname>CAPServiceListener</classname> 
 			with  corresponding <classname>CAPServiceBase </classname> to  listen  for  incoming  CAP  Service  messages.  
 			Following CAPServiceBase are exposed by <classname>CAPProvider</classname>.
 			<itemizedlist>
@@ -153,7 +153,7 @@ public class CAPExample implements CAPDialogListener, CAPServiceCircuitSwitchedC
 }]]>
 	</programlisting>
 	
-		<para>Before any CAP specific service can be used, the corresponding service should be activated.</para>
+		<para>Before any CAP specific service can be used, the corresponding service should be activated as shown below:</para>
 		
 		<programlisting language="Java" role="JAVA"><![CDATA[
         ....
@@ -163,7 +163,7 @@ public class CAPExample implements CAPDialogListener, CAPServiceCircuitSwitchedC
 	</programlisting>		
 
 		<para>
-			The CAP User Application leverages:
+			The CAP-User Application leverages:
 			<itemizedlist>
 				<listitem>
 					<para><classname>MAPParameterFactory</classname> to create instances of 
@@ -209,7 +209,7 @@ public class CAPExample implements CAPDialogListener, CAPServiceCircuitSwitchedC
 		<title>&THIS.APPLICATION; Sending a CAP request (InitialDPRequest as an example)</title>
 
 		<para>
-			For sending a CAP request we need at the SSF side:
+			For sending a CAP request you must do the following at the SSF side:
 		</para>
 		<para>
 			- Create a new CAP Dialog
@@ -290,7 +290,7 @@ currentCapDialog.send();
 			- Wait for a response and other instructions from the SCF
 		</para>
 		<para>
-			At the SCF side when receiving TC-Begin message the following sequence of events occur:
+			At the SCF side when the TC-Begin message is received, the following sequence of events occur:
 		</para>
 		<programlisting
 			language="Java"
@@ -301,11 +301,11 @@ void CAPDialogListener.onDialogRequest(CAPDialog capDialog,
 
 		<para>
 			This is the request for CAP Dialog processing. 	
-			A CAP user can reject the Dialog by invoking capDialog.refuse() method.
+			A CAP-User can reject the Dialog by invoking <literal>capDialog.refuse()</literal> method.
 		</para>
 
 		<para>
-			Then the incoming primitives corresponded events (one or more) occur. In this case it is
+			Then the incoming primitives corresponding events (one or more) occur. In this case it is
 		</para>
 		<programlisting
 			language="Java"
@@ -352,10 +352,10 @@ currentCapDialog.send();
 ]]></programlisting>
 
 		<para>
-			If preparing the response spends much time we should return the control and prepare the answer in your thread.
+			If preparing the response takes time, you should return the control and prepare the answer in a separate thread.
 		</para>
 		<para>
-			If error or reject primitives are included into a TCAP message following events occur:
+			If error or reject primitives are included into a TCAP message the following events occur:
 		</para>
 		<programlisting
 			language="Java"
@@ -367,9 +367,9 @@ public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem proble
 ]]></programlisting>
 
 		<para>
-			After all incoming components have been processing onDialogDelimiter(CAPDialog capDialog); 
-			event is invoking (or onDialogClose(CAPDialog capDialog) in TC-END case). 
-			If all response components have been prepared we can tell the stack to send response:
+			After all incoming components have been processed, the event <literal>onDialogDelimiter(CAPDialog capDialog);</literal> 
+			event is invoked (or <literal>onDialogClose(CAPDialog capDialog)</literal> in TC-END case). 
+			If all response components have been prepared you can tell the Stack to send response:
 			<itemizedlist>
 				<listitem>
 					<para><classname>capDialog.close(false);</classname> - to send TC-END</para>
@@ -381,18 +381,17 @@ public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem proble
 					<para><classname>capDialog.close(true);</classname> - sends TC-END without any components (prearrangedEnd)</para>
 				</listitem>
 			</itemizedlist>
-			Instead of send() and close(boolean prearrangedEnd) methods you can invoke 
-			sendDelayed() or closeDelayed(boolean prearrangedEnd) methods.
-			These methods make the same as sned and close() methods.
-			But when invoking it from events of parsing incoming components
-			real sending and dialog closing will occur only when all incoming components events
+			Instead of the methods <literal>send()</literal> and <literal>close(boolean prearrangedEnd)</literal>, you can invoke 
+			<literal>sendDelayed()</literal> or <literal>closeDelayed(boolean prearrangedEnd)</literal>.
+			These methods are the same as  <literal>send()</literal> and <literal>close(boolean prearrangedEnd)</literal> methods, but when invoking them from events of parsing incoming components
+			real sending and dialog closing will occur only when all incoming component events
 			and onDialogDelimiter() or onDialogClose() would be processed.
 			 
-			If all response components have been prepared we should return the control and 
-			will send a response when all components are ready.
+			If all response components have been prepared you should return the control and 
+			send a response when all components are ready.
 		</para>
 		<para>
-			In the error case you can terminate a CAP dialog in any method by invoking
+			In case of an error, you can terminate a CAP dialog in any method by invoking:
 			<itemizedlist>
 				<listitem>
 					<para><classname>capDialog.abort(CAPUserAbortReason abortReason);</classname> - sends TC-U-ABORT primitive</para>
@@ -400,7 +399,7 @@ public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem proble
 			</itemizedlist>
 		</para>
 		<para>
-			If no local actions or no response from a remote size for a long time timeouts occur and the following methods are invoked:
+			If there are no local actions or no response from a remote size for a long time, timeouts occur and the following methods are invoked:
 			<itemizedlist>
 				<listitem>
 					<para><classname>CAPDialogListener.onDialogTimeout(CAPDialog capDialog);</classname></para>
@@ -411,9 +410,9 @@ public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem proble
 			</itemizedlist>
 		</para>
 		<para>
-			In <classname>onDialogTimeout()</classname> method you can invoke <classname>capDialog.keepAlive();</classname> to prevent closing a Dialog. 
+			In the <classname>onDialogTimeout()</classname> method you can invoke <classname>capDialog.keepAlive();</classname> to prevent a Dialog from closing. 
 			For preventing an Invoke timeout you should invoke <classname>resetInvokeTimer(Long invokeId);</classname> 
-			(before onInvokeTimeout() occured).
+			(before <classname>onInvokeTimeout()</classname> occurs).
 		</para>
 	</section>
 
@@ -422,8 +421,6 @@ public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem proble
 	<section
 		id="cap_usage_example"> 
 		<title>&THIS.APPLICATION; CAP Usage</title>
-		<para>The complete example looks like</para>
-
 		<programlisting
 			language="Java"
 			role="JAVA"><![CDATA[
