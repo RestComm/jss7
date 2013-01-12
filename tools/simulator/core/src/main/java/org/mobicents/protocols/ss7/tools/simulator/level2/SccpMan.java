@@ -32,7 +32,6 @@ import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
-import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
 import org.mobicents.protocols.ss7.sccp.OriginationType;
 import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.RemoteSubSystem;
@@ -85,7 +84,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 	private NumberingPlan numberingPlan = NumberingPlan.ISDN_MOBILE;
 	private int translationType = 0;
 	private String callingPartyAddressDigits = "";
-	private String extraLocalAddressDigits = "";
+//	private String extraLocalAddressDigits = "";
 
 	private SccpStackImpl sccpStack;
 	private SccpProvider sccpProvider;
@@ -261,16 +260,16 @@ public class SccpMan implements SccpManMBean, Stoppable {
 		this.testerHost.markStore();
 	}
 
-	@Override
-	public String getExtraLocalAddressDigits() {
-		return extraLocalAddressDigits;
-	}
-
-	@Override
-	public void setExtraLocalAddressDigits(String val) {
-		extraLocalAddressDigits = val;
-		this.testerHost.markStore();
-	}
+//	@Override
+//	public String getExtraLocalAddressDigits() {
+//		return extraLocalAddressDigits;
+//	}
+//
+//	@Override
+//	public void setExtraLocalAddressDigits(String val) {
+//		extraLocalAddressDigits = val;
+//		this.testerHost.markStore();
+//	}
 
 	@Override
 	public void putGlobalTitleType(String val) {
@@ -308,8 +307,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 		try {
 			this.isRspcUp = true;
 			this.isRssUp = true;
-			this.initSccp(this.mtp3UserPart, this.remoteSsn, this.localSsn, this.remoteSpc, this.localSpc, this.ni, this.callingPartyAddressDigits,
-					this.extraLocalAddressDigits);
+			this.initSccp(this.mtp3UserPart, this.remoteSsn, this.localSsn, this.remoteSpc, this.localSpc, this.ni, this.callingPartyAddressDigits);
 			this.testerHost.sendNotif(SOURCE_NAME, "SCCP has been started", "", Level.INFO);
 			return true;
 		} catch (Throwable e) {
@@ -351,8 +349,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 		}
 	}
 
-	private void initSccp(Mtp3UserPart mtp3UserPart, int remoteSsn, int localSsn, int dpc, int opc, int ni, String callingPartyAddressDigits,
-			String extraLocalAddressDigits) throws Exception {
+	private void initSccp(Mtp3UserPart mtp3UserPart, int remoteSsn, int localSsn, int dpc, int opc, int ni, String callingPartyAddressDigits) throws Exception {
 
 		this.sccpStack = new SccpStackImpl("TestingSccp");
 
@@ -380,26 +377,28 @@ public class SccpMan implements SccpManMBean, Stoppable {
 
 			SccpAddress pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, this.createGlobalTitle("*"), 0);
 			String mask = "K";
-			((RouterImpl)this.router).addRule(1, RuleType.Solitary, null, null, pattern, mask, 1, -1, null);
+//			((RouterImpl)this.router).addRule(1, RuleType.Solitary, null, null, pattern, mask, 1, -1, null);
+			((RouterImpl)this.router).addRule(1, RuleType.Solitary, null, OriginationType.LocalOriginated, pattern, mask, 1, -1, null);
 //			int id, RuleType ruleType, LoadSharingAlgorithm algo, OriginationType originationType, SccpAddress pattern, String mask,
 //			int pAddressId, int sAddressId, Integer newCallingPartyAddressAddressId
 
-			pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, this.createGlobalTitle(callingPartyAddressDigits), 0);
+//			pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, this.createGlobalTitle(callingPartyAddressDigits), 0);
+			pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, this.createGlobalTitle("*"), 0);
 			mask = "R";
-			((RouterImpl)this.router).addRule(2, RuleType.Solitary, null, null, pattern, mask, 2, -1, null);
+			((RouterImpl)this.router).addRule(2, RuleType.Solitary, null, OriginationType.RemoteOriginated, pattern, mask, 2, -1, null);
 
-			if (extraLocalAddressDigits != null && !extraLocalAddressDigits.equals("")) {
-				String[] ss = extraLocalAddressDigits.split(",");
-				
-				int ruleNum = 3;
-				for (String s : ss) {
-					s = s.trim();
-					pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, this.createGlobalTitle(s), 0);
-					mask = "R";
-					((RouterImpl)this.router).addRule(ruleNum, RuleType.Solitary, null, null, pattern, mask, 2, -1, null);
-					ruleNum++;
-				}
-			}
+//			if (extraLocalAddressDigits != null && !extraLocalAddressDigits.equals("")) {
+//				String[] ss = extraLocalAddressDigits.split(",");
+//				
+//				int ruleNum = 3;
+//				for (String s : ss) {
+//					s = s.trim();
+//					pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, this.createGlobalTitle(s), 0);
+//					mask = "R";
+//					((RouterImpl)this.router).addRule(ruleNum, RuleType.Solitary, null, null, pattern, mask, 2, -1, null);
+//					ruleNum++;
+//				}
+//			}
 		}
 	}
 
@@ -468,7 +467,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 			xml.add(sccp.natureOfAddress.toString(), ADDRESS_NATURE);
 			xml.add(sccp.numberingPlan.toString(), NUMBERING_PLAN);
 			xml.add(sccp.callingPartyAddressDigits, CALLING_PARTY_ADDRESS_DIGITS);
-			xml.add(sccp.extraLocalAddressDigits, EXTRA_LOCAL_ADDRESS_DIGITS);
+//			xml.add(sccp.extraLocalAddressDigits, EXTRA_LOCAL_ADDRESS_DIGITS);
 		}
 
 		public void read(InputElement xml, SccpMan sccp) throws XMLStreamException {
@@ -487,7 +486,8 @@ public class SccpMan implements SccpManMBean, Stoppable {
 			String np = (String) xml.get(NUMBERING_PLAN, String.class);
 			sccp.numberingPlan = NumberingPlan.valueOf(np);
 			sccp.callingPartyAddressDigits = (String) xml.get(CALLING_PARTY_ADDRESS_DIGITS, String.class);
-			sccp.extraLocalAddressDigits = (String) xml.get(EXTRA_LOCAL_ADDRESS_DIGITS, String.class);
+			// for skipping previous data
+			String extraLocalAddressDigits = (String) xml.get(EXTRA_LOCAL_ADDRESS_DIGITS, String.class);
 		}
 	};
 }

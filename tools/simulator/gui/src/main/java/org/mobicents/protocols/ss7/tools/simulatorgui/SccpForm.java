@@ -73,7 +73,6 @@ public class SccpForm extends JDialog {
 	private JRadioButton rbRouteGt;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JPanel panel_1;
-	private JTextField tbExtraLocalAddressDigits;
 
 	public SccpForm(JFrame owner) {
 		super(owner, true);
@@ -81,7 +80,7 @@ public class SccpForm extends JDialog {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setTitle("SCCP settings");
-		setBounds(100, 100, 590, 692);
+		setBounds(100, 100, 590, 651);
 		
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.CENTER);
@@ -129,7 +128,7 @@ public class SccpForm extends JDialog {
 				loadDataA();
 			}
 		});
-		button.setBounds(10, 596, 245, 23);
+		button.setBounds(10, 555, 245, 23);
 		panel.add(button);
 		
 		JButton button_1 = new JButton("Load default values for side B");
@@ -138,7 +137,7 @@ public class SccpForm extends JDialog {
 				loadDataB();
 			}
 		});
-		button_1.setBounds(265, 596, 234, 23);
+		button_1.setBounds(265, 555, 234, 23);
 		panel.add(button_1);
 		
 		JButton button_2 = new JButton("Reload");
@@ -147,7 +146,7 @@ public class SccpForm extends JDialog {
 				reloadData();
 			}
 		});
-		button_2.setBounds(10, 630, 144, 23);
+		button_2.setBounds(10, 589, 144, 23);
 		panel.add(button_2);
 		
 		JButton button_3 = new JButton("Save");
@@ -158,7 +157,7 @@ public class SccpForm extends JDialog {
 				}
 			}
 		});
-		button_3.setBounds(255, 630, 117, 23);
+		button_3.setBounds(255, 589, 117, 23);
 		panel.add(button_3);
 		
 		JButton button_4 = new JButton("Cancel");
@@ -167,7 +166,7 @@ public class SccpForm extends JDialog {
 				getJFrame().dispose();
 			}
 		});
-		button_4.setBounds(382, 630, 117, 23);
+		button_4.setBounds(382, 589, 117, 23);
 		panel.add(button_4);
 		
 		tbLocalSsn = new JTextField();
@@ -182,7 +181,7 @@ public class SccpForm extends JDialog {
 		panel_1 = new JPanel();
 		panel_1.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panel_1.setLayout(null);
-		panel_1.setBounds(10, 366, 564, 219);
+		panel_1.setBounds(10, 366, 564, 178);
 		panel.add(panel_1);
 		
 		JLabel lblParametersForCreating = new JLabel("Parameters for creating SccpAddress (when routing on GT)");
@@ -230,19 +229,6 @@ public class SccpForm extends JDialog {
 		tbCallingPartyAddressDigits.setColumns(10);
 		tbCallingPartyAddressDigits.setBounds(219, 147, 231, 20);
 		panel_1.add(tbCallingPartyAddressDigits);
-		
-		tbExtraLocalAddressDigits = new JTextField();
-		tbExtraLocalAddressDigits.setColumns(10);
-		tbExtraLocalAddressDigits.setBounds(219, 177, 335, 20);
-		panel_1.add(tbExtraLocalAddressDigits);
-		
-		JLabel lblExtraLocalAddresses = new JLabel("Extra local addresses");
-		lblExtraLocalAddresses.setBounds(10, 180, 199, 14);
-		panel_1.add(lblExtraLocalAddresses);
-		
-		JLabel lblSeveralAddressesCan = new JLabel("Several addresses can be inserted here for example: \"7222111111,7222199??\"");
-		lblSeveralAddressesCan.setBounds(10, 198, 544, 14);
-		panel_1.add(lblSeveralAddressesCan);
 		
 		rbRouteDpcSsn = new JRadioButton("Route on DPC and SSN mode");
 		buttonGroup.add(rbRouteDpcSsn);
@@ -301,7 +287,7 @@ public class SccpForm extends JDialog {
 		tbTranslationType.setText(((Integer) this.sccp.getTranslationType()).toString());
 		
 		tbCallingPartyAddressDigits.setText(this.sccp.getCallingPartyAddressDigits());
-		tbExtraLocalAddressDigits.setText(this.sccp.getExtraLocalAddressDigits());
+//		tbExtraLocalAddressDigits.setText(this.sccp.getExtraLocalAddressDigits());
 	}
 
 	private void loadDataA() {
@@ -320,7 +306,7 @@ public class SccpForm extends JDialog {
 		tbTranslationType.setText("0");
 		
 		tbCallingPartyAddressDigits.setText("");
-		tbExtraLocalAddressDigits.setText("");
+//		tbExtraLocalAddressDigits.setText("");
 	}
 
 	private void loadDataB() {
@@ -339,7 +325,7 @@ public class SccpForm extends JDialog {
 		tbTranslationType.setText("0");
 		
 		tbCallingPartyAddressDigits.setText("");
-		tbExtraLocalAddressDigits.setText("");
+//		tbExtraLocalAddressDigits.setText("");
 	}
 
 	private boolean saveData() {
@@ -400,7 +386,7 @@ public class SccpForm extends JDialog {
 		this.sccp.setNumberingPlan((NumberingPlanType) cbNumberingPlan.getSelectedItem());
 
 		this.sccp.setCallingPartyAddressDigits(tbCallingPartyAddressDigits.getText());
-		this.sccp.setExtraLocalAddressDigits(tbExtraLocalAddressDigits.getText());
+//		this.sccp.setExtraLocalAddressDigits(tbExtraLocalAddressDigits.getText());
 
 		return true;
 	}
@@ -411,7 +397,7 @@ public class SccpForm extends JDialog {
 		this.cbNumberingPlan.setEnabled(val);
 		this.tbTranslationType.setEnabled(val);
 		this.tbCallingPartyAddressDigits.setEnabled(val);
-		this.tbExtraLocalAddressDigits.setEnabled(val);
+//		this.tbExtraLocalAddressDigits.setEnabled(val);
 	}
 }
 

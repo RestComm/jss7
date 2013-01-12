@@ -63,9 +63,9 @@ public class SccpManStandardMBean extends StandardMBean {
 				new MBeanAttributeInfo("CallingPartyAddressDigits", String.class.getName(), 
 						"CallingPartyAddress digits for RouteOnGt mode", 
 						true, true, false),
-				new MBeanAttributeInfo("ExtraLocalAddressDigits", String.class.getName(), 
-						"Extra local addresses, for example: \"7222111111,7222199??\"", 
-						true, true, false),
+//				new MBeanAttributeInfo("ExtraLocalAddressDigits", String.class.getName(), 
+//						"Extra local addresses, for example: \"7222111111,7222199??\"", 
+//						true, true, false),
 		};
 
 		MBeanParameterInfo[] signString = new MBeanParameterInfo[] { new MBeanParameterInfo("val", String.class.getName(), "Index number or value") };

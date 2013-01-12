@@ -80,9 +80,9 @@ public interface SccpManMBean {
 
 	public void setCallingPartyAddressDigits(String val);
 
-	public String getExtraLocalAddressDigits();
-
-	public void setExtraLocalAddressDigits(String val);
+//	public String getExtraLocalAddressDigits();
+//
+//	public void setExtraLocalAddressDigits(String val);
 
 
 	public void putGlobalTitleType(String val);
