@@ -6303,11 +6303,13 @@ public class MAPFunctionalTest extends SccpHarness {
 				assertTrue(gmsc.getAddress().equals("49883700292"));
 				assertEquals(type, InterrogationType.forwarding);
 				
-				IMSIImpl imsi = new IMSIImpl("011220200198227");
-				ISDNAddressString roamingNumber = new ISDNAddressStringImpl(AddressNature.international_number, 
+				IMSI imsi = this.mapParameterFactory.createIMSI("011220200198227");
+						
+				ISDNAddressString roamingNumber = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, 
 																			NumberingPlan.ISDN, "79273605819");
-				RoutingInfoImpl routingInfo = new RoutingInfoImpl(roamingNumber);
-				ExtendedRoutingInfoImpl extRoutingInfo = new ExtendedRoutingInfoImpl(routingInfo);
+				RoutingInfo routingInfo = this.mapParameterFactory.createRoutingInfo(roamingNumber);
+				ExtendedRoutingInfo extRoutingInfo = this.mapParameterFactory.createExtendedRoutingInfo(routingInfo);
+		
 				CUGCheckInfo cugCheckInfo = null;
 				boolean cugSubscriptionFlag = false;
 				SubscriberInfo subscriberInfo = null; 
@@ -6444,9 +6446,9 @@ public class MAPFunctionalTest extends SccpHarness {
 				assertEquals(msisdn.getNumberingPlan() , NumberingPlan.ISDN);
 				assertTrue(msisdn.getAddress().equals("29113123311"));
 				
-				IMSIImpl imsi = new IMSIImpl("011220200198227");
-				ISDNAddressString roamingNumber = new ISDNAddressStringImpl(AddressNature.international_number, 
-																			NumberingPlan.ISDN, "79273605819");
+				IMSI imsi = this.mapParameterFactory.createIMSI("011220200198227");
+				ISDNAddressString roamingNumber = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, 
+						NumberingPlan.ISDN, "79273605819")   ;
 				RoutingInfoImpl routingInfo = new RoutingInfoImpl(roamingNumber);
 
 				try {

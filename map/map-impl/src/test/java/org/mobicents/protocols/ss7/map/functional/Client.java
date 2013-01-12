@@ -1063,19 +1063,19 @@ public class Client extends EventTestHarness {
 		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
 		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
 		
-		IMSI imsi = new IMSIImpl("1111122222");
-		ISDNAddressString msisdn =  new ISDNAddressStringImpl(AddressNature.international_number, 
+		IMSI imsi = this.mapParameterFactory.createIMSI("1111122222");
+		ISDNAddressString msisdn =  this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, 
 				NumberingPlan.ISDN, "22234");
-		Category category = new CategoryImpl(5);
+		Category category = this.mapParameterFactory.createCategory(5);
 		SubscriberStatus subscriberStatus = SubscriberStatus.operatorDeterminedBarring;
 		ArrayList<ExtBearerServiceCode> bearerServiceList = new ArrayList<ExtBearerServiceCode>();
-		ExtBearerServiceCodeImpl extBearerServiceCode = new ExtBearerServiceCodeImpl(BearerServiceCodeValue.Asynchronous9_6kbps);
+		ExtBearerServiceCode extBearerServiceCode = this.mapParameterFactory.createExtBearerServiceCode(BearerServiceCodeValue.Asynchronous9_6kbps);
 		bearerServiceList.add(extBearerServiceCode);
 		ArrayList<ExtTeleserviceCode> teleserviceList = new ArrayList<ExtTeleserviceCode>();
-		ExtTeleserviceCode extTeleservice = new ExtTeleserviceCodeImpl(TeleserviceCodeValue.allSpeechTransmissionServices);
+		ExtTeleserviceCode extTeleservice = this.mapParameterFactory.createExtTeleserviceCode(TeleserviceCodeValue.allSpeechTransmissionServices);
 		teleserviceList.add(extTeleservice);
 		boolean roamingRestrictionDueToUnsupportedFeature = true;
-		ISDNAddressString sgsnNumber =  new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "22228");
+		ISDNAddressString sgsnNumber =  this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "22228");
 		ArrayList<ExtSSInfo> provisionedSS = null;
 		ODBData odbData = null;
 		ArrayList<ZoneCode> regionalSubscriptionData = null;
@@ -1127,16 +1127,17 @@ public class Client extends EventTestHarness {
 
 		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
 
-		IMSI imsi = new IMSIImpl("1111122222");
-		ISDNAddressString msisdn =  new ISDNAddressStringImpl(AddressNature.international_number, 
-				NumberingPlan.ISDN, "22234");
-		Category category = new CategoryImpl(5);
+		IMSI imsi =this.mapParameterFactory.createIMSI("1111122222");
+		ISDNAddressString msisdn = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, 
+				NumberingPlan.ISDN, "22234") ;
+		Category category = this.mapParameterFactory.createCategory(5);
 		SubscriberStatus subscriberStatus = SubscriberStatus.operatorDeterminedBarring;
 		ArrayList<ExtBearerServiceCode> bearerServiceList = new ArrayList<ExtBearerServiceCode>();
-		ExtBearerServiceCodeImpl extBearerServiceCode = new ExtBearerServiceCodeImpl(BearerServiceCodeValue.Asynchronous9_6kbps);
+		ExtBearerServiceCode extBearerServiceCode = this.mapParameterFactory.createExtBearerServiceCode(BearerServiceCodeValue.Asynchronous9_6kbps);
 		bearerServiceList.add(extBearerServiceCode);
 		ArrayList<ExtTeleserviceCode> teleserviceList = new ArrayList<ExtTeleserviceCode>();
-		ExtTeleserviceCode extTeleservice = new ExtTeleserviceCodeImpl(TeleserviceCodeValue.allSpeechTransmissionServices);
+		ExtTeleserviceCode extTeleservice = this.mapParameterFactory.createExtTeleserviceCode(TeleserviceCodeValue.allSpeechTransmissionServices);
+				
 		teleserviceList.add(extTeleservice);
 		boolean roamingRestrictionDueToUnsupportedFeature = true;
 		ArrayList<ExtSSInfo> provisionedSS = null;
@@ -1162,10 +1163,12 @@ public class Client extends EventTestHarness {
 		clientDialogCallHandling = this.mapProvider.getMAPServiceCallHandling().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
 
 		InterrogationType interrogationType = InterrogationType.forwarding;
-		ISDNAddressString msisdn = new ISDNAddressStringImpl(AddressNature.international_number, 
+		ISDNAddressString msisdn = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, 
 															 NumberingPlan.ISDN, "29113123311");
-		ISDNAddressString gmscAddress = new ISDNAddressStringImpl(AddressNature.international_number, 
-				 										   NumberingPlan.ISDN, "49883700292");
+
+		ISDNAddressString gmscAddress = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, 
+				   NumberingPlan.ISDN, "49883700292");
+
 		CUGCheckInfo cugCheckInfo = null;
 		Integer numberOfForwarding = null;
 		boolean orInterrogation = false;
@@ -1215,7 +1218,8 @@ public class Client extends EventTestHarness {
 
 		clientDialogCallHandling = this.mapProvider.getMAPServiceCallHandling().createNewDialog(appCnt,
 				this.thisAddress, null, this.remoteAddress, null);
-		ISDNAddressString msisdn = new ISDNAddressStringImpl(AddressNature.international_number, 
+		
+		ISDNAddressString msisdn = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, 
 															 NumberingPlan.ISDN, "29113123311");
 
 		clientDialogCallHandling.addSendRoutingInformationRequest(msisdn, null, null, null);
