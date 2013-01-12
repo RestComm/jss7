@@ -1,5 +1,8 @@
 package org.mobicents.protocols.ss7.cap;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
 import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPDialogListener;
@@ -49,6 +52,7 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.Specializ
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DestinationRoutingAddress;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSM;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
+import org.mobicents.protocols.ss7.map.api.MAPProvider;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformation;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -57,15 +61,20 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 
 public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitchedCallListener {
 
-	private CAPStack capStack;
 	private CAPProvider capProvider;
 	private CAPParameterFactory paramFact;
 	private CAPDialogCircuitSwitchedCall currentCapDialog;
 	private CallContent cc;
 
-	public CallSsfExample(SccpProvider sccpPprovider, int ssn) {
-		capStack = new CAPStackImpl(sccpPprovider, ssn);
-		capProvider = capStack.getCAPProvider();
+	public CallSsfExample() throws NamingException {
+		InitialContext ctx = new InitialContext();
+		try {
+			String providerJndiName = "java:/mobicents/ss7/cap";
+			this.capProvider = ((CAPProvider) ctx.lookup(providerJndiName));
+		} finally {
+			ctx.close();
+		}
+		
 		paramFact = capProvider.getCAPParameterFactory();
 
 		capProvider.addCAPDialogListener(this);
@@ -77,8 +86,6 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	}
 
 	public void start() {
-		capStack.start();
-
 		// Make the circuitSwitchedCall service activated
         capProvider.getCAPServiceCircuitSwitchedCall().acivate();
 
@@ -86,7 +93,7 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	}
 
 	public void stop() {
-		capStack.stop();
+		 capProvider.getCAPServiceCircuitSwitchedCall().deactivate();
 	}
 
 	public void sendInitialDP(SccpAddress origAddress, SccpAddress remoteAddress, 

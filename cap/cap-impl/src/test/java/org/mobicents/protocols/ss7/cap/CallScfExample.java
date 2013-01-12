@@ -2,13 +2,15 @@ package org.mobicents.protocols.ss7.cap;
 
 import java.util.ArrayList;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPDialogListener;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPMessage;
 import org.mobicents.protocols.ss7.cap.api.CAPParameterFactory;
 import org.mobicents.protocols.ss7.cap.api.CAPProvider;
-import org.mobicents.protocols.ss7.cap.api.CAPStack;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPNoticeProblemDiagnostic;
@@ -49,21 +51,24 @@ import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
-import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 
 public class CallScfExample implements CAPDialogListener, CAPServiceCircuitSwitchedCallListener {
 
-	private CAPStack capStack;
 	private CAPProvider capProvider;
 	private CAPParameterFactory paramFact;
 	private CAPDialogCircuitSwitchedCall currentCapDialog;
 	private CallContent cc;
 
-	public CallScfExample(SccpProvider sccpPprovider, int ssn) {
-		capStack = new CAPStackImpl(sccpPprovider, ssn);
-		capProvider = capStack.getCAPProvider();
+	public CallScfExample() throws NamingException {
+		InitialContext ctx = new InitialContext();
+		try {
+			String providerJndiName = "java:/mobicents/ss7/cap";
+			this.capProvider = ((CAPProvider) ctx.lookup(providerJndiName));
+		} finally {
+			ctx.close();
+		}
 		paramFact = capProvider.getCAPParameterFactory();
 
 		capProvider.addCAPDialogListener(this);
@@ -75,8 +80,6 @@ public class CallScfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	}
 
 	public void start() {
-		capStack.start();
-
 		// Make the circuitSwitchedCall service activated
         capProvider.getCAPServiceCircuitSwitchedCall().acivate();
 
@@ -84,7 +87,7 @@ public class CallScfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	}
 
 	public void stop() {
-		capStack.stop();
+		capProvider.getCAPServiceCircuitSwitchedCall().deactivate();
 	}
 
 	@Override

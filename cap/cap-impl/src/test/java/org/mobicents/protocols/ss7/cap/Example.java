@@ -1,8 +1,5 @@
 package org.mobicents.protocols.ss7.cap;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAnswerSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.ODisconnectSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
@@ -24,23 +21,9 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformation;
-import org.mobicents.protocols.ss7.sccp.SccpProvider;
-import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 public class Example {
-
-	private static SccpProvider getSccpProvider() throws NamingException {
-		// no arg is ok, if we run in JBoss
-
-		InitialContext ctx = new InitialContext();
-		try {
-			String providerJndiName = "/mobicents/ss7/sccp";
-			return ((SccpStack) ctx.lookup(providerJndiName)).getSccpProvider();
-		} finally {
-			ctx.close();
-		}
-	}
 
 	private static SccpAddress createLocalAddress() {
 		return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 1, null, 146);
@@ -52,8 +35,7 @@ public class Example {
 
 
 	public static void startCallSsf() throws Exception {
-		SccpProvider sccpProvider = getSccpProvider(); // JNDI lookup of SCCP
-		CallSsfExample client = new CallSsfExample(sccpProvider, 146);
+		CallSsfExample client = new CallSsfExample();
 
 		client.start();
 
@@ -137,8 +119,7 @@ public class Example {
 	}
 
 	public static void startCallScf() throws Exception {
-		SccpProvider sccpProvider = getSccpProvider(); // JNDI lookup of SCCP
-		CallScfExample server = new CallScfExample(sccpProvider, 146);
+		CallScfExample server = new CallScfExample();
 
 		server.start();
 		
