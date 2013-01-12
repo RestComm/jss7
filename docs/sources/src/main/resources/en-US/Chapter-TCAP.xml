@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">%BOOK_ENTITIES;]>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">
+%BOOK_ENTITIES;
+]>
 
 <chapter
 	id="tcap">
@@ -9,27 +12,27 @@
 	<para>
 		The Transaction Capabilities Application Part (TCAP) is defined in ITU-T Recommendations Q.771-Q.775.
 		TCAP allows services at network nodes to communicate with each other using an agreed-upon set of data elements.
-		Its primary purpose is to facilitate multiple concurrent dialogs between the same sub-systems on the same machines, 
+		The primary purpose of TCAP is to facilitate multiple concurrent dialogs between the same sub-systems on the same machines, 
 		using Transaction IDs to differentiate these, similar to the way TCP ports facilitate multiplexing connections between 
 		the same IP addresses on the Internet.
 	</para>
 	<section>
 		<title>&THIS.PLATFORM; &THIS.APPLICATION; TCAP Usage</title>
 		<para>
-			The <classname>org.mobicents.protocols.ss7.tcap.api.TCAPStack</classname> interface defines the methods required to represent TCAP
+			The <classname>org.mobicents.protocols.ss7.tcap.api.TCAPStack</classname> interface defines the methods required to represent the TCAP
 			Protocol Stack. TCAPStack exposes <classname>org.mobicents.protocols.ss7.tcap.api.TCAPProvider</classname> that interacts directly
-			with TCAPStack. TCAPProvider defines methods that will be used by TCAP User Part to create new 
-			<classname>org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog</classname> to be sent across network.
-			TCAP User Part also allows to register<classname>org.mobicents.protocols.ss7.tcap.api.TCListener</classname> to listen TCAP messages.
+			with the TCAPStack. TCAPProvider defines methods that will be used by TCAP User Part to create new 
+			<classname>org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog</classname> to be sent across the network.
+			TCAP User Part also allows to register<classname>org.mobicents.protocols.ss7.tcap.api.TCListener</classname> to listen for TCAP messages.
 		</para>
 		<para>
 			TCAPProvider also exposes <classname>org.mobicents.protocols.ss7.tcap.api.DialogPrimitiveFactory</classname> to create dialog primitives 
 			and <classname>org.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory</classname> to create components. 
-			Components are a means of invoking an operation at a remote node
+			Components are a means of invoking an operation at a remote node.
 		</para>
 		
 		<para>
-			The UML Class Diagram looks like
+			The UML Class Diagram is depicted in the figure below:
 		</para>
 		
 	
@@ -49,8 +52,8 @@
 		</mediaobject>	
 		
 		<para>
-			The <classname>org.mobicents.protocols.ss7.tcap.TCAPStackImpl</classname> is concrete implementation of <classname>TCAPStack</classname>. 
-			The TCAP User Part gets access to <classname>TCAPProvider</classname> by doing JNDI lookup as explained in <xref linkend="design_overview_ss7_service"/>					
+			The <classname>org.mobicents.protocols.ss7.tcap.TCAPStackImpl</classname> is a concrete implementation of <classname>TCAPStack</classname>. 
+			The TCAP User Part gets access to <classname>TCAPProvider</classname> by doing JNDI lookup as explained in the <xref linkend="design_overview_ss7_service"/>.					
 		</para>		
 		
 		<programlisting
@@ -83,8 +86,8 @@
 			]]>
 		</programlisting>		
 		
-	<para>The TCAP User Part leverages TCAPProvider to create new Dialog. The component's between the nodes
-		are exchanged within this Dialog
+	<para>TCAP User Part leverages <classname>TCAPProvider</classname> to create a new Dialog. The components between the nodes
+		are exchanged within this Dialog.
 	</para>
 	
 	<programlisting
@@ -97,30 +100,30 @@
 	</programlisting>		
 	
 	<para>
-		The TCAP User Part leverages ComponentPrimitiveFactory to create new components. These components are sent using the dialog 
+		The TCAP User Part leverages <classname>ComponentPrimitiveFactory</classname> to create new components. These components are sent using the dialog.
 	</para>	
 	
 	<para>
-		Common scenario of using TCAP stack is:
+		Below is a list of common scenarios using the TCAP stack :
 	</para>	
 	  <itemizedlist>
 		<listitem>
-			<para><literal>Creating TCAP Dialog by TCAPProvider.getNewDialog() or getNewUnstructuredDialog()</literal></para>
+			<para>Creating a TCAP Dialog by invoking the methods <literal>TCAPProvider.getNewDialog()</literal> or <literal>getNewUnstructuredDialog()</literal></para>
 		</listitem>
 		<listitem>
-			<para><literal>adding components into a Dialog for sending by Dialog.sendComponent();</literal></para>
+			<para>Adding components into a Dialog for sending by <literal>Dialog.sendComponent();</literal></para>
 		</listitem>			
 		<listitem>
-			<para><literal>sending a TCAP message TC-UNI, TC-BEGIN, TC-CONTINUE, TC-END or TC-ABORT via Dialog.send() methods</literal></para>
+			<para>Sending a TCAP message TC-UNI, TC-BEGIN, TC-CONTINUE, TC-END or TC-ABORT via <literal>Dialog.send()</literal> methods.</para>
 		</listitem>		
 		<listitem>
-			<para><literal>waiting for responses of a peer</literal></para>
+			<para>Waiting for responses from a peer</para>
 		</listitem>	
 		<listitem>
-			<para><literal>when TCAP stack receives a message from a peer events like TCListener.onTCUni(), onTCBegin(), onTCContinue(), onTCEnd(), onTCUserAbort(), onTCPAbort() will be invoked</literal></para>
+			<para>When the TCAP stack receives a message from a peer, events like <literal>TCListener.onTCUni()</literal>, <literal>onTCBegin()</literal>, <literal>onTCContinue()</literal>, <literal>onTCEnd()</literal>, <literal>onTCUserAbort()</literal>, <literal>onTCPAbort()</literal> will be invoked.</para>
 		</listitem>		
 		<listitem>
-			<para><literal>after an Invoke component is received a TCAP user should process it and</literal></para>
+			<para>After an Invoke component is received, a TCAP-User should process it and do one of the below:</para>
 			 <itemizedlist>
 			 	<listitem>
 			 		<para>
@@ -134,7 +137,7 @@
 			 	</listitem>	
 			 	<listitem>
 			 		<para>
-			 			invoke Dialog.processInvokeWithoutAnswer() method if TCAP uses will not answer to the Invoke
+			 			invoke Dialog.processInvokeWithoutAnswer() method if TCAP-Users will not answer to the Invoke.
 			 		</para>
 			 	</listitem>			 			 	
 			 </itemizedlist>
@@ -160,7 +163,7 @@
 	
 	<section>
 		<title>&THIS.PLATFORM; &THIS.APPLICATION; TCAP User Part Example</title>
-		<para>Below is TCAP User Part example. This example creates dialog and exchanges messages withing structured dialog. Refer to source for function calls:
+		<para>Below is a TCAP User Part example. This example creates a dialog and exchanges messages within a structured dialog. Refer to source for function calls.
 		</para>
 	<programlisting
 		language="Java"

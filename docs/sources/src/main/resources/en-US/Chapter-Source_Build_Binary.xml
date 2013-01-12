@@ -662,9 +662,10 @@ Halting VM]]></screen>
                         <title>Configuring TCAP</title>
                         <para> 
                                 <literal>TcapStack</literal> initiates the TCAP stack routines. Respective TCAP stack beans are instantiated for each <literal>MAP</literal>, <literal>CAP</literal>
-                                Service. If you are using either one, feel free to delete other.
+                                Service. If you are using either one, feel free to delete the other.
                         </para>
-                        <programlisting language="XML" role="XML"><![CDATA[     	<!-- ==================================================================== -->
+                        <programlisting language="XML" role="XML"><![CDATA[     	
+	<!-- ==================================================================== -->
 	<!-- TCAP Service -->
 	<!-- ==================================================================== -->	
 	<bean name="TcapStackMap" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
@@ -708,48 +709,77 @@ Halting VM]]></screen>
                         </para>	
 	  
                         <para>                          
-                                Stack has following properties: 
+                                TCAP Stack has following configurable properties: 
                                 <variablelist>
                                         <varlistentry>
-                                                <term>dialogIdleTimeout</term>
+                                                <term>dialogIdleTimeout: public void setDialogIdleTimeout(long l);</term>
                                                 <listitem>
-                                                        <para>The TCAP Dialog idle timeout in milli-seconds </para>
+                                                        <para>This property specifies how long a dialog can be idle (i.e. not receive/send any messages) before a timeout occurs. The value is specified in milliseconds. When a timeout occurs the method <literal>TCListener.onDialogTimeout()</literal> will be invoked. If a TCAP-User does not invoke <literal>Dialog.keepAlive()</literal> inside the method <literal>TCListener.onDialogTimeout()</literal>, the TCAP Dialog will be released.</para>
                                                 </listitem>
                                         </varlistentry>                                 
                                         <varlistentry>
-                                                <term>invokeTimeout</term>
+                                                <term>invokeTimeout: public void setInvokeTimeout(long l);</term>
                                                 <listitem>
-                                                        <para>
-                                                                Component invoke timeout value in milli-seconds 
+                                                        <para>This property specifies, by default, how long Invoke will wait for a response from a peer before a timeout occurs. The value is specified in milliseconds. If a TCAP-User does not specify a custom Invoke timeout when sending a new Invoke, this default value will be used for outgoing Invoke timeout. When this timeout occurs <literal>TCListener.onInvokeTimeout()</literal> will be invoked. 
                                                         </para>
                                                 </listitem>
                                         </varlistentry> 
-                                        <varlistentry>
-                                                <term>dialogIdRangeStart</term>
-                                                <listitem>
-                                                        <para>All the outgoing Dialog will have id started with dialogIdRangeStart. dialogIdRangeStart cannt be greater than dialogIdRangeEnd </para>
-                                                </listitem>
-                                        </varlistentry>   
-                                        <varlistentry>
-                                                <term>dialogIdRangeEnd</term>
+  					<varlistentry>
+                                                <term>maxDialogs: public void setMaxDialogs(int v); </term>
                                                 <listitem>
                                                         <para>
-                                                        	All the outgoing Dialog will have id started with dialogIdRangeStart and incremented by 1 for each new outgoing dialog till dialogIdRangeEnd. After this
-                                                        	dialog is will again start from  dialogIdRangeStart value.
-                                                        </para>
-                                                </listitem>
-                                       </varlistentry>                                                                                                               
-                                        <varlistentry>
-                                                <term>maxDialogs</term>
-                                                <listitem>
-                                                        <para>
-                                                        	Maximum concurrent dialog's allowed at any given point of time. If application tries to create more dialog than this, exception is thrown.
-                                                        	dialogIdRangeEnd - dialogIdRangeStart must alwasy be less than maxDialogs
+This property specifes the maximum number of concurrent dialogs allowed to be alive at any point of time. If this property is not set, a default value of 5000 dialogs will be used. If an application attempts to create more dialogs than this maximum number specified, an Exception is thrown.
                                                         </para>
                                                 </listitem>
                                         </varlistentry>
+                                                        	
+
+                                        <varlistentry>
+                                                <term>dialogIdRangeStart: public void setDialogIdRangeStart(long val);</term>
+                                                <listitem>
+                                                        <para>
+TCAP stack can be configured to use a range of local DialogId values. You may install a set of TCAP Stack instances with different DialogId ranges. These ranges can be used for loadsharing of SS7 traffic between the TCAP instances.
+All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart</literal>. This value of <literal>dialogIdRangeStart</literal> cannt be greater than <literal>dialogIdRangeEnd</literal>. In addition, the value of <literal>dialogIdRangeEnd - dialogIdRangeStart</literal> must always be less than the value of <literal>maxDialogs</literal>. </para>
+                                                </listitem>
+                                        </varlistentry>   
+                                        <varlistentry>
+                                                <term>dialogIdRangeEnd: public void setDialogIdRangeStart(long val);</term>
+                                                <listitem>
+                                                        <para>
+                                                        	All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart</literal> and incremented by 1 for each new outgoing dialog till <literal>dialogIdRangeEnd</literal>. After this,
+                                                        	dialog will again start from the value of<literal>dialogIdRangeStart</literal>.
+                                                        </para>
+                                                </listitem>
+                                       </varlistentry>   
+                                        <varlistentry>
+                                                <term>previewMode: public void setPreviewMode(boolean val);</term>
+                                                <listitem>
+                                                        <para>
+                                                        	PreviewMode is needed for special processing mode. By default TCAP is not set in PreviewMode. When PreviewMode set in TCAP level:
+<itemizedlist>
+	<listitem>
+		<para>Stack only listens for incoming messages and does not send anything. The methods <literal>send()</literal>,
+  <literal>close()</literal>, <literal>sendComponent()</literal> and other such methods do nothing.</para>
+	</listitem>
+	<listitem>
+		<para>A TCAP Dialog is temporary. TCAP Dialog is discarded after any
+   incoming message like TC-BEGIN or TC-CONTINUE has been processed.</para>
+	</listitem>
+	<listitem>
+		<para>For any incoming messages (including TC-CONTINUE, TC-END, TC-ABORT)
+   a new TCAP Dialog is created (and then deleted).</para>
+	</listitem>
+	<listitem>
+		<para>There are no timers and timeouts.</para>
+	</listitem>
+</itemizedlist>
+                                                        </para>
+                                                </listitem>
+                                       </varlistentry>                       
                                 </variablelist>
                         </para>
+
+
                 </section>  
 
                 <section id="configuring_MAP">
