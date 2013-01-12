@@ -134,26 +134,15 @@ MAP has full implementation for USSD, SMS and Location Management Service (LMS) 
 		<para>
 			The <classname>org.mobicents.protocols.ss7.map.MAPStackImpl</classname> 
 			is concrete implementation of <classname>MAPStack.</classname>
-			The MAP User application creates an instance of <classname>MAPStackImpl</classname> 
-			passing the reference of <classname>SccpProvider</classname> and Sub System Number and 
-			then start it. All incoming messages are checked for destination SSN, 
-			if it matches with the one registered with this MAPStackImpl the corresponding listener 
-			is called else the peer receives error.
+			The MAP User application gets reference to MAPProvider by doing JNDI lookup as explained in <xref linkend="design_overview_ss7_service"/>
 		</para>
 
 		<programlisting
 			language="Java"
-			role="JAVA"><![CDATA[SccpProvider sccpProvider = getSccpProvider(); 
-        MAPStackImpl mapStack = new MAPStackImpl(sccpProvider, 8);
-        mapStack.start();
-        ...]]>
+			role="JAVA"><![CDATA[String providerJndiName = "java:/mobicents/ss7/map";
+this.mapProvider = ((MAPProvider) ctx.lookup(providerJndiName));
+...]]>
 		</programlisting>
-
-		<para>
-			The  reference  to <classname>SccpProvider</classname>  is  received  from SccpStack.  
-			To  get  handle  to <classname>SccpStack</classname>  do the JNDI look-up passing the JNDI name configured 
-			in SS7 service as explained in <xref linkend="sccp_access_point" />.
-		</para>
 
 		<para>
 			The MAP User application should register the concrete implementation of <classname>MAPDialogListener</classname> 
@@ -187,9 +176,8 @@ MAP has full implementation for USSD, SMS and Location Management Service (LMS) 
 		</para>
 
 		<programlisting language="Java" role="JAVA"><![CDATA[
-public class MAPExample implements MAPDialogListener, MAPServiceSupplementaryListener {
+public class UssdClientExample implements MAPDialogListener, MAPServiceSupplementaryListener {
         ....       
-        mapProvider = mapStack.getMAPProvider();
         mapProvider.addMAPDialogListener(this);
         mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
         ....
@@ -347,7 +335,7 @@ void MAPServiceSupplementaryListener.onProcessUnstructuredSSRequest(ProcessUnstr
 ]]></programlisting>
 
 		<para>
-			If the preparing the response spends much time we should return the control and prepare the answer in your thread.
+			If the preparing of response takes more time we should return the control and prepare the answer asynchronously in separate thread.
 		</para>
 		<para>
 			If error or reject primitives are included into a TCAP message following events occur:
@@ -362,7 +350,7 @@ public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem proble
 
 		<para>
 			After all incoming components have been processing onDialogDelimiter(MAPDialog mapDialog); 
-			event is invoking (or onDialogClose(MAPDialog mapDialog) in TC-END case). 
+			event is invoked (or onDialogClose(MAPDialog mapDialog) in TC-END case). 
 			If all response components have been prepared we can tell the stack to send response:
 			<itemizedlist>
 				<listitem>
@@ -377,10 +365,10 @@ public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem proble
 			</itemizedlist>
 			Instead of send() and close(boolean prearrangedEnd) methods you can invoke 
 			sendDelayed() or closeDelayed(boolean prearrangedEnd) methods.
-			These methods make the same as sned and close() methods.
-			But when invoking it from events of parsing incoming components
+			These methods make the same as send() and close() methods, but when these methods are invoked from MAP Service message handlers 
+			(component handler methods called by stack while parsing incoming components)
 			real sending and dialog closing will occur only when all incoming components events
-			and onDialogDelimiter() or onDialogClose() would be processed. 
+			and onDialogDelimiter() or onDialogClose() is processed. 
 			
 			If all response components have been prepared we should return the control and 
 			will send a response when all components are ready.
@@ -394,7 +382,7 @@ public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem proble
 			</itemizedlist>
 		</para>
 		<para>
-			If no local actions or no response from a remote size for a long time timeouts occur and the following methods are invoked:
+			If no local actions or no response from a peer for a long time, timeouts occur and the following methods are invoked:
 			<itemizedlist>
 				<listitem>
 					<para><classname>MAPDialogListener.onDialogTimeout(MAPDialog mapDialog);</classname></para>
@@ -424,76 +412,6 @@ package org.mobicents.protocols.ss7.map;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
-import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
-import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
-import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
-import org.mobicents.protocols.ss7.sccp.SccpStack;
-import org.mobicents.protocols.ss7.sccp.SccpProvider;
-import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-
-public class Example {
-
-	private static SccpProvider getSccpProvider()  {
-		.....
-		.....
-	}
-
-	private static SccpAddress createLocalAddress() {
-		return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 1, null, 8);
-	}
-
-	private static SccpAddress createRemoteAddress() {
-		return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2, null, 8);
-	}
-	
-	
-	public static void startUssdClient() throws Exception {
-		SccpProvider sccpProvider = getSccpProvider(); // JNDI lookup of SCCP
-		UssdClientExample client = new UssdClientExample(sccpProvider, 8);
-
-		client.start();
-
-		SccpAddress origAddress = createLocalAddress();
-		ISDNAddressString origReference = client.getMAPProvider().getMAPParameterFactory()
-				.createISDNAddressString(AddressNature.international_number, 
-				NumberingPlan.land_mobile, "31628968300");
-		SccpAddress destAddress = createRemoteAddress();
-		ISDNAddressString destReference = client.getMAPProvider().getMAPParameterFactory()
-				.createISDNAddressString(AddressNature.international_number, 
-				NumberingPlan.land_mobile, "204208300008002");
-
-		ISDNAddressString msisdn = client.getMAPProvider().getMAPParameterFactory()
-				.createISDNAddressString(AddressNature.international_number, 
-				NumberingPlan.ISDN, "31628838002");
-		client.sendProcessUssdRequest(origAddress, origReference, destAddress, destReference, 
-				"*123#", null, msisdn);
-		
-		// wait for answer
-		Thread.sleep(600000);
-
-		client.stop();
-	}
-	
-	public static void startUssdServer() throws Exception {
-		SccpProvider sccpProvider = getSccpProvider(); 
-		UssdServerExample server = new UssdServerExample(sccpProvider, 8);
-
-		server.start();
-		
-		// wait for a request
-		Thread.sleep(600000);
-
-		server.stop();
-	}
-}
-]]>
-	</programlisting>
-
-		<programlisting
-			language="Java"
-			role="JAVA"><![CDATA[
-package org.mobicents.protocols.ss7.map;
 
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
@@ -504,12 +422,10 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPMessage;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
-import org.mobicents.protocols.ss7.map.api.MAPStack;
 import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
@@ -528,25 +444,30 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSN
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
 import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
-import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 
+/**
+ * A simple example show-casing how to use MAP stack. Demonstrates how new MAP
+ * Dialog is craeted and Invoke is sent to peer.
+ * 
+ * @author Amit Bhayani
+ * 
+ */
 public class UssdClientExample implements MAPDialogListener, MAPServiceSupplementaryListener {
 
-	private MAPStack mapStack;
 	private MAPProvider mapProvider;
 	private MAPParameterFactory paramFact;
-	private MAPDialogSupplementary currentMapDialog;
 
-	public UssdClientExample(SccpProvider sccpPprovider, int ssn) {
-		mapStack = new MAPStackImpl(sccpPprovider, ssn);
-		mapProvider = mapStack.getMAPProvider();
-		paramFact = mapProvider.getMAPParameterFactory();
-
-		mapProvider.addMAPDialogListener(this);
-		mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
+	public UssdClientExample() throws NamingException {
+		InitialContext ctx = new InitialContext();
+		try {
+			String providerJndiName = "java:/mobicents/ss7/map";
+			this.mapProvider = ((MAPProvider) ctx.lookup(providerJndiName));
+		} finally {
+			ctx.close();
+		}
 	}
 
 	public MAPProvider getMAPProvider() {
@@ -554,24 +475,27 @@ public class UssdClientExample implements MAPDialogListener, MAPServiceSupplemen
 	}
 
 	public void start() {
-		mapStack.start();
+		// Listen for Dialog events
+		mapProvider.addMAPDialogListener(this);
+		// Listen for USSD related messages
+		mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
 
 		// Make the supplementary service activated
-        mapProvider.getMAPServiceSupplementary().acivate();
-
-        currentMapDialog = null;
+		mapProvider.getMAPServiceSupplementary().acivate();
 	}
 
 	public void stop() {
-		mapStack.stop();
+		mapProvider.getMAPServiceSupplementary().deactivate();
 	}
 
-	public void sendProcessUssdRequest(SccpAddress origAddress, AddressString origReference, SccpAddress remoteAddress, AddressString destReference,
-			String ussdMessage, AlertingPattern alertingPattern, ISDNAddressString msisdn) throws MAPException {
+	public void sendProcessUssdRequest(SccpAddress origAddress, AddressString origReference, SccpAddress remoteAddress,
+			AddressString destReference, String ussdMessage, AlertingPattern alertingPattern, ISDNAddressString msisdn)
+			throws MAPException {
 		// First create Dialog
-		currentMapDialog = mapProvider.getMAPServiceSupplementary().createNewDialog(
-				MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext, MAPApplicationContextVersion.version2), origAddress,
-				destReference, remoteAddress, destReference);
+		MAPDialogSupplementary currentMapDialog = mapProvider.getMAPServiceSupplementary().createNewDialog(
+				MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext,
+						MAPApplicationContextVersion.version2), origAddress, destReference, remoteAddress,
+				destReference);
 
 		CBSDataCodingScheme ussdDataCodingScheme = new CBSDataCodingSchemeImpl(0x0f);
 		// The Charset is null, here we let system use default Charset (UTF-7 as
@@ -582,126 +506,121 @@ public class UssdClientExample implements MAPDialogListener, MAPServiceSupplemen
 		currentMapDialog.addProcessUnstructuredSSRequest(ussdDataCodingScheme, ussdString, alertingPattern, msisdn);
 		// This will initiate the TC-BEGIN with INVOKE component
 		currentMapDialog.send();
-	}	
+	}
 
 	public void onProcessUnstructuredSSResponse(ProcessUnstructuredSSResponse ind) {
-		if (currentMapDialog == ind.getMAPDialog()) {
-			USSDString ussdString = ind.getUSSDString();
-			try {
-				String response = ussdString.getString(null);
-				// processing USSD response
-			} catch (MAPException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		USSDString ussdString = ind.getUSSDString();
+		try {
+			String response = ussdString.getString(null);
+			// processing USSD response
+		} catch (MAPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
-
 	public void onErrorComponent(MAPDialog mapDialog, Long invokeId, MAPErrorMessage mapErrorMessage) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	public void onProviderErrorComponent(MAPDialog mapDialog, Long invokeId, MAPProviderError providerError) {
+	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem, boolean isLocalOriginated) {
 		// TODO Auto-generated method stub
-		
-	}
 
-	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void onInvokeTimeout(MAPDialog mapDialog, Long invokeId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void onMAPMessage(MAPMessage mapMessage) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void onUnstructuredSSRequest(UnstructuredSSRequest unstrReqInd) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void onUnstructuredSSResponse(UnstructuredSSResponse unstrResInd) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void onUnstructuredSSNotifyRequest(UnstructuredSSNotifyRequest unstrNotifyInd) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void onUnstructuredSSNotifyResponse(UnstructuredSSNotifyResponse unstrNotifyInd) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void onDialogDelimiter(MAPDialog mapDialog) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, AddressString origReference, MAPExtensionContainer extensionContainer) {
+	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, AddressString origReference,
+			MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, AddressString origReference, IMSI eriImsi, AddressString eriVlrNo) {
+	public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, AddressString origReference,
+			IMSI eriImsi, AddressString eriVlrNo) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void onDialogAccept(MAPDialog mapDialog, MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
-			ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason, MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason, MAPAbortSource abortSource,
+	public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason,
 			MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason,
+			MAPAbortSource abortSource, MAPExtensionContainer extensionContainer) {
+		// TODO Auto-generated method stub
+
 	}
 
 	public void onDialogClose(MAPDialog mapDialog) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void onDialogNotice(MAPDialog mapDialog, MAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void onDialogRelease(MAPDialog mapDialog) {
-		currentMapDialog = null;
 	}
 
 	public void onDialogTimeout(MAPDialog mapDialog) {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	@Override
+	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason,
+			ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
+		// TODO Auto-generated method stub
+
 	}
 }
 ]]>
@@ -712,18 +631,19 @@ public class UssdClientExample implements MAPDialogListener, MAPServiceSupplemen
 			role="JAVA"><![CDATA[
 package org.mobicents.protocols.ss7.map;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPMessage;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
-import org.mobicents.protocols.ss7.map.api.MAPStack;
 import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderError;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
@@ -740,24 +660,29 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSN
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
 import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
-import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 
+/**
+ * A simple example show-casing how to use MAP stack. Demonstrates how to listen
+ * to incoming Dialog from peer and process the MAP messages and send response.
+ * 
+ * @author Amit Bhayani
+ * 
+ */
 public class UssdServerExample implements MAPDialogListener, MAPServiceSupplementaryListener {
 
-	private MAPStack mapStack;
 	private MAPProvider mapProvider;
 	private MAPParameterFactory paramFact;
-	private MAPDialogSupplementary currentMapDialog;
 
-	public UssdServerExample(SccpProvider sccpPprovider, int ssn) {
-		mapStack = new MAPStackImpl(sccpPprovider, ssn);
-		mapProvider = mapStack.getMAPProvider();
-		paramFact = mapProvider.getMAPParameterFactory();
-
-		mapProvider.addMAPDialogListener(this);
-		mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
+	public UssdServerExample() throws NamingException {
+		InitialContext ctx = new InitialContext();
+		try {
+			String providerJndiName = "java:/mobicents/ss7/map";
+			this.mapProvider = ((MAPProvider) ctx.lookup(providerJndiName));
+		} finally {
+			ctx.close();
+		}
 	}
 
 	public MAPProvider getMAPProvider() {
@@ -765,21 +690,24 @@ public class UssdServerExample implements MAPDialogListener, MAPServiceSupplemen
 	}
 
 	public void start() {
-		mapStack.start();
+		// Listen for Dialog events
+		mapProvider.addMAPDialogListener(this);
+		// Listen for USSD related messages
+		mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
 
 		// Make the supplementary service activated
-        mapProvider.getMAPServiceSupplementary().acivate();
-
-        currentMapDialog = null;
+		mapProvider.getMAPServiceSupplementary().acivate();
 	}
 
 	public void stop() {
-		mapStack.stop();
+		mapProvider.getMAPServiceSupplementary().deactivate();
 	}
 
 	public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest ind) {
 
 		USSDString ussdString = ind.getUSSDString();
+		MAPDialogSupplementary currentMapDialog = ind.getMAPDialog();
+
 		try {
 			String request = ussdString.getString(null);
 
@@ -799,113 +727,109 @@ public class UssdServerExample implements MAPDialogListener, MAPServiceSupplemen
 	public void onDialogDelimiter(MAPDialog mapDialog) {
 		// This will initiate the TC-END with ReturnResultLast component
 		try {
-			currentMapDialog.send();
+			mapDialog.send();
 		} catch (MAPException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-
 	public void onErrorComponent(MAPDialog mapDialog, Long invokeId, MAPErrorMessage mapErrorMessage) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	public void onProviderErrorComponent(MAPDialog mapDialog, Long invokeId, MAPProviderError providerError) {
+	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem, boolean isLocalOriginated) {
 		// TODO Auto-generated method stub
-		
-	}
 
-	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void onInvokeTimeout(MAPDialog mapDialog, Long invokeId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void onMAPMessage(MAPMessage mapMessage) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void onProcessUnstructuredSSResponse(ProcessUnstructuredSSResponse ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void onUnstructuredSSRequest(UnstructuredSSRequest unstrReqInd) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void onUnstructuredSSResponse(UnstructuredSSResponse unstrResInd) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void onUnstructuredSSNotifyRequest(UnstructuredSSNotifyRequest unstrNotifyInd) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void onUnstructuredSSNotifyResponse(UnstructuredSSNotifyResponse unstrNotifyInd) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, AddressString origReference, MAPExtensionContainer extensionContainer) {
+	public void onDialogRequest(MAPDialog mapDialog, AddressString destReference, AddressString origReference,
+			MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, AddressString origReference, IMSI eriImsi, AddressString eriVlrNo) {
+	public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, AddressString origReference,
+			IMSI eriImsi, AddressString eriVlrNo) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void onDialogAccept(MAPDialog mapDialog, MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, MAPProviderError providerError,
+	public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason,
 			ApplicationContextName alternativeApplicationContext, MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason, MAPExtensionContainer extensionContainer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason, MAPAbortSource abortSource,
+	public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason,
 			MAPExtensionContainer extensionContainer) {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	public void onDialogProviderAbort(MAPDialog mapDialog, MAPAbortProviderReason abortProviderReason,
+			MAPAbortSource abortSource, MAPExtensionContainer extensionContainer) {
+		// TODO Auto-generated method stub
+
 	}
 
 	public void onDialogClose(MAPDialog mapDialog) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void onDialogNotice(MAPDialog mapDialog, MAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void onDialogRelease(MAPDialog mapDialog) {
-		currentMapDialog = null;
 	}
 
 	public void onDialogTimeout(MAPDialog mapDialog) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
 ]]>
