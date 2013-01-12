@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">
+%BOOK_ENTITIES;
+]>
+
+<chapter id="m3ua">
+	<title>M3UA</title>
+	<section id="m3ua_route">
+	<title>Route</title>
+	<para>
+Before you can transfer Payload Data from M3UA-User to a peer, you must define the route based on Destination Point Code (DPC), Originating Point Code (OPC) and Service Indicator (SI). For details on how to add a new Route, please refer to <xref linkend="shell_m3ua_as_side_route_add"/>.  
+	</para>
+	<para>
+While DPC is mandatory and should be an actual value, OPC and SI can be -1 indicating wild card. The table below shows an example of a routeset table. The routeset table contains routesets for all the possible destinations that can be reached. This table is searched to find a match for the DPC:OPC:SI to be routed. If a match is found in the list of Application Servers, an AS is chosen from the available routes associated with the routeset. If an AS is not found, SI is substitued with -1 (DPC:OPC:-1) and a match is searched for again. If a match still is not found, OPC is substituted with -1 (DPC:-1:-1) and the table is searched again for a match. If there is still no matching AS, MSU is dropped and routing does not take place.  
+	
+<table frame="all" pgwide="1">
+					<title>Routesets</title>
+					<tgroup colsep="1" cols="4">
+						<colspec colnum="1" colname="c0" colwidth="3*" />
+						<colspec colnum="2" colname="c3" colwidth="3*" />
+						<colspec colnum="3" colname="c6" colwidth="3*" />
+						<colspec colnum="4" colname="c12" colwidth="3*" />
+						<thead>
+							<row>
+								<entry>DPC</entry>
+								<entry>OPC</entry>
+								<entry>SI</entry>
+								<entry>AS Name</entry>
+							</row>
+						</thead>
+						<tbody>
+							<row><entry>2</entry><entry>3</entry><entry>2</entry><entry>AS1, AS2</entry></row>
+							<row><entry>2</entry><entry>3</entry><entry>-1</entry><entry>AS1, AS2</entry></row>
+							<row><entry>4</entry><entry>-1</entry><entry>-1</entry><entry>AS3</entry></row>
+						</tbody>
+					</tgroup>
+					
+</table>
+	</para>
+	</section>
+	<section id="m3ua_loadsharing">
+	<title>Load Sharing</title>
+	<para>
+M3UA load-balancing makes use of the SLS field of the Protocol Data carried in the Payload Data Message. M3UA can be configured as below:
+<itemizedlist>
+	<listitem><para>load-balance between Application Servers (AS) for a given route. For any given route, there can be a maximum of 16 ASs defined. </para></listitem>
+	<listitem><para>load-balance within an AS and between Application Server Processes (ASP). A maximum 128 ASPs can be defined within an AS for load-sharing.</para></listitem>
+
+</itemizedlist>
+	</para>
+	<para>
+For even distribution of messages in the network it is recommended that you define an even number of ASs for a route for load sharing. You must ensure that you take proper care in deciding on a number of ASs for a route and number of ASPs within an AS depending on the routing label format of MSU.
+	</para>
+	<para>
+M3UA can be configured to use either the highest or lowest bits of the SLS for AS selection. The number of SLS bits used for AS selection depends on the number of maximum AS defined for a route. The remaining bits are used for ASP selection.
+	</para>
+	<para>
+<table frame="all" pgwide="1">
+					<title>Routesets</title>
+					<tgroup colsep="1" cols="3">
+						<colspec colnum="1" colname="c0" colwidth="3*" />
+						<colspec colnum="2" colname="c3" colwidth="3*" />
+						<colspec colnum="3" colname="c6" colwidth="3*" />
+						<thead>
+							<row>
+								<entry>Max AS for Route</entry>
+								<entry>Number of SLS bits used for AS</entry>
+								<entry>Max ASPs that can be used within an AS</entry>
+							</row>
+						</thead>
+						<tbody>
+							<row><entry>1 or 2</entry><entry>1</entry><entry>128</entry></row>
+							<row><entry>3 or 4</entry><entry>2</entry><entry>64</entry></row>
+							<row><entry>5 to 8</entry><entry>3</entry><entry>32</entry></row>
+							<row><entry>9 to 16</entry><entry>4</entry><entry>16</entry></row>
+						</tbody>
+					</tgroup>
+					
+</table>
+	</para>
+	</section>
+</chapter>
