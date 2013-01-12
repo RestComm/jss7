@@ -309,7 +309,7 @@ backup-addressid &lt;backup-address-id&gt; loadsharing-algo &lt;loadsharing-algo
 newcgparty-addressid &lt;new-callingPartyAddress-id&gt; origination-type &lt;originationType&gt;
 </programlisting>
 			<para>This command should be specified after configuring <command>sccp address</command>. 
-			Please refer  <xref linkend="address_management"/> on how to configure <command>sccp address</command></para>
+			Please refer to <xref linkend="address_management"/> on how to configure <command>sccp address</command>.</para>
 			<variablelist>
 				<varlistentry>
 					<term>&lt;id&gt;</term>
@@ -538,7 +538,7 @@ newcgparty-addressid &lt;new-callingPartyAddress-id&gt; origination-type &lt;ori
 											6
 										</entry>														
 										<entry>
-											Land Mobile Numbering Plan (recommendations E.212)
+											Land Mobile Numbering Plan (Recommendations E.212)
 										</entry>
 									</row>	
 									<row>
@@ -546,7 +546,7 @@ newcgparty-addressid &lt;new-callingPartyAddress-id&gt; origination-type &lt;ori
 											7
 										</entry>														
 										<entry>
-											ISDN/Mobile Numbering Plan (recommendations E.214)
+											ISDN/Mobile Numbering Plan (Recommendations E.214)
 										</entry>
 									</row>	
 									<row>
@@ -570,7 +570,7 @@ newcgparty-addressid &lt;new-callingPartyAddress-id&gt; origination-type &lt;ori
 											15
 										</entry>														
 										<entry>
-											Reseerved
+											Reserved
 										</entry>
 									</row>																																																								
 								</tbody>
@@ -769,8 +769,8 @@ newcgparty-addressid &lt;new-callingPartyAddress-id&gt; origination-type &lt;ori
 					<term>&lt;backup-address-id&gt;</term>
 					<listitem>
 						<para>Optional.</para>
-						<para>Identifies the SCCP Address used as the backup translation in case if pointcode specified by primary address is not available.
-						Backup address is optional and used only dominant and loadshared address types</para>
+						<para>Identifies the SCCP Address used as the backup translation in case the pointcode specified by primary address is not available.
+						Backup address is used if &lt;ruleType&gt; parameter is not "solitary".</para>
 					</listitem>
 				</varlistentry>					
 				<varlistentry>
@@ -778,7 +778,7 @@ newcgparty-addressid &lt;new-callingPartyAddress-id&gt; origination-type &lt;ori
 					<listitem>
 						<para>Optional.</para>
 						<para>This parameter is mandatory if &lt;ruleType&gt; parameter is "loadshared".
-						Loadsharing algorithm is configired here. Possible values of the parameter: 						
+						Loadsharing algorithm is configured here. Possible values of the parameter: 			
 						</para>
 						<table frame="all" pgwide="1">
 							<title>Rule type values</title>
@@ -862,7 +862,7 @@ newcgparty-addressid &lt;new-callingPartyAddress-id&gt; origination-type &lt;ori
 						from local SCCP users (for example a local TCAP stack).</para>
 						<para>If this parameter is "remoteOriginated" then a rule applies only for messages originating from SS7 network and not for messages originating from local SCCP users.</para>
 						<para>
-							If this parameter is absent a rule applies to all messages regardless of there origination.
+							If this parameter is absent, a rule applies to all messages regardless of their origination.
 						</para>
 					</listitem>
 				</varlistentry>												
@@ -881,8 +881,12 @@ mobicents(10.65.208.215:3435)>sccp rule create 2 R 71 2 8 0 0 3 123456789 loadsh
 		<section id="shell_sccprule_modify">
 			<title>Modify existing Rule</title>
 			<para>Rule can be modified by issuing command with following structure:</para>
-			<programlisting>sccp rule modify &lt;id&gt; &lt;mask&gt; &lt;address-indicator&gt; &lt;point-code&gt; &lt;subsystem-number&gt; &lt;translation-type&gt; &lt;numbering-plan&gt;  
-&lt;nature-of-address-indicator&gt; &lt;digits&gt; &lt;ruleType&gt; &lt;primary-address-id&gt; &lt;backup-address-id&gt;</programlisting>
+<programlisting>
+sccp rule modify &lt;id&gt; &lt;mask&gt; &lt;address-indicator&gt; &lt;point-code&gt; &lt;subsystem-number&gt; &lt;translation-type&gt; 
+&lt;numbering-plan&gt; &lt;nature-of-address-indicator&gt; &lt;digits&gt; &lt;ruleType&gt; &lt;primary-address-id&gt; 
+backup-addressid &lt;backup-address-id&gt; loadsharing-algo &lt;loadsharing-algorithm&gt; 
+newcgparty-addressid &lt;new-callingPartyAddress-id&gt; origination-type &lt;originationType&gt;
+</programlisting>
 			<para>Meaning of parameters is the same.</para>
 		</section>			
 		
@@ -934,24 +938,19 @@ sccp rule show &lt;id&gt;</programlisting>
 			<title>Address Management</title>
 			<para>The command is used to define primary or backup address of translation. The global title
 			address information of this command is combined with the global title being translated by examining the
-			mask provided in the <command>sccp rule create</command> command.The syntax remains same except for primary address
-			<command>sccp primary_add</command> is used and for backup address <command>sccp backup_add</command> is used </para>
+			mask provided in the <command>sccp rule create</command> command. </para>
 			<itemizedlist>
 				<listitem>
-					<para><command>sccp primary_add create</command></para>
-					<para><command>sccp backup_add create</command></para>
+					<para><command>sccp address create</command></para>
 				</listitem>
 				<listitem>
-					<para><command>sccp primary_add modify</command></para>
-					<para><command>sccp backup_add modify</command></para>
+					<para><command>sccp address modify</command></para>
 				</listitem>				
 				<listitem>
-					<para><command>sccp primary_add delete</command></para>
-					<para><command>sccp backup_add delete</command></para>					
+					<para><command>sccp address delete</command></para>
 				</listitem>
 				<listitem>
-					<para><command>sccp primary_add show</command></para>
-					<para><command>sccp backup_add show</command></para>	
+					<para><command>sccp address show</command></para>
 				</listitem>
 			</itemizedlist>		
 			
@@ -960,22 +959,12 @@ sccp rule show &lt;id&gt;</programlisting>
 			id="shell_sccpaddress_create">
 			<title>Create Address</title>
 			<para>Address can be created by issuing command with following structure:</para>
-			<itemizedlist>
-				<listitem>
-					<para>For primary address</para>
+
 			<programlisting>
-sccp primary_add create &lt;id&gt; &lt;address-indicator&gt; &lt;point-code&gt; &lt;subsystem-number&gt; &lt;translation-type&gt; &lt;numbering-plan&gt;  
+sccp address create &lt;id&gt; &lt;address-indicator&gt; &lt;point-code&gt; &lt;subsystem-number&gt; &lt;translation-type&gt; &lt;numbering-plan&gt;  
 &lt;nature-of-address-indicator&gt; &lt;digits&gt;
 </programlisting>
-				</listitem>
-				<listitem>
-					<para>For backup address</para>
-			<programlisting>
-sccp backup_add create &lt;id&gt; &lt;address-indicator&gt; &lt;point-code&gt; &lt;subsystem-number&gt; &lt;translation-type&gt; &lt;numbering-plan&gt;  
-&lt;nature-of-address-indicator&gt; &lt;digits&gt;
-</programlisting>
-				</listitem>				
-			</itemizedlist>
+			
 			
 			<variablelist>
 				<varlistentry>
@@ -1138,58 +1127,33 @@ sccp backup_add create &lt;id&gt; &lt;address-indicator&gt; &lt;point-code&gt; &
 			</variablelist>	
 	
 			<example>
-				<title>SCCP Primary Address creation</title>
+				
 				<screen>
-mobicents(10.65.208.215:3435)>sccp primary_add create 1 71 2 8 0 0 3 123456789
+mobicents(10.65.208.215:3435)>sccp address create 1 71 2 8 0 0 3 123456789
 				</screen>
 			</example>
-			<example>
-				<title>SCCP Backup Address creation</title>
-				<screen>
-mobicents(10.65.208.215:3435)>sccp backup_add create 1 71 3 8 0 0 3 123456789
-				</screen>
-			</example>
+			
 		</section>			
 
 		<section id="shell_sccpaddress_modify">
 			<title>Modify existing Address</title>
 			<para>Address can be modified by issuing command with following structure:</para>
-			<itemizedlist>
-				<listitem>
-					<para>For primary address</para>
+		
 			<programlisting>
-sccp primary_add modify &lt;id&gt; &lt;address-indicator&gt; &lt;point-code&gt; &lt;subsystem-number&gt; &lt;translation-type&gt; &lt;numbering-plan&gt;  
+sccp address modify &lt;id&gt; &lt;address-indicator&gt; &lt;point-code&gt; &lt;subsystem-number&gt; &lt;translation-type&gt; &lt;numbering-plan&gt;  
 &lt;nature-of-address-indicator&gt; &lt;digits&gt;
 </programlisting>
-				</listitem>
-				<listitem>
-					<para>For backup address</para>
-			<programlisting>
-sccp backup_add modify &lt;id&gt; &lt;address-indicator&gt; &lt;point-code&gt; &lt;subsystem-number&gt; &lt;translation-type&gt; &lt;numbering-plan&gt;  
-&lt;nature-of-address-indicator&gt; &lt;digits&gt;
-</programlisting>
-				</listitem>				
-			</itemizedlist>
+				
 			<para>Meaning of parameters is the same.</para>
 		</section>			
 				
 		<section
 			id="shell_sccp_address_delete">
 			<title>Delete Address</title>
-			<itemizedlist>
-				<listitem>
-					<para>For primary address</para>
+			
 			<programlisting>
-sccp primary_add delete &lt;id&gt;
+sccp address delete &lt;id&gt;
 </programlisting>
-				</listitem>
-				<listitem>
-					<para>For backup address</para>
-			<programlisting>
-sccp backup_add delete &lt;id&gt;
-</programlisting>
-				</listitem>				
-			</itemizedlist>
 			<para>Where:</para>
 			<variablelist>
 
@@ -1201,45 +1165,30 @@ sccp backup_add delete &lt;id&gt;
 				</varlistentry>
 			</variablelist>
 			<example>
-				<title>Primary Address Removal</title>
+				<title> Address Removal</title>
 				<screen>
-mobicents(10.65.208.215:3435)>sccp primary_add delete 1
+mobicents(10.65.208.215:3435)>sccp address delete 1
 Rule successfully removed
 				</screen>
 			</example>
-			<example>
-				<title>Backup Address Removal</title>
-				<screen>
-mobicents(10.65.208.215:3435)>sccp backup_add delete 1
-Rule successfully removed
-				</screen>
-			</example>			
+						
 		</section>	
 		
 		<section
 			id="shell_sccp_address_show">
 			<title>Show Address</title>
 			<para>Address's can be viewed by issuing command with following structure:</para>
-			<itemizedlist>
-				<listitem>
-					<para>For primary address</para>
+			>
 			<programlisting>
-sccp primary_add show &lt;id&gt; 
+sccp address show &lt;id&gt; 
 </programlisting>
-				</listitem>
-				<listitem>
-					<para>For backup address</para>
-			<programlisting>
-sccp backup_add show &lt;id&gt;
-</programlisting>
-				</listitem>				
-			</itemizedlist>			
+						
 			<para>Where:</para>
 			<variablelist>
 				<varlistentry>
 					<term>&lt;id&gt;</term>
 					<listitem>
-						<para>id is optional. If passed only address matching the id will be shown, else all the addresses will be shown</para>
+						<para>id is optional. If it is passed, only address matching the id will be shown, else all the addresses will be shown.</para>
 					</listitem>
 				</varlistentry>
 			</variablelist>
