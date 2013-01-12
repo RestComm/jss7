@@ -867,7 +867,24 @@ newcgparty-addressid &lt;new-callingPartyAddress-id&gt; origination-type &lt;ori
 					</listitem>
 				</varlistentry>												
 			</variablelist>	
-	
+			<para>
+				When you define Rules, a comparison function imposes ordering the collection of SCCP Rules using a sorting algorithm that is based on the GT digits. The algorithm is defined below:
+				<orderedlist>
+				<listitem><para>Rules defined with OriginationType==localOriginated or OriginationType==remoteOriginated, are always at the top of the list. Rules defined with OriginationType==All are always at the bottom of the list.</para> <para>Among rules with the same values for OriginationType (All or localOriginated/remoteOriginated), the sorting is done using the below rules. </listitem>
+				<listitem><para>Rules with GT digits having no wildcard (* or ?) are always at the top of the list. Between
+ two Rules with GT digits, both having no wildcards, the one with the shortest length is at the top
+ of the list. For example, Digit1 "123456" will be above Digit2 "1234567890" and this will be above Digit3 "999/*</para></listitem>
+				<listitem><para>Rules with GT digits having the wildcard "?" are always above digits having the wildcard "*". For
+ example, Digit1 "800/????/9" will be above Digit2 "999/*</para></listitem>
+				<listitem><para>Between Rules with two GT digits both having wildcard "?", the one with the least number of
+ wildcard "?" is at the top of the list. For example, Digit1 "800/????/9" will be above Digit2
+ "800/?????/9"</para></listitem>
+				<listitem><para> Between Rules with two GT digits both having an equal number of wildcard "?", the digit whose
+ first appearance of "?" is after other, is at the top of the list. For example between
+ Digit1 "80/??/0/???/9" and Digit 2 "800/?????/9", Digit2 is above Digit1.</para></listitem>
+				</orderedlist>
+				When a Rule is compared during Translation, comparison always starts from the top of the list.
+			</para>
 			<example>
 				<title>SCCP Rule creation</title>
 				<screen>
