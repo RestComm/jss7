@@ -308,7 +308,7 @@ sccp rule create &lt;id&gt; &lt;mask&gt; &lt;address-indicator&gt; &lt;point-cod
 backup-addressid &lt;backup-address-id&gt; loadsharing-algo &lt;loadsharing-algorithm&gt; 
 newcgparty-addressid &lt;new-callingPartyAddress-id&gt; origination-type &lt;originationType&gt;
 </programlisting>
-			<para>This command should be specified after <command>sccp address</command> are configured. 
+			<para>This command should be specified after configuring <command>sccp address</command>. 
 			Please refer  <xref linkend="address_management"/> on how to configure <command>sccp address</command></para>
 			<variablelist>
 				<varlistentry>
@@ -751,8 +751,7 @@ newcgparty-addressid &lt;new-callingPartyAddress-id&gt; origination-type &lt;ori
 											broadcast
 										</entry>														
 										<entry>
-											Both (primary and backup) addresses are used and mandatory.
-											All messages are routed to both addresses even all of them are avalable.
+											Both primary and backup addresses are used and are mandatory. All messages are routed to both addresses.
 										</entry>
 									</row>									
 								</tbody>
@@ -850,8 +849,8 @@ newcgparty-addressid &lt;new-callingPartyAddress-id&gt; origination-type &lt;ori
 				<varlistentry>
 					<term>&lt;new-callingPartyAddress-id&gt;</term>
 					<listitem>
-						<para>Optional.</para>
-						<para>callingPartyAddresses of messages that fit a rule will be replaced with this address</para>
+						<para>Optional Parameter</para>
+						<para>callingPartyAddresses of messages that fit a rule will be replaced with this address.</para>
 					</listitem>
 				</varlistentry>	
 				<varlistentry>
@@ -859,12 +858,11 @@ newcgparty-addressid &lt;new-callingPartyAddress-id&gt; origination-type &lt;ori
 					<listitem>
 						<para>Optional.</para>
 						<para>origination-type can be "localOriginated" or "remoteOriginated"</para>
-						<para>If this parameter is "localOriginated" than a rule applies only for messages that are originated 
-						from local SCCP users (for example a local TCAP stack)</para>
-						<para>If this parameter is "remoteOriginated" than a rule applies only for messages that are NOT originated 
-						from local SCCP users but come from SS7 network</para>
+						<para>If this parameter is "localOriginated", then a rule applies only for messages originating
+						from local SCCP users (for example a local TCAP stack).</para>
+						<para>If this parameter is "remoteOriginated" then a rule applies only for messages originating from SS7 network and not for messages originating from local SCCP users.</para>
 						<para>
-							If this parameter is absent a rule applies to all messages regardless of there originating
+							If this parameter is absent a rule applies to all messages regardless of there origination.
 						</para>
 					</listitem>
 				</varlistentry>												
