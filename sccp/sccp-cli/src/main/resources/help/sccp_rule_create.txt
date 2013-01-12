@@ -260,6 +260,34 @@ PARAMETERS
 							But only 8 links are acceptable in
 							both linksets.
 
+					bit2		if( (SLS & 0x04) == 0 ) 
+							<route to primary> else 
+							<route to backup>
+							This algorithm can be used if not 
+							all traffic is local 
+							(mobicents stack) originated. 
+							But only 8 links are acceptable in
+							both linksets.
+
+					bit1		if( (SLS & 0x02) == 0 ) 
+							<route to primary> else 
+							<route to backup>
+							This algorithm can be used if not 
+							all traffic is local 
+							(mobicents stack) originated. 
+							But only 8 links are acceptable in
+							both linksets.
+
+					bit0		if( (SLS & 0x01) == 0 ) 
+							<route to primary> else 
+							<route to backup>
+							This algorithm can be used if not 
+							all traffic is local 
+							(mobicents stack) originated. 
+							But only 8 links are acceptable in
+							both linksets.
+
+
 	<new-callingPartyAddress-id>
 				-	This address will replace the 
 					callingPartyAddresses of messages that fit a Rule.
