@@ -7,6 +7,85 @@
 
 <chapter id="m3ua">
 	<title>M3UA</title>
+<section id="mobicents_signaling_gateway_m3ua">
+			<title>&THIS.PLATFORM; M3UA Stack</title>
+	
+			<para>
+				<literal>M3UA</literal> is a client-server protocol supporting the transport of any SS7 MTP3-User signaling (e.g. <literal>ISUP</literal> and <literal>SCCP</literal> messages) over IP. <literal>M3UA</literal> is defined
+				by the IETF SIGTRAN working group in RFC 4666. 
+				&THIS.PLATFORM; M3UA Stack can be used on the Application Server side or on the Signaling Gateway side or can also be used in peer-to-peer mode IPSP. 
+			</para>
+			<para>
+				<literal>M3UA</literal> uses the  &THIS.PLATFORM; SCTP (Stream Control Transmission Protocol) Stack.
+			</para>
+		
+			<note>
+				<title>Note</title>
+				<para>
+					&THIS.PLATFORM; SCTP Stack uses Java SCTP layer which is only available from JDK 7 onwards.
+				</para>
+			</note>
+					
+			<section id="mobicents_signaling_gateway_m3ua_as">
+				<title>&THIS.PLATFORM; M3UA Stack on the Application Server side</title>		
+				<para>
+					The figure below demonstrates the basic functionality of the &THIS.PLATFORM; M3UA Stack when configured as an Application Server (AS) 
+					that will communicate with an External Signaling Gateway. 
+				</para>
+				<mediaobject
+					id="m3ua_AS">
+					<imageobject>
+						<imagedata
+							width="300px"
+							align="center"
+							fileref="images/M3UAAs.jpg"
+							format="JPG" />
+					</imageobject>
+					<caption>
+						<para>&THIS.PLATFORM; M3UA Stack configured as an AS
+						</para>
+					</caption>
+				</mediaobject>
+				<para>
+					To use M3UA Stack as an AS, the Routing Context (RC) may not be known and is optional. Refer to Section <xref linkend="configuring_Rem_SGW"/> for help in configuring M3UA Stack 
+					as an AS.
+				</para>
+			</section>
+			
+			<section id="mobicents_signaling_gateway_m3ua_SG">
+				<title>&THIS.PLATFORM; M3UA Stack on the Signaling Gateway side</title>			
+				<para>
+					The figure below demonstrates the basic functionality of the &THIS.PLATFORM; M3UA Stack when configured as a Signaling Gateway (SG). 
+					The &THIS.PLATFORM; Signaling Gateway provides the Nodal Interworking Function (NIF) that allows SS7 Signaling (SCCP/ISUP)
+					to be inter-worked into the M3UA/IP Network.
+					
+				</para>
+				<mediaobject
+					id="m3ua_SGW">
+					<imageobject>
+						<imagedata
+							width="300px"
+							align="center"
+							fileref="images/M3UASgw.jpg"
+							format="JPG" />
+					</imageobject>
+					<caption>
+						<para>&THIS.PLATFORM; M3UA Stack configured as a SG
+						</para>
+					</caption>
+				</mediaobject>
+				<para>
+					&THIS.PLATFORM; M3UA Stack used on the SG side will share a common point code with a set of M3UA Application Servers. 
+					You can configure the M3UA stack on SG side in one of the two traffic modes: Loadbalance or Override. Broadcast traffic mode is not supported. Refer to <xref linkend="configuring_sgw"/> for instructions on configuring M3UA Stack as SG. &THIS.PLATFORM; M3UA Stack used on SG side doesn't support routing key management messages. The Routing Key should be provisioned statically using the management console.
+				</para>	
+			</section>	
+			<section id="mobicents_ipsp_m3ua">
+				<title>&THIS.PLATFORM; M3UA Stack as IPSP</title>			
+				<para>
+					An IPSP is essentially the same as an ASP, except that it uses M3UA in a point-to-point fashion.  Conceptually, an IPSP does not use the services of a Signalling Gateway node.
+				</para>
+			</section>
+		</section>
 	<section id="m3ua_route">
 	<title>Route</title>
 	<para>
