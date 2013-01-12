@@ -4,8 +4,9 @@ Name
 SYNOPSIS
 	sccp rule create <id> <mask> <address-indicator> <point-code> <subsystem-number> 
 	<translation-type> <numbering-plan> <nature-of-address-indicator> <digits> 
-	<ruleType> <primary-address-id> <backup-address-id> <loadsharing-algorithm>
-
+	<ruleType> <primary-address-id> backup-addressid <backup-address-id> 
+	loadsharing-algo <loadsharing-algorithm> newcgparty-addressid 
+	<new-callingPartyAddress-id> origination-type <originationType>
 
 DESCRIPTION
 	This command is used to create a new SCCP Routing Rule. You must ensure that 
@@ -115,9 +116,58 @@ PARAMETERS
 					plan which the address information follows. This
 					is ignored if GT Indicator is 0000, 0001 or 0010.
 
+					NUMBER PLAN VALUES
+	
+					Value		Description
+					----------------------------------	
+					0		Unknown
+
+					1		ISDN/Telephony Number Plan
+							(Recommendations E.163 and E.164)
+
+					2		Generic Numbering Plan
+
+					3		Data Numbering Plan
+							(Recommendations X.121)
+
+					4		Telex Numbering Plan
+							(Recommendations F.69)
+
+					5		Maritime Mobile Numbering Plan
+							(Recommendations E.210, E.211)
+
+					6		Land Mobile Numbering Plan
+							(Recommendations E.212)
+
+					7		ISDN/Mobile Numbering Plan
+							(Recommendations E.214)
+
+					8 to 13		Spare
+					
+					14		Private Network or 
+							Network-Specific Numbering Plan
+
+					15		Reserved
+
 	<nature-of-address>	-	The Nature of Address Indicator (NAI) field 
 					defines the address range for a specific numbering 
 					plan. This is only used if GT Indicator is 0100.
+
+					NAI VALUES
+	
+					Value		Description
+					----------------------------------	
+					0		Unknown
+
+					1		Subscriber Number
+
+					2		Reserved for National use
+
+					3		National Significant Number
+
+					4		International Number
+
+					5 to 127	Spare
 
 	<digits>		-	Specifies the string of digits divided into 
 					subsections using separator '/' depending on if 
@@ -154,13 +204,13 @@ PARAMETERS
 							(<backup-address-id> may be missed
 							in this case).
 
-					dominant	Both (primary and backup) 
+					dominant	Both primary and backup 
 							addresses are used and mandatory. 
 							If both the addresses are 
 							available, the primary address is 
 							used for routing.
 
-					loadshared	Both (primary and backup) 
+					loadshared	Both primary and backup 
 							addresses are used and mandatory. 
 							If both the addresses are 
 							available, either primary or 
@@ -168,15 +218,21 @@ PARAMETERS
 							routing. 
 							The <loadsharing-algorithm> should
 							be configured in this case.
+			
+					broadcast	Both primary and backup addresses
+							are used and are mandatory. All
+							messages are routed to both
+							addresses.
 
 	<primary-address-id>	-	Identifies the SCCP Address used as the primary 
 					translation.
 
+	Optional Parameters
+
 	<backup-address-id>	-	Identifies the SCCP Address used as the backup
 					translation in case the pointcode specified by the
 					primary address is not available. Backup address
-					is used only with dominant and loadshared address 
-					types.
+					is used if <ruleType> is not "solitary".
 									
 	<loadsharing-algorithm>	-	This parameter is mandatory if <ruleType> is 
 					"loadshared". The Loadsharing algorithm is 
@@ -204,6 +260,34 @@ PARAMETERS
 							But only 8 links are acceptable in
 							both linksets.
 
+	<new-callingPartyAddress-id>
+				-	This address will replace the 
+					callingPartyAddresses of messages that fit a Rule.
+
+	<originationType>	-	Takes one of the following values defined below.
+					If the parameter is not defined, rule applies to
+					all messages regardless of their origination.
+
+					ORIGINATION TYPE VALUES
+					
+					Value			Description
+					-------------------------------------	
+					localOriginated		If this parameter is 
+								"localOriginated", then a 
+								rule applies only for 
+								messages originating from 
+								local SCCP users 
+								(for example a local 
+								TCAP stack).
+
+					remoteOriginated	If this parameter is 
+								"remoteOriginated", then a 
+								rule applies only for 
+								messages originating from 
+								SS7 network and not for
+								messages originating from
+								local SCCP users. 
+	
 EXAMPLES
 	sccp rule create 1 R 71 2 8 0 0 3 123456789 solitary 1
 
@@ -214,10 +298,9 @@ EXAMPLES
 SEE ALSO
 	sccp sap create, sccp sap modify, sccp sap delete, sccp sap show, 
 	sccp dest create, sccp dest modify, sccp dest delete, sccp dest show, 
-	sccp rule modify, sccp rule delete, sccp rule show, sccp primary_add create,
-	sccp primary_add modify, sccp primary_add delete, sccp primary_add show, 
-	sccp backup_add create, sccp backup_add modify, sccp backup_add delete,
-	sccp backup_add show, sccp rsp create, sccp rsp modify, sccp rsp delete, 
+	sccp rule modify, sccp rule delete, sccp rule show, sccp address create,
+	sccp address modify, sccp address delete, sccp address show, 
+	sccp rsp create, sccp rsp modify, sccp rsp delete, 
 	sccp rsp show, sccp rss create, sccp rss modify, sccp rss delete, sccp rss show, 
 	sccp lmr create, sccp lmr modify, sccp lmr delete, sccp lmr show, sccp csp create, 
 	sccp csp modify, sccp csp delete, sccp csp show, sccp get, sccp set

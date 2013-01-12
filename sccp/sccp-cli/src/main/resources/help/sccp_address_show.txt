@@ -1,0 +1,28 @@
+Name
+	sccp address show
+
+SYNOPSIS
+	sccp address show <id>
+
+DESCRIPTION
+	This command is used to view the details of all configured addresses. 
+	If an <id> is specified in the command, it will only display the details of the 
+	Address identified by the value of the 'id' specified. 
+
+PARAMETERS
+
+	Optional Parameters
+
+	<id>		-	The id of the Address whose details are to be displayed. 
+				If this parameter is not specified, the details of all
+				configured Addresses will be displayed.  
+
+SEE ALSO
+	sccp sap create, sccp sap modify, sccp sap delete, sccp dest show,
+	sccp dest create, sccp dest modify, sccp dest delete, sccp dest show,
+	sccp rule create, sccp rule modify, sccp rule delete, sccp rule show,
+	sccp address create, sccp address modify, sccp address delete, 
+	sccp rsp create, sccp rsp modify, sccp rsp delete,
+	sccp rsp show, sccp rss create, sccp rss modify, sccp rss delete, sccp rss show,
+	sccp lmr create, sccp lmr modify, sccp lmr delete, sccp lmr show, sccp csp create,
+	sccp csp modify, sccp csp delete, sccp csp show, sccp get, sccp set

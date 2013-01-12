@@ -1,0 +1,125 @@
+Name
+	sccp address create
+
+SYNOPSIS
+	sccp address create <id> <address-indicator> <point-code> <subsystem-number> 
+	<translation-type> <numbering-plan> <nature-of-address-indicator> <digits>
+
+DESCRIPTION
+	This command is used to create a new primary address or backup address of 
+	translation. You can create a new newCallingParty address as well
+	using this command. The global title address information of this command is combined with
+	the global title being translated by examining the mask provided in the 
+	'sccp rule create' command. 
+
+PARAMETERS
+
+	Standard Parameters
+                                              
+	<id>			-	A unique number to identify this address.
+
+	<address-indicator>	-	The address indicator is the first field in a SCCP 
+					Party Address (called/calling) and is one octet in
+					length. Its function is to indicate which
+					information elements are present so that the 
+					address can be interpreted. In other words, it 
+					indicates the type of addressing information that 
+					is to be found in the address field. The 
+					addressing information from the original global 
+					title is then compared with the passed address
+					information to match the rule. 
+
+					SCCP ADDRESS INDICATOR
+					--------------------------------
+					| 8 | 7 | 6 | 5 | 4 |3 | 2 | 1 |
+					--------------------------------
+
+					Bit '1'     : PC Indicator              
+						      (1 = included)
+
+					Bit '2'     : SSN Indicator             
+						      (1 = included)
+
+					Bit '3 - 6' : GT Indicator		
+						      (0000 = GT not included)
+						      (0001 = GT includes 
+							      Nature of Address)
+						      (0010 = GT includes
+							      Translation Type)
+						      (0011 = GT includes 
+							      Translation Type, 
+							      Numbering Plan and 
+							      Encoding Scheme)
+						      (0100 = GT includes 
+							      Translation Type, 
+							      Numbering Plan and 
+							      Encoding Scheme and
+							      Nature of Address)
+
+					Bit '7'     : Routing Indicator 	
+						      (0 = Route on GT, 
+						      1 = Route on PC + SSN)	
+
+					Bit '8'     : Reserved for National use.
+
+	<point-code>		-	MTP Signaling Point Code. This is ignored if 
+					Bit '0' of address-indicator is not set.
+
+	<subsystem-number>	-	This is ignored if Bit '1' of address-indicator is 
+					not set.
+
+	<translation-type>	-	This is ignored if GT Indicator is 0000 or 0001.
+
+					TRANSLATION TYPE VALUES
+	
+					Value		Description
+					----------------------------------	
+					0		Unknown
+
+					1  - 63		International Service
+
+					64 - 127	Spare
+
+					128 - 254	National Network Specific
+
+					255		Reserved for Expansion
+
+	<numbering-plan>	-	The Number Plan (NP) field specifies the numbering
+					plan which the address information follows. This
+					is ignored if GT Indicator is 0000, 0001 or 0010.
+
+	<nature-of-address>	-	The Nature of Address Indicator (NAI) field 
+					defines the address range for a specific numbering 
+					plan. This is only used if GT Indicator is 0100.
+
+	<digits>		-	The global title address information to translate 
+					to. Specified as string of digits divided into 
+					subsections using separator '/' depending on if 
+					the mask contains separator or not. 
+					The digits string can contain:  
+
+					DIGIT PATTERN
+					
+					Value		Description
+					----------------------------------	
+					-		padding - ignored
+
+					/		separator used to split the digit 
+							pattern into sections. 
+							Each section is processed 
+							differently as specified by the 
+							mask parameter in the 
+							'sccp rule create' command.
+
+EXAMPLES
+	sccp address create 1 71 2 8 0 0 3 123456789
+
+SEE ALSO
+	sccp sap create, sccp sap modify, sccp sap delete, sccp sap show, 
+	sccp dest create, sccp dest modify, sccp dest delete, sccp dest show, 
+	sccp rule create, sccp rule modify, sccp rule delete, sccp rule show, 
+	sccp address modify, sccp address delete, sccp address show, 
+	sccp rsp create, sccp rsp modify, sccp rsp delete, 
+	sccp rsp show, sccp rss create, sccp rss modify, sccp rss delete, sccp rss show, 
+	sccp lmr create, sccp lmr modify, sccp lmr delete, sccp lmr show, sccp csp create, 
+	sccp csp modify, sccp csp delete, sccp csp show, sccp get, sccp set
