@@ -829,7 +829,7 @@ newcgparty-addressid &lt;new-callingPartyAddress-id&gt; origination-type &lt;ori
 										<entry>
 											<para>if( (SLS &amp; 0x08) == 0 ) &lt;route to primary&gt; else &lt;route to backup&gt;</para>  
 											<para>This algorithm can be used if not all traffic is local (mobicents stack) originated.
-											But only 8 links in both the linksets is acceptable.</para>  
+											But only 8 links in both the linksets are acceptable.</para>  
 										</entry>
 									</row>
 									<row>
