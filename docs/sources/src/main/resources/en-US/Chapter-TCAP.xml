@@ -50,33 +50,23 @@
 		
 		<para>
 			The <classname>org.mobicents.protocols.ss7.tcap.TCAPStackImpl</classname> is concrete implementation of <classname>TCAPStack</classname>. 
-			The TCAP User Part creates instance of <classname>TCAPStackImpl</classname> passing the reference of <classname>SccpProvider</classname> and 
-			new instance of <classname>SccpAddress</classname> representing address to which bind listener. The <literal>TCAP</literal> stack creates internaly &THIS.PLATFORM; <literal>MAP</literal> Stack implementation.
-			Passed <literal>SccpAddress</literal> is used to match against incoming messages destination address.		
+			The TCAP User Part gets access to <classname>TCAPProvider</classname> by doing JNDI lookup as explained in <xref linkend="design_overview_ss7_service"/>					
 		</para>		
 		
 		<programlisting
 			language="Java"
 			role="JAVA"><![CDATA[	
-			SccpProvider sccpProvider = getSccpProvider(); //JNDI lookup of SCCP Stack and get Provider
-			SccpAddress localAddress createLocalAddress();		
-	
-	        TCAPStack tcapStack = new TCAPStackImpl(sccpPprovider, localAddress);
-	
-			  
-	        ...
-	        
-	        private SccpAddress createLocalAddress()
-	        {
-		 		
-		        return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 1, null, 8);
-	        }
+		InitialContext ctx = new InitialContext();
+		try {
+			String providerJndiName = "java:/mobicents/ss7/tcap";
+			this.tcapProvider = ((TCAPProvider) ctx.lookup(providerJndiName));
+		} finally {
+			ctx.close();
+		}
 	
 			]]>
 		</programlisting>		
-		<para>The reference to <classname>SccpProvider</classname> is received from <classname>SccpStack</classname>. 
-		To get handle to <classname>SccpStack</classname> do the JNDI look-up passing the 
-		JNDI name configured in SS7 service as explained in <xref linkend="sccp_access_point"/> </para>	
+		
 		
 		<para>The TCAP User Part should register the concrete implementation of 
 			<classname>TCListener</classname> with <classname>TCAPProvider</classname> to listen for incoming TCAP messages.
@@ -85,9 +75,8 @@
 		<programlisting
 			language="Java"
 			role="JAVA"><![CDATA[
-	public class Client implements TCListener{
+	public class ClientTest implements TCListener{
 			.....		
-			tcapProvider = tcapStack.getProvider();
 	        tcapProvider.addTCListener(this);
 	        ....
 	}        		
@@ -101,14 +90,56 @@
 	<programlisting
 		language="Java"
 		role="JAVA"><![CDATA[
-		clientDialog = this.tcapProvider.getNewDialog(thisAddress, remoteAddress);   		
+		SccpAddress localAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 1, null, 8);
+		SccpAddress remoteAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2, null, 8);
+		clientDialog = this.tcapProvider.getNewDialog(localAddress, remoteAddress);   		
 		]]>
 	</programlisting>		
 	
 	<para>
-		The TCAP User Part leverages ComponentPrimitiveFactory to create new components. These components are sent usig the dialog 
-	</para>		
+		The TCAP User Part leverages ComponentPrimitiveFactory to create new components. These components are sent using the dialog 
+	</para>	
 	
+	<para>
+		Common scenario of using TCAP stack is:
+	</para>	
+	  <itemizedlist>
+		<listitem>
+			<para><literal>Creating TCAP Dialog by TCAPProvider.getNewDialog() or getNewUnstructuredDialog()</literal></para>
+		</listitem>
+		<listitem>
+			<para><literal>adding components into a Dialog for sending by Dialog.sendComponent();</literal></para>
+		</listitem>			
+		<listitem>
+			<para><literal>sending a TCAP message TC-UNI, TC-BEGIN, TC-CONTINUE, TC-END or TC-ABORT via Dialog.send() methods</literal></para>
+		</listitem>		
+		<listitem>
+			<para><literal>waiting for responses of a peer</literal></para>
+		</listitem>	
+		<listitem>
+			<para><literal>when TCAP stack receives a message from a peer events like TCListener.onTCUni(), onTCBegin(), onTCContinue(), onTCEnd(), onTCUserAbort(), onTCPAbort() will be invoked</literal></para>
+		</listitem>		
+		<listitem>
+			<para><literal>after an Invoke component is received a TCAP user should process it and</literal></para>
+			 <itemizedlist>
+			 	<listitem>
+			 		<para>
+			 			send a response (ReturnResult, ReturnResulLast components) or 
+			 		</para>
+			 	</listitem>
+			 	<listitem>
+			 		<para>
+			 			send an error (ReturnError or Reject components) or
+			 		</para>
+			 	</listitem>	
+			 	<listitem>
+			 		<para>
+			 			invoke Dialog.processInvokeWithoutAnswer() method if TCAP uses will not answer to the Invoke
+			 		</para>
+			 	</listitem>			 			 	
+			 </itemizedlist>
+		</listitem>						
+	</itemizedlist>	
 	
 	<programlisting
 		language="Java"
@@ -135,118 +166,141 @@
 		language="Java"
 		role="JAVA"><![CDATA[	
 		
-public class Client implements TCListener{
-	//encoded Application Context Name
+package org.mobicents.protocols.ss7.tcap;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory;
+import org.mobicents.protocols.ss7.tcap.api.TCAPException;
+import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
+import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
+import org.mobicents.protocols.ss7.tcap.api.TCListener;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndRequest;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCNoticeIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCPAbortIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUniIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortIndication;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TerminationType;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
+import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
+
+/**
+ * Simple example demonstrates how to use TCAP Stack
+ * 
+ * @author Amit Bhayani
+ * 
+ */
+public class ClientTest implements TCListener {
+	// encoded Application Context Name
 	public static final long[] _ACN_ = new long[] { 0, 4, 0, 0, 1, 0, 19, 2 };
-	
-	private TCAPStack stack;
-	private SccpAddress thisAddress;
-	private SccpAddress remoteAddress;
-	
 	private TCAPProvider tcapProvider;
 	private Dialog clientDialog;
-	
-	Client(SccpProvider sccpPprovider, SccpAddress thisAddress,SccpAddress remoteAddress) {
-		super();
-		this.stack = new TCAPStackImpl(sccpPprovider,thisAddress); //pass address, so stack can register in SCCP
-		this.runningTestCase = runningTestCase;
-		this.thisAddress = thisAddress;
-		this.remoteAddress = remoteAddress;
-		this.tcapProvider = this.stack.getProvider();
+
+	ClientTest() throws NamingException {
+
+		InitialContext ctx = new InitialContext();
+		try {
+			String providerJndiName = "java:/mobicents/ss7/tcap";
+			this.tcapProvider = ((TCAPProvider) ctx.lookup(providerJndiName));
+		} finally {
+			ctx.close();
+		}
+
 		this.tcapProvider.addTCListener(this);
 	}
 
-	private static SccpProvider getSccpProvider() throws NamingException {
-       ......
-       ......
-    }
+	public void sendInvoke() throws TCAPException, TCAPSendException {
+		SccpAddress localAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 1, null, 8);
+		SccpAddress remoteAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2, null, 8);
 
-	public void start() throws TCAPException, TCAPSendException {
-		clientDialog = this.tcapProvider.getNewDialog(thisAddress, remoteAddress);
+		clientDialog = this.tcapProvider.getNewDialog(localAddress, remoteAddress);
 		ComponentPrimitiveFactory cpFactory = this.tcapProvider.getComponentPrimitiveFactory();
-		
-		//create some INVOKE
+
+		// create some INVOKE
 		Invoke invoke = cpFactory.createTCInvokeRequest();
 		invoke.setInvokeId(this.clientDialog.getNewInvokeId());
-		
 		OperationCode oc = cpFactory.createOperationCode();
-        oc.setLocalOperationCode(12L);
-        invoke.setOperationCode(oc);
-		//no parameter
+		oc.setLocalOperationCode(12L);
+		invoke.setOperationCode(oc);
+		// no parameter
 		this.clientDialog.sendComponent(invoke);
-		
-		ApplicationContextName acn = this.tcapProvider.getDialogPrimitiveFactory()
-			.createApplicationContextName(_ACN_);
-		//UI is optional!
+		ApplicationContextName acn = this.tcapProvider.getDialogPrimitiveFactory().createApplicationContextName(_ACN_);
+		// UI is optional!
 		TCBeginRequest tcbr = this.tcapProvider.getDialogPrimitiveFactory().createBegin(this.clientDialog);
 		tcbr.setApplicationContextName(acn);
 		this.clientDialog.send(tcbr);
 	}
 
-	public void onDialogReleased(Dialog d)
-	{
+	public void onDialogReleased(Dialog d) {
+	}
+
+	public void onInvokeTimeout(Invoke tcInvokeRequest) {
+	}
+
+	public void onDialogTimeout(Dialog d) {
 		d.keepAlive();
 	}
 
-
-	public void onInvokeTimeout(Invoke tcInvokeRequest)
-	{
-	}
-
-	
-	public void onDialogTimeout(Dialog d)
-	{
-	}
-
 	public void onTCBegin(TCBeginIndication ind) {
-		
-		
 	}
 
 	public void onTCContinue(TCContinueIndication ind) {
-
-		//send end
+		// send end
 		TCEndRequest end = this.tcapProvider.getDialogPrimitiveFactory().createEnd(ind.getDialog());
 		end.setTermination(TerminationType.Basic);
 		try {
 			ind.getDialog().send(end);
-			
 		} catch (TCAPSendException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	public void onTCEnd(TCEndIndication ind) {
-		//should not happen, in this scenario, we send data.
+		// should not happen, in this scenario, we send data.
 	}
 
 	public void onTCUni(TCUniIndication ind) {
-		//not going to happen
-	
+		// not going to happen
 	}
-
 
 	public void onTCPAbort(TCPAbortIndication ind) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	public void onTCUserAbort(TCUserAbortIndication ind) {
 		// TODO Auto-generated method stub
-		
 	}
-	
-	
-	public static void main(String[] args)
-	{
 
-	    SccpAddress localAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 1, null, 8);
-	    
-	   
-	    SccpAddress remoteAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2, null, 8);
-		Client c = new Client(getSccpProvider(),localAddress,remoteAddress);
+	public void onTCNotice(TCNoticeIndication ind) {
+		// TODO Auto-generated method stub
+
 	}
-	
+
+	public static void main(String[] args) {
+
+		try {
+			ClientTest c = new ClientTest();
+			c.sendInvoke();
+		} catch (NamingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TCAPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TCAPSendException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }
 
 		]]>
