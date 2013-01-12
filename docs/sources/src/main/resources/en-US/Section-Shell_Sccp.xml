@@ -798,8 +798,8 @@ newcgparty-addressid &lt;new-callingPartyAddress-id&gt; origination-type &lt;ori
 										</entry>														
 										<entry>
 											<para>if( (SLS &amp; 0x01) == 0 ) &lt;route to primary&gt; else &lt;route to backup&gt;</para>  
-											<para>This algorithm can be used if not all traffic is local (mobisents stack) originated.
-											But only 8 links in the both linksets is acceptable.</para>  
+											<para>This algorithm can be used if not all traffic is local (mobicents stack) originated.
+											But only 8 links in both the linksets are acceptable.</para>  
 										</entry>
 									</row>
 									<row>
@@ -808,8 +808,8 @@ newcgparty-addressid &lt;new-callingPartyAddress-id&gt; origination-type &lt;ori
 										</entry>														
 										<entry>
 											<para>if( (SLS &amp; 0x02) == 0 ) &lt;route to primary&gt; else &lt;route to backup&gt;</para>  
-											<para>This algorithm can be used if not all traffic is local (mobisents stack) originated.
-											But only 8 links in the both linksets is acceptable.</para>  
+											<para>This algorithm can be used if not all traffic is local (mobicents stack) originated.
+											But only 8 links in both the linksets are acceptable.</para>  
 										</entry>
 									</row>
 									<row>
@@ -818,8 +818,8 @@ newcgparty-addressid &lt;new-callingPartyAddress-id&gt; origination-type &lt;ori
 										</entry>														
 										<entry>
 											<para>if( (SLS &amp; 0x04) == 0 ) &lt;route to primary&gt; else &lt;route to backup&gt;</para>  
-											<para>This algorithm can be used if not all traffic is local (mobisents stack) originated.
-											But only 8 links in the both linksets is acceptable.</para>  
+											<para>This algorithm can be used if not all traffic is local (mobicents stack) originated.
+											But only 8 links in both the linksets are acceptable.</para>  
 										</entry>
 									</row>
 									<row>
@@ -828,8 +828,8 @@ newcgparty-addressid &lt;new-callingPartyAddress-id&gt; origination-type &lt;ori
 										</entry>														
 										<entry>
 											<para>if( (SLS &amp; 0x08) == 0 ) &lt;route to primary&gt; else &lt;route to backup&gt;</para>  
-											<para>This algorithm can be used if not all traffic is local (mobisents stack) originated.
-											But only 8 links in the both linksets is acceptable.</para>  
+											<para>This algorithm can be used if not all traffic is local (mobicents stack) originated.
+											But only 8 links in both the linksets is acceptable.</para>  
 										</entry>
 									</row>
 									<row>
@@ -838,7 +838,7 @@ newcgparty-addressid &lt;new-callingPartyAddress-id&gt; origination-type &lt;ori
 										</entry>													
 										<entry>
 											<para>if( (SLS &amp; 0x10) == 0 ) &lt;route to primary&gt; else &lt;route to backup&gt;</para>  
-											<para>This algorithm is the best if all traffic is local (mobisents stack) originated</para>  
+											<para>This algorithm is the best if all traffic is local (mobicents stack) originated</para>  
 										</entry>
 									</row>
 								</tbody>
