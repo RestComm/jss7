@@ -353,19 +353,13 @@
 						CallingPartyAddress digits
 					</para>
 				</listitem>
-				<listitem>
-					<para>
-						Extra local addresses (used for routing rules). We can define here several addresses
-						separated by comma. "?" and "*" characters can also be used here.
-					</para>
-				</listitem>
 			</itemizedlist>
 	</para>
 
 	<para>
-		If "Route on GlobalTitle" mode is used, several rules for routing are created when SCCP layer starting.
-		Addresses that are equal CallingPartyAddress or Extra local addresses are routed to the local
-		SCCP user. All other addresses are routed to the Remote SPC/Remote SSN.
+		If "Route on GlobalTitle" mode is used, two rules for routing are created when SCCP layer starting.
+		All remore originated messages will be routed to a local user, 
+		all local originated messages will be routed to a remote user (to a peer with "Remote SPC" address).  
 	</para>
 
 	<para>

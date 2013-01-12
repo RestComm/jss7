@@ -630,7 +630,7 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 		this.onMtRequest(da, oa, si, curDialog);
 
 		try {
-			curDialog.addForwardShortMessageResponse(invokeId);
+			curDialog.addMtForwardShortMessageResponse(invokeId, null, null);
 			this.needSendClose = true;
 
 			this.countMtFsmResp++;
