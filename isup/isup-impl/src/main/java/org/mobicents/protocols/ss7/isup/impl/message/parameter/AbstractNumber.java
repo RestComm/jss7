@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,19 +20,14 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * Start time:18:44:10 2009-03-27<br>
- * Project: mobicents-isup-stack<br>
- * 
- * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
- *         </a>
- * 
- */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.isup.ParameterException;
@@ -66,6 +61,10 @@ import org.mobicents.protocols.ss7.isup.message.parameter.Number;
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
 public abstract class AbstractNumber extends AbstractISUPParameter implements Number{
+
+	private static final String ADDRESS = "address";
+
+	private static final String DEFAULT_ADDRESS = "";
 
 	protected Logger logger = Logger.getLogger(this.getClass());
 	/**
@@ -419,5 +418,21 @@ public abstract class AbstractNumber extends AbstractISUPParameter implements Nu
 		// lets compute odd flag
 		oddFlag = this.address.length() % 2;
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<AbstractNumber> ISUP_ABSTRACT_NUMBER_XML = new XMLFormat<AbstractNumber>(AbstractNumber.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, AbstractNumber abstractNumber) throws XMLStreamException {
+			abstractNumber.setAddress(xml.getAttribute(ADDRESS, DEFAULT_ADDRESS));
+		}
+
+		@Override
+		public void write(AbstractNumber abstractNumber, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			xml.setAttribute(ADDRESS, abstractNumber.address);
+		}
+	};
 
 }
