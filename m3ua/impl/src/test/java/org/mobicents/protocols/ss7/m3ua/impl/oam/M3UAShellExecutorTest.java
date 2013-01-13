@@ -313,6 +313,12 @@ public class M3UAShellExecutorTest {
 			// TODO Auto-generated method stub
 			
 		}
+
+		@Override
+		public boolean isUp() {
+			// TODO Auto-generated method stub
+			return false;
+		}
 	}
 
 	class TransportManagement implements Management {
