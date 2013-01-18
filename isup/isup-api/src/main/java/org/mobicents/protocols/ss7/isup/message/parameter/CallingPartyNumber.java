@@ -110,7 +110,7 @@ public interface CallingPartyNumber extends NAINumber, ISUPParameter {
 
 	public void setNumberIncompleteIndicator(int numberIncompleteIndicator);
 
-	public int getAddressRepresentationREstrictedIndicator();
+	public int getAddressRepresentationRestrictedIndicator();
 
 	public void setAddressRepresentationREstrictedIndicator(int addressRepresentationREstrictedIndicator);
 

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,18 +20,13 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * Start time:14:02:37 2009-04-04<br>
- * Project: mobicents-isup-stack<br>
- * 
- * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
- *         </a>
- * 
- */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
@@ -46,6 +41,9 @@ import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
  */
 public abstract class AbstractNAINumber extends AbstractNumber implements NAINumber{
 	
+	private static final String NATURE_OF_ADDRESS_INDICATOR = "natureOfAddresIndicator";
+
+	private static final int DEFAULT_NATURE_OF_ADDRESS_INDICATOR = 0;
 
 	/**
 	 * Holds nature of address indicator bits - those are 7 first bits from
@@ -131,5 +129,24 @@ public abstract class AbstractNAINumber extends AbstractNumber implements NAINum
 		return 1;
 	}
 
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<AbstractNAINumber> ISUP_ABSTRACT_NAI_NUMBER_XML = new XMLFormat<AbstractNAINumber>(AbstractNAINumber.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, AbstractNAINumber abstractNAINumber) throws XMLStreamException {
+			ISUP_ABSTRACT_NUMBER_XML.read(xml, abstractNAINumber);
+
+			abstractNAINumber.natureOfAddresIndicator = xml.getAttribute(NATURE_OF_ADDRESS_INDICATOR, DEFAULT_NATURE_OF_ADDRESS_INDICATOR);
+		}
+
+		@Override
+		public void write(AbstractNAINumber abstractNAINumber, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			ISUP_ABSTRACT_NUMBER_XML.write(abstractNAINumber, xml);
+
+			xml.setAttribute(NATURE_OF_ADDRESS_INDICATOR, abstractNAINumber.natureOfAddresIndicator);
+		}
+	};
 
 }

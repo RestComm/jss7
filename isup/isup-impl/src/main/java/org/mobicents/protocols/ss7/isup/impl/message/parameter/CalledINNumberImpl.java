@@ -75,6 +75,10 @@ public class CalledINNumberImpl extends CalledNumberImpl implements CalledINNumb
 		
 	}
 
+	protected String getPrimitiveName() {
+		return "CalledINNumber";
+	}
+
 	public int getCode() {
 
 		return _PARAMETER_CODE;

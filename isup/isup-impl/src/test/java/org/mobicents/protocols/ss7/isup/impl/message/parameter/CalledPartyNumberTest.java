@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,19 +20,17 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * Start time:14:11:03 2009-04-23<br>
- * Project: mobicents-isup-stack<br>
- * 
- * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski
- *         </a>
- * 
- */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
+import static org.testng.Assert.assertEquals;
+
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
@@ -44,6 +42,7 @@ import org.testng.annotations.Test;
  * 
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski
  *         </a>
+ * @author sergey vetyutnev
  */
 public class CalledPartyNumberTest extends ParameterHarness {
 
@@ -95,6 +94,36 @@ public class CalledPartyNumberTest extends ParameterHarness {
 		String[] methodNames = { "getNumberingPlanIndicator", "getInternalNetworkNumberIndicator", "getNatureOfAddressIndicator", "isOddFlag", "getAddress" };
 		Object[] expectedValues = { CalledPartyNumberImpl._NPI_ISDN, CalledPartyNumberImpl._INN_ROUTING_NOT_ALLOWED, CalledPartyNumber._NAI_SUBSCRIBER_NUMBER, true, super.getFiveDigitsString() };
 		super.testValues(bci, methodNames, expectedValues);
+	}
+
+	@Test(groups = { "functional.xml.serialize", "parameter" })
+	public void testXMLSerialize() throws Exception {
+
+		CalledPartyNumberImpl original = new CalledPartyNumberImpl(CalledPartyNumber._NAI_INTERNATIONAL_NUMBER, "664422", CalledPartyNumber._NPI_ISDN,
+				CalledPartyNumber._NAI_NRNINNF);
+//		int natureOfAddresIndicator, String address, int numberingPlanIndicator, int internalNetworkNumberIndicator
+
+		// Writes the area to a file.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+		writer.write(original, "calledPartyNumber", CalledPartyNumberImpl.class);
+		writer.close();
+
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		CalledPartyNumberImpl copy = reader.read("calledPartyNumber", CalledPartyNumberImpl.class);
+
+		assertEquals(copy.getNatureOfAddressIndicator(), original.getNatureOfAddressIndicator());
+		assertEquals(copy.getAddress(), original.getAddress());
+		assertEquals(copy.getNumberingPlanIndicator(), original.getNumberingPlanIndicator());
+		assertEquals(copy.getInternalNetworkNumberIndicator(), original.getInternalNetworkNumberIndicator());
 	}
 
 	/*

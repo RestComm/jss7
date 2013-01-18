@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,12 +20,6 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * Start time:12:37:11 2009-07-23<br>
- * Project: mobicents-isup-stack<br>
- * 
- * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
- */
 package org.mobicents.protocols.ss7.isup.message.parameter;
 
 /**
@@ -88,8 +82,10 @@ public interface GenericDigits extends ISUPParameter {
 
 	public void setTypeOfDigits(int typeOfDigits) ;
 
-	public int[] getDigits() ;
+	public byte[] getEncodedDigits() ;
 
-	public void setDigits(int[] digits) ;
+	public void setEncodedDigits(byte[] digits) ;
 
+	// TODO: add public String getDecodedDigits() ;
+	// TODO: add public void setDecodedDigits(int encodingScheme, String digits) ;
 }

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,18 +20,13 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * Start time:15:14:32 2009-03-30<br>
- * Project: mobicents-isup-stack<br>
- * 
- * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
- *         </a>
- * 
- */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
@@ -41,14 +36,22 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
  * Project: mobicents-isup-stack<br>
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
+ * @author sergey vetyutnev
  */
 public class CauseIndicatorsImpl extends AbstractISUPParameter implements CauseIndicators {
 
-	// FIXME: we ignore EXT fields , is this ok ?
-	
+	private static final String LOCATION = "location";
+	private static final String CAUSE_VALUE = "causeValue";
+	private static final String CODING_STANDARD = "codingStandard";
+	private static final String RECOMMENDATION = "recommendation";
+	private static final String DIAGNOSTICS = "diagnostics";
+
+	private static final int DEFAULT_VALUE = 0;
+
 	private int location = 0;
 	private int causeValue = 0;
 	private int codingStandard = 0;
+	private int recommendation = 0;
 	private byte[] diagnostics = null;
 
 	public CauseIndicatorsImpl() {
@@ -56,20 +59,20 @@ public class CauseIndicatorsImpl extends AbstractISUPParameter implements CauseI
 		
 	}
 
-	public CauseIndicatorsImpl(int codingStandard, int location, int causeValue, byte[] diagnostics) {
+	public CauseIndicatorsImpl(int codingStandard, int location, int recommendation, int causeValue, byte[] diagnostics) {
 		super();
 		this.setCodingStandard(codingStandard);
 		this.setLocation(location);
+		this.setRecommendation(recommendation);
 		this.setCauseValue(causeValue);
 		this.diagnostics = diagnostics;
 	}
 
 	public int decode(byte[] b) throws ParameterException {
 
-		// FIXME: there are ext bits, does this mean this param can be from 1 to
-		// 3+ bytes?
-		// but trace shows that extension bit is always on... does this mean
-		// that we can have mutliptle indicators?
+		// FIXME: there are ext bits but we do not care about them
+		// FIXME: "Recommendation" optional field must be encoded/decoded when codingStandard!=_CODING_STANDARD_ITUT
+
 		if (b == null || b.length < 2) {
 			throw new ParameterException("byte[] must not be null or has size less than 2");
 		}
@@ -159,6 +162,14 @@ public class CauseIndicatorsImpl extends AbstractISUPParameter implements CauseI
 		return causeValue & 0x7F;
 	}
 
+	public int getRecommendation(){
+		return recommendation;
+	}
+
+	public void setRecommendation(int recommendation){
+		this.recommendation = recommendation & 0x7F;
+	}
+
 	public void setCauseValue(int causeValue) {
 		this.causeValue = causeValue;
 	}
@@ -175,4 +186,77 @@ public class CauseIndicatorsImpl extends AbstractISUPParameter implements CauseI
 
 		return _PARAMETER_CODE;
 	}
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("CauseIndicators [");
+		
+		sb.append("codingStandard=");
+		sb.append(codingStandard);
+		sb.append(", location=");
+		sb.append(location);
+		sb.append(", recommendation=");
+		sb.append(recommendation);
+		sb.append(", causeValue=");
+		sb.append(causeValue);
+
+		if (this.diagnostics != null) {
+			sb.append(", diagnostics=[");
+			sb.append(printDataArr(this.diagnostics));
+			sb.append("]");
+		}
+
+		sb.append("]");
+		
+		return sb.toString();
+	}
+
+	protected String printDataArr(byte[] data) {
+		StringBuilder sb = new StringBuilder();
+		boolean first = true;
+		if (data != null) {
+			for (int b : data) {
+				if (first)
+					first = false;
+				else
+					sb.append(", ");
+				sb.append(b);
+			}
+		}
+
+		return sb.toString();
+	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<CauseIndicatorsImpl> ISUP_CAUSE_INDICATORS_XML = new XMLFormat<CauseIndicatorsImpl>(CauseIndicatorsImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, CauseIndicatorsImpl causeIndicators) throws XMLStreamException {
+			causeIndicators.location = xml.getAttribute(LOCATION, DEFAULT_VALUE);
+			causeIndicators.causeValue = xml.getAttribute(CAUSE_VALUE, DEFAULT_VALUE);
+			causeIndicators.codingStandard = xml.getAttribute(CODING_STANDARD, DEFAULT_VALUE);
+			causeIndicators.recommendation = xml.getAttribute(RECOMMENDATION, DEFAULT_VALUE);
+
+			ByteArrayContainer bc = xml.get(DIAGNOSTICS, ByteArrayContainer.class);
+			if (bc != null) {
+				causeIndicators.diagnostics = bc.getData();
+			}
+		}
+
+		@Override
+		public void write(CauseIndicatorsImpl causeIndicators, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			xml.setAttribute(LOCATION, causeIndicators.location);
+			xml.setAttribute(CAUSE_VALUE, causeIndicators.causeValue);
+			xml.setAttribute(CODING_STANDARD, causeIndicators.codingStandard);
+			xml.setAttribute(RECOMMENDATION, causeIndicators.recommendation);
+
+			if (causeIndicators.diagnostics != null) {
+				ByteArrayContainer bac = new ByteArrayContainer(causeIndicators.diagnostics);
+				xml.add(bac, DIAGNOSTICS, ByteArrayContainer.class);
+			}
+		}
+	};
 }

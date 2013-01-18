@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,6 +24,10 @@ package org.mobicents.protocols.ss7.cap.isup;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
+import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -47,6 +51,10 @@ public class CalledPartyNumberCapImpl implements CalledPartyNumberCap, CAPAsnPri
 
 	public static final String _PrimitiveName = "CalledPartyNumberCap";
 
+	private static final String ISUP_CALLED_PARTY_NUMBER_XML = "isupCalledPartyNumber";
+
+	protected static final Logger loger = Logger.getLogger(CalledPartyNumberCapImpl.class);
+
 	private byte[] data;
 
 	public CalledPartyNumberCapImpl() {
@@ -57,6 +65,10 @@ public class CalledPartyNumberCapImpl implements CalledPartyNumberCap, CAPAsnPri
 	}
 
 	public CalledPartyNumberCapImpl(CalledPartyNumber calledPartyNumber) throws CAPException {
+		this.setCalledPartyNumber(calledPartyNumber);
+	}
+
+	public void setCalledPartyNumber(CalledPartyNumber calledPartyNumber) throws CAPException {
 		if (calledPartyNumber == null)
 			throw new CAPException("The calledPartyNumber parameter must not be null");
 		try {
@@ -205,5 +217,29 @@ public class CalledPartyNumberCapImpl implements CalledPartyNumberCap, CAPAsnPri
 
 		return sb.toString();
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<CalledPartyNumberCapImpl> CALLED_PARTY_NUMBER_XML = new XMLFormat<CalledPartyNumberCapImpl>(CalledPartyNumberCapImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, CalledPartyNumberCapImpl calledPartyNumber) throws XMLStreamException {
+			try {
+				calledPartyNumber.setCalledPartyNumber(xml.get(ISUP_CALLED_PARTY_NUMBER_XML, CalledPartyNumberImpl.class));
+			} catch (CAPException e) {
+				loger.error("Error while deserialzing CalledPartyNumberCapImpl.", e);
+			}
+		}
+
+		@Override
+		public void write(CalledPartyNumberCapImpl calledPartyNumber, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			try {
+				xml.add(((CalledPartyNumberImpl) calledPartyNumber.getCalledPartyNumber()), ISUP_CALLED_PARTY_NUMBER_XML, CalledPartyNumberImpl.class);
+			} catch (CAPException e) {
+				loger.error("Error while serialzing CalledPartyNumberCapImpl.", e);
+			}
+		}
+	};
 }
 

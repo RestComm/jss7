@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,19 +20,9 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * Start time:14:54:53 2009-04-02<br>
- * Project: mobicents-isup-stack<br>
- * 
- * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
- *         </a>
- * 
- */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectingNumber;
 
@@ -41,30 +31,10 @@ import org.mobicents.protocols.ss7.isup.message.parameter.RedirectingNumber;
  * Project: mobicents-isup-stack<br>
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
+ * @author sergey vetyutnev
  */
-public class RedirectingNumberImpl extends AbstractNAINumber implements RedirectingNumber {
+public class RedirectingNumberImpl extends CalledNumberImpl implements RedirectingNumber {
 
-	protected int numberingPlanIndicator = 0;
-
-	protected int addressRepresentationRestrictedIndicator = 0;
-
-	public RedirectingNumberImpl() {
-		super();
-		
-	}
-
-	public RedirectingNumberImpl(int natureOfAddresIndicator, String address, int numberingPlanIndicator, int addressRepresentationRestrictedIndicator) {
-		super(natureOfAddresIndicator, address);
-		this.numberingPlanIndicator = numberingPlanIndicator;
-		this.addressRepresentationRestrictedIndicator = addressRepresentationRestrictedIndicator;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.mobicents.isup.parameters.AbstractNumber#decodeBody(java.io.
-	 * ByteArrayInputStream)
-	 */
 	public RedirectingNumberImpl(byte[] representation) throws ParameterException {
 		super(representation);
 		
@@ -75,51 +45,25 @@ public class RedirectingNumberImpl extends AbstractNAINumber implements Redirect
 		
 	}
 
-	
-	public int decodeBody(ByteArrayInputStream bis) throws IllegalArgumentException {
-		int b = bis.read() & 0xff;
-
-		this.numberingPlanIndicator = (b & 0x70) >> 4;
-		this.addressRepresentationRestrictedIndicator = (b & 0x0c) >> 2;
-
-		return 1;
+	public RedirectingNumberImpl(int natureOfAddresIndicator, String address, int numberingPlanIndicator, int addressRepresentationRestrictedIndicator) {
+		super(natureOfAddresIndicator, address, numberingPlanIndicator, addressRepresentationRestrictedIndicator);
+		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.mobicents.isup.parameters.AbstractNumber#encodeBody(java.io.
-	 * ByteArrayOutputStream)
-	 */
-	
-	public int encodeBody(ByteArrayOutputStream bos) {
-		int c = this.numberingPlanIndicator << 4;
-		c |= (this.addressRepresentationRestrictedIndicator << 2);
-
-		bos.write(c);
-		return 1;
+	public RedirectingNumberImpl() {
+		super();
+		
 	}
 
-	public int getNumberingPlanIndicator() {
-		return numberingPlanIndicator;
-	}
-
-	public void setNumberingPlanIndicator(int numberingPlanIndicator) {
-		this.numberingPlanIndicator = numberingPlanIndicator;
-	}
-
-	public int getAddressRepresentationRestrictedIndicator() {
-		return addressRepresentationRestrictedIndicator;
-	}
-
-	public void setAddressRepresentationRestrictedIndicator(int addressRepresentationREstrictedIndicator) {
-		this.addressRepresentationRestrictedIndicator = addressRepresentationREstrictedIndicator;
+	protected String getPrimitiveName() {
+		return "RedirectingNumber";
 	}
 
 	public int getCode() {
 
 		return _PARAMETER_CODE;
 	}
+
 	/**
 	 * <pre>
 	 * a) Odd/even indicator: as for 3.9 a).
