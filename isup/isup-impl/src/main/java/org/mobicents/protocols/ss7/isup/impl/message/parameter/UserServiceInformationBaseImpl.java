@@ -128,7 +128,7 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
 				throw new IllegalArgumentException("byte[] should be at least 3 bytes in length");
 			
 			v = b[index++];
-			this.customInformationTransferRate=v;
+			this.customInformationTransferRate = v & 0x7F;
 		}
 		
 		while(index<b.length)

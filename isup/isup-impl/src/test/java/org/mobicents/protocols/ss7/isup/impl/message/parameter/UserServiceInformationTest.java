@@ -65,7 +65,7 @@ public class UserServiceInformationTest {
 	}
 
 	private byte[] getData2() {
-		return new byte[] { (byte) 184, (byte) 216, 19 };
+		return new byte[] { (byte) 184, (byte) 216, (byte) 147 };
 	}
 	
 	@Test(groups = { "functional.decode", "parameter" })
