@@ -63,6 +63,10 @@ public class OriginalCalledINNumberImpl extends CalledNumberImpl implements Orig
 		
 	}
 
+	protected String getPrimitiveName() {
+		return "OriginalCalledINNumber";
+	}
+
 	public int getCode() {
 
 		return _PARAMETER_CODE;

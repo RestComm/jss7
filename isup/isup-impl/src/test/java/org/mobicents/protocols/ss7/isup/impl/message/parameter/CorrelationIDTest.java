@@ -92,7 +92,7 @@ public class CorrelationIDTest extends ParameterHarness {
 	 */
 	
 	public AbstractISUPParameter getTestedComponent() {
-		return new CorrelationIDImpl(1,1,new int[2]);
+		return new CorrelationIDImpl(1,1,new byte[2]);
 	}
 
 }

@@ -27,7 +27,6 @@ import javolution.xml.stream.XMLStreamException;
 
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPMessage;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 
 /**
  * 

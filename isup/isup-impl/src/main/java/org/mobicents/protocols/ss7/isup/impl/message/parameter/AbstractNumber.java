@@ -251,8 +251,7 @@ public abstract class AbstractNumber extends AbstractISUPParameter implements Nu
 	 * ByteArrayInputStream as parameter. Decodes digits part.
 	 * 
 	 * @param bis
-	 * @return - number of bytes reads throws IllegalArgumentException - thrown
-	 *         if read error is encountered.
+	 * @return - number of bytes reads 
 	 * @throws IllegalArgumentException
 	 *             - thrown if read error is encountered.
 	 */
@@ -261,6 +260,7 @@ public abstract class AbstractNumber extends AbstractISUPParameter implements Nu
 		if (bis.available() == 0) {
 			throw new ParameterException("No more data to read.");
 		}
+
 		// FIXME: we could spare time by passing length arg - or getting it from
 		// bis??
 		int count = 0;

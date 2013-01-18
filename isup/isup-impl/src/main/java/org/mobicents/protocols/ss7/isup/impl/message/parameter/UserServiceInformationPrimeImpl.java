@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,17 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * Start time:12:36:18 2009-04-04<br>
- * Project: mobicents-isup-stack<br>
- * 
- * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
- *         </a>
- * 
- */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
-
-import java.io.IOException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformationPrime;
@@ -38,36 +28,28 @@ import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformation
 /**
  * Start time:12:36:18 2009-04-04<br>
  * Project: mobicents-isup-stack<br>
- * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
+ * @author sergey vetyutnev
  */
-public class UserServiceInformationPrimeImpl extends AbstractISUPParameter implements UserServiceInformationPrime{
-	
-//FIXME Q.931
+public class UserServiceInformationPrimeImpl extends UserServiceInformationBaseImpl implements UserServiceInformationPrime {
 
-	public int decode(byte[] b) throws ParameterException {
-		// TODO Auto-generated method stub
-		return 0;
+	public UserServiceInformationPrimeImpl() {
+		super();
+
 	}
 
-	public byte[] encode() throws ParameterException {
-		// TODO Auto-generated method stub
-		return null;
+	public UserServiceInformationPrimeImpl(byte[] b) throws ParameterException {
+		super(b);
 	}
+
+	protected String getPrimitiveName() {
+		return "UserServiceInformationPrime";
+	}
+
 	public int getCode() {
 
 		return _PARAMETER_CODE;
 	}
 
-	public UserServiceInformationPrimeImpl() {
-		super();
-		
-	}
-
-	public UserServiceInformationPrimeImpl(byte[] b) throws ParameterException {
-		super();
-		decode(b);
-	}
-	
 }

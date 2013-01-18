@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,14 +20,6 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * Start time:17:30:47 2009-03-29<br>
- * Project: mobicents-isup-stack<br>
- * 
- * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
- *         </a>
- * 
- */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.ByteArrayInputStream;
@@ -55,14 +47,18 @@ public class OriginalCalledNumberImpl extends CalledNumberImpl implements Origin
 		
 	}
 
-	public OriginalCalledNumberImpl(int natureOfAddresIndicator, String address, int numberingPlanIndicator, int addressRepresentationREstrictedIndicator) {
-		super(natureOfAddresIndicator, address, numberingPlanIndicator, addressRepresentationREstrictedIndicator);
+	public OriginalCalledNumberImpl(int natureOfAddresIndicator, String address, int numberingPlanIndicator, int addressRepresentationRestrictedIndicator) {
+		super(natureOfAddresIndicator, address, numberingPlanIndicator, addressRepresentationRestrictedIndicator);
 		
 	}
 
 	public OriginalCalledNumberImpl() {
 		super();
 		
+	}
+
+	protected String getPrimitiveName() {
+		return "OriginalCalledNumber";
 	}
 
 	public int getCode() {

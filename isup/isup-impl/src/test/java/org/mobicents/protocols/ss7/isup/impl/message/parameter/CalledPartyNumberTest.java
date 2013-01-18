@@ -124,7 +124,6 @@ public class CalledPartyNumberTest extends ParameterHarness {
 		assertEquals(copy.getAddress(), original.getAddress());
 		assertEquals(copy.getNumberingPlanIndicator(), original.getNumberingPlanIndicator());
 		assertEquals(copy.getInternalNetworkNumberIndicator(), original.getInternalNetworkNumberIndicator());
-
 	}
 
 	/*

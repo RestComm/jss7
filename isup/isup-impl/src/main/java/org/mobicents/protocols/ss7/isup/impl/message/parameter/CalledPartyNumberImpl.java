@@ -48,7 +48,6 @@ public class CalledPartyNumberImpl extends AbstractNAINumber implements CalledPa
 	private static final int DEFAULT_INTERNAL_NETWORK_NUMBER_INDICATOR = 0;
 
 	protected int numberingPlanIndicator;
-
 	protected int internalNetworkNumberIndicator;
 
 	/**

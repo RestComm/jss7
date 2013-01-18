@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,18 +20,13 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * Start time:16:14:51 2009-03-29<br>
- * Project: mobicents-isup-stack<br>
- * 
- * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
- *         </a>
- * 
- */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyNumber;
@@ -45,12 +40,19 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyNumber;
  */
 public class CallingPartyNumberImpl extends AbstractNAINumber implements CallingPartyNumber {
 
+	private static final String NUMBERING_PLAN_INDICATOR = "numberingPlanIndicator";
+	private static final String NUMBER_NUMBER_INCOMPLETE_INDICATOR = "numberIncompleteIndicator";
+	private static final String ADDRESS_REPRESENTATION_RESTRICTED_INDICATOR = "addressRepresentationRestrictedIndicator";
+	private static final String SCREENING_INDICATOR = "screeningIndicator";
+
+	private static final int DEFAULT_NUMBERING_PLAN_INDICATOR = 0;
+	private static final int DEFAULT_NUMBER_NUMBER_INCOMPLETE_INDICATOR = 0;
+	private static final int DEFAULT_ADDRESS_REPRESENTATION_RESTRICTED_INDICATOR = 0;
+	private static final int DEFAULT_SCREENING_INDICATOR = 0;
+
 	protected int numberingPlanIndicator;
-
 	protected int numberIncompleteIndicator;
-
-	protected int addressRepresentationREstrictedIndicator;
-
+	protected int addressRepresentationRestrictedIndicator;
 	protected int screeningIndicator;
 
 	/**
@@ -83,7 +85,7 @@ public class CallingPartyNumberImpl extends AbstractNAINumber implements Calling
 		super(natureOfAddresIndicator, address);
 		this.numberingPlanIndicator = numberingPlanIndicator;
 		this.numberIncompleteIndicator = numberIncompleteIndicator;
-		this.addressRepresentationREstrictedIndicator = addressRepresentationREstrictedIndicator;
+		this.addressRepresentationRestrictedIndicator = addressRepresentationREstrictedIndicator;
 		this.screeningIndicator = screeningIndicator;
 	}
 
@@ -99,7 +101,7 @@ public class CallingPartyNumberImpl extends AbstractNAINumber implements Calling
 
 		this.numberIncompleteIndicator = (b & 0x80) >> 7;
 		this.numberingPlanIndicator = (b & 0x70) >> 4;
-		this.addressRepresentationREstrictedIndicator = (b & 0x0c) >> 2;
+		this.addressRepresentationRestrictedIndicator = (b & 0x0c) >> 2;
 		this.screeningIndicator = (b & 0x03);
 
 		return 1;
@@ -122,7 +124,7 @@ public class CallingPartyNumberImpl extends AbstractNAINumber implements Calling
 
 		int c = this.numberingPlanIndicator << 4;
 		c |= (this.numberIncompleteIndicator << 7);
-		c |= (this.addressRepresentationREstrictedIndicator << 2);
+		c |= (this.addressRepresentationRestrictedIndicator << 2);
 		c |= (this.screeningIndicator);
 		bos.write(c);
 		return 1;
@@ -133,7 +135,7 @@ public class CallingPartyNumberImpl extends AbstractNAINumber implements Calling
 	 */
 	protected void doAddressPresentationRestricted() {
 
-		if (this.addressRepresentationREstrictedIndicator == _APRI_NOT_AVAILABLE) {
+		if (this.addressRepresentationRestrictedIndicator == _APRI_NOT_AVAILABLE) {
 
 			// NOTE 1 If the parameter is included and the address
 			// presentation
@@ -149,24 +151,28 @@ public class CallingPartyNumberImpl extends AbstractNAINumber implements Calling
 			this.natureOfAddresIndicator = 0;
 			this.numberIncompleteIndicator = 0;
 			this.numberingPlanIndicator = 0;
+			this.screeningIndicator = 3; // !!!
 			this.setAddress("");
 		}
 	}
 
+	public int decodeDigits(ByteArrayInputStream bis) throws ParameterException {
+
+		if (this.addressRepresentationRestrictedIndicator == _APRI_NOT_AVAILABLE) {
+			this.setAddress("");
+			return 0;
+		} else {
+			return super.decodeDigits(bis);
+		}
+	}
 	
 	public int encodeDigits(ByteArrayOutputStream bos) {
 
-		if (this.addressRepresentationREstrictedIndicator == _APRI_NOT_AVAILABLE) {
-
-			// FIXME: encode with 11(0xC0) ? or 1111(0xF0) ?
-			bos.write(0xF0);
-
-			return 1;
-
+		if (this.addressRepresentationRestrictedIndicator == _APRI_NOT_AVAILABLE) {
+			return 0;
 		} else {
 			return super.encodeDigits(bos);
 		}
-
 	}
 
 	public int getNumberingPlanIndicator() {
@@ -185,12 +191,12 @@ public class CallingPartyNumberImpl extends AbstractNAINumber implements Calling
 		this.numberIncompleteIndicator = numberIncompleteIndicator;
 	}
 
-	public int getAddressRepresentationREstrictedIndicator() {
-		return addressRepresentationREstrictedIndicator;
+	public int getAddressRepresentationRestrictedIndicator() {
+		return addressRepresentationRestrictedIndicator;
 	}
 
 	public void setAddressRepresentationREstrictedIndicator(int addressRepresentationREstrictedIndicator) {
-		this.addressRepresentationREstrictedIndicator = addressRepresentationREstrictedIndicator;
+		this.addressRepresentationRestrictedIndicator = addressRepresentationREstrictedIndicator;
 	}
 
 	public int getScreeningIndicator() {
@@ -205,4 +211,36 @@ public class CallingPartyNumberImpl extends AbstractNAINumber implements Calling
 
 		return _PARAMETER_CODE;
 	}
+
+	public String toString() {
+		return "CallingPartyNumber [numberingPlanIndicator=" + numberingPlanIndicator + ", numberIncompleteIndicator=" + numberIncompleteIndicator
+				+ ", addressRepresentationREstrictedIndicator=" + addressRepresentationRestrictedIndicator + ", screeningIndicator=" + screeningIndicator
+				+ ", natureOfAddresIndicator=" + natureOfAddresIndicator + ", oddFlag=" + oddFlag + ", address=" + address + "]";
+	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<CallingPartyNumberImpl> ISUP_CALLING_PARTY_NUMBER_XML = new XMLFormat<CallingPartyNumberImpl>(CallingPartyNumberImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, CallingPartyNumberImpl callingPartyNumber) throws XMLStreamException {
+			ISUP_ABSTRACT_NAI_NUMBER_XML.read(xml, callingPartyNumber);
+
+			callingPartyNumber.numberingPlanIndicator = xml.getAttribute(NUMBERING_PLAN_INDICATOR, DEFAULT_NUMBERING_PLAN_INDICATOR);
+			callingPartyNumber.numberIncompleteIndicator = xml.getAttribute(NUMBER_NUMBER_INCOMPLETE_INDICATOR, DEFAULT_NUMBER_NUMBER_INCOMPLETE_INDICATOR);
+			callingPartyNumber.addressRepresentationRestrictedIndicator = xml.getAttribute(ADDRESS_REPRESENTATION_RESTRICTED_INDICATOR, DEFAULT_ADDRESS_REPRESENTATION_RESTRICTED_INDICATOR);
+			callingPartyNumber.screeningIndicator = xml.getAttribute(SCREENING_INDICATOR, DEFAULT_SCREENING_INDICATOR);
+		}
+
+		@Override
+		public void write(CallingPartyNumberImpl callingPartyNumber, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			ISUP_ABSTRACT_NAI_NUMBER_XML.write(callingPartyNumber, xml);
+
+			xml.setAttribute(NUMBERING_PLAN_INDICATOR, callingPartyNumber.numberingPlanIndicator);
+			xml.setAttribute(NUMBER_NUMBER_INCOMPLETE_INDICATOR, callingPartyNumber.numberIncompleteIndicator);
+			xml.setAttribute(ADDRESS_REPRESENTATION_RESTRICTED_INDICATOR, callingPartyNumber.addressRepresentationRestrictedIndicator);
+			xml.setAttribute(SCREENING_INDICATOR, callingPartyNumber.screeningIndicator);
+		}
+	};
 }

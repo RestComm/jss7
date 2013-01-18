@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,14 +24,28 @@ package org.mobicents.protocols.ss7.cap.isup;
 
 import static org.testng.Assert.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.CalledPartyNumberImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
-import org.testng.*;import org.testng.annotations.*;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.AlertingCategory;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
+import org.mobicents.protocols.ss7.map.primitives.AlertingPatternImpl;
+import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
+import org.mobicents.protocols.ss7.map.service.supplementary.ProcessUnstructuredSSRequestImpl;
+import org.testng.annotations.*;
 
 /**
  * 
@@ -80,6 +94,36 @@ public class CalledPartyNumberCapTest {
 		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
 		
 		// int natureOfAddresIndicator, String address, int numberingPlanIndicator, int internalNetworkNumberIndicator
+	}
+
+	@Test(groups = { "functional.xml.serialize", "service.ussd" })
+	public void testXMLSerialize() throws Exception {
+
+		CalledPartyNumberCapImpl original = new CalledPartyNumberCapImpl(new CalledPartyNumberImpl(CalledPartyNumber._NAI_INTERNATIONAL_NUMBER, "664422",
+				CalledPartyNumber._NPI_ISDN, CalledPartyNumber._NAI_NRNINNF));
+
+		// Writes the area to a file.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+		writer.write(original, "calledPartyNumberCap", CalledPartyNumberCapImpl.class);
+		writer.close();
+
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		CalledPartyNumberCapImpl copy = reader.read("calledPartyNumberCap", CalledPartyNumberCapImpl.class);
+
+		assertEquals(copy.getCalledPartyNumber().getNatureOfAddressIndicator(), original.getCalledPartyNumber().getNatureOfAddressIndicator());
+		assertEquals(copy.getCalledPartyNumber().getAddress(), original.getCalledPartyNumber().getAddress());
+		assertEquals(copy.getCalledPartyNumber().getNumberingPlanIndicator(), original.getCalledPartyNumber().getNumberingPlanIndicator());
+		assertEquals(copy.getCalledPartyNumber().getInternalNetworkNumberIndicator(), original.getCalledPartyNumber().getInternalNetworkNumberIndicator());
+
 	}
 }
 
