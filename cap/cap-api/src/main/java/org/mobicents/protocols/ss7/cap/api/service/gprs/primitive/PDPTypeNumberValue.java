@@ -19,31 +19,32 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
-import org.mobicents.protocols.ss7.cap.api.primitives.AppendFreeFormatData;
-
 /**
-*
+ * 
+ * @author Lasith Waruna Perera
+ * 
+ */
+public enum PDPTypeNumberValue {
+	PPP(0x01); 
 
-fCIBCCCAMELsequence1 [0] SEQUENCE {
-freeFormatData [0] OCTET STRING (SIZE(1 .. 160)),
-pDPID [1] PDPID OPTIONAL,
-appendFreeFormatData [2] AppendFreeFormatData DEFAULT overwrite,
-...
-}
+	private int code;
 
-* 
-* @author sergey vetyutnev
-* 
-*/
-public interface FCIBCCCAMELsequence1 {
+	private PDPTypeNumberValue(int code) {
+		this.code = code;
+	}
 
-	public FreeFormatData getFreeFormatData();
+	public int getCode() {
+		return this.code;
+	}
 
-	public PDPID getPDPID();
-
-	public AppendFreeFormatData getAppendFreeFormatData();
-
+	public static PDPTypeNumberValue getInstance(int code) {
+		switch (code) {
+		case 0x01:
+			return PDPTypeNumberValue.PPP;
+		default:
+			return null;
+		}
+	}
 }

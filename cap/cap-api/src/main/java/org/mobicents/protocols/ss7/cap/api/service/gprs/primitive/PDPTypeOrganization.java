@@ -19,31 +19,22 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
-import org.mobicents.protocols.ss7.cap.api.primitives.AppendFreeFormatData;
 
 /**
 *
-
-fCIBCCCAMELsequence1 [0] SEQUENCE {
-freeFormatData [0] OCTET STRING (SIZE(1 .. 160)),
-pDPID [1] PDPID OPTIONAL,
-appendFreeFormatData [2] AppendFreeFormatData DEFAULT overwrite,
-...
-}
-
-* 
-* @author sergey vetyutnev
-* 
-*/
-public interface FCIBCCCAMELsequence1 {
-
-	public FreeFormatData getFreeFormatData();
-
-	public PDPID getPDPID();
-
-	public AppendFreeFormatData getAppendFreeFormatData();
-
+PDPTypeOrganization ::= OCTET STRING  (1)
+--  refer to 3GPP TS 29.060 [12] for the encoding.
+-- The pDPTypeOrganization shall use the least significant 4 bits of the octet encoded.
+-- The sender of this parameter shall set the most significant 4 bits of the octet to 1.
+-- The receiver of this parameter shall ignore the most significant 4 bits of this octet.
+ * 
+ * @author Lasith Waruna Perera
+ * 
+ */
+public interface PDPTypeOrganization {
+	public int getData();
+	
+	public PDPTypeOrganizationValue getPDPTypeOrganizationValue();
 }

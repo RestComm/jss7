@@ -44,7 +44,7 @@ SGSNCapabilities ::= OCTET STRING (SIZE (1))
 */
 public interface SGSNCapabilities {
 
-	public byte[] getData();
+	public int getData();
 
 	public boolean getAoCSupportedBySGSN();
 

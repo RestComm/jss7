@@ -41,6 +41,6 @@ GPRSCause {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE (1 .. 1))
 */
 public interface GPRSCause {
 
-	public byte[] getData();
+	public int getData();
 
 }

@@ -32,6 +32,11 @@ bound.&minAccessPointNameLength .. bound.&maxAccessPointNameLength))
 -- i.e. the 3GPP TS 24.008 IEI and 3GPP TS 24.008 octet length indicator
 -- shall not be included.
 
+
+--The Access point name is a type 4 information element with a minimum length of 3
+--octets and a maximum length of 102 octets.
+--The value part is defined in 3GPP TS 23.003 [10].
+
 * 
 * @author sergey vetyutnev
 * 

@@ -19,8 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
-package org.mobicents.protocols.ss7.cap.primitives;
+package org.mobicents.protocols.ss7.cap.service.gprs;
 
 import java.io.IOException;
 
@@ -29,38 +28,70 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.cap.api.CAPMessageType;
+import org.mobicents.protocols.ss7.cap.api.CAPOperationCode;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.CancelGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.PDPID;
+import org.mobicents.protocols.ss7.cap.service.gprs.primitive.PDPIDImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
-*
-* Super class for implementing primitives that are SEQUENCE
-* 
-* @author sergey vetyutnev
-* 
-*/
-public abstract class SequenceBase implements CAPAsnPrimitive {
-
-	protected String _PrimitiveName;
-
-	public SequenceBase(String _PrimitiveName) {
-		this._PrimitiveName = _PrimitiveName;
+ * 
+ * @author Lasith Waruna Perera
+ * 
+ */
+public class CancelGPRSRequestImpl   extends GprsMessageImpl  implements CancelGPRSRequest {
+	
+	public static final String _PrimitiveName = "CancelGPRSRequest";
+	
+	public static final int _ID_pdpID = 0;
+	
+	private PDPID pdpID;
+	
+	public CancelGPRSRequestImpl() {
 	}
 
+	public CancelGPRSRequestImpl( PDPID pdpID) {
+		super();
+		this.pdpID = pdpID;
+	}
+
+
+	@Override
+	public PDPID getPDPID() {
+		return this.pdpID;
+	}
+	
+	@Override
+	public CAPMessageType getMessageType() {
+		return CAPMessageType.cancelGPRS_Request;
+	}
+
+	@Override
+	public int getOperationCode() {
+		return CAPOperationCode.cancelGPRS;
+	}
+
+	@Override
 	public int getTag() throws CAPException {
 		return Tag.SEQUENCE;
 	}
 
+	@Override
 	public int getTagClass() {
 		return Tag.CLASS_UNIVERSAL;
 	}
 
+	@Override
 	public boolean getIsPrimitive() {
 		return false;
 	}
 
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+	@Override
+	public void decodeAll(AsnInputStream ansIS)
+			throws CAPParsingComponentException {
 		try {
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
@@ -70,13 +101,15 @@ public abstract class SequenceBase implements CAPAsnPrimitive {
 		} catch (AsnException e) {
 			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
-		}catch (MAPParsingComponentException e) {
+		} catch (MAPParsingComponentException e) {
 			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+	@Override
+	public void decodeData(AsnInputStream ansIS, int length)
+			throws CAPParsingComponentException {
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
@@ -85,26 +118,81 @@ public abstract class SequenceBase implements CAPAsnPrimitive {
 		} catch (AsnException e) {
 			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
-		}catch (MAPParsingComponentException e) {
+		} catch (MAPParsingComponentException e) {
 			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	protected abstract void _decode(AsnInputStream asnIS, int length) throws CAPParsingComponentException, IOException, AsnException,MAPParsingComponentException;
+	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException, MAPParsingComponentException {
 
+		this.pdpID = null;
+
+		AsnInputStream ais = ansIS.readSequenceStreamData(length);
+		while (true) {
+			if (ais.available() == 0)
+				break;
+
+			int tag = ais.readTag();
+
+			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+				switch (tag) {	
+				case _ID_pdpID:
+					if (!ais.isTagPrimitive())
+						throw new CAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ".pdpID: Parameter is not primitive",
+								CAPParsingComponentExceptionReason.MistypedParameter);
+					this.pdpID = new PDPIDImpl();
+					((PDPIDImpl) this.pdpID).decodeAll(ais);
+					break;
+				default:
+					ais.advanceElement();
+					break;
+				}
+			} else {
+				ais.advanceElement();
+			}
+		}
+	}
+	
+	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
 		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 	}
 
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+	@Override
+	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag)
+			throws CAPException {
 		try {
-			asnOs.writeTag(tagClass, false, tag);
+			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
 			int pos = asnOs.StartContentDefiniteLength();
 			this.encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
 			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public void encodeData(AsnOutputStream asnOs) throws CAPException {
+	
+		if (this.pdpID != null)
+			((PDPIDImpl) this.pdpID).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_pdpID);
+
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName + " [");
+
+		if (this.pdpID != null) {
+			sb.append("pdpID=");
+			sb.append(this.pdpID.toString());
+		}
+
+		sb.append("]");
+
+		return sb.toString();
 	}
 }

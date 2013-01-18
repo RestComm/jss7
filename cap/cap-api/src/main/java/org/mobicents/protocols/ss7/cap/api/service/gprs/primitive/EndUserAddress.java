@@ -26,14 +26,11 @@ package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 *
 
 EndUserAddress {PARAMETERS-BOUND: bound} ::= SEQUENCE {
-pDPTypeOrganization [0] OCTET STRING (SIZE(1)),
-pDPTypeNumber [1] OCTET STRING (SIZE(1)),
-pDPAddress [2] OCTET STRING (SIZE(1 .. 63)) OPTIONAL
+pDPTypeOrganization [0] PDPTypeOrganization,
+pDPTypeNumber [1] PDPTypeNumber,
+pDPAddress [2] PDPAddress OPTIONAL
 }
 -- Indicates the EndUserAddress, refer to 3GPP TS 29.060 [12] for the encoding.
--- The pDPTypeOrganization shall use the least significant 4 bits of the octet encoded.
--- The sender of this parameter shall set the most significant 4 bits of the octet to 1.
--- The receiver of this parameter shall ignore the most significant 4 bits of this octet.
 
 * 
 * @author sergey vetyutnev
@@ -41,10 +38,10 @@ pDPAddress [2] OCTET STRING (SIZE(1 .. 63)) OPTIONAL
 */
 public interface EndUserAddress {
 
-	public int getPDPTypeOrganization();
+	public PDPTypeOrganization getPDPTypeOrganization();
 
-	public int getPDPTypeNumber();
+	public PDPTypeNumber getPDPTypeNumber();
 
-	public byte[] getPDPAddress();
+	public PDPAddress getPDPAddress();
 
 }

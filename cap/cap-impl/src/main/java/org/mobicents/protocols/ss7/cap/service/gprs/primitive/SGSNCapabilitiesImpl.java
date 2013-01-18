@@ -19,31 +19,49 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.mobicents.protocols.ss7.cap.service.gprs.primitive;
 
-package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
-
-import org.mobicents.protocols.ss7.cap.api.primitives.AppendFreeFormatData;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.SGSNCapabilities;
+import org.mobicents.protocols.ss7.cap.primitives.OctetStringLength1Base;
 
 /**
-*
+ * 
+ * @author Lasith Waruna Perera
+ * 
+ */
+public class SGSNCapabilitiesImpl extends OctetStringLength1Base implements SGSNCapabilities{
 
-fCIBCCCAMELsequence1 [0] SEQUENCE {
-freeFormatData [0] OCTET STRING (SIZE(1 .. 160)),
-pDPID [1] PDPID OPTIONAL,
-appendFreeFormatData [2] AppendFreeFormatData DEFAULT overwrite,
-...
-}
+	public SGSNCapabilitiesImpl() {
+		super("SGSNCapabilities");
+	}
+	
+	public SGSNCapabilitiesImpl(int data) {
+		super("SGSNCapabilities", data);
+	}
 
-* 
-* @author sergey vetyutnev
-* 
-*/
-public interface FCIBCCCAMELsequence1 {
+	@Override
+	public int getData() {
+		return data;
+	}
 
-	public FreeFormatData getFreeFormatData();
+	@Override
+	public boolean getAoCSupportedBySGSN() {
+		return ((data & 0x01) == 0x01);
+	}
 
-	public PDPID getPDPID();
 
-	public AppendFreeFormatData getAppendFreeFormatData();
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(_PrimitiveName + " [");
+		
+		if (this.getAoCSupportedBySGSN()) {
+			sb.append("AoCSupportedBySGSN ");
+		}
 
+		sb.append("]");
+
+		return sb.toString();
+	}
+	
 }
