@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -31,7 +31,7 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.CauseIndicatorsImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.*;
 
 /**
  * 
@@ -72,7 +72,7 @@ public class CauseCapTest {
 		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 0);
 		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
 
-		CauseIndicators ci = new CauseIndicatorsImpl(0, 4, 16, null);
+		CauseIndicators ci = new CauseIndicatorsImpl(0, 4, 0, 16, null);
 		elem = new CauseCapImpl(ci);
 		aos = new AsnOutputStream();
 		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 0);

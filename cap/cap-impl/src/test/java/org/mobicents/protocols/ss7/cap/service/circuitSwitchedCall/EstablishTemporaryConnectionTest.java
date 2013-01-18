@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -55,8 +55,8 @@ public class EstablishTemporaryConnectionTest {
 				(byte) 129, 0, 48, 9, 2, 1, 3, 10, 1, 1, (byte) 129, 1, (byte) 255, (byte) 166, 3, (byte) 130, 1, 1, (byte) 135, 1, 8, (byte) 159, 50, 1, 11 };
 	}
 
-	public int[] getCorrelationIDDigits() {
-		return new int[] { 1, 2, 3, 4 };
+	public byte[] getCorrelationIDDigits() {
+		return new byte[] { 1, 2, 3, 4 };
 	}
 	
 
@@ -82,7 +82,7 @@ public class EstablishTemporaryConnectionTest {
 		assertEquals(elem.getAssistingSSPIPRoutingAddress().getGenericNumber().getScreeningIndicator(), 1);
 		assertEquals(elem.getCorrelationID().getGenericDigits().getEncodingScheme(), 2);
 		assertEquals(elem.getCorrelationID().getGenericDigits().getTypeOfDigits(), 0);
-		assertTrue(Arrays.equals(elem.getCorrelationID().getGenericDigits().getDigits(), getCorrelationIDDigits()));
+		assertTrue(Arrays.equals(elem.getCorrelationID().getGenericDigits().getEncodedDigits(), getCorrelationIDDigits()));
 		assertTrue(Arrays.equals(elem.getScfID().getData(), getScfIDData()));
 		assertEquals(elem.getServiceInteractionIndicatorsTwo().getBothwayThroughConnectionInd(), BothwayThroughConnectionInd.bothwayPathNotRequired);
 		assertNull(elem.getCallSegmentID());
@@ -103,7 +103,7 @@ public class EstablishTemporaryConnectionTest {
 		assertEquals(elem.getAssistingSSPIPRoutingAddress().getGenericNumber().getScreeningIndicator(), 1);
 		assertEquals(elem.getCorrelationID().getGenericDigits().getEncodingScheme(), 2);
 		assertEquals(elem.getCorrelationID().getGenericDigits().getTypeOfDigits(), 0);
-		assertTrue(Arrays.equals(elem.getCorrelationID().getGenericDigits().getDigits(), getCorrelationIDDigits()));
+		assertTrue(Arrays.equals(elem.getCorrelationID().getGenericDigits().getEncodedDigits(), getCorrelationIDDigits()));
 		assertTrue(Arrays.equals(elem.getScfID().getData(), getScfIDData()));
 		assertEquals(elem.getServiceInteractionIndicatorsTwo().getBothwayThroughConnectionInd(), BothwayThroughConnectionInd.bothwayPathNotRequired);
 		assertEquals((int)elem.getCallSegmentID(), 8);

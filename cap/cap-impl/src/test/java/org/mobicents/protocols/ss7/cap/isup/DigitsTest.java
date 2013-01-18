@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -33,7 +33,7 @@ import org.mobicents.protocols.ss7.isup.impl.message.parameter.GenericDigitsImpl
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.GenericNumberImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericDigits;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.*;
 
 /**
  * 
@@ -50,8 +50,8 @@ public class DigitsTest {
 		return new byte[] { (byte) 157, 7, 3, (byte) 132, 33, 7, 1, 9, 0 };
 	}
 
-	public int[] getGenericDigitsInt() {
-		return new int[] { 5, 6, 7, 8 };
+	public byte[] getGenericDigitsInt() {
+		return new byte[] { 5, 6, 7, 8 };
 	}
 
 	@Test(groups = { "functional.decode","isup"})
@@ -66,7 +66,7 @@ public class DigitsTest {
 		GenericDigits gd = elem.getGenericDigits();
 		assertEquals(gd.getEncodingScheme(), 2);
 		assertEquals(gd.getTypeOfDigits(), 1);
-		assertTrue(Arrays.equals(gd.getDigits(), getGenericDigitsInt()));
+		assertTrue(Arrays.equals(gd.getEncodedDigits(), getGenericDigitsInt()));
 		
 		data = this.getData2();
 		ais = new AsnInputStream(data);

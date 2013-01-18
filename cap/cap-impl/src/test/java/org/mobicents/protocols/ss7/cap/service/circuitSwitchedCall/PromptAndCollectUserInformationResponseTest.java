@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -44,8 +44,8 @@ public class PromptAndCollectUserInformationResponseTest {
 		return new byte[] { (byte) 128, 4, 65, 44, 55, 66 };
 	}
 
-	public int[] getDigits() {
-		return new int[] { 44, 55, 66 };
+	public byte[] getDigits() {
+		return new byte[] { 44, 55, 66 };
 	}
 
 	@Test(groups = { "functional.decode","circuitSwitchedCall"})
@@ -59,7 +59,7 @@ public class PromptAndCollectUserInformationResponseTest {
 		elem.decodeAll(ais);
 		assertEquals(elem.getDigitsResponse().getGenericDigits().getEncodingScheme(), 2);
 		assertEquals(elem.getDigitsResponse().getGenericDigits().getTypeOfDigits(), 1);
-		assertTrue(Arrays.equals(elem.getDigitsResponse().getGenericDigits().getDigits(), this.getDigits()));
+		assertTrue(Arrays.equals(elem.getDigitsResponse().getGenericDigits().getEncodedDigits(), this.getDigits()));
 	}
 
 	@Test(groups = { "functional.encode","circuitSwitchedCall"})

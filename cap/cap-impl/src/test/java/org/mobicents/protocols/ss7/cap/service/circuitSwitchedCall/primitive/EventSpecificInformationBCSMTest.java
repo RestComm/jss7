@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -46,7 +46,7 @@ import org.mobicents.protocols.ss7.isup.impl.message.parameter.CalledPartyNumber
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.CauseIndicatorsImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.*;
 
 /**
  * 
@@ -185,7 +185,7 @@ public class EventSpecificInformationBCSMTest {
 	@Test(groups = { "functional.encode","circuitSwitchedCall.primitive"})
 	public void testEncode() throws Exception {
 
-		CauseIndicators causeIndicators = new CauseIndicatorsImpl(0, 4, 16, null);
+		CauseIndicators causeIndicators = new CauseIndicatorsImpl(0, 4, 0, 16, null);
 		CauseCap failureCause = new CauseCapImpl(causeIndicators);
 		RouteSelectFailureSpecificInfo routeSelectFailureSpecificInfo = new RouteSelectFailureSpecificInfoImpl(failureCause);
 		EventSpecificInformationBCSMImpl elem = new EventSpecificInformationBCSMImpl(routeSelectFailureSpecificInfo);
@@ -193,7 +193,7 @@ public class EventSpecificInformationBCSMTest {
 		elem.encodeAll(aos);
 		assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
 
-		causeIndicators = new CauseIndicatorsImpl(0, 4, 16, null);
+		causeIndicators = new CauseIndicatorsImpl(0, 4, 0, 16, null);
 		CauseCap busyCause = new CauseCapImpl(causeIndicators);
 		OCalledPartyBusySpecificInfoImpl oCalledPartyBusySpecificInfoImpl = new OCalledPartyBusySpecificInfoImpl(busyCause);
 		elem = new EventSpecificInformationBCSMImpl(oCalledPartyBusySpecificInfoImpl);
@@ -213,7 +213,7 @@ public class EventSpecificInformationBCSMTest {
 		elem.encodeAll(aos);
 		assertTrue(Arrays.equals(aos.toByteArray(), this.getData4()));
 
-		causeIndicators = new CauseIndicatorsImpl(0, 4, 16, null);
+		causeIndicators = new CauseIndicatorsImpl(0, 4, 0, 16, null);
 		CauseCap releaseCause = new CauseCapImpl(causeIndicators);
 		ODisconnectSpecificInfoImpl oDisconnectSpecificInfo = new ODisconnectSpecificInfoImpl(releaseCause);
 		elem = new EventSpecificInformationBCSMImpl(oDisconnectSpecificInfo);
@@ -221,7 +221,7 @@ public class EventSpecificInformationBCSMTest {
 		elem.encodeAll(aos);
 		assertTrue(Arrays.equals(aos.toByteArray(), this.getData5()));
 
-		causeIndicators = new CauseIndicatorsImpl(0, 4, 16, null);
+		causeIndicators = new CauseIndicatorsImpl(0, 4, 0, 16, null);
 		busyCause = new CauseCapImpl(causeIndicators);
 		TBusySpecificInfoImpl tBusySpecificInfo = new TBusySpecificInfoImpl(busyCause, false, false, null);
 		elem = new EventSpecificInformationBCSMImpl(tBusySpecificInfo);
@@ -244,7 +244,7 @@ public class EventSpecificInformationBCSMTest {
 		elem.encodeAll(aos);
 		assertTrue(Arrays.equals(aos.toByteArray(), this.getData8()));
 
-		causeIndicators = new CauseIndicatorsImpl(0, 4, 16, null);
+		causeIndicators = new CauseIndicatorsImpl(0, 4, 0, 16, null);
 		releaseCause = new CauseCapImpl(causeIndicators);
 		TDisconnectSpecificInfoImpl tDisconnectSpecificInfo = new TDisconnectSpecificInfoImpl(releaseCause);
 		elem = new EventSpecificInformationBCSMImpl(tDisconnectSpecificInfo);

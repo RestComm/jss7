@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -33,7 +33,7 @@ import org.mobicents.protocols.ss7.cap.isup.CauseCapImpl;
 import org.mobicents.protocols.ss7.cap.primitives.DateAndTimeImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.CauseIndicatorsImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.*;
 
 /**
  * 
@@ -115,9 +115,9 @@ public class RequestedInformationTest {
 		aos = new AsnOutputStream();
 		elem.encodeAll(aos);
 		assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
-		
-		CauseIndicatorsImpl ci = new CauseIndicatorsImpl(0, 2, 17, null);
-		// int codingStandard, int location, int causeValue, byte[] diagnostics
+
+		CauseIndicatorsImpl ci = new CauseIndicatorsImpl(0, 2, 0, 17, null);
+		// int codingStandard, int location, int recommendation, int causeValue, byte[] diagnostics
 		CauseCapImpl cc = new CauseCapImpl(ci); 
 		elem = new RequestedInformationImpl(cc);
 		aos = new AsnOutputStream();

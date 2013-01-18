@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -31,7 +31,7 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.CallingPartyNumberImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyNumber;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.*;
 
 /**
  * 
@@ -61,7 +61,7 @@ public class CallingPartyNumberCapTest {
 		assertTrue(cpn.isOddFlag());
 		assertEquals(cpn.getNumberingPlanIndicator(), 1);
 		assertEquals(cpn.getScreeningIndicator(), 1);
-		assertEquals(cpn.getAddressRepresentationREstrictedIndicator(), 0);
+		assertEquals(cpn.getAddressRepresentationRestrictedIndicator(), 0);
 		assertEquals(cpn.getNumberIncompleteIndicator(), 0);
 		assertEquals(cpn.getNatureOfAddressIndicator(), 4);
 		assertTrue(cpn.getAddress().equals("41789005047"));

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -47,8 +47,8 @@ public class VariablePartTest {
 		return new byte[] { (byte) 129, 4, 96, 18, 17, 16 };
 	}
 
-	public int[] getGenericDigitsData() {
-		return new int[] { 18, 17, 16 };
+	public byte[] getGenericDigitsData() {
+		return new byte[] { 18, 17, 16 };
 	}
 
 	public byte[] getData3() {
@@ -87,7 +87,7 @@ public class VariablePartTest {
 		assertNull(elem.getInteger());
 		assertEquals(elem.getNumber().getGenericDigits().getEncodingScheme(), 3);
 		assertEquals(elem.getNumber().getGenericDigits().getTypeOfDigits(), 0);
-		assertTrue(Arrays.equals(elem.getNumber().getGenericDigits().getDigits(), getGenericDigitsData()));
+		assertTrue(Arrays.equals(elem.getNumber().getGenericDigits().getEncodedDigits(), getGenericDigitsData()));
 		assertNull(elem.getTime());
 		assertNull(elem.getDate());
 		assertNull(elem.getPrice());
