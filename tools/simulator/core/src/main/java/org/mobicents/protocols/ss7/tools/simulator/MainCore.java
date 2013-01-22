@@ -22,7 +22,6 @@
 
 package org.mobicents.protocols.ss7.tools.simulator;
  
-import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.rmi.registry.LocateRegistry;
@@ -44,11 +43,17 @@ import org.mobicents.protocols.ss7.tools.simulator.level1.M3uaManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.level1.M3uaManStandardMBean;
 import org.mobicents.protocols.ss7.tools.simulator.level2.SccpManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.level2.SccpManStandardMBean;
+import org.mobicents.protocols.ss7.tools.simulator.level3.CapManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.level3.CapManStandardMBean;
 import org.mobicents.protocols.ss7.tools.simulator.level3.MapManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.level3.MapManStandardMBean;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHostMBean;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHostStandardMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.cap.TestCapScfManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.cap.TestCapScfStandardManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.cap.TestCapSsfManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.cap.TestCapSsfStandardManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsClientManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsClientStandardManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsServerManMBean;
@@ -167,10 +172,13 @@ public class MainCore {
 		ObjectName nameDialogicMan = new ObjectName("SS7_Simulator_" + appName + ":type=DialogicMan");
 		ObjectName nameSccpMan = new ObjectName("SS7_Simulator_" + appName + ":type=SccpMan");
 		ObjectName nameMapMan = new ObjectName("SS7_Simulator_" + appName + ":type=MapMan");
+		ObjectName nameCapMan = new ObjectName("SS7_Simulator_" + appName + ":type=CapMan");
 		ObjectName nameUssdClientManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestUssdClientMan");
 		ObjectName nameUssdServerManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestUssdServerMan");
 		ObjectName nameSmsClientManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestSmsClientMan");
 		ObjectName nameSmsServerManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestSmsServerMan");
+		ObjectName nameTestCapSsfMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestCapSsfMan");
+		ObjectName nameTestCapScfMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestCapScfMan");
 
 		// HtmlAdaptorServer
 		HtmlAdaptorServer adapter = null;
@@ -201,6 +209,9 @@ public class MainCore {
 			MapManStandardMBean mapMBean = new MapManStandardMBean(host.getMapMan(), MapManMBean.class);
 			mbs.registerMBean(mapMBean, nameMapMan);
 
+			CapManStandardMBean capMBean = new CapManStandardMBean(host.getCapMan(), CapManMBean.class);
+			mbs.registerMBean(capMBean, nameCapMan);
+
 			TestUssdClientStandardManMBean ussdClientManMBean = new TestUssdClientStandardManMBean(host.getTestUssdClientMan(), TestUssdClientManMBean.class);
 			mbs.registerMBean(ussdClientManMBean, nameUssdClientManMan);
 
@@ -212,6 +223,12 @@ public class MainCore {
 
 			TestSmsServerStandardManMBean smsServerManMBean = new TestSmsServerStandardManMBean(host.getTestSmsServerMan(), TestSmsServerManMBean.class);
 			mbs.registerMBean(smsServerManMBean, nameSmsServerManMan);
+
+			TestCapSsfStandardManMBean capSsfManMBean = new TestCapSsfStandardManMBean(host.getTestCapSsfMan(), TestCapSsfManMBean.class);
+			mbs.registerMBean(capSsfManMBean, nameTestCapSsfMan);
+
+			TestCapScfStandardManMBean capScfManMBean = new TestCapScfStandardManMBean(host.getTestCapScfMan(), TestCapScfManMBean.class);
+			mbs.registerMBean(capScfManMBean, nameTestCapScfMan);
 
 			System.out.println("All beans have been loaded...");
 
@@ -268,10 +285,13 @@ public class MainCore {
 		mbs.unregisterMBean(nameDialogicMan);
 		mbs.unregisterMBean(nameSccpMan);
 		mbs.unregisterMBean(nameMapMan);
+		mbs.unregisterMBean(nameCapMan);
 		mbs.unregisterMBean(nameUssdClientManMan);
 		mbs.unregisterMBean(nameUssdServerManMan);
 		mbs.unregisterMBean(nameSmsClientManMan);
 		mbs.unregisterMBean(nameSmsServerManMan);
+		mbs.unregisterMBean(nameTestCapSsfMan);
+		mbs.unregisterMBean(nameTestCapScfMan);
 
 //		Registry.unbind(key);
 		UnicastRemoteObject.unexportObject(reg,true);  

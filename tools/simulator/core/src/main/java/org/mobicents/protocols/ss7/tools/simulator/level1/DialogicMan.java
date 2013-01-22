@@ -22,9 +22,6 @@
 
 package org.mobicents.protocols.ss7.tools.simulator.level1;
 
-import javolution.xml.XMLFormat;
-import javolution.xml.stream.XMLStreamException;
-
 import org.apache.log4j.Level;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
@@ -39,12 +36,6 @@ import org.mobicents.ss7.hardware.dialogic.DialogicMtp3UserPart;
 public class DialogicMan implements DialogicManMBean, Stoppable {
 
 	public static String SOURCE_NAME = "Dialogic";
-
-	private static final String SOURCE_MODULE_ID = "SourceModuleId";
-	private static final String DESTINATION_MODULE_ID = "DestinationModuleId";
-
-	private int sourceModuleId;
-	private int destinationModuleId;
 
 	private final String name;
 	private TesterHost testerHost;
@@ -66,23 +57,23 @@ public class DialogicMan implements DialogicManMBean, Stoppable {
 
 	@Override
 	public int getSourceModuleId() {
-		return sourceModuleId;
+		return this.testerHost.getConfigurationData().getDialogicConfigurationData().getSourceModuleId();
 	}
 
 	@Override
 	public void setSourceModuleId(int val) {
-		sourceModuleId = val;
+		this.testerHost.getConfigurationData().getDialogicConfigurationData().setSourceModuleId(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public int getDestinationModuleId() {
-		return destinationModuleId;
+		return this.testerHost.getConfigurationData().getDialogicConfigurationData().getDestinationModuleId();
 	}
 
 	@Override
 	public void setDestinationModuleId(int val) {
-		destinationModuleId = val;
+		this.testerHost.getConfigurationData().getDialogicConfigurationData().setDestinationModuleId(val);
 		this.testerHost.markStore();
 	}
 
@@ -98,7 +89,7 @@ public class DialogicMan implements DialogicManMBean, Stoppable {
 
 	public boolean start() {
 		try {
-			this.initDialogic(this.sourceModuleId, this.destinationModuleId);
+			this.initDialogic(this.getSourceModuleId(), this.getDestinationModuleId());
 			this.isStarted = true;
 			this.testerHost.sendNotif(SOURCE_NAME, "Dialogic has been started", "", Level.INFO);
 			return true;
@@ -143,19 +134,6 @@ public class DialogicMan implements DialogicManMBean, Stoppable {
 	public Mtp3UserPart getMtp3UserPart() {
 		return this.dialogic;
 	}	
-
-	protected static final XMLFormat<DialogicMan> XML = new XMLFormat<DialogicMan>(DialogicMan.class) {
-
-		public void write(DialogicMan dial, OutputElement xml) throws XMLStreamException {
-			xml.setAttribute(SOURCE_MODULE_ID, dial.sourceModuleId);
-			xml.setAttribute(DESTINATION_MODULE_ID, dial.destinationModuleId);
-		}
-
-		public void read(InputElement xml, DialogicMan dial) throws XMLStreamException {
-			dial.sourceModuleId = xml.getAttribute(SOURCE_MODULE_ID).toInt();
-			dial.destinationModuleId = xml.getAttribute(DESTINATION_MODULE_ID).toInt();
-		}
-	};
 
 }
 

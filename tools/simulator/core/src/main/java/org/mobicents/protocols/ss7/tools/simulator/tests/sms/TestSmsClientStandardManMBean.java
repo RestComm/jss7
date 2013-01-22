@@ -97,7 +97,7 @@ public class TestSmsClientStandardManMBean extends StandardMBean {
 						signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
 		};
 
-		return new MBeanInfo(TestSmsServerMan.class.getName(), "SmsClient test parameters management", attributes, null, operations, null);
+		return new MBeanInfo(TestSmsClientMan.class.getName(), "SmsClient test parameters management", attributes, null, operations, null);
 	}
 
 }

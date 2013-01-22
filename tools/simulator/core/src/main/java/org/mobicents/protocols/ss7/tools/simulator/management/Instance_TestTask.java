@@ -39,6 +39,8 @@ public class Instance_TestTask extends EnumeratedBase {
 	public static final int VAL_USSD_TEST_SERVER = 2;
 	public static final int VAL_SMS_TEST_CLIENT = 3;
 	public static final int VAL_SMS_TEST_SERVER = 4;
+	public static final int VAL_CAP_TEST_SCF = 5;
+	public static final int VAL_CAP_TEST_SSF = 6;
 
 	private static Hashtable<String, Integer> stringMap = new Hashtable<String, Integer>();
 	private static Hashtable<Integer,String> intMap = new Hashtable<Integer,String>();
@@ -49,12 +51,16 @@ public class Instance_TestTask extends EnumeratedBase {
 		intMap.put(VAL_USSD_TEST_SERVER, "USSD_TEST_SERVER");
 		intMap.put(VAL_SMS_TEST_CLIENT, "SMS_TEST_CLIENT");
 		intMap.put(VAL_SMS_TEST_SERVER, "SMS_TEST_SERVER");
+		intMap.put(VAL_CAP_TEST_SCF, "CAP_TEST_SCF");
+		intMap.put(VAL_CAP_TEST_SSF, "CAP_TEST_SSF");
 
 		stringMap.put("NO", VAL_NO);
 		stringMap.put("USSD_TEST_CLIENT", VAL_USSD_TEST_CLIENT);
 		stringMap.put("USSD_TEST_SERVER", VAL_USSD_TEST_SERVER);
 		stringMap.put("SMS_TEST_CLIENT", VAL_SMS_TEST_CLIENT);
 		stringMap.put("SMS_TEST_SERVER", VAL_SMS_TEST_SERVER);
+		stringMap.put("CAP_TEST_SCF", VAL_CAP_TEST_SCF);
+		stringMap.put("CAP_TEST_SSF", VAL_CAP_TEST_SSF);
 	}
 
 	public Instance_TestTask() {

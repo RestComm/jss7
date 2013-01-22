@@ -346,7 +346,7 @@ public class TestUssdClientMan extends TesterBase implements TestUssdClientManMB
 		if (!isStarted)
 			return "The tester is not started";
 		if (this.sender != null)
-			return "The tester is not ion manual mode";
+			return "The tester is not in a manual mode";
 
 		MAPDialogSupplementary curDialog = currentDialog;
 		if (curDialog != null) {

@@ -56,35 +56,10 @@ public class SccpMan implements SccpManMBean, Stoppable {
 
 	public static String SOURCE_NAME = "SCCP";
 
-	private static final String REMOTE_ON_GT_MODE = "routeOnGtMode";
-	private static final String REMOTE_SPC = "remoteSpc";
-	private static final String LOCAL_SPC = "localSpc";
-	private static final String NI = "ni";
-	private static final String REMOTE_SSN = "remoteSsn";
-	private static final String LOCAL_SSN = "localSsn";
-	private static final String GLOBAL_TITLE_TYPE = "globalTitleType";
-	private static final String ADDRESS_NATURE = "addressNature";
-	private static final String NUMBERING_PLAN = "numberingPlan";
-	private static final String TRANSLATION_TYTE = "translationType";
-	private static final String CALLING_PARTY_ADDRESS_DIGITS = "callingPartyAddressDigits";
-	private static final String EXTRA_LOCAL_ADDRESS_DIGITS = "extraLocalAddressDigits";
-
 	private final String name;
 	private TesterHost testerHost;
 
 	private Mtp3UserPart mtp3UserPart;
-	private boolean routeOnGtMode;
-	private int remoteSpc = 0;
-	private int localSpc = 0;
-	private int localSsn;
-	private int remoteSsn;
-	private int ni = 0;
-	private GlobalTitleType globalTitleType = new GlobalTitleType(GlobalTitleType.VAL_TT_NP_ES_NOA);
-	private NatureOfAddress natureOfAddress = NatureOfAddress.INTERNATIONAL;
-	private NumberingPlan numberingPlan = NumberingPlan.ISDN_MOBILE;
-	private int translationType = 0;
-	private String callingPartyAddressDigits = "";
-//	private String extraLocalAddressDigits = "";
 
 	private SccpStackImpl sccpStack;
 	private SccpProvider sccpProvider;
@@ -116,100 +91,100 @@ public class SccpMan implements SccpManMBean, Stoppable {
 
 	@Override
 	public boolean isRouteOnGtMode() {
-		return routeOnGtMode;
+		return this.testerHost.getConfigurationData().getSccpConfigurationData().isRouteOnGtMode();
 	}
 
 	@Override
 	public void setRouteOnGtMode(boolean val) {
-		routeOnGtMode = val;
+		this.testerHost.getConfigurationData().getSccpConfigurationData().setRouteOnGtMode(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public int getRemoteSpc() {
-		return remoteSpc;
+		return this.testerHost.getConfigurationData().getSccpConfigurationData().getRemoteSpc();
 	}
 
 	@Override
 	public void setRemoteSpc(int val) {
-		remoteSpc = val;
+		this.testerHost.getConfigurationData().getSccpConfigurationData().setRemoteSpc(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public int getLocalSpc() {
-		return localSpc;
+		return this.testerHost.getConfigurationData().getSccpConfigurationData().getLocalSpc();
 	}
 
 	@Override
 	public void setLocalSpc(int val) {
-		localSpc = val;
+		this.testerHost.getConfigurationData().getSccpConfigurationData().setLocalSpc(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public int getNi() {
-		return ni;
+		return this.testerHost.getConfigurationData().getSccpConfigurationData().getNi();
 	}
 
 	@Override
 	public void setNi(int val) {
-		ni = val;
+		this.testerHost.getConfigurationData().getSccpConfigurationData().setNi(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public int getRemoteSsn() {
-		return this.remoteSsn;
+		return this.testerHost.getConfigurationData().getSccpConfigurationData().getRemoteSsn();
 	}
 
 	@Override
 	public void setRemoteSsn(int val) {
-		this.remoteSsn = val;
+		this.testerHost.getConfigurationData().getSccpConfigurationData().setRemoteSsn(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public int getLocalSsn() {
-		return this.localSsn;
+		return this.testerHost.getConfigurationData().getSccpConfigurationData().getLocalSsn();
 	}
 
 	@Override
 	public void setLocalSsn(int val) {
-		this.localSsn = val;
+		this.testerHost.getConfigurationData().getSccpConfigurationData().setLocalSsn(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public GlobalTitleType getGlobalTitleType() {
-		return globalTitleType;
+		return this.testerHost.getConfigurationData().getSccpConfigurationData().getGlobalTitleType();
 	}
 
 	@Override
 	public String getGlobalTitleType_Value() {
-		return globalTitleType.toString();
+		return this.testerHost.getConfigurationData().getSccpConfigurationData().getGlobalTitleType().toString();
 	}
 
 	@Override
 	public void setGlobalTitleType(GlobalTitleType val) {
-		globalTitleType = val;
+		this.testerHost.getConfigurationData().getSccpConfigurationData().setGlobalTitleType(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public NatureOfAddressType getNatureOfAddress() {
-		return new NatureOfAddressType(natureOfAddress.getValue());
+		return new NatureOfAddressType(this.testerHost.getConfigurationData().getSccpConfigurationData().getNatureOfAddress().getValue());
 	}
 
 	@Override
 	public String getNatureOfAddress_Value() {
-		return natureOfAddress.toString();
+		return this.testerHost.getConfigurationData().getSccpConfigurationData().getNatureOfAddress().toString();
 	}
 
 	@Override
 	public void setNatureOfAddress(NatureOfAddressType val) {
 		try {
-			natureOfAddress = NatureOfAddress.valueOf(val.intValue());
+			this.testerHost.getConfigurationData().getSccpConfigurationData().setNatureOfAddress(NatureOfAddress.valueOf(val.intValue()));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -219,18 +194,18 @@ public class SccpMan implements SccpManMBean, Stoppable {
 
 	@Override
 	public NumberingPlanType getNumberingPlan() {
-		return new NumberingPlanType(numberingPlan.getValue());
+		return new NumberingPlanType(this.testerHost.getConfigurationData().getSccpConfigurationData().getNumberingPlan().getValue());
 	}
 
 	@Override
 	public String getNumberingPlan_Value() {
-		return numberingPlan.toString();
+		return this.testerHost.getConfigurationData().getSccpConfigurationData().getNumberingPlan().toString();
 	}
 
 	@Override
 	public void setNumberingPlan(NumberingPlanType val) {
 		try {
-			numberingPlan = NumberingPlan.valueOf(val.intValue());
+			this.testerHost.getConfigurationData().getSccpConfigurationData().setNumberingPlan(NumberingPlan.valueOf(val.intValue()));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -240,36 +215,25 @@ public class SccpMan implements SccpManMBean, Stoppable {
 
 	@Override
 	public int getTranslationType() {
-		return translationType;
+		return this.testerHost.getConfigurationData().getSccpConfigurationData().getTranslationType();
 	}
 
 	@Override
 	public void setTranslationType(int val) {
-		translationType = val;
+		this.testerHost.getConfigurationData().getSccpConfigurationData().setTranslationType(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public String getCallingPartyAddressDigits() {
-		return callingPartyAddressDigits;
+		return this.testerHost.getConfigurationData().getSccpConfigurationData().getCallingPartyAddressDigits();
 	}
 
 	@Override
 	public void setCallingPartyAddressDigits(String val) {
-		callingPartyAddressDigits = val;
+		this.testerHost.getConfigurationData().getSccpConfigurationData().setCallingPartyAddressDigits(val);
 		this.testerHost.markStore();
 	}
-
-//	@Override
-//	public String getExtraLocalAddressDigits() {
-//		return extraLocalAddressDigits;
-//	}
-//
-//	@Override
-//	public void setExtraLocalAddressDigits(String val) {
-//		extraLocalAddressDigits = val;
-//		this.testerHost.markStore();
-//	}
 
 	@Override
 	public void putGlobalTitleType(String val) {
@@ -307,7 +271,10 @@ public class SccpMan implements SccpManMBean, Stoppable {
 		try {
 			this.isRspcUp = true;
 			this.isRssUp = true;
-			this.initSccp(this.mtp3UserPart, this.remoteSsn, this.localSsn, this.remoteSpc, this.localSpc, this.ni, this.callingPartyAddressDigits);
+			this.initSccp(this.mtp3UserPart, this.testerHost.getConfigurationData().getSccpConfigurationData().getRemoteSsn(), this.testerHost
+					.getConfigurationData().getSccpConfigurationData().getLocalSsn(), this.testerHost.getConfigurationData().getSccpConfigurationData()
+					.getRemoteSpc(), this.testerHost.getConfigurationData().getSccpConfigurationData().getLocalSpc(), this.testerHost.getConfigurationData()
+					.getSccpConfigurationData().getNi(), this.testerHost.getConfigurationData().getSccpConfigurationData().getCallingPartyAddressDigits());
 			this.testerHost.sendNotif(SOURCE_NAME, "SCCP has been started", "", Level.INFO);
 			return true;
 		} catch (Throwable e) {
@@ -335,15 +302,17 @@ public class SccpMan implements SccpManMBean, Stoppable {
 				boolean conn = !rspc.isRemoteSpcProhibited();
 				if (this.isRspcUp != conn) {
 					this.isRspcUp = conn;
-					this.testerHost.sendNotif(SOURCE_NAME, "SCCP RemoteSignalingPoint is " + (conn ? "enabled" : "disabled"), "Dpc=" + this.remoteSpc, Level.INFO);
+					this.testerHost.sendNotif(SOURCE_NAME, "SCCP RemoteSignalingPoint is " + (conn ? "enabled" : "disabled"), "Dpc="
+							+ this.testerHost.getConfigurationData().getSccpConfigurationData().getRemoteSpc(), Level.INFO);
 				}
 			}			
 			if (rss != null) {
 				boolean conn = !rss.isRemoteSsnProhibited();
 				if (this.isRssUp != conn) {
 					this.isRssUp = conn;
-					this.testerHost.sendNotif(SOURCE_NAME, "SCCP RemoteSubSystem is " + (conn ? "enabled" : "disabled"), "Dpc=" + this.remoteSpc + " Ssn="
-							+ this.remoteSsn, Level.INFO);
+					this.testerHost.sendNotif(SOURCE_NAME, "SCCP RemoteSubSystem is " + (conn ? "enabled" : "disabled"), "Dpc="
+							+ this.testerHost.getConfigurationData().getSccpConfigurationData().getRemoteSpc() + " Ssn="
+							+ this.testerHost.getConfigurationData().getSccpConfigurationData().getRemoteSsn(), Level.INFO);
 				}
 			}
 		}
@@ -369,7 +338,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 		this.resource.addRemoteSpc(1, dpc, 0, 0);
 		this.resource.addRemoteSsn(1, dpc, remoteSsn, 0, false);
 
-		if (this.routeOnGtMode) {
+		if (this.testerHost.getConfigurationData().getSccpConfigurationData().isRouteOnGtMode()) {
 			this.router = this.sccpStack.getRouter();
 
 			this.router.addRoutingAddress(1, new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, dpc, this.createGlobalTitle(""), 0));
@@ -410,20 +379,25 @@ public class SccpMan implements SccpManMBean, Stoppable {
 
 
 	public SccpAddress createCallingPartyAddress() {
-		if (this.routeOnGtMode) {
-			return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, createGlobalTitle(this.callingPartyAddressDigits), this.localSsn);
+		if (this.testerHost.getConfigurationData().getSccpConfigurationData().isRouteOnGtMode()) {
+			return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, createGlobalTitle(this.testerHost.getConfigurationData()
+					.getSccpConfigurationData().getCallingPartyAddressDigits()), this.testerHost.getConfigurationData().getSccpConfigurationData()
+					.getLocalSsn());
 		} else {
-			return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, this.localSpc, null, this.localSsn);
+			return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, this.testerHost.getConfigurationData().getSccpConfigurationData()
+					.getLocalSpc(), null, this.testerHost.getConfigurationData().getSccpConfigurationData().getLocalSsn());
 		}
 	}
 	
 	public SccpAddress createCalledPartyAddress() {
-		return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, this.remoteSpc, null, this.remoteSsn);
+		return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, this.testerHost.getConfigurationData().getSccpConfigurationData().getRemoteSpc(),
+				null, this.testerHost.getConfigurationData().getSccpConfigurationData().getRemoteSsn());
 	}
 
 	public SccpAddress createCalledPartyAddress(String address, int ssn) {
-		if (this.routeOnGtMode) {
-			return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, createGlobalTitle(address), (ssn >= 0 ? ssn : this.remoteSsn));
+		if (this.testerHost.getConfigurationData().getSccpConfigurationData().isRouteOnGtMode()) {
+			return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, createGlobalTitle(address), (ssn >= 0 ? ssn : this.testerHost
+					.getConfigurationData().getSccpConfigurationData().getRemoteSsn()));
 		} else {
 			return createCalledPartyAddress();
 		}
@@ -431,18 +405,21 @@ public class SccpMan implements SccpManMBean, Stoppable {
 
 	public GlobalTitle createGlobalTitle( String address ) {
 		GlobalTitle gt = null;
-		switch (this.globalTitleType.intValue()) {
+		switch (this.testerHost.getConfigurationData().getSccpConfigurationData().getGlobalTitleType().intValue()) {
 		case GlobalTitleType.VAL_NOA_ONLY:
-			gt = GlobalTitle.getInstance(this.natureOfAddress, address);
+			gt = GlobalTitle.getInstance(this.testerHost.getConfigurationData().getSccpConfigurationData().getNatureOfAddress(), address);
 			break;
 		case GlobalTitleType.VAL_TT_ONLY:
-			gt = GlobalTitle.getInstance(this.translationType, address);
+			gt = GlobalTitle.getInstance(this.testerHost.getConfigurationData().getSccpConfigurationData().getTranslationType(), address);
 			break;
 		case GlobalTitleType.VAL_TT_NP_ES:
-			gt = GlobalTitle.getInstance(this.translationType, this.numberingPlan, address);
+			gt = GlobalTitle.getInstance(this.testerHost.getConfigurationData().getSccpConfigurationData().getTranslationType(), this.testerHost
+					.getConfigurationData().getSccpConfigurationData().getNumberingPlan(), address);
 			break;
 		case GlobalTitleType.VAL_TT_NP_ES_NOA:
-			gt = GlobalTitle.getInstance(this.translationType, this.numberingPlan, this.natureOfAddress, address);
+			gt = GlobalTitle.getInstance(this.testerHost.getConfigurationData().getSccpConfigurationData().getTranslationType(), this.testerHost
+					.getConfigurationData().getSccpConfigurationData().getNumberingPlan(), this.testerHost.getConfigurationData().getSccpConfigurationData()
+					.getNatureOfAddress(), address);
 			break;
 		}
 		return gt;
@@ -451,44 +428,5 @@ public class SccpMan implements SccpManMBean, Stoppable {
 //	public SccpAddress createDestAddress() {
 //		return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, this.remotePc, null, this.remoteSsn);
 //	}
-
-	protected static final XMLFormat<SccpMan> XML = new XMLFormat<SccpMan>(SccpMan.class) {
-
-		public void write(SccpMan sccp, OutputElement xml) throws XMLStreamException {
-			xml.setAttribute(REMOTE_ON_GT_MODE, sccp.routeOnGtMode);
-			xml.setAttribute(REMOTE_SPC, sccp.remoteSpc);
-			xml.setAttribute(LOCAL_SPC, sccp.localSpc);
-			xml.setAttribute(NI, sccp.ni);
-			xml.setAttribute(REMOTE_SSN, sccp.remoteSsn);
-			xml.setAttribute(LOCAL_SSN, sccp.localSsn);
-			xml.setAttribute(TRANSLATION_TYTE, sccp.translationType);
-
-			xml.add(sccp.globalTitleType.toString(), GLOBAL_TITLE_TYPE);
-			xml.add(sccp.natureOfAddress.toString(), ADDRESS_NATURE);
-			xml.add(sccp.numberingPlan.toString(), NUMBERING_PLAN);
-			xml.add(sccp.callingPartyAddressDigits, CALLING_PARTY_ADDRESS_DIGITS);
-//			xml.add(sccp.extraLocalAddressDigits, EXTRA_LOCAL_ADDRESS_DIGITS);
-		}
-
-		public void read(InputElement xml, SccpMan sccp) throws XMLStreamException {
-			sccp.routeOnGtMode = xml.getAttribute(REMOTE_ON_GT_MODE).toBoolean();
-			sccp.remoteSpc = xml.getAttribute(REMOTE_SPC).toInt();
-			sccp.localSpc = xml.getAttribute(LOCAL_SPC).toInt();
-			sccp.ni = xml.getAttribute(NI).toInt();
-			sccp.remoteSsn = xml.getAttribute(REMOTE_SSN).toInt();
-			sccp.localSsn = xml.getAttribute(LOCAL_SSN).toInt();
-			sccp.translationType = xml.getAttribute(TRANSLATION_TYTE).toInt();
-
-			String gtt = (String) xml.get(GLOBAL_TITLE_TYPE, String.class);
-			sccp.globalTitleType = GlobalTitleType.createInstance(gtt);
-			String an = (String) xml.get(ADDRESS_NATURE, String.class);
-			sccp.natureOfAddress = NatureOfAddress.valueOf(an);
-			String np = (String) xml.get(NUMBERING_PLAN, String.class);
-			sccp.numberingPlan = NumberingPlan.valueOf(np);
-			sccp.callingPartyAddressDigits = (String) xml.get(CALLING_PARTY_ADDRESS_DIGITS, String.class);
-			// for skipping previous data
-			String extraLocalAddressDigits = (String) xml.get(EXTRA_LOCAL_ADDRESS_DIGITS, String.class);
-		}
-	};
 }
 

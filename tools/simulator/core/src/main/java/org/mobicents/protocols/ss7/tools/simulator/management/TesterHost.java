@@ -27,6 +27,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Properties;
 //import java.util.logging.Level;
 
@@ -36,14 +37,23 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import org.apache.log4j.lf5.LogLevel;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
+import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
+import org.mobicents.protocols.ss7.tools.simulator.common.ConfigurationData;
+import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
+import org.mobicents.protocols.ss7.tools.simulator.level1.DialogicConfigurationData_OldFormat;
 import org.mobicents.protocols.ss7.tools.simulator.level1.DialogicMan;
+import org.mobicents.protocols.ss7.tools.simulator.level1.M3uaConfigurationData;
+import org.mobicents.protocols.ss7.tools.simulator.level1.M3uaConfigurationData_OldFormat;
 import org.mobicents.protocols.ss7.tools.simulator.level1.M3uaMan;
 import org.mobicents.protocols.ss7.tools.simulator.level2.SccpMan;
+import org.mobicents.protocols.ss7.tools.simulator.level3.CapMan;
+import org.mobicents.protocols.ss7.tools.simulator.level3.MapConfigurationData_OldFormat;
 import org.mobicents.protocols.ss7.tools.simulator.level3.MapMan;
+import org.mobicents.protocols.ss7.tools.simulator.tests.cap.TestCapScfMan;
+import org.mobicents.protocols.ss7.tools.simulator.tests.cap.TestCapSsfMan;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsClientMan;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsServerMan;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientMan;
@@ -68,20 +78,9 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
 	private static final String CLASS_ATTRIBUTE = "type";
 	private static final String TAB_INDENT = "\t";
-	private static final String PERSIST_FILE_NAME = "simulator.xml";
-
-	private static final String INSTANCE_L1 = "instance_L1";
-	private static final String INSTANCE_L2 = "instance_L2";
-	private static final String INSTANCE_L3 = "instance_L3";
-	private static final String INSTANCE_TESTTASK = "instance_TestTask";
-	private static final String M3UA = "m3ua";
-	private static final String DIALOGIC = "dialogic";
-	private static final String SCCP = "sccp";
-	private static final String MAP = "map";
-	private static final String TEST_USSD_CLIENT = "testUssdClient";
-	private static final String TEST_USSD_SERVER = "testUssdServer";
-	private static final String TEST_SMS_CLIENT = "testSmsClient";
-	private static final String TEST_SMS_SERVER = "testSmsServer";
+	private static final String PERSIST_FILE_NAME_OLD = "simulator.xml";
+	private static final String PERSIST_FILE_NAME = "simulator2.xml";
+	private static final String CONFIGURATION_DATA = "configurationData";
 
 	private final String appName;
 	private String persistDir = null;
@@ -92,10 +91,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 	private boolean isStarted = false;
 	private boolean needQuit = false;
 	private boolean needStore = false;
-	private Instance_L1 instance_L1 = new Instance_L1(Instance_L1.VAL_NO);
-	private Instance_L2 instance_L2 = new Instance_L2(Instance_L2.VAL_NO);
-	private Instance_L3 instance_L3 = new Instance_L3(Instance_L3.VAL_NO);
-	private Instance_TestTask instance_TestTask = new Instance_TestTask(Instance_TestTask.VAL_NO);
+	private ConfigurationData configurationData = new ConfigurationData();
 	private long sequenceNumber = 0;
 
 	// Layers
@@ -109,10 +105,13 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 	DialogicMan dialogic;
 	SccpMan sccp;
 	MapMan map;
+	CapMan cap;
 	TestUssdClientMan testUssdClientMan;
 	TestUssdServerMan testUssdServerMan;
 	TestSmsClientMan testSmsClientMan;
 	TestSmsServerMan testSmsServerMan;
+	TestCapSsfMan testCapSsfMan;
+	TestCapScfMan testCapScfMan;
 	
 	// testers
 
@@ -131,6 +130,9 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 		this.map = new MapMan(appName);
 		this.map.setTesterHost(this);
 
+		this.cap = new CapMan(appName);
+		this.cap.setTesterHost(this);
+
 		this.testUssdClientMan = new TestUssdClientMan(appName);
 		this.testUssdClientMan.setTesterHost(this);
 
@@ -142,25 +144,45 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
 		this.testSmsServerMan = new TestSmsServerMan(appName);
 		this.testSmsServerMan.setTesterHost(this);
+
+		this.testCapSsfMan = new TestCapSsfMan(appName);
+		this.testCapSsfMan.setTesterHost(this);
+
+		this.testCapScfMan = new TestCapScfMan(appName);
+		this.testCapScfMan.setTesterHost(this);
 		
 		this.setupLog4j(appName);
 
 		binding.setClassAttribute(CLASS_ATTRIBUTE);
 
 		this.persistFile.clear();
+		TextBuilder persistFileOld = new TextBuilder();
 
 		if (persistDir != null) {
+			persistFileOld.append(persistDir).append(File.separator).append(this.appName).append("_").append(PERSIST_FILE_NAME_OLD);
 			this.persistFile.append(persistDir).append(File.separator).append(this.appName).append("_").append(PERSIST_FILE_NAME);
 		} else {
-			this.persistFile.append(System.getProperty(TESTER_HOST_PERSIST_DIR_KEY, System.getProperty(USER_DIR_KEY))).append(File.separator).append(this.appName)
-					.append("_").append(PERSIST_FILE_NAME);
+			persistFileOld.append(System.getProperty(TESTER_HOST_PERSIST_DIR_KEY, System.getProperty(USER_DIR_KEY))).append(File.separator)
+					.append(this.appName).append("_").append(PERSIST_FILE_NAME_OLD);
+			this.persistFile.append(System.getProperty(TESTER_HOST_PERSIST_DIR_KEY, System.getProperty(USER_DIR_KEY))).append(File.separator)
+					.append(this.appName).append("_").append(PERSIST_FILE_NAME);
 		}
 
-		try {
-			this.load();
-		} catch (FileNotFoundException e) {
-			this.sendNotif(SOURCE_NAME, "Failed to load the Host state in file", e, Level.WARN);
+		File fnOld = new File(persistFileOld.toString());
+		File fn = new File(persistFile.toString());
+
+		if (this.loadOld(fnOld)) {
+			this.store();
+		} else {
+			this.load(fn);
 		}
+		if (fnOld.exists())
+			fnOld.delete();
+		
+	}
+
+	public ConfigurationData getConfigurationData() {
+		return this.configurationData;
 	}
 
 	public M3uaMan getM3uaMan() {
@@ -179,6 +201,10 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 		return this.map;
 	}
 
+	public CapMan getCapMan() {
+		return this.cap;
+	}
+
 	public TestUssdClientMan getTestUssdClientMan() {
 		return this.testUssdClientMan;
 	}
@@ -193,6 +219,14 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
 	public TestSmsServerMan getTestSmsServerMan() {
 		return this.testSmsServerMan;
+	}
+
+	public TestCapSsfMan getTestCapSsfMan() {
+		return this.testCapSsfMan;
+	}
+
+	public TestCapScfMan getTestCapScfMan() {
+		return this.testCapScfMan;
 	}
 
 	private void setupLog4j(String appName) {
@@ -268,66 +302,66 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
 	@Override
 	public Instance_L1 getInstance_L1() {
-		return instance_L1;
+		return configurationData.getInstance_L1();
 	}
 
 	@Override
 	public void setInstance_L1(Instance_L1 val) {
-		instance_L1 = val;
+		configurationData.setInstance_L1(val);
 		this.markStore();
 	}
 
 	@Override
 	public Instance_L2 getInstance_L2() {
-		return instance_L2;
+		return configurationData.getInstance_L2();
 	}
 
 	@Override
 	public void setInstance_L2(Instance_L2 val) {
-		instance_L2 = val;
+		configurationData.setInstance_L2(val);
 		this.markStore();
 	}
 
 	@Override
 	public Instance_L3 getInstance_L3() {
-		return instance_L3;
+		return configurationData.getInstance_L3();
 	}
 
 	@Override
 	public void setInstance_L3(Instance_L3 val) {
-		instance_L3 = val;
+		configurationData.setInstance_L3(val);
 		this.markStore();
 	}
 
 	@Override
 	public Instance_TestTask getInstance_TestTask() {
-		return instance_TestTask;
+		return configurationData.getInstance_TestTask();
 	}
 
 	@Override
 	public void setInstance_TestTask(Instance_TestTask val) {
-		instance_TestTask = val;
+		configurationData.setInstance_TestTask(val);
 		this.markStore();
 	}
 
 	@Override
 	public String getInstance_L1_Value() {
-		return instance_L1.toString();
+		return configurationData.getInstance_L1().toString();
 	}
 
 	@Override
 	public String getInstance_L2_Value() {
-		return instance_L2.toString();
+		return configurationData.getInstance_L2().toString();
 	}
 
 	@Override
 	public String getInstance_L3_Value() {
-		return instance_L3.toString();
+		return configurationData.getInstance_L3().toString();
 	}
 
 	@Override
 	public String getInstance_TestTask_Value() {
-		return instance_TestTask.toString();
+		return configurationData.getInstance_TestTask().toString();
 	}
 
 	@Override
@@ -377,7 +411,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 		// L1
 		boolean started = false;
 		Mtp3UserPart mtp3UserPart = null; 
-		switch(this.instance_L1.intValue()){
+		switch(this.configurationData.getInstance_L1().intValue()){
 		case Instance_L1.VAL_M3UA:
 			this.instance_L1_B = this.m3ua;
 			started = this.m3ua.start();
@@ -391,7 +425,8 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
 		default:
 			// TODO: implement others test tasks ...
-			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L1." + this.instance_L1.toString() + " has not been implemented yet", "", Level.WARN);
+			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L1." + this.configurationData.getInstance_L1().toString() + " has not been implemented yet", "",
+					Level.WARN);
 			break;
 		}
 		if (!started) {
@@ -403,7 +438,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 		// L2
 		started = false;
 		SccpStack sccpStack = null; 
-		switch(this.instance_L2.intValue()){
+		switch(this.configurationData.getInstance_L2().intValue()){
 		case Instance_L2.VAL_SCCP:
 			if (mtp3UserPart == null) {
 				this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing SCCP: No Mtp3UserPart is defined at L1", "", Level.WARN);
@@ -421,7 +456,8 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
 		default:
 			// TODO: implement others test tasks ...
-			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L2." + this.instance_L2.toString() + " has not been implemented yet", "", Level.WARN);
+			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L2." + this.configurationData.getInstance_L2().toString() + " has not been implemented yet", "",
+					Level.WARN);
 			break;
 		}
 		if (!started) {
@@ -433,7 +469,8 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 		// L3
 		started = false;
 		MapMan curMap = null;
-		switch(this.instance_L3.intValue()){
+		CapMan curCap = null;
+		switch(this.configurationData.getInstance_L3().intValue()){
 		case Instance_L3.VAL_MAP:
 			if (sccpStack == null) {
 				this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing TCAP+MAP: No SccpStack is defined at L2", "", Level.WARN);
@@ -445,8 +482,14 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			}
 			break;
 		case Instance_L3.VAL_CAP:
-			// TODO: implement CAP .......
-			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L3.VAL_CAP has not been implemented yet", "", Level.WARN);
+			if (sccpStack == null) {
+				this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing TCAP+CAP: No SccpStack is defined at L2", "", Level.WARN);
+			} else {
+				this.instance_L3_B = this.cap;
+				this.cap.setSccpStack(sccpStack);
+				started = this.cap.start();
+				curCap = this.cap;
+			}
 			break;
 		case Instance_L3.VAL_INAP:
 			// TODO: implement INAP .......
@@ -455,7 +498,8 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
 		default:
 			// TODO: implement others test tasks ...
-			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L3." + this.instance_L3.toString() + " has not been implemented yet", "", Level.WARN);
+			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L3." + this.configurationData.getInstance_L3().toString() + " has not been implemented yet", "",
+					Level.WARN);
 			break;
 		}
 		if (!started) {
@@ -466,7 +510,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
 		// Testers
 		started = false;
-		switch(this.instance_TestTask.intValue()){
+		switch(this.configurationData.getInstance_TestTask().intValue()){
 		case Instance_TestTask.VAL_USSD_TEST_CLIENT:
 			if (curMap == null) {
 				this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing USSD_TEST_CLIENT: No MAP stack is defined at L3", "", Level.WARN);
@@ -507,9 +551,30 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			}
 			break;
 
+		case Instance_TestTask.VAL_CAP_TEST_SCF:
+			if (curCap == null) {
+				this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing VAL_CAP_TEST_SCF: No CAP stack is defined at L3", "", Level.WARN);
+			} else {
+				this.instance_TestTask_B = this.testCapScfMan;
+				this.testCapScfMan.setCapMan(curCap);
+				started = this.testCapScfMan.start();
+			}
+			break;
+
+		case Instance_TestTask.VAL_CAP_TEST_SSF:
+			if (curCap == null) {
+				this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing VAL_CAP_TEST_SSF: No CAP stack is defined at L3", "", Level.WARN);
+			} else {
+				this.instance_TestTask_B = this.testCapSsfMan;
+				this.testCapSsfMan.setCapMan(curCap);
+				started = this.testCapSsfMan.start();
+			}
+			break;
+
 		default:
 			// TODO: implement others test tasks ...
-			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_TestTask." + this.instance_TestTask.toString() + " has not been implemented yet", "", Level.WARN);
+			this.sendNotif(TesterHost.SOURCE_NAME, "Instance_TestTask." + this.configurationData.getInstance_TestTask().toString()
+					+ " has not been implemented yet", "", Level.WARN);
 			break;
 		}
 		if (!started) {
@@ -630,70 +695,166 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 		try {
 			XMLObjectWriter writer = XMLObjectWriter.newInstance(new FileOutputStream(persistFile.toString()));
 			writer.setBinding(binding);
-			// Enables cross-references.
-			// writer.setReferenceResolver(new XMLReferenceResolver());
+//			writer.setReferenceResolver(new XMLReferenceResolver());
 			writer.setIndentation(TAB_INDENT);
-			writer.write(this.instance_L1.toString(), INSTANCE_L1, String.class);
-			writer.write(this.instance_L2.toString(), INSTANCE_L2, String.class);
-			writer.write(this.instance_L3.toString(), INSTANCE_L3, String.class);
-			writer.write(this.instance_TestTask.toString(), INSTANCE_TESTTASK, String.class);
 
-			writer.write(this.m3ua, M3UA, M3uaMan.class);
-			writer.write(this.dialogic, DIALOGIC, DialogicMan.class);
-			writer.write(this.sccp, SCCP, SccpMan.class);
-			writer.write(this.map, MAP, MapMan.class);
-			writer.write(this.testUssdClientMan, TEST_USSD_CLIENT, TestUssdClientMan.class);
-			writer.write(this.testUssdServerMan, TEST_USSD_SERVER, TestUssdServerMan.class);
-			writer.write(this.testSmsClientMan, TEST_SMS_CLIENT, TestSmsClientMan.class);
-			writer.write(this.testSmsServerMan, TEST_SMS_SERVER, TestSmsServerMan.class);
+			writer.write(this.configurationData, CONFIGURATION_DATA, ConfigurationData.class);			
 
-//			writer.write(remoteSpcs, REMOTE_SPC, FastMap.class);
-//			writer.write(concernedSpcs, CONCERNED_SPC, FastMap.class);
 
+
+
+//			writer.write(this.map, MAP, MapMan.class);
+//			writer.write(this.cap, CAP, CapMan.class);
+//			writer.write(this.testUssdClientMan, TEST_USSD_CLIENT, TestUssdClientMan.class);
+//			writer.write(this.testUssdServerMan, TEST_USSD_SERVER, TestUssdServerMan.class);
+//			writer.write(this.testSmsClientMan, TEST_SMS_CLIENT, TestSmsClientMan.class);
+//			writer.write(this.testSmsServerMan, TEST_SMS_SERVER, TestSmsServerMan.class);
+//			writer.write(this.testCapSsfMan, TEST_CAP_SSF, TestCapSsfMan.class);
+//			writer.write(this.testCapScfMan, TEST_CAP_SCF, TestCapScfMan.class);
+
+
+			
 			writer.close();
 		} catch (Exception e) {
 			this.sendNotif(SOURCE_NAME, "Error while persisting the Host state in file", e, Level.ERROR);
 		}
 	}
 
-	private void load() throws FileNotFoundException {
+	private boolean load(File fn) {
 
 		XMLObjectReader reader = null;
 		try {
-			File fn = new File(persistFile.toString());
 			if (!fn.exists()) {
-				this.sendNotif(SOURCE_NAME, "Error while reading the Host state from file: file not found: " + persistFile.toString(), "", Level.WARN);
-				return;
+				this.sendNotif(SOURCE_NAME, "Error while reading the Host state from file: file not found: " + persistFile, "", Level.WARN);
+				return false;
 			}
-			
-			reader = XMLObjectReader.newInstance(new FileInputStream(persistFile.toString()));
+
+			reader = XMLObjectReader.newInstance(new FileInputStream(fn));
 
 			reader.setBinding(binding);
-			this.instance_L1 = Instance_L1.createInstance(reader.read(INSTANCE_L1, String.class));
-			this.instance_L2 = Instance_L2.createInstance(reader.read(INSTANCE_L2, String.class));
-			this.instance_L3 = Instance_L3.createInstance(reader.read(INSTANCE_L3, String.class));
-			this.instance_TestTask = Instance_TestTask.createInstance(reader.read(INSTANCE_TESTTASK, String.class));
+			
+			this.configurationData = reader.read(CONFIGURATION_DATA, ConfigurationData.class);
 
-			M3uaMan _m3ua = reader.read(M3UA, M3uaMan.class);
-			this.m3ua.setSctpLocalHost(_m3ua.getSctpLocalHost());
-			this.m3ua.setSctpLocalPort(_m3ua.getSctpLocalPort());
-			this.m3ua.setSctpRemoteHost(_m3ua.getSctpRemoteHost());
-			this.m3ua.setSctpRemotePort(_m3ua.getSctpRemotePort());
-			this.m3ua.setSctpIPChannelType(_m3ua.getSctpIPChannelType());
-			this.m3ua.setSctpIsServer(_m3ua.isSctpIsServer());
+			
+			
+//			MapMan _map = reader.read(MAP, MapMan.class);
+//			this.map.setLocalSsn(_map.getLocalSsn());
+//			this.map.setRemoteSsn(_map.getRemoteSsn());
+//			this.map.setRemoteAddressDigits(_map.getRemoteAddressDigits());
+//			this.map.setOrigReference(_map.getOrigReference());
+//			this.map.setOrigReferenceAddressNature(_map.getOrigReferenceAddressNature());
+//			this.map.setOrigReferenceNumberingPlan(_map.getOrigReferenceNumberingPlan());
+//			this.map.setDestReference(_map.getDestReference());
+//			this.map.setDestReferenceAddressNature(_map.getDestReferenceAddressNature());
+//			this.map.setDestReferenceNumberingPlan(_map.getDestReferenceNumberingPlan());
+//
+//			CapMan _cap = reader.read(CAP, CapMan.class);
+//			if (_cap != null) {
+//				this.cap.setLocalSsn(_cap.getLocalSsn());
+//				this.cap.setRemoteSsn(_cap.getRemoteSsn());
+//				this.cap.setRemoteAddressDigits(_cap.getRemoteAddressDigits());
+//			}
+//
+//			TestUssdClientMan _TestUssdClientMan = reader.read(TEST_USSD_CLIENT, TestUssdClientMan.class);
+//			this.testUssdClientMan.setMsisdnAddress(_TestUssdClientMan.getMsisdnAddress());
+//			this.testUssdClientMan.setMsisdnAddressNature(_TestUssdClientMan.getMsisdnAddressNature());
+//			this.testUssdClientMan.setMsisdnNumberingPlan(_TestUssdClientMan.getMsisdnNumberingPlan());
+//			this.testUssdClientMan.setDataCodingScheme(_TestUssdClientMan.getDataCodingScheme());
+//			this.testUssdClientMan.setAlertingPattern(_TestUssdClientMan.getAlertingPattern());
+//			this.testUssdClientMan.setUssdClientAction(_TestUssdClientMan.getUssdClientAction());
+//			this.testUssdClientMan.setAutoRequestString(_TestUssdClientMan.getAutoRequestString());
+//			this.testUssdClientMan.setMaxConcurrentDialogs(_TestUssdClientMan.getMaxConcurrentDialogs());
+//			this.testUssdClientMan.setOneNotificationFor100Dialogs(_TestUssdClientMan.isOneNotificationFor100Dialogs());
+//
+//			TestUssdServerMan _TestUssdServerMan = reader.read(TEST_USSD_SERVER, TestUssdServerMan.class);
+//			this.testUssdServerMan.setMsisdnAddress(_TestUssdServerMan.getMsisdnAddress());
+//			this.testUssdServerMan.setMsisdnAddressNature(_TestUssdServerMan.getMsisdnAddressNature());
+//			this.testUssdServerMan.setMsisdnNumberingPlan(_TestUssdServerMan.getMsisdnNumberingPlan());
+//			this.testUssdServerMan.setDataCodingScheme(_TestUssdServerMan.getDataCodingScheme());
+//			this.testUssdServerMan.setAlertingPattern(_TestUssdServerMan.getAlertingPattern());
+//			this.testUssdServerMan.setProcessSsRequestAction(_TestUssdServerMan.getProcessSsRequestAction());
+//			this.testUssdServerMan.setAutoResponseString(_TestUssdServerMan.getAutoResponseString());
+//			this.testUssdServerMan.setAutoUnstructured_SS_RequestString(_TestUssdServerMan.getAutoUnstructured_SS_RequestString());
+//			this.testUssdServerMan.setOneNotificationFor100Dialogs(_TestUssdServerMan.isOneNotificationFor100Dialogs());
+//
+//			TestSmsClientMan _TestSmsClientMan = reader.read(TEST_SMS_CLIENT, TestSmsClientMan.class);
+//			this.testSmsClientMan.setAddressNature(_TestSmsClientMan.getAddressNature());
+//			this.testSmsClientMan.setNumberingPlan(_TestSmsClientMan.getNumberingPlan());
+//			this.testSmsClientMan.setServiceCenterAddress(_TestSmsClientMan.getServiceCenterAddress());
+//			this.testSmsClientMan.setMapProtocolVersion(_TestSmsClientMan.getMapProtocolVersion());
+//			this.testSmsClientMan.setSRIResponseImsi(_TestSmsClientMan.getSRIResponseImsi());
+//			this.testSmsClientMan.setSRIResponseVlr(_TestSmsClientMan.getSRIResponseVlr());
+//			this.testSmsClientMan.setSmscSsn(_TestSmsClientMan.getSmscSsn());
+//			this.testSmsClientMan.setTypeOfNumber(_TestSmsClientMan.getTypeOfNumber());
+//			this.testSmsClientMan.setNumberingPlanIdentification(_TestSmsClientMan.getNumberingPlanIdentification());
+//			this.testSmsClientMan.setSmsCodingType(_TestSmsClientMan.getSmsCodingType());
+//
+//			TestSmsServerMan _TestSmsServerMan = reader.read(TEST_SMS_SERVER, TestSmsServerMan.class);
+//			this.testSmsServerMan.setAddressNature(_TestSmsServerMan.getAddressNature());
+//			this.testSmsServerMan.setNumberingPlan(_TestSmsServerMan.getNumberingPlan());
+//			this.testSmsServerMan.setServiceCenterAddress(_TestSmsServerMan.getServiceCenterAddress());
+//			this.testSmsServerMan.setMapProtocolVersion(_TestSmsServerMan.getMapProtocolVersion());
+//			this.testSmsServerMan.setHlrSsn(_TestSmsServerMan.getHlrSsn());
+//			this.testSmsServerMan.setVlrSsn(_TestSmsServerMan.getVlrSsn());
+//			this.testSmsServerMan.setTypeOfNumber(_TestSmsServerMan.getTypeOfNumber());
+//			this.testSmsServerMan.setNumberingPlanIdentification(_TestSmsServerMan.getNumberingPlanIdentification());
+//			this.testSmsServerMan.setSmsCodingType(_TestSmsServerMan.getSmsCodingType());
+//
+//			if (reader.hasNext()) {
+//				TestCapSsfMan _TestCapSsfMan = reader.read(TEST_CAP_SSF, TestCapSsfMan.class);
+//				this.testCapSsfMan.setCapApplicationContext(_TestCapSsfMan.getCapApplicationContext());
+//
+//				TestCapScfMan _TestCapScfMan = reader.read(TEST_CAP_SCF, TestCapScfMan.class);
+//				this.testCapScfMan.setCapApplicationContext(_TestCapScfMan.getCapApplicationContext());
+//			}
+
+			reader.close();
+			
+			return true;
+
+		} catch (Exception ex) {
+			this.sendNotif(SOURCE_NAME, "Error while reading the Host state from file", ex, Level.WARN	);
+			return false;
+		}
+	}
+
+	private boolean loadOld(File fn) {
+
+		XMLObjectReader reader = null;
+		try {
+			if (!fn.exists()) {
+//				this.sendNotif(SOURCE_NAME, "Error while reading the Host state from file: file not found: " + persistFile, "", Level.WARN);
+				return false;
+			}
+			
+			reader = XMLObjectReader.newInstance(new FileInputStream(fn));
+
+			reader.setBinding(binding);
+			this.configurationData.setInstance_L1(Instance_L1.createInstance(reader.read(ConfigurationData.INSTANCE_L1, String.class)));
+			this.configurationData.setInstance_L2(Instance_L2.createInstance(reader.read(ConfigurationData.INSTANCE_L2, String.class)));
+			this.configurationData.setInstance_L3(Instance_L3.createInstance(reader.read(ConfigurationData.INSTANCE_L3, String.class)));
+			this.configurationData.setInstance_TestTask(Instance_TestTask.createInstance(reader.read(ConfigurationData.INSTANCE_TESTTASK, String.class)));
+
+			M3uaConfigurationData_OldFormat _m3ua = reader.read(ConfigurationData.M3UA, M3uaConfigurationData_OldFormat.class);
+			this.m3ua.setSctpLocalHost(_m3ua.getLocalHost());
+			this.m3ua.setSctpLocalPort(_m3ua.getLocalPort());
+			this.m3ua.setSctpRemoteHost(_m3ua.getRemoteHost());
+			this.m3ua.setSctpRemotePort(_m3ua.getRemotePort());
+			this.configurationData.getM3uaConfigurationData().setIpChannelType(_m3ua.getIpChannelType());
+			this.m3ua.setSctpIsServer(_m3ua.getIsSctpServer());
 			this.m3ua.doSetExtraHostAddresses(_m3ua.getSctpExtraHostAddresses());
-			this.m3ua.setM3uaFunctionality(_m3ua.getM3uaFunctionality());
-			this.m3ua.setM3uaIPSPType(_m3ua.getM3uaIPSPType());
-			this.m3ua.setM3uaExchangeType(_m3ua.getM3uaExchangeType());
-			this.m3ua.setM3uaDpc(_m3ua.getM3uaDpc());
-			this.m3ua.setM3uaOpc(_m3ua.getM3uaOpc());
-			this.m3ua.setM3uaSi(_m3ua.getM3uaSi());
+			this.configurationData.getM3uaConfigurationData().setM3uaFunctionality(_m3ua.getM3uaFunctionality());
+			this.configurationData.getM3uaConfigurationData().setM3uaIPSPType(_m3ua.getM3uaIPSPType());
+			this.configurationData.getM3uaConfigurationData().setM3uaExchangeType(_m3ua.getM3uaExchangeType());
+			this.m3ua.setM3uaDpc(_m3ua.getDpc());
+			this.m3ua.setM3uaOpc(_m3ua.getOpc());
+			this.m3ua.setM3uaSi(_m3ua.getSi());
 
-			DialogicMan _dial = reader.read(DIALOGIC, DialogicMan.class);
+			DialogicConfigurationData_OldFormat _dial = reader.read(ConfigurationData.DIALOGIC, DialogicConfigurationData_OldFormat.class);
 			this.dialogic.setSourceModuleId(_dial.getSourceModuleId());
 			this.dialogic.setDestinationModuleId(_dial.getDestinationModuleId());
-
-			SccpMan _sccp = reader.read(SCCP, SccpMan.class);
+			
+			SccpMan _sccp = reader.read(ConfigurationData.SCCP, SccpMan.class);
 			this.sccp.setRouteOnGtMode(_sccp.isRouteOnGtMode());
 			this.sccp.setRemoteSpc(_sccp.getRemoteSpc());
 			this.sccp.setLocalSpc(_sccp.getLocalSpc());
@@ -707,18 +868,20 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			this.sccp.setCallingPartyAddressDigits(_sccp.getCallingPartyAddressDigits());
 //			this.sccp.setExtraLocalAddressDigits(_sccp.getExtraLocalAddressDigits());
 
-			MapMan _tcap = reader.read(MAP, MapMan.class);
-			this.map.setLocalSsn(_tcap.getLocalSsn());
-			this.map.setRemoteSsn(_tcap.getRemoteSsn());
-			this.map.setRemoteAddressDigits(_tcap.getRemoteAddressDigits());
-			this.map.setOrigReference(_tcap.getOrigReference());
-			this.map.setOrigReferenceAddressNature(_tcap.getOrigReferenceAddressNature());
-			this.map.setOrigReferenceNumberingPlan(_tcap.getOrigReferenceNumberingPlan());
-			this.map.setDestReference(_tcap.getDestReference());
-			this.map.setDestReferenceAddressNature(_tcap.getDestReferenceAddressNature());
-			this.map.setDestReferenceNumberingPlan(_tcap.getDestReferenceNumberingPlan());
+			MapConfigurationData_OldFormat _map = reader.read(ConfigurationData.MAP, MapConfigurationData_OldFormat.class);
+			this.map.setLocalSsn(_map.getLocalSsn());
+			this.map.setRemoteSsn(_map.getRemoteSsn());
+			this.map.setRemoteAddressDigits(_map.getRemoteAddressDigits());
+			this.map.setOrigReference(_map.getOrigReference());
+			this.map.setOrigReferenceAddressNature(new AddressNatureType(_map.getOrigReferenceAddressNature().getIndicator()));
+			this.map.setOrigReferenceNumberingPlan(new NumberingPlanType(_map.getOrigReferenceNumberingPlan().getIndicator()));
+			this.map.setDestReference(_map.getDestReference());
+			this.map.setDestReferenceAddressNature(new AddressNatureType(_map.getDestReferenceAddressNature().getIndicator()));
+			this.map.setDestReferenceNumberingPlan(new NumberingPlanType(_map.getDestReferenceNumberingPlan().getIndicator()));
 
-			TestUssdClientMan _TestUssdClientMan = reader.read(TEST_USSD_CLIENT, TestUssdClientMan.class);
+			// ...........................
+
+			TestUssdClientMan _TestUssdClientMan = reader.read(ConfigurationData.TEST_USSD_CLIENT, TestUssdClientMan.class);
 			this.testUssdClientMan.setMsisdnAddress(_TestUssdClientMan.getMsisdnAddress());
 			this.testUssdClientMan.setMsisdnAddressNature(_TestUssdClientMan.getMsisdnAddressNature());
 			this.testUssdClientMan.setMsisdnNumberingPlan(_TestUssdClientMan.getMsisdnNumberingPlan());
@@ -729,7 +892,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			this.testUssdClientMan.setMaxConcurrentDialogs(_TestUssdClientMan.getMaxConcurrentDialogs());
 			this.testUssdClientMan.setOneNotificationFor100Dialogs(_TestUssdClientMan.isOneNotificationFor100Dialogs());
 
-			TestUssdServerMan _TestUssdServerMan = reader.read(TEST_USSD_SERVER, TestUssdServerMan.class);
+			TestUssdServerMan _TestUssdServerMan = reader.read(ConfigurationData.TEST_USSD_SERVER, TestUssdServerMan.class);
 			this.testUssdServerMan.setMsisdnAddress(_TestUssdServerMan.getMsisdnAddress());
 			this.testUssdServerMan.setMsisdnAddressNature(_TestUssdServerMan.getMsisdnAddressNature());
 			this.testUssdServerMan.setMsisdnNumberingPlan(_TestUssdServerMan.getMsisdnNumberingPlan());
@@ -740,7 +903,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			this.testUssdServerMan.setAutoUnstructured_SS_RequestString(_TestUssdServerMan.getAutoUnstructured_SS_RequestString());
 			this.testUssdServerMan.setOneNotificationFor100Dialogs(_TestUssdServerMan.isOneNotificationFor100Dialogs());
 
-			TestSmsClientMan _TestSmsClientMan = reader.read(TEST_SMS_CLIENT, TestSmsClientMan.class);
+			TestSmsClientMan _TestSmsClientMan = reader.read(ConfigurationData.TEST_SMS_CLIENT, TestSmsClientMan.class);
 			this.testSmsClientMan.setAddressNature(_TestSmsClientMan.getAddressNature());
 			this.testSmsClientMan.setNumberingPlan(_TestSmsClientMan.getNumberingPlan());
 			this.testSmsClientMan.setServiceCenterAddress(_TestSmsClientMan.getServiceCenterAddress());
@@ -752,7 +915,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			this.testSmsClientMan.setNumberingPlanIdentification(_TestSmsClientMan.getNumberingPlanIdentification());
 			this.testSmsClientMan.setSmsCodingType(_TestSmsClientMan.getSmsCodingType());
 
-			TestSmsServerMan _TestSmsServerMan = reader.read(TEST_SMS_SERVER, TestSmsServerMan.class);
+			TestSmsServerMan _TestSmsServerMan = reader.read(ConfigurationData.TEST_SMS_SERVER, TestSmsServerMan.class);
 			this.testSmsServerMan.setAddressNature(_TestSmsServerMan.getAddressNature());
 			this.testSmsServerMan.setNumberingPlan(_TestSmsServerMan.getNumberingPlan());
 			this.testSmsServerMan.setServiceCenterAddress(_TestSmsServerMan.getServiceCenterAddress());
@@ -763,11 +926,21 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			this.testSmsServerMan.setNumberingPlanIdentification(_TestSmsServerMan.getNumberingPlanIdentification());
 			this.testSmsServerMan.setSmsCodingType(_TestSmsServerMan.getSmsCodingType());
 
-//			remoteSsns = reader.read(REMOTE_SSN, FastMap.class);
-//			remoteSpcs = reader.read(REMOTE_SPC, FastMap.class);
-//			concernedSpcs = reader.read(CONCERNED_SPC, FastMap.class);
+//			if (reader.hasNext()) {
+//				TestCapSsfMan _TestCapSsfMan = reader.read(TEST_CAP_SSF, TestCapSsfMan.class);
+//				this.testCapSsfMan.setCapApplicationContext(_TestCapSsfMan.getCapApplicationContext());
+//
+//				TestCapScfMan _TestCapScfMan = reader.read(TEST_CAP_SCF, TestCapScfMan.class);
+//				this.testCapScfMan.setCapApplicationContext(_TestCapScfMan.getCapApplicationContext());
+//			}
+
+			reader.close();
+			
+			return true;
+
 		} catch (Exception ex) {
 			this.sendNotif(SOURCE_NAME, "Error while reading the Host state from file", ex, Level.WARN	);
+			return false;
 		}
 	}
 }

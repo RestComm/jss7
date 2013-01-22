@@ -35,6 +35,7 @@ import org.mobicents.protocols.ss7.tools.simulator.common.EnumeratedBase;
 import org.mobicents.protocols.ss7.tools.simulator.level1.DialogicManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.level1.M3uaManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.level2.SccpManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.level3.CapManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.level3.MapManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.management.Instance_L1;
 import org.mobicents.protocols.ss7.tools.simulator.management.Instance_L2;
@@ -42,10 +43,14 @@ import org.mobicents.protocols.ss7.tools.simulator.management.Instance_L3;
 import org.mobicents.protocols.ss7.tools.simulator.management.Instance_TestTask;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHostMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.cap.TestCapScfManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.cap.TestCapSsfManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsClientManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsServerManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerManMBean;
+import org.mobicents.protocols.ss7.tools.simulatorgui.tests.cap.TestCapScfParamForm;
+import org.mobicents.protocols.ss7.tools.simulatorgui.tests.cap.TestCapSsfParamForm;
 import org.mobicents.protocols.ss7.tools.simulatorgui.tests.sms.TestSmsClientForm;
 import org.mobicents.protocols.ss7.tools.simulatorgui.tests.sms.TestSmsClientParamForm;
 import org.mobicents.protocols.ss7.tools.simulatorgui.tests.sms.TestSmsServerForm;
@@ -77,11 +82,14 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
 	private DialogicManMBean dialogic;
 	private SccpManMBean sccp;
 	private MapManMBean map;
+	private CapManMBean cap;
 	
 	private TestUssdClientManMBean ussdClient;
 	private TestUssdServerManMBean ussdServer;
 	private TestSmsClientManMBean smsClient;
 	private TestSmsServerManMBean smsServer;
+	private TestCapScfManMBean capScf;
+	private TestCapSsfManMBean capSsf;
 	
 	private TestingForm testingForm;
 	
@@ -278,7 +286,9 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
 				}
 					break;
 				case Instance_L3.VAL_CAP: {
-					// TODO: implement it ......
+					CapForm frame = new CapForm(getJFrame());
+					frame.setData(cap);
+					frame.setVisible(true);
 				}
 					break;
 				case Instance_L3.VAL_INAP: {
@@ -319,6 +329,18 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
 					frame.setVisible(true);
 				}
 					break;
+				case Instance_TestTask.VAL_CAP_TEST_SCF: {
+					TestCapScfParamForm frame = new TestCapScfParamForm(getJFrame());
+					frame.setData(capScf);
+					frame.setVisible(true);
+				}
+					break;
+				case Instance_TestTask.VAL_CAP_TEST_SSF: {
+					TestCapSsfParamForm frame = new TestCapSsfParamForm(getJFrame());
+					frame.setData(capSsf);
+					frame.setVisible(true);
+				}
+					break;
 					
 					// TODO: other tests form options editing
 				}
@@ -340,8 +362,8 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
 	}
 
 	protected void startHost(String appName, boolean isRemote, final TesterHost hostImpl, TesterHostMBean host, M3uaManMBean m3ua, DialogicManMBean dialogic,
-			SccpManMBean sccp, MapManMBean map, TestUssdClientManMBean ussdClient, TestUssdServerManMBean ussdServer, TestSmsClientManMBean smsClient,
-			TestSmsServerManMBean smsServer) {
+			SccpManMBean sccp, MapManMBean map, CapManMBean cap, TestUssdClientManMBean ussdClient, TestUssdServerManMBean ussdServer,
+			TestSmsClientManMBean smsClient, TestSmsServerManMBean smsServer, TestCapScfManMBean capScf, TestCapSsfManMBean capSsf) {
 		setTitle(getTitle() + appName);
 
 		this.hostImpl = hostImpl;
@@ -350,10 +372,13 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
 		this.dialogic = dialogic;
 		this.sccp = sccp;
 		this.map = map;
+		this.cap = cap;
 		this.ussdClient = ussdClient;
 		this.ussdServer = ussdServer;
 		this.smsClient = smsClient;
 		this.smsServer = smsServer;
+		this.capScf = capScf;
+		this.capSsf = capSsf;
 
 		this.btTermRemote.setEnabled(isRemote);
 
