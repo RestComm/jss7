@@ -30,11 +30,10 @@ import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
 import javax.swing.JTextArea;
 import java.awt.Insets;
-import java.util.Date;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.Rectangle;
-import java.awt.Dialog.ModalityType;
+import javax.swing.JScrollPane;
 
 /**
  * 
@@ -133,13 +132,17 @@ public class EventForm extends JDialog {
 		gbc_lblUserdata.gridy = 3;
 		panel.add(lblUserdata, gbc_lblUserdata);
 		
+		JScrollPane scrollPane = new JScrollPane();
+		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
+		gbc_scrollPane.fill = GridBagConstraints.BOTH;
+		gbc_scrollPane.gridx = 1;
+		gbc_scrollPane.gridy = 3;
+		panel.add(scrollPane, gbc_scrollPane);
+		
 		taUserData = new JTextArea();
 		taUserData.setEditable(false);
-		GridBagConstraints gbc_taUserData = new GridBagConstraints();
-		gbc_taUserData.fill = GridBagConstraints.BOTH;
-		gbc_taUserData.gridx = 1;
-		gbc_taUserData.gridy = 3;
-		panel.add(taUserData, gbc_taUserData);
+		taUserData.setLineWrap(true);
+		scrollPane.setViewportView(taUserData);
 	}
 
 	public void setData(String eventTime, String source, String msg, String userData) {

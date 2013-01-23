@@ -787,8 +787,8 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 //			this.sccp.setExtraLocalAddressDigits(_sccp.getExtraLocalAddressDigits());
 
 			MapConfigurationData_OldFormat _map = reader.read(ConfigurationData.MAP, MapConfigurationData_OldFormat.class);
-			this.map.setLocalSsn(_map.getLocalSsn());
-			this.map.setRemoteSsn(_map.getRemoteSsn());
+//			this.map.setLocalSsn(_map.getLocalSsn());
+//			this.map.setRemoteSsn(_map.getRemoteSsn());
 			this.map.setRemoteAddressDigits(_map.getRemoteAddressDigits());
 			this.map.setOrigReference(_map.getOrigReference());
 			this.map.setOrigReferenceAddressNature(new AddressNatureType(_map.getOrigReferenceAddressNature().getIndicator()));

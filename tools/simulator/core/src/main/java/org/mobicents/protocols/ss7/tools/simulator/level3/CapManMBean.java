@@ -29,13 +29,13 @@ package org.mobicents.protocols.ss7.tools.simulator.level3;
  */
 public interface CapManMBean {
 
-	public int getLocalSsn();
-
-	public void setLocalSsn(int val);
-
-	public int getRemoteSsn();
-
-	public void setRemoteSsn(int val);
+//	public int getLocalSsn();
+//
+//	public void setLocalSsn(int val);
+//
+//	public int getRemoteSsn();
+//
+//	public void setRemoteSsn(int val);
 
 	public String getRemoteAddressDigits();
 

@@ -71,27 +71,27 @@ public class MapMan implements MapManMBean, Stoppable {
 	}	
 
 
-	@Override
-	public int getRemoteSsn() {
-		return this.testerHost.getConfigurationData().getMapConfigurationData().getRemoteSsn();
-	}
-
-	@Override
-	public void setRemoteSsn(int val) {
-		this.testerHost.getConfigurationData().getMapConfigurationData().setRemoteSsn(val);
-		this.testerHost.markStore();
-	}
-
-	@Override
-	public int getLocalSsn() {
-		return this.testerHost.getConfigurationData().getMapConfigurationData().getLocalSsn();
-	}
-
-	@Override
-	public void setLocalSsn(int val) {
-		this.testerHost.getConfigurationData().getMapConfigurationData().setLocalSsn(val);
-		this.testerHost.markStore();
-	}
+//	@Override
+//	public int getRemoteSsn() {
+//		return this.testerHost.getConfigurationData().getMapConfigurationData().getRemoteSsn();
+//	}
+//
+//	@Override
+//	public void setRemoteSsn(int val) {
+//		this.testerHost.getConfigurationData().getMapConfigurationData().setRemoteSsn(val);
+//		this.testerHost.markStore();
+//	}
+//
+//	@Override
+//	public int getLocalSsn() {
+//		return this.testerHost.getConfigurationData().getMapConfigurationData().getLocalSsn();
+//	}
+//
+//	@Override
+//	public void setLocalSsn(int val) {
+//		this.testerHost.getConfigurationData().getMapConfigurationData().setLocalSsn(val);
+//		this.testerHost.markStore();
+//	}
 
 	@Override
 	public String getRemoteAddressDigits() {
@@ -229,7 +229,7 @@ public class MapMan implements MapManMBean, Stoppable {
 
 	public boolean start() {
 		try {
-			this.initMap(this.sccpStack, this.testerHost.getConfigurationData().getMapConfigurationData().getLocalSsn());
+			this.initMap(this.sccpStack, this.testerHost.getSccpMan().getLocalSsn());
 			this.testerHost.sendNotif(SOURCE_NAME, "TCAP+MAP has been started", "", Level.INFO);
 			return true;
 		} catch (Throwable e) {
@@ -278,7 +278,7 @@ public class MapMan implements MapManMBean, Stoppable {
 		} else {
 			return this.testerHost.getSccpMan().createCalledPartyAddress(
 					this.testerHost.getConfigurationData().getMapConfigurationData().getRemoteAddressDigits(),
-					this.testerHost.getConfigurationData().getMapConfigurationData().getRemoteSsn());
+					this.testerHost.getSccpMan().getRemoteSsn());
 		}
 	}
 

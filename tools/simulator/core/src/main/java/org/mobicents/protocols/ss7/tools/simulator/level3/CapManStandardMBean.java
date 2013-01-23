@@ -44,8 +44,8 @@ public class CapManStandardMBean extends StandardMBean {
 	public MBeanInfo getMBeanInfo() {
 
 		MBeanAttributeInfo[] attributes = new MBeanAttributeInfo[] { 
-				new MBeanAttributeInfo("LocalSsn", int.class.getName(), "Local Ssn", true, true, false),
-				new MBeanAttributeInfo("RemoteSsn", int.class.getName(), "Remote Ssn", true, true, false),
+//				new MBeanAttributeInfo("LocalSsn", int.class.getName(), "Local Ssn", true, true, false),
+//				new MBeanAttributeInfo("RemoteSsn", int.class.getName(), "Remote Ssn", true, true, false),
 				new MBeanAttributeInfo("RemoteAddressDigits", String.class.getName(), 
 						"Remote address digits. If empty ROUTING_BASED_ON_DPC_AND_SSN is used for CalledPartyAddress (remoteSpc from SCCP), " +
 						"if not empty ROUTING_BASED_ON_GLOBAL_TITLE is used (address and Ssn from CAP)", 

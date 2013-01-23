@@ -41,8 +41,8 @@ public class MapConfigurationData_OldFormat extends MapConfigurationData {
 		}
 
 		public void read(InputElement xml, MapConfigurationData_OldFormat map) throws XMLStreamException {
-			map.setLocalSsn(xml.getAttribute(LOCAL_SSN).toInt());
-			map.setRemoteSsn(xml.getAttribute(REMOTE_SSN).toInt());
+			int localSsn = xml.getAttribute(LOCAL_SSN).toInt();
+			int remoteSsn = xml.getAttribute(REMOTE_SSN).toInt();
 
 			map.setRemoteAddressDigits((String) xml.get(REMOTE_ADDRESS_DIGITS, String.class));
 			map.setOrigReference((String) xml.get(ORIG_REFERENCE, String.class));

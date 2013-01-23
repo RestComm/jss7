@@ -291,6 +291,23 @@ public class SccpForm extends JDialog {
 	}
 
 	private void loadDataA() {
+		SsnDefaultSelectionForm fmA = new SsnDefaultSelectionForm();
+		fmA.setVisible(true);
+
+		int res = fmA.getResult();
+		if (res == 0)
+			return;
+		switch (res) {
+		case 1:
+			tbRemoteSsn.setText("8");
+			tbLocalSsn.setText("8");
+			break;
+		case 2:
+			tbRemoteSsn.setText("146");
+			tbLocalSsn.setText("146");
+			break;
+		}
+
 		this.rbRouteDpcSsn.setSelected(true);
 		setRouteOnGtEnabled(false);
 
@@ -301,8 +318,6 @@ public class SccpForm extends JDialog {
 		tbRemoteSpc.setText("2");
 		tbLocalSpc.setText("1");
 		tbNi.setText("2");
-		tbRemoteSsn.setText("8");
-		tbLocalSsn.setText("8");
 		tbTranslationType.setText("0");
 		
 		tbCallingPartyAddressDigits.setText("");
@@ -310,6 +325,23 @@ public class SccpForm extends JDialog {
 	}
 
 	private void loadDataB() {
+		SsnDefaultSelectionForm fmA = new SsnDefaultSelectionForm();
+		fmA.setVisible(true);
+
+		int res = fmA.getResult();
+		if (res == 0)
+			return;
+		switch (res) {
+		case 1:
+			tbRemoteSsn.setText("8");
+			tbLocalSsn.setText("8");
+			break;
+		case 2:
+			tbRemoteSsn.setText("146");
+			tbLocalSsn.setText("146");
+			break;
+		}
+
 		this.rbRouteDpcSsn.setSelected(true);
 		setRouteOnGtEnabled(false);
 
@@ -320,8 +352,6 @@ public class SccpForm extends JDialog {
 		tbRemoteSpc.setText("1");
 		tbLocalSpc.setText("2");
 		tbNi.setText("2");
-		tbRemoteSsn.setText("8");
-		tbLocalSsn.setText("8");
 		tbTranslationType.setText("0");
 		
 		tbCallingPartyAddressDigits.setText("");

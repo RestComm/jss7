@@ -66,27 +66,27 @@ public class CapMan implements CapManMBean, Stoppable {
 	}	
 
 
-	@Override
-	public int getRemoteSsn() {
-		return this.testerHost.getConfigurationData().getCapConfigurationData().getRemoteSsn();
-	}
-
-	@Override
-	public void setRemoteSsn(int val) {
-		this.testerHost.getConfigurationData().getCapConfigurationData().setRemoteSsn(val);
-		this.testerHost.markStore();
-	}
-
-	@Override
-	public int getLocalSsn() {
-		return this.testerHost.getConfigurationData().getCapConfigurationData().getLocalSsn();
-	}
-
-	@Override
-	public void setLocalSsn(int val) {
-		this.testerHost.getConfigurationData().getCapConfigurationData().setLocalSsn(val);
-		this.testerHost.markStore();
-	}
+//	@Override
+//	public int getRemoteSsn() {
+//		return this.testerHost.getConfigurationData().getCapConfigurationData().getRemoteSsn();
+//	}
+//
+//	@Override
+//	public void setRemoteSsn(int val) {
+//		this.testerHost.getConfigurationData().getCapConfigurationData().setRemoteSsn(val);
+//		this.testerHost.markStore();
+//	}
+//
+//	@Override
+//	public int getLocalSsn() {
+//		return this.testerHost.getConfigurationData().getCapConfigurationData().getLocalSsn();
+//	}
+//
+//	@Override
+//	public void setLocalSsn(int val) {
+//		this.testerHost.getConfigurationData().getCapConfigurationData().setLocalSsn(val);
+//		this.testerHost.markStore();
+//	}
 
 	@Override
 	public String getRemoteAddressDigits() {
@@ -110,7 +110,7 @@ public class CapMan implements CapManMBean, Stoppable {
 
 	public boolean start() {
 		try {
-			this.initCap(this.sccpStack, this.testerHost.getConfigurationData().getCapConfigurationData().getLocalSsn());
+			this.initCap(this.sccpStack, this.testerHost.getSccpMan().getLocalSsn());
 			this.testerHost.sendNotif(SOURCE_NAME, "TCAP+CAP has been started", "", Level.INFO);
 			return true;
 		} catch (Throwable e) {
@@ -159,7 +159,7 @@ public class CapMan implements CapManMBean, Stoppable {
 		} else {
 			return this.testerHost.getSccpMan().createCalledPartyAddress(
 					this.testerHost.getConfigurationData().getCapConfigurationData().getRemoteAddressDigits(),
-					this.testerHost.getConfigurationData().getCapConfigurationData().getRemoteSsn());
+					this.testerHost.getSccpMan().getRemoteSsn());
 		}
 	}
 

@@ -188,11 +188,15 @@ public class TestCapScfMan extends TesterBase implements TestCapScfManMBean, Sto
 		CAPDialogCircuitSwitchedCall curDialog = currentDialog;
 		if (curDialog != null) {
 			try {
-				curDialog.close(false);
+				if (curDialog.getState() == CAPDialogState.Active)
+					curDialog.close(false);
+				else
+					curDialog.abort(CAPUserAbortReason.no_reason_given);
 				this.doRemoveDialog();
 				return "The current dialog has been closed";
 			} catch (CAPException e) {
 				this.doRemoveDialog();
+				this.testerHost.sendNotif(SOURCE_NAME, "Exception when closing a dialog", e.toString(), Level.DEBUG);
 				return "Exception when closing the current dialog: " + e.toString();
 			}
 		} else {
@@ -392,8 +396,7 @@ public class TestCapScfMan extends TesterBase implements TestCapScfManMBean, Sto
 			if (dlg.getState() == CAPDialogState.InitialReceived)
 				dlg.send();
 		} catch (CAPException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when sending a first response", e.toString(), Level.DEBUG);
 		}
 	}
 
@@ -428,7 +431,7 @@ public class TestCapScfMan extends TesterBase implements TestCapScfManMBean, Sto
 					try {
 						capDialog.abort(CAPUserAbortReason.congestion);
 					} catch (CAPException e) {
-						e.printStackTrace();
+						this.testerHost.sendNotif(SOURCE_NAME, "Exception when rejecting Dialog", e.toString(), Level.DEBUG);
 					}
 					this.testerHost.sendNotif(SOURCE_NAME, "Rejected incoming Dialog:", "TrId=" + capDialog.getRemoteDialogId(), Level.DEBUG);
 				}

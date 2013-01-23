@@ -45,8 +45,8 @@ public class MapConfigurationData {
 	protected static final String DEST_REFERENCE_ADDRESS_NATURE = "destReferenceAddressNature";
 	protected static final String DEST_REFERENCE_NUMBERING_PLAN = "destReferenceNumberingPlan";
 
-	private int localSsn;
-	private int remoteSsn;
+//	private int localSsn;
+//	private int remoteSsn;
 	private String remoteAddressDigits;
 	
 	private String origReference;
@@ -57,21 +57,21 @@ public class MapConfigurationData {
 	private NumberingPlan destReferenceNumberingPlan = NumberingPlan.ISDN;
 
 
-	public int getLocalSsn() {
-		return localSsn;
-	}
-
-	public void setLocalSsn(int localSsn) {
-		this.localSsn = localSsn;
-	}
-
-	public int getRemoteSsn() {
-		return remoteSsn;
-	}
-
-	public void setRemoteSsn(int remoteSsn) {
-		this.remoteSsn = remoteSsn;
-	}
+//	public int getLocalSsn() {
+//		return localSsn;
+//	}
+//
+//	public void setLocalSsn(int localSsn) {
+//		this.localSsn = localSsn;
+//	}
+//
+//	public int getRemoteSsn() {
+//		return remoteSsn;
+//	}
+//
+//	public void setRemoteSsn(int remoteSsn) {
+//		this.remoteSsn = remoteSsn;
+//	}
 
 	public String getRemoteAddressDigits() {
 		return remoteAddressDigits;
@@ -133,8 +133,8 @@ public class MapConfigurationData {
 	protected static final XMLFormat<MapConfigurationData> XML = new XMLFormat<MapConfigurationData>(MapConfigurationData.class) {
 
 		public void write(MapConfigurationData map, OutputElement xml) throws XMLStreamException {
-			xml.setAttribute(LOCAL_SSN, map.getLocalSsn());
-			xml.setAttribute(REMOTE_SSN, map.getRemoteSsn());
+//			xml.setAttribute(LOCAL_SSN, map.getLocalSsn());
+//			xml.setAttribute(REMOTE_SSN, map.getRemoteSsn());
 
 			xml.add(map.getRemoteAddressDigits(), REMOTE_ADDRESS_DIGITS, String.class);
 			xml.add(map.getOrigReference(), ORIG_REFERENCE, String.class);
@@ -147,8 +147,8 @@ public class MapConfigurationData {
 		}
 
 		public void read(InputElement xml, MapConfigurationData map) throws XMLStreamException {
-			map.setLocalSsn(xml.getAttribute(LOCAL_SSN).toInt());
-			map.setRemoteSsn(xml.getAttribute(REMOTE_SSN).toInt());
+//			map.setLocalSsn(xml.getAttribute(LOCAL_SSN).toInt());
+//			map.setRemoteSsn(xml.getAttribute(REMOTE_SSN).toInt());
 
 			map.setRemoteAddressDigits((String) xml.get(REMOTE_ADDRESS_DIGITS, String.class));
 			map.setOrigReference((String) xml.get(ORIG_REFERENCE, String.class));

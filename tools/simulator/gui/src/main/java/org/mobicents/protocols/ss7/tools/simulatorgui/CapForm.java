@@ -45,8 +45,6 @@ public class CapForm extends JDialog {
 	private CapManMBean cap;
 
 	private static final long serialVersionUID = 6493475378477569651L;
-	private JTextField tbLocalSsn;
-	private JTextField tbRemoteSsn;
 	private JTextField tbRemoteAddressDigits;
 
 	public CapForm(JFrame owner) {
@@ -61,36 +59,18 @@ public class CapForm extends JDialog {
 		getContentPane().add(panel, BorderLayout.CENTER);
 		panel.setLayout(null);
 		
-		JLabel label = new JLabel("Local SSN");
-		label.setBounds(10, 14, 183, 14);
-		panel.add(label);
-		
-		tbLocalSsn = new JTextField();
-		tbLocalSsn.setColumns(10);
-		tbLocalSsn.setBounds(203, 11, 129, 20);
-		panel.add(tbLocalSsn);
-		
-		JLabel label_1 = new JLabel("Remote SSN");
-		label_1.setBounds(10, 45, 183, 14);
-		panel.add(label_1);
-		
-		tbRemoteSsn = new JTextField();
-		tbRemoteSsn.setColumns(10);
-		tbRemoteSsn.setBounds(203, 42, 129, 20);
-		panel.add(tbRemoteSsn);
-		
 		JLabel label_2 = new JLabel("Remote address digits");
-		label_2.setBounds(10, 76, 183, 14);
+		label_2.setBounds(10, 14, 183, 14);
 		panel.add(label_2);
 		
 		tbRemoteAddressDigits = new JTextField();
 		tbRemoteAddressDigits.setColumns(10);
-		tbRemoteAddressDigits.setBounds(203, 73, 270, 20);
+		tbRemoteAddressDigits.setBounds(203, 11, 270, 20);
 		panel.add(tbRemoteAddressDigits);
 		
 		JLabel label_3 = new JLabel("<html>\r\nIf empty RoutingOnDpcAndSsn is used for CalledPartyAddress (remoteSpc from SCCP)<br>\r\nIf not empty RoutingOnGT is used (address and Ssn a defined in MAP layer)<br>\r\nThis option may be ignored by some test tasks that supply there own digits\r\n</html>");
 		label_3.setVerticalAlignment(SwingConstants.TOP);
-		label_3.setBounds(10, 101, 555, 56);
+		label_3.setBounds(10, 39, 555, 56);
 		panel.add(label_3);
 		
 		JButton button = new JButton("Load default values for side A");
@@ -152,44 +132,44 @@ public class CapForm extends JDialog {
 	}
 
 	private void reloadData() {
-		tbLocalSsn.setText(((Integer) this.cap.getLocalSsn()).toString());
-		tbRemoteSsn.setText(((Integer) this.cap.getRemoteSsn()).toString());
+//		tbLocalSsn.setText(((Integer) this.cap.getLocalSsn()).toString());
+//		tbRemoteSsn.setText(((Integer) this.cap.getRemoteSsn()).toString());
 
 		tbRemoteAddressDigits.setText(this.cap.getRemoteAddressDigits());
 	}
 
 	private void loadDataA() {
-		tbLocalSsn.setText("146");
-		tbRemoteSsn.setText("146");
+//		tbLocalSsn.setText("146");
+//		tbRemoteSsn.setText("146");
 
 		tbRemoteAddressDigits.setText("");
 	}
 
 	private void loadDataB() {
-		tbLocalSsn.setText("146");
-		tbRemoteSsn.setText("146");
+//		tbLocalSsn.setText("146");
+//		tbRemoteSsn.setText("146");
 
 		tbRemoteAddressDigits.setText("");
 	}
 
 	private boolean saveData() {
-		int localSsn = 0;
-		int remoteSsn = 0;
-		try {
-			localSsn = Integer.parseInt(tbLocalSsn.getText());
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(this, "Exception when parsing Local Ssn value: " + e.toString());
-			return false;
-		}
-		try {
-			remoteSsn = Integer.parseInt(tbRemoteSsn.getText());
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(this, "Exception when parsing Remote Ssn value: " + e.toString());
-			return false;
-		}
-
-		this.cap.setLocalSsn(localSsn);
-		this.cap.setRemoteSsn(remoteSsn);
+//		int localSsn = 0;
+//		int remoteSsn = 0;
+//		try {
+//			localSsn = Integer.parseInt(tbLocalSsn.getText());
+//		} catch (Exception e) {
+//			JOptionPane.showMessageDialog(this, "Exception when parsing Local Ssn value: " + e.toString());
+//			return false;
+//		}
+//		try {
+//			remoteSsn = Integer.parseInt(tbRemoteSsn.getText());
+//		} catch (Exception e) {
+//			JOptionPane.showMessageDialog(this, "Exception when parsing Remote Ssn value: " + e.toString());
+//			return false;
+//		}
+//
+//		this.cap.setLocalSsn(localSsn);
+//		this.cap.setRemoteSsn(remoteSsn);
 
 		this.cap.setRemoteAddressDigits(tbRemoteAddressDigits.getText());
 

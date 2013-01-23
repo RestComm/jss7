@@ -31,13 +31,13 @@ import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
  */
 public interface MapManMBean {
 
-	public int getLocalSsn();
-
-	public void setLocalSsn(int val);
-
-	public int getRemoteSsn();
-
-	public void setRemoteSsn(int val);
+//	public int getLocalSsn();
+//
+//	public void setLocalSsn(int val);
+//
+//	public int getRemoteSsn();
+//
+//	public void setRemoteSsn(int val);
 
 	public String getRemoteAddressDigits();
 
