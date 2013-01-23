@@ -41,7 +41,7 @@ public class BearerServiceCodeValueTest {
 	
 	@Test(groups = { "functional.encode","primitives"})
 	public void test() throws Exception {
-		int code = BearerServiceCodeValue.Asynchronous9_6kbps.getCode();
+		int code = BearerServiceCodeValue.Asynchronous9_6kbps.getBearerServiceCode();
 		
 		BearerServiceCodeValue valueFromCode = BearerServiceCodeValue.getInstance(code);
 		
