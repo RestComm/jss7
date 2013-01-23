@@ -29,7 +29,7 @@ import javax.management.MBeanParameterInfo;
 import javax.management.NotCompliantMBeanException;
 import javax.management.StandardMBean;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
-import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
+import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
 
 /**
  * 
@@ -49,7 +49,7 @@ public class TestUssdClientStandardManMBean extends StandardMBean {
 				new MBeanAttributeInfo("MsisdnAddress", String.class.getName(), "Msisdn parameter: string", true, true, false),
 				new MBeanAttributeInfo("MsisdnAddressNature", AddressNatureType.class.getName(), "Msisdn parameter: AddressNature", true, true, false),
 				new MBeanAttributeInfo("MsisdnAddressNature_Value", String.class.getName(), "Msisdn parameter: AddressNature", true, false, false),
-				new MBeanAttributeInfo("MsisdnNumberingPlan", NumberingPlanType.class.getName(), "Msisdn parameter: NumberingPlan", true, true, false),
+				new MBeanAttributeInfo("MsisdnNumberingPlan", NumberingPlanMapType.class.getName(), "Msisdn parameter: NumberingPlan", true, true, false),
 				new MBeanAttributeInfo("MsisdnNumberingPlan_Value", String.class.getName(), "Msisdn parameter: NumberingPlan", true, false, false),
 				new MBeanAttributeInfo("DataCodingScheme", int.class.getName(), "USSD DataCodingScheme (default value: 15)", true, true, false),
 				new MBeanAttributeInfo("AlertingPattern", int.class.getName(), "AlertingPattern value (-1 means no AlertingPattern parameter)", true, true, false),

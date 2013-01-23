@@ -31,7 +31,7 @@ import org.mobicents.protocols.ss7.tools.simulator.common.EnumeratedBase;
  * @author sergey vetyutnev
  * 
  */
-public class NumberingPlanType extends EnumeratedBase {
+public class NumberingPlanSccpType extends EnumeratedBase {
 
 	private static final long serialVersionUID = 6312337607873455146L;
 	private static Hashtable<String, Integer> stringMap = new Hashtable<String, Integer>();
@@ -61,27 +61,27 @@ public class NumberingPlanType extends EnumeratedBase {
 		stringMap.put(NumberingPlan.RESERVED.toString(), NumberingPlan.RESERVED.getValue());
 	}
 
-	public NumberingPlanType() {
+	public NumberingPlanSccpType() {
 	}
 
-	public NumberingPlanType(int val) throws java.lang.IllegalArgumentException {
+	public NumberingPlanSccpType(int val) throws java.lang.IllegalArgumentException {
 		super(val);
 	}
 
-	public NumberingPlanType(Integer val) throws java.lang.IllegalArgumentException {
+	public NumberingPlanSccpType(Integer val) throws java.lang.IllegalArgumentException {
 		super(val);
 	}
 
-	public NumberingPlanType(String val) throws java.lang.IllegalArgumentException {
+	public NumberingPlanSccpType(String val) throws java.lang.IllegalArgumentException {
 		super(val);
 	}
 
-	public static NumberingPlanType createInstance(String s) {
+	public static NumberingPlanSccpType createInstance(String s) {
 		Integer i1 = doCreateInstance(s, stringMap, intMap);
 		if (i1 == null)
-			return new NumberingPlanType(NumberingPlan.UNKNOWN.getValue());
+			return new NumberingPlanSccpType(NumberingPlan.UNKNOWN.getValue());
 		else
-			return new NumberingPlanType(i1);
+			return new NumberingPlanSccpType(i1);
 	}
 
 	@Override

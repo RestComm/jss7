@@ -22,9 +22,6 @@
 
 package org.mobicents.protocols.ss7.tools.simulator.tests.sms;
 
-import javolution.xml.XMLFormat;
-import javolution.xml.stream.XMLStreamException;
-
 import org.apache.log4j.Level;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
@@ -76,10 +73,10 @@ import org.mobicents.protocols.ss7.map.smstpdu.UserDataImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.ValidityPeriodImpl;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
-import org.mobicents.protocols.ss7.tools.simulator.common.MapProtocolVersion;
-import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
 import org.mobicents.protocols.ss7.tools.simulator.common.TesterBase;
 import org.mobicents.protocols.ss7.tools.simulator.level3.MapMan;
+import org.mobicents.protocols.ss7.tools.simulator.level3.MapProtocolVersion;
+import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
 
 /**
@@ -90,28 +87,6 @@ import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
 public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBean, Stoppable, MAPDialogListener, MAPServiceSmsListener {
 
 	public static String SOURCE_NAME = "TestSmsClient";
-
-	private static final String ADDRESS_NATURE = "addressNature";
-	private static final String NUMBERING_PLAN = "numberingPlan";
-	private static final String SERVICE_CENTER_ADDRESS = "serviceCenterAddress";
-	private static final String MAP_PROTOCOL_VERSION = "mapProtocolVersion";
-	private static final String SRI_RESPONSE_IMSI = "sriResponseImsi";
-	private static final String SRI_RESPONSE_VLR = "sriResponseVlr";
-	private static final String SMSC_SSN = "smscSsn";
-	private static final String TYPE_OF_NUMBER = "typeOfNumber";
-	private static final String NUMBERING_PLAN_IDENTIFICATION = "numberingPlanIdentification";
-	private static final String SMS_CODING_TYPE = "smsCodingType";
-
-	private AddressNature addressNature = AddressNature.international_number;
-	private NumberingPlan numberingPlan = NumberingPlan.ISDN;
-	private String serviceCenterAddress = "";
-	private MapProtocolVersion mapProtocolVersion = new MapProtocolVersion(MapProtocolVersion.VAL_MAP_V3);
-	private String sriResponseImsi = "";
-	private String sriResponseVlr = "";
-	private int smscSsn = 8;
-	private TypeOfNumber typeOfNumber = TypeOfNumber.InternationalNumber;
-	private NumberingPlanIdentification numberingPlanIdentification = NumberingPlanIdentification.ISDNTelephoneNumberingPlan;
-	private SmsCodingType smsCodingType = new SmsCodingType(SmsCodingType.VAL_GSM7);
 
 	private final String name;
 	private MapMan mapMan;
@@ -149,141 +124,142 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 
 	@Override
 	public AddressNatureType getAddressNature() {
-		return new AddressNatureType(addressNature.getIndicator());
+		return new AddressNatureType(this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getAddressNature().getIndicator());
 	}
 
 	@Override
 	public String getAddressNature_Value() {
-		return addressNature.toString();
+		return new AddressNatureType(this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getAddressNature().getIndicator()).toString();
 	}
 
 	@Override
 	public void setAddressNature(AddressNatureType val) {
-		addressNature = AddressNature.getInstance(val.intValue());
+		this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().setAddressNature(AddressNature.getInstance(val.intValue()));
 		this.testerHost.markStore();
 	}
 
 	@Override
-	public NumberingPlanType getNumberingPlan() {
-		return new NumberingPlanType(numberingPlan.getIndicator());
+	public NumberingPlanMapType getNumberingPlan() {
+		return new NumberingPlanMapType(this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getNumberingPlan().getIndicator());
 	}
 
 	@Override
 	public String getNumberingPlan_Value() {
-		return numberingPlan.toString();
+		return new NumberingPlanMapType(this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getNumberingPlan().getIndicator()).toString();
 	}
 
 	@Override
-	public void setNumberingPlan(NumberingPlanType val) {
-		numberingPlan = NumberingPlan.getInstance(val.intValue());
+	public void setNumberingPlan(NumberingPlanMapType val) {
+		this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().setNumberingPlan(NumberingPlan.getInstance(val.intValue()));
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public String getServiceCenterAddress() {
-		return serviceCenterAddress;
+		return this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getServiceCenterAddress();
 	}
 
 	@Override
 	public void setServiceCenterAddress(String val) {
-		serviceCenterAddress = val;
+		this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().setServiceCenterAddress(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public MapProtocolVersion getMapProtocolVersion() {
-		return mapProtocolVersion;
+		return this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getMapProtocolVersion();
 	}
 
 	@Override
 	public String getMapProtocolVersion_Value() {
-		return mapProtocolVersion.toString();
+		return this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getMapProtocolVersion().toString();
 	}
 
 	@Override
 	public void setMapProtocolVersion(MapProtocolVersion val) {
-		mapProtocolVersion = val;
+		this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().setMapProtocolVersion(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public String getSRIResponseImsi() {
-		return sriResponseImsi;
+		return this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getSriResponseImsi();
 	}
 
 	@Override
 	public void setSRIResponseImsi(String val) {
-		sriResponseImsi = val;
+		this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().setSriResponseImsi(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public String getSRIResponseVlr() {
-		return sriResponseVlr;
+		return this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getSriResponseVlr();
 	}
 
 	@Override
 	public void setSRIResponseVlr(String val) {
-		sriResponseVlr = val;
+		this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().setSriResponseVlr(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public int getSmscSsn() {
-		return smscSsn;
+		return this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getSmscSsn();
 	}
 
 	@Override
 	public void setSmscSsn(int val) {
-		smscSsn = val;
+		this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().setSmscSsn(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public TypeOfNumberType getTypeOfNumber() {
-		return new TypeOfNumberType(typeOfNumber.getCode());
+		return new TypeOfNumberType(this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getTypeOfNumber().getCode());
 	}
 
 	@Override
 	public String getTypeOfNumber_Value() {
-		return typeOfNumber.toString();
+		return new TypeOfNumberType(this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getTypeOfNumber().getCode()).toString();
 	}
 
 	@Override
 	public void setTypeOfNumber(TypeOfNumberType val) {
-		typeOfNumber = TypeOfNumber.getInstance(val.intValue());
+		this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().setTypeOfNumber(TypeOfNumber.getInstance(val.intValue()));
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public NumberingPlanIdentificationType getNumberingPlanIdentification() {
-		return new NumberingPlanIdentificationType(numberingPlanIdentification.getCode());
+		return new NumberingPlanIdentificationType(this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getNumberingPlanIdentification().getCode());
 	}
 
 	@Override
 	public String getNumberingPlanIdentification_Value() {
-		return numberingPlanIdentification.toString();
+		return new NumberingPlanIdentificationType(this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getNumberingPlanIdentification()
+				.getCode()).toString();
 	}
 
 	@Override
 	public void setNumberingPlanIdentification(NumberingPlanIdentificationType val) {
-		numberingPlanIdentification = NumberingPlanIdentification.getInstance(val.intValue());
+		this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().setNumberingPlanIdentification(NumberingPlanIdentification.getInstance(val.intValue()));
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public SmsCodingType getSmsCodingType() {
-		return smsCodingType;
+		return this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getSmsCodingType();
 	}
 
 	@Override
 	public String getSmsCodingType_Value() {
-		return smsCodingType.toString();
+		return this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getSmsCodingType().toString();
 	}
 
 	@Override
 	public void setSmsCodingType(SmsCodingType val) {
-		smsCodingType = val;
+		this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().setSmsCodingType(val);
 		this.testerHost.markStore();
 	}
 
@@ -297,7 +273,7 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 
 	@Override
 	public void putNumberingPlan(String val) {
-		NumberingPlanType x = NumberingPlanType.createInstance(val);
+		NumberingPlanMapType x = NumberingPlanMapType.createInstance(val);
 		if (x != null)
 			this.setNumberingPlan(x);
 	}
@@ -329,45 +305,6 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 		if (x != null)
 			this.setSmsCodingType(x);
 	}
-
-	protected static final XMLFormat<TestSmsClientMan> XML = new XMLFormat<TestSmsClientMan>(TestSmsClientMan.class) {
-
-		public void write(TestSmsClientMan srv, OutputElement xml) throws XMLStreamException {
-			xml.setAttribute(SMSC_SSN, srv.smscSsn);
-
-			xml.add(srv.serviceCenterAddress, SERVICE_CENTER_ADDRESS);
-			xml.add(srv.sriResponseImsi, SRI_RESPONSE_IMSI);
-			xml.add(srv.sriResponseVlr, SRI_RESPONSE_VLR);
-
-			xml.add(srv.addressNature.toString(), ADDRESS_NATURE);
-			xml.add(srv.numberingPlan.toString(), NUMBERING_PLAN);
-			xml.add(srv.mapProtocolVersion.toString(), MAP_PROTOCOL_VERSION);
-			xml.add(srv.typeOfNumber.toString(), TYPE_OF_NUMBER);
-			xml.add(srv.numberingPlanIdentification.toString(), NUMBERING_PLAN_IDENTIFICATION);
-			xml.add(srv.smsCodingType.toString(), SMS_CODING_TYPE);
-		}
-
-		public void read(InputElement xml, TestSmsClientMan srv) throws XMLStreamException {
-			srv.smscSsn = xml.getAttribute(SMSC_SSN).toInt();
-
-			srv.serviceCenterAddress = (String) xml.get(SERVICE_CENTER_ADDRESS, String.class);
-			srv.sriResponseImsi = (String) xml.get(SRI_RESPONSE_IMSI, String.class);
-			srv.sriResponseVlr = (String) xml.get(SRI_RESPONSE_VLR, String.class);
-
-			String an = (String) xml.get(ADDRESS_NATURE, String.class);
-			srv.addressNature = AddressNature.valueOf(an);
-			String np = (String) xml.get(NUMBERING_PLAN, String.class);
-			srv.numberingPlan = NumberingPlan.valueOf(np);
-			String mpv = (String) xml.get(MAP_PROTOCOL_VERSION, String.class);
-			srv.mapProtocolVersion = MapProtocolVersion.createInstance(mpv);
-			String ton = (String) xml.get(TYPE_OF_NUMBER, String.class);
-			srv.typeOfNumber = TypeOfNumber.valueOf(ton);
-			String npi = (String) xml.get(NUMBERING_PLAN_IDENTIFICATION, String.class);
-			srv.numberingPlanIdentification = NumberingPlanIdentification.valueOf(npi);
-			String sct = (String) xml.get(SMS_CODING_TYPE, String.class);
-			srv.smsCodingType = SmsCodingType.createInstance(sct);
-		}
-	};
 
 
 	@Override
@@ -439,7 +376,7 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 			return "DestIsdnNumber is empty";
 		if (origIsdnNumber == null || origIsdnNumber.equals(""))
 			return "OrigIsdnNumber is empty";
-		int maxMsgLen = this.smsCodingType.getSupportesMaxMessageLength();
+		int maxMsgLen = this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getSmsCodingType().getSupportesMaxMessageLength();
 		if (msg.length() > maxMsgLen)
 			return "Simulator does not support message length for current encoding type more than " + maxMsgLen;
 
@@ -454,7 +391,7 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 
 		MAPApplicationContextVersion vers;
 		MAPApplicationContextName acn = MAPApplicationContextName.shortMsgMORelayContext;
-		switch(this.mapProtocolVersion.intValue()){
+		switch (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getMapProtocolVersion().intValue()) {
 		case MapProtocolVersion.VAL_MAP_V1:
 			vers = MAPApplicationContextVersion.version1;
 			break;
@@ -467,24 +404,32 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 		}
 		MAPApplicationContext mapAppContext = MAPApplicationContext.getInstance(acn, vers);
 
-		AddressString serviceCentreAddressDA = mapProvider.getMAPParameterFactory().createAddressString(this.addressNature, this.numberingPlan, serviceCentreAddr);
+		AddressString serviceCentreAddressDA = mapProvider.getMAPParameterFactory().createAddressString(
+				this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getAddressNature(),
+				this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getNumberingPlan(), serviceCentreAddr);
 		SM_RP_DA da = mapProvider.getMAPParameterFactory().createSM_RP_DA(serviceCentreAddressDA);
-		ISDNAddressString msisdn = mapProvider.getMAPParameterFactory().createISDNAddressString(this.addressNature, this.numberingPlan, origIsdnNumber);
+		ISDNAddressString msisdn = mapProvider.getMAPParameterFactory().createISDNAddressString(
+				this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getAddressNature(),
+				this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getNumberingPlan(), origIsdnNumber);
 		SM_RP_OA oa = mapProvider.getMAPParameterFactory().createSM_RP_OA_Msisdn(msisdn);
 
 		try {
-			AddressField destAddress = new AddressFieldImpl(this.typeOfNumber, this.numberingPlanIdentification, destIsdnNumber);
-			DataCodingScheme dcs = new DataCodingSchemeImpl(this.smsCodingType.intValue() == SmsCodingType.VAL_GSM7 ? 0 : 8);
+			AddressField destAddress = new AddressFieldImpl(this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getTypeOfNumber(),
+					this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getNumberingPlanIdentification(), destIsdnNumber);
+			DataCodingScheme dcs = new DataCodingSchemeImpl(this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getSmsCodingType()
+					.intValue() == SmsCodingType.VAL_GSM7 ? 0 : 8);
 			UserData userData = new UserDataImpl(msg, dcs, null, null);
 			ProtocolIdentifier pi = new ProtocolIdentifierImpl(0);
-			ValidityPeriod validityPeriod = new ValidityPeriodImpl(169); // 3 days
+			ValidityPeriod validityPeriod = new ValidityPeriodImpl(169); // 3
+																			// days
 			SmsSubmitTpdu tpdu = new SmsSubmitTpduImpl(false, false, false, ++mesRef, destAddress, pi, validityPeriod, userData);
 			SmsSignalInfo si = mapProvider.getMAPParameterFactory().createSmsSignalInfo(tpdu, null);
 
 			MAPDialogSms curDialog = mapProvider.getMAPServiceSms().createNewDialog(mapAppContext, this.mapMan.createOrigAddress(), null,
-					this.mapMan.createDestAddress(serviceCentreAddr, this.smscSsn), null);
+					this.mapMan.createDestAddress(serviceCentreAddr, this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getSmscSsn()),
+					null);
 
-			if (this.mapProtocolVersion.intValue() <= 2)
+			if (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getMapProtocolVersion().intValue() <= 2)
 				curDialog.addForwardShortMessageRequest(da, oa, si, false);
 			else
 				curDialog.addMoForwardShortMessageRequest(da, oa, si, null, null);
@@ -671,39 +616,16 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 		MAPDialogSms curDialog = ind.getMAPDialog();
 		long invokeId = ind.getInvokeId();
 
-//		MAPUserAbortChoiceImpl choice = new MAPUserAbortChoiceImpl();
-//		choice.setUserResourceLimitation();
-//		try {
-//			curDialog.abort(choice);
-//		} catch (MAPException e1) {
-//			e1.printStackTrace();
-//		}
-
-
-//		MAPErrorMessage err = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageFacilityNotSup(null, true, false);
-//		try {
-//			curDialog.sendErrorComponent(invokeId, err);
-//		} catch (MAPException e) {
-//			e.printStackTrace();
-//		}
-
-//		Problem prb = mapProvider.getMAPParameterFactory().createProblemGeneral(GeneralProblemType.MistypedComponent);
-//		try {
-//			curDialog.sendRejectComponent(invokeId, prb);
-//		} catch (MAPException e) {
-//			e.printStackTrace();
-//		}
-//		
-//		this.needSendClose = true;
-//		return;
-
-
 		String uData = this.createSriData(curDialog.getLocalDialogId(), ind.getMsisdn().getAddress(), ind.getServiceCentreAddress().getAddress());
 		this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: sriReq", uData, Level.DEBUG);
 
 
-		IMSI imsi = mapProvider.getMAPParameterFactory().createIMSI(this.sriResponseImsi);
-		ISDNAddressString networkNodeNumber = mapProvider.getMAPParameterFactory().createISDNAddressString(this.addressNature, this.numberingPlan, this.sriResponseVlr);
+		IMSI imsi = mapProvider.getMAPParameterFactory().createIMSI(
+				this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getSriResponseImsi());
+		ISDNAddressString networkNodeNumber = mapProvider.getMAPParameterFactory().createISDNAddressString(
+				this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getAddressNature(),
+				this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getNumberingPlan(),
+				this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getSriResponseVlr());
 		LocationInfoWithLMSI li = mapProvider.getMAPParameterFactory().createLocationInfoWithLMSI(networkNodeNumber, null, null, null, null);
 
 		try {
@@ -711,7 +633,8 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 			this.needSendClose = true;
 
 			this.countSriResp++;
-			uData = this.createSriRespData(curDialog.getLocalDialogId(), this.sriResponseImsi, this.sriResponseVlr);
+			uData = this.createSriRespData(curDialog.getLocalDialogId(), this.testerHost.getConfigurationData().getTestSmsClientConfigurationData()
+					.getSriResponseImsi(), this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getSriResponseVlr());
 			this.testerHost.sendNotif(SOURCE_NAME, "Sent: sriResp", uData, Level.DEBUG);
 		} catch (MAPException e) {
 			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking addSendRoutingInfoForSMResponse() : " + e.getMessage(), e, Level.ERROR);

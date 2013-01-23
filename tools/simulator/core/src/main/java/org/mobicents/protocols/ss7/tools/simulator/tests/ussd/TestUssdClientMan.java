@@ -23,9 +23,6 @@
 package org.mobicents.protocols.ss7.tools.simulator.tests.ussd;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import javolution.xml.XMLFormat;
-import javolution.xml.stream.XMLStreamException;
-
 import org.apache.log4j.Level;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
@@ -54,9 +51,9 @@ import org.mobicents.protocols.ss7.map.dialog.MAPUserAbortChoiceImpl;
 import org.mobicents.protocols.ss7.map.primitives.AlertingPatternImpl;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
-import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
 import org.mobicents.protocols.ss7.tools.simulator.common.TesterBase;
 import org.mobicents.protocols.ss7.tools.simulator.level3.MapMan;
+import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
 
 /**
  * 
@@ -66,27 +63,6 @@ import org.mobicents.protocols.ss7.tools.simulator.level3.MapMan;
 public class TestUssdClientMan extends TesterBase implements TestUssdClientManMBean, Stoppable, MAPDialogListener, MAPServiceSupplementaryListener {
 
 	public static String SOURCE_NAME = "TestUssdClient";
-
-	private static final String MSISDN_ADDRESS = "msisdnAddress";
-	private static final String MSISDN_ADDRESS_NATURE = "msisdnAddressNature";
-	private static final String MSISDN_NUMBERING_PLAN = "msisdnNumberingPlan";
-	private static final String DATA_CODING_SCHEME = "dataCodingScheme";
-	private static final String ALERTING_PATTERN = "alertingPattern";
-	private static final String USSD_CLIENT_ACTION = "ussdClientAction";
-	private static final String AUTO_REQUEST_STRING = "autoRequestString";
-	private static final String MAX_CONCURENT_DIALOGS = "maxConcurrentDialogs";
-	private static final String ONE_NOTIFICATION_FOR_100_DIALOGS = "oneNotificationFor100Dialogs";
-
-	private String msisdnAddress = "";
-	private AddressNature msisdnAddressNature = AddressNature.international_number;
-	private NumberingPlan msisdnNumberingPlan = NumberingPlan.ISDN;
-	private int dataCodingScheme = 0x0F;
-	private int alertingPattern = -1;
-
-	private UssdClientAction ussdClientAction = new UssdClientAction(UssdClientAction.VAL_MANUAL_OPERATION);
-	private String autoRequestString = "???";
-	private int maxConcurrentDialogs = 10;
-	private boolean oneNotificationFor100Dialogs = false;
 
 	private final String name;
 //	private TesterHost testerHost;
@@ -125,116 +101,117 @@ public class TestUssdClientMan extends TesterBase implements TestUssdClientManMB
 
 	@Override
 	public String getMsisdnAddress() {
-		return msisdnAddress;
+		return this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getMsisdnAddress();
 	}
 
 	@Override
 	public void setMsisdnAddress(String val) {
-		msisdnAddress = val;
+		this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().setMsisdnAddress(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public AddressNatureType getMsisdnAddressNature() {
-		return new AddressNatureType(msisdnAddressNature.getIndicator());
+		return new AddressNatureType(this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getMsisdnAddressNature().getIndicator());
 	}
 
 	@Override
 	public String getMsisdnAddressNature_Value() {
-		return msisdnAddressNature.toString();
+		return new AddressNatureType(this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getMsisdnAddressNature().getIndicator()).toString();
 	}
 
 	@Override
 	public void setMsisdnAddressNature(AddressNatureType val) {
-		msisdnAddressNature = AddressNature.getInstance(val.intValue());
+		this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().setMsisdnAddressNature(AddressNature.getInstance(val.intValue()));
 		this.testerHost.markStore();
 	}
 
 	@Override
-	public NumberingPlanType getMsisdnNumberingPlan() {
-		return new NumberingPlanType(msisdnNumberingPlan.getIndicator());
+	public NumberingPlanMapType getMsisdnNumberingPlan() {
+		return new NumberingPlanMapType(this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getMsisdnNumberingPlan().getIndicator());
 	}
 
 	@Override
 	public String getMsisdnNumberingPlan_Value() {
-		return msisdnNumberingPlan.toString();
+		return new NumberingPlanMapType(this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getMsisdnNumberingPlan().getIndicator())
+				.toString();
 	}
 
 	@Override
-	public void setMsisdnNumberingPlan(NumberingPlanType val) {
-		msisdnNumberingPlan = NumberingPlan.getInstance(val.intValue());
+	public void setMsisdnNumberingPlan(NumberingPlanMapType val) {
+		this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().setMsisdnNumberingPlan(NumberingPlan.getInstance(val.intValue()));
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public int getDataCodingScheme() {
-		return dataCodingScheme;
+		return this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getDataCodingScheme();
 	}
 
 	@Override
 	public void setDataCodingScheme(int val) {
-		dataCodingScheme = val;
+		this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().setDataCodingScheme(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public int getAlertingPattern() {
-		return alertingPattern;
+		return this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getAlertingPattern();
 	}
 
 	@Override
 	public void setAlertingPattern(int val) {
-		alertingPattern = val;
+		this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().setAlertingPattern(val);
 		this.testerHost.markStore();
 	}
 
 
 	@Override
 	public UssdClientAction getUssdClientAction() {
-		return ussdClientAction;
+		return this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getUssdClientAction();
 	}
 
 	@Override
 	public String getUssdClientAction_Value() {
-		return ussdClientAction.toString();
+		return this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getUssdClientAction().toString();
 	}
 
 	@Override
 	public void setUssdClientAction(UssdClientAction val) {
-		ussdClientAction = val;
+		this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().setUssdClientAction(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public String getAutoRequestString() {
-		return autoRequestString;
+		return this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getAutoRequestString();
 	}
 
 	@Override
 	public void setAutoRequestString(String val) {
-		autoRequestString = val;
+		this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().setAutoRequestString(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public int getMaxConcurrentDialogs() {
-		return maxConcurrentDialogs;
+		return this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getMaxConcurrentDialogs();
 	}
 
 	@Override
 	public void setMaxConcurrentDialogs(int val) {
-		maxConcurrentDialogs = val;
+		this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().setMaxConcurrentDialogs(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public boolean isOneNotificationFor100Dialogs() {
-		return oneNotificationFor100Dialogs;
+		return this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().isOneNotificationFor100Dialogs();
 	}
 
 	@Override
 	public void setOneNotificationFor100Dialogs(boolean val) {
-		oneNotificationFor100Dialogs = val;
+		this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().setOneNotificationFor100Dialogs(val);
 		this.testerHost.markStore();
 	}
 	
@@ -248,7 +225,7 @@ public class TestUssdClientMan extends TesterBase implements TestUssdClientManMB
 
 	@Override
 	public void putMsisdnNumberingPlan(String val) {
-		NumberingPlanType x = NumberingPlanType.createInstance(val);
+		NumberingPlanMapType x = NumberingPlanMapType.createInstance(val);
 		if (x != null)
 			this.setMsisdnNumberingPlan(x);
 	}
@@ -302,7 +279,7 @@ public class TestUssdClientMan extends TesterBase implements TestUssdClientManMB
 		this.testerHost.sendNotif(SOURCE_NAME, "USSD Client has been started", "", Level.INFO);
 		isStarted = true;
 		
-		if (ussdClientAction.intValue() == UssdClientAction.VAL_AUTO_SendProcessUnstructuredSSRequest) {
+		if (this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getUssdClientAction().intValue() == UssdClientAction.VAL_AUTO_SendProcessUnstructuredSSRequest) {
 			nbConcurrentDialogs = new AtomicInteger();
 			this.sender = new MessageSender();
 			Thread thr = new Thread(this.sender);
@@ -346,7 +323,7 @@ public class TestUssdClientMan extends TesterBase implements TestUssdClientManMB
 		if (!isStarted)
 			return "The tester is not started";
 		if (this.sender != null)
-			return "The tester is not ion manual mode";
+			return "The tester is not in a manual mode";
 
 		MAPDialogSupplementary curDialog = currentDialog;
 		if (curDialog != null) {
@@ -385,15 +362,16 @@ public class TestUssdClientMan extends TesterBase implements TestUssdClientManMB
 
 		currentRequestDef = "";
 
-		return this.doPerformProcessUnstructuredRequest(msg, true);		
+		return this.doPerformProcessUnstructuredRequest(msg, true);
 	}
 
 	private String doPerformProcessUnstructuredRequest(String msg, boolean manualMode) {
-		
+
 		MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
 		USSDString ussdString = null;
 		try {
-			ussdString = mapProvider.getMAPParameterFactory().createUSSDString(msg, new CBSDataCodingSchemeImpl(this.dataCodingScheme), null);
+			ussdString = mapProvider.getMAPParameterFactory().createUSSDString(msg,
+					new CBSDataCodingSchemeImpl(this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getDataCodingScheme()), null);
 		} catch (MAPException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -409,28 +387,36 @@ public class TestUssdClientMan extends TesterBase implements TestUssdClientManMB
 			invokeId = null;
 
 			ISDNAddressString msisdn = null;
-			if (this.msisdnAddress != null && !this.msisdnAddress.equals("")) {
-				msisdn = mapProvider.getMAPParameterFactory().createISDNAddressString(this.msisdnAddressNature, this.msisdnNumberingPlan, this.msisdnAddress);
+			if (this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getMsisdnAddress() != null
+					&& !this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getMsisdnAddress().equals("")) {
+				msisdn = mapProvider.getMAPParameterFactory().createISDNAddressString(
+						this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getMsisdnAddressNature(),
+						this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getMsisdnNumberingPlan(),
+						this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getMsisdnAddress());
 			}
 
 			AlertingPattern alPattern = null;
-			if (this.alertingPattern >= 0 && this.alertingPattern <= 255)
-				alPattern = new AlertingPatternImpl(new byte[] { (byte) this.alertingPattern });
-			curDialog.addProcessUnstructuredSSRequest(new CBSDataCodingSchemeImpl(this.dataCodingScheme), ussdString, alPattern, msisdn);
+			if (this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getAlertingPattern() >= 0
+					&& this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getAlertingPattern() <= 255)
+				alPattern = new AlertingPatternImpl(new byte[] { (byte) this.testerHost.getConfigurationData().getTestUssdClientConfigurationData()
+						.getAlertingPattern() });
+			curDialog.addProcessUnstructuredSSRequest(new CBSDataCodingSchemeImpl(this.testerHost.getConfigurationData().getTestUssdClientConfigurationData()
+					.getDataCodingScheme()), ussdString, alPattern, msisdn);
 
 			curDialog.send();
 
 			if (manualMode)
 				currentRequestDef += "Sent procUnstrSsReq=\"" + msg + "\";";
 			this.countProcUnstReq++;
-			if (this.oneNotificationFor100Dialogs) {
+			if (this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().isOneNotificationFor100Dialogs()) {
 				int i1 = countProcUnstReq / 100;
 				if (countProcUnstReqNot < i1) {
 					countProcUnstReqNot = i1;
 					this.testerHost.sendNotif(SOURCE_NAME, "Sent: procUnstrSsReq: " + (countProcUnstReqNot * 100) + " messages sent", "", Level.DEBUG);
 				}
 			} else {
-				String uData = this.createUssdMessageData(curDialog.getLocalDialogId(), this.dataCodingScheme, msisdn, alPattern);
+				String uData = this.createUssdMessageData(curDialog.getLocalDialogId(), this.testerHost.getConfigurationData()
+						.getTestUssdClientConfigurationData().getDataCodingScheme(), msisdn, alPattern);
 				this.testerHost.sendNotif(SOURCE_NAME, "Sent: procUnstrSsReq: " + msg, uData, Level.DEBUG);
 			}
 
@@ -458,40 +444,6 @@ public class TestUssdClientMan extends TesterBase implements TestUssdClientManMB
 		return sb.toString();
 	}
 
-	protected static final XMLFormat<TestUssdClientMan> XML = new XMLFormat<TestUssdClientMan>(TestUssdClientMan.class) {
-
-		public void write(TestUssdClientMan clt, OutputElement xml) throws XMLStreamException {
-			xml.setAttribute(DATA_CODING_SCHEME, clt.dataCodingScheme);
-			xml.setAttribute(ALERTING_PATTERN, clt.alertingPattern);
-			xml.setAttribute(MAX_CONCURENT_DIALOGS, clt.maxConcurrentDialogs);
-			xml.setAttribute(ONE_NOTIFICATION_FOR_100_DIALOGS, clt.oneNotificationFor100Dialogs);
-
-			xml.add(clt.msisdnAddress, MSISDN_ADDRESS);
-			xml.add(clt.msisdnAddressNature.toString(), MSISDN_ADDRESS_NATURE);
-			xml.add(clt.msisdnNumberingPlan.toString(), MSISDN_NUMBERING_PLAN);
-			
-			xml.add(clt.ussdClientAction.toString(), USSD_CLIENT_ACTION);
-			xml.add(clt.autoRequestString, AUTO_REQUEST_STRING);
-		}
-
-		public void read(InputElement xml, TestUssdClientMan clt) throws XMLStreamException {
-			clt.dataCodingScheme = xml.getAttribute(DATA_CODING_SCHEME).toInt();
-			clt.alertingPattern = xml.getAttribute(ALERTING_PATTERN).toInt();
-			clt.maxConcurrentDialogs = xml.getAttribute(MAX_CONCURENT_DIALOGS).toInt();
-			clt.oneNotificationFor100Dialogs = xml.getAttribute(ONE_NOTIFICATION_FOR_100_DIALOGS).toBoolean();
-
-			clt.msisdnAddress = (String) xml.get(MSISDN_ADDRESS, String.class);
-			String an = (String) xml.get(MSISDN_ADDRESS_NATURE, String.class);
-			clt.msisdnAddressNature = AddressNature.valueOf(an);
-			String np = (String) xml.get(MSISDN_NUMBERING_PLAN, String.class);
-			clt.msisdnNumberingPlan = NumberingPlan.valueOf(np);
-
-			String uca = (String) xml.get(USSD_CLIENT_ACTION, String.class);
-			clt.ussdClientAction = UssdClientAction.createInstance(uca);
-			clt.autoRequestString = (String) xml.get(AUTO_REQUEST_STRING, String.class);
-		}
-	};
-
 	@Override
 	public String performUnstructuredResponse(String msg) {
 		if (!isStarted)
@@ -510,14 +462,16 @@ public class TestUssdClientMan extends TesterBase implements TestUssdClientManMB
 			return "USSD message is empty";
 		USSDString ussdString = null;
 		try {
-			ussdString = mapProvider.getMAPParameterFactory().createUSSDString(msg, new CBSDataCodingSchemeImpl(this.dataCodingScheme), null);
+			ussdString = mapProvider.getMAPParameterFactory().createUSSDString(msg,
+					new CBSDataCodingSchemeImpl(this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getDataCodingScheme()), null);
 		} catch (MAPException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		try {
-			curDialog.addUnstructuredSSResponse(invokeId, new CBSDataCodingSchemeImpl(this.dataCodingScheme), ussdString);
+			curDialog.addUnstructuredSSResponse(invokeId, new CBSDataCodingSchemeImpl(this.testerHost.getConfigurationData()
+					.getTestUssdClientConfigurationData().getDataCodingScheme()), ussdString);
 
 			curDialog.send();
 
@@ -525,13 +479,14 @@ public class TestUssdClientMan extends TesterBase implements TestUssdClientManMB
 
 			currentRequestDef += "Sent unstrSsResp=\"" + msg + "\";";
 			this.countUnstResp++;
-			String uData = this.createUssdMessageData(curDialog.getLocalDialogId(), this.dataCodingScheme, null, null);
+			String uData = this.createUssdMessageData(curDialog.getLocalDialogId(), this.testerHost.getConfigurationData().getTestUssdClientConfigurationData()
+					.getDataCodingScheme(), null, null);
 			this.testerHost.sendNotif(SOURCE_NAME, "Sent: unstrSsResp: " + msg, uData, Level.DEBUG);
-			
+
 			return "UnstructuredSSResponse has been sent";
 		} catch (MAPException ex) {
 			return "Exception when sending UnstructuredSSResponse: " + ex.toString();
-		}		
+		}
 	}
 
 
@@ -565,7 +520,7 @@ public class TestUssdClientMan extends TesterBase implements TestUssdClientManMB
 		}
 
 		this.countProcUnstResp++;
-		if (!this.oneNotificationFor100Dialogs) {
+		if (!this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().isOneNotificationFor100Dialogs()) {
 			String uData = this.createUssdMessageData(ind.getMAPDialog().getLocalDialogId(), ind.getDataCodingScheme().getCode(), null, null);
 			try {
 				this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: procUnstrSsResp: " + ind.getUSSDString().getString(null), uData, Level.DEBUG);
@@ -668,7 +623,7 @@ public class TestUssdClientMan extends TesterBase implements TestUssdClientManMB
 
 		nbConcurrentDialogs.decrementAndGet();
 		if (this.sender != null) {
-			if (nbConcurrentDialogs.get() < maxConcurrentDialogs / 2)
+			if (nbConcurrentDialogs.get() < this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getMaxConcurrentDialogs() / 2)
 				this.sender.notify();
 		}
 	}
@@ -694,12 +649,12 @@ public class TestUssdClientMan extends TesterBase implements TestUssdClientManMB
 				if (needStop)
 					break;
 
-				if (nbConcurrentDialogs.get() < maxConcurrentDialogs) {
-					doPerformProcessUnstructuredRequest(autoRequestString, false);
+				if (nbConcurrentDialogs.get() < testerHost.getConfigurationData().getTestUssdClientConfigurationData().getMaxConcurrentDialogs()) {
+					doPerformProcessUnstructuredRequest(testerHost.getConfigurationData().getTestUssdClientConfigurationData().getAutoRequestString(), false);
 					nbConcurrentDialogs.incrementAndGet();
 				}
 
-				if (nbConcurrentDialogs.get() >= maxConcurrentDialogs) {
+				if (nbConcurrentDialogs.get() >= testerHost.getConfigurationData().getTestUssdClientConfigurationData().getMaxConcurrentDialogs()) {
 					try {
 						this.wait(100);
 					} catch (Exception ex) {

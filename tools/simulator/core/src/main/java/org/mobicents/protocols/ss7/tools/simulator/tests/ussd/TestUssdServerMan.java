@@ -24,9 +24,6 @@ package org.mobicents.protocols.ss7.tools.simulator.tests.ussd;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import javolution.xml.XMLFormat;
-import javolution.xml.stream.XMLStreamException;
-
 import org.apache.log4j.Level;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
@@ -55,9 +52,9 @@ import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.map.primitives.AlertingPatternImpl;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
-import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
 import org.mobicents.protocols.ss7.tools.simulator.common.TesterBase;
 import org.mobicents.protocols.ss7.tools.simulator.level3.MapMan;
+import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
 
 /**
@@ -68,26 +65,6 @@ import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
 public class TestUssdServerMan extends TesterBase implements TestUssdServerManMBean, Stoppable, MAPDialogListener, MAPServiceSupplementaryListener {
 
 	public static String SOURCE_NAME = "TestUssdServer";
-
-	private static final String MSISDN_ADDRESS = "msisdnAddress";
-	private static final String MSISDN_ADDRESS_NATURE = "msisdnAddressNature";
-	private static final String MSISDN_NUMBERING_PLAN = "msisdnNumberingPlan";
-	private static final String DATA_CODING_SCHEME = "dataCodingScheme";
-	private static final String ALERTING_PATTERN = "alertingPattern";
-	private static final String PROCESS_SS_REQUEST_ACTION = "processSsRequestAction";
-	private static final String AUTO_RESPONSE_STRING = "autoResponseString";
-	private static final String AUTO_UNSTRUCTURED_SS_REQUEST_STRING = "autoUnstructured_SS_RequestString";
-	private static final String ONE_NOTIFICATION_FOR_100_DIALOGS = "oneNotificationFor100Dialogs";
-
-	private String msisdnAddress = "";
-	private AddressNature msisdnAddressNature = AddressNature.international_number;
-	private NumberingPlan msisdnNumberingPlan = NumberingPlan.ISDN;
-	private int dataCodingScheme = 0x0F;
-	private int alertingPattern = -1;
-	private ProcessSsRequestAction processSsRequestAction = new ProcessSsRequestAction(ProcessSsRequestAction.VAL_MANUAL_RESPONSE);
-	private String autoResponseString = "";
-	private String autoUnstructured_SS_RequestString = "";
-	private boolean oneNotificationFor100Dialogs = false;
 
 	private final String name;
 //	private TesterHost testerHost;
@@ -128,115 +105,115 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 
 	@Override
 	public String getMsisdnAddress() {
-		return msisdnAddress;
+		return this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getMsisdnAddress();
 	}
 
 	@Override
 	public void setMsisdnAddress(String val) {
-		msisdnAddress = val;
+		this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().setMsisdnAddress(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public AddressNatureType getMsisdnAddressNature() {
-		return new AddressNatureType(msisdnAddressNature.getIndicator());
+		return new AddressNatureType(this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getMsisdnAddressNature().getIndicator());
 	}
 
 	@Override
 	public String getMsisdnAddressNature_Value() {
-		return msisdnAddressNature.toString();
+		return new AddressNatureType(this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getMsisdnAddressNature().getIndicator()).toString();
 	}
 
 	@Override
 	public void setMsisdnAddressNature(AddressNatureType val) {
-		msisdnAddressNature = AddressNature.getInstance(val.intValue());
+		this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().setMsisdnAddressNature(AddressNature.getInstance(val.intValue()));
 		this.testerHost.markStore();
 	}
 
 	@Override
-	public NumberingPlanType getMsisdnNumberingPlan() {
-		return new NumberingPlanType(msisdnNumberingPlan.getIndicator());
+	public NumberingPlanMapType getMsisdnNumberingPlan() {
+		return new NumberingPlanMapType(this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getMsisdnNumberingPlan().getIndicator());
 	}
 
 	@Override
 	public String getMsisdnNumberingPlan_Value() {
-		return msisdnNumberingPlan.toString();
+		return new NumberingPlanMapType(this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getMsisdnNumberingPlan().getIndicator()).toString();
 	}
 
 	@Override
-	public void setMsisdnNumberingPlan(NumberingPlanType val) {
-		msisdnNumberingPlan = NumberingPlan.getInstance(val.intValue());
+	public void setMsisdnNumberingPlan(NumberingPlanMapType val) {
+		this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().setMsisdnNumberingPlan(NumberingPlan.getInstance(val.intValue()));
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public int getDataCodingScheme() {
-		return dataCodingScheme;
+		return this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getDataCodingScheme();
 	}
 
 	@Override
 	public void setDataCodingScheme(int val) {
-		dataCodingScheme = val;
+		this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().setDataCodingScheme(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public int getAlertingPattern() {
-		return alertingPattern;
+		return this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getAlertingPattern();
 	}
 
 	@Override
 	public void setAlertingPattern(int val) {
-		alertingPattern = val;
+		this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().setAlertingPattern(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public ProcessSsRequestAction getProcessSsRequestAction() {
-		return processSsRequestAction;
+		return this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getProcessSsRequestAction();
 	}
 
 	@Override
 	public String getProcessSsRequestAction_Value() {
-		return processSsRequestAction.toString();
+		return this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getProcessSsRequestAction().toString();
 	}
 
 	@Override
 	public void setProcessSsRequestAction(ProcessSsRequestAction val) {
-		processSsRequestAction = val;
+		this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().setProcessSsRequestAction(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public String getAutoResponseString() {
-		return autoResponseString;
+		return this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getAutoResponseString();
 	}
 
 	@Override
 	public void setAutoResponseString(String val) {
-		autoResponseString = val;
+		this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().setAutoResponseString(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public String getAutoUnstructured_SS_RequestString() {
-		return autoUnstructured_SS_RequestString;
+		return this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getAutoUnstructured_SS_RequestString();
 	}
 
 	@Override
 	public void setAutoUnstructured_SS_RequestString(String val) {
-		autoUnstructured_SS_RequestString = val;
+		this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().setAutoUnstructured_SS_RequestString(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public boolean isOneNotificationFor100Dialogs() {
-		return oneNotificationFor100Dialogs;
+		return this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().isOneNotificationFor100Dialogs();
 	}
 
 	@Override
 	public void setOneNotificationFor100Dialogs(boolean val) {
-		oneNotificationFor100Dialogs = val;
+		this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().setOneNotificationFor100Dialogs(val);
 		this.testerHost.markStore();
 	}
 
@@ -249,7 +226,7 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 
 	@Override
 	public void putMsisdnNumberingPlan(String val) {
-		NumberingPlanType x = NumberingPlanType.createInstance(val);
+		NumberingPlanMapType x = NumberingPlanMapType.createInstance(val);
 		if (x != null)
 			this.setMsisdnNumberingPlan(x);
 	}
@@ -377,54 +354,22 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 		return sb.toString();
 	}
 
-	protected static final XMLFormat<TestUssdServerMan> XML = new XMLFormat<TestUssdServerMan>(TestUssdServerMan.class) {
-
-		public void write(TestUssdServerMan srv, OutputElement xml) throws XMLStreamException {
-			xml.setAttribute(DATA_CODING_SCHEME, srv.dataCodingScheme);
-			xml.setAttribute(ALERTING_PATTERN, srv.alertingPattern);
-			xml.setAttribute(ONE_NOTIFICATION_FOR_100_DIALOGS, srv.oneNotificationFor100Dialogs);
-
-			xml.add(srv.msisdnAddress, MSISDN_ADDRESS);
-			xml.add(srv.autoResponseString, AUTO_RESPONSE_STRING);
-			xml.add(srv.autoUnstructured_SS_RequestString, AUTO_UNSTRUCTURED_SS_REQUEST_STRING);
-			
-			xml.add(srv.msisdnAddressNature.toString(), MSISDN_ADDRESS_NATURE);
-			xml.add(srv.msisdnNumberingPlan.toString(), MSISDN_NUMBERING_PLAN);
-			xml.add(srv.processSsRequestAction.toString(), PROCESS_SS_REQUEST_ACTION);
-		}
-
-		public void read(InputElement xml, TestUssdServerMan srv) throws XMLStreamException {
-			srv.dataCodingScheme = xml.getAttribute(DATA_CODING_SCHEME).toInt();
-			srv.alertingPattern = xml.getAttribute(ALERTING_PATTERN).toInt();
-			srv.oneNotificationFor100Dialogs = xml.getAttribute(ONE_NOTIFICATION_FOR_100_DIALOGS).toBoolean();
-
-			srv.msisdnAddress = (String) xml.get(MSISDN_ADDRESS, String.class);
-			srv.autoResponseString = (String) xml.get(AUTO_RESPONSE_STRING, String.class);
-			srv.autoUnstructured_SS_RequestString = (String) xml.get(AUTO_UNSTRUCTURED_SS_REQUEST_STRING, String.class);
-			
-			String an = (String) xml.get(MSISDN_ADDRESS_NATURE, String.class);
-			srv.msisdnAddressNature = AddressNature.valueOf(an);
-			String np = (String) xml.get(MSISDN_NUMBERING_PLAN, String.class);
-			srv.msisdnNumberingPlan = NumberingPlan.valueOf(np);
-			String ss_act = (String) xml.get(PROCESS_SS_REQUEST_ACTION, String.class);
-			srv.processSsRequestAction = ProcessSsRequestAction.createInstance(ss_act);
-		}
-	};
-
 	public String sendProcessUnstructuredResponse(MAPDialogSupplementary curDialog, String msg, long invokeId) {
 
 		MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
 
 		USSDString ussdString = null;
 		try {
-			ussdString = mapProvider.getMAPParameterFactory().createUSSDString(msg, new CBSDataCodingSchemeImpl(this.dataCodingScheme), null);
+			ussdString = mapProvider.getMAPParameterFactory().createUSSDString(msg,
+					new CBSDataCodingSchemeImpl(this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getDataCodingScheme()), null);
 		} catch (MAPException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
 		try {
-			curDialog.addProcessUnstructuredSSResponse(invokeId, new CBSDataCodingSchemeImpl(this.dataCodingScheme), ussdString);
+			curDialog.addProcessUnstructuredSSResponse(invokeId, new CBSDataCodingSchemeImpl(this.testerHost.getConfigurationData()
+					.getTestUssdServerConfigurationData().getDataCodingScheme()), ussdString);
 		} catch (MAPException e) {
 			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking addProcessUnstructuredSSResponse() : " + e.getMessage(), e, Level.ERROR);
 			return "Exception when sending ProcessUnstructuredSSResponse: " + e.toString();
@@ -436,14 +381,15 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 			dd.currentRequestDef = currentRequestDef;
 		}
 		this.countProcUnstResp++;
-		if (this.oneNotificationFor100Dialogs) {
+		if (this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().isOneNotificationFor100Dialogs()) {
 			int i1 = countProcUnstResp / 100;
 			if (countProcUnstRespNot < i1) {
 				countProcUnstRespNot = i1;
 				this.testerHost.sendNotif(SOURCE_NAME, "Sent: procUnstrSsResp: " + (countProcUnstRespNot * 100) + " messages sent", "", Level.DEBUG);
 			}
 		} else {
-			String uData = this.createUssdMessageData(curDialog.getLocalDialogId(), this.dataCodingScheme, null, null);
+			String uData = this.createUssdMessageData(curDialog.getLocalDialogId(), this.testerHost.getConfigurationData().getTestUssdServerConfigurationData()
+					.getDataCodingScheme(), null, null);
 			this.testerHost.sendNotif(SOURCE_NAME, "Sent: procUnstrSsResp: " + msg, uData, Level.DEBUG);
 		}
 
@@ -456,21 +402,29 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 
 		USSDString ussdString = null;
 		try {
-			ussdString = mapProvider.getMAPParameterFactory().createUSSDString(msg, new CBSDataCodingSchemeImpl(this.dataCodingScheme), null);
+			ussdString = mapProvider.getMAPParameterFactory().createUSSDString(msg,
+					new CBSDataCodingSchemeImpl(this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getDataCodingScheme()), null);
 		} catch (MAPException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		ISDNAddressString msisdn = null;
-		if (this.msisdnAddress != null && !this.msisdnAddress.equals("")) {
-			msisdn = mapProvider.getMAPParameterFactory().createISDNAddressString(this.msisdnAddressNature, this.msisdnNumberingPlan, this.msisdnAddress);
+		if (this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getMsisdnAddress() != null
+				&& !this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getMsisdnAddress().equals("")) {
+			msisdn = mapProvider.getMAPParameterFactory().createISDNAddressString(
+					this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getMsisdnAddressNature(),
+					this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getMsisdnNumberingPlan(),
+					this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getMsisdnAddress());
 		}
 		AlertingPattern alPattern = null;
-		if (this.alertingPattern >= 0 && this.alertingPattern <= 255)
-			alPattern = new AlertingPatternImpl(new byte[] { (byte) this.alertingPattern });
+		if (this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getAlertingPattern() >= 0
+				&& this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getAlertingPattern() <= 255)
+			alPattern = new AlertingPatternImpl(new byte[] { (byte) this.testerHost.getConfigurationData().getTestUssdServerConfigurationData()
+					.getAlertingPattern() });
 
 		try {
-			curDialog.addUnstructuredSSRequest(new CBSDataCodingSchemeImpl(this.dataCodingScheme), ussdString, alPattern, msisdn);
+			curDialog.addUnstructuredSSRequest(new CBSDataCodingSchemeImpl(this.testerHost.getConfigurationData().getTestUssdServerConfigurationData()
+					.getDataCodingScheme()), ussdString, alPattern, msisdn);
 		} catch (MAPException e) {
 			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking addUnstructuredSSRequest() : " + e.getMessage(), e, Level.ERROR);
 			return "Exception when sending UnstructuredSSRequest: " + e.toString();
@@ -482,7 +436,8 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 			dd.currentRequestDef = currentRequestDef;
 		}
 		this.countUnstReq++;
-		String uData = this.createUssdMessageData(curDialog.getLocalDialogId(), this.dataCodingScheme, null, null);
+		String uData = this.createUssdMessageData(curDialog.getLocalDialogId(), this.testerHost.getConfigurationData().getTestUssdServerConfigurationData()
+				.getDataCodingScheme(), null, null);
 		this.testerHost.sendNotif(SOURCE_NAME, "Sent: unstrSsReq: " + msg, uData, Level.DEBUG);
 
 		return "UnstructuredSSRequest has been sent";
@@ -538,7 +493,7 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking send() : " + e.getMessage(), e, Level.ERROR);
 		}
 
-		return res;			
+		return res;
 	}
 
 	@Override
@@ -552,7 +507,8 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 
 		USSDString ussdString = null;
 		try {
-			ussdString = mapProvider.getMAPParameterFactory().createUSSDString(msg, new CBSDataCodingSchemeImpl(this.dataCodingScheme), null);
+			ussdString = mapProvider.getMAPParameterFactory().createUSSDString(msg,
+					new CBSDataCodingSchemeImpl(this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getDataCodingScheme()), null);
 		} catch (MAPException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -561,29 +517,37 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 				MAPApplicationContextVersion.version2);
 
 		ISDNAddressString msisdn = null;
-		if (this.msisdnAddress != null && !this.msisdnAddress.equals("")) {
-			msisdn = mapProvider.getMAPParameterFactory().createISDNAddressString(this.msisdnAddressNature, this.msisdnNumberingPlan, this.msisdnAddress);
+		if (this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getMsisdnAddress() != null
+				&& !this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getMsisdnAddress().equals("")) {
+			msisdn = mapProvider.getMAPParameterFactory().createISDNAddressString(
+					this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getMsisdnAddressNature(),
+					this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getMsisdnNumberingPlan(),
+					this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getMsisdnAddress());
 		}
 
 		AlertingPattern alPattern = null;
-		if (this.alertingPattern >= 0 && this.alertingPattern <= 255)
-			alPattern = new AlertingPatternImpl(new byte[] { (byte) this.alertingPattern });
+		if (this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getAlertingPattern() >= 0
+				&& this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getAlertingPattern() <= 255)
+			alPattern = new AlertingPatternImpl(new byte[] { (byte) this.testerHost.getConfigurationData().getTestUssdServerConfigurationData()
+					.getAlertingPattern() });
 
 		try {
 			MAPDialogSupplementary dlg = mapProvider.getMAPServiceSupplementary().createNewDialog(mapUssdAppContext, this.mapMan.createOrigAddress(),
 					this.mapMan.createOrigReference(), this.mapMan.createDestAddress(), this.mapMan.createDestReference());
-			dlg.addUnstructuredSSNotifyRequest(new CBSDataCodingSchemeImpl(this.dataCodingScheme), ussdString, alPattern, msisdn);
+			dlg.addUnstructuredSSNotifyRequest(new CBSDataCodingSchemeImpl(this.testerHost.getConfigurationData().getTestUssdServerConfigurationData()
+					.getDataCodingScheme()), ussdString, alPattern, msisdn);
 
 			dlg.send();
 
 			this.countUnstNotifReq++;
-			String uData = this.createUssdMessageData(dlg.getLocalDialogId(), this.dataCodingScheme, msisdn, alPattern);
+			String uData = this.createUssdMessageData(dlg.getLocalDialogId(), this.testerHost.getConfigurationData().getTestUssdServerConfigurationData()
+					.getDataCodingScheme(), msisdn, alPattern);
 			this.testerHost.sendNotif(SOURCE_NAME, "Sent: unstrSsNotify: " + msg, uData, Level.DEBUG);
 
 			return "UnstructuredSSNotify has been sent";
 		} catch (MAPException ex) {
 			return "Exception when sending UnstructuredSSNotify: " + ex.toString();
-		}		
+		}
 	}
 
 
@@ -617,7 +581,7 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 			pref = "CurDialog: ";
 		}
 		this.countProcUnstReq++;
-		if (!this.oneNotificationFor100Dialogs) {
+		if (!this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().isOneNotificationFor100Dialogs()) {
 			String uData = this.createUssdMessageData(ind.getMAPDialog().getLocalDialogId(), ind.getDataCodingScheme().getCode(), ind.getMSISDNAddressString(),
 					ind.getAlertingPattern());
 			try {
