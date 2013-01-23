@@ -24,9 +24,6 @@ package org.mobicents.protocols.ss7.tools.simulator.level2;
 
 import java.io.IOException;
 
-import javolution.xml.XMLFormat;
-import javolution.xml.stream.XMLStreamException;
-
 import org.apache.log4j.Level;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
@@ -193,8 +190,8 @@ public class SccpMan implements SccpManMBean, Stoppable {
 	}
 
 	@Override
-	public NumberingPlanType getNumberingPlan() {
-		return new NumberingPlanType(this.testerHost.getConfigurationData().getSccpConfigurationData().getNumberingPlan().getValue());
+	public NumberingPlanSccpType getNumberingPlan() {
+		return new NumberingPlanSccpType(this.testerHost.getConfigurationData().getSccpConfigurationData().getNumberingPlan().getValue());
 	}
 
 	@Override
@@ -203,7 +200,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 	}
 
 	@Override
-	public void setNumberingPlan(NumberingPlanType val) {
+	public void setNumberingPlan(NumberingPlanSccpType val) {
 		try {
 			this.testerHost.getConfigurationData().getSccpConfigurationData().setNumberingPlan(NumberingPlan.valueOf(val.intValue()));
 		} catch (IOException e) {
@@ -251,7 +248,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
 
 	@Override
 	public void putNumberingPlan(String val) {
-		NumberingPlanType x = NumberingPlanType.createInstance(val);
+		NumberingPlanSccpType x = NumberingPlanSccpType.createInstance(val);
 		if (x != null)
 			this.setNumberingPlan(x);
 	}

@@ -36,11 +36,14 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.LineBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.JOptionPane;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Date;
 import java.util.Vector;
 import javax.swing.JButton;
 import java.awt.event.WindowAdapter;
@@ -51,9 +54,6 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.Dimension;
 import javax.swing.JScrollPane;
-import java.awt.Dialog.ModalExclusionType;
-import java.awt.Window.Type;
-import java.awt.Dialog.ModalityType;
 
 /**
  * 
@@ -65,6 +65,8 @@ public class TestingForm extends JDialog {
 	private static final long serialVersionUID = -3725574796168603069L;
 
 	private DefaultTableModel model = new DefaultTableModel();
+	private EventForm eventForm;
+	private SimulatorGuiForm mainForm;
 	private javax.swing.Timer tm;
 
 	private JPanel panel;
@@ -87,14 +89,18 @@ public class TestingForm extends JDialog {
 	private JTextField tbL3State;
 	private JLabel lblTestingState;
 	private JLabel lbTestState;
-	
+	private JButton btnOpenEventWindow;
+
 	public TestingForm(JFrame owner) {
 		super(owner, true);
+		setModal(false);
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				if (getDefaultCloseOperation() == JDialog.DO_NOTHING_ON_CLOSE) {
 					JOptionPane.showMessageDialog(getJFrame(), "Before exiting you must Stop the testing process");
+				} else {
+					closingWindow();
 				}
 			}
 		});
@@ -204,6 +210,14 @@ public class TestingForm extends JDialog {
 		
 		btRefresh = new JButton("Refresh state");
 		panel_a_but.add(btRefresh);
+		
+		btnOpenEventWindow = new JButton("Open event window");
+		btnOpenEventWindow.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				openEventWindow();
+			}
+		});
+		panel_a_but.add(btnOpenEventWindow);
 		btRefresh.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				refreshState();
@@ -271,14 +285,40 @@ public class TestingForm extends JDialog {
 		panel_b.add(scrollPane);
 
 		model = (DefaultTableModel) tNotif.getModel();
+
+		tNotif.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+
+				if (e.getValueIsAdjusting())
+					return;
+				if (eventForm == null)
+					return;
+
+				// Номер текущей строки таблицы
+				setEventMsg();
+			}
+		});
 		
 		panel_c = new JPanel();
 		panel.add(panel_c);
 		panel_c.setLayout(new BorderLayout(0, 0));
 	}
+	
+	private void setEventMsg() {
+		ListSelectionModel l = tNotif.getSelectionModel();
+		if (!l.isSelectionEmpty()) {
+			int index = l.getMinSelectionIndex();
+			String s1 = (String) model.getValueAt(index, 0);
+			String s2 = (String) model.getValueAt(index, 1);
+			String s3 = (String) model.getValueAt(index, 2);
+			String s4 = (String) model.getValueAt(index, 3);
+			eventForm.setData(s1, s2, s3, s4);
+		}
+	}
 
-	public void setData(final TesterHostMBean host) {
+	public void setData(SimulatorGuiForm mainForm, final TesterHostMBean host) {
 		this.host = host;
+		this.mainForm = mainForm;
 
 		this.tm = new javax.swing.Timer(5000, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -301,13 +341,34 @@ public class TestingForm extends JDialog {
 	}
 
 	public void sendNotif(Notification notif) {
+		
+		Date d1 = new Date(notif.getTimeStamp());
+		String s1 = d1.toLocaleString();
+		
 		Vector newRow = new Vector();
-		newRow.add(notif.getTimeStamp());
+		newRow.add(s1);
 		newRow.add(notif.getType());
 		newRow.add(notif.getMessage());
 		newRow.add(notif.getUserData());
 		model.getDataVector().add(0,newRow);
 
 		model.newRowsAdded(new TableModelEvent(model));
+	}
+
+	public void eventFormClose() {
+		this.eventForm = null;
+	}
+	
+	private void openEventWindow() {
+		if (this.eventForm != null)
+			return;
+
+		this.eventForm = new EventForm(this);
+		this.eventForm.setVisible(true);
+		setEventMsg();
+	}
+
+	private void closingWindow() {
+		this.mainForm.testingFormClose();
 	}
 }

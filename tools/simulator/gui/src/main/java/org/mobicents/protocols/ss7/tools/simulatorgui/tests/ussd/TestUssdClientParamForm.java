@@ -36,7 +36,7 @@ import javax.swing.JComboBox;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
-import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
+import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.UssdClientAction;
 import org.mobicents.protocols.ss7.tools.simulatorgui.M3uaForm;
@@ -237,7 +237,7 @@ public class TestUssdClientParamForm extends JDialog {
 
 	private void loadDataA() {
 		M3uaForm.setEnumeratedBaseComboBox(cbAddressNature, new AddressNatureType(AddressNature.international_number.getIndicator()));
-		M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, new NumberingPlanType(NumberingPlan.ISDN.getIndicator()));
+		M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, new NumberingPlanMapType(NumberingPlan.ISDN.getIndicator()));
 		M3uaForm.setEnumeratedBaseComboBox(cbUssdClientAction, new UssdClientAction(UssdClientAction.VAL_MANUAL_OPERATION));
 
 		tbMsisdnAddress.setText("");
@@ -278,7 +278,7 @@ public class TestUssdClientParamForm extends JDialog {
 		}
 
 		this.ussdClient.setMsisdnAddressNature((AddressNatureType) cbAddressNature.getSelectedItem());
-		this.ussdClient.setMsisdnNumberingPlan((NumberingPlanType) cbNumberingPlan.getSelectedItem());
+		this.ussdClient.setMsisdnNumberingPlan((NumberingPlanMapType) cbNumberingPlan.getSelectedItem());
 		this.ussdClient.setMsisdnAddress(tbMsisdnAddress.getText());
 		this.ussdClient.setUssdClientAction((UssdClientAction) cbUssdClientAction.getSelectedItem());
 		this.ussdClient.setAutoRequestString(tbAutoRequestString.getText());

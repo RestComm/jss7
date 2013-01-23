@@ -28,8 +28,8 @@ import javax.swing.JFrame;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
-import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
 import org.mobicents.protocols.ss7.tools.simulator.level3.MapManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
 
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -252,9 +252,9 @@ public class MapForm extends JDialog {
 
 	private void loadDataA() {
 		M3uaForm.setEnumeratedBaseComboBox(cbOrigReferenceAddressNature, new AddressNatureType(AddressNature.international_number.getIndicator()));
-		M3uaForm.setEnumeratedBaseComboBox(cbOrigReferenceNumberingPlan, new NumberingPlanType(NumberingPlan.ISDN.getIndicator()));
+		M3uaForm.setEnumeratedBaseComboBox(cbOrigReferenceNumberingPlan, new NumberingPlanMapType(NumberingPlan.ISDN.getIndicator()));
 		M3uaForm.setEnumeratedBaseComboBox(cbDestReferenceAddressNature, new AddressNatureType(AddressNature.international_number.getIndicator()));
-		M3uaForm.setEnumeratedBaseComboBox(cbDestReferenceNumberingPlan, new NumberingPlanType(NumberingPlan.ISDN.getIndicator()));
+		M3uaForm.setEnumeratedBaseComboBox(cbDestReferenceNumberingPlan, new NumberingPlanMapType(NumberingPlan.ISDN.getIndicator()));
 
 		tbLocalSsn.setText("8");
 		tbRemoteSsn.setText("8");
@@ -266,9 +266,9 @@ public class MapForm extends JDialog {
 
 	private void loadDataB() {
 		M3uaForm.setEnumeratedBaseComboBox(cbOrigReferenceAddressNature, new AddressNatureType(AddressNature.international_number.getIndicator()));
-		M3uaForm.setEnumeratedBaseComboBox(cbOrigReferenceNumberingPlan, new NumberingPlanType(NumberingPlan.ISDN.getIndicator()));
+		M3uaForm.setEnumeratedBaseComboBox(cbOrigReferenceNumberingPlan, new NumberingPlanMapType(NumberingPlan.ISDN.getIndicator()));
 		M3uaForm.setEnumeratedBaseComboBox(cbDestReferenceAddressNature, new AddressNatureType(AddressNature.international_number.getIndicator()));
-		M3uaForm.setEnumeratedBaseComboBox(cbDestReferenceNumberingPlan, new NumberingPlanType(NumberingPlan.ISDN.getIndicator()));
+		M3uaForm.setEnumeratedBaseComboBox(cbDestReferenceNumberingPlan, new NumberingPlanMapType(NumberingPlan.ISDN.getIndicator()));
 
 		tbLocalSsn.setText("8");
 		tbRemoteSsn.setText("8");
@@ -295,9 +295,9 @@ public class MapForm extends JDialog {
 		}
 
 		this.map.setOrigReferenceAddressNature((AddressNatureType) cbOrigReferenceAddressNature.getSelectedItem());
-		this.map.setOrigReferenceNumberingPlan((NumberingPlanType) cbOrigReferenceNumberingPlan.getSelectedItem());
+		this.map.setOrigReferenceNumberingPlan((NumberingPlanMapType) cbOrigReferenceNumberingPlan.getSelectedItem());
 		this.map.setDestReferenceAddressNature((AddressNatureType) cbDestReferenceAddressNature.getSelectedItem());
-		this.map.setDestReferenceNumberingPlan((NumberingPlanType) cbDestReferenceNumberingPlan.getSelectedItem());
+		this.map.setDestReferenceNumberingPlan((NumberingPlanMapType) cbDestReferenceNumberingPlan.getSelectedItem());
 
 		this.map.setLocalSsn(localSsn);
 		this.map.setRemoteSsn(remoteSsn);

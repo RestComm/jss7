@@ -49,7 +49,9 @@ import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsClientManMBe
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsServerManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerManMBean;
+import org.mobicents.protocols.ss7.tools.simulatorgui.tests.cap.TestCapScfForm;
 import org.mobicents.protocols.ss7.tools.simulatorgui.tests.cap.TestCapScfParamForm;
+import org.mobicents.protocols.ss7.tools.simulatorgui.tests.cap.TestCapSsfForm;
 import org.mobicents.protocols.ss7.tools.simulatorgui.tests.cap.TestCapSsfParamForm;
 import org.mobicents.protocols.ss7.tools.simulatorgui.tests.sms.TestSmsClientForm;
 import org.mobicents.protocols.ss7.tools.simulatorgui.tests.sms.TestSmsClientParamForm;
@@ -62,6 +64,8 @@ import org.mobicents.protocols.ss7.tools.simulatorgui.tests.ussd.TestUssdServerP
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
@@ -83,6 +87,7 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
 	private SccpManMBean sccp;
 	private MapManMBean map;
 	private CapManMBean cap;
+	private boolean isRemote;
 	
 	private TestUssdClientManMBean ussdClient;
 	private TestUssdServerManMBean ussdServer;
@@ -116,8 +121,12 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				if (hostImpl != null) {
-					hostImpl.quit();
+				if (getDefaultCloseOperation() == JDialog.DO_NOTHING_ON_CLOSE) {
+					JOptionPane.showMessageDialog(getJFrame(), "Before exiting you must close a test window form");
+				} else {
+					if (hostImpl != null) {
+						hostImpl.quit();
+					}
 				}
 			}
 		});
@@ -187,47 +196,7 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
 		btStart = new JButton("Run test");
 		btStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// Starting tests
-				saveData();
-
-				TestingForm dlg = null;
-				switch (((Instance_TestTask) cbTestTask.getSelectedItem()).intValue()) {
-				case Instance_TestTask.VAL_USSD_TEST_CLIENT: {
-					TestUssdClientForm testUssdClientForm = new TestUssdClientForm(getJFrame());
-					testUssdClientForm.setData(ussdClient);
-					dlg = testUssdClientForm;
-				}
-					break;
-				case Instance_TestTask.VAL_USSD_TEST_SERVER: {
-					TestUssdServerForm testUssdServerForm = new TestUssdServerForm(getJFrame());
-					testUssdServerForm.setData(ussdServer);
-					dlg = testUssdServerForm;
-				}
-					break;
-				case Instance_TestTask.VAL_SMS_TEST_CLIENT: {
-					TestSmsClientForm testSmsClientForm = new TestSmsClientForm(getJFrame());
-					testSmsClientForm.setData(smsClient);
-					dlg = testSmsClientForm;
-				}
-					break;
-				case Instance_TestTask.VAL_SMS_TEST_SERVER: {
-					TestSmsServerForm testSmsServerForm = new TestSmsServerForm(getJFrame());
-					testSmsServerForm.setData(smsServer);
-					dlg = testSmsServerForm;
-				}
-					break;
-					
-					// TODO: other tests form options editing
-				}
-				if (dlg == null) {
-					JOptionPane.showMessageDialog(getJFrame(), "No proper test task defined");
-					return;
-				}
-
-				testingForm = dlg;
-				dlg.setData(host);
-				dlg.setVisible(true);
-				testingForm = null;
+				openTest();
 			}
 		});
 		btStart.setBounds(318, 158, 144, 23);
@@ -361,6 +330,86 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
 		panel.add(btTermRemote);
 	}
 
+	private void openTest() {
+		// Starting tests
+		saveData();
+
+		TestingForm dlg = null;
+		switch (((Instance_TestTask) cbTestTask.getSelectedItem()).intValue()) {
+		case Instance_TestTask.VAL_USSD_TEST_CLIENT: {
+			TestUssdClientForm testUssdClientForm = new TestUssdClientForm(getJFrame());
+			testUssdClientForm.setData(ussdClient);
+			dlg = testUssdClientForm;
+		}
+			break;
+		case Instance_TestTask.VAL_USSD_TEST_SERVER: {
+			TestUssdServerForm testUssdServerForm = new TestUssdServerForm(getJFrame());
+			testUssdServerForm.setData(ussdServer);
+			dlg = testUssdServerForm;
+		}
+			break;
+		case Instance_TestTask.VAL_SMS_TEST_CLIENT: {
+			TestSmsClientForm testSmsClientForm = new TestSmsClientForm(getJFrame());
+			testSmsClientForm.setData(smsClient);
+			dlg = testSmsClientForm;
+		}
+			break;
+		case Instance_TestTask.VAL_SMS_TEST_SERVER: {
+			TestSmsServerForm testSmsServerForm = new TestSmsServerForm(getJFrame());
+			testSmsServerForm.setData(smsServer);
+			dlg = testSmsServerForm;
+		}
+			break;
+		case Instance_TestTask.VAL_CAP_TEST_SCF: {
+			TestCapScfForm testCapScfForm = new TestCapScfForm(getJFrame());
+			testCapScfForm.setData(capScf);
+			dlg = testCapScfForm;
+		}
+			break;
+		case Instance_TestTask.VAL_CAP_TEST_SSF: {
+			TestCapSsfForm testCapSsfForm = new TestCapSsfForm(getJFrame());
+			testCapSsfForm.setData(capSsf);
+			dlg = testCapSsfForm;
+		}
+			break;
+			
+			// TODO: other tests form options editing
+		}
+		if (dlg == null) {
+			JOptionPane.showMessageDialog(getJFrame(), "No proper test task defined");
+			return;
+		}
+
+		this.enableButtons(false);
+		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+		testingForm = dlg;
+		dlg.setData(this, host);
+		dlg.setVisible(true);
+//		testingForm = null;
+	}
+
+	public void testingFormClose() {
+		testingForm = null;
+		this.enableButtons(true);
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+	}
+
+	private void enableButtons(boolean enabled) {
+		this.btL1.setEnabled(enabled);
+		this.btL2.setEnabled(enabled);
+		this.btL3.setEnabled(enabled);
+		this.btReload.setEnabled(enabled);
+		this.btSave.setEnabled(enabled);
+		this.btStart.setEnabled(enabled);
+		this.btTermRemote.setEnabled(isRemote && enabled);
+		this.btTestTask.setEnabled(enabled);
+
+		this.cbL1.setEnabled(enabled);
+		this.cbL2.setEnabled(enabled);
+		this.cbL3.setEnabled(enabled);
+		this.cbTestTask.setEnabled(enabled);
+	}
+
 	protected void startHost(String appName, boolean isRemote, final TesterHost hostImpl, TesterHostMBean host, M3uaManMBean m3ua, DialogicManMBean dialogic,
 			SccpManMBean sccp, MapManMBean map, CapManMBean cap, TestUssdClientManMBean ussdClient, TestUssdServerManMBean ussdServer,
 			TestSmsClientManMBean smsClient, TestSmsServerManMBean smsServer, TestCapScfManMBean capScf, TestCapSsfManMBean capSsf) {
@@ -379,6 +428,7 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
 		this.smsServer = smsServer;
 		this.capScf = capScf;
 		this.capSsf = capSsf;
+		this.isRemote = isRemote;
 
 		this.btTermRemote.setEnabled(isRemote);
 

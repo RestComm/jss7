@@ -30,7 +30,6 @@ import javax.management.NotCompliantMBeanException;
 import javax.management.StandardMBean;
 
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
-import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
 
 /**
  * 
@@ -56,12 +55,12 @@ public class MapManStandardMBean extends StandardMBean {
 				new MBeanAttributeInfo("OrigReference", String.class.getName(), "Origination reference string", true, true, false),
 				new MBeanAttributeInfo("OrigReferenceAddressNature", AddressNatureType.class.getName(), "Origination reference parameter: AddressNature", true, true, false),
 				new MBeanAttributeInfo("OrigReferenceAddressNature_Value", String.class.getName(), "Origination reference parameter: AddressNature", true, false, false),
-				new MBeanAttributeInfo("OrigReferenceNumberingPlan", NumberingPlanType.class.getName(), "Origination reference parameter: NumberingPlan", true, true, false),
+				new MBeanAttributeInfo("OrigReferenceNumberingPlan", NumberingPlanMapType.class.getName(), "Origination reference parameter: NumberingPlan", true, true, false),
 				new MBeanAttributeInfo("OrigReferenceNumberingPlan_Value", String.class.getName(), "Origination reference parameter: NumberingPlan", true, false, false),
 				new MBeanAttributeInfo("DestReference", String.class.getName(), "Destination reference string", true, true, false),
 				new MBeanAttributeInfo("DestReferenceAddressNature", AddressNatureType.class.getName(), "Destination reference parameter: AddressNature", true, true, false),
 				new MBeanAttributeInfo("DestReferenceAddressNature_Value", String.class.getName(), "Destination reference parameter: AddressNature", true, false, false),
-				new MBeanAttributeInfo("DestReferenceNumberingPlan", NumberingPlanType.class.getName(), "Destination reference parameter: NumberingPlan", true, true, false),
+				new MBeanAttributeInfo("DestReferenceNumberingPlan", NumberingPlanMapType.class.getName(), "Destination reference parameter: NumberingPlan", true, true, false),
 				new MBeanAttributeInfo("DestReferenceNumberingPlan_Value", String.class.getName(), "Destination reference parameter: NumberingPlan", true, false, false),
 		};
 

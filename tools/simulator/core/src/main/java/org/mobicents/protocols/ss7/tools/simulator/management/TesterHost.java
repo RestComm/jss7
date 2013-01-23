@@ -24,12 +24,9 @@ package org.mobicents.protocols.ss7.tools.simulator.management;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.util.Properties;
-//import java.util.logging.Level;
 
 import javax.management.Notification;
 import javax.management.NotificationBroadcasterSupport;
@@ -42,21 +39,29 @@ import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.mobicents.protocols.ss7.tools.simulator.common.ConfigurationData;
-import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
 import org.mobicents.protocols.ss7.tools.simulator.level1.DialogicConfigurationData_OldFormat;
 import org.mobicents.protocols.ss7.tools.simulator.level1.DialogicMan;
-import org.mobicents.protocols.ss7.tools.simulator.level1.M3uaConfigurationData;
 import org.mobicents.protocols.ss7.tools.simulator.level1.M3uaConfigurationData_OldFormat;
 import org.mobicents.protocols.ss7.tools.simulator.level1.M3uaMan;
+import org.mobicents.protocols.ss7.tools.simulator.level2.NatureOfAddressType;
+import org.mobicents.protocols.ss7.tools.simulator.level2.NumberingPlanSccpType;
+import org.mobicents.protocols.ss7.tools.simulator.level2.SccpConfigurationData_OldFormat;
 import org.mobicents.protocols.ss7.tools.simulator.level2.SccpMan;
 import org.mobicents.protocols.ss7.tools.simulator.level3.CapMan;
 import org.mobicents.protocols.ss7.tools.simulator.level3.MapConfigurationData_OldFormat;
 import org.mobicents.protocols.ss7.tools.simulator.level3.MapMan;
+import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
 import org.mobicents.protocols.ss7.tools.simulator.tests.cap.TestCapScfMan;
 import org.mobicents.protocols.ss7.tools.simulator.tests.cap.TestCapSsfMan;
+import org.mobicents.protocols.ss7.tools.simulator.tests.sms.NumberingPlanIdentificationType;
+import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsClientConfigurationData_OldFormat;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsClientMan;
+import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsServerConfigurationData_OldFormat;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsServerMan;
+import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TypeOfNumberType;
+import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientConfigurationData_OldFormat;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientMan;
+import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerConfigurationData_OldFormat;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerMan;
 import javolution.text.TextBuilder;
 import javolution.xml.XMLBinding;
@@ -700,20 +705,6 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
 			writer.write(this.configurationData, CONFIGURATION_DATA, ConfigurationData.class);			
 
-
-
-
-//			writer.write(this.map, MAP, MapMan.class);
-//			writer.write(this.cap, CAP, CapMan.class);
-//			writer.write(this.testUssdClientMan, TEST_USSD_CLIENT, TestUssdClientMan.class);
-//			writer.write(this.testUssdServerMan, TEST_USSD_SERVER, TestUssdServerMan.class);
-//			writer.write(this.testSmsClientMan, TEST_SMS_CLIENT, TestSmsClientMan.class);
-//			writer.write(this.testSmsServerMan, TEST_SMS_SERVER, TestSmsServerMan.class);
-//			writer.write(this.testCapSsfMan, TEST_CAP_SSF, TestCapSsfMan.class);
-//			writer.write(this.testCapScfMan, TEST_CAP_SCF, TestCapScfMan.class);
-
-
-			
 			writer.close();
 		} catch (Exception e) {
 			this.sendNotif(SOURCE_NAME, "Error while persisting the Host state in file", e, Level.ERROR);
@@ -734,79 +725,6 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			reader.setBinding(binding);
 			
 			this.configurationData = reader.read(CONFIGURATION_DATA, ConfigurationData.class);
-
-			
-			
-//			MapMan _map = reader.read(MAP, MapMan.class);
-//			this.map.setLocalSsn(_map.getLocalSsn());
-//			this.map.setRemoteSsn(_map.getRemoteSsn());
-//			this.map.setRemoteAddressDigits(_map.getRemoteAddressDigits());
-//			this.map.setOrigReference(_map.getOrigReference());
-//			this.map.setOrigReferenceAddressNature(_map.getOrigReferenceAddressNature());
-//			this.map.setOrigReferenceNumberingPlan(_map.getOrigReferenceNumberingPlan());
-//			this.map.setDestReference(_map.getDestReference());
-//			this.map.setDestReferenceAddressNature(_map.getDestReferenceAddressNature());
-//			this.map.setDestReferenceNumberingPlan(_map.getDestReferenceNumberingPlan());
-//
-//			CapMan _cap = reader.read(CAP, CapMan.class);
-//			if (_cap != null) {
-//				this.cap.setLocalSsn(_cap.getLocalSsn());
-//				this.cap.setRemoteSsn(_cap.getRemoteSsn());
-//				this.cap.setRemoteAddressDigits(_cap.getRemoteAddressDigits());
-//			}
-//
-//			TestUssdClientMan _TestUssdClientMan = reader.read(TEST_USSD_CLIENT, TestUssdClientMan.class);
-//			this.testUssdClientMan.setMsisdnAddress(_TestUssdClientMan.getMsisdnAddress());
-//			this.testUssdClientMan.setMsisdnAddressNature(_TestUssdClientMan.getMsisdnAddressNature());
-//			this.testUssdClientMan.setMsisdnNumberingPlan(_TestUssdClientMan.getMsisdnNumberingPlan());
-//			this.testUssdClientMan.setDataCodingScheme(_TestUssdClientMan.getDataCodingScheme());
-//			this.testUssdClientMan.setAlertingPattern(_TestUssdClientMan.getAlertingPattern());
-//			this.testUssdClientMan.setUssdClientAction(_TestUssdClientMan.getUssdClientAction());
-//			this.testUssdClientMan.setAutoRequestString(_TestUssdClientMan.getAutoRequestString());
-//			this.testUssdClientMan.setMaxConcurrentDialogs(_TestUssdClientMan.getMaxConcurrentDialogs());
-//			this.testUssdClientMan.setOneNotificationFor100Dialogs(_TestUssdClientMan.isOneNotificationFor100Dialogs());
-//
-//			TestUssdServerMan _TestUssdServerMan = reader.read(TEST_USSD_SERVER, TestUssdServerMan.class);
-//			this.testUssdServerMan.setMsisdnAddress(_TestUssdServerMan.getMsisdnAddress());
-//			this.testUssdServerMan.setMsisdnAddressNature(_TestUssdServerMan.getMsisdnAddressNature());
-//			this.testUssdServerMan.setMsisdnNumberingPlan(_TestUssdServerMan.getMsisdnNumberingPlan());
-//			this.testUssdServerMan.setDataCodingScheme(_TestUssdServerMan.getDataCodingScheme());
-//			this.testUssdServerMan.setAlertingPattern(_TestUssdServerMan.getAlertingPattern());
-//			this.testUssdServerMan.setProcessSsRequestAction(_TestUssdServerMan.getProcessSsRequestAction());
-//			this.testUssdServerMan.setAutoResponseString(_TestUssdServerMan.getAutoResponseString());
-//			this.testUssdServerMan.setAutoUnstructured_SS_RequestString(_TestUssdServerMan.getAutoUnstructured_SS_RequestString());
-//			this.testUssdServerMan.setOneNotificationFor100Dialogs(_TestUssdServerMan.isOneNotificationFor100Dialogs());
-//
-//			TestSmsClientMan _TestSmsClientMan = reader.read(TEST_SMS_CLIENT, TestSmsClientMan.class);
-//			this.testSmsClientMan.setAddressNature(_TestSmsClientMan.getAddressNature());
-//			this.testSmsClientMan.setNumberingPlan(_TestSmsClientMan.getNumberingPlan());
-//			this.testSmsClientMan.setServiceCenterAddress(_TestSmsClientMan.getServiceCenterAddress());
-//			this.testSmsClientMan.setMapProtocolVersion(_TestSmsClientMan.getMapProtocolVersion());
-//			this.testSmsClientMan.setSRIResponseImsi(_TestSmsClientMan.getSRIResponseImsi());
-//			this.testSmsClientMan.setSRIResponseVlr(_TestSmsClientMan.getSRIResponseVlr());
-//			this.testSmsClientMan.setSmscSsn(_TestSmsClientMan.getSmscSsn());
-//			this.testSmsClientMan.setTypeOfNumber(_TestSmsClientMan.getTypeOfNumber());
-//			this.testSmsClientMan.setNumberingPlanIdentification(_TestSmsClientMan.getNumberingPlanIdentification());
-//			this.testSmsClientMan.setSmsCodingType(_TestSmsClientMan.getSmsCodingType());
-//
-//			TestSmsServerMan _TestSmsServerMan = reader.read(TEST_SMS_SERVER, TestSmsServerMan.class);
-//			this.testSmsServerMan.setAddressNature(_TestSmsServerMan.getAddressNature());
-//			this.testSmsServerMan.setNumberingPlan(_TestSmsServerMan.getNumberingPlan());
-//			this.testSmsServerMan.setServiceCenterAddress(_TestSmsServerMan.getServiceCenterAddress());
-//			this.testSmsServerMan.setMapProtocolVersion(_TestSmsServerMan.getMapProtocolVersion());
-//			this.testSmsServerMan.setHlrSsn(_TestSmsServerMan.getHlrSsn());
-//			this.testSmsServerMan.setVlrSsn(_TestSmsServerMan.getVlrSsn());
-//			this.testSmsServerMan.setTypeOfNumber(_TestSmsServerMan.getTypeOfNumber());
-//			this.testSmsServerMan.setNumberingPlanIdentification(_TestSmsServerMan.getNumberingPlanIdentification());
-//			this.testSmsServerMan.setSmsCodingType(_TestSmsServerMan.getSmsCodingType());
-//
-//			if (reader.hasNext()) {
-//				TestCapSsfMan _TestCapSsfMan = reader.read(TEST_CAP_SSF, TestCapSsfMan.class);
-//				this.testCapSsfMan.setCapApplicationContext(_TestCapSsfMan.getCapApplicationContext());
-//
-//				TestCapScfMan _TestCapScfMan = reader.read(TEST_CAP_SCF, TestCapScfMan.class);
-//				this.testCapScfMan.setCapApplicationContext(_TestCapScfMan.getCapApplicationContext());
-//			}
 
 			reader.close();
 			
@@ -853,8 +771,8 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			DialogicConfigurationData_OldFormat _dial = reader.read(ConfigurationData.DIALOGIC, DialogicConfigurationData_OldFormat.class);
 			this.dialogic.setSourceModuleId(_dial.getSourceModuleId());
 			this.dialogic.setDestinationModuleId(_dial.getDestinationModuleId());
-			
-			SccpMan _sccp = reader.read(ConfigurationData.SCCP, SccpMan.class);
+
+			SccpConfigurationData_OldFormat _sccp = reader.read(ConfigurationData.SCCP, SccpConfigurationData_OldFormat.class);
 			this.sccp.setRouteOnGtMode(_sccp.isRouteOnGtMode());
 			this.sccp.setRemoteSpc(_sccp.getRemoteSpc());
 			this.sccp.setLocalSpc(_sccp.getLocalSpc());
@@ -862,8 +780,8 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			this.sccp.setRemoteSsn(_sccp.getRemoteSsn());
 			this.sccp.setLocalSsn(_sccp.getLocalSsn());
 			this.sccp.setGlobalTitleType(_sccp.getGlobalTitleType());
-			this.sccp.setNatureOfAddress(_sccp.getNatureOfAddress());
-			this.sccp.setNumberingPlan(_sccp.getNumberingPlan());
+			this.sccp.setNatureOfAddress(new NatureOfAddressType(_sccp.getNatureOfAddress().getValue()));
+			this.sccp.setNumberingPlan(new NumberingPlanSccpType(_sccp.getNumberingPlan().getValue()));
 			this.sccp.setTranslationType(_sccp.getTranslationType());
 			this.sccp.setCallingPartyAddressDigits(_sccp.getCallingPartyAddressDigits());
 //			this.sccp.setExtraLocalAddressDigits(_sccp.getExtraLocalAddressDigits());
@@ -874,17 +792,15 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			this.map.setRemoteAddressDigits(_map.getRemoteAddressDigits());
 			this.map.setOrigReference(_map.getOrigReference());
 			this.map.setOrigReferenceAddressNature(new AddressNatureType(_map.getOrigReferenceAddressNature().getIndicator()));
-			this.map.setOrigReferenceNumberingPlan(new NumberingPlanType(_map.getOrigReferenceNumberingPlan().getIndicator()));
+			this.map.setOrigReferenceNumberingPlan(new NumberingPlanMapType(_map.getOrigReferenceNumberingPlan().getIndicator()));
 			this.map.setDestReference(_map.getDestReference());
 			this.map.setDestReferenceAddressNature(new AddressNatureType(_map.getDestReferenceAddressNature().getIndicator()));
-			this.map.setDestReferenceNumberingPlan(new NumberingPlanType(_map.getDestReferenceNumberingPlan().getIndicator()));
+			this.map.setDestReferenceNumberingPlan(new NumberingPlanMapType(_map.getDestReferenceNumberingPlan().getIndicator()));
 
-			// ...........................
-
-			TestUssdClientMan _TestUssdClientMan = reader.read(ConfigurationData.TEST_USSD_CLIENT, TestUssdClientMan.class);
+			TestUssdClientConfigurationData_OldFormat _TestUssdClientMan = reader.read(ConfigurationData.TEST_USSD_CLIENT, TestUssdClientConfigurationData_OldFormat.class);
 			this.testUssdClientMan.setMsisdnAddress(_TestUssdClientMan.getMsisdnAddress());
-			this.testUssdClientMan.setMsisdnAddressNature(_TestUssdClientMan.getMsisdnAddressNature());
-			this.testUssdClientMan.setMsisdnNumberingPlan(_TestUssdClientMan.getMsisdnNumberingPlan());
+			this.testUssdClientMan.setMsisdnAddressNature(new AddressNatureType(_TestUssdClientMan.getMsisdnAddressNature().getIndicator()));
+			this.testUssdClientMan.setMsisdnNumberingPlan(new NumberingPlanMapType(_TestUssdClientMan.getMsisdnNumberingPlan().getIndicator()));
 			this.testUssdClientMan.setDataCodingScheme(_TestUssdClientMan.getDataCodingScheme());
 			this.testUssdClientMan.setAlertingPattern(_TestUssdClientMan.getAlertingPattern());
 			this.testUssdClientMan.setUssdClientAction(_TestUssdClientMan.getUssdClientAction());
@@ -892,10 +808,10 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			this.testUssdClientMan.setMaxConcurrentDialogs(_TestUssdClientMan.getMaxConcurrentDialogs());
 			this.testUssdClientMan.setOneNotificationFor100Dialogs(_TestUssdClientMan.isOneNotificationFor100Dialogs());
 
-			TestUssdServerMan _TestUssdServerMan = reader.read(ConfigurationData.TEST_USSD_SERVER, TestUssdServerMan.class);
+			TestUssdServerConfigurationData_OldFormat _TestUssdServerMan = reader.read(ConfigurationData.TEST_USSD_SERVER, TestUssdServerConfigurationData_OldFormat.class);
 			this.testUssdServerMan.setMsisdnAddress(_TestUssdServerMan.getMsisdnAddress());
-			this.testUssdServerMan.setMsisdnAddressNature(_TestUssdServerMan.getMsisdnAddressNature());
-			this.testUssdServerMan.setMsisdnNumberingPlan(_TestUssdServerMan.getMsisdnNumberingPlan());
+			this.testUssdServerMan.setMsisdnAddressNature(new AddressNatureType(_TestUssdServerMan.getMsisdnAddressNature().getIndicator()));
+			this.testUssdServerMan.setMsisdnNumberingPlan(new NumberingPlanMapType(_TestUssdServerMan.getMsisdnNumberingPlan().getIndicator()));
 			this.testUssdServerMan.setDataCodingScheme(_TestUssdServerMan.getDataCodingScheme());
 			this.testUssdServerMan.setAlertingPattern(_TestUssdServerMan.getAlertingPattern());
 			this.testUssdServerMan.setProcessSsRequestAction(_TestUssdServerMan.getProcessSsRequestAction());
@@ -903,36 +819,32 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 			this.testUssdServerMan.setAutoUnstructured_SS_RequestString(_TestUssdServerMan.getAutoUnstructured_SS_RequestString());
 			this.testUssdServerMan.setOneNotificationFor100Dialogs(_TestUssdServerMan.isOneNotificationFor100Dialogs());
 
-			TestSmsClientMan _TestSmsClientMan = reader.read(ConfigurationData.TEST_SMS_CLIENT, TestSmsClientMan.class);
-			this.testSmsClientMan.setAddressNature(_TestSmsClientMan.getAddressNature());
-			this.testSmsClientMan.setNumberingPlan(_TestSmsClientMan.getNumberingPlan());
+			TestSmsClientConfigurationData_OldFormat _TestSmsClientMan = reader.read(ConfigurationData.TEST_SMS_CLIENT,
+					TestSmsClientConfigurationData_OldFormat.class);
+			this.testSmsClientMan.setAddressNature(new AddressNatureType(_TestSmsClientMan.getAddressNature().getIndicator()) );
+			this.testSmsClientMan.setNumberingPlan(new NumberingPlanMapType(_TestSmsClientMan.getNumberingPlan().getIndicator()));
 			this.testSmsClientMan.setServiceCenterAddress(_TestSmsClientMan.getServiceCenterAddress());
 			this.testSmsClientMan.setMapProtocolVersion(_TestSmsClientMan.getMapProtocolVersion());
-			this.testSmsClientMan.setSRIResponseImsi(_TestSmsClientMan.getSRIResponseImsi());
-			this.testSmsClientMan.setSRIResponseVlr(_TestSmsClientMan.getSRIResponseVlr());
+			this.testSmsClientMan.setSRIResponseImsi(_TestSmsClientMan.getSriResponseImsi());
+			this.testSmsClientMan.setSRIResponseVlr(_TestSmsClientMan.getSriResponseVlr());
 			this.testSmsClientMan.setSmscSsn(_TestSmsClientMan.getSmscSsn());
-			this.testSmsClientMan.setTypeOfNumber(_TestSmsClientMan.getTypeOfNumber());
-			this.testSmsClientMan.setNumberingPlanIdentification(_TestSmsClientMan.getNumberingPlanIdentification());
+			this.testSmsClientMan.setTypeOfNumber(new TypeOfNumberType(_TestSmsClientMan.getTypeOfNumber().getCode()));
+			this.testSmsClientMan.setNumberingPlanIdentification(new NumberingPlanIdentificationType(_TestSmsClientMan.getNumberingPlanIdentification()
+					.getCode()));
 			this.testSmsClientMan.setSmsCodingType(_TestSmsClientMan.getSmsCodingType());
 
-			TestSmsServerMan _TestSmsServerMan = reader.read(ConfigurationData.TEST_SMS_SERVER, TestSmsServerMan.class);
-			this.testSmsServerMan.setAddressNature(_TestSmsServerMan.getAddressNature());
-			this.testSmsServerMan.setNumberingPlan(_TestSmsServerMan.getNumberingPlan());
+			TestSmsServerConfigurationData_OldFormat _TestSmsServerMan = reader.read(ConfigurationData.TEST_SMS_SERVER,
+					TestSmsServerConfigurationData_OldFormat.class);
+			this.testSmsServerMan.setAddressNature(new AddressNatureType(_TestSmsServerMan.getAddressNature().getIndicator()) );
+			this.testSmsServerMan.setNumberingPlan(new NumberingPlanMapType(_TestSmsServerMan.getNumberingPlan().getIndicator()));
 			this.testSmsServerMan.setServiceCenterAddress(_TestSmsServerMan.getServiceCenterAddress());
 			this.testSmsServerMan.setMapProtocolVersion(_TestSmsServerMan.getMapProtocolVersion());
 			this.testSmsServerMan.setHlrSsn(_TestSmsServerMan.getHlrSsn());
 			this.testSmsServerMan.setVlrSsn(_TestSmsServerMan.getVlrSsn());
-			this.testSmsServerMan.setTypeOfNumber(_TestSmsServerMan.getTypeOfNumber());
-			this.testSmsServerMan.setNumberingPlanIdentification(_TestSmsServerMan.getNumberingPlanIdentification());
+			this.testSmsServerMan.setTypeOfNumber(new TypeOfNumberType(_TestSmsServerMan.getTypeOfNumber().getCode()));
+			this.testSmsServerMan.setNumberingPlanIdentification(new NumberingPlanIdentificationType(_TestSmsServerMan.getNumberingPlanIdentification()
+					.getCode()));
 			this.testSmsServerMan.setSmsCodingType(_TestSmsServerMan.getSmsCodingType());
-
-//			if (reader.hasNext()) {
-//				TestCapSsfMan _TestCapSsfMan = reader.read(TEST_CAP_SSF, TestCapSsfMan.class);
-//				this.testCapSsfMan.setCapApplicationContext(_TestCapSsfMan.getCapApplicationContext());
-//
-//				TestCapScfMan _TestCapScfMan = reader.read(TEST_CAP_SCF, TestCapScfMan.class);
-//				this.testCapScfMan.setCapApplicationContext(_TestCapScfMan.getCapApplicationContext());
-//			}
 
 			reader.close();
 			

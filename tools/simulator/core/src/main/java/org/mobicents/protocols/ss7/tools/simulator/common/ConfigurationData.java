@@ -34,6 +34,12 @@ import org.mobicents.protocols.ss7.tools.simulator.management.Instance_L1;
 import org.mobicents.protocols.ss7.tools.simulator.management.Instance_L2;
 import org.mobicents.protocols.ss7.tools.simulator.management.Instance_L3;
 import org.mobicents.protocols.ss7.tools.simulator.management.Instance_TestTask;
+import org.mobicents.protocols.ss7.tools.simulator.tests.cap.TestCapScfConfigurationData;
+import org.mobicents.protocols.ss7.tools.simulator.tests.cap.TestCapSsfConfigurationData;
+import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsClientConfigurationData;
+import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsServerConfigurationData;
+import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientConfigurationData;
+import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerConfigurationData;
 
 /**
  * 
@@ -56,8 +62,8 @@ public class ConfigurationData {
 	public static final String TEST_USSD_SERVER = "testUssdServer";
 	public static final String TEST_SMS_CLIENT = "testSmsClient";
 	public static final String TEST_SMS_SERVER = "testSmsServer";
-	public static final String TEST_CAP_SSF = "testCapSsf";
 	public static final String TEST_CAP_SCF = "testCapScf";
+	public static final String TEST_CAP_SSF = "testCapSsf";
 
 	private Instance_L1 instance_L1 = new Instance_L1(Instance_L1.VAL_NO);
 	private Instance_L2 instance_L2 = new Instance_L2(Instance_L2.VAL_NO);
@@ -69,6 +75,13 @@ public class ConfigurationData {
 	private SccpConfigurationData sccpConfigurationData = new SccpConfigurationData();
 	private MapConfigurationData mapConfigurationData = new MapConfigurationData();
 	private CapConfigurationData capConfigurationData = new CapConfigurationData();
+
+	private TestSmsClientConfigurationData testSmsClientConfigurationData = new TestSmsClientConfigurationData();
+	private TestSmsServerConfigurationData testSmsServerConfigurationData = new TestSmsServerConfigurationData();
+	private TestUssdClientConfigurationData testUssdClientConfigurationData = new TestUssdClientConfigurationData();
+	private TestUssdServerConfigurationData testUssdServerConfigurationData = new TestUssdServerConfigurationData();
+	private TestCapScfConfigurationData testCapScfConfigurationData = new TestCapScfConfigurationData();
+	private TestCapSsfConfigurationData testCapSsfConfigurationData = new TestCapSsfConfigurationData();
 
 
 	public Instance_L1 getInstance_L1() {
@@ -148,6 +161,60 @@ public class ConfigurationData {
 	}
 
 
+	public TestSmsClientConfigurationData getTestSmsClientConfigurationData() {
+		return testSmsClientConfigurationData;
+	}
+
+	public void setTestSmsClientConfigurationData(TestSmsClientConfigurationData testSmsClientConfigurationData) {
+		this.testSmsClientConfigurationData = testSmsClientConfigurationData;
+	}
+
+
+	public TestSmsServerConfigurationData getTestSmsServerConfigurationData() {
+		return testSmsServerConfigurationData;
+	}
+
+	public void setTestSmsServerConfigurationData(TestSmsServerConfigurationData testSmsServerConfigurationData) {
+		this.testSmsServerConfigurationData = testSmsServerConfigurationData;
+	}
+
+
+	public TestUssdClientConfigurationData getTestUssdClientConfigurationData() {
+		return testUssdClientConfigurationData;
+	}
+
+	public void setTestUssdClientConfigurationData(TestUssdClientConfigurationData testUssdClientConfigurationData) {
+		this.testUssdClientConfigurationData = testUssdClientConfigurationData;
+	}
+
+
+	public TestUssdServerConfigurationData getTestUssdServerConfigurationData() {
+		return testUssdServerConfigurationData;
+	}
+
+	public void setTestUssdServerConfigurationData(TestUssdServerConfigurationData testUssdServerConfigurationData) {
+		this.testUssdServerConfigurationData = testUssdServerConfigurationData;
+	}
+
+
+	public TestCapScfConfigurationData getTestCapScfConfigurationData() {
+		return testCapScfConfigurationData;
+	}
+
+	public void setTestCapScfConfigurationData(TestCapScfConfigurationData testCapScfConfigurationData) {
+		this.testCapScfConfigurationData = testCapScfConfigurationData;
+	}
+
+
+	public TestCapSsfConfigurationData getTestCapSsfConfigurationData() {
+		return testCapSsfConfigurationData;
+	}
+
+	public void setTestCapSsfConfigurationData(TestCapSsfConfigurationData testCapSsfConfigurationData) {
+		this.testCapSsfConfigurationData = testCapSsfConfigurationData;
+	}
+
+
 	/**
 	 * XML Serialization/Deserialization
 	 */
@@ -179,6 +246,34 @@ public class ConfigurationData {
 			CapConfigurationData cap = xml.get(CAP, CapConfigurationData.class);
 			if (cap != null)
 				data.setCapConfigurationData(cap);
+
+			TestUssdClientConfigurationData ussdClient = xml.get(TEST_USSD_CLIENT, TestUssdClientConfigurationData.class);
+			if (ussdClient != null)
+				data.setTestUssdClientConfigurationData(ussdClient);
+
+			TestUssdServerConfigurationData ussdServer = xml.get(TEST_USSD_SERVER, TestUssdServerConfigurationData.class);
+			if (ussdServer != null)
+				data.setTestUssdServerConfigurationData(ussdServer);
+
+			TestSmsClientConfigurationData smsClient = xml.get(TEST_SMS_CLIENT, TestSmsClientConfigurationData.class);
+			if (smsClient != null)
+				data.setTestSmsClientConfigurationData(smsClient);
+
+			TestSmsServerConfigurationData smsServer = xml.get(TEST_SMS_SERVER, TestSmsServerConfigurationData.class);
+			if (smsServer != null)
+				data.setTestSmsServerConfigurationData(smsServer);
+
+			TestCapScfConfigurationData capScf = xml.get(TEST_CAP_SCF, TestCapScfConfigurationData.class);
+			if (capScf != null)
+				data.setTestCapScfConfigurationData(capScf);
+
+			TestCapSsfConfigurationData capSsf = xml.get(TEST_CAP_SSF, TestCapSsfConfigurationData.class);
+			if (capSsf != null)
+				data.setTestCapSsfConfigurationData(capSsf);
+
+//			while (xml.hasNext()) {
+//				Object o = xml.getNext();
+//			}
 		}
 
 		@Override
@@ -193,7 +288,15 @@ public class ConfigurationData {
 			xml.add(data.getSccpConfigurationData(), SCCP, SccpConfigurationData.class);
 			xml.add(data.getMapConfigurationData(), MAP, MapConfigurationData.class);
 			xml.add(data.getCapConfigurationData(), CAP, CapConfigurationData.class);
+
+			xml.add(data.getTestUssdClientConfigurationData(), TEST_USSD_CLIENT, TestUssdClientConfigurationData.class);
+			xml.add(data.getTestUssdServerConfigurationData(), TEST_USSD_SERVER, TestUssdServerConfigurationData.class);
+			xml.add(data.getTestSmsClientConfigurationData(), TEST_SMS_CLIENT, TestSmsClientConfigurationData.class);
+			xml.add(data.getTestSmsServerConfigurationData(), TEST_SMS_SERVER, TestSmsServerConfigurationData.class);
+			xml.add(data.getTestCapScfConfigurationData(), TEST_CAP_SCF, TestCapScfConfigurationData.class);
+			xml.add(data.getTestCapSsfConfigurationData(), TEST_CAP_SSF, TestCapSsfConfigurationData.class);
 		}
 	};
 
 }
+

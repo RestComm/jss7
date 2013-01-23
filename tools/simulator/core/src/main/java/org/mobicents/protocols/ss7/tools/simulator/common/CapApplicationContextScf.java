@@ -24,6 +24,8 @@ package org.mobicents.protocols.ss7.tools.simulator.common;
 
 import java.util.Hashtable;
 
+import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
+
 /**
  * 
  * @author sergey vetyutnev
@@ -75,6 +77,14 @@ public class CapApplicationContextScf extends EnumeratedBase {
 	@Override
 	protected Hashtable<String, Integer> getStringTable() {
 		return stringMap;
+	}
+
+	public CAPApplicationContext getCAPApplicationContext() {
+		switch (this.intValue()) {
+		case VAL_CAP_V4_capscf_ssfGeneric:
+			return CAPApplicationContext.CapV4_scf_gsmSSFGeneric;
+		}
+		return CAPApplicationContext.CapV4_scf_gsmSSFGeneric;
 	}
 
 }

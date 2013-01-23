@@ -20,9 +20,11 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.tools.simulator.common;
+package org.mobicents.protocols.ss7.tools.simulator.level3;
 
 import java.util.Hashtable;
+
+import org.mobicents.protocols.ss7.tools.simulator.common.EnumeratedBase;
 
 /**
  * 

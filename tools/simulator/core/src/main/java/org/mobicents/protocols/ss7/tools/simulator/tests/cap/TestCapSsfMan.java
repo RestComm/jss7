@@ -22,20 +22,20 @@
 
 package org.mobicents.protocols.ss7.tools.simulator.tests.cap;
 
-import javolution.xml.XMLFormat;
-import javolution.xml.stream.XMLStreamException;
-
 import org.apache.log4j.Level;
+import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPDialogListener;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPMessage;
 import org.mobicents.protocols.ss7.cap.api.CAPProvider;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPDialogState;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPNoticeProblemDiagnostic;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
+import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestResponse;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingReportRequest;
@@ -62,6 +62,8 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestRe
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ResetTimerRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SendChargingInformationRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequest;
+import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
 import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
@@ -69,6 +71,7 @@ import org.mobicents.protocols.ss7.tools.simulator.common.CapApplicationContextS
 import org.mobicents.protocols.ss7.tools.simulator.common.TesterBase;
 import org.mobicents.protocols.ss7.tools.simulator.level3.CapMan;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
+import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.ProcessSsRequestAction;
 
 /**
  * 
@@ -78,10 +81,6 @@ import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
 public class TestCapSsfMan extends TesterBase implements TestCapSsfManMBean, Stoppable, CAPDialogListener, CAPServiceCircuitSwitchedCallListener {
 
 	public static String SOURCE_NAME = "TestCapSsf";
-
-	private static final String CAP_PROTOCOL_VERSION = "capProtocolVersion";
-
-	private CapApplicationContextSsf capProtocolVersion = new CapApplicationContextSsf(CapApplicationContextSsf.VAL_CAP_V1_gsmSSF_to_gsmSCF);
 
 	private final String name;
 	private CapMan capMan;
@@ -113,17 +112,17 @@ public class TestCapSsfMan extends TesterBase implements TestCapSsfManMBean, Sto
 
 	@Override
 	public CapApplicationContextSsf getCapApplicationContext() {
-		return this.capProtocolVersion;
+		return this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().getCapApplicationContext();
 	}
 
 	@Override
 	public String getCapApplicationContext_Value() {
-		return this.capProtocolVersion.toString();
+		return this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().getCapApplicationContext().toString();
 	}
 
 	@Override
 	public void setCapApplicationContext(CapApplicationContextSsf val) {
-		capProtocolVersion = val;
+		this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().setCapApplicationContext(val);
 		this.testerHost.markStore();
 	}
 
@@ -133,18 +132,6 @@ public class TestCapSsfMan extends TesterBase implements TestCapSsfManMBean, Sto
 		if (x != null)
 			this.setCapApplicationContext(x);
 	}
-
-	protected static final XMLFormat<TestCapSsfMan> XML = new XMLFormat<TestCapSsfMan>(TestCapSsfMan.class) {
-
-		public void write(TestCapSsfMan srv, OutputElement xml) throws XMLStreamException {
-			xml.add(srv.capProtocolVersion.toString(), CAP_PROTOCOL_VERSION);
-		}
-
-		public void read(InputElement xml, TestCapSsfMan srv) throws XMLStreamException {
-			String cpv = (String) xml.get(CAP_PROTOCOL_VERSION, String.class);
-			srv.capProtocolVersion = CapApplicationContextSsf.createInstance(cpv);
-		}
-	};
 
 
 	@Override
@@ -158,6 +145,10 @@ public class TestCapSsfMan extends TesterBase implements TestCapSsfManMBean, Sto
 		sb.append("<html>");
 		sb.append(SOURCE_NAME);
 		sb.append(": ");
+		if (this.currentDialog != null) {
+			sb.append(", curDialog: ");
+			sb.append(this.currentDialog.getState());
+		}
 		sb.append("<br>Count: countInitialDp-");
 		sb.append(countInitialDp);
 		sb.append(", countInitiateCallAttempt-");
@@ -174,6 +165,7 @@ public class TestCapSsfMan extends TesterBase implements TestCapSsfManMBean, Sto
 		capProvider.getCAPServiceCircuitSwitchedCall().addCAPServiceListener(this);
 		capProvider.addCAPDialogListener(this);
 		this.testerHost.sendNotif(SOURCE_NAME, "CAP SSF has been started", "", Level.INFO);
+		currentDialog = null;
 		isStarted = true;
 
 		return true;
@@ -192,9 +184,6 @@ public class TestCapSsfMan extends TesterBase implements TestCapSsfManMBean, Sto
 	@Override
 	public void execute() {
 	}
-
-
-	// ...................................
 
 	@Override
 	public String closeCurrentDialog() {
@@ -223,8 +212,50 @@ public class TestCapSsfMan extends TesterBase implements TestCapSsfManMBean, Sto
 
 	@Override
 	public String performInitialDp(String msg) {
-		// TODO Auto-generated method stub
-		return null;
+		if (!isStarted)
+			return "The tester is not started";
+
+		CAPDialogCircuitSwitchedCall curDialog2 = currentDialog;
+		if (curDialog2 != null)
+			return "The current dialog exists. Finish it previousely";
+//		if (msg == null || msg.equals(""))
+//			return "USSD message is empty";
+
+		currentRequestDef = "";
+
+		CAPProvider capProvider = this.capMan.getCAPStack().getCAPProvider();
+		CAPApplicationContext capAppContext = this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().getCapApplicationContext().getCAPApplicationContext();
+
+		try {
+			CAPDialogCircuitSwitchedCall curDialog = capProvider.getCAPServiceCircuitSwitchedCall().createNewDialog(capAppContext,
+					this.capMan.createOrigAddress(), this.capMan.createDestAddress());
+			currentDialog = curDialog;
+			this.testerHost.sendNotif(SOURCE_NAME, "DlgStarted:", "TrId=" + curDialog.getLocalDialogId(), Level.DEBUG);
+
+			int serviceKey = 1;
+			CalledPartyNumber calledPartyNumberIsup = capProvider.getISUPParameterFactory().createCalledPartyNumber();
+			calledPartyNumberIsup.setAddress("111222");
+			calledPartyNumberIsup.setInternalNetworkNumberIndicator(calledPartyNumberIsup._INN_ROUTING_ALLOWED);
+			calledPartyNumberIsup.setNatureOfAddresIndicator(calledPartyNumberIsup._NAI_INTERNATIONAL_NUMBER);
+			calledPartyNumberIsup.setNumberingPlanIndicator(calledPartyNumberIsup._NPI_ISDN);
+			CalledPartyNumberCap calledPartyNumber = capProvider.getCAPParameterFactory().createCalledPartyNumberCap(calledPartyNumberIsup);
+
+			curDialog.addInitialDPRequest(serviceKey, calledPartyNumber, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+					null, null, null, null, false, null, null, null, null, null, null, null, null, false, null);
+
+			curDialog.send();
+
+			currentRequestDef += "Sent initialDp;";
+			this.countInitialDp++;
+//			String uData = this.createUssdMessageData(curDialog.getLocalDialogId(), this.testerHost.getConfigurationData().getTestUssdClientConfigurationData()
+//					.getDataCodingScheme(), msisdn, alPattern);
+			String uData = "";
+			this.testerHost.sendNotif(SOURCE_NAME, "Sent: initialDP", uData, Level.DEBUG);
+
+			return "initialDP has been sent";
+		} catch (CAPException ex) {
+			return "Exception when sending initialDP: " + ex.toString();
+		}
 	}
 
 	@Override
@@ -233,16 +264,15 @@ public class TestCapSsfMan extends TesterBase implements TestCapSsfManMBean, Sto
 		return null;
 	}
 
+
 	@Override
-	public void onCAPMessage(CAPMessage arg0) {
-		// TODO Auto-generated method stub
-		
+	public void onCAPMessage(CAPMessage msg) {
+		this.testerHost.sendNotif(SOURCE_NAME, "Rsvd: " + msg.getMessageType().toString(), msg.toString(), Level.DEBUG);
 	}
 
 	@Override
-	public void onErrorComponent(CAPDialog arg0, Long arg1, CAPErrorMessage arg2) {
-		// TODO Auto-generated method stub
-		
+	public void onErrorComponent(CAPDialog dlg, Long invokeId, CAPErrorMessage msg) {
+		this.testerHost.sendNotif(SOURCE_NAME, "Rsvd: Error, InvokeId=" + invokeId + ", Error=" + msg.getErrorCode(), msg.toString(), Level.DEBUG);
 	}
 
 	@Override
@@ -252,9 +282,9 @@ public class TestCapSsfMan extends TesterBase implements TestCapSsfManMBean, Sto
 	}
 
 	@Override
-	public void onRejectComponent(CAPDialog arg0, Long arg1, Problem arg2, boolean arg3) {
-		// TODO Auto-generated method stub
-		
+	public void onRejectComponent(CAPDialog dlg, Long invokeId, Problem problem, boolean isLocalOriginated) {
+		this.testerHost.sendNotif(SOURCE_NAME, "Rsvd: Reject, InvokeId=" + invokeId + (isLocalOriginated ? ", local" : ", remote"), problem.toString(),
+				Level.DEBUG);
 	}
 
 	@Override
@@ -402,57 +432,73 @@ public class TestCapSsfMan extends TesterBase implements TestCapSsfManMBean, Sto
 	}
 
 	@Override
-	public void onDialogAccept(CAPDialog arg0, CAPGprsReferenceNumber arg1) {
-		// TODO Auto-generated method stub
-		
+	public void onDialogAccept(CAPDialog dlg, CAPGprsReferenceNumber referenceNumber) {
+		this.testerHost.sendNotif(SOURCE_NAME, "Rsvd: DlgAccept", "TrId=" + dlg.getLocalDialogId(), Level.DEBUG);
 	}
 
 	@Override
-	public void onDialogClose(CAPDialog arg0) {
-		// TODO Auto-generated method stub
-		
+	public void onDialogClose(CAPDialog dlg) {
+		this.testerHost.sendNotif(SOURCE_NAME, "Rsvd: DlgClose", "TrId=" + dlg.getLocalDialogId(), Level.DEBUG);
 	}
 
 	@Override
-	public void onDialogDelimiter(CAPDialog arg0) {
-		// TODO Auto-generated method stub
-		
+	public void onDialogDelimiter(CAPDialog dlg) {
+		try {
+			if (dlg.getState() == CAPDialogState.InitialReceived)
+				dlg.send();
+		} catch (CAPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
-	public void onDialogNotice(CAPDialog arg0, CAPNoticeProblemDiagnostic arg1) {
-		// TODO Auto-generated method stub
-		
+	public void onDialogNotice(CAPDialog dlg, CAPNoticeProblemDiagnostic problem) {
+		this.testerHost.sendNotif(SOURCE_NAME, "Rsvd: DlgNotice", "Problem: " + problem, Level.DEBUG);
 	}
 
 	@Override
-	public void onDialogProviderAbort(CAPDialog arg0, PAbortCauseType arg1) {
-		// TODO Auto-generated method stub
-		
+	public void onDialogProviderAbort(CAPDialog dlg, PAbortCauseType problem) {
+		this.testerHost.sendNotif(SOURCE_NAME, "Rsvd: DlgProviderAbort", "Problem: " + problem, Level.DEBUG);
 	}
 
 	@Override
 	public void onDialogRelease(CAPDialog arg0) {
-		// TODO Auto-generated method stub
-		
+		this.doRemoveDialog();
+		this.testerHost.sendNotif(SOURCE_NAME, "DlgClosed:", "", Level.DEBUG);
 	}
 
 	@Override
-	public void onDialogRequest(CAPDialog arg0, CAPGprsReferenceNumber arg1) {
-		// TODO Auto-generated method stub
-		
+	public void onDialogRequest(CAPDialog capDialog, CAPGprsReferenceNumber referenceNumber) {
+		synchronized (this) {
+			if (capDialog instanceof CAPDialogCircuitSwitchedCall) {
+				CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall) capDialog;
+
+				CAPDialogCircuitSwitchedCall curDialog = this.currentDialog;
+				currentRequestDef = "";
+				if (curDialog == null) {
+					this.currentDialog = dlg;
+					this.testerHost.sendNotif(SOURCE_NAME, "DlgAccepted:", "TrId=" + capDialog.getRemoteDialogId(), Level.DEBUG);
+				} else {
+					try {
+						capDialog.abort(CAPUserAbortReason.congestion);
+					} catch (CAPException e) {
+						e.printStackTrace();
+					}
+					this.testerHost.sendNotif(SOURCE_NAME, "Rejected incoming Dialog:", "TrId=" + capDialog.getRemoteDialogId(), Level.DEBUG);
+				}
+			}
+		}
 	}
 
 	@Override
-	public void onDialogTimeout(CAPDialog arg0) {
-		// TODO Auto-generated method stub
-		
+	public void onDialogTimeout(CAPDialog dlg) {
+		dlg.keepAlive();
 	}
 
 	@Override
-	public void onDialogUserAbort(CAPDialog arg0, CAPGeneralAbortReason arg1, CAPUserAbortReason arg2) {
-		// TODO Auto-generated method stub
-		
+	public void onDialogUserAbort(CAPDialog dlg, CAPGeneralAbortReason reason, CAPUserAbortReason userAbort) {
+		this.testerHost.sendNotif(SOURCE_NAME, "Rsvd: DlgProviderAbort", reason + " - " + userAbort, Level.DEBUG);
 	}
 
 }

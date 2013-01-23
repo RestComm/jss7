@@ -24,6 +24,8 @@ package org.mobicents.protocols.ss7.tools.simulator.common;
 
 import java.util.Hashtable;
 
+import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
+
 /**
  * 
  * @author sergey vetyutnev
@@ -108,6 +110,34 @@ public class CapApplicationContextSsf extends EnumeratedBase {
 	@Override
 	protected Hashtable<String, Integer> getStringTable() {
 		return stringMap;
+	}
+
+	public CAPApplicationContext getCAPApplicationContext() {
+		switch (this.intValue()) {
+		case VAL_CAP_V1_gsmSSF_to_gsmSCF:
+			return CAPApplicationContext.CapV1_gsmSSF_to_gsmSCF;
+		case VAL_CAP_V2_gsmSSF_to_gsmSCF:
+			return CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF;
+		case VAL_CAP_V3_scfGeneric:
+			return CAPApplicationContext.CapV3_gsmSSF_scfGeneric;
+		case VAL_CAP_V4_scfGeneric:
+			return CAPApplicationContext.CapV4_gsmSSF_scfGeneric;
+
+		case VAL_CAP_V2_assist_gsmSSF_to_gsmSCF:
+			return CAPApplicationContext.CapV2_assistGsmSSF_to_gsmSCF;
+		case VAL_CAP_V3_scfAssistHandoffAC:
+			return CAPApplicationContext.CapV3_gsmSSF_scfAssistHandoff;
+		case VAL_CAP_V4_scfAssistHandoffAC:
+			return CAPApplicationContext.CapV4_gsmSSF_scfAssistHandoff;
+
+		case VAL_CAP_V2_gsmSRF_to_gsmSCF:
+			return CAPApplicationContext.CapV2_gsmSRF_to_gsmSCF;
+		case VAL_CAP_V3_gsmSRF_gsmSCF:
+			return CAPApplicationContext.CapV3_gsmSRF_gsmSCF;
+		case VAL_CAP_V4_gsmSRF_gsmSCF:
+			return CAPApplicationContext.CapV4_gsmSRF_gsmSCF;
+		}
+		return CAPApplicationContext.CapV1_gsmSSF_to_gsmSCF;
 	}
 
 }

@@ -25,9 +25,7 @@ package org.mobicents.protocols.ss7.tools.simulatorgui.tests.cap;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
-import org.mobicents.protocols.ss7.tools.simulator.common.CapApplicationContextScf;
 import org.mobicents.protocols.ss7.tools.simulator.common.CapApplicationContextSsf;
-import org.mobicents.protocols.ss7.tools.simulator.tests.cap.TestCapScfManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.cap.TestCapSsfManMBean;
 import org.mobicents.protocols.ss7.tools.simulatorgui.M3uaForm;
 
@@ -55,7 +53,7 @@ public class TestCapSsfParamForm extends JDialog {
 
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
-		setTitle("CAP SCF test settings");
+		setTitle("CAP SSF test settings");
 		setBounds(100, 100, 540, 189);
 		
 		JPanel panel = new JPanel();
@@ -133,7 +131,7 @@ public class TestCapSsfParamForm extends JDialog {
 	}
 
 	private void loadDataA() {
-		M3uaForm.setEnumeratedBaseComboBox(cbCapApplicationContext, new CapApplicationContextScf(CapApplicationContextSsf.VAL_CAP_V1_gsmSSF_to_gsmSCF));
+		M3uaForm.setEnumeratedBaseComboBox(cbCapApplicationContext, new CapApplicationContextSsf(CapApplicationContextSsf.VAL_CAP_V1_gsmSSF_to_gsmSCF));
 	}
 
 	private void loadDataB() {

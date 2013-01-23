@@ -22,9 +22,6 @@
 
 package org.mobicents.protocols.ss7.tools.simulator.level3;
 
-import javolution.xml.XMLFormat;
-import javolution.xml.stream.XMLStreamException;
-
 import org.apache.log4j.Level;
 import org.mobicents.protocols.ss7.map.MAPStackImpl;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
@@ -37,7 +34,6 @@ import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
-import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
 
 /**
@@ -136,17 +132,17 @@ public class MapMan implements MapManMBean, Stoppable {
 	}
 
 	@Override
-	public NumberingPlanType getOrigReferenceNumberingPlan() {
-		return new NumberingPlanType(this.testerHost.getConfigurationData().getMapConfigurationData().getOrigReferenceNumberingPlan().getIndicator());
+	public NumberingPlanMapType getOrigReferenceNumberingPlan() {
+		return new NumberingPlanMapType(this.testerHost.getConfigurationData().getMapConfigurationData().getOrigReferenceNumberingPlan().getIndicator());
 	}
 
 	@Override
 	public String getOrigReferenceNumberingPlan_Value() {
-		return new NumberingPlanType(this.testerHost.getConfigurationData().getMapConfigurationData().getOrigReferenceNumberingPlan().getIndicator()).toString();
+		return new NumberingPlanMapType(this.testerHost.getConfigurationData().getMapConfigurationData().getOrigReferenceNumberingPlan().getIndicator()).toString();
 	}
 
 	@Override
-	public void setOrigReferenceNumberingPlan(NumberingPlanType val) {
+	public void setOrigReferenceNumberingPlan(NumberingPlanMapType val) {
 		this.testerHost.getConfigurationData().getMapConfigurationData().setOrigReferenceNumberingPlan(NumberingPlan.getInstance(val.intValue()));
 		this.testerHost.markStore();
 	}
@@ -179,17 +175,17 @@ public class MapMan implements MapManMBean, Stoppable {
 	}
 
 	@Override
-	public NumberingPlanType getDestReferenceNumberingPlan() {
-		return new NumberingPlanType(this.testerHost.getConfigurationData().getMapConfigurationData().getDestReferenceNumberingPlan().getIndicator());
+	public NumberingPlanMapType getDestReferenceNumberingPlan() {
+		return new NumberingPlanMapType(this.testerHost.getConfigurationData().getMapConfigurationData().getDestReferenceNumberingPlan().getIndicator());
 	}
 
 	@Override
 	public String getDestReferenceNumberingPlan_Value() {
-		return new NumberingPlanType(this.testerHost.getConfigurationData().getMapConfigurationData().getDestReferenceNumberingPlan().getIndicator()).toString();
+		return new NumberingPlanMapType(this.testerHost.getConfigurationData().getMapConfigurationData().getDestReferenceNumberingPlan().getIndicator()).toString();
 	}
 
 	@Override
-	public void setDestReferenceNumberingPlan(NumberingPlanType val) {
+	public void setDestReferenceNumberingPlan(NumberingPlanMapType val) {
 		this.testerHost.getConfigurationData().getMapConfigurationData().setDestReferenceNumberingPlan(NumberingPlan.getInstance(val.intValue()));
 		this.testerHost.markStore();
 	}
@@ -203,7 +199,7 @@ public class MapMan implements MapManMBean, Stoppable {
 
 	@Override
 	public void putOrigReferenceNumberingPlan(String val) {
-		NumberingPlanType x = NumberingPlanType.createInstance(val);
+		NumberingPlanMapType x = NumberingPlanMapType.createInstance(val);
 		if (x != null)
 			this.setOrigReferenceNumberingPlan(x);
 	}
@@ -217,7 +213,7 @@ public class MapMan implements MapManMBean, Stoppable {
 
 	@Override
 	public void putDestReferenceNumberingPlan(String val) {
-		NumberingPlanType x = NumberingPlanType.createInstance(val);
+		NumberingPlanMapType x = NumberingPlanMapType.createInstance(val);
 		if (x != null)
 			this.setDestReferenceNumberingPlan(x);
 	}

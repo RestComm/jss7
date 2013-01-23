@@ -35,12 +35,12 @@ import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
  */
 public class MapConfigurationData_OldFormat extends MapConfigurationData {
 
-	protected static final XMLFormat<MapConfigurationData> XML = new XMLFormat<MapConfigurationData>(MapConfigurationData.class) {
+	protected static final XMLFormat<MapConfigurationData_OldFormat> XML = new XMLFormat<MapConfigurationData_OldFormat>(MapConfigurationData_OldFormat.class) {
 
-		public void write(MapConfigurationData map, OutputElement xml) throws XMLStreamException {
+		public void write(MapConfigurationData_OldFormat map, OutputElement xml) throws XMLStreamException {
 		}
 
-		public void read(InputElement xml, MapConfigurationData map) throws XMLStreamException {
+		public void read(InputElement xml, MapConfigurationData_OldFormat map) throws XMLStreamException {
 			map.setLocalSsn(xml.getAttribute(LOCAL_SSN).toInt());
 			map.setRemoteSsn(xml.getAttribute(REMOTE_SSN).toInt());
 

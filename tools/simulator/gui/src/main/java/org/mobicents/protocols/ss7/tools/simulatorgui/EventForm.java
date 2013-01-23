@@ -1,0 +1,155 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
+package org.mobicents.protocols.ss7.tools.simulatorgui;
+
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.GridBagLayout;
+import javax.swing.JLabel;
+import java.awt.GridBagConstraints;
+import javax.swing.JTextArea;
+import java.awt.Insets;
+import java.util.Date;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.Rectangle;
+import java.awt.Dialog.ModalityType;
+
+/**
+ * 
+ * @author sergey vetyutnev
+ * 
+ */
+public class EventForm extends JDialog {
+
+	private static final long serialVersionUID = 5638054828861986117L;
+
+	private TestingForm testingForm;
+
+	private JTextArea taTime;
+	private JTextArea taSource;
+	private JTextArea taMessage;
+	private JTextArea taUserData;
+
+	public EventForm(TestingForm testingForm) {
+		super(testingForm, true);
+		setModalityType(ModalityType.MODELESS);
+
+		setBounds(new Rectangle(150, 150, 450, 300));
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent arg0) {
+				formClosing();
+			}
+		});
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+		this.testingForm = testingForm;
+
+		setTitle("Event details");
+		
+		JPanel panel = new JPanel();
+		getContentPane().add(panel, BorderLayout.CENTER);
+		GridBagLayout gbl_panel = new GridBagLayout();
+		gbl_panel.columnWidths = new int[]{0, 0, 0};
+		gbl_panel.rowHeights = new int[] {20, 0, 0, 0, 0};
+		gbl_panel.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
+		panel.setLayout(gbl_panel);
+		
+		JLabel lblTime = new JLabel("Event time");
+		GridBagConstraints gbc_lblTime = new GridBagConstraints();
+		gbc_lblTime.insets = new Insets(0, 0, 5, 5);
+		gbc_lblTime.gridx = 0;
+		gbc_lblTime.gridy = 0;
+		panel.add(lblTime, gbc_lblTime);
+		
+		taTime = new JTextArea();
+		taTime.setEditable(false);
+		GridBagConstraints gbc_taTime = new GridBagConstraints();
+		gbc_taTime.insets = new Insets(0, 0, 5, 0);
+		gbc_taTime.fill = GridBagConstraints.BOTH;
+		gbc_taTime.gridx = 1;
+		gbc_taTime.gridy = 0;
+		panel.add(taTime, gbc_taTime);
+		
+		JLabel lblSource = new JLabel("Source");
+		GridBagConstraints gbc_lblSource = new GridBagConstraints();
+		gbc_lblSource.insets = new Insets(0, 0, 5, 5);
+		gbc_lblSource.gridx = 0;
+		gbc_lblSource.gridy = 1;
+		panel.add(lblSource, gbc_lblSource);
+		
+		taSource = new JTextArea();
+		taSource.setEditable(false);
+		GridBagConstraints gbc_taSource = new GridBagConstraints();
+		gbc_taSource.insets = new Insets(0, 0, 5, 0);
+		gbc_taSource.fill = GridBagConstraints.BOTH;
+		gbc_taSource.gridx = 1;
+		gbc_taSource.gridy = 1;
+		panel.add(taSource, gbc_taSource);
+		
+		JLabel lblMessage = new JLabel("Message");
+		GridBagConstraints gbc_lblMessage = new GridBagConstraints();
+		gbc_lblMessage.insets = new Insets(0, 0, 5, 5);
+		gbc_lblMessage.gridx = 0;
+		gbc_lblMessage.gridy = 2;
+		panel.add(lblMessage, gbc_lblMessage);
+		
+		taMessage = new JTextArea();
+		taMessage.setEditable(false);
+		GridBagConstraints gbc_taMessage = new GridBagConstraints();
+		gbc_taMessage.insets = new Insets(0, 0, 5, 0);
+		gbc_taMessage.fill = GridBagConstraints.BOTH;
+		gbc_taMessage.gridx = 1;
+		gbc_taMessage.gridy = 2;
+		panel.add(taMessage, gbc_taMessage);
+		
+		JLabel lblUserdata = new JLabel("UserData");
+		GridBagConstraints gbc_lblUserdata = new GridBagConstraints();
+		gbc_lblUserdata.insets = new Insets(0, 0, 0, 5);
+		gbc_lblUserdata.gridx = 0;
+		gbc_lblUserdata.gridy = 3;
+		panel.add(lblUserdata, gbc_lblUserdata);
+		
+		taUserData = new JTextArea();
+		taUserData.setEditable(false);
+		GridBagConstraints gbc_taUserData = new GridBagConstraints();
+		gbc_taUserData.fill = GridBagConstraints.BOTH;
+		gbc_taUserData.gridx = 1;
+		gbc_taUserData.gridy = 3;
+		panel.add(taUserData, gbc_taUserData);
+	}
+
+	public void setData(String eventTime, String source, String msg, String userData) {
+		this.taTime.setText(eventTime);
+		this.taSource.setText(source);
+		this.taMessage.setText(msg);
+		this.taUserData.setText(userData);
+	}
+
+	private void formClosing() {
+		this.testingForm.eventFormClose();
+	}
+}

@@ -31,7 +31,7 @@ import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.tools.simulator.level2.GlobalTitleType;
 import org.mobicents.protocols.ss7.tools.simulator.level2.NatureOfAddressType;
-import org.mobicents.protocols.ss7.tools.simulator.level2.NumberingPlanType;
+import org.mobicents.protocols.ss7.tools.simulator.level2.NumberingPlanSccpType;
 import org.mobicents.protocols.ss7.tools.simulator.level2.SccpManMBean;
 
 import java.awt.BorderLayout;
@@ -296,7 +296,7 @@ public class SccpForm extends JDialog {
 
 		M3uaForm.setEnumeratedBaseComboBox(cbGlobalTitleType, new GlobalTitleType(GlobalTitleType.VAL_TT_NP_ES_NOA));
 		M3uaForm.setEnumeratedBaseComboBox(cbAddressNature, new NatureOfAddressType(NatureOfAddress.INTERNATIONAL.getValue()));
-		M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, new NumberingPlanType(NumberingPlan.ISDN_MOBILE.getValue()));
+		M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, new NumberingPlanSccpType(NumberingPlan.ISDN_MOBILE.getValue()));
 
 		tbRemoteSpc.setText("2");
 		tbLocalSpc.setText("1");
@@ -315,7 +315,7 @@ public class SccpForm extends JDialog {
 
 		M3uaForm.setEnumeratedBaseComboBox(cbGlobalTitleType, new GlobalTitleType(GlobalTitleType.VAL_TT_NP_ES_NOA));
 		M3uaForm.setEnumeratedBaseComboBox(cbAddressNature, new NatureOfAddressType(NatureOfAddress.INTERNATIONAL.getValue()));
-		M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, new NumberingPlanType(NumberingPlan.ISDN_MOBILE.getValue()));
+		M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, new NumberingPlanSccpType(NumberingPlan.ISDN_MOBILE.getValue()));
 
 		tbRemoteSpc.setText("1");
 		tbLocalSpc.setText("2");
@@ -383,7 +383,7 @@ public class SccpForm extends JDialog {
 
 		this.sccp.setGlobalTitleType((GlobalTitleType) cbGlobalTitleType.getSelectedItem());
 		this.sccp.setNatureOfAddress((NatureOfAddressType) cbAddressNature.getSelectedItem());
-		this.sccp.setNumberingPlan((NumberingPlanType) cbNumberingPlan.getSelectedItem());
+		this.sccp.setNumberingPlan((NumberingPlanSccpType) cbNumberingPlan.getSelectedItem());
 
 		this.sccp.setCallingPartyAddressDigits(tbCallingPartyAddressDigits.getText());
 //		this.sccp.setExtraLocalAddressDigits(tbExtraLocalAddressDigits.getText());
