@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.cap.EsiBcsm;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -43,6 +46,8 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
  * 
  */
 public class ODisconnectSpecificInfoImpl implements ODisconnectSpecificInfo, CAPAsnPrimitive {
+
+	private static final String RELEASE_CAUSE = "releaseCause";
 
 	public static final int _ID_releaseCause = 0;
 
@@ -84,14 +89,14 @@ public class ODisconnectSpecificInfoImpl implements ODisconnectSpecificInfo, CAP
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
+					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -101,21 +106,22 @@ public class ODisconnectSpecificInfoImpl implements ODisconnectSpecificInfo, CAP
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
+					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException,
+			MAPParsingComponentException, IOException, AsnException {
 
 		this.releaseCause = null;
-		
+
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 		while (true) {
 			if (ais.available() == 0)
@@ -180,5 +186,26 @@ public class ODisconnectSpecificInfoImpl implements ODisconnectSpecificInfo, CAP
 
 		return sb.toString();
 	}
-}
 
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<ODisconnectSpecificInfoImpl> O_DISCONNECT_SPECIFIC_INFO_XML = new XMLFormat<ODisconnectSpecificInfoImpl>(
+			ODisconnectSpecificInfoImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, ODisconnectSpecificInfoImpl oDisconnectSpecificInfo)
+				throws XMLStreamException {
+			oDisconnectSpecificInfo.releaseCause = xml.get(RELEASE_CAUSE, CauseCapImpl.class);
+		}
+
+		@Override
+		public void write(ODisconnectSpecificInfoImpl oDisconnectSpecificInfo,
+				javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+
+			if (oDisconnectSpecificInfo.releaseCause != null) {
+				xml.add((CauseCapImpl) oDisconnectSpecificInfo.releaseCause, RELEASE_CAUSE, CauseCapImpl.class);
+			}
+		}
+	};
+}

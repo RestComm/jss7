@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -41,7 +44,10 @@ import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
  * @author sergey vetyutnev
  * 
  */
-public class ExtBasicServiceCodeImpl implements ExtBasicServiceCode, MAPAsnPrimitive  {
+public class ExtBasicServiceCodeImpl implements ExtBasicServiceCode, MAPAsnPrimitive {
+
+	private static final String EXT_BEARER_SERVICE = "extBearerService";
+	private static final String EXT_TELE_SERVICE = "extTeleservice";
 
 	public static final int _ID_ext_BearerService = 2;
 	public static final int _ID_ext_Teleservice = 3;
@@ -49,7 +55,7 @@ public class ExtBasicServiceCodeImpl implements ExtBasicServiceCode, MAPAsnPrimi
 	public static final String _PrimitiveName = "ExtBasicServiceCode";
 
 	private ExtBearerServiceCode extBearerService;
-	private ExtTeleserviceCode extTeleservice;	
+	private ExtTeleserviceCode extTeleservice;
 
 	public ExtBasicServiceCodeImpl() {
 	}
@@ -61,7 +67,7 @@ public class ExtBasicServiceCodeImpl implements ExtBasicServiceCode, MAPAsnPrimi
 	public ExtBasicServiceCodeImpl(ExtTeleserviceCode extTeleservice) {
 		this.extTeleservice = extTeleservice;
 	}
-	
+
 	public ExtBearerServiceCode getExtBearerService() {
 		return extBearerService;
 	}
@@ -70,8 +76,6 @@ public class ExtBasicServiceCodeImpl implements ExtBasicServiceCode, MAPAsnPrimi
 		return extTeleservice;
 	}
 
-	
-	
 	public int getTag() throws MAPException {
 		if (extBearerService != null)
 			return _ID_ext_BearerService;
@@ -93,11 +97,11 @@ public class ExtBasicServiceCodeImpl implements ExtBasicServiceCode, MAPAsnPrimi
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -106,18 +110,18 @@ public class ExtBasicServiceCodeImpl implements ExtBasicServiceCode, MAPAsnPrimi
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
+			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, MAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
+			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, MAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
 	private void _decode(AsnInputStream ais, int length) throws MAPParsingComponentException, IOException, AsnException {
 
 		this.extBearerService = null;
-		this.extTeleservice = null;	
+		this.extTeleservice = null;
 
 		int tag = ais.getTag();
 
@@ -148,7 +152,7 @@ public class ExtBasicServiceCodeImpl implements ExtBasicServiceCode, MAPAsnPrimi
 	}
 
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		
+
 		try {
 			asnOs.writeTag(tagClass, true, tag);
 			int pos = asnOs.StartContentDefiniteLength();
@@ -189,4 +193,34 @@ public class ExtBasicServiceCodeImpl implements ExtBasicServiceCode, MAPAsnPrimi
 
 		return sb.toString();
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<ExtBasicServiceCodeImpl> EXT_BASIC_SERVICE_CODE_XML = new XMLFormat<ExtBasicServiceCodeImpl>(
+			ExtBasicServiceCodeImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, ExtBasicServiceCodeImpl extBasicServiceCode)
+				throws XMLStreamException {
+			extBasicServiceCode.extBearerService = xml.get(EXT_BEARER_SERVICE, ExtBearerServiceCodeImpl.class);
+			extBasicServiceCode.extTeleservice = xml.get(EXT_TELE_SERVICE, ExtTeleserviceCodeImpl.class);
+
+		}
+
+		@Override
+		public void write(ExtBasicServiceCodeImpl extBasicServiceCode, javolution.xml.XMLFormat.OutputElement xml)
+				throws XMLStreamException {
+
+			if (extBasicServiceCode.extBearerService != null) {
+				xml.add(((ExtBearerServiceCodeImpl) extBasicServiceCode.extBearerService), EXT_BEARER_SERVICE,
+						ExtBearerServiceCodeImpl.class);
+			}
+
+			if (extBasicServiceCode.extTeleservice != null) {
+				xml.add(((ExtTeleserviceCodeImpl) extBasicServiceCode.extTeleservice), EXT_TELE_SERVICE,
+						ExtTeleserviceCodeImpl.class);
+			}
+		}
+	};
 }

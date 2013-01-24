@@ -22,15 +22,22 @@
 
 package org.mobicents.protocols.ss7.cap.EsiBcsm;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.isup.CauseCapImpl;
-import org.testng.*;import org.testng.annotations.*;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.EventReportBCSMRequestImpl;
+import org.testng.annotations.Test;
 
 /**
  * 
@@ -47,7 +54,7 @@ public class RouteSelectFailureSpecificInfoTest {
 		return new byte[] { (byte) 132, (byte) 144 };
 	}
 
-	@Test(groups = { "functional.decode","EsiBcsm"})
+	@Test(groups = { "functional.decode","circuitSwitchedCall.primitive"})
 	public void testDecode() throws Exception {
 
 		byte[] data = this.getData();
@@ -58,7 +65,7 @@ public class RouteSelectFailureSpecificInfoTest {
 		assertTrue(Arrays.equals(elem.getFailureCause().getData(), this.getIntData()));
 	}
 
-	@Test(groups = { "functional.encode","EsiBcsm"})
+	@Test(groups = { "functional.encode","circuitSwitchedCall.primitive"})
 	public void testEncode() throws Exception {
 
 		CauseCapImpl cause = new CauseCapImpl(this.getIntData());
@@ -66,6 +73,35 @@ public class RouteSelectFailureSpecificInfoTest {
 		AsnOutputStream aos = new AsnOutputStream();
 		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 2);
 		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
+		
+	}
+	
+	@Test(groups = { "functional.xml.serialize","circuitSwitchedCall.primitive"})
+	public void testXMLSerializaion() throws Exception {
+
+		CauseCapImpl cause = new CauseCapImpl(this.getIntData());
+		RouteSelectFailureSpecificInfoImpl original = new RouteSelectFailureSpecificInfoImpl(cause);
+		
+		
+		// Writes the area to a file.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for
+										// indentation).
+		writer.write(original, "RouteSelectFailureSpecificInfoImpl", RouteSelectFailureSpecificInfoImpl.class);
+		writer.close();
+
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		RouteSelectFailureSpecificInfoImpl copy = reader.read("RouteSelectFailureSpecificInfoImpl", RouteSelectFailureSpecificInfoImpl.class);
+		
+		assertEquals(copy.getFailureCause().getCauseIndicators().getLocation(), original.getFailureCause().getCauseIndicators().getLocation());
 		
 	}
 }

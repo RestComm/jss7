@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -23,6 +23,9 @@
 package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
 import java.io.IOException;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -47,12 +50,17 @@ import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
 import org.mobicents.protocols.ss7.inap.primitives.MiscCallInfoImpl;
 
 /**
-*
-* 
-* @author sergey vetyutnev
-* 
-*/
+ * 
+ * @author sergey vetyutnev
+ * @author Amit Bhayani
+ * 
+ */
 public class EventReportBCSMRequestImpl extends CircuitSwitchedCallMessageImpl implements EventReportBCSMRequest {
+
+	private static final String EVENT_TYPE_BCSM = "eventTypeBCSM";
+	private static final String EVENT_SPECIFIC_INFO_BCSM = "eventSpecificInformationBCSM";
+	private static final String LEG_ID = "legID";
+	private static final String MISC_CALL_INFO = "miscCallInfo";
 
 	public static final int _ID_eventTypeBCSM = 0;
 	public static final int _ID_eventSpecificInformationBCSM = 2;
@@ -61,18 +69,18 @@ public class EventReportBCSMRequestImpl extends CircuitSwitchedCallMessageImpl i
 	public static final int _ID_extensions = 5;
 
 	public static final String _PrimitiveName = "EventReportBCSMRequest";
-	
+
 	private EventTypeBCSM eventTypeBCSM;
 	private EventSpecificInformationBCSM eventSpecificInformationBCSM;
 	private ReceivingSideID legID;
 	private MiscCallInfo miscCallInfo;
 	private CAPExtensions extensions;
 
-	
 	public EventReportBCSMRequestImpl() {
 	}
-	
-	public EventReportBCSMRequestImpl(EventTypeBCSM eventTypeBCSM, EventSpecificInformationBCSM eventSpecificInformationBCSM, ReceivingSideID legID,
+
+	public EventReportBCSMRequestImpl(EventTypeBCSM eventTypeBCSM,
+			EventSpecificInformationBCSM eventSpecificInformationBCSM, ReceivingSideID legID,
 			MiscCallInfo miscCallInfo, CAPExtensions extensions) {
 		this.eventTypeBCSM = eventTypeBCSM;
 		this.eventSpecificInformationBCSM = eventSpecificInformationBCSM;
@@ -116,7 +124,6 @@ public class EventReportBCSMRequestImpl extends CircuitSwitchedCallMessageImpl i
 		return extensions;
 	}
 
-	
 	@Override
 	public int getTag() throws CAPException {
 		return Tag.SEQUENCE;
@@ -139,14 +146,14 @@ public class EventReportBCSMRequestImpl extends CircuitSwitchedCallMessageImpl i
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (INAPParsingComponentException e) {
-			throw new CAPParsingComponentException("INAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("INAPParsingComponentException when decoding " + _PrimitiveName
+					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -156,24 +163,26 @@ public class EventReportBCSMRequestImpl extends CircuitSwitchedCallMessageImpl i
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (INAPParsingComponentException e) {
-			throw new CAPParsingComponentException("INAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("INAPParsingComponentException when decoding " + _PrimitiveName
+					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException, INAPParsingComponentException {
+	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException,
+			AsnException, INAPParsingComponentException {
 
 		this.eventTypeBCSM = null;
 		this.eventSpecificInformationBCSM = null;
 		this.legID = null;
 		this.miscCallInfo = null;
-//		this.miscCallInfo = new MiscCallInfoImpl(MiscCallInfoMessageType.request, null);
+		// this.miscCallInfo = new
+		// MiscCallInfoImpl(MiscCallInfoMessageType.request, null);
 		this.extensions = null;
 
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
@@ -183,28 +192,28 @@ public class EventReportBCSMRequestImpl extends CircuitSwitchedCallMessageImpl i
 				break;
 
 			int tag = ais.readTag();
-			
+
 			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 				switch (tag) {
 				case _ID_eventTypeBCSM:
-					i1 = (int)ais.readInteger();
+					i1 = (int) ais.readInteger();
 					this.eventTypeBCSM = EventTypeBCSM.getInstance(i1);
 					break;
 				case _ID_eventSpecificInformationBCSM:
 					AsnInputStream ais2 = ais.readSequenceStream();
 					ais2.readTag();
 					this.eventSpecificInformationBCSM = new EventSpecificInformationBCSMImpl();
-					((EventSpecificInformationBCSMImpl)this.eventSpecificInformationBCSM).decodeAll(ais2);
+					((EventSpecificInformationBCSMImpl) this.eventSpecificInformationBCSM).decodeAll(ais2);
 					break;
 				case _ID_legID:
 					ais2 = ais.readSequenceStream();
 					ais2.readTag();
 					this.legID = new ReceivingSideIDImpl();
-					((ReceivingSideIDImpl)this.legID).decodeAll(ais2);
+					((ReceivingSideIDImpl) this.legID).decodeAll(ais2);
 					break;
 				case _ID_miscCallInfo:
 					this.miscCallInfo = new MiscCallInfoImpl();
-					((MiscCallInfoImpl)this.miscCallInfo).decodeAll(ais);
+					((MiscCallInfoImpl) this.miscCallInfo).decodeAll(ais);
 					break;
 				case _ID_extensions:
 					this.extensions = new CAPExtensionsImpl();
@@ -221,8 +230,8 @@ public class EventReportBCSMRequestImpl extends CircuitSwitchedCallMessageImpl i
 		}
 
 		if (this.eventTypeBCSM == null)
-			throw new CAPParsingComponentException(
-					"Error while decoding " + _PrimitiveName + ": eventTypeBCSM is mandatory but not found ",
+			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+					+ ": eventTypeBCSM is mandatory but not found ",
 					CAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
@@ -251,7 +260,7 @@ public class EventReportBCSMRequestImpl extends CircuitSwitchedCallMessageImpl i
 			throw new CAPException("Error while encoding " + _PrimitiveName + ": eventTypeBCSM must not be null");
 
 		try {
-			aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_eventTypeBCSM, this.eventTypeBCSM.getCode());			
+			aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_eventTypeBCSM, this.eventTypeBCSM.getCode());
 
 			if (this.eventSpecificInformationBCSM != null) {
 				aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_eventSpecificInformationBCSM);
@@ -269,7 +278,7 @@ public class EventReportBCSMRequestImpl extends CircuitSwitchedCallMessageImpl i
 				((MiscCallInfoImpl) this.miscCallInfo).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_miscCallInfo);
 			if (this.extensions != null)
 				((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
-			
+
 		} catch (IOException e) {
 			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		} catch (AsnException e) {
@@ -311,5 +320,44 @@ public class EventReportBCSMRequestImpl extends CircuitSwitchedCallMessageImpl i
 
 		return sb.toString();
 	}
-}
 
+	protected static final XMLFormat<EventReportBCSMRequestImpl> EVENT_REPORT_BCSM_REQUEST_XML = new XMLFormat<EventReportBCSMRequestImpl>(
+			EventReportBCSMRequestImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, EventReportBCSMRequestImpl eventReportBCSMRequest)
+				throws XMLStreamException {
+			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, eventReportBCSMRequest);
+			eventReportBCSMRequest.eventTypeBCSM = EventTypeBCSM.getInstance(xml.get(EVENT_TYPE_BCSM, Integer.class));
+
+			eventReportBCSMRequest.eventSpecificInformationBCSM = xml.get(EVENT_SPECIFIC_INFO_BCSM,
+					EventSpecificInformationBCSMImpl.class);
+
+			eventReportBCSMRequest.legID = xml.get(LEG_ID, ReceivingSideIDImpl.class);
+
+			eventReportBCSMRequest.miscCallInfo = xml.get(MISC_CALL_INFO, MiscCallInfoImpl.class);
+		}
+
+		@Override
+		public void write(EventReportBCSMRequestImpl eventReportBCSMRequest, javolution.xml.XMLFormat.OutputElement xml)
+				throws XMLStreamException {
+			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(eventReportBCSMRequest, xml);
+
+			xml.add(eventReportBCSMRequest.eventTypeBCSM.getCode(), EVENT_TYPE_BCSM, Integer.class);
+
+			if (eventReportBCSMRequest.eventSpecificInformationBCSM != null) {
+				xml.add((EventSpecificInformationBCSMImpl) eventReportBCSMRequest.eventSpecificInformationBCSM,
+						EVENT_SPECIFIC_INFO_BCSM, EventSpecificInformationBCSMImpl.class);
+			}
+
+			if (eventReportBCSMRequest.legID != null) {
+				xml.add((ReceivingSideIDImpl) eventReportBCSMRequest.legID, LEG_ID, ReceivingSideIDImpl.class);
+			}
+
+			if (eventReportBCSMRequest.miscCallInfo != null) {
+				xml.add((MiscCallInfoImpl) eventReportBCSMRequest.miscCallInfo, MISC_CALL_INFO, MiscCallInfoImpl.class);
+			}
+
+		}
+	};
+}

@@ -25,20 +25,24 @@ package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TeleserviceCodeValue;
-import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtTeleserviceCodeImpl;
 import org.testng.annotations.Test;
 
 /**
-*
-* @author sergey vetyutnev
-* 
-*/
+ * 
+ * @author sergey vetyutnev
+ * 
+ */
 public class ExtTeleserviceCodeTest {
 
 	byte[] data = new byte[] { 4, 1, 0x11 };
@@ -60,7 +64,6 @@ public class ExtTeleserviceCodeTest {
 		assertTrue(Arrays.equals(impl.getData(), dataEncoded));
 		assertEquals(impl.getTeleserviceCodeValue(), TeleserviceCodeValue.telephony);
 
-
 		asn = new AsnInputStream(data2);
 		tag = asn.readTag();
 		assertEquals(tag, 3);
@@ -69,7 +72,6 @@ public class ExtTeleserviceCodeTest {
 		impl.decodeAll(asn);
 
 		assertEquals(impl.getTeleserviceCodeValue(), TeleserviceCodeValue.allSpeechTransmissionServices);
-
 
 		asn = new AsnInputStream(data3);
 		tag = asn.readTag();
@@ -81,7 +83,7 @@ public class ExtTeleserviceCodeTest {
 		assertEquals(impl.getTeleserviceCodeValue(), TeleserviceCodeValue.shortMessageMO_PP);
 	}
 
-	@Test(groups = { "functional.encode","subscriberManagement"})
+	@Test(groups = { "functional.encode", "subscriberManagement" })
 	public void testEncode() throws Exception {
 
 		ExtTeleserviceCodeImpl impl = new ExtTeleserviceCodeImpl(TeleserviceCodeValue.telephony);
@@ -89,21 +91,45 @@ public class ExtTeleserviceCodeTest {
 		impl.encodeAll(asnOS);
 		byte[] encodedData = asnOS.toByteArray();
 		byte[] rawData = data;
-		assertTrue(Arrays.equals(rawData, encodedData));		
+		assertTrue(Arrays.equals(rawData, encodedData));
 
 		impl = new ExtTeleserviceCodeImpl(TeleserviceCodeValue.allSpeechTransmissionServices);
 		asnOS = new AsnOutputStream();
 		impl.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, 3);
 		encodedData = asnOS.toByteArray();
 		rawData = data2;
-		assertTrue(Arrays.equals(rawData, encodedData));		
+		assertTrue(Arrays.equals(rawData, encodedData));
 
 		impl = new ExtTeleserviceCodeImpl(TeleserviceCodeValue.shortMessageMO_PP);
 		asnOS = new AsnOutputStream();
 		impl.encodeAll(asnOS);
 		encodedData = asnOS.toByteArray();
 		rawData = data3;
-		assertTrue(Arrays.equals(rawData, encodedData));		
+		assertTrue(Arrays.equals(rawData, encodedData));
+	}
+
+	@Test(groups = { "functional.xml.serialize", "subscriberManagement" })
+	public void testXMLSerializaion() throws Exception {
+		ExtTeleserviceCodeImpl original = new ExtTeleserviceCodeImpl(TeleserviceCodeValue.telephony);
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for
+										// indentation).
+		writer.write(original, "extTeleserviceCode", ExtTeleserviceCodeImpl.class);
+		writer.close();
+
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		ExtTeleserviceCodeImpl copy = reader.read("extTeleserviceCode", ExtTeleserviceCodeImpl.class);
+
+		assertEquals(copy.getTeleserviceCodeValue(), original.getTeleserviceCodeValue());
 	}
 
 }

@@ -97,6 +97,9 @@ public class AddressStringTest {
 
 		// deserialize
 		byte[] pickled = out.toByteArray();
+		String xml = new String(pickled);
+		System.out.println(xml);
+		
 		InputStream in = new ByteArrayInputStream(pickled);
 		ObjectInputStream ois = new ObjectInputStream(in);
 		Object o = ois.readObject();

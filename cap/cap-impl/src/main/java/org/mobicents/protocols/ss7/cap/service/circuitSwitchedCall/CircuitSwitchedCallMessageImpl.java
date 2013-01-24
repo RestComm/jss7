@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,6 +22,9 @@
 
 package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.ss7.cap.MessageImpl;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCall;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CircuitSwitchedCallMessage;
@@ -30,12 +33,33 @@ import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 /**
  * 
  * @author sergey vetyutnev
+ * @author Amit Bhayani
  * 
  */
-public abstract class CircuitSwitchedCallMessageImpl extends MessageImpl implements CircuitSwitchedCallMessage, CAPAsnPrimitive {
+public abstract class CircuitSwitchedCallMessageImpl extends MessageImpl implements CircuitSwitchedCallMessage,
+		CAPAsnPrimitive {
 
 	public CAPDialogCircuitSwitchedCall getCAPDialog() {
-		return (CAPDialogCircuitSwitchedCall)super.getCAPDialog();
+		return (CAPDialogCircuitSwitchedCall) super.getCAPDialog();
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<CircuitSwitchedCallMessageImpl> CIRCUIT_SWITCHED_CALL_MESSAGE_XML = new XMLFormat<CircuitSwitchedCallMessageImpl>(
+			CircuitSwitchedCallMessageImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, CircuitSwitchedCallMessageImpl ussdMessage)
+				throws XMLStreamException {
+			CAP_MESSAGE_XML.read(xml, ussdMessage);
+		}
+
+		@Override
+		public void write(CircuitSwitchedCallMessageImpl ussdMessage, javolution.xml.XMLFormat.OutputElement xml)
+				throws XMLStreamException {
+			CAP_MESSAGE_XML.write(ussdMessage, xml);
+		}
+	};
 
 }

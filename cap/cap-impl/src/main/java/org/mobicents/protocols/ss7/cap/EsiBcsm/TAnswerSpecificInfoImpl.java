@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.cap.EsiBcsm;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -34,9 +37,11 @@ import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.ChargeIndicator;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.TAnswerSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtBasicServiceCodeImpl;
 
 /**
  * 
@@ -44,6 +49,13 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
  * 
  */
 public class TAnswerSpecificInfoImpl implements TAnswerSpecificInfo, CAPAsnPrimitive {
+
+	private static final String DESTINATION_ADDRESS = "destinationAddress";
+	private static final String OR_CALL = "orCall";
+	private static final String FORWARDED_CALL = "forwardedCall";
+	private static final String CHARGE_INDICATOR = "chargeIndicator";
+	private static final String EXT_BASIC_SERVICE_CODE = "extBasicServiceCode";
+	private static final String EXT_BASIC_SERVICE_CODE2 = "extBasicServiceCode2";
 
 	public static final int _ID_destinationAddress = 50;
 	public static final int _ID_orCall = 51;
@@ -64,8 +76,9 @@ public class TAnswerSpecificInfoImpl implements TAnswerSpecificInfo, CAPAsnPrimi
 	public TAnswerSpecificInfoImpl() {
 	}
 
-	public TAnswerSpecificInfoImpl(CalledPartyNumberCap destinationAddress, boolean orCall, boolean forwardedCall, ChargeIndicator chargeIndicator,
-			ExtBasicServiceCode extBasicServiceCode, ExtBasicServiceCode extBasicServiceCode2) {
+	public TAnswerSpecificInfoImpl(CalledPartyNumberCap destinationAddress, boolean orCall, boolean forwardedCall,
+			ChargeIndicator chargeIndicator, ExtBasicServiceCode extBasicServiceCode,
+			ExtBasicServiceCode extBasicServiceCode2) {
 		this.destinationAddress = destinationAddress;
 		this.orCall = orCall;
 		this.forwardedCall = forwardedCall;
@@ -126,14 +139,14 @@ public class TAnswerSpecificInfoImpl implements TAnswerSpecificInfo, CAPAsnPrimi
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
+					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -143,18 +156,19 @@ public class TAnswerSpecificInfoImpl implements TAnswerSpecificInfo, CAPAsnPrimi
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
+					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException,
+			MAPParsingComponentException, IOException, AsnException {
 
 		this.destinationAddress = null;
 		this.orCall = false;
@@ -254,7 +268,7 @@ public class TAnswerSpecificInfoImpl implements TAnswerSpecificInfo, CAPAsnPrimi
 		StringBuilder sb = new StringBuilder();
 		sb.append(_PrimitiveName);
 		sb.append(" [");
-		
+
 		if (this.destinationAddress != null) {
 			sb.append("destinationAddress= [");
 			sb.append(destinationAddress.toString());
@@ -286,5 +300,55 @@ public class TAnswerSpecificInfoImpl implements TAnswerSpecificInfo, CAPAsnPrimi
 
 		return sb.toString();
 	}
-}
 
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<TAnswerSpecificInfoImpl> O_ANSWER_SPECIFIC_INFO_XML = new XMLFormat<TAnswerSpecificInfoImpl>(
+			TAnswerSpecificInfoImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, TAnswerSpecificInfoImpl oAnswerSpecificInfo)
+				throws XMLStreamException {
+			oAnswerSpecificInfo.destinationAddress = xml.get(DESTINATION_ADDRESS, CalledPartyNumberCapImpl.class);
+			oAnswerSpecificInfo.orCall = xml.get(OR_CALL, Boolean.class);
+			oAnswerSpecificInfo.forwardedCall = xml.get(FORWARDED_CALL, Boolean.class);
+
+			// oAnswerSpecificInfo.chargeIndicator = xml.get(CHARGE_INDICATOR,
+			// ChargeIndicatorImpl.class);
+
+			oAnswerSpecificInfo.extBasicServiceCode = xml.get(EXT_BASIC_SERVICE_CODE, ExtBasicServiceCodeImpl.class);
+			oAnswerSpecificInfo.extBasicServiceCode2 = xml.get(EXT_BASIC_SERVICE_CODE2, ExtBasicServiceCodeImpl.class);
+		}
+
+		@Override
+		public void write(TAnswerSpecificInfoImpl oAnswerSpecificInfo, javolution.xml.XMLFormat.OutputElement xml)
+				throws XMLStreamException {
+
+			if (oAnswerSpecificInfo.destinationAddress != null) {
+				xml.add(((CalledPartyNumberCapImpl) oAnswerSpecificInfo.destinationAddress), DESTINATION_ADDRESS,
+						CalledPartyNumberCapImpl.class);
+			}
+
+			xml.add(oAnswerSpecificInfo.orCall, OR_CALL, Boolean.class);
+			xml.add(oAnswerSpecificInfo.forwardedCall, FORWARDED_CALL, Boolean.class);
+
+			if (oAnswerSpecificInfo.chargeIndicator != null) {
+				// TODO ChargeIndicatorImpl not yet implemented
+				// xml.add(((ChargeIndicatorImpl)
+				// oAnswerSpecificInfo.chargeIndicator), CHARGE_INDICATOR,
+				// ChargeIndicatorImpl.class);
+			}
+
+			if (oAnswerSpecificInfo.extBasicServiceCode != null) {
+				xml.add(((ExtBasicServiceCodeImpl) oAnswerSpecificInfo.extBasicServiceCode), EXT_BASIC_SERVICE_CODE,
+						ExtBasicServiceCodeImpl.class);
+			}
+
+			if (oAnswerSpecificInfo.extBasicServiceCode2 != null) {
+				xml.add(((ExtBasicServiceCodeImpl) oAnswerSpecificInfo.extBasicServiceCode2), EXT_BASIC_SERVICE_CODE2,
+						ExtBasicServiceCodeImpl.class);
+			}
+		}
+	};
+}

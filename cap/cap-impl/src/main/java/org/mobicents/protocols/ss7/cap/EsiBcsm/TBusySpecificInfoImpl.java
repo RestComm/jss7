@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.cap.EsiBcsm;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -46,6 +49,11 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
  */
 public class TBusySpecificInfoImpl implements TBusySpecificInfo, CAPAsnPrimitive {
 
+	private static final String BUSY_CAUSE = "busyCause";
+	private static final String CALL_FORWARDED = "callForwarded";
+	private static final String ROUTE_NOT_PERMITTED = "routeNotPermitted";
+	private static final String FORWARDING_DESTINATION_NUMBER = "forwardingDestinationNumber";
+
 	public static final int _ID_busyCause = 0;
 	public static final int _ID_callForwarded = 50;
 	public static final int _ID_routeNotPermitted = 51;
@@ -58,11 +66,11 @@ public class TBusySpecificInfoImpl implements TBusySpecificInfo, CAPAsnPrimitive
 	private boolean routeNotPermitted;
 	private CalledPartyNumberCap forwardingDestinationNumber;
 
-
 	public TBusySpecificInfoImpl() {
 	}
 
-	public TBusySpecificInfoImpl(CauseCap busyCause, boolean callForwarded, boolean routeNotPermitted, CalledPartyNumberCap forwardingDestinationNumber) {
+	public TBusySpecificInfoImpl(CauseCap busyCause, boolean callForwarded, boolean routeNotPermitted,
+			CalledPartyNumberCap forwardingDestinationNumber) {
 		this.busyCause = busyCause;
 		this.callForwarded = callForwarded;
 		this.routeNotPermitted = routeNotPermitted;
@@ -111,14 +119,14 @@ public class TBusySpecificInfoImpl implements TBusySpecificInfo, CAPAsnPrimitive
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
+					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -128,24 +136,25 @@ public class TBusySpecificInfoImpl implements TBusySpecificInfo, CAPAsnPrimitive
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
+					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException,
+			MAPParsingComponentException, IOException, AsnException {
 
 		this.busyCause = null;
 		this.callForwarded = false;
 		this.routeNotPermitted = false;
 		this.forwardingDestinationNumber = null;
-		
+
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 		while (true) {
 			if (ais.available() == 0)
@@ -211,7 +220,8 @@ public class TBusySpecificInfoImpl implements TBusySpecificInfo, CAPAsnPrimitive
 			if (this.routeNotPermitted)
 				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_routeNotPermitted);
 			if (this.forwardingDestinationNumber != null)
-				((CalledPartyNumberCapImpl) this.forwardingDestinationNumber).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_forwardingDestinationNumber);
+				((CalledPartyNumberCapImpl) this.forwardingDestinationNumber).encodeAll(asnOs,
+						Tag.CLASS_CONTEXT_SPECIFIC, _ID_forwardingDestinationNumber);
 		} catch (IOException e) {
 			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		} catch (AsnException e) {
@@ -247,5 +257,39 @@ public class TBusySpecificInfoImpl implements TBusySpecificInfo, CAPAsnPrimitive
 
 		return sb.toString();
 	}
-}
 
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<TBusySpecificInfoImpl> T_BUSY_SPECIFIC_INFO = new XMLFormat<TBusySpecificInfoImpl>(
+			TBusySpecificInfoImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, TBusySpecificInfoImpl tBusySpecificInfo)
+				throws XMLStreamException {
+			tBusySpecificInfo.busyCause = xml.get(BUSY_CAUSE, CauseCapImpl.class);
+
+			tBusySpecificInfo.callForwarded = xml.get(CALL_FORWARDED, Boolean.class);
+			tBusySpecificInfo.routeNotPermitted = xml.get(ROUTE_NOT_PERMITTED, Boolean.class);
+
+			tBusySpecificInfo.forwardingDestinationNumber = xml.get(FORWARDING_DESTINATION_NUMBER,
+					CalledPartyNumberCapImpl.class);
+		}
+
+		@Override
+		public void write(TBusySpecificInfoImpl tBusySpecificInfo, javolution.xml.XMLFormat.OutputElement xml)
+				throws XMLStreamException {
+			if (tBusySpecificInfo.busyCause != null) {
+				xml.add((CauseCapImpl) tBusySpecificInfo.busyCause, BUSY_CAUSE, CauseCapImpl.class);
+			}
+
+			xml.add(tBusySpecificInfo.callForwarded, CALL_FORWARDED, Boolean.class);
+			xml.add(tBusySpecificInfo.routeNotPermitted, ROUTE_NOT_PERMITTED, Boolean.class);
+
+			if (tBusySpecificInfo.forwardingDestinationNumber != null) {
+				xml.add((CalledPartyNumberCapImpl) tBusySpecificInfo.forwardingDestinationNumber,
+						FORWARDING_DESTINATION_NUMBER, CalledPartyNumberCapImpl.class);
+			}
+		}
+	};
+}

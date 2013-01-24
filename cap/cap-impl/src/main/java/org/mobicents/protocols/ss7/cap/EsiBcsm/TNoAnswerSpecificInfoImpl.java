@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.cap.EsiBcsm;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -43,6 +46,9 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
  * 
  */
 public class TNoAnswerSpecificInfoImpl implements TNoAnswerSpecificInfo, CAPAsnPrimitive {
+
+	private static final String CALL_FORWARDED = "callForwarded";
+	private static final String FORWARDING_DESTINATION_NUMBER = "forwardingDestinationNumber";
 
 	public static final int _ID_callForwarded = 50;
 	public static final int _ID_forwardingDestinationNumber = 52;
@@ -85,7 +91,6 @@ public class TNoAnswerSpecificInfoImpl implements TNoAnswerSpecificInfo, CAPAsnP
 		return false;
 	}
 
-
 	@Override
 	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
@@ -93,14 +98,14 @@ public class TNoAnswerSpecificInfoImpl implements TNoAnswerSpecificInfo, CAPAsnP
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
+					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -110,22 +115,23 @@ public class TNoAnswerSpecificInfoImpl implements TNoAnswerSpecificInfo, CAPAsnP
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
+					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException,
+			MAPParsingComponentException, IOException, AsnException {
 
 		this.callForwarded = false;
 		this.forwardingDestinationNumber = null;
-		
+
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 		while (true) {
 			if (ais.available() == 0)
@@ -179,7 +185,8 @@ public class TNoAnswerSpecificInfoImpl implements TNoAnswerSpecificInfo, CAPAsnP
 			if (this.callForwarded)
 				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_callForwarded);
 			if (this.forwardingDestinationNumber != null)
-				((CalledPartyNumberCapImpl) this.forwardingDestinationNumber).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_forwardingDestinationNumber);
+				((CalledPartyNumberCapImpl) this.forwardingDestinationNumber).encodeAll(asnOs,
+						Tag.CLASS_CONTEXT_SPECIFIC, _ID_forwardingDestinationNumber);
 		} catch (IOException e) {
 			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		} catch (AsnException e) {
@@ -207,5 +214,29 @@ public class TNoAnswerSpecificInfoImpl implements TNoAnswerSpecificInfo, CAPAsnP
 
 		return sb.toString();
 	}
-}
 
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<TNoAnswerSpecificInfoImpl> T_NO_ANSWER_SPECIFIC_INFO = new XMLFormat<TNoAnswerSpecificInfoImpl>(
+			TNoAnswerSpecificInfoImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, TNoAnswerSpecificInfoImpl tNoAnswerSpecificInfo)
+				throws XMLStreamException {
+			tNoAnswerSpecificInfo.callForwarded = xml.get(CALL_FORWARDED, Boolean.class);
+			tNoAnswerSpecificInfo.forwardingDestinationNumber = xml.get(FORWARDING_DESTINATION_NUMBER,
+					CalledPartyNumberCapImpl.class);
+		}
+
+		@Override
+		public void write(TNoAnswerSpecificInfoImpl tNoAnswerSpecificInfo, javolution.xml.XMLFormat.OutputElement xml)
+				throws XMLStreamException {
+			xml.add(tNoAnswerSpecificInfo.callForwarded, CALL_FORWARDED, Boolean.class);
+			if (tNoAnswerSpecificInfo.forwardingDestinationNumber != null) {
+				xml.add((CalledPartyNumberCapImpl) tNoAnswerSpecificInfo.forwardingDestinationNumber,
+						FORWARDING_DESTINATION_NUMBER, CalledPartyNumberCapImpl.class);
+			}
+		}
+	};
+}

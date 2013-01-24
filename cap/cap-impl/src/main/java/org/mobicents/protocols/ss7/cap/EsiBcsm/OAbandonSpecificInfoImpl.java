@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.cap.EsiBcsm;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -42,17 +45,18 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
  */
 public class OAbandonSpecificInfoImpl implements OAbandonSpecificInfo, CAPAsnPrimitive {
 
+	private static final String ROUTE_NOT_PERMITTED = "routeNotPermitted";
+
 	public static final int _ID_routeNotPermitted = 50;
 
 	public static final String _PrimitiveName = "OAbandonSpecificInfo";
 	private boolean routeNotPermitted;
 
-
 	public OAbandonSpecificInfoImpl() {
 	}
 
 	public OAbandonSpecificInfoImpl(boolean routeNotPermitted) {
-		this.routeNotPermitted=routeNotPermitted;
+		this.routeNotPermitted = routeNotPermitted;
 	}
 
 	@Override
@@ -70,7 +74,6 @@ public class OAbandonSpecificInfoImpl implements OAbandonSpecificInfo, CAPAsnPri
 		return false;
 	}
 
-
 	@Override
 	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
@@ -78,14 +81,14 @@ public class OAbandonSpecificInfoImpl implements OAbandonSpecificInfo, CAPAsnPri
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
+					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -95,21 +98,22 @@ public class OAbandonSpecificInfoImpl implements OAbandonSpecificInfo, CAPAsnPri
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
+					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException,
+			MAPParsingComponentException, IOException, AsnException {
 
 		this.routeNotPermitted = false;
-		
+
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 		while (true) {
 			if (ais.available() == 0)
@@ -176,7 +180,6 @@ public class OAbandonSpecificInfoImpl implements OAbandonSpecificInfo, CAPAsnPri
 			sb.append("routeNotPermitted");
 		}
 
-
 		sb.append("]");
 
 		return sb.toString();
@@ -186,9 +189,27 @@ public class OAbandonSpecificInfoImpl implements OAbandonSpecificInfo, CAPAsnPri
 	public boolean getRouteNotPermitted() {
 		return routeNotPermitted;
 	}
-	
-	public void  setRouteNotPermitted(boolean newValue) {
-		routeNotPermitted=newValue;
-	}
-}
 
+	public void setRouteNotPermitted(boolean newValue) {
+		routeNotPermitted = newValue;
+	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<OAbandonSpecificInfoImpl> T_BUSY_SPECIFIC_INFO = new XMLFormat<OAbandonSpecificInfoImpl>(
+			OAbandonSpecificInfoImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, OAbandonSpecificInfoImpl oAbandonSpecificInfo)
+				throws XMLStreamException {
+			oAbandonSpecificInfo.routeNotPermitted = xml.get(ROUTE_NOT_PERMITTED, Boolean.class);
+		}
+
+		@Override
+		public void write(OAbandonSpecificInfoImpl oAbandonSpecificInfo, javolution.xml.XMLFormat.OutputElement xml)
+				throws XMLStreamException {
+			xml.add(oAbandonSpecificInfo.routeNotPermitted, ROUTE_NOT_PERMITTED, Boolean.class);
+		}
+	};
+}
