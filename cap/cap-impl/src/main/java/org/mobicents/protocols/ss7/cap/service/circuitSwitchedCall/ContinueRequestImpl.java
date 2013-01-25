@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,6 +22,9 @@
 
 package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
@@ -34,6 +37,7 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ContinueR
 /**
  * 
  * @author sergey vetyutnev
+ * @author Amit Bhayani
  * 
  */
 public class ContinueRequestImpl extends CircuitSwitchedCallMessageImpl implements ContinueRequest {
@@ -98,9 +102,28 @@ public class ContinueRequestImpl extends CircuitSwitchedCallMessageImpl implemen
 		StringBuilder sb = new StringBuilder();
 		sb.append(_PrimitiveName);
 		sb.append(" [");
-		
+
 		sb.append("]");
 
 		return sb.toString();
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<ContinueRequestImpl> CONTINUE_REQUEST_XML = new XMLFormat<ContinueRequestImpl>(
+			ContinueRequestImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, ContinueRequestImpl applyChargingReportRequest)
+				throws XMLStreamException {
+			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, applyChargingReportRequest);
+		}
+
+		@Override
+		public void write(ContinueRequestImpl applyChargingReportRequest, javolution.xml.XMLFormat.OutputElement xml)
+				throws XMLStreamException {
+			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(applyChargingReportRequest, xml);
+		}
+	};
 }
