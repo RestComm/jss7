@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,9 +22,17 @@
 
 package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -34,6 +42,7 @@ import org.testng.annotations.Test;
 /**
  * 
  * @author sergey vetyutnev
+ * @author Amit Bhayani
  * 
  */
 public class CancelRequestTest {
@@ -49,8 +58,8 @@ public class CancelRequestTest {
 	public byte[] getData3() {
 		return new byte[] { (byte) 162, 3, (byte) 129, 1, 20 };
 	}
-	
-	@Test(groups = { "functional.decode","circuitSwitchedCall"})
+
+	@Test(groups = { "functional.decode", "circuitSwitchedCall" })
 	public void testDecode() throws Exception {
 
 		byte[] data = this.getData1();
@@ -82,10 +91,10 @@ public class CancelRequestTest {
 		assertNull(elem.getInvokeID());
 		assertFalse(elem.getAllRequests());
 		assertNull(elem.getCallSegmentToCancel().getInvokeID());
-		assertEquals((int)elem.getCallSegmentToCancel().getCallSegmentID(), 20);
+		assertEquals((int) elem.getCallSegmentToCancel().getCallSegmentID(), 20);
 	}
 
-	@Test(groups = { "functional.encode","circuitSwitchedCall"})
+	@Test(groups = { "functional.encode", "circuitSwitchedCall" })
 	public void testEncode() throws Exception {
 
 		CancelRequestImpl elem = new CancelRequestImpl(11000);
@@ -105,5 +114,55 @@ public class CancelRequestTest {
 		elem.encodeAll(aos);
 		assertTrue(Arrays.equals(aos.toByteArray(), this.getData3()));
 	}
-}
 
+	@Test(groups = { "functional.xml.serialize", "circuitSwitchedCall" })
+	public void testXMLSerializaion() throws Exception {
+		CancelRequestImpl original = new CancelRequestImpl(11000);
+
+		// Writes the area to a file.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for
+										// indentation).
+		writer.write(original, "cancelRequest", CancelRequestImpl.class);
+		writer.close();
+
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		CancelRequestImpl copy = reader.read("cancelRequest", CancelRequestImpl.class);
+
+		assertEquals(copy.getInvokeID(), original.getInvokeID());
+
+		CallSegmentToCancelImpl callSegmentToCancel = new CallSegmentToCancelImpl(null, 20);
+		// Integer invokeID, Integer callSegmentID
+		original = new CancelRequestImpl(callSegmentToCancel);
+
+		// Writes the area to a file.
+		baos = new ByteArrayOutputStream();
+		writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for
+										// indentation).
+		writer.write(original, "cancelRequest", CancelRequestImpl.class);
+		writer.close();
+
+		rawData = baos.toByteArray();
+		serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		bais = new ByteArrayInputStream(rawData);
+		reader = XMLObjectReader.newInstance(bais);
+		copy = reader.read("cancelRequest", CancelRequestImpl.class);
+
+		assertEquals(copy.getCallSegmentToCancel().getCallSegmentID(), original.getCallSegmentToCancel()
+				.getCallSegmentID());
+
+	}
+}
