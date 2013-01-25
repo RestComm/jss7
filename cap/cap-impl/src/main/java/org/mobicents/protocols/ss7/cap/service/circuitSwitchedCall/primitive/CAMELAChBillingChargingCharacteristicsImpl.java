@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -41,9 +44,17 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 /**
  * 
  * @author sergey vetyutnev
+ * @author Amit Bhayani
  * 
  */
-public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBillingChargingCharacteristics, CAPAsnPrimitive {
+public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBillingChargingCharacteristics,
+		CAPAsnPrimitive {
+
+	private static final String MAX_CALL_PERIOD_DURATION = "maxCallPeriodDuration";
+	private static final String RELEASED_IF_DURATION_EXCEEDED = "releaseIfdurationExceeded";
+	private static final String TARIFF_SWITCH_INTERVAL = "tariffSwitchInterval";
+	private static final String AUDIBLE_INDICATOR = "audibleIndicator";
+	private static final String EXTENSIONS = "extensions";
 
 	public static final int _ID_timeDurationCharging = 0;
 
@@ -65,16 +76,16 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
 
 	private boolean isCAPVersion3orLater;
 
-	
 	public CAMELAChBillingChargingCharacteristicsImpl() {
 	}
-	
+
 	public CAMELAChBillingChargingCharacteristicsImpl(byte[] data) {
 		this.data = data;
 	}
 
-	public CAMELAChBillingChargingCharacteristicsImpl(long maxCallPeriodDuration, boolean releaseIfdurationExceeded, Long tariffSwitchInterval,
-			AudibleIndicator audibleIndicator, CAPExtensions extensions, boolean isCAPVersion3orLater) {
+	public CAMELAChBillingChargingCharacteristicsImpl(long maxCallPeriodDuration, boolean releaseIfdurationExceeded,
+			Long tariffSwitchInterval, AudibleIndicator audibleIndicator, CAPExtensions extensions,
+			boolean isCAPVersion3orLater) {
 		this.maxCallPeriodDuration = maxCallPeriodDuration;
 		this.releaseIfdurationExceeded = releaseIfdurationExceeded;
 		this.tariffSwitchInterval = tariffSwitchInterval;
@@ -83,7 +94,6 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
 		this.isCAPVersion3orLater = isCAPVersion3orLater;
 	}
 
-	
 	@Override
 	public byte[] getData() {
 		return data;
@@ -113,9 +123,7 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
 	public CAPExtensions getExtensions() {
 		return extensions;
 	}
-	
-	
-	
+
 	@Override
 	public int getTag() throws CAPException {
 		return Tag.STRING_OCTET;
@@ -138,14 +146,14 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
+					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -155,18 +163,19 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
+					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException,
+			MAPParsingComponentException, IOException, AsnException {
 
 		this.data = null;
 		this.maxCallPeriodDuration = -1;
@@ -174,15 +183,16 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
 		this.tariffSwitchInterval = null;
 		this.audibleIndicator = null; // TODO: DEFAULT tone: FALSE
 		this.extensions = null;
-		
+
 		this.data = ansIS.readOctetStringData(length);
 
 		AsnInputStream aiss = new AsnInputStream(this.data);
 		int tag = aiss.readTag();
-		if (tag != _ID_timeDurationCharging || aiss.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || aiss.isTagPrimitive())
+		if (tag != _ID_timeDurationCharging || aiss.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC
+				|| aiss.isTagPrimitive())
 			throw new CAPParsingComponentException("Error when decoding " + _PrimitiveName
-					+ ": CAMEL-AChBillingChargingCharacteristics choice has bad tag oe tagClass or is primitive, tag=" + tag + ", tagClass="
-					+ aiss.getTagClass(), CAPParsingComponentExceptionReason.MistypedParameter);
+					+ ": CAMEL-AChBillingChargingCharacteristics choice has bad tag oe tagClass or is primitive, tag="
+					+ tag + ", tagClass=" + aiss.getTagClass(), CAPParsingComponentExceptionReason.MistypedParameter);
 
 		AsnInputStream ais = aiss.readSequenceStream();
 		while (true) {
@@ -217,7 +227,8 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
 									parsed = true;
 								}
 							}
-							if (ais2.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC && tag2 == _ID_extensions_In_ReleaseIfDurationExceeded) {
+							if (ais2.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC
+									&& tag2 == _ID_extensions_In_ReleaseIfDurationExceeded) {
 								this.extensions = new CAPExtensionsImpl();
 								((CAPExtensionsImpl) this.extensions).decodeAll(ais2);
 								parsed = true;
@@ -250,7 +261,8 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
 		}
 
 		if (this.maxCallPeriodDuration == -1)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": maxCallPeriodDuration is mandatory but not found",
+			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+					+ ": maxCallPeriodDuration is mandatory but not found",
 					CAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
@@ -261,7 +273,7 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-		
+
 		try {
 			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
 			int pos = asnOs.StartContentDefiniteLength();
@@ -274,13 +286,16 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		
+
 		if (this.data == null) {
 			// encoding internal octet string
 			if (this.maxCallPeriodDuration < 1 || this.maxCallPeriodDuration > 864000)
-				throw new CAPException("Error while encoding " + _PrimitiveName + ": maxCallPeriodDuration must be from 1 to 864000");
-			if (this.tariffSwitchInterval != null && (this.tariffSwitchInterval < 1 || this.tariffSwitchInterval > 86400))
-				throw new CAPException("Error while encoding " + _PrimitiveName + ": tariffSwitchInterval must be from 1 to 86400");
+				throw new CAPException("Error while encoding " + _PrimitiveName
+						+ ": maxCallPeriodDuration must be from 1 to 864000");
+			if (this.tariffSwitchInterval != null
+					&& (this.tariffSwitchInterval < 1 || this.tariffSwitchInterval > 86400))
+				throw new CAPException("Error while encoding " + _PrimitiveName
+						+ ": tariffSwitchInterval must be from 1 to 86400");
 
 			try {
 				AsnOutputStream aos = new AsnOutputStream();
@@ -298,7 +313,8 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
 						int pos2 = aos.StartContentDefiniteLength();
 						aos.writeBoolean(true);
 						if (this.extensions != null) {
-							((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions_In_ReleaseIfDurationExceeded);
+							((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,
+									_ID_extensions_In_ReleaseIfDurationExceeded);
 						}
 						aos.FinalizeContent(pos2);
 					}
@@ -313,7 +329,7 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
 
 				if (this.extensions != null && this.isCAPVersion3orLater)
 					((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
-				
+
 				aos.FinalizeContent(pos);
 				this.data = aos.toByteArray();
 			} catch (IOException e) {
@@ -355,4 +371,42 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
 
 		return sb.toString();
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<CAMELAChBillingChargingCharacteristicsImpl> CAMEL_ACH_BILLING_CHARGING_CHARACTERISTIC_XML = new XMLFormat<CAMELAChBillingChargingCharacteristicsImpl>(
+			CAMELAChBillingChargingCharacteristicsImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml,
+				CAMELAChBillingChargingCharacteristicsImpl camelAChBillingChargingCharacteristics) throws XMLStreamException {
+			camelAChBillingChargingCharacteristics.maxCallPeriodDuration = xml.get(MAX_CALL_PERIOD_DURATION, Long.class);
+			camelAChBillingChargingCharacteristics.releaseIfdurationExceeded = xml.get(RELEASED_IF_DURATION_EXCEEDED, Boolean.class);
+			camelAChBillingChargingCharacteristics.tariffSwitchInterval = xml.get(TARIFF_SWITCH_INTERVAL, Long.class);
+			// TODO AudibleIndicatorImpl is not yet implemented
+			// oAnswerSpecificInfo.audibleIndicator = xml.get(AUDIBLE_INDICATOR,
+			// AudibleIndicatorImpl.class);
+
+		}
+
+		@Override
+		public void write(CAMELAChBillingChargingCharacteristicsImpl camelAChBillingChargingCharacteristics,
+				javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+
+			xml.add(camelAChBillingChargingCharacteristics.maxCallPeriodDuration, MAX_CALL_PERIOD_DURATION, Long.class);
+			xml.add(camelAChBillingChargingCharacteristics.releaseIfdurationExceeded, RELEASED_IF_DURATION_EXCEEDED, Boolean.class);
+
+			if (camelAChBillingChargingCharacteristics.tariffSwitchInterval != null) {
+				xml.add(camelAChBillingChargingCharacteristics.tariffSwitchInterval, TARIFF_SWITCH_INTERVAL, Long.class);
+			}
+
+			// TODO AudibleIndicatorImpl is not yet implemented
+			// if(oAnswerSpecificInfo.audibleIndicator != null){
+			// xml.add(((AudibleIndicatorImpl)oAnswerSpecificInfo.audibleIndicator),
+			// AUDIBLE_INDICATOR, AudibleIndicatorImpl.class);
+			// }
+
+		}
+	};
 }
