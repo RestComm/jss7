@@ -292,7 +292,7 @@ public class ApplyChargingRequestImpl extends CircuitSwitchedCallMessageImpl imp
 		@Override
 		public void read(javolution.xml.XMLFormat.InputElement xml, ApplyChargingRequestImpl applyChargingRequest)
 				throws XMLStreamException {
-
+			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, applyChargingRequest);
 			applyChargingRequest.aChBillingChargingCharacteristics = xml.get(A_CH_BILLING_CHARGING_CHARACTERISTICS,
 					CAMELAChBillingChargingCharacteristicsImpl.class);
 			applyChargingRequest.partyToCharge = xml.get(PARTY_TO_CHARGE, SendingSideIDImpl.class);
@@ -307,7 +307,9 @@ public class ApplyChargingRequestImpl extends CircuitSwitchedCallMessageImpl imp
 		@Override
 		public void write(ApplyChargingRequestImpl applyChargingRequest, javolution.xml.XMLFormat.OutputElement xml)
 				throws XMLStreamException {
-
+			
+			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(applyChargingRequest, xml);
+			
 			xml.add((CAMELAChBillingChargingCharacteristicsImpl) applyChargingRequest.aChBillingChargingCharacteristics,
 					A_CH_BILLING_CHARGING_CHARACTERISTICS, CAMELAChBillingChargingCharacteristicsImpl.class);
 

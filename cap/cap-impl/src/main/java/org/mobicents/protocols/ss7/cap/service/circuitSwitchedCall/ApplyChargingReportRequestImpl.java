@@ -206,6 +206,7 @@ public class ApplyChargingReportRequestImpl extends CircuitSwitchedCallMessageIm
 		@Override
 		public void read(javolution.xml.XMLFormat.InputElement xml,
 				ApplyChargingReportRequestImpl applyChargingReportRequest) throws XMLStreamException {
+			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, applyChargingReportRequest);
 			applyChargingReportRequest.timeDurationChargingResult = xml.get(TIME_DURATION_CHARGING_RESULT,
 					TimeDurationChargingResultImpl.class);
 		}
@@ -213,6 +214,9 @@ public class ApplyChargingReportRequestImpl extends CircuitSwitchedCallMessageIm
 		@Override
 		public void write(ApplyChargingReportRequestImpl applyChargingReportRequest,
 				javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			
+			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(applyChargingReportRequest, xml);
+			
 			xml.add((TimeDurationChargingResultImpl) applyChargingReportRequest.timeDurationChargingResult,
 					TIME_DURATION_CHARGING_RESULT, TimeDurationChargingResultImpl.class);
 		}
