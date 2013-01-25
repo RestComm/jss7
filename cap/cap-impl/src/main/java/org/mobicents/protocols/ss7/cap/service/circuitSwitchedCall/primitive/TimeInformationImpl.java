@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -39,9 +42,13 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 /**
  * 
  * @author sergey vetyutnev
+ * @author Amit Bhayani
  * 
  */
 public class TimeInformationImpl implements TimeInformation, CAPAsnPrimitive {
+
+	private static final String TIME_IF_NO_TARIFF_SWITCH = "timeIfNoTariffSwitch";
+	private static final String TIME_IF_TARIFF_SWITCH = "timeIfTariffSwitch";
 
 	public static final int _ID_timeIfNoTariffSwitch = 0;
 	public static final int _ID_timeIfTariffSwitch = 1;
@@ -50,7 +57,6 @@ public class TimeInformationImpl implements TimeInformation, CAPAsnPrimitive {
 
 	private Integer timeIfNoTariffSwitch;
 	private TimeIfTariffSwitch timeIfTariffSwitch;
-	
 
 	public TimeInformationImpl() {
 	}
@@ -73,7 +79,6 @@ public class TimeInformationImpl implements TimeInformation, CAPAsnPrimitive {
 		return timeIfTariffSwitch;
 	}
 
-	
 	@Override
 	public int getTag() throws CAPException {
 		if (timeIfNoTariffSwitch != null)
@@ -102,14 +107,14 @@ public class TimeInformationImpl implements TimeInformation, CAPAsnPrimitive {
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
+					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -119,21 +124,22 @@ public class TimeInformationImpl implements TimeInformation, CAPAsnPrimitive {
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
+					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException,
+			MAPParsingComponentException, IOException, AsnException {
 
 		this.timeIfNoTariffSwitch = null;
-		this.timeIfTariffSwitch = null;	
+		this.timeIfTariffSwitch = null;
 
 		int tag = ais.getTag();
 
@@ -179,12 +185,14 @@ public class TimeInformationImpl implements TimeInformation, CAPAsnPrimitive {
 	public void encodeData(AsnOutputStream aos) throws CAPException {
 
 		if (this.timeIfNoTariffSwitch == null && this.timeIfTariffSwitch == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": both timeIfNoTariffSwitch and this.timeIfTariffSwitch must not be null");
+			throw new CAPException("Error while encoding " + _PrimitiveName
+					+ ": both timeIfNoTariffSwitch and this.timeIfTariffSwitch must not be null");
 
 		try {
 			if (this.timeIfNoTariffSwitch != null) {
 				if (this.timeIfNoTariffSwitch < 0 || this.timeIfNoTariffSwitch > 864000)
-					throw new CAPException("Error while encoding " + _PrimitiveName + ": timeIfNoTariffSwitch must be from 0 to 864000");
+					throw new CAPException("Error while encoding " + _PrimitiveName
+							+ ": timeIfNoTariffSwitch must be from 0 to 864000");
 				aos.writeIntegerData(this.timeIfNoTariffSwitch);
 			} else {
 				((TimeIfTariffSwitchImpl) this.timeIfTariffSwitch).encodeData(aos);
@@ -214,4 +222,32 @@ public class TimeInformationImpl implements TimeInformation, CAPAsnPrimitive {
 
 		return sb.toString();
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<TimeInformationImpl> TIME_INFORMATION_XML = new XMLFormat<TimeInformationImpl>(
+			TimeInformationImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, TimeInformationImpl timeInformation)
+				throws XMLStreamException {
+			timeInformation.timeIfNoTariffSwitch = xml.get(TIME_IF_NO_TARIFF_SWITCH, Integer.class);
+			timeInformation.timeIfTariffSwitch = xml.get(TIME_IF_TARIFF_SWITCH, TimeIfTariffSwitchImpl.class);
+		}
+
+		@Override
+		public void write(TimeInformationImpl timeInformation, javolution.xml.XMLFormat.OutputElement xml)
+				throws XMLStreamException {
+
+			if (timeInformation.timeIfNoTariffSwitch != null) {
+				xml.add(timeInformation.timeIfNoTariffSwitch, TIME_IF_NO_TARIFF_SWITCH, Integer.class);
+			}
+
+			if (timeInformation.timeIfTariffSwitch != null) {
+				xml.add((TimeIfTariffSwitchImpl) timeInformation.timeIfTariffSwitch, TIME_IF_TARIFF_SWITCH,
+						TimeIfTariffSwitchImpl.class);
+			}
+		}
+	};
 }

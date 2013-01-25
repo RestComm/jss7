@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,17 +22,25 @@
 
 package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.Test;
 
 /**
  * 
  * @author sergey vetyutnev
+ * @author Amit Bhayani
  * 
  */
 public class TimeInformationTest {
@@ -45,7 +53,7 @@ public class TimeInformationTest {
 		return new byte[] { (byte) 161, 4, (byte) 128, 2, 3, (byte) 232 };
 	}
 
-	@Test(groups = { "functional.decode","circuitSwitchedCall.primitive"})
+	@Test(groups = { "functional.decode", "circuitSwitchedCall.primitive" })
 	public void testDecode() throws Exception {
 
 		byte[] data = this.getData1();
@@ -64,7 +72,7 @@ public class TimeInformationTest {
 		assertNull(elem.getTimeIfTariffSwitch().getTariffSwitchInterval());
 	}
 
-	@Test(groups = { "functional.encode","circuitSwitchedCall.primitive"})
+	@Test(groups = { "functional.encode", "circuitSwitchedCall.primitive" })
 	public void testEncode() throws Exception {
 
 		TimeInformationImpl elem = new TimeInformationImpl(26);
@@ -78,5 +86,55 @@ public class TimeInformationTest {
 		elem.encodeAll(aos);
 		assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
 	}
-}
 
+	@Test(groups = { "functional.xml.serialize", "circuitSwitchedCall" })
+	public void testXMLSerializaion() throws Exception {
+		TimeInformationImpl original = new TimeInformationImpl(26);
+
+		// Writes the area to a file.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for
+										// indentation).
+		writer.write(original, "timeInformation", TimeInformationImpl.class);
+		writer.close();
+
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		TimeInformationImpl copy = reader.read("timeInformation", TimeInformationImpl.class);
+
+		assertEquals(copy.getTimeIfNoTariffSwitch(), original.getTimeIfNoTariffSwitch());
+		assertNull(copy.getTimeIfTariffSwitch());
+
+		TimeIfTariffSwitchImpl tit = new TimeIfTariffSwitchImpl(1000, null);
+		original = new TimeInformationImpl(tit);
+
+		baos = new ByteArrayOutputStream();
+		writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for
+										// indentation).
+		writer.write(original, "timeInformation", TimeInformationImpl.class);
+		writer.close();
+
+		rawData = baos.toByteArray();
+
+		serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		bais = new ByteArrayInputStream(rawData);
+		reader = XMLObjectReader.newInstance(bais);
+		copy = reader.read("timeInformation", TimeInformationImpl.class);
+
+		assertEquals(copy.getTimeIfTariffSwitch().getTariffSwitchInterval(), original.getTimeIfTariffSwitch()
+				.getTariffSwitchInterval());
+		assertNull(copy.getTimeIfNoTariffSwitch());
+	}
+}
