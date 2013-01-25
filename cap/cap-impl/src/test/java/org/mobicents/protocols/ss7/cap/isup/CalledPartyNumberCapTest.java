@@ -96,7 +96,7 @@ public class CalledPartyNumberCapTest {
 		// int natureOfAddresIndicator, String address, int numberingPlanIndicator, int internalNetworkNumberIndicator
 	}
 
-	@Test(groups = { "functional.xml.serialize", "service.ussd" })
+	@Test(groups = { "functional.xml.serialize", "isup" })
 	public void testXMLSerialize() throws Exception {
 
 		CalledPartyNumberCapImpl original = new CalledPartyNumberCapImpl(new CalledPartyNumberImpl(CalledPartyNumber._NAI_INTERNATIONAL_NUMBER, "664422",

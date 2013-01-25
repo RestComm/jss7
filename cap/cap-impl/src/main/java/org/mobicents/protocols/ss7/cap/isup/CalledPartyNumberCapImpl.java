@@ -221,7 +221,7 @@ public class CalledPartyNumberCapImpl implements CalledPartyNumberCap, CAPAsnPri
 	/**
 	 * XML Serialization/Deserialization
 	 */
-	protected static final XMLFormat<CalledPartyNumberCapImpl> CALLED_PARTY_NUMBER_XML = new XMLFormat<CalledPartyNumberCapImpl>(CalledPartyNumberCapImpl.class) {
+	protected static final XMLFormat<CalledPartyNumberCapImpl> CALLED_PARTY_NUMBER_CAP_XML = new XMLFormat<CalledPartyNumberCapImpl>(CalledPartyNumberCapImpl.class) {
 
 		@Override
 		public void read(javolution.xml.XMLFormat.InputElement xml, CalledPartyNumberCapImpl calledPartyNumber) throws XMLStreamException {

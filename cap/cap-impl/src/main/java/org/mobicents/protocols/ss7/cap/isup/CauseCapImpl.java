@@ -24,6 +24,10 @@ package org.mobicents.protocols.ss7.cap.isup;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
+import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -47,6 +51,10 @@ public class CauseCapImpl implements CauseCap, CAPAsnPrimitive {
 
 	public static final String _PrimitiveName = "CauseCap";
 
+	private static final String ISUP_CAUSE_INDICATORS_XML = "isupCauseIndicators";
+
+	protected static final Logger loger = Logger.getLogger(CauseCapImpl.class);
+
 	private byte[] data;
 	
 	
@@ -58,6 +66,10 @@ public class CauseCapImpl implements CauseCap, CAPAsnPrimitive {
 	}
 
 	public CauseCapImpl(CauseIndicators causeIndicators) throws CAPException {
+		setCauseIndicators(causeIndicators);
+	}
+
+	public void setCauseIndicators(CauseIndicators causeIndicators) throws CAPException {
 		if (causeIndicators == null)
 			throw new CAPException("The causeIndicators parameter must not be null");
 		try {
@@ -206,4 +218,28 @@ public class CauseCapImpl implements CauseCap, CAPAsnPrimitive {
 
 		return sb.toString();
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<CauseCapImpl> CAUSE_CAP_XML = new XMLFormat<CauseCapImpl>(CauseCapImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, CauseCapImpl causeCap) throws XMLStreamException {
+			try {
+				causeCap.setCauseIndicators(xml.get(ISUP_CAUSE_INDICATORS_XML, CauseIndicatorsImpl.class));
+			} catch (CAPException e) {
+				loger.error("Error while deserialzing CauseIndicators.", e);
+			}
+		}
+
+		@Override
+		public void write(CauseCapImpl causeCap, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			try {
+				xml.add(((CauseIndicatorsImpl) causeCap.getCauseIndicators()), ISUP_CAUSE_INDICATORS_XML, CauseIndicatorsImpl.class);
+			} catch (CAPException e) {
+				loger.error("Error while serialzing CauseIndicators.", e);
+			}
+		}
+	};
 }
