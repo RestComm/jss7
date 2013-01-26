@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,17 +20,10 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * Start time:12:43:13 2009-04-04<br>
- * Project: mobicents-isup-stack<br>
- * 
- * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
- *         </a>
- * 
- */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
-import java.io.IOException;
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserTeleserviceInformation;
@@ -40,8 +33,18 @@ import org.mobicents.protocols.ss7.isup.message.parameter.UserTeleserviceInforma
  * Project: mobicents-isup-stack<br>
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
+ * @author sergey vetyutnev
  */
 public class UserTeleserviceInformationImpl extends AbstractISUPParameter implements UserTeleserviceInformation {
+
+	private static final String CODING_STANDARD = "codingStandard";
+	private static final String INTERPRETATION = "interpretation";
+	private static final String PRESENTATION_METHOD = "presentationMethod";
+	private static final String HIGHLAYER_CHAR_IDENTIFICATION = "highLayerCharIdentification";
+	private static final String E_HIGH_LAYER_CHAR_IDENTIFICATION = "eHighLayerCharIdentification";
+	private static final String E_VIDEO_TELEPHONY_CHAR_IDENTIFICATION = "eVideoTelephonyCharIdentification";
+
+	private static final int DEFAULT_INT_VALUE = 0;
 
 	private int codingStandard;
 	private int interpretation;
@@ -50,10 +53,10 @@ public class UserTeleserviceInformationImpl extends AbstractISUPParameter implem
 
 	// I hate this, its soo jsr 17 style...
 	private boolean eHighLayerCharIdentificationPresent;
-	private boolean eVidedoTelephonyCharIdentificationPresent;
+	private boolean eVideoTelephonyCharIdentificationPresent;
 
 	private int eHighLayerCharIdentification;
-	private int eVidedoTelephonyCharIdentification;
+	private int eVideoTelephonyCharIdentification;
 
 	public UserTeleserviceInformationImpl() {
 		super();
@@ -68,14 +71,14 @@ public class UserTeleserviceInformationImpl extends AbstractISUPParameter implem
 		this.setHighLayerCharIdentification(highLayerCharIdentification);
 	}
 
-	public UserTeleserviceInformationImpl(int codingStandard, int interpretation, int presentationMethod, int highLayerCharIdentification, int eVidedoTelephonyCharIdentification,
+	public UserTeleserviceInformationImpl(int codingStandard, int interpretation, int presentationMethod, int highLayerCharIdentification, int eVideoTelephonyCharIdentification,
 			boolean notImportantIgnoredParameter) {
 		super();
 		this.setCodingStandard(codingStandard);
 		this.setInterpretation(interpretation);
 		this.setPresentationMethod(presentationMethod);
 		this.setHighLayerCharIdentification(highLayerCharIdentification);
-		setEVidedoTelephonyCharIdentification(eVidedoTelephonyCharIdentification);
+		setEVideoTelephonyCharIdentification(eVideoTelephonyCharIdentification);
 	}
 
 	public UserTeleserviceInformationImpl(int codingStandard, int interpretation, int presentationMethod, int highLayerCharIdentification, int eHighLayerCharIdentification) {
@@ -108,20 +111,20 @@ public class UserTeleserviceInformationImpl extends AbstractISUPParameter implem
 			throw new ParameterException(e);
 		}
 		boolean ext = ((b[1] >> 7) & 0x01) == 0;
-		if (ext && b.length != 3) {
+		if (ext && b.length < 3) {
 			throw new ParameterException("byte[] indicates extension to high layer cahracteristic indicator, however there isnt enough bytes");
 		}
 		if (!ext) {
-			// ??
 			return b.length;
 		}
 
 		// FIXME: add check for excesive byte?, it should not happen though?
 		if (this.highLayerCharIdentification == _HLCI_MAINTAINENCE || this.highLayerCharIdentification == _HLCI_MANAGEMENT) {
 			this.setEHighLayerCharIdentification(b[2] & 0x7F);
-		} else if ((this.highLayerCharIdentification >= _HLCI_AUDIO_VID_LOW_RANGE && this.highLayerCharIdentification <= _HLCI_AUDIO_VID_HIGH_RANGE)
-				|| (this.highLayerCharIdentification >= _HLCI_AUDIO_VID_LOW_RANGE2 && this.highLayerCharIdentification <= _HLCI_AUDIO_VID_HIGH_RANGE2)) {
-			this.setEVidedoTelephonyCharIdentification(b[2] & 0x7F);
+//		} else if ((this.highLayerCharIdentification >= _HLCI_AUDIO_VID_LOW_RANGE && this.highLayerCharIdentification <= _HLCI_AUDIO_VID_HIGH_RANGE)
+//				|| (this.highLayerCharIdentification >= _HLCI_AUDIO_VID_LOW_RANGE2 && this.highLayerCharIdentification <= _HLCI_AUDIO_VID_HIGH_RANGE2)) {
+		} else if ((this.highLayerCharIdentification >= _HLCI_VIDEOTELEPHONY && this.highLayerCharIdentification <= _HLCI_AUDIO_VID_HIGH_RANGE2)) {
+			this.setEVideoTelephonyCharIdentification(b[2] & 0x7F);
 		} else {
 			//logger.warning("HLCI indicates value which does not allow for extension, but its present....");
 		}
@@ -130,7 +133,7 @@ public class UserTeleserviceInformationImpl extends AbstractISUPParameter implem
 
 	public byte[] encode() throws ParameterException {
 		byte[] b = null;
-		if (this.eHighLayerCharIdentificationPresent || this.eVidedoTelephonyCharIdentificationPresent) {
+		if (this.eHighLayerCharIdentificationPresent || this.eVideoTelephonyCharIdentificationPresent) {
 			b = new byte[3];
 		} else {
 			b = new byte[2];
@@ -144,12 +147,12 @@ public class UserTeleserviceInformationImpl extends AbstractISUPParameter implem
 
 		b[0] = (byte) v;
 		b[1] = (byte) (this.highLayerCharIdentification & 0x7F);
-		if (this.eHighLayerCharIdentificationPresent || this.eVidedoTelephonyCharIdentificationPresent) {
+		if (this.eHighLayerCharIdentificationPresent || this.eVideoTelephonyCharIdentificationPresent) {
 
 			if (this.eHighLayerCharIdentificationPresent) {
 				b[2] = (byte) (0x80 | (this.eHighLayerCharIdentification & 0x7F));
 			} else {
-				b[2] = (byte) (0x80 | (this.eVidedoTelephonyCharIdentification & 0x7F));
+				b[2] = (byte) (0x80 | (this.eVideoTelephonyCharIdentification & 0x7F));
 			}
 			return b;
 		} else {
@@ -196,7 +199,7 @@ public class UserTeleserviceInformationImpl extends AbstractISUPParameter implem
 
 	public void setEHighLayerCharIdentification(int highLayerCharIdentification) {
 
-		if (this.eVidedoTelephonyCharIdentificationPresent) {
+		if (this.eVideoTelephonyCharIdentificationPresent) {
 			throw new IllegalStateException("Either Extended VideoTlephony or Extended HighLayer octet is set. ExtendedVideoTlephony is already present");
 		}
 		if (this.highLayerCharIdentification == _HLCI_MAINTAINENCE || this.highLayerCharIdentification == _HLCI_MANAGEMENT) {
@@ -207,18 +210,19 @@ public class UserTeleserviceInformationImpl extends AbstractISUPParameter implem
 		}
 	}
 
-	public int getEVidedoTelephonyCharIdentification() {
-		return eVidedoTelephonyCharIdentification;
+	public int getEVideoTelephonyCharIdentification() {
+		return eVideoTelephonyCharIdentification;
 	}
 
-	public void setEVidedoTelephonyCharIdentification(int eVidedoTelephonyCharIdentification) {
+	public void setEVideoTelephonyCharIdentification(int eVidedoTelephonyCharIdentification) {
 		if (this.eHighLayerCharIdentificationPresent) {
 			throw new IllegalStateException("Either Extended VideoTlephony or Extended HighLayer octet is set. ExtendedHighLayer is already present");
 		}
-		if ((this.highLayerCharIdentification >= _HLCI_AUDIO_VID_LOW_RANGE && this.highLayerCharIdentification <= _HLCI_AUDIO_VID_HIGH_RANGE)
-				|| (this.highLayerCharIdentification >= _HLCI_AUDIO_VID_LOW_RANGE2 && this.highLayerCharIdentification <= _HLCI_AUDIO_VID_HIGH_RANGE2)) {
-			this.eVidedoTelephonyCharIdentificationPresent = true;
-			this.eVidedoTelephonyCharIdentification = eVidedoTelephonyCharIdentification & 0x7F;
+//		if ((this.highLayerCharIdentification >= _HLCI_AUDIO_VID_LOW_RANGE && this.highLayerCharIdentification <= _HLCI_AUDIO_VID_HIGH_RANGE)
+//				|| (this.highLayerCharIdentification >= _HLCI_AUDIO_VID_LOW_RANGE2 && this.highLayerCharIdentification <= _HLCI_AUDIO_VID_HIGH_RANGE2)) {
+		if ((this.highLayerCharIdentification >= _HLCI_VIDEOTELEPHONY && this.highLayerCharIdentification <= _HLCI_AUDIO_VID_HIGH_RANGE2)) {
+			this.eVideoTelephonyCharIdentificationPresent = true;
+			this.eVideoTelephonyCharIdentification = eVidedoTelephonyCharIdentification & 0x7F;
 		} else {
 			throw new IllegalArgumentException("Can not set this octet - HLCI is of value: " + this.highLayerCharIdentification);
 		}
@@ -228,12 +232,76 @@ public class UserTeleserviceInformationImpl extends AbstractISUPParameter implem
 		return eHighLayerCharIdentificationPresent;
 	}
 
-	public boolean isEVidedoTelephonyCharIdentificationPresent() {
-		return eVidedoTelephonyCharIdentificationPresent;
+	public boolean isEVideoTelephonyCharIdentificationPresent() {
+		return eVideoTelephonyCharIdentificationPresent;
 	}
 
 	public int getCode() {
 
 		return _PARAMETER_CODE;
 	}
+	
+	public String toString() {
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("UserTeleserviceInformation [codingStandard=");
+		sb.append(codingStandard);
+		sb.append(", interpretation=");
+		sb.append(interpretation);
+		sb.append(", presentationMethod=");
+		sb.append(presentationMethod);
+		sb.append(", highLayerCharIdentification=");
+		sb.append(highLayerCharIdentification);
+
+		if (this.eHighLayerCharIdentificationPresent) {
+			sb.append(", eHighLayerCharIdentification=");
+			sb.append(eHighLayerCharIdentification);
+		}
+
+		if (this.eVideoTelephonyCharIdentificationPresent) {
+			sb.append(", eVideoTelephonyCharIdentification=");
+			sb.append(this.eVideoTelephonyCharIdentification);
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<UserTeleserviceInformationImpl> ISUP_USER_TELESERVICE_INFORMATION_XML = new XMLFormat<UserTeleserviceInformationImpl>(UserTeleserviceInformationImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, UserTeleserviceInformationImpl userTeleserviceInformation) throws XMLStreamException {
+			userTeleserviceInformation.codingStandard = xml.getAttribute(CODING_STANDARD, DEFAULT_INT_VALUE);
+			userTeleserviceInformation.interpretation = xml.getAttribute(INTERPRETATION, DEFAULT_INT_VALUE);
+			userTeleserviceInformation.presentationMethod = xml.getAttribute(PRESENTATION_METHOD, DEFAULT_INT_VALUE);
+			userTeleserviceInformation.highLayerCharIdentification = xml.getAttribute(HIGHLAYER_CHAR_IDENTIFICATION, DEFAULT_INT_VALUE);
+
+			int val = xml.getAttribute(E_HIGH_LAYER_CHAR_IDENTIFICATION, Integer.MIN_VALUE);
+			if (val != Integer.MIN_VALUE)
+				userTeleserviceInformation.setEHighLayerCharIdentification(val);
+
+			val = xml.getAttribute(E_VIDEO_TELEPHONY_CHAR_IDENTIFICATION, Integer.MIN_VALUE);
+			if (val != Integer.MIN_VALUE)
+				userTeleserviceInformation.setEVideoTelephonyCharIdentification(val);
+		}
+
+		@Override
+		public void write(UserTeleserviceInformationImpl userTeleserviceInformation, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			xml.setAttribute(CODING_STANDARD, userTeleserviceInformation.codingStandard);
+			xml.setAttribute(INTERPRETATION, userTeleserviceInformation.interpretation);
+			xml.setAttribute(PRESENTATION_METHOD, userTeleserviceInformation.presentationMethod);
+			xml.setAttribute(HIGHLAYER_CHAR_IDENTIFICATION, userTeleserviceInformation.highLayerCharIdentification);
+
+			if (userTeleserviceInformation.eHighLayerCharIdentificationPresent)
+				xml.setAttribute(E_HIGH_LAYER_CHAR_IDENTIFICATION, userTeleserviceInformation.eHighLayerCharIdentification);
+
+			if (userTeleserviceInformation.eVideoTelephonyCharIdentificationPresent)
+				xml.setAttribute(E_VIDEO_TELEPHONY_CHAR_IDENTIFICATION, userTeleserviceInformation.eVideoTelephonyCharIdentification);
+		}
+	};
 }

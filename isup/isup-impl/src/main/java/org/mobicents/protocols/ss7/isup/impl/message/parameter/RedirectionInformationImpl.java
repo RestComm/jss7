@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,17 +20,10 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * Start time:15:18:18 2009-04-02<br>
- * Project: mobicents-isup-stack<br>
- * 
- * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
- *         </a>
- * 
- */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
-import java.io.IOException;
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionInformation;
@@ -40,9 +33,16 @@ import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionInformation
  * Project: mobicents-isup-stack<br>
  * 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
+ * @author sergey vetyutnev
  */
 public class RedirectionInformationImpl extends AbstractISUPParameter implements RedirectionInformation{
 
+	private static final String REDIRECTING_INDICATOR = "redirectingIndicator";
+	private static final String ORIGINAL_REDIRECTION_REASON = "originalRedirectionReason";
+	private static final String REDIRECTION_COUNTER = "redirectionCounter";
+	private static final String REDIRECTION_REASON = "redirectionReason";
+
+	private static final int DEFAULT_INT_VALUE = 0;
 	
 	private int redirectingIndicator;
 	private int originalRedirectionReason;
@@ -123,9 +123,36 @@ public class RedirectionInformationImpl extends AbstractISUPParameter implements
 	public void setRedirectionReason(int redirectionReason) {
 		this.redirectionReason = redirectionReason & 0x0F;
 	}
+	
+	public String toString() {
+		return "RedirectionInformation [redirectingIndicator=" + redirectingIndicator + ", originalRedirectionReason=" + originalRedirectionReason
+				+ ", redirectionCounter=" + redirectionCounter + ", redirectionReason=" + redirectionReason + "]";
+	}
 
 	public int getCode() {
 
 		return _PARAMETER_CODE;
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<RedirectionInformationImpl> ISUP_REDIRECTION_INFORMATION_XML = new XMLFormat<RedirectionInformationImpl>(RedirectionInformationImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, RedirectionInformationImpl redirectionInformation) throws XMLStreamException {
+			redirectionInformation.redirectingIndicator = xml.getAttribute(REDIRECTING_INDICATOR, DEFAULT_INT_VALUE);
+			redirectionInformation.originalRedirectionReason = xml.getAttribute(ORIGINAL_REDIRECTION_REASON, DEFAULT_INT_VALUE);
+			redirectionInformation.redirectionCounter = xml.getAttribute(REDIRECTION_COUNTER, DEFAULT_INT_VALUE);
+			redirectionInformation.redirectionReason = xml.getAttribute(REDIRECTION_REASON, DEFAULT_INT_VALUE);
+		}
+
+		@Override
+		public void write(RedirectionInformationImpl redirectionInformation, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			xml.setAttribute(REDIRECTING_INDICATOR, redirectionInformation.redirectingIndicator);
+			xml.setAttribute(ORIGINAL_REDIRECTION_REASON, redirectionInformation.originalRedirectionReason);
+			xml.setAttribute(REDIRECTION_COUNTER, redirectionInformation.redirectionCounter);
+			xml.setAttribute(REDIRECTION_REASON, redirectionInformation.redirectionReason);
+		}
+	};
 }

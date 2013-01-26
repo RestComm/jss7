@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.inap.isup;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -34,6 +37,7 @@ import org.mobicents.protocols.ss7.inap.api.INAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.inap.api.isup.RedirectionInformationInap;
 import org.mobicents.protocols.ss7.inap.primitives.INAPAsnPrimitive;
 import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.CallingPartyCategoryImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.RedirectionInformationImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionInformation;
 
@@ -46,6 +50,8 @@ public class RedirectionInformationInapImpl implements RedirectionInformationIna
 
 	public static final String _PrimitiveName = "RedirectionInformationInap";
 
+	private static final String ISUP_REDIRECTION_INFORMATION_XML = "isupRedirectionInformation";
+
 	private byte[] data;
 
 	public RedirectionInformationInapImpl() {
@@ -56,6 +62,10 @@ public class RedirectionInformationInapImpl implements RedirectionInformationIna
 	}
 
 	public RedirectionInformationInapImpl(RedirectionInformation redirectionInformation) throws INAPException {
+		setRedirectionInformation(redirectionInformation);
+	}
+
+	public void setRedirectionInformation(RedirectionInformation redirectionInformation) throws INAPException {
 		if (redirectionInformation == null)
 			throw new INAPException("The redirectionInformation parameter must not be null");
 		try {
@@ -198,4 +208,28 @@ public class RedirectionInformationInapImpl implements RedirectionInformationIna
 
 		return sb.toString();
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<RedirectionInformationInapImpl> REDIRECTION_INFORMATION_INAP_XML = new XMLFormat<RedirectionInformationInapImpl>(RedirectionInformationInapImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, RedirectionInformationInapImpl redirectionInformationInap) throws XMLStreamException {
+			try {
+				redirectionInformationInap.setRedirectionInformation(xml.get(ISUP_REDIRECTION_INFORMATION_XML, RedirectionInformationImpl.class));
+			} catch (INAPException e) {
+				throw new XMLStreamException(e);
+			}
+		}
+
+		@Override
+		public void write(RedirectionInformationInapImpl redirectionInformationInap, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			try {
+				xml.add(((RedirectionInformationImpl) redirectionInformationInap.getRedirectionInformation()), ISUP_REDIRECTION_INFORMATION_XML, RedirectionInformationImpl.class);
+			} catch (INAPException e) {
+				throw new XMLStreamException(e);
+			}
+		}
+	};
 }

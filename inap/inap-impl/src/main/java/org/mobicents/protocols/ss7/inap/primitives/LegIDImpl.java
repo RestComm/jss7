@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.inap.primitives;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -44,10 +47,15 @@ public class LegIDImpl implements LegID, INAPAsnPrimitive {
 	public static final int _ID_sendingSideID = 0;
 	public static final int _ID_receivingSideID = 1;
 
+	private static final String SENDING_SIDE_ID = "sendingSideID";
+	private static final String RECEIVING_SIDE_ID = "receivingSideID";
+
+	private static final String DEFAULT_STRING_VALUE = null;
+
 	public static final String _PrimitiveName = "LegID";
 
 	private LegType sendingSideID;
-	private LegType receivingSideID;	
+	private LegType receivingSideID;
 	
 	
 	public LegIDImpl() {
@@ -202,4 +210,31 @@ public class LegIDImpl implements LegID, INAPAsnPrimitive {
 		
 		return sb.toString();
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<LegIDImpl> LEG_ID_XML = new XMLFormat<LegIDImpl>(LegIDImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, LegIDImpl legId) throws XMLStreamException {
+			String sendingSideID = xml.getAttribute(SENDING_SIDE_ID, DEFAULT_STRING_VALUE);
+			if (sendingSideID != null) {
+				legId.sendingSideID = Enum.valueOf(LegType.class, sendingSideID);
+			}
+
+			String receivingSideID = xml.getAttribute(RECEIVING_SIDE_ID, DEFAULT_STRING_VALUE);
+			if (receivingSideID != null) {
+				legId.receivingSideID = Enum.valueOf(LegType.class, receivingSideID);
+			}
+		}
+
+		@Override
+		public void write(LegIDImpl legId, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			if (legId.sendingSideID != null)
+				xml.setAttribute(SENDING_SIDE_ID, legId.sendingSideID.toString());
+			if (legId.receivingSideID != null)
+				xml.setAttribute(RECEIVING_SIDE_ID, legId.receivingSideID.toString());
+		}
+	};
 }

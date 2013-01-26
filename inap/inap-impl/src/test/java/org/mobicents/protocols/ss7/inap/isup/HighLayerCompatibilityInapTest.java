@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,14 +24,19 @@ package org.mobicents.protocols.ss7.inap.isup;
 
 import static org.testng.Assert.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.UserTeleserviceInformationImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserTeleserviceInformation;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.*;
 
 /**
  * 
@@ -60,7 +65,7 @@ public class HighLayerCompatibilityInapTest {
 		assertTrue(Arrays.equals(elem.getData(), this.getIntData()));
 		assertEquals(hlc.getCodingStandard(), 0);
 		assertEquals(hlc.getEHighLayerCharIdentification(), 0);
-		assertEquals(hlc.getEVidedoTelephonyCharIdentification(), 0);
+		assertEquals(hlc.getEVideoTelephonyCharIdentification(), 0);
 		assertEquals(hlc.getInterpretation(), 4);
 		assertEquals(hlc.getPresentationMethod(), 1);
 		assertEquals(hlc.getHighLayerCharIdentification(), 1);
@@ -81,5 +86,36 @@ public class HighLayerCompatibilityInapTest {
 		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
 		
 //		int codingStandard, int interpretation, int presentationMethod, int highLayerCharIdentification
+	}
+
+	@Test(groups = { "functional.xml.serialize", "isup" })
+	public void testXMLSerialize() throws Exception {
+
+		UserTeleserviceInformationImpl prim = new UserTeleserviceInformationImpl(UserTeleserviceInformation._CODING_STANDARD_NATIONAL,
+				UserTeleserviceInformation._INTERPRETATION_FHGCI, UserTeleserviceInformation._PRESENTATION_METHOD_HLPP, UserTeleserviceInformation._HLCI_IVTI);
+		HighLayerCompatibilityInapImpl original = new HighLayerCompatibilityInapImpl(prim);
+
+		// Writes the area to a file.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+		writer.write(original, "highLayerCompatibilityInap", HighLayerCompatibilityInapImpl.class);
+		writer.close();
+
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		HighLayerCompatibilityInapImpl copy = reader.read("highLayerCompatibilityInap", HighLayerCompatibilityInapImpl.class);
+
+		assertEquals(copy.getHighLayerCompatibility().getCodingStandard(), original.getHighLayerCompatibility().getCodingStandard());
+		assertEquals(copy.getHighLayerCompatibility().getInterpretation(), original.getHighLayerCompatibility().getInterpretation());
+		assertEquals(copy.getHighLayerCompatibility().getPresentationMethod(), original.getHighLayerCompatibility().getPresentationMethod());
+		assertEquals(copy.getHighLayerCompatibility().getHighLayerCharIdentification(), original.getHighLayerCompatibility().getHighLayerCharIdentification());
+
 	}
 }

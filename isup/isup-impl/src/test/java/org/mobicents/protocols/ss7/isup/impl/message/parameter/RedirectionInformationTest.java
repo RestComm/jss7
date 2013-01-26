@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,20 +20,26 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * Start time:20:07:45 2009-04-26<br>
- * Project: mobicents-isup-stack<br>
- * 
- * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski
- *         </a>
- * 
- */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionInformation;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 /**
@@ -42,9 +48,84 @@ import org.testng.annotations.Test;
  * 
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski
  *         </a>
+ * @author sergey vetyutnev
  */
 public class RedirectionInformationTest extends ParameterHarness {
 
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+	}
+
+	@AfterClass
+	public static void tearDownClass() throws Exception {
+	}
+
+	@BeforeTest
+	public void setUp() {
+	}
+
+	@AfterTest
+	public void tearDown() {
+	}
+
+	private byte[] getData() {
+		return new byte[] { 35, 20 };
+	}
+
+	@Test(groups = { "functional.decode", "parameter" })
+	public void testDecode() throws Exception {
+
+		RedirectionInformationImpl prim = new RedirectionInformationImpl();
+		prim.decode(getData());
+
+		assertEquals(prim.getRedirectingIndicator(), RedirectionInformation._RI_CALL_D);
+		assertEquals(prim.getOriginalRedirectionReason(), RedirectionInformation._ORR_NO_REPLY);
+		assertEquals(prim.getRedirectionCounter(), 4);
+		assertEquals(prim.getRedirectionReason(), RedirectionInformation._RI_CALL_REROUTED);
+	}
+
+	@Test(groups = { "functional.encode", "parameter" })
+	public void testEncode() throws Exception {
+
+		RedirectionInformationImpl prim = new RedirectionInformationImpl(RedirectionInformation._RI_CALL_D, RedirectionInformation._ORR_NO_REPLY, 4,
+				RedirectionInformation._RI_CALL_REROUTED);
+		//		int redirectingIndicator, int originalRedirectionReason, int redirectionCounter, int redirectionReason
+
+		byte[] data = getData();
+		byte[] encodedData = prim.encode();
+
+		assertTrue(Arrays.equals(data, encodedData));
+
+	}
+
+	@Test(groups = { "functional.xml.serialize", "parameter" })
+	public void testXMLSerialize() throws Exception {
+
+		RedirectionInformationImpl original = new RedirectionInformationImpl(RedirectionInformation._RI_CALL_D, RedirectionInformation._ORR_NO_REPLY, 4,
+				RedirectionInformation._RI_CALL_REROUTED);
+
+		// Writes the area to a file.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+		writer.write(original, "redirectionInformation", RedirectionInformationImpl.class);
+		writer.close();
+
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		RedirectionInformationImpl copy = reader.read("redirectionInformation", RedirectionInformationImpl.class);
+
+		assertEquals(copy.getRedirectingIndicator(), original.getRedirectingIndicator());
+		assertEquals(copy.getOriginalRedirectionReason(), original.getOriginalRedirectionReason());
+		assertEquals(copy.getRedirectionCounter(), original.getRedirectionCounter());
+		assertEquals(copy.getRedirectionReason(), original.getRedirectionReason());
+	}
 	
 	
 	
