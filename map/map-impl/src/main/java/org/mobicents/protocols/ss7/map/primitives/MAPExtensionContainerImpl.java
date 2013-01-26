@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -26,10 +26,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.ByteArrayContainer;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
@@ -44,6 +48,10 @@ public class MAPExtensionContainerImpl implements MAPExtensionContainer, MAPAsnP
 
 	protected static final int PRIVATEEXTENSIONLIST_REF_TAG = 0x00;
 	protected static final int PSCEXTENSIONS_REF_TAG = 0x01;
+
+	private static final String PRIVATE_EXTENSION = "privateExtension";
+	private static final String PRIVATE_EXTENSION_LIST = "privateExtensionList";
+	private static final String PCS_EXTENSIONS = "pcsExtensions";
 
 	private ArrayList<MAPPrivateExtension> privateExtensionList;
 	private byte[] pcsExtensions;
@@ -290,5 +298,49 @@ public class MAPExtensionContainerImpl implements MAPExtensionContainer, MAPAsnP
 			sb.append(b);
 		}
 		return sb.toString();
+	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<MAPExtensionContainerImpl> MAP_EXTENSION_CONTAINER_XML = new XMLFormat<MAPExtensionContainerImpl>(MAPExtensionContainerImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, MAPExtensionContainerImpl mapExtensionContainer) throws XMLStreamException {
+			MAPExtensionContainer_privateExtensionList al = xml.get(PRIVATE_EXTENSION_LIST, MAPExtensionContainer_privateExtensionList.class);
+			if (al != null) {
+				mapExtensionContainer.privateExtensionList = al.getData();
+			}
+
+			ByteArrayContainer bc = xml.get(PCS_EXTENSIONS, ByteArrayContainer.class);
+			if (bc != null) {
+				mapExtensionContainer.pcsExtensions = bc.getData();
+			}
+		}
+
+		@Override
+		public void write(MAPExtensionContainerImpl mapExtensionContainer, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			if (mapExtensionContainer.privateExtensionList != null) {
+				MAPExtensionContainer_privateExtensionList al = new MAPExtensionContainer_privateExtensionList(mapExtensionContainer.privateExtensionList);
+				xml.add(al, PRIVATE_EXTENSION_LIST, MAPExtensionContainer_privateExtensionList.class);
+			}
+			
+			if (mapExtensionContainer.pcsExtensions != null) {
+				ByteArrayContainer bac = new ByteArrayContainer(mapExtensionContainer.pcsExtensions);
+				xml.add(bac, PCS_EXTENSIONS, ByteArrayContainer.class);
+			}
+		}
+	};
+
+	public static class MAPExtensionContainer_privateExtensionList extends ArrayListSerializingBase<MAPPrivateExtension> {
+
+		public MAPExtensionContainer_privateExtensionList() {
+			super(PRIVATE_EXTENSION, MAPPrivateExtensionImpl.class);
+		}
+
+		public MAPExtensionContainer_privateExtensionList(ArrayList<MAPPrivateExtension> data) {
+			super(PRIVATE_EXTENSION, MAPPrivateExtensionImpl.class, data);
+		}
+		
 	}
 }

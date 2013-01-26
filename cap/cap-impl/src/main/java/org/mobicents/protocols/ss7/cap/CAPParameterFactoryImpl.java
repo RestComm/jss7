@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -299,7 +299,7 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
 	}
 
 	@Override
-	public CAPExtensions createCAPExtensions(ExtensionField[] fieldsList) {
+	public CAPExtensions createCAPExtensions(ArrayList<ExtensionField> fieldsList) {
 		return new CAPExtensionsImpl(fieldsList);
 	}
 
@@ -351,17 +351,26 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
 	}
 
 	@Override
-	public Digits createDigits(byte[] data) {
-		return new DigitsImpl(data);
+	public Digits createDigits_GenericNumber(byte[] data) {
+		DigitsImpl res = new DigitsImpl(data);
+		res.setIsGenericNumber();
+		return res;
 	}
 
 	@Override
-	public Digits createDigits(GenericNumber genericNumber) throws CAPException {
+	public Digits createDigits_GenericDigits(byte[] data) {
+		DigitsImpl res = new DigitsImpl(data);
+		res.setIsGenericDigits();
+		return res;
+	}
+
+	@Override
+	public Digits createDigits_GenericNumber(GenericNumber genericNumber) throws CAPException {
 		return new DigitsImpl(genericNumber);
 	}
 
 	@Override
-	public Digits createDigits(GenericDigits genericDigits) throws CAPException {
+	public Digits createDigits_GenericDigits(GenericDigits genericDigits) throws CAPException {
 		return new DigitsImpl(genericDigits);
 	}
 

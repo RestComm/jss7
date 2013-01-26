@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,15 +24,21 @@ package org.mobicents.protocols.ss7.cap.primitives;
 
 import static org.testng.Assert.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 import org.mobicents.protocols.ss7.cap.api.primitives.CriticalityType;
 import org.mobicents.protocols.ss7.cap.api.primitives.ExtensionField;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.*;
 
 /**
  * 
@@ -77,16 +83,19 @@ public class CAPExtensionsTest {
 			e.printStackTrace();
 		}
 		ExtensionFieldImpl a2 = new ExtensionFieldImpl(3, CriticalityType.typeAbort, aos.toByteArray());
-		CAPExtensionsImpl elem = new CAPExtensionsImpl(new ExtensionField[] { a1, a2 });
+		ArrayList<ExtensionField> flds = new ArrayList<ExtensionField>();
+		flds.add(a1);
+		flds.add(a2);
+		CAPExtensionsImpl elem = new CAPExtensionsImpl(flds);
 		return elem;
 	}
 
 	public static boolean checkTestCAPExtensions(CAPExtensions elem) {
-		if (elem.getExtensionFields() == null || elem.getExtensionFields().length != 2)
+		if (elem.getExtensionFields() == null || elem.getExtensionFields().size() != 2)
 			return false;
 		
-		ExtensionField a1 = elem.getExtensionFields()[0];
-		ExtensionField a2 = elem.getExtensionFields()[1];
+		ExtensionField a1 = elem.getExtensionFields().get(0);
+		ExtensionField a2 = elem.getExtensionFields().get(1);
 		if (a1.getLocalCode() != 2 || a2.getLocalCode() != 3)
 			return false;
 		if (a1.getCriticalityType() != CriticalityType.typeIgnore || a2.getCriticalityType() != CriticalityType.typeAbort)
@@ -97,5 +106,72 @@ public class CAPExtensionsTest {
 			return false;
 		
 		return true;
+	}
+
+	private byte[] getDataSer() {
+		return new byte[] { 1, (byte) 255, 3 };
+	}
+
+	public long[] getDataOid() {
+		return new long[] { 1, 0, 22 };
+	}
+
+	@Test(groups = { "functional.xml.serialize", "primitives" })
+	public void testXMLSerialize() throws Exception {
+
+		ArrayList<ExtensionField> fieldsList = new ArrayList<ExtensionField>(); 
+		fieldsList.add(new ExtensionFieldImpl(234, CriticalityType.typeIgnore, getDataSer()));
+		fieldsList.add(new ExtensionFieldImpl(getDataOid(), null, getDataSer()));
+		CAPExtensionsImpl original = new CAPExtensionsImpl(fieldsList); 
+
+		// Writes the area to a file.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+		writer.write(original, "capExtensions", CAPExtensionsImpl.class);
+		writer.close();
+
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		CAPExtensionsImpl copy = reader.read("capExtensions", CAPExtensionsImpl.class);
+
+		assertEquals(copy.getExtensionFields().size(), original.getExtensionFields().size());
+
+		assertEquals((int) copy.getExtensionFields().get(0).getLocalCode(), (int) original.getExtensionFields().get(0).getLocalCode());
+		assertTrue(Arrays.equals(copy.getExtensionFields().get(0).getGlobalCode(), original.getExtensionFields().get(0).getGlobalCode()));
+		assertEquals(copy.getExtensionFields().get(0).getCriticalityType(), original.getExtensionFields().get(0).getCriticalityType());
+		assertEquals(copy.getExtensionFields().get(0).getData(), original.getExtensionFields().get(0).getData());
+
+		assertTrue(Arrays.equals(copy.getExtensionFields().get(1).getGlobalCode(), original.getExtensionFields().get(1).getGlobalCode()));
+		assertEquals(copy.getExtensionFields().get(1).getCriticalityType(), original.getExtensionFields().get(1).getCriticalityType());
+		assertEquals(copy.getExtensionFields().get(1).getData(), original.getExtensionFields().get(1).getData());
+
+
+		original = CAPExtensionsTest.createTestCAPExtensions(); 
+
+		// Writes the area to a file.
+		baos = new ByteArrayOutputStream();
+		writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+		writer.write(original, "capExtensions", CAPExtensionsImpl.class);
+		writer.close();
+
+		rawData = baos.toByteArray();
+		serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		bais = new ByteArrayInputStream(rawData);
+		reader = XMLObjectReader.newInstance(bais);
+		copy = reader.read("capExtensions", CAPExtensionsImpl.class);
+
+		CAPExtensionsTest.checkTestCAPExtensions(copy);
 	}
 }

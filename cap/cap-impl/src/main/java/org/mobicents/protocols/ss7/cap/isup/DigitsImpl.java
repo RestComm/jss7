@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.cap.isup;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -49,7 +52,12 @@ public class DigitsImpl implements Digits, CAPAsnPrimitive {
 
 	public static final String _PrimitiveName = "Digits";
 
+	private static final String ISUP_GENERIC_DIGITS_XML = "genericDigits";
+	private static final String ISUP_GENERIC_NUMBER_XML = "genericNumber";
+
 	private byte[] data;
+	private boolean isGenericDigits;
+	private boolean isGenericNumber;
 
 	
 	public DigitsImpl() {
@@ -76,6 +84,8 @@ public class DigitsImpl implements Digits, CAPAsnPrimitive {
 	public GenericDigits getGenericDigits() throws CAPException {
 		if (this.data == null)
 			throw new CAPException("The data has not been filled");
+		if (!this.isGenericDigits)
+			throw new CAPException("Primitive is not marked as GenericDigits (use setGenericDigits() before)");
 
 		try {
 			GenericDigitsImpl ocn = new GenericDigitsImpl();
@@ -90,6 +100,8 @@ public class DigitsImpl implements Digits, CAPAsnPrimitive {
 	public GenericNumber getGenericNumber() throws CAPException {
 		if (this.data == null)
 			throw new CAPException("The data has not been filled");
+		if (!this.isGenericNumber)
+			throw new CAPException("Primitive is not marked as GenericNumber (use setGenericNumber() before)");
 
 		try {
 			GenericNumberImpl ocn = new GenericNumberImpl();
@@ -112,6 +124,7 @@ public class DigitsImpl implements Digits, CAPAsnPrimitive {
 			throw new CAPException("The genericDigits parameter must not be null");
 		try {
 			this.data = ((GenericDigitsImpl) genericDigits).encode();
+			setIsGenericDigits();
 		} catch (ParameterException e) {
 			throw new CAPException("ParameterException when encoding genericDigits: " + e.getMessage(), e);
 		}
@@ -124,9 +137,32 @@ public class DigitsImpl implements Digits, CAPAsnPrimitive {
 			throw new CAPException("The genericNumber parameter must not be null");
 		try {
 			this.data = ((GenericNumberImpl) genericNumber).encode();
+			setIsGenericNumber();
 		} catch (ParameterException e) {
 			throw new CAPException("ParameterException when encoding genericNumber: " + e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public boolean getIsGenericDigits() {
+		return isGenericDigits;
+	}
+
+	@Override
+	public boolean getIsGenericNumber() {
+		return isGenericNumber;
+	}
+
+	@Override
+	public void setIsGenericDigits() {
+		isGenericDigits = true;
+		isGenericNumber = false;
+	}
+
+	@Override
+	public void setIsGenericNumber() {
+		isGenericNumber = true;
+		isGenericDigits = false;
 	}
 
 	@Override
@@ -222,13 +258,17 @@ public class DigitsImpl implements Digits, CAPAsnPrimitive {
 			sb.append(printDataArr(this.data));
 			sb.append("]");
 			try {
-				GenericNumber gn = this.getGenericNumber();
-				sb.append(", genericNumber");
-				sb.append(gn.toString());
+				if (this.getIsGenericNumber()) {
+					GenericNumber gn = this.getGenericNumber();
+					sb.append(", genericNumber");
+					sb.append(gn.toString());
+				}
 
-				GenericDigits gd = this.getGenericDigits();
-				sb.append(", genericDigits");
-				sb.append(gd.toString());
+				if (this.getIsGenericDigits()) {
+					GenericDigits gd = this.getGenericDigits();
+					sb.append(", genericDigits");
+					sb.append(gd.toString());
+				}
 			} catch (CAPException e) {
 			}
 		}
@@ -247,5 +287,40 @@ public class DigitsImpl implements Digits, CAPAsnPrimitive {
 
 		return sb.toString();
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<DigitsImpl> DIGITS_XML = new XMLFormat<DigitsImpl>(DigitsImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, DigitsImpl digits) throws XMLStreamException {
+			try {
+				GenericDigits gd = xml.get(ISUP_GENERIC_DIGITS_XML, GenericDigitsImpl.class);
+				if (gd != null)
+					digits.setGenericDigits(gd);
+				GenericNumber gn = xml.get(ISUP_GENERIC_NUMBER_XML, GenericNumberImpl.class);
+				if (gn != null)
+					digits.setGenericNumber(gn);
+			} catch (CAPException e) {
+				throw new XMLStreamException(e);
+			}
+		}
+
+		@Override
+		public void write(DigitsImpl digits, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			try {
+				if (digits.getIsGenericDigits())
+					xml.add(((GenericDigitsImpl) digits.getGenericDigits()), ISUP_GENERIC_DIGITS_XML, GenericDigitsImpl.class);
+				else if (digits.getIsGenericNumber())
+					xml.add(((GenericNumberImpl) digits.getGenericNumber()), ISUP_GENERIC_NUMBER_XML, GenericNumberImpl.class);
+				else
+					throw new XMLStreamException("Error when serializing Digits: primitive is market neither GenericDigits nor GenericNumber");
+			} catch (CAPException e) {
+				throw new XMLStreamException(e);
+			}
+		}
+	};
+
 }
 

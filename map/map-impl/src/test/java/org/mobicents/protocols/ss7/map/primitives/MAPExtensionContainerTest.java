@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -32,6 +32,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -214,5 +217,31 @@ public class MAPExtensionContainerTest {
 				0x30, 0x18, (byte) 0x81, 0x01, 0x09, (byte) 0xa2, 0x13, 0x02, 0x01, 0x01, 0x04, 0x0e, 0x09, 0x01, 0x0a, 0x0a,
 				0x09, (byte) 0x84, 0x13, 0x32, (byte) 0x84, 0x30, 0x03, (byte) 0x92, 0x11, 0x07, 0x30, 0x03, (byte) 0x81, 0x01, 0x0a
 		};
+	}
+
+	@Test(groups = { "functional.xml.serialize", "primitives" })
+	public void testXMLSerialize() throws Exception {
+
+		MAPExtensionContainerImpl original = (MAPExtensionContainerImpl)MAPExtensionContainerTest.GetTestExtensionContainer(); 
+		
+		// Writes the area to a file.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+		writer.write(original, "mapExtensionContainer", MAPExtensionContainerImpl.class);
+		writer.close();
+
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		MAPExtensionContainerImpl copy = reader.read("mapExtensionContainer", MAPExtensionContainerImpl.class);
+
+		MAPExtensionContainerTest.CheckTestExtensionContainer(copy);
+
 	}
 }

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.cap.isup;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -34,6 +37,7 @@ import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.isup.OriginalCalledNumberCap;
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.CalledPartyNumberImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.OriginalCalledNumberImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledNumber;
 
@@ -47,6 +51,8 @@ public class OriginalCalledNumberCapImpl implements OriginalCalledNumberCap, CAP
 
 	public static final String _PrimitiveName = "OriginalCalledNumberCap";
 
+	private static final String ISUP_ORIGINAL_CALLED_NUMBER_XML = "isupOriginalCalledNumber";
+
 	private byte[] data;
 
 	public OriginalCalledNumberCapImpl() {
@@ -57,6 +63,10 @@ public class OriginalCalledNumberCapImpl implements OriginalCalledNumberCap, CAP
 	}
 
 	public OriginalCalledNumberCapImpl(OriginalCalledNumber originalCalledNumber) throws CAPException {
+		setOriginalCalledNumber(originalCalledNumber);
+	}
+
+	public void setOriginalCalledNumber(OriginalCalledNumber originalCalledNumber) throws CAPException {
 		if (originalCalledNumber == null)
 			throw new CAPException("The originalCalledNumber parameter must not be null");
 		try {
@@ -205,4 +215,28 @@ public class OriginalCalledNumberCapImpl implements OriginalCalledNumberCap, CAP
 
 		return sb.toString();
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<OriginalCalledNumberCapImpl> ORIGINAL_CALLED_NUMBER_CAP_XML = new XMLFormat<OriginalCalledNumberCapImpl>(OriginalCalledNumberCapImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, OriginalCalledNumberCapImpl originalCalledNumber) throws XMLStreamException {
+			try {
+				originalCalledNumber.setOriginalCalledNumber(xml.get(ISUP_ORIGINAL_CALLED_NUMBER_XML, OriginalCalledNumberImpl.class));
+			} catch (CAPException e) {
+				throw new XMLStreamException(e);
+			}
+		}
+
+		@Override
+		public void write(OriginalCalledNumberCapImpl originalCalledNumber, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			try {
+				xml.add(((OriginalCalledNumberImpl) originalCalledNumber.getOriginalCalledNumber()), ISUP_ORIGINAL_CALLED_NUMBER_XML, OriginalCalledNumberImpl.class);
+			} catch (CAPException e) {
+				throw new XMLStreamException(e);
+			}
+		}
+	};
 }

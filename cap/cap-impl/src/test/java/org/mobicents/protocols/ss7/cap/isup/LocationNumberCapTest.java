@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,14 +24,21 @@ package org.mobicents.protocols.ss7.cap.isup;
 
 import static org.testng.Assert.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.CalledPartyNumberImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.LocationNumberImpl;
+import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.*;
 
 /**
  * 
@@ -82,6 +89,40 @@ public class LocationNumberCapTest {
 		
 //		int natureOfAddresIndicator, String address, int numberingPlanIndicator, int internalNetworkNumberIndicator, int addressRepresentationREstrictedIndicator,
 //		int screeningIndicator
+	}
+
+	@Test(groups = { "functional.xml.serialize", "isup" })
+	public void testXMLSerialize() throws Exception {
+
+		LocationNumberImpl ln = new LocationNumberImpl(LocationNumber._NAI_NATIONAL_SN, "12345", LocationNumber._NPI_TELEX,
+				LocationNumber._INN_ROUTING_NOT_ALLOWED, LocationNumber._APRI_ALLOWED, LocationNumber._SI_USER_PROVIDED_VERIFIED_PASSED);
+		LocationNumberCapImpl original = new LocationNumberCapImpl(ln);
+
+		// Writes the area to a file.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+		writer.write(original, "locationNumberCap", LocationNumberCapImpl.class);
+		writer.close();
+
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		LocationNumberCapImpl copy = reader.read("locationNumberCap", LocationNumberCapImpl.class);
+
+		assertEquals(copy.getLocationNumber().getNatureOfAddressIndicator(), original.getLocationNumber().getNatureOfAddressIndicator());
+		assertEquals(copy.getLocationNumber().getAddress(), original.getLocationNumber().getAddress());
+		assertEquals(copy.getLocationNumber().getNumberingPlanIndicator(), original.getLocationNumber().getNumberingPlanIndicator());
+		assertEquals(copy.getLocationNumber().getInternalNetworkNumberIndicator(), original.getLocationNumber().getInternalNetworkNumberIndicator());
+		assertEquals(copy.getLocationNumber().getAddressRepresentationRestrictedIndicator(), original.getLocationNumber().getAddressRepresentationRestrictedIndicator());
+		assertEquals(copy.getLocationNumber().getScreeningIndicator(), original.getLocationNumber().getScreeningIndicator());
+		assertEquals(copy.getLocationNumber().isOddFlag(), original.getLocationNumber().isOddFlag());
+
 	}
 }
 
