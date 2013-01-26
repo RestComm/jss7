@@ -82,4 +82,20 @@ public interface Digits {
 
 	public void setGenericNumber(GenericNumber genericNumber) throws CAPException;
 
+	public boolean getIsGenericDigits();
+
+	public boolean getIsGenericNumber();
+
+	/**
+	 * Set that Digits carries GenericDigits element
+	 * Attention: this value must be set after primitive decoding !!!!
+	 */
+	public void setIsGenericDigits();
+
+	/**
+	 * Set that Digits carries GenericNumber element
+	 * Attention: this value must be set after primitive decoding !!!!
+	 */
+	public void setIsGenericNumber();
+
 }

@@ -20,21 +20,59 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.primitives;
-
-import java.util.ArrayList;
+package org.mobicents.protocols.ss7.map.primitives;
 
 /**
-*
-Extensions {PARAMETERS-BOUND : bound} ::= SEQUENCE SIZE (1..bound.&numOfExtensions) OF ExtensionField
-numOfExtensions ::= 10
-* 
-* @author sergey vetyutnev
-* 
-*/
-public interface CAPExtensions {
+ * 
+ * @author sergey vetyutnev
+ * 
+ */
+public class OidContainer {
 
-	public ArrayList<ExtensionField> getExtensionFields();
+	private long[] data;
 
-	public void setExtensionFields(ArrayList<ExtensionField> fieldsList);
+	public OidContainer() {
+	}
+
+	public OidContainer(long[] val) {
+		this.data = val;
+	}
+
+	public void parseSerializedData(String val) throws NumberFormatException {
+		if (val == null || val.length() == 0) {
+			this.data = new long[0];
+			return;
+		}
+
+		String[] ss = val.split("\\.");
+		this.data = new long[ss.length];
+		for (int i1 = 0; i1 < ss.length; i1++) {
+			data[i1] = Long.parseLong(ss[i1]);
+		}
+	}
+
+	public long[] getData() {
+		return data;
+	}
+
+	public void setData(long[] val) {
+		data = val;
+	}
+
+	public String getSerializedData() {
+		if(this.data==null)
+			return "";
+		else {
+			boolean isFirst = true;
+			StringBuilder sb = new StringBuilder();
+			for (long l : data) {
+				if (isFirst)
+					isFirst = false;
+				else
+					sb.append(".");
+				sb.append(l);
+			}
+			return sb.toString();
+		}
+	}
 }

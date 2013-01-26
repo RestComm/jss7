@@ -528,6 +528,7 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
 					case _ID_additionalCallingPartyNumber:
 						this.additionalCallingPartyNumber = new DigitsImpl();
 						((DigitsImpl)this.additionalCallingPartyNumber).decodeAll(ais);
+						this.additionalCallingPartyNumber.setIsGenericNumber();
 						break;
 					case _ID_bearerCapability:
 						AsnInputStream ais2 = ais.readSequenceStream();

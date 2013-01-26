@@ -27,7 +27,6 @@ import java.io.IOException;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
-import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -52,8 +51,6 @@ public class CallingPartyNumberCapImpl implements CallingPartyNumberCap, CAPAsnP
 	public static final String _PrimitiveName = "CallingPartyNumberCap";
 
 	private static final String ISUP_CALLING_PARTY_NUMBER_XML = "isupCallingPartyNumber";
-
-	protected static final Logger loger = Logger.getLogger(CallingPartyNumberCapImpl.class);
 
 	private byte[] data;
 
@@ -228,7 +225,7 @@ public class CallingPartyNumberCapImpl implements CallingPartyNumberCap, CAPAsnP
 			try {
 				callingPartyNumber.setCallingPartyNumber(xml.get(ISUP_CALLING_PARTY_NUMBER_XML, CallingPartyNumberImpl.class));
 			} catch (CAPException e) {
-				loger.error("Error while deserialzing CallingPartyNumberCapImpl.", e);
+				throw new XMLStreamException(e);
 			}
 		}
 
@@ -237,7 +234,7 @@ public class CallingPartyNumberCapImpl implements CallingPartyNumberCap, CAPAsnP
 			try {
 				xml.add(((CallingPartyNumberImpl) callingPartyNumber.getCallingPartyNumber()), ISUP_CALLING_PARTY_NUMBER_XML, CallingPartyNumberImpl.class);
 			} catch (CAPException e) {
-				loger.error("Error while serialzing CallingPartyNumberCapImpl.", e);
+				throw new XMLStreamException(e);
 			}
 		}
 	};

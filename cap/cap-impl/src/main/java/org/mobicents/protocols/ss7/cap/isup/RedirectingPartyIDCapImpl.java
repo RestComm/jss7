@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -23,6 +23,9 @@
 package org.mobicents.protocols.ss7.cap.isup;
 
 import java.io.IOException;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -47,6 +50,8 @@ public class RedirectingPartyIDCapImpl implements RedirectingPartyIDCap, CAPAsnP
 
 	public static final String _PrimitiveName = "RedirectingPartyIDCap";
 
+	private static final String ISUP_REDIRECTING_NUMBER_XML = "isupRedirectingNumber";
+
 	private byte[] data;
 
 	public RedirectingPartyIDCapImpl() {
@@ -57,6 +62,10 @@ public class RedirectingPartyIDCapImpl implements RedirectingPartyIDCap, CAPAsnP
 	}
 
 	public RedirectingPartyIDCapImpl(RedirectingNumber redirectingNumber) throws CAPException {
+		setRedirectingNumber(redirectingNumber);
+	}
+
+	public void setRedirectingNumber(RedirectingNumber redirectingNumber) throws CAPException {
 		if (redirectingNumber == null)
 			throw new CAPException("The redirectingNumber parameter must not be null");
 		try {
@@ -205,4 +214,28 @@ public class RedirectingPartyIDCapImpl implements RedirectingPartyIDCap, CAPAsnP
 
 		return sb.toString();
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<RedirectingPartyIDCapImpl> REDIRECTING_PARTY_ID_CAP_XML = new XMLFormat<RedirectingPartyIDCapImpl>(RedirectingPartyIDCapImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, RedirectingPartyIDCapImpl redirectingPartyID) throws XMLStreamException {
+			try {
+				redirectingPartyID.setRedirectingNumber(xml.get(ISUP_REDIRECTING_NUMBER_XML, RedirectingNumberImpl.class));
+			} catch (CAPException e) {
+				throw new XMLStreamException(e);
+			}
+		}
+
+		@Override
+		public void write(RedirectingPartyIDCapImpl redirectingPartyID, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			try {
+				xml.add(((RedirectingNumberImpl) redirectingPartyID.getRedirectingNumber()), ISUP_REDIRECTING_NUMBER_XML, RedirectingNumberImpl.class);
+			} catch (CAPException e) {
+				throw new XMLStreamException(e);
+			}
+		}
+	};
 }

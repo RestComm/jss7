@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,12 +24,17 @@ package org.mobicents.protocols.ss7.cap.primitives;
 
 import static org.testng.Assert.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.cap.api.primitives.CriticalityType;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.*;
 
 /**
  * 
@@ -113,6 +118,65 @@ public class ExtensionFieldTest {
 		aos = new AsnOutputStream();
 		elem.encodeAll(aos);
 		assertTrue(Arrays.equals(aos.toByteArray(), this.getData3()));
+	}
+
+	private byte[] getDataSer() {
+		return new byte[] { 1, (byte) 255, 3 };
+	}
+
+	@Test(groups = { "functional.xml.serialize", "primitives" })
+	public void testXMLSerialize() throws Exception {
+
+		ExtensionFieldImpl original = new ExtensionFieldImpl(234, CriticalityType.typeIgnore, getDataSer());
+
+		// Writes the area to a file.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+		writer.write(original, "extensionField", ExtensionFieldImpl.class);
+		writer.close();
+
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		ExtensionFieldImpl copy = reader.read("extensionField", ExtensionFieldImpl.class);
+
+		assertEquals((int) copy.getLocalCode(), (int) original.getLocalCode());
+		assertTrue(Arrays.equals(copy.getGlobalCode(), original.getGlobalCode()));
+		assertEquals(copy.getCriticalityType(), original.getCriticalityType());
+		assertEquals(copy.getData(), original.getData());
+
+
+		original = new ExtensionFieldImpl(getDataOid(), null, getDataSer());
+
+		// Writes the area to a file.
+		baos = new ByteArrayOutputStream();
+		writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+		writer.write(original, "extensionField", ExtensionFieldImpl.class);
+		writer.close();
+
+		rawData = baos.toByteArray();
+		serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		bais = new ByteArrayInputStream(rawData);
+		reader = XMLObjectReader.newInstance(bais);
+		copy = reader.read("extensionField", ExtensionFieldImpl.class);
+
+		assertNull(copy.getLocalCode());
+		assertNull(original.getLocalCode());
+		assertTrue(Arrays.equals(copy.getGlobalCode(), original.getGlobalCode()));
+		assertEquals(copy.getCriticalityType(), original.getCriticalityType());
+		assertEquals(copy.getData(), original.getData());
+
 	}
 }
 

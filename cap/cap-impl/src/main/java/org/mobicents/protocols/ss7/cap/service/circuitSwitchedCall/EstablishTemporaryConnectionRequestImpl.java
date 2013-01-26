@@ -242,10 +242,12 @@ public class EstablishTemporaryConnectionRequestImpl extends CircuitSwitchedCall
 				case _ID_assistingSSPIPRoutingAddress:
 					this.assistingSSPIPRoutingAddress = new DigitsImpl();
 					((DigitsImpl) this.assistingSSPIPRoutingAddress).decodeAll(ais);
+					this.assistingSSPIPRoutingAddress.setIsGenericNumber();
 					break;
 				case _ID_correlationID:
 					this.correlationID = new DigitsImpl();
 					((DigitsImpl) this.correlationID).decodeAll(ais);
+					this.correlationID.setIsGenericDigits();
 					break;
 				case _ID_scfID:
 					this.scfID = new ScfIDImpl();

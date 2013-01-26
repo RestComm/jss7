@@ -27,7 +27,6 @@ import java.io.IOException;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
-import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -52,8 +51,6 @@ public class BearerCapImpl implements BearerCap, CAPAsnPrimitive {
 	public static final String _PrimitiveName = "BearerCap";
 
 	private static final String USER_SERVICE_INFORMATION_XML = "userServiceInformation";
-
-	protected static final Logger loger = Logger.getLogger(BearerCapImpl.class);
 
 	private byte[] data;
 
@@ -228,7 +225,7 @@ public class BearerCapImpl implements BearerCap, CAPAsnPrimitive {
 			try {
 				bearerCap.setUserServiceInformation(xml.get(USER_SERVICE_INFORMATION_XML, UserServiceInformationImpl.class));
 			} catch (CAPException e) {
-				loger.error("Error while deserialzing UserServiceInformation.", e);
+				throw new XMLStreamException(e);
 			}
 		}
 
@@ -237,7 +234,7 @@ public class BearerCapImpl implements BearerCap, CAPAsnPrimitive {
 			try {
 				xml.add(((UserServiceInformationImpl) bearerCap.getUserServiceInformation()), USER_SERVICE_INFORMATION_XML, UserServiceInformationImpl.class);
 			} catch (CAPException e) {
-				loger.error("Error while serialzing UserServiceInformation.", e);
+				throw new XMLStreamException(e);
 			}
 		}
 	};
