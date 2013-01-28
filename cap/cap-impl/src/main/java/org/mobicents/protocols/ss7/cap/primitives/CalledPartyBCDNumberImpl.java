@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -54,6 +54,9 @@ public class CalledPartyBCDNumberImpl extends OctetStringBase implements CalledP
 	private static final String NAI = "nai";
 	private static final String NPI = "npi";
 	private static final String NUMBER = "number";
+	private static final String IS_EXTENSION = "isExtension";
+
+	private static final String DEFAULT_STRING_VALUE = null;
 
 	protected static final int NO_EXTENSION_MASK = 0x80;
 	protected static final int NATURE_OF_ADD_IND_MASK = 0x70;
@@ -242,28 +245,39 @@ public class CalledPartyBCDNumberImpl extends OctetStringBase implements CalledP
 	/**
 	 * XML Serialization/Deserialization
 	 */
-	protected static final XMLFormat<CalledPartyBCDNumberImpl> ADDRESS_STRING_XML = new XMLFormat<CalledPartyBCDNumberImpl>(
+	protected static final XMLFormat<CalledPartyBCDNumberImpl> CALLED_PARTY_BCD_NUMBER_XML = new XMLFormat<CalledPartyBCDNumberImpl>(
 			CalledPartyBCDNumberImpl.class) {
 
 		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml, CalledPartyBCDNumberImpl addressStringImpl)
-				throws XMLStreamException {
+		public void read(javolution.xml.XMLFormat.InputElement xml, CalledPartyBCDNumberImpl calledPartyBCDNumber) throws XMLStreamException {
 			try {
-				addressStringImpl.setParameters(AddressNature.getInstance(xml.getAttribute(NAI, 0)), NumberingPlan.getInstance(xml.getAttribute(NPI, 0)),
-						xml.getAttribute(NUMBER, ""), false);
+				AddressNature addressNature = null;
+				NumberingPlan numberingPlan = null;
+				String nai = xml.getAttribute(NAI, DEFAULT_STRING_VALUE);
+				String npi = xml.getAttribute(NPI, DEFAULT_STRING_VALUE);
+				if (nai != null) {
+					addressNature = Enum.valueOf(AddressNature.class, nai);
+				}
+				if (npi != null) {
+					numberingPlan = Enum.valueOf(NumberingPlan.class, npi);
+				}
+
+				calledPartyBCDNumber.setParameters(addressNature, numberingPlan, xml.getAttribute(NUMBER, ""), xml.getAttribute(IS_EXTENSION, false));
 			} catch (CAPException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new XMLStreamException("CAPException when CalledPartyBCDNumber data setting", e);
 			}
 		}
 
 		@Override
-		public void write(CalledPartyBCDNumberImpl addressStringImpl, javolution.xml.XMLFormat.OutputElement xml)
+		public void write(CalledPartyBCDNumberImpl calledPartyBCDNumber, javolution.xml.XMLFormat.OutputElement xml)
 				throws XMLStreamException {
 
-			xml.setAttribute(NAI, addressStringImpl.getAddressNature().getIndicator());
-			xml.setAttribute(NPI, addressStringImpl.getNumberingPlan().getIndicator());
-			xml.setAttribute(NUMBER, addressStringImpl.getAddress());
+			xml.setAttribute(NUMBER, calledPartyBCDNumber.getAddress());
+			xml.setAttribute(NAI, calledPartyBCDNumber.getAddressNature().toString());
+			xml.setAttribute(NPI, calledPartyBCDNumber.getNumberingPlan().toString());
+			if (calledPartyBCDNumber.isExtension()) {
+				xml.setAttribute(IS_EXTENSION, true);
+			}
 		}
 	};
 }

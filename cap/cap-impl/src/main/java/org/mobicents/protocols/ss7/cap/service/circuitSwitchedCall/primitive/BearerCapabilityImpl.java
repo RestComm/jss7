@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -46,6 +49,8 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 
 	public static final int _ID_bearerCap = 0;
 
+	private static final String BEARER_CAP_XML = "bearerCap";
+
 	public static final String _PrimitiveName = "BearerCap";
 
 	private BearerCap bearerCap;
@@ -57,7 +62,11 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 	public BearerCapabilityImpl(BearerCap bearerCap) {
 		this.bearerCap = bearerCap;
 	}
-	
+
+	public void setBearerCap(BearerCap bearerCap) {
+		this.bearerCap = bearerCap;
+	}
+
 	@Override
 	public BearerCap getBearerCap() {
 		return bearerCap;
@@ -178,5 +187,22 @@ public class BearerCapabilityImpl implements BearerCapability, CAPAsnPrimitive {
 
 		return sb.toString();
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<BearerCapabilityImpl> BEARER_CAPABILITY_XML = new XMLFormat<BearerCapabilityImpl>(BearerCapabilityImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, BearerCapabilityImpl bearerCap) throws XMLStreamException {
+			bearerCap.setBearerCap(xml.get(BEARER_CAP_XML, BearerCapImpl.class));
+		}
+
+		@Override
+		public void write(BearerCapabilityImpl bearerCap, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			if (bearerCap.getBearerCap() != null)
+				xml.add(((BearerCapImpl) bearerCap.getBearerCap()), BEARER_CAP_XML, BearerCapImpl.class);
+		}
+	};
 }
 

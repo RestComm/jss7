@@ -315,7 +315,7 @@ public class DigitsImpl implements Digits, CAPAsnPrimitive {
 				else if (digits.getIsGenericNumber())
 					xml.add(((GenericNumberImpl) digits.getGenericNumber()), ISUP_GENERIC_NUMBER_XML, GenericNumberImpl.class);
 				else
-					throw new XMLStreamException("Error when serializing Digits: primitive is market neither GenericDigits nor GenericNumber");
+					throw new XMLStreamException("Error when serializing Digits: primitive is marked neither GenericDigits nor GenericNumber");
 			} catch (CAPException e) {
 				throw new XMLStreamException(e);
 			}
