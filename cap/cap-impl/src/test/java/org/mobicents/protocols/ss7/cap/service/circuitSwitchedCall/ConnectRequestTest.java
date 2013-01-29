@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,8 +24,13 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
 import static org.testng.Assert.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -44,7 +49,7 @@ import org.mobicents.protocols.ss7.inap.isup.RedirectionInformationInapImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.CalledPartyNumberImpl;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingCategory;
 import org.mobicents.protocols.ss7.map.primitives.AlertingPatternImpl;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.*;
 
 /**
  * 
@@ -134,7 +139,7 @@ public class ConnectRequestTest {
 		assertTrue(Arrays.equals(elem.getRedirectionInformation().getData(), getRedirectionInformation()));
 		assertTrue(elem.getSuppressionOfAnnouncement());
 		assertTrue(elem.getOCSIApplicable());
-		assertEquals((int)elem.getNAOliInfo().getValue(), 40);
+		assertEquals((int)elem.getNAOliInfo().getData(), 40);
 	}
 
 	@Test(groups = { "functional.encode","circuitSwitchedCall"})
@@ -183,6 +188,65 @@ public class ConnectRequestTest {
 //		RedirectingPartyIDCap redirectingPartyID, RedirectionInformationInap redirectionInformation, ArrayList<GenericNumberCap> genericNumbers,
 //		ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, LocationNumberCap chargeNumber, LegID legToBeConnected, CUGInterlock cugInterlock,
 //		boolean cugOutgoingAccess, boolean suppressionOfAnnouncement, boolean ocsIApplicable, NAOliInfo naoliInfo, boolean borInterrogationRequested
+	}
+
+	@Test(groups = { "functional.xml.serialize", "circuitSwitchedCall" })
+	public void testXMLSerialize() throws Exception {
+		
+		ArrayList<CalledPartyNumberCap> calledPartyNumbers = new ArrayList<CalledPartyNumberCap>();
+		CalledPartyNumberImpl cpn = new CalledPartyNumberImpl(2, "972201", 1, 2);
+		CalledPartyNumberCapImpl calledPartyNumber = new CalledPartyNumberCapImpl(cpn);
+		calledPartyNumbers.add(calledPartyNumber);
+		DestinationRoutingAddressImpl destinationRoutingAddress = new DestinationRoutingAddressImpl(calledPartyNumbers);
+
+		ArrayList<GenericNumberCap> genericNumbers = new ArrayList<GenericNumberCap>();
+		GenericNumberCapImpl genericNumberCap = new GenericNumberCapImpl(getDataGenericNumber());
+		genericNumbers.add(genericNumberCap);
+
+		AlertingPatternImpl alertingPattern = new AlertingPatternImpl(AlertingCategory.Category5);
+		AlertingPatternCapImpl alertingPatternCap = new AlertingPatternCapImpl(alertingPattern);
+		OriginalCalledNumberCapImpl originalCalledPartyID = new OriginalCalledNumberCapImpl(getOriginalCalledPartyID());
+		CallingPartysCategoryInapImpl callingPartysCategory = new CallingPartysCategoryInapImpl(getCallingPartysCategory());
+		RedirectingPartyIDCapImpl redirectingPartyID = new RedirectingPartyIDCapImpl(getRedirectingPartyID());
+		RedirectionInformationInapImpl redirectionInformation = new RedirectionInformationInapImpl(getRedirectionInformation());
+		NAOliInfoImpl naoliInfo = new NAOliInfoImpl(40);
+
+		ConnectRequestImpl original = new ConnectRequestImpl(destinationRoutingAddress, alertingPatternCap, originalCalledPartyID,
+				CAPExtensionsTest.createTestCAPExtensions(), null, callingPartysCategory, redirectingPartyID, redirectionInformation, genericNumbers, null,
+				null, null, null, false, true, true, naoliInfo, false);
+
+		// Writes the area to a file.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+		writer.write(original, "connectRequest", ConnectRequestImpl.class);
+		writer.close();
+
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		ConnectRequestImpl copy = reader.read("connectRequest", ConnectRequestImpl.class);
+
+		assertEquals(copy.getDestinationRoutingAddress().getCalledPartyNumber().size(), original.getDestinationRoutingAddress().getCalledPartyNumber().size());
+		assertEquals(copy.getDestinationRoutingAddress().getCalledPartyNumber().get(0).getCalledPartyNumber().getInternalNetworkNumberIndicator(), original.getDestinationRoutingAddress().getCalledPartyNumber().get(0).getCalledPartyNumber().getInternalNetworkNumberIndicator());
+		assertEquals(copy.getDestinationRoutingAddress().getCalledPartyNumber().get(0).getCalledPartyNumber().getAddress().equals("972201"), original.getDestinationRoutingAddress().getCalledPartyNumber().get(0).getCalledPartyNumber().getAddress().equals("972201"));
+		assertEquals(copy.getAlertingPattern().getAlertingPattern().getAlertingCategory(), original.getAlertingPattern().getAlertingPattern().getAlertingCategory());
+		assertEquals(copy.getOriginalCalledPartyID().getData(), original.getOriginalCalledPartyID().getData());
+		assertTrue(CAPExtensionsTest.checkTestCAPExtensions(copy.getExtensions()));
+		assertEquals(copy.getCallingPartysCategory().getData(), original.getCallingPartysCategory().getData());
+		
+		assertEquals(copy.getRedirectingPartyID().getData(), original.getRedirectingPartyID().getData());
+		assertEquals(copy.getRedirectionInformation().getData(), original.getRedirectionInformation().getData());
+		assertEquals(copy.getGenericNumbers().size(), original.getGenericNumbers().size());
+		assertEquals(copy.getGenericNumbers().get(0).getData(), original.getGenericNumbers().get(0).getData());
+		assertEquals(copy.getSuppressionOfAnnouncement(), original.getSuppressionOfAnnouncement());
+		assertEquals(copy.getOCSIApplicable(), original.getOCSIApplicable());
+		assertEquals(copy.getNAOliInfo().getData(), original.getNAOliInfo().getData());
 	}
 }
 

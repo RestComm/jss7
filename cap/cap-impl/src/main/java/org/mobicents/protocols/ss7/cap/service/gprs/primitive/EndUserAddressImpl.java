@@ -50,7 +50,7 @@ public class EndUserAddressImpl extends SequenceBase implements EndUserAddress{
 	private PDPTypeOrganization pdpTypeOrganization;
 	private PDPTypeNumber pdpTypeNumber;
 	private PDPAddress pdpAddress;
-	
+
 	public EndUserAddressImpl() {
 		super("EndUserAddress");
 	}

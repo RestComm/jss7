@@ -86,7 +86,7 @@ public class EstablishTemporaryConnectionTest {
 		assertTrue(Arrays.equals(elem.getScfID().getData(), getScfIDData()));
 		assertEquals(elem.getServiceInteractionIndicatorsTwo().getBothwayThroughConnectionInd(), BothwayThroughConnectionInd.bothwayPathNotRequired);
 		assertNull(elem.getCallSegmentID());
-		assertEquals((int) elem.getNAOliInfo().getValue(), 11);
+		assertEquals((int) elem.getNAOliInfo().getData(), 11);
 		assertTrue(CAPExtensionsTest.checkTestCAPExtensions(elem.getExtensions()));
 
 		data = this.getData2();
@@ -107,7 +107,7 @@ public class EstablishTemporaryConnectionTest {
 		assertTrue(Arrays.equals(elem.getScfID().getData(), getScfIDData()));
 		assertEquals(elem.getServiceInteractionIndicatorsTwo().getBothwayThroughConnectionInd(), BothwayThroughConnectionInd.bothwayPathNotRequired);
 		assertEquals((int)elem.getCallSegmentID(), 8);
-		assertEquals((int) elem.getNAOliInfo().getValue(), 11);
+		assertEquals((int) elem.getNAOliInfo().getData(), 11);
 		assertTrue(CAPExtensionsTest.checkTestCAPExtensions(elem.getExtensions()));
 	}
 
