@@ -640,11 +640,6 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
 	}
 
 	@Override
-	public NAOliInfo createNAOliInfo(byte[] data) {
-		return new NAOliInfoImpl(data);
-	}
-
-	@Override
 	public NAOliInfo createNAOliInfo(int value) {
 		return new NAOliInfoImpl(value);
 	}

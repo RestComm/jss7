@@ -47,7 +47,7 @@ public class IMSIImpl extends TbcdString implements IMSI {
 	public String getData() {
 		return this.data;
 	}
-	
+
 	/**
 	 * XML Serialization/Deserialization
 	 */

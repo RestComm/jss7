@@ -251,7 +251,6 @@ public interface CAPParameterFactory {
 
 	public AlertingPatternCap createAlertingPatternCap(AlertingPattern alertingPattern);
 	public AlertingPatternCap createAlertingPatternCap(byte[] data);
-	public NAOliInfo createNAOliInfo(byte[] data);
 	public NAOliInfo createNAOliInfo(int value);
 
 	public ScfID createScfID(byte[] data);

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -61,6 +64,7 @@ import org.mobicents.protocols.ss7.inap.isup.CallingPartysCategoryInapImpl;
 import org.mobicents.protocols.ss7.inap.isup.RedirectionInformationInapImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGInterlock;
+import org.mobicents.protocols.ss7.map.primitives.ArrayListSerializingBase;
 
 /**
  * 
@@ -88,6 +92,19 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
 	public static final int _ID_naOliInfo = 57;
 	public static final int _ID_bor_InterrogationRequested = 58;
 
+	private static final String DESTINATION_ROUTING_ADDRESS = "destinationRoutingAddress";
+	private static final String ALERTING_PATTERN = "alertingPattern";
+	private static final String ORIGINAL_CALLED_PARTY_ID = "originalCalledPartyID";
+	private static final String EXTENSIONS = "extensions";
+	private static final String CALLING_PARTYS_CATEGORY = "callingPartysCategory";
+	private static final String REDIRECTING_PARTY_ID = "redirectingPartyID";
+	private static final String REDIRECTION_INFORMATION = "redirectionInformation";
+	private static final String GENERIC_NUMBER = "genericNumber";
+	private static final String GENERIC_NUMBER_LIST = "genericNumbersList";
+	private static final String SUPPRESSION_OF_ANNOUNCEMENT = "suppressionOfAnnouncement";
+	private static final String OCSI_APPLICABLE = "OCSIApplicable";
+	private static final String NA_OLI_INFO = "NAOliInfo";
+	
 	public static final String _PrimitiveName = "ConnectRequestIndication";
 	
 	private DestinationRoutingAddress destinationRoutingAddress;
@@ -596,6 +613,80 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
 		sb.append("]");
 
 		return sb.toString();
+	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<ConnectRequestImpl> CONNECT_REQUEST_XML = new XMLFormat<ConnectRequestImpl>(ConnectRequestImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, ConnectRequestImpl connectRequest) throws XMLStreamException {
+			connectRequest.destinationRoutingAddress = xml.get(DESTINATION_ROUTING_ADDRESS, DestinationRoutingAddressImpl.class);
+			connectRequest.alertingPattern = xml.get(ALERTING_PATTERN, AlertingPatternCapImpl.class);
+			connectRequest.originalCalledPartyID = xml.get(ORIGINAL_CALLED_PARTY_ID, OriginalCalledNumberCapImpl.class);
+			connectRequest.extensions = xml.get(EXTENSIONS, CAPExtensionsImpl.class);
+			connectRequest.callingPartysCategory = xml.get(CALLING_PARTYS_CATEGORY, CallingPartysCategoryInapImpl.class);
+
+			connectRequest.redirectingPartyID = xml.get(REDIRECTING_PARTY_ID, RedirectingPartyIDCapImpl.class);
+			connectRequest.redirectionInformation = xml.get(REDIRECTION_INFORMATION, RedirectionInformationInapImpl.class);
+
+			ConnectRequest_GenericNumbers al = xml.get(GENERIC_NUMBER_LIST, ConnectRequest_GenericNumbers.class);
+			if (al != null) {
+				connectRequest.genericNumbers = al.getData();
+			}
+
+			Boolean bval = xml.get(SUPPRESSION_OF_ANNOUNCEMENT, Boolean.class);
+			if (bval != null)
+				connectRequest.suppressionOfAnnouncement = bval;
+			bval = xml.get(OCSI_APPLICABLE, Boolean.class);
+			if (bval != null)
+				connectRequest.ocsIApplicable = bval;
+			connectRequest.naoliInfo = xml.get(NA_OLI_INFO, NAOliInfoImpl.class);
+		}
+
+		@Override
+		public void write(ConnectRequestImpl connectRequest, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			if (connectRequest.getDestinationRoutingAddress() != null)
+				xml.add((DestinationRoutingAddressImpl) connectRequest.getDestinationRoutingAddress(), DESTINATION_ROUTING_ADDRESS, DestinationRoutingAddressImpl.class);
+			if (connectRequest.getAlertingPattern() != null)
+				xml.add((AlertingPatternCapImpl) connectRequest.getAlertingPattern(), ALERTING_PATTERN, AlertingPatternCapImpl.class);
+			if (connectRequest.getOriginalCalledPartyID() != null)
+				xml.add((OriginalCalledNumberCapImpl) connectRequest.getOriginalCalledPartyID(), ORIGINAL_CALLED_PARTY_ID, OriginalCalledNumberCapImpl.class);
+			if (connectRequest.getExtensions() != null)
+				xml.add((CAPExtensionsImpl) connectRequest.getExtensions(), EXTENSIONS, CAPExtensionsImpl.class);
+			if (connectRequest.getCallingPartysCategory() != null)
+				xml.add((CallingPartysCategoryInapImpl) connectRequest.getCallingPartysCategory(), CALLING_PARTYS_CATEGORY, CallingPartysCategoryInapImpl.class);
+
+			if (connectRequest.getRedirectingPartyID() != null)
+				xml.add((RedirectingPartyIDCapImpl) connectRequest.getRedirectingPartyID(), REDIRECTING_PARTY_ID, RedirectingPartyIDCapImpl.class);
+			if (connectRequest.getRedirectionInformation() != null)
+				xml.add((RedirectionInformationInapImpl) connectRequest.getRedirectionInformation(), REDIRECTION_INFORMATION, RedirectionInformationInapImpl.class);
+
+			if (connectRequest.getGenericNumbers() != null) {
+				ConnectRequest_GenericNumbers al = new ConnectRequest_GenericNumbers(connectRequest.getGenericNumbers());
+				xml.add(al, GENERIC_NUMBER_LIST, ConnectRequest_GenericNumbers.class);
+			}
+
+			if (connectRequest.getSuppressionOfAnnouncement())
+				xml.add(true, SUPPRESSION_OF_ANNOUNCEMENT, Boolean.class);
+			if (connectRequest.getOCSIApplicable())
+				xml.add(true, OCSI_APPLICABLE, Boolean.class);
+			if (connectRequest.getNAOliInfo() != null)
+				xml.add((NAOliInfoImpl) connectRequest.getNAOliInfo(), NA_OLI_INFO, NAOliInfoImpl.class);
+		}
+	};
+
+	public static class ConnectRequest_GenericNumbers extends ArrayListSerializingBase<GenericNumberCap> {
+
+		public ConnectRequest_GenericNumbers() {
+			super(GENERIC_NUMBER, GenericNumberCapImpl.class);
+		}
+
+		public ConnectRequest_GenericNumbers(ArrayList<GenericNumberCap> data) {
+			super(GENERIC_NUMBER, GenericNumberCapImpl.class, data);
+		}
+		
 	}
 }
 
