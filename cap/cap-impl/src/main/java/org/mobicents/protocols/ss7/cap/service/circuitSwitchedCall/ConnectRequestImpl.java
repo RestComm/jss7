@@ -622,6 +622,7 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
 
 		@Override
 		public void read(javolution.xml.XMLFormat.InputElement xml, ConnectRequestImpl connectRequest) throws XMLStreamException {
+			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, connectRequest);
 			connectRequest.destinationRoutingAddress = xml.get(DESTINATION_ROUTING_ADDRESS, DestinationRoutingAddressImpl.class);
 			connectRequest.alertingPattern = xml.get(ALERTING_PATTERN, AlertingPatternCapImpl.class);
 			connectRequest.originalCalledPartyID = xml.get(ORIGINAL_CALLED_PARTY_ID, OriginalCalledNumberCapImpl.class);
@@ -647,6 +648,7 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
 
 		@Override
 		public void write(ConnectRequestImpl connectRequest, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(connectRequest, xml);
 			if (connectRequest.getDestinationRoutingAddress() != null)
 				xml.add((DestinationRoutingAddressImpl) connectRequest.getDestinationRoutingAddress(), DESTINATION_ROUTING_ADDRESS, DestinationRoutingAddressImpl.class);
 			if (connectRequest.getAlertingPattern() != null)
