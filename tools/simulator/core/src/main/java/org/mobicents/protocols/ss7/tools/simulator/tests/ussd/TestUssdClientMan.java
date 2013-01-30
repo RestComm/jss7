@@ -398,8 +398,8 @@ public class TestUssdClientMan extends TesterBase implements TestUssdClientManMB
 			AlertingPattern alPattern = null;
 			if (this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getAlertingPattern() >= 0
 					&& this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getAlertingPattern() <= 255)
-				alPattern = new AlertingPatternImpl(new byte[] { (byte) this.testerHost.getConfigurationData().getTestUssdClientConfigurationData()
-						.getAlertingPattern() });
+				alPattern = new AlertingPatternImpl((byte) this.testerHost.getConfigurationData().getTestUssdClientConfigurationData()
+						.getAlertingPattern());
 			curDialog.addProcessUnstructuredSSRequest(new CBSDataCodingSchemeImpl(this.testerHost.getConfigurationData().getTestUssdClientConfigurationData()
 					.getDataCodingScheme()), ussdString, alPattern, msisdn);
 

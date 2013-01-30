@@ -419,8 +419,8 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 		AlertingPattern alPattern = null;
 		if (this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getAlertingPattern() >= 0
 				&& this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getAlertingPattern() <= 255)
-			alPattern = new AlertingPatternImpl(new byte[] { (byte) this.testerHost.getConfigurationData().getTestUssdServerConfigurationData()
-					.getAlertingPattern() });
+			alPattern = new AlertingPatternImpl((byte) this.testerHost.getConfigurationData().getTestUssdServerConfigurationData()
+					.getAlertingPattern() );
 
 		try {
 			curDialog.addUnstructuredSSRequest(new CBSDataCodingSchemeImpl(this.testerHost.getConfigurationData().getTestUssdServerConfigurationData()
@@ -528,8 +528,8 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
 		AlertingPattern alPattern = null;
 		if (this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getAlertingPattern() >= 0
 				&& this.testerHost.getConfigurationData().getTestUssdServerConfigurationData().getAlertingPattern() <= 255)
-			alPattern = new AlertingPatternImpl(new byte[] { (byte) this.testerHost.getConfigurationData().getTestUssdServerConfigurationData()
-					.getAlertingPattern() });
+			alPattern = new AlertingPatternImpl( (byte) this.testerHost.getConfigurationData().getTestUssdServerConfigurationData()
+					.getAlertingPattern() );
 
 		try {
 			MAPDialogSupplementary dlg = mapProvider.getMAPServiceSupplementary().createNewDialog(mapUssdAppContext, this.mapMan.createOrigAddress(),
