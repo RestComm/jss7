@@ -61,6 +61,7 @@ public class EventReportBCSMRequestImpl extends CircuitSwitchedCallMessageImpl i
 	private static final String EVENT_SPECIFIC_INFO_BCSM = "eventSpecificInformationBCSM";
 	private static final String LEG_ID = "legID";
 	private static final String MISC_CALL_INFO = "miscCallInfo";
+	private static final String EXTENSIONS = "extensions";
 
 	public static final int _ID_eventTypeBCSM = 0;
 	public static final int _ID_eventSpecificInformationBCSM = 2;
@@ -328,7 +329,10 @@ public class EventReportBCSMRequestImpl extends CircuitSwitchedCallMessageImpl i
 		public void read(javolution.xml.XMLFormat.InputElement xml, EventReportBCSMRequestImpl eventReportBCSMRequest)
 				throws XMLStreamException {
 			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, eventReportBCSMRequest);
-			eventReportBCSMRequest.eventTypeBCSM = EventTypeBCSM.getInstance(xml.get(EVENT_TYPE_BCSM, Integer.class));
+
+			String str = xml.get(EVENT_TYPE_BCSM, String.class);
+			if (str != null)
+				eventReportBCSMRequest.eventTypeBCSM = Enum.valueOf(EventTypeBCSM.class, str);
 
 			eventReportBCSMRequest.eventSpecificInformationBCSM = xml.get(EVENT_SPECIFIC_INFO_BCSM,
 					EventSpecificInformationBCSMImpl.class);
@@ -336,6 +340,7 @@ public class EventReportBCSMRequestImpl extends CircuitSwitchedCallMessageImpl i
 			eventReportBCSMRequest.legID = xml.get(LEG_ID, ReceivingSideIDImpl.class);
 
 			eventReportBCSMRequest.miscCallInfo = xml.get(MISC_CALL_INFO, MiscCallInfoImpl.class);
+			eventReportBCSMRequest.extensions = xml.get(EXTENSIONS, CAPExtensionsImpl.class);
 		}
 
 		@Override
@@ -343,7 +348,9 @@ public class EventReportBCSMRequestImpl extends CircuitSwitchedCallMessageImpl i
 				throws XMLStreamException {
 			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(eventReportBCSMRequest, xml);
 
-			xml.add(eventReportBCSMRequest.eventTypeBCSM.getCode(), EVENT_TYPE_BCSM, Integer.class);
+			if (eventReportBCSMRequest.eventTypeBCSM != null) {
+				xml.add(eventReportBCSMRequest.eventTypeBCSM.toString(), EVENT_TYPE_BCSM, String.class);
+			}
 
 			if (eventReportBCSMRequest.eventSpecificInformationBCSM != null) {
 				xml.add((EventSpecificInformationBCSMImpl) eventReportBCSMRequest.eventSpecificInformationBCSM,
@@ -358,6 +365,8 @@ public class EventReportBCSMRequestImpl extends CircuitSwitchedCallMessageImpl i
 				xml.add((MiscCallInfoImpl) eventReportBCSMRequest.miscCallInfo, MISC_CALL_INFO, MiscCallInfoImpl.class);
 			}
 
+			if (eventReportBCSMRequest.getExtensions() != null)
+				xml.add((CAPExtensionsImpl) eventReportBCSMRequest.getExtensions(), EXTENSIONS, CAPExtensionsImpl.class);
 		}
 	};
 }

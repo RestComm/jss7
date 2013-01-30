@@ -921,6 +921,8 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
 
 		@Override
 		public void read(javolution.xml.XMLFormat.InputElement xml, InitialDPRequestImpl initialDP) throws XMLStreamException {
+			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, initialDP);
+
 			initialDP.isCAPVersion3orLater = xml.getAttribute(IS_CAP_VERSION_3_OR_LATER, false);
 			
 			initialDP.serviceKey = xml.get(SERVICE_KEY, Integer.class);
@@ -963,6 +965,8 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
 
 		@Override
 		public void write(InitialDPRequestImpl initialDP, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(initialDP, xml);
+
 			xml.setAttribute(IS_CAP_VERSION_3_OR_LATER, initialDP.isCAPVersion3orLater);
 			
 			xml.add((Integer) initialDP.getServiceKey(), SERVICE_KEY, Integer.class);

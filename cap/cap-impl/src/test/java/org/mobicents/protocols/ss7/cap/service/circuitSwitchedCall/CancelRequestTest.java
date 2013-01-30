@@ -118,6 +118,7 @@ public class CancelRequestTest {
 	@Test(groups = { "functional.xml.serialize", "circuitSwitchedCall" })
 	public void testXMLSerializaion() throws Exception {
 		CancelRequestImpl original = new CancelRequestImpl(11000);
+		original.setInvokeId(24);
 
 		// Writes the area to a file.
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -137,7 +138,10 @@ public class CancelRequestTest {
 		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
 		CancelRequestImpl copy = reader.read("cancelRequest", CancelRequestImpl.class);
 
+		assertEquals(copy.getInvokeId(), original.getInvokeId());
 		assertEquals(copy.getInvokeID(), original.getInvokeID());
+		assertEquals(copy.getAllRequests(), original.getAllRequests());
+		original.setInvokeId(24);
 
 		CallSegmentToCancelImpl callSegmentToCancel = new CallSegmentToCancelImpl(null, 20);
 		// Integer invokeID, Integer callSegmentID
@@ -161,8 +165,33 @@ public class CancelRequestTest {
 		reader = XMLObjectReader.newInstance(bais);
 		copy = reader.read("cancelRequest", CancelRequestImpl.class);
 
+		assertEquals(copy.getInvokeId(), original.getInvokeId());
+		assertEquals(copy.getAllRequests(), original.getAllRequests());
 		assertEquals(copy.getCallSegmentToCancel().getCallSegmentID(), original.getCallSegmentToCancel()
 				.getCallSegmentID());
 
+
+		original = new CancelRequestImpl(true);
+
+		// Writes the area to a file.
+		baos = new ByteArrayOutputStream();
+		writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for
+										// indentation).
+		writer.write(original, "cancelRequest", CancelRequestImpl.class);
+		writer.close();
+
+		rawData = baos.toByteArray();
+		serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		bais = new ByteArrayInputStream(rawData);
+		reader = XMLObjectReader.newInstance(bais);
+		copy = reader.read("cancelRequest", CancelRequestImpl.class);
+
+		assertEquals(copy.getInvokeId(), original.getInvokeId());
+		assertEquals(copy.getAllRequests(), original.getAllRequests());
 	}
 }

@@ -115,15 +115,15 @@ public class ContinueRequestImpl extends CircuitSwitchedCallMessageImpl implemen
 			ContinueRequestImpl.class) {
 
 		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml, ContinueRequestImpl applyChargingReportRequest)
+		public void read(javolution.xml.XMLFormat.InputElement xml, ContinueRequestImpl continueRequest)
 				throws XMLStreamException {
-			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, applyChargingReportRequest);
+			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, continueRequest);
 		}
 
 		@Override
-		public void write(ContinueRequestImpl applyChargingReportRequest, javolution.xml.XMLFormat.OutputElement xml)
+		public void write(ContinueRequestImpl continueRequest, javolution.xml.XMLFormat.OutputElement xml)
 				throws XMLStreamException {
-			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(applyChargingReportRequest, xml);
+			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(continueRequest, xml);
 		}
 	};
 }

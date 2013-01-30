@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -25,6 +25,9 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -40,6 +43,7 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestRe
 import org.mobicents.protocols.ss7.cap.primitives.BCSMEventImpl;
 import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
+import org.mobicents.protocols.ss7.map.primitives.ArrayListSerializingBase;
 
 /**
  * 
@@ -52,6 +56,10 @@ public class RequestReportBCSMEventRequestImpl extends CircuitSwitchedCallMessag
 	public static final int _ID_extensions = 2;
 
 	public static final String _PrimitiveName = "ApplyChargingRequestIndication";
+
+	private static final String EXTENSIONS = "extensions";
+	private static final String BCSM_EVENT = "bcsmEvent";
+	private static final String BCSM_EVENT_LIST = "bcsmEventList";
 
 	private ArrayList<BCSMEvent> bcsmEventList;
 	private CAPExtensions extensions;
@@ -259,5 +267,48 @@ public class RequestReportBCSMEventRequestImpl extends CircuitSwitchedCallMessag
 		sb.append("]");
 
 		return sb.toString();
+	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<RequestReportBCSMEventRequestImpl> REQUEST_REPORT_BCSM_EVENT_REQUEST_XML = new XMLFormat<RequestReportBCSMEventRequestImpl>(RequestReportBCSMEventRequestImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, RequestReportBCSMEventRequestImpl requestReportBCSMEventRequest) throws XMLStreamException {
+			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, requestReportBCSMEventRequest);
+
+			RequestReportBCSMEventRequest_BCSMEvent al = xml.get(BCSM_EVENT_LIST, RequestReportBCSMEventRequest_BCSMEvent.class);
+			if (al != null) {
+				requestReportBCSMEventRequest.bcsmEventList = al.getData();
+			}
+
+			requestReportBCSMEventRequest.extensions = xml.get(EXTENSIONS, CAPExtensionsImpl.class);
+		}
+
+		@Override
+		public void write(RequestReportBCSMEventRequestImpl requestReportBCSMEventRequest, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(requestReportBCSMEventRequest, xml);
+
+			if (requestReportBCSMEventRequest.getBCSMEventList() != null) {
+				RequestReportBCSMEventRequest_BCSMEvent al = new RequestReportBCSMEventRequest_BCSMEvent(requestReportBCSMEventRequest.getBCSMEventList());
+				xml.add(al, BCSM_EVENT_LIST, RequestReportBCSMEventRequest_BCSMEvent.class);
+			}
+
+			if (requestReportBCSMEventRequest.getExtensions() != null)
+				xml.add((CAPExtensionsImpl) requestReportBCSMEventRequest.getExtensions(), EXTENSIONS, CAPExtensionsImpl.class);
+		}
+	};
+
+	public static class RequestReportBCSMEventRequest_BCSMEvent extends ArrayListSerializingBase<BCSMEvent> {
+
+		public RequestReportBCSMEventRequest_BCSMEvent() {
+			super(BCSM_EVENT, BCSMEventImpl.class);
+		}
+
+		public RequestReportBCSMEventRequest_BCSMEvent(ArrayList<BCSMEvent> data) {
+			super(BCSM_EVENT, BCSMEventImpl.class, data);
+		}
+
 	}
 }

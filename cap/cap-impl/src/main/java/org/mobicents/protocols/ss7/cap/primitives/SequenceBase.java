@@ -31,6 +31,7 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.inap.api.INAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
@@ -70,8 +71,11 @@ public abstract class SequenceBase implements CAPAsnPrimitive {
 		} catch (AsnException e) {
 			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
-		}catch (MAPParsingComponentException e) {
+		} catch (MAPParsingComponentException e) {
 			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+					CAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (INAPParsingComponentException e) {
+			throw new CAPParsingComponentException("INAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
@@ -85,13 +89,17 @@ public abstract class SequenceBase implements CAPAsnPrimitive {
 		} catch (AsnException e) {
 			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
-		}catch (MAPParsingComponentException e) {
+		} catch (MAPParsingComponentException e) {
 			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+					CAPParsingComponentExceptionReason.MistypedParameter);
+		} catch (INAPParsingComponentException e) {
+			throw new CAPParsingComponentException("INAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
 					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	protected abstract void _decode(AsnInputStream asnIS, int length) throws CAPParsingComponentException, IOException, AsnException,MAPParsingComponentException;
+	protected abstract void _decode(AsnInputStream asnIS, int length) throws CAPParsingComponentException, IOException, AsnException,
+			MAPParsingComponentException, INAPParsingComponentException;
 
 	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
 		this.encodeAll(asnOs, this.getTagClass(), this.getTag());

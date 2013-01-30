@@ -50,15 +50,15 @@ public abstract class CircuitSwitchedCallMessageImpl extends MessageImpl impleme
 			CircuitSwitchedCallMessageImpl.class) {
 
 		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml, CircuitSwitchedCallMessageImpl ussdMessage)
+		public void read(javolution.xml.XMLFormat.InputElement xml, CircuitSwitchedCallMessageImpl message)
 				throws XMLStreamException {
-			CAP_MESSAGE_XML.read(xml, ussdMessage);
+			CAP_MESSAGE_XML.read(xml, message);
 		}
 
 		@Override
-		public void write(CircuitSwitchedCallMessageImpl ussdMessage, javolution.xml.XMLFormat.OutputElement xml)
+		public void write(CircuitSwitchedCallMessageImpl message, javolution.xml.XMLFormat.OutputElement xml)
 				throws XMLStreamException {
-			CAP_MESSAGE_XML.write(ussdMessage, xml);
+			CAP_MESSAGE_XML.write(message, xml);
 		}
 	};
 

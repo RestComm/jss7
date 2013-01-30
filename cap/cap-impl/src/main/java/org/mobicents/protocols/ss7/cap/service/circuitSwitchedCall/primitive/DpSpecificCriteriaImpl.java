@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -23,6 +23,9 @@
 package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
 import java.io.IOException;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -50,6 +53,10 @@ public class DpSpecificCriteriaImpl implements DpSpecificCriteria, CAPAsnPrimiti
 	public static final int _ID_dpSpecificCriteriaAlt = 3;
 
 	public static final String _PrimitiveName = "DpSpecificCriteria";
+
+	private static final String APPLICATION_TIMER = "applicationTimer";
+	private static final String MID_CALL_CONTROL_INFO = "midCallControlInfo";
+	private static final String DP_SPECIFIC_CRITERIA_ALT = "dpSpecificCriteriaAlt";
 
 	private Integer applicationTimer;
 	private MidCallControlInfo midCallControlInfo;
@@ -209,8 +216,15 @@ public class DpSpecificCriteriaImpl implements DpSpecificCriteria, CAPAsnPrimiti
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-		if (this.applicationTimer == null && this.midCallControlInfo == null && this.dpSpecificCriteriaAlt == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": all of choices are null");
+		int choiceCnt = 0;
+		if (this.applicationTimer != null)
+			choiceCnt++;
+		if (this.midCallControlInfo != null)
+			choiceCnt++;
+		if (dpSpecificCriteriaAlt != null)
+			choiceCnt++;
+		if (choiceCnt != 1)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": only one choice is possible, found: " + choiceCnt);
 
 		if (this.applicationTimer != null) {
 			try {
@@ -224,7 +238,7 @@ public class DpSpecificCriteriaImpl implements DpSpecificCriteria, CAPAsnPrimiti
 			// TODO: implement it
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 
@@ -247,4 +261,31 @@ public class DpSpecificCriteriaImpl implements DpSpecificCriteria, CAPAsnPrimiti
 
 		return sb.toString();
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<DpSpecificCriteriaImpl> DP_SPECIFIC_CRITERIA_XML = new XMLFormat<DpSpecificCriteriaImpl>(DpSpecificCriteriaImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, DpSpecificCriteriaImpl dpSpecificCriteria) throws XMLStreamException {
+			dpSpecificCriteria.applicationTimer = xml.get( APPLICATION_TIMER, Integer.class);
+			
+			// TODO: implement it
+//			dpSpecificCriteria.midCallControlInfo = xml.get( MID_CALL_CONTROL_INFO, MidCallControlInfoImpl.class);
+//			dpSpecificCriteria.dpSpecificCriteriaAlt = xml.get( DP_SPECIFIC_CRITERIA_ALT, DpSpecificCriteriaAltImpl.class);
+		}
+
+		@Override
+		public void write(DpSpecificCriteriaImpl dpSpecificCriteria, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			if (dpSpecificCriteria.getApplicationTimer() != null)
+				xml.add((Integer) dpSpecificCriteria.getApplicationTimer(), APPLICATION_TIMER, Integer.class);
+
+			// TODO: implement it
+//			if (dpSpecificCriteria.getMidCallControlInfo() != null)
+//				xml.add((MidCallControlInfoImpl) dpSpecificCriteria.getMidCallControlInfo(), MID_CALL_CONTROL_INFO, MidCallControlInfoImpl.class);
+//			if (dpSpecificCriteria.getDpSpecificCriteriaAlt() != null)
+//				xml.add((DpSpecificCriteriaAltImpl) dpSpecificCriteria.getDpSpecificCriteriaAlt(), DP_SPECIFIC_CRITERIA_ALT, DpSpecificCriteriaAltImpl.class);
+		}
+	};
 }

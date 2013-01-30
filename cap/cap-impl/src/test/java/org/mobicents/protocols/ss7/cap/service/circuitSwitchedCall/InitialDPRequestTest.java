@@ -348,6 +348,7 @@ public class InitialDPRequestTest {
 				highLayerCompatibility, additionalCallingPartyNumber, bearerCapability, EventTypeBCSM.collectedInfo, redirectingPartyID,
 				redirectionInformation, null, null, null, null, null, false, imsi, subscriberState, locationInformation, extBasicServiceCode,
 				callReferenceNumber, mscAddress, calledPartyBCDNumber, timeAndTimezone, true, initialDPArgExtension, false);
+		original.setInvokeId(24);
 
 		// Writes the area to a file.
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -366,6 +367,7 @@ public class InitialDPRequestTest {
 		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
 		InitialDPRequestImpl copy = reader.read("initialDP", InitialDPRequestImpl.class);
 
+		assertEquals(copy.getInvokeId(), original.getInvokeId());
 		assertEquals(copy.getServiceKey(), original.getServiceKey());
 		assertEquals(copy.getCalledPartyNumber().getData(), original.getCalledPartyNumber().getData());
 		assertEquals(copy.getCallingPartyNumber().getData(), original.getCallingPartyNumber().getData());
@@ -398,6 +400,7 @@ public class InitialDPRequestTest {
 
 		original = new InitialDPRequestImpl(110, calledPartyNumber, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
 				null, null, null, false, null, null, null, null, null, null, null, null, false, null, false);
+		original.setInvokeId(24);
 
 		// Writes the area to a file.
 		baos = new ByteArrayOutputStream();
@@ -416,6 +419,7 @@ public class InitialDPRequestTest {
 		reader = XMLObjectReader.newInstance(bais);
 		copy = reader.read("initialDP", InitialDPRequestImpl.class);
 
+		assertEquals(copy.getInvokeId(), original.getInvokeId());
 		assertEquals(copy.getServiceKey(), original.getServiceKey());
 		assertEquals(copy.getCalledPartyNumber().getData(), original.getCalledPartyNumber().getData());
 		assertNull(copy.getCallingPartyNumber());
