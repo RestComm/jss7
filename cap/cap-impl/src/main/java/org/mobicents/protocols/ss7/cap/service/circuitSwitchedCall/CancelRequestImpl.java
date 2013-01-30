@@ -267,7 +267,9 @@ public class CancelRequestImpl extends CircuitSwitchedCallMessageImpl implements
 				throws XMLStreamException {
 			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, cancelRequest);
 			cancelRequest.invokeID = xml.get(INVOKE_ID, Integer.class);
-			cancelRequest.allRequests = xml.get(ALL_REQUESTS, Boolean.class);
+			Boolean bval = xml.get(ALL_REQUESTS, Boolean.class);
+			if (bval != null)
+				cancelRequest.allRequests = bval;
 			cancelRequest.callSegmentToCancel = xml.get(CALL_SEGMENT_TO_CANCEL, CallSegmentToCancelImpl.class);
 		}
 
@@ -278,7 +280,8 @@ public class CancelRequestImpl extends CircuitSwitchedCallMessageImpl implements
 			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(cancelRequest, xml);
 			
 			xml.add(cancelRequest.invokeID, INVOKE_ID, Integer.class);
-			xml.add(cancelRequest.allRequests, ALL_REQUESTS, Boolean.class);
+			if (cancelRequest.allRequests)
+				xml.add(cancelRequest.allRequests, ALL_REQUESTS, Boolean.class);
 			xml.add((CallSegmentToCancelImpl) cancelRequest.callSegmentToCancel, CALL_SEGMENT_TO_CANCEL,
 					CallSegmentToCancelImpl.class);
 		}

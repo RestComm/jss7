@@ -214,6 +214,7 @@ public class ConnectRequestTest {
 		ConnectRequestImpl original = new ConnectRequestImpl(destinationRoutingAddress, alertingPatternCap, originalCalledPartyID,
 				CAPExtensionsTest.createTestCAPExtensions(), null, callingPartysCategory, redirectingPartyID, redirectionInformation, genericNumbers, null,
 				null, null, null, false, true, true, naoliInfo, false);
+		original.setInvokeId(24);
 
 		// Writes the area to a file.
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -232,6 +233,7 @@ public class ConnectRequestTest {
 		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
 		ConnectRequestImpl copy = reader.read("connectRequest", ConnectRequestImpl.class);
 
+		assertEquals(copy.getInvokeId(), original.getInvokeId());
 		assertEquals(copy.getDestinationRoutingAddress().getCalledPartyNumber().size(), original.getDestinationRoutingAddress().getCalledPartyNumber().size());
 		assertEquals(copy.getDestinationRoutingAddress().getCalledPartyNumber().get(0).getCalledPartyNumber().getInternalNetworkNumberIndicator(), original.getDestinationRoutingAddress().getCalledPartyNumber().get(0).getCalledPartyNumber().getInternalNetworkNumberIndicator());
 		assertEquals(copy.getDestinationRoutingAddress().getCalledPartyNumber().get(0).getCalledPartyNumber().getAddress().equals("972201"), original.getDestinationRoutingAddress().getCalledPartyNumber().get(0).getCalledPartyNumber().getAddress().equals("972201"));
@@ -239,7 +241,6 @@ public class ConnectRequestTest {
 		assertEquals(copy.getOriginalCalledPartyID().getData(), original.getOriginalCalledPartyID().getData());
 		assertTrue(CAPExtensionsTest.checkTestCAPExtensions(copy.getExtensions()));
 		assertEquals(copy.getCallingPartysCategory().getData(), original.getCallingPartysCategory().getData());
-		
 		assertEquals(copy.getRedirectingPartyID().getData(), original.getRedirectingPartyID().getData());
 		assertEquals(copy.getRedirectionInformation().getData(), original.getRedirectionInformation().getData());
 		assertEquals(copy.getGenericNumbers().size(), original.getGenericNumbers().size());

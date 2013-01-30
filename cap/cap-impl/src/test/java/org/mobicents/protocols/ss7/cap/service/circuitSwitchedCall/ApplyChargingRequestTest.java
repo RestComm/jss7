@@ -127,8 +127,9 @@ public class ApplyChargingRequestTest {
 		CAMELAChBillingChargingCharacteristicsImpl aChBillingChargingCharacteristics = new CAMELAChBillingChargingCharacteristicsImpl(
 				36000, false, null, null, null, false);
 		SendingSideIDImpl partyToCharge = new SendingSideIDImpl(LegType.leg1);
-		ApplyChargingRequestImpl original = new ApplyChargingRequestImpl(aChBillingChargingCharacteristics,
-				partyToCharge, null, null);
+		ApplyChargingRequestImpl original = new ApplyChargingRequestImpl(aChBillingChargingCharacteristics, partyToCharge,
+				CAPExtensionsTest.createTestCAPExtensions(), null);
+		original.setInvokeId(24);
 
 		// Writes the area to a file.
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -148,11 +149,13 @@ public class ApplyChargingRequestTest {
 		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
 		ApplyChargingRequestImpl copy = reader.read("applyChargingRequest", ApplyChargingRequestImpl.class);
 
+		assertEquals(copy.getInvokeId(), original.getInvokeId());
 		assertEquals(copy.getAChBillingChargingCharacteristics().getMaxCallPeriodDuration(), original
 				.getAChBillingChargingCharacteristics().getMaxCallPeriodDuration());
 		assertEquals(copy.getAChBillingChargingCharacteristics().getReleaseIfdurationExceeded(), original
 				.getAChBillingChargingCharacteristics().getReleaseIfdurationExceeded());
 		assertEquals(copy.getPartyToCharge().getSendingSideID(), original.getPartyToCharge().getSendingSideID());
+		assertTrue(CAPExtensionsTest.checkTestCAPExtensions(copy.getExtensions()));
 
 	}
 }

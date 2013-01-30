@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -46,7 +49,9 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 public class ReleaseCallRequestImpl extends CircuitSwitchedCallMessageImpl implements ReleaseCallRequest {
 
 	public static final String _PrimitiveName = "ReleaseCalltRequestIndication";
-	
+
+	private static final String CAUSE = "cause";
+
 	private CauseCap cause;
 
 	
@@ -173,5 +178,26 @@ public class ReleaseCallRequestImpl extends CircuitSwitchedCallMessageImpl imple
 
 		return sb.toString();
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<ReleaseCallRequestImpl> RELEASE_CALL_REQUEST_XML = new XMLFormat<ReleaseCallRequestImpl>(ReleaseCallRequestImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, ReleaseCallRequestImpl releaseCallRequest) throws XMLStreamException {
+			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, releaseCallRequest);
+
+			releaseCallRequest.cause = xml.get(CAUSE, CauseCapImpl.class);
+		}
+
+		@Override
+		public void write(ReleaseCallRequestImpl releaseCallRequest, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(releaseCallRequest, xml);
+
+			if (releaseCallRequest.getCause() != null)
+				xml.add((CauseCapImpl) releaseCallRequest.getCause(), CAUSE, CauseCapImpl.class);
+		}
+	};
 }
 

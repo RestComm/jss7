@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -23,6 +23,9 @@
 package org.mobicents.protocols.ss7.cap.primitives;
 
 import java.io.IOException;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -47,7 +50,7 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
  * @author sergey vetyutnev
  * 
  */
-public class BCSMEventImpl implements BCSMEvent, CAPAsnPrimitive {
+public class BCSMEventImpl extends SequenceBase implements BCSMEvent {
 
 	public static final int _ID_eventTypeBCSM = 0;
 	public static final int _ID_monitorMode = 1;
@@ -55,8 +58,12 @@ public class BCSMEventImpl implements BCSMEvent, CAPAsnPrimitive {
 	public static final int _ID_dpSpecificCriteria = 30;
 	public static final int _ID_automaticRearm = 50;
 
-	public static final String _PrimitiveName = "BCSMEvent";
-	
+	private static final String EVENT_TYPE_BCSM = "eventTypeBCSM";
+	private static final String MONITOR_MODE = "monitorMode";
+	private static final String LEG_ID = "legID";
+	private static final String DP_SPECIFIC_CRITERIA = "dpSpecificCriteria";
+	private static final String AUTOMATIC_REARM = "automaticRearm";
+
 	private EventTypeBCSM eventTypeBCSM;
 	private MonitorMode monitorMode;
 	private LegID legID;
@@ -65,9 +72,11 @@ public class BCSMEventImpl implements BCSMEvent, CAPAsnPrimitive {
 
 	
 	public BCSMEventImpl() {
+		super("BCSMEvent");
 	}
 
 	public BCSMEventImpl(EventTypeBCSM eventTypeBCSM, MonitorMode monitorMode, LegID legID, DpSpecificCriteria dpSpecificCriteria, boolean automaticRearm) {
+		super("BCSMEvent");
 		this.eventTypeBCSM = eventTypeBCSM;
 		this.monitorMode = monitorMode;
 		this.legID = legID;
@@ -99,64 +108,8 @@ public class BCSMEventImpl implements BCSMEvent, CAPAsnPrimitive {
 	public boolean getAutomaticRearm() {
 		return automaticRearm;
 	}
-	
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
-
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
-
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
-
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (INAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
-
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (INAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException, INAPParsingComponentException {
+	protected void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException, INAPParsingComponentException {
 
 		this.eventTypeBCSM = null;
 		this.monitorMode = null;
@@ -211,25 +164,6 @@ public class BCSMEventImpl implements BCSMEvent, CAPAsnPrimitive {
 		if (this.eventTypeBCSM == null || this.monitorMode == null)
 			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": eventTypeBCSM and monitorMode are mandatory but not found",
 					CAPParsingComponentExceptionReason.MistypedParameter);
-	}
-
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
-	}
-
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-		
-		try {
-			asnOs.writeTag(tagClass, false, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
 	}
 
 	@Override
@@ -299,5 +233,40 @@ public class BCSMEventImpl implements BCSMEvent, CAPAsnPrimitive {
 
 		return sb.toString();
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<BCSMEventImpl> BCSM_EVENT_XML = new XMLFormat<BCSMEventImpl>(BCSMEventImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, BCSMEventImpl bcsmEvent) throws XMLStreamException {
+			String str = xml.get(EVENT_TYPE_BCSM, String.class);
+			if (str != null)
+				bcsmEvent.eventTypeBCSM = Enum.valueOf(EventTypeBCSM.class, str);
+			str = xml.get(MONITOR_MODE, String.class);
+			if (str != null)
+				bcsmEvent.monitorMode = Enum.valueOf(MonitorMode.class, str);
+			bcsmEvent.legID = xml.get(LEG_ID, LegIDImpl.class);
+			bcsmEvent.dpSpecificCriteria = xml.get(DP_SPECIFIC_CRITERIA, DpSpecificCriteriaImpl.class);
+			Boolean bval = xml.get(AUTOMATIC_REARM, Boolean.class);
+			if (bval != null)
+				bcsmEvent.automaticRearm = bval;
+		}
+
+		@Override
+		public void write(BCSMEventImpl bcsmEvent, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			if (bcsmEvent.getEventTypeBCSM() != null)
+				xml.add((String) bcsmEvent.getEventTypeBCSM().toString(), EVENT_TYPE_BCSM, String.class);
+			if (bcsmEvent.getMonitorMode() != null)
+				xml.add((String) bcsmEvent.getMonitorMode().toString(), MONITOR_MODE, String.class);
+			if (bcsmEvent.getLegID() != null)
+				xml.add((LegIDImpl) bcsmEvent.getLegID(), LEG_ID, LegIDImpl.class);
+			if (bcsmEvent.getDpSpecificCriteria() != null)
+				xml.add((DpSpecificCriteriaImpl) bcsmEvent.getDpSpecificCriteria(), DP_SPECIFIC_CRITERIA, DpSpecificCriteriaImpl.class);
+			if (bcsmEvent.getAutomaticRearm())
+				xml.add((Boolean) bcsmEvent.getAutomaticRearm(), AUTOMATIC_REARM, Boolean.class);
+		}
+	};
 }
 

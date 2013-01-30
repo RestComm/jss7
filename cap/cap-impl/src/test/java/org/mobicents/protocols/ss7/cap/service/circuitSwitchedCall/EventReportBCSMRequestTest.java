@@ -160,7 +160,8 @@ public class EventReportBCSMRequestTest {
 		MiscCallInfoImpl miscCallInfo = new MiscCallInfoImpl(MiscCallInfoMessageType.request, null);
 
 		EventReportBCSMRequestImpl original = new EventReportBCSMRequestImpl(EventTypeBCSM.routeSelectFailure,
-				eventSpecificInformationBCSM, legID, miscCallInfo, null);
+				eventSpecificInformationBCSM, legID, miscCallInfo, CAPExtensionsTest.createTestCAPExtensions());
+		original.setInvokeId(24);
 
 		// Writes the area to a file.
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -180,7 +181,10 @@ public class EventReportBCSMRequestTest {
 		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
 		EventReportBCSMRequestImpl copy = reader.read("eventReportBCSMRequest", EventReportBCSMRequestImpl.class);
 
+		assertEquals(copy.getInvokeId(), original.getInvokeId());
 		assertEquals(copy.getEventTypeBCSM(), original.getEventTypeBCSM());
+		assertEquals(copy.getEventSpecificInformationBCSM().getRouteSelectFailureSpecificInfo().getFailureCause().getData(), 
+				original.getEventSpecificInformationBCSM().getRouteSelectFailureSpecificInfo().getFailureCause().getData());
 
 		assertEquals(copy.getLegID().getReceivingSideID(), original.getLegID().getReceivingSideID());
 

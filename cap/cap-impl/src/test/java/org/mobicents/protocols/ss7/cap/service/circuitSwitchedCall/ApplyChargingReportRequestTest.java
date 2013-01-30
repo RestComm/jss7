@@ -99,6 +99,7 @@ public class ApplyChargingReportRequestTest {
 				timeInformation, false, false, null, null);
 
 		ApplyChargingReportRequestImpl original = new ApplyChargingReportRequestImpl(timeDurationChargingResult);
+		original.setInvokeId(24);
 
 		// Writes the area to a file.
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -119,6 +120,7 @@ public class ApplyChargingReportRequestTest {
 		ApplyChargingReportRequestImpl copy = reader.read("applyChargingReportRequest",
 				ApplyChargingReportRequestImpl.class);
 
+		assertEquals(copy.getInvokeId(), original.getInvokeId());
 		assertEquals(copy.getTimeDurationChargingResult().getPartyToCharge().getReceivingSideID(), original
 				.getTimeDurationChargingResult().getPartyToCharge().getReceivingSideID());
 
