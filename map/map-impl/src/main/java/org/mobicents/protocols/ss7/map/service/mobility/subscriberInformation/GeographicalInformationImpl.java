@@ -22,6 +22,9 @@
 
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GeographicalInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.TypeOfShape;
@@ -39,6 +42,14 @@ public class GeographicalInformationImpl extends OctetStringBase implements Geog
 	private static double koef24 = Math.pow(2.0, 24) / 360;
 	private static double[] uncertaintyTable = initUncertaintyTable();
 
+	private static final String TYPE_OF_SHAPE = "typeOfShape";
+	private static final String LATITUDE = "latitude";
+	private static final String LONGITUDE = "longitude";
+	private static final String UNCERTAINTY = "uncertainty";
+
+	private static final String DEFAULT_STRING_VALUE = null;
+	private static final double DEFAULT_DOUBLE_VALUE = 0;
+	
 	private static double[] initUncertaintyTable() {
 		double[] res = new double[128];
 
@@ -61,7 +72,10 @@ public class GeographicalInformationImpl extends OctetStringBase implements Geog
 
 	public GeographicalInformationImpl(TypeOfShape typeOfShape, double latitude, double longitude, double uncertainty) throws MAPException {
 		super(8, 8, "GeographicalInformation");
+		setData(typeOfShape, latitude, longitude, uncertainty);
+	}
 
+	public void setData(TypeOfShape typeOfShape, double latitude, double longitude, double uncertainty) throws MAPException {
 		if (typeOfShape != TypeOfShape.EllipsoidPointWithUncertaintyCircle) {
 			throw new MAPException("typeOfShape parameter for GeographicalInformation can be only \"ellipsoid point with uncertainty circle\"");
 		}
@@ -212,4 +226,38 @@ public class GeographicalInformationImpl extends OctetStringBase implements Geog
 
 		return sb.toString();
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<GeographicalInformationImpl> GEOGRAPHICAL_INFORMATION_XML = new XMLFormat<GeographicalInformationImpl>(GeographicalInformationImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, GeographicalInformationImpl geographicalInformation) throws XMLStreamException {
+			String str = xml.getAttribute(TYPE_OF_SHAPE, DEFAULT_STRING_VALUE);
+			TypeOfShape tos = null;
+			if (str != null)
+				tos = Enum.valueOf(TypeOfShape.class, str);
+
+			double lat = xml.getAttribute(LATITUDE, DEFAULT_DOUBLE_VALUE);
+			double lng = xml.getAttribute(LONGITUDE, DEFAULT_DOUBLE_VALUE);
+			double unc = xml.getAttribute(UNCERTAINTY, DEFAULT_DOUBLE_VALUE);
+
+			try {
+				geographicalInformation.setData(tos, lat, lng, unc);
+			} catch (MAPException e) {
+				throw new XMLStreamException("MAPException when deserializing GeographicalInformation", e);
+			}
+		}
+
+		@Override
+		public void write(GeographicalInformationImpl geographicalInformation, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			if (geographicalInformation.getTypeOfShape() != null) {
+				xml.setAttribute(TYPE_OF_SHAPE, geographicalInformation.getTypeOfShape().toString());
+			}
+			xml.setAttribute(LATITUDE, geographicalInformation.getLatitude());
+			xml.setAttribute(LONGITUDE, geographicalInformation.getLongitude());
+			xml.setAttribute(UNCERTAINTY, geographicalInformation.getUncertainty());
+		}
+	};
 }

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -28,10 +28,10 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -99,27 +99,57 @@ public class CellGlobalIdOrServiceAreaIdOrLAITest {
 		assertTrue( Arrays.equals(data,encodedData));
 
 	}
-	
-	@Test(groups = { "functional.serialize", "service.lsm" })
+
+	@Test(groups = { "functional.xml.serialize", "service.lsm" })
 	public void testSerialization() throws Exception {
-		CellGlobalIdOrServiceAreaIdFixedLength par = new CellGlobalIdOrServiceAreaIdFixedLengthImpl(new byte[] { 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b });
+		CellGlobalIdOrServiceAreaIdFixedLength par = new CellGlobalIdOrServiceAreaIdFixedLengthImpl(250, 1, 4444, 3333);
 		CellGlobalIdOrServiceAreaIdOrLAIImpl original = new CellGlobalIdOrServiceAreaIdOrLAIImpl(par);
 
-		// serialize
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ObjectOutputStream oos = new ObjectOutputStream(out);
-		oos.writeObject(original);
-		oos.close();
+		// Writes the area to a file.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+		writer.write(original, "cellGlobalIdOrServiceAreaIdOrLAI", CellGlobalIdOrServiceAreaIdOrLAIImpl.class);
+		writer.close();
 
-		// deserialize
-		byte[] pickled = out.toByteArray();
-		InputStream in = new ByteArrayInputStream(pickled);
-		ObjectInputStream ois = new ObjectInputStream(in);
-		Object o = ois.readObject();
-		CellGlobalIdOrServiceAreaIdOrLAIImpl copy = (CellGlobalIdOrServiceAreaIdOrLAIImpl) o;
-		
-		//test result
-		assertEquals(copy, original);
-		
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		CellGlobalIdOrServiceAreaIdOrLAIImpl copy = reader.read("cellGlobalIdOrServiceAreaIdOrLAI", CellGlobalIdOrServiceAreaIdOrLAIImpl.class);
+
+		assertEquals(copy.getCellGlobalIdOrServiceAreaIdFixedLength().getMCC(), original.getCellGlobalIdOrServiceAreaIdFixedLength().getMCC());
+		assertEquals(copy.getCellGlobalIdOrServiceAreaIdFixedLength().getMNC(), original.getCellGlobalIdOrServiceAreaIdFixedLength().getMNC());
+		assertEquals(copy.getCellGlobalIdOrServiceAreaIdFixedLength().getLac(), original.getCellGlobalIdOrServiceAreaIdFixedLength().getLac());
+		assertEquals(copy.getCellGlobalIdOrServiceAreaIdFixedLength().getCellId(), original.getCellGlobalIdOrServiceAreaIdFixedLength().getCellId());
+
+
+		LAIFixedLengthImpl par2 = new LAIFixedLengthImpl(250, 1, 4444);
+		original = new CellGlobalIdOrServiceAreaIdOrLAIImpl(par2);
+
+		// Writes the area to a file.
+		baos = new ByteArrayOutputStream();
+		writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+		writer.write(original, "cellGlobalIdOrServiceAreaIdOrLAI", CellGlobalIdOrServiceAreaIdOrLAIImpl.class);
+		writer.close();
+
+		rawData = baos.toByteArray();
+		serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		bais = new ByteArrayInputStream(rawData);
+		reader = XMLObjectReader.newInstance(bais);
+		copy = reader.read("cellGlobalIdOrServiceAreaIdOrLAI", CellGlobalIdOrServiceAreaIdOrLAIImpl.class);
+
+		assertEquals(copy.getLAIFixedLength().getMCC(), original.getLAIFixedLength().getMCC());
+		assertEquals(copy.getLAIFixedLength().getMNC(), original.getLAIFixedLength().getMNC());
+		assertEquals(copy.getLAIFixedLength().getLac(), original.getLAIFixedLength().getLac());
 	}
 }

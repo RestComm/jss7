@@ -22,6 +22,9 @@
 
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GeodeticInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.TypeOfShape;
@@ -34,6 +37,17 @@ import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
  */
 public class GeodeticInformationImpl extends OctetStringBase implements GeodeticInformation {
 
+	private static final String SCREENING_AND_PRESENTATION_INDICATORS = "screeningAndPresentationIndicators";
+	private static final String TYPE_OF_SHAPE = "typeOfShape";
+	private static final String LATITUDE = "latitude";
+	private static final String LONGITUDE = "longitude";
+	private static final String UNCERTAINTY = "uncertainty";
+	private static final String CONFIDENCE = "confidence";
+
+	private static final String DEFAULT_STRING_VALUE = null;
+	private static final double DEFAULT_DOUBLE_VALUE = 0;
+	private static final int DEFAULT_INT_VALUE = 0;
+
 	public GeodeticInformationImpl() {
 		super(10, 10, "GeodeticInformation");
 	}
@@ -45,6 +59,11 @@ public class GeodeticInformationImpl extends OctetStringBase implements Geodetic
 	public GeodeticInformationImpl(int screeningAndPresentationIndicators, TypeOfShape typeOfShape, double latitude, double longitude, double uncertainty,
 			int confidence) throws MAPException {
 		super(10, 10, "GeodeticInformation");
+		this.setData(screeningAndPresentationIndicators, typeOfShape, latitude, longitude, uncertainty, confidence);
+	}
+
+	public void setData(int screeningAndPresentationIndicators, TypeOfShape typeOfShape, double latitude, double longitude, double uncertainty, int confidence)
+			throws MAPException {
 
 		if (typeOfShape != TypeOfShape.EllipsoidPointWithUncertaintyCircle) {
 			throw new MAPException("typeOfShape parameter for GeographicalInformation can be only \" ellipsoid point with uncertainty circle\"");
@@ -141,4 +160,43 @@ public class GeodeticInformationImpl extends OctetStringBase implements Geodetic
 
 		return sb.toString();
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<GeodeticInformationImpl> GEODETIC_INFORMATION_XML = new XMLFormat<GeodeticInformationImpl>(GeodeticInformationImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, GeodeticInformationImpl geodeticInformation) throws XMLStreamException {
+			int sapi = xml.getAttribute(SCREENING_AND_PRESENTATION_INDICATORS, DEFAULT_INT_VALUE);
+
+			String str = xml.getAttribute(TYPE_OF_SHAPE, DEFAULT_STRING_VALUE);
+			TypeOfShape tos = null;
+			if (str != null)
+				tos = Enum.valueOf(TypeOfShape.class, str);
+
+			double lat = xml.getAttribute(LATITUDE, DEFAULT_DOUBLE_VALUE);
+			double lng = xml.getAttribute(LONGITUDE, DEFAULT_DOUBLE_VALUE);
+			double unc = xml.getAttribute(UNCERTAINTY, DEFAULT_DOUBLE_VALUE);
+			int conf = xml.getAttribute(CONFIDENCE, DEFAULT_INT_VALUE);
+
+			try {
+				geodeticInformation.setData(sapi, tos, lat, lng, unc, conf);
+			} catch (MAPException e) {
+				throw new XMLStreamException("MAPException when deserializing GeodeticInformationImpl", e);
+			}
+		}
+
+		@Override
+		public void write(GeodeticInformationImpl geodeticInformation, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			xml.setAttribute(SCREENING_AND_PRESENTATION_INDICATORS, geodeticInformation.getScreeningAndPresentationIndicators());
+			if (geodeticInformation.getTypeOfShape() != null) {
+				xml.setAttribute(TYPE_OF_SHAPE, geodeticInformation.getTypeOfShape().toString());
+			}
+			xml.setAttribute(LATITUDE, geodeticInformation.getLatitude());
+			xml.setAttribute(LONGITUDE, geodeticInformation.getLongitude());
+			xml.setAttribute(UNCERTAINTY, geodeticInformation.getUncertainty());
+			xml.setAttribute(CONFIDENCE, geodeticInformation.getConfidence());
+		}
+	};
 }

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.map.primitives;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -37,12 +40,16 @@ import org.mobicents.protocols.ss7.map.api.primitives.LAIFixedLength;
 
 /**
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
 public class CellGlobalIdOrServiceAreaIdOrLAIImpl implements CellGlobalIdOrServiceAreaIdOrLAI, MAPAsnPrimitive {
 
 	private static final int _TAG_CELL_GLOBAL_ID_OR_SERVICE_AREAR_ID = 0;
 	private static final int _TAG_LAI = 1;
+
+	private static final String CELL_GLOBAL_ID_OR_SERVICE_AREA_ID_FIXED_LENGTH = "cellGlobalIdOrServiceAreaIdFixedLength";
+	private static final String LAI_FIXED_LENGTH = "laiFixedLength";
 
 	private CellGlobalIdOrServiceAreaIdFixedLength cellGlobalIdOrServiceAreaIdFixedLength = null;
 	private LAIFixedLength laiFixedLength = null;
@@ -246,5 +253,30 @@ public class CellGlobalIdOrServiceAreaIdOrLAIImpl implements CellGlobalIdOrServi
 			return false;
 		return true;
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<CellGlobalIdOrServiceAreaIdOrLAIImpl> CELL_GLOBAL_ID_OR_SERVICE_AREA_ID_OR_LAI_XML = new XMLFormat<CellGlobalIdOrServiceAreaIdOrLAIImpl>(
+			CellGlobalIdOrServiceAreaIdOrLAIImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, CellGlobalIdOrServiceAreaIdOrLAIImpl cellGlobalIdOrServiceAreaIdOrLAI) throws XMLStreamException {
+			cellGlobalIdOrServiceAreaIdOrLAI.cellGlobalIdOrServiceAreaIdFixedLength = xml.get(CELL_GLOBAL_ID_OR_SERVICE_AREA_ID_FIXED_LENGTH,
+					CellGlobalIdOrServiceAreaIdFixedLengthImpl.class);
+			cellGlobalIdOrServiceAreaIdOrLAI.laiFixedLength = xml.get(LAI_FIXED_LENGTH, LAIFixedLengthImpl.class);
+		}
+
+		@Override
+		public void write(CellGlobalIdOrServiceAreaIdOrLAIImpl cellGlobalIdOrServiceAreaIdOrLAI, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			if (cellGlobalIdOrServiceAreaIdOrLAI.getCellGlobalIdOrServiceAreaIdFixedLength() != null) {
+				xml.add((CellGlobalIdOrServiceAreaIdFixedLengthImpl) cellGlobalIdOrServiceAreaIdOrLAI.getCellGlobalIdOrServiceAreaIdFixedLength(),
+						CELL_GLOBAL_ID_OR_SERVICE_AREA_ID_FIXED_LENGTH, CellGlobalIdOrServiceAreaIdFixedLengthImpl.class);
+			}
+			if (cellGlobalIdOrServiceAreaIdOrLAI.getLAIFixedLength() != null) {
+				xml.add((LAIFixedLengthImpl) cellGlobalIdOrServiceAreaIdOrLAI.getLAIFixedLength(), LAI_FIXED_LENGTH, LAIFixedLengthImpl.class);
+			}
+		}
+	};
 }
 

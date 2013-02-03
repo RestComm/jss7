@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -23,6 +23,10 @@
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
 import java.io.IOException;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -42,8 +46,8 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.LSAIdentity;
 import org.mobicents.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdOrLAIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
-import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
+import org.mobicents.protocols.ss7.map.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.LSAIdentityImpl;
 
 /**
@@ -51,7 +55,7 @@ import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.LSA
  * @author sergey vetyutnev
  * 
  */
-public class LocationInformationImpl implements LocationInformation, MAPAsnPrimitive {
+public class LocationInformationImpl extends SequenceBase implements LocationInformation {
 
 	public static final int _ID_geographicalInformation = 0;
 	public static final int _ID_vlr_number = 1;
@@ -66,7 +70,19 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 	public static final int _ID_locationInformationEPS = 10;
 	public static final int _ID_userCSGInformation = 11;
 
-	public static final String _PrimitiveName = "LocationInformation";
+	private static final String AGE_OF_LOCATION_INFORMATION = "ageOfLocationInformation";
+	private static final String GEOGRAPHICAL_INFORMATION = "geographicalInformation";
+	private static final String VLR_NUMBER = "vlrNumber";
+	private static final String LOCATION_NUMBER = "locationNumber";
+	private static final String CELL_GLOBAL_ID_OR_SERVICE_AREA_ID_OR_LAI = "cellGlobalIdOrServiceAreaIdOrLAI";
+	private static final String EXTENSION_CONTAINER = "extensionContainer";
+	private static final String SELECTED_LSA_ID = "selectedLSAId";
+	private static final String MSC_NUMBER = "mscNumber";
+	private static final String GEODETIC_INFORMATION = "geodeticInformation";
+	private static final String CURRENT_LOCATION_RETRIEVED = "currentLocationRetrieved";
+	private static final String SAI_PRESENT = "saiPresent";
+	private static final String LOCATION_INFORMATION_EPS = "locationInformationEPS";
+	private static final String USER_CSG_INFORMATION = "userCSGInformation";
 
 	private Integer ageOfLocationInformation;
 	private GeographicalInformation geographicalInformation;
@@ -83,12 +99,15 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 	private UserCSGInformation userCSGInformation;
 
 	public LocationInformationImpl() {
+		super("LocationInformation");
 	}
 
 	public LocationInformationImpl(Integer ageOfLocationInformation, GeographicalInformation geographicalInformation, ISDNAddressString vlrNumber,
 			LocationNumberMap locationNumber, CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI, MAPExtensionContainer extensionContainer,
 			LSAIdentity selectedLSAId, ISDNAddressString mscNumber, GeodeticInformation geodeticInformation, boolean currentLocationRetrieved,
 			boolean saiPresent, LocationInformationEPS locationInformationEPS, UserCSGInformation userCSGInformation) {
+		super("LocationInformation");
+
 		this.ageOfLocationInformation = ageOfLocationInformation;
 		this.geographicalInformation = geographicalInformation;
 		this.vlrNumber = vlrNumber;
@@ -156,46 +175,7 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 		return userCSGInformation;
 	}
 
-	public int getTag() throws MAPException {
-		return Tag.SEQUENCE;
-	}
-
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
-
-	public boolean getIsPrimitive() {
-		return false;
-	}
-
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+	protected void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
 		this.ageOfLocationInformation = null;
 		this.geographicalInformation = null;
@@ -334,23 +314,6 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 		}
 	}
 
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
-
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
-
 	public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
 		try {
@@ -486,4 +449,78 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 
 		return sb.toString();
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<LocationInformationImpl> LOCATION_INFORMATION_XML = new XMLFormat<LocationInformationImpl>(LocationInformationImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, LocationInformationImpl locationInformation) throws XMLStreamException {
+			locationInformation.ageOfLocationInformation = xml.get(AGE_OF_LOCATION_INFORMATION, Integer.class);
+			locationInformation.geographicalInformation = xml.get(GEOGRAPHICAL_INFORMATION, GeographicalInformationImpl.class);
+			locationInformation.vlrNumber = xml.get(VLR_NUMBER, ISDNAddressStringImpl.class);
+			locationInformation.locationNumber = xml.get(LOCATION_NUMBER, LocationNumberMapImpl.class);
+			locationInformation.cellGlobalIdOrServiceAreaIdOrLAI = xml.get(CELL_GLOBAL_ID_OR_SERVICE_AREA_ID_OR_LAI, CellGlobalIdOrServiceAreaIdOrLAIImpl.class);
+
+			locationInformation.extensionContainer = xml.get(EXTENSION_CONTAINER, MAPExtensionContainerImpl.class);
+			locationInformation.selectedLSAId = xml.get(SELECTED_LSA_ID, LSAIdentityImpl.class);
+			locationInformation.mscNumber = xml.get(MSC_NUMBER, ISDNAddressStringImpl.class);
+			locationInformation.geodeticInformation = xml.get(GEODETIC_INFORMATION, GeodeticInformationImpl.class);
+
+			Boolean bval = xml.get(CURRENT_LOCATION_RETRIEVED, Boolean.class);
+			if (bval != null)
+				locationInformation.currentLocationRetrieved = bval;
+			bval = xml.get(SAI_PRESENT, Boolean.class);
+			if (bval != null)
+				locationInformation.saiPresent = bval;
+			locationInformation.locationInformationEPS = xml.get(LOCATION_INFORMATION_EPS, LocationInformationEPSImpl.class);
+			locationInformation.userCSGInformation = xml.get(USER_CSG_INFORMATION, UserCSGInformationImpl.class);
+		}
+
+		@Override
+		public void write(LocationInformationImpl locationInformation, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			if (locationInformation.ageOfLocationInformation != null) {
+				xml.add((Integer) locationInformation.ageOfLocationInformation, AGE_OF_LOCATION_INFORMATION, Integer.class);
+			}
+			if (locationInformation.geographicalInformation != null) {
+				xml.add((GeographicalInformationImpl) locationInformation.geographicalInformation, GEOGRAPHICAL_INFORMATION, GeographicalInformationImpl.class);
+			}
+			if (locationInformation.vlrNumber != null) {
+				xml.add((ISDNAddressStringImpl) locationInformation.vlrNumber, VLR_NUMBER, ISDNAddressStringImpl.class);
+			}
+			if (locationInformation.locationNumber != null) {
+				xml.add((LocationNumberMapImpl) locationInformation.locationNumber, LOCATION_NUMBER, LocationNumberMapImpl.class);
+			}
+			if (locationInformation.cellGlobalIdOrServiceAreaIdOrLAI != null) {
+				xml.add((CellGlobalIdOrServiceAreaIdOrLAIImpl) locationInformation.cellGlobalIdOrServiceAreaIdOrLAI, CELL_GLOBAL_ID_OR_SERVICE_AREA_ID_OR_LAI, CellGlobalIdOrServiceAreaIdOrLAIImpl.class);
+			}
+
+			if (locationInformation.extensionContainer != null) {
+				xml.add((MAPExtensionContainerImpl) locationInformation.extensionContainer, EXTENSION_CONTAINER, MAPExtensionContainerImpl.class);
+			}
+			if (locationInformation.selectedLSAId != null) {
+				xml.add((LSAIdentityImpl) locationInformation.selectedLSAId, SELECTED_LSA_ID, LSAIdentityImpl.class);
+			}
+			if (locationInformation.mscNumber != null) {
+				xml.add((ISDNAddressStringImpl) locationInformation.mscNumber, MSC_NUMBER, ISDNAddressStringImpl.class);
+			}
+			if (locationInformation.geodeticInformation != null) {
+				xml.add((GeodeticInformationImpl) locationInformation.geodeticInformation, GEODETIC_INFORMATION, GeodeticInformationImpl.class);
+			}
+
+			if (locationInformation.currentLocationRetrieved) {
+				xml.add((Boolean) locationInformation.currentLocationRetrieved, CURRENT_LOCATION_RETRIEVED, Boolean.class);
+			}
+			if (locationInformation.saiPresent) {
+				xml.add((Boolean) locationInformation.saiPresent, SAI_PRESENT, Boolean.class);
+			}
+			if (locationInformation.locationInformationEPS != null) {
+				xml.add((LocationInformationEPSImpl) locationInformation.locationInformationEPS, LOCATION_INFORMATION_EPS, LocationInformationEPSImpl.class);
+			}
+			if (locationInformation.userCSGInformation != null) {
+				xml.add((UserCSGInformationImpl) locationInformation.userCSGInformation, USER_CSG_INFORMATION, UserCSGInformationImpl.class);
+			}
+		}
+	};
 }

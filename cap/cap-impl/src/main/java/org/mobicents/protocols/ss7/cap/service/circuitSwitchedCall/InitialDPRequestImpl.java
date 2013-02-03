@@ -949,8 +949,7 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
 			initialDP.redirectionInformation = xml.get(REDIRECTION_INFORMATION, RedirectionInformationInapImpl.class);
 			initialDP.imsi = xml.get(IMSI, IMSIImpl.class);
 			initialDP.subscriberState = xml.get(SUBSCRIBER_STATE, SubscriberStateImpl.class);
-			// TODO: implement it
-//			initialDP.locationInformation = xml.get(LOCATION_INFORMATION, LocationInformationImpl.class);
+			initialDP.locationInformation = xml.get(LOCATION_INFORMATION, LocationInformationImpl.class);
 			initialDP.extBasicServiceCode = xml.get(EXT_BASIC_SERVICE_CODE, ExtBasicServiceCodeImpl.class);
 
 			initialDP.callReferenceNumber = xml.get(CALL_REFERENCE_NUMBER, CallReferenceNumberImpl.class);
@@ -1005,9 +1004,8 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
 				xml.add((IMSIImpl) initialDP.getIMSI(), IMSI, IMSIImpl.class);
 			if (initialDP.getSubscriberState() != null)
 				xml.add((SubscriberStateImpl) initialDP.getSubscriberState(), SUBSCRIBER_STATE, SubscriberStateImpl.class);
-			// TODO: implement it
-//			if (initialDP.getLocationInformation() != null)
-//				xml.add((LocationInformationImpl) initialDP.getLocationInformation(), LOCATION_INFORMATION, LocationInformationImpl.class);
+			if (initialDP.getLocationInformation() != null)
+				xml.add((LocationInformationImpl) initialDP.getLocationInformation(), LOCATION_INFORMATION, LocationInformationImpl.class);
 			if (initialDP.getExtBasicServiceCode() != null)
 				xml.add((ExtBasicServiceCodeImpl) initialDP.getExtBasicServiceCode(), EXT_BASIC_SERVICE_CODE, ExtBasicServiceCodeImpl.class);
 

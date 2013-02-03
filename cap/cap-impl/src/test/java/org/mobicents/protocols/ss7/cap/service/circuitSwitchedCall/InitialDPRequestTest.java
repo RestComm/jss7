@@ -386,7 +386,7 @@ public class InitialDPRequestTest {
 		assertEquals(copy.getRedirectionInformation().getData(), original.getRedirectionInformation().getData());
 		assertEquals(copy.getIMSI().getData(), original.getIMSI().getData());
 		assertEquals(copy.getSubscriberState().getSubscriberStateChoice(), original.getSubscriberState().getSubscriberStateChoice());
-//		assertEquals((int)copy.getLocationInformation().getAgeOfLocationInformation(), (int)original.getLocationInformation().getAgeOfLocationInformation());
+		assertEquals((int)copy.getLocationInformation().getAgeOfLocationInformation(), (int)original.getLocationInformation().getAgeOfLocationInformation());
 		assertEquals(copy.getExtBasicServiceCode().getExtTeleservice().getData(), original.getExtBasicServiceCode().getExtTeleservice().getData());
 		assertEquals(copy.getCallReferenceNumber().getData(), original.getCallReferenceNumber().getData());
 		assertEquals(copy.getMscAddress().getAddress(), original.getMscAddress().getAddress());

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -36,5 +36,7 @@ CSG-Id ::= BIT STRING (SIZE (27))
 public interface CSGId {
 
 	public BitSetStrictLength getData();
+
+	// TODO: add implementing of internal structure (?)
 
 }

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -23,18 +23,28 @@
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
 import static org.testng.Assert.*;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.BitSetStrictLength;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.LocationNumberImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.TypeOfShape;
 import org.mobicents.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdFixedLengthImpl;
 import org.mobicents.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdOrLAIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.LocationInformationImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.LocationNumberMapImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.CSGIdImpl;
@@ -212,6 +222,63 @@ public class LocationInformationTest {
 //		LocationNumber locationNumber, CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI, MAPExtensionContainer extensionContainer,
 //		LSAIdentity selectedLSAId, ISDNAddressString mscNumber, GeodeticInformation geodeticInformation, boolean currentLocationRetrieved,
 //		boolean saiPresent, LocationInformationEPS locationInformationEPS, UserCSGInformation userCSGInformation
+	}
+
+	@Test(groups = { "functional.xml.serialize", "subscriberInformation" })
+	public void testXMLSerialize() throws Exception {
+
+		ISDNAddressString vlrNumber = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "000222111");
+		GeographicalInformationImpl ggi = new GeographicalInformationImpl(TypeOfShape.EllipsoidPointWithUncertaintyCircle, -70.33, -0.5, 58);
+		LSAIdentityImpl selectedLSAId = new LSAIdentityImpl(getDataLSAIdentity());
+		ISDNAddressStringImpl mscNumber = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "888222666");
+		GeodeticInformationImpl gdi = new GeodeticInformationImpl(3, TypeOfShape.EllipsoidPointWithUncertaintyCircle, 21.5, 171, 8, 11);
+		LocationInformationEPSImpl liEps = new LocationInformationEPSImpl(null, null, null, null, null, true, 7, null);
+		BitSetStrictLength bs = new BitSetStrictLength(27);
+		bs.set(0);
+		bs.set(26);
+		CSGIdImpl csgId = new CSGIdImpl(bs);
+		UserCSGInformationImpl uci = new UserCSGInformationImpl(csgId, null, null, null);
+		LocationNumberImpl ln = new LocationNumberImpl(LocationNumber._NAI_NATIONAL_SN, "80207910020", LocationNumber._NPI_TELEX,
+				LocationNumber._INN_ROUTING_NOT_ALLOWED, LocationNumber._APRI_ALLOWED, LocationNumber._SI_USER_PROVIDED_VERIFIED_PASSED);
+		LocationNumberMapImpl locationNumber = new LocationNumberMapImpl(ln);
+		CellGlobalIdOrServiceAreaIdFixedLengthImpl cellGlobalIdOrServiceAreaIdFixedLength = new CellGlobalIdOrServiceAreaIdFixedLengthImpl(250, 1, 111, 2212);
+		CellGlobalIdOrServiceAreaIdOrLAIImpl cellGlobalIdOrServiceAreaIdOrLAI = new CellGlobalIdOrServiceAreaIdOrLAIImpl(cellGlobalIdOrServiceAreaIdFixedLength);
+		LocationInformationImpl original = new LocationInformationImpl(3, ggi, vlrNumber, locationNumber, cellGlobalIdOrServiceAreaIdOrLAI,
+				MAPExtensionContainerTest.GetTestExtensionContainer(), selectedLSAId, mscNumber, gdi, true, true, liEps, uci);
+		
+		// Writes the area to a file.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+		writer.write(original, "locationInformation", LocationInformationImpl.class);
+		writer.close();
+
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		LocationInformationImpl copy = reader.read("locationInformation", LocationInformationImpl.class);
+
+		assertEquals((int)copy.getAgeOfLocationInformation(), (int)original.getAgeOfLocationInformation());
+		assertEquals(copy.getGeographicalInformation().getLatitude(), original.getGeographicalInformation().getLatitude());
+		assertEquals(copy.getVlrNumber().getAddress(), original.getVlrNumber().getAddress());
+		assertEquals(copy.getLocationNumber().getLocationNumber().getAddress(), original.getLocationNumber().getLocationNumber().getAddress());
+		assertEquals(copy.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getCellId(), original
+				.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getCellId());
+
+		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(copy.getExtensionContainer()));
+		assertEquals(copy.getSelectedLSAId().getData(), original.getSelectedLSAId().getData());
+		assertEquals(copy.getMscNumber().getAddress(), original.getMscNumber().getAddress());
+		assertEquals(copy.getGeodeticInformation().getLongitude(), original.getGeodeticInformation().getLongitude());
+		
+		assertEquals(copy.getCurrentLocationRetrieved(), original.getCurrentLocationRetrieved());
+		assertEquals(copy.getSaiPresent(), original.getSaiPresent());
+		assertEquals((int)copy.getLocationInformationEPS().getAgeOfLocationInformation(), (int)original.getLocationInformationEPS().getAgeOfLocationInformation());
+		assertEquals(copy.getUserCSGInformation().getCSGId().getData(), original.getUserCSGInformation().getCSGId().getData());
 	}
 
 }
