@@ -48,6 +48,11 @@ public interface TestCapSsfManMBean {
 
 	public String performInitialDp(String msg);
 
-	public String performInitiateCallAttempt(String msg);
+	public String performAssistRequestInstructions(String msg);
+
+
+	public String performApplyChargingReport(String msg);
+
+	public String performEventReportBCSM(String msg);
 
 }

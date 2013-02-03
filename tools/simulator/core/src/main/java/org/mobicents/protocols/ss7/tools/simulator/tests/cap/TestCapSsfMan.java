@@ -36,6 +36,9 @@ import org.mobicents.protocols.ss7.cap.api.dialog.CAPNoticeProblemDiagnostic;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.Digits;
+import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
+import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestResponse;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingReportRequest;
@@ -62,7 +65,13 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestRe
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ResetTimerRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SendChargingInformationRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.IPSSPCapabilities;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeDurationChargingResult;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeIfTariffSwitch;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeInformation;
+import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
 import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
@@ -85,8 +94,10 @@ public class TestCapSsfMan extends TesterBase implements TestCapSsfManMBean, Sto
 
 	private boolean isStarted = false;
 	private int countInitialDp = 0;
-	private int countInitiateCallAttempt = 0;
 	private int countAssistRequestInstructions = 0;
+	private int countApplyChargingReport = 0;
+	private int countEventReportBCSM = 0;
+	private int countInitiateCallAttempt = 0;
 	private String currentRequestDef = "";
 	private CAPDialogCircuitSwitchedCall currentDialog = null;
 
@@ -153,6 +164,10 @@ public class TestCapSsfMan extends TesterBase implements TestCapSsfManMBean, Sto
 		sb.append(countInitiateCallAttempt);
 		sb.append("<br>countAssistRequestInstructions-");
 		sb.append(countAssistRequestInstructions);
+		sb.append(", countApplyChargingReport-");
+		sb.append(countApplyChargingReport);
+		sb.append(", countEventReportBCSM-");
+		sb.append(countEventReportBCSM);
 		sb.append("</html>");
 		return sb.toString();
 	}
@@ -220,8 +235,6 @@ public class TestCapSsfMan extends TesterBase implements TestCapSsfManMBean, Sto
 		CAPDialogCircuitSwitchedCall curDialog2 = currentDialog;
 		if (curDialog2 != null)
 			return "The current dialog exists. Finish it previousely";
-//		if (msg == null || msg.equals(""))
-//			return "USSD message is empty";
 
 		currentRequestDef = "";
 
@@ -249,8 +262,6 @@ public class TestCapSsfMan extends TesterBase implements TestCapSsfManMBean, Sto
 
 			currentRequestDef += "Sent initialDp;";
 			this.countInitialDp++;
-//			String uData = this.createUssdMessageData(curDialog.getLocalDialogId(), this.testerHost.getConfigurationData().getTestUssdClientConfigurationData()
-//					.getDataCodingScheme(), msisdn, alPattern);
 			String uData = "";
 			this.testerHost.sendNotif(SOURCE_NAME, "Sent: initialDP", uData, Level.DEBUG);
 
@@ -262,9 +273,112 @@ public class TestCapSsfMan extends TesterBase implements TestCapSsfManMBean, Sto
 	}
 
 	@Override
-	public String performInitiateCallAttempt(String msg) {
-		// TODO Auto-generated method stub
-		return null;
+	public String performAssistRequestInstructions(String msg) {
+		if (!isStarted)
+			return "The tester is not started";
+
+		CAPDialogCircuitSwitchedCall curDialog2 = currentDialog;
+		if (curDialog2 != null)
+			return "The current dialog exists. Finish it previousely";
+
+		currentRequestDef = "";
+
+		CAPProvider capProvider = this.capMan.getCAPStack().getCAPProvider();
+		CAPApplicationContext capAppContext = this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().getCapApplicationContext().getCAPApplicationContext();
+
+		try {
+			CAPDialogCircuitSwitchedCall curDialog = capProvider.getCAPServiceCircuitSwitchedCall().createNewDialog(capAppContext,
+					this.capMan.createOrigAddress(), this.capMan.createDestAddress());
+			currentDialog = curDialog;
+			this.testerHost.sendNotif(SOURCE_NAME, "DlgStarted:", "TrId=" + curDialog.getLocalDialogId(), Level.DEBUG);
+
+			GenericNumber genericNumber = capProvider.getISUPParameterFactory().createGenericNumber();
+			genericNumber.setAddress("111333");
+			genericNumber.setAddressRepresentationRestrictedIndicator(GenericNumber._APRI_ALLOWED);
+			genericNumber.setNatureOfAddresIndicator(GenericNumber._NAI_INTERNATIONAL_NUMBER);
+			genericNumber.setNumberIncompleter(GenericNumber._NI_COMPLETE);
+			genericNumber.setNumberingPlanIndicator(GenericNumber._NPI_ISDN);
+			genericNumber.setNumberQualifierIndicator(GenericNumber._NQIA_CALLED_NUMBER);
+			genericNumber.setScreeningIndicator(GenericNumber._SI_NETWORK_PROVIDED);
+			Digits correlationID = capProvider.getCAPParameterFactory().createDigits_GenericNumber(genericNumber);
+
+			IPSSPCapabilities ipSSPCapabilities = capProvider.getCAPParameterFactory().createIPSSPCapabilities(false, false, false, false, false, null);
+
+			curDialog.addAssistRequestInstructionsRequest(correlationID, ipSSPCapabilities, null);
+
+			curDialog.send();
+
+			currentRequestDef += "Sent assistRequestInstructions;";
+			this.countAssistRequestInstructions++;
+			String uData = "";
+			this.testerHost.sendNotif(SOURCE_NAME, "Sent: assistRequestInstructions", uData, Level.DEBUG);
+
+			return "assistRequestInstructions has been sent";
+		} catch (CAPException ex) {
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when sending assistRequestInstructions", ex.toString(), Level.DEBUG);
+			return "Exception when sending assistRequestInstructions: " + ex.toString();
+		}
+	}
+
+	@Override
+	public String performApplyChargingReport(String msg) {
+		if (!isStarted)
+			return "The tester is not started";
+
+		CAPDialogCircuitSwitchedCall curDialog = currentDialog;
+		if (curDialog == null)
+			return "The current dialog does not exist. Start it previousely or wait of starting by a peer";
+
+		CAPProvider capProvider = this.capMan.getCAPStack().getCAPProvider();
+
+		try {
+			ReceivingSideID partyToCharge = capProvider.getCAPParameterFactory().createReceivingSideID(LegType.leg1);
+			TimeIfTariffSwitch timeIfNoTariffSwitch = capProvider.getCAPParameterFactory().createTimeIfTariffSwitch(200, null);
+			TimeInformation timeInformation = capProvider.getCAPParameterFactory().createTimeInformation(timeIfNoTariffSwitch);
+			TimeDurationChargingResult timeDurationChargingResult = capProvider.getCAPParameterFactory().createTimeDurationChargingResult(partyToCharge,
+					timeInformation, true, false, null, null);
+			curDialog.addApplyChargingReportRequest(timeDurationChargingResult);
+
+			curDialog.send();
+
+			currentRequestDef += "Sent applyChargingReport;";
+			this.countApplyChargingReport++;
+			String uData = "";
+			this.testerHost.sendNotif(SOURCE_NAME, "Sent: applyChargingReport", uData, Level.DEBUG);
+
+			return "applyChargingReport has been sent";
+		} catch (CAPException ex) {
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when sending applyChargingReport", ex.toString(), Level.DEBUG);
+			return "Exception when sending applyChargingReport: " + ex.toString();
+		}
+	}
+
+	@Override
+	public String performEventReportBCSM(String msg) {
+		if (!isStarted)
+			return "The tester is not started";
+
+		CAPDialogCircuitSwitchedCall curDialog = currentDialog;
+		if (curDialog == null)
+			return "The current dialog does not exist. Start it previousely or wait of starting by a peer";
+
+		CAPProvider capProvider = this.capMan.getCAPStack().getCAPProvider();
+
+		try {
+			curDialog.addEventReportBCSMRequest(EventTypeBCSM.oAnswer, null, null, null, null);
+
+			curDialog.send();
+
+			currentRequestDef += "Sent eventReportBCSM;";
+			this.countEventReportBCSM++;
+			String uData = "";
+			this.testerHost.sendNotif(SOURCE_NAME, "Sent: eventReportBCSM", uData, Level.DEBUG);
+
+			return "eventReportBCSM has been sent";
+		} catch (CAPException ex) {
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when sending eventReportBCSM", ex.toString(), Level.DEBUG);
+			return "Exception when sending eventReportBCSM: " + ex.toString();
+		}
 	}
 
 

@@ -333,7 +333,7 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
 	private void openTest() {
 		// Starting tests
 		saveData();
-
+		
 		TestingForm dlg = null;
 		switch (((Instance_TestTask) cbTestTask.getSelectedItem()).intValue()) {
 		case Instance_TestTask.VAL_USSD_TEST_CLIENT: {
@@ -385,13 +385,12 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
 		testingForm = dlg;
 		dlg.setData(this, host);
 		dlg.setVisible(true);
-//		testingForm = null;
 	}
 
 	public void testingFormClose() {
 		testingForm = null;
 		this.enableButtons(true);
-		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);
 	}
 
 	private void enableButtons(boolean enabled) {

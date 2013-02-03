@@ -25,7 +25,6 @@ package org.mobicents.protocols.ss7.tools.simulatorgui.tests.cap;
 import javax.management.Notification;
 import javax.swing.JFrame;
 
-import org.mobicents.protocols.ss7.tools.simulator.tests.cap.TestCapScfManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.cap.TestCapSsfManMBean;
 import org.mobicents.protocols.ss7.tools.simulatorgui.TestingForm;
 import javax.swing.JPanel;
@@ -37,6 +36,8 @@ import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+import java.awt.FlowLayout;
 
 /**
  * 
@@ -48,17 +49,20 @@ public class TestCapSsfForm extends TestingForm {
 	private static final long serialVersionUID = 841129095300363570L;
 
 	private TestCapSsfManMBean capSsf;
-	private JLabel lbResult;
 	private JButton btCloseDialog;
 	private JButton btInitialDp;
 	private JButton btAssistRequestInstructions;
 	private JLabel lbState;
+	private JButton btApplyChargingReport;
+	private JButton btEventReportBCSM;
+	private JPanel panel_1;
+	private JLabel lbResult;
 
 	public TestCapSsfForm(JFrame owner) {
 		super(owner);
 		
 		JPanel panel = new JPanel();
-		panel_c.add(panel, BorderLayout.CENTER);
+		panel_c.add(panel, BorderLayout.NORTH);
 		GridBagLayout gbl_panel = new GridBagLayout();
 		gbl_panel.columnWidths = new int[]{0, 0, 0, 0, 0};
 		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
@@ -90,28 +94,66 @@ public class TestCapSsfForm extends TestingForm {
 		gbc_btInitialDp.gridy = 0;
 		panel.add(btInitialDp, gbc_btInitialDp);
 		
-		btAssistRequestInstructions = new JButton("assistRequestInstructions");
+		btAssistRequestInstructions = new JButton("AssistRequestInstructions");
+		btAssistRequestInstructions.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				sendAssistRequestInstructions();
+			}
+		});
 		GridBagConstraints gbc_btAssistRequestInstructions = new GridBagConstraints();
 		gbc_btAssistRequestInstructions.insets = new Insets(0, 0, 5, 0);
 		gbc_btAssistRequestInstructions.gridx = 3;
 		gbc_btAssistRequestInstructions.gridy = 0;
 		panel.add(btAssistRequestInstructions, gbc_btAssistRequestInstructions);
 		
-		lbResult = new JLabel("-");
-		GridBagConstraints gbc_lbResult = new GridBagConstraints();
-		gbc_lbResult.insets = new Insets(0, 0, 5, 0);
-		gbc_lbResult.gridwidth = 3;
-		gbc_lbResult.gridx = 1;
-		gbc_lbResult.gridy = 5;
-		panel.add(lbResult, gbc_lbResult);
+		btApplyChargingReport = new JButton("ApplyChargingReport");
+		btApplyChargingReport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				sendApplyChargingReport();
+			}
+		});
+		GridBagConstraints gbc_btApplyChargingReport = new GridBagConstraints();
+		gbc_btApplyChargingReport.insets = new Insets(0, 0, 5, 5);
+		gbc_btApplyChargingReport.gridx = 1;
+		gbc_btApplyChargingReport.gridy = 1;
+		panel.add(btApplyChargingReport, gbc_btApplyChargingReport);
+		
+		btEventReportBCSM = new JButton("EventReportBCSM");
+		btEventReportBCSM.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				sendEventReportBCSM();
+			}
+		});
+		GridBagConstraints gbc_btEventReportBCSM = new GridBagConstraints();
+		gbc_btEventReportBCSM.insets = new Insets(0, 0, 5, 5);
+		gbc_btEventReportBCSM.gridx = 2;
+		gbc_btEventReportBCSM.gridy = 1;
+		panel.add(btEventReportBCSM, gbc_btEventReportBCSM);
 		
 		lbState = new JLabel("-");
 		GridBagConstraints gbc_lbState = new GridBagConstraints();
 		gbc_lbState.gridwidth = 3;
-		gbc_lbState.insets = new Insets(0, 0, 0, 5);
 		gbc_lbState.gridx = 1;
 		gbc_lbState.gridy = 6;
 		panel.add(lbState, gbc_lbState);
+		
+		panel_1 = new JPanel();
+		panel_c.add(panel_1, BorderLayout.SOUTH);
+		GridBagLayout gbl_panel_1 = new GridBagLayout();
+		gbl_panel_1.columnWidths = new int[]{376, 4, 0};
+		gbl_panel_1.rowHeights = new int[]{0, 14, 0};
+		gbl_panel_1.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
+		gbl_panel_1.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
+		panel_1.setLayout(gbl_panel_1);
+		
+		lbResult = new JLabel("-");
+		lbResult.setHorizontalAlignment(SwingConstants.LEFT);
+		GridBagConstraints gbc_lbResult = new GridBagConstraints();
+		gbc_lbResult.fill = GridBagConstraints.BOTH;
+		gbc_lbResult.insets = new Insets(0, 0, 5, 5);
+		gbc_lbResult.gridx = 0;
+		gbc_lbResult.gridy = 0;
+		panel_1.add(lbResult, gbc_lbResult);
 		
 		this.setDialogClosed();
 	}
@@ -132,11 +174,30 @@ public class TestCapSsfForm extends TestingForm {
 		this.lbResult.setText(res);
 	}
 
+	private void sendAssistRequestInstructions() {
+		String msg = "";
+		String res = this.capSsf.performAssistRequestInstructions(msg);
+		this.lbResult.setText(res);
+	}
+
+	private void sendApplyChargingReport() {
+		String msg = "";
+		String res = this.capSsf.performApplyChargingReport(msg);
+		this.lbResult.setText(res);
+	}
+
+	private void sendEventReportBCSM() {
+		String msg = "";
+		String res = this.capSsf.performEventReportBCSM(msg);
+		this.lbResult.setText(res);
+	}
+
 	private void setDialogOpenedClosed(boolean opened) {
 		this.btInitialDp.setEnabled(!opened);
 		this.btAssistRequestInstructions.setEnabled(!opened);
 
-//		this.btCloseDialog.setEnabled(opened);
+		this.btApplyChargingReport.setEnabled(opened);
+		this.btEventReportBCSM.setEnabled(opened);
 	}
 
 	private void setDialogOpened() {
