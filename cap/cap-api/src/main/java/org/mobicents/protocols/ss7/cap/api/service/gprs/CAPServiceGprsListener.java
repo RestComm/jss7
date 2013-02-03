@@ -30,5 +30,37 @@ import org.mobicents.protocols.ss7.cap.api.CAPServiceListener;
  * 
  */
 public interface CAPServiceGprsListener extends CAPServiceListener {
+	
+	public void onInitialDpGprsRequest(InitialDpGprsRequest ind);
+	
+	public void onRequestReportGPRSEventRequest(RequestReportGPRSEventRequest ind);
+	
+	public void onApplyChargingGPRSRequest(ApplyChargingGPRSRequest ind);
+	
+	public void onEntityReleasedGPRSRequest(EntityReleasedGPRSRequest ind);
+	
+	public void onEntityReleasedGPRSResponse(EntityReleasedGPRSResponse ind);
+	
+	public void onConnectGPRSRequest(ConnectGPRSRequest ind);
+	
+	public void onContinueGPRSRequest(ContinueGPRSRequest ind);
+	
+	public void onReleaseGPRSRequest(ReleaseGPRSRequest ind);
+	
+	public void onResetTimerGPRSRequest(ResetTimerGPRSRequest ind);
+	
+	public void onFurnishChargingInformationGPRSRequest(FurnishChargingInformationGPRSRequest ind);
+	
+	public void onCancelGPRSRequest(CancelGPRSRequest ind);
+	
+	public void onSendChargingInformationGPRSRequest(SendChargingInformationGPRSRequest ind);
+	
+	public void onApplyChargingReportGPRSRequest(ApplyChargingReportGPRSRequest ind);
+	
+	public void onApplyChargingReportGPRSResponse(ApplyChargingReportGPRSResponse ind);
+	
+	public void onEventReportGPRSRequest(EventReportGPRSRequest ind);
+	
+	public void onEventReportGPRSResponse(EventReportGPRSResponse ind);
 
 }

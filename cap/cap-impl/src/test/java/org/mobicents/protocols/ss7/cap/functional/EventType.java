@@ -22,6 +22,9 @@
 
 package org.mobicents.protocols.ss7.cap.functional;
 
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ApplyChargingReportGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.EventReportGPRSResponse;
+
 /**
  * 
  * @author amit bhayani
@@ -40,5 +43,11 @@ public enum EventType {
 	ConnectRequest, ContinueRequest, EventReportBCSMRequest, RequestReportBCSMEventRequest, ReleaseCallRequest, ActivityTestRequest, ActivityTestResponse,
 	AssistRequestInstructionsRequest, EstablishTemporaryConnectionRequest, DisconnectForwardConnectionRequest, ConnectToResourceRequest,
 	ResetTimerRequest, FurnishChargingInformationRequest, SendChargingInformationRequest, SpecializedResourceReportRequest, 
-	PlayAnnouncementRequest, PromptAndCollectUserInformationRequest, PromptAndCollectUserInformationResponse, CancelRequest
+	PlayAnnouncementRequest, PromptAndCollectUserInformationRequest, PromptAndCollectUserInformationResponse, CancelRequest,
+
+	// gprs EventType
+	InitialDpGprsRequest,RequestReportGPRSEventRequest,ApplyChargingGPRSRequest,EntityReleasedGPRSRequest,ConnectGPRSRequest,
+	ContinueGPRSRequest,ReleaseGPRSRequest,ResetTimerGPRSRequest,FurnishChargingInformationGPRSRequest,CancelGPRSRequest,
+	SendChargingInformationGPRSRequest,applyChargingReportGPRS,EventReportGPRSRequest,EventReportGPRSResponse,
+	ApplyChargingReportGPRSResponse,ApplyChargingReportGPRSRequest,	EntityReleasedGPRSResponse
 }

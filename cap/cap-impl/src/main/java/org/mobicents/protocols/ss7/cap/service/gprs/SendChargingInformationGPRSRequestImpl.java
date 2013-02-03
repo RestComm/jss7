@@ -32,9 +32,9 @@ import org.mobicents.protocols.ss7.cap.api.CAPMessageType;
 import org.mobicents.protocols.ss7.cap.api.CAPOperationCode;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.cap.api.service.gprs.FurnishChargingInformationGPRSRequest;
-import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.CAMELFCIGPRSBillingChargingCharacteristics;
-import org.mobicents.protocols.ss7.cap.service.gprs.primitive.CAMELFCIGPRSBillingChargingCharacteristicsImpl;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.SendChargingInformationGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.CAMELSCIGPRSBillingChargingCharacteristics;
+import org.mobicents.protocols.ss7.cap.service.gprs.primitive.CAMELSCIGPRSBillingChargingCharacteristicsImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
@@ -42,36 +42,37 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
  * @author Lasith Waruna Perera
  * 
  */
-public class FurnishChargingInformationGPRSRequestImpl  extends GprsMessageImpl  implements FurnishChargingInformationGPRSRequest {
+public class SendChargingInformationGPRSRequestImpl extends GprsMessageImpl implements SendChargingInformationGPRSRequest{
 	
-	public static final String _PrimitiveName = "FurnishChargingInformationGPRSRequest";
+	public static final int _ID_sciGPRSBillingChargingCharacteristics = 0;
+
+	public static final String _PrimitiveName = "SendChargingInformationGPRSRequest";
 	
-	public static final int _ID_CAMELFCIGPRSBillingChargingCharacteristics = 0;
+	private CAMELSCIGPRSBillingChargingCharacteristics sciGPRSBillingChargingCharacteristics;
 	
 	
-	private CAMELFCIGPRSBillingChargingCharacteristics fciGPRSBillingChargingCharacteristics;
-	
-	public FurnishChargingInformationGPRSRequestImpl() {
+	public SendChargingInformationGPRSRequestImpl() {
 	}
 	
-	public FurnishChargingInformationGPRSRequestImpl(CAMELFCIGPRSBillingChargingCharacteristics fciGPRSBillingChargingCharacteristics) {
+	public SendChargingInformationGPRSRequestImpl(
+			CAMELSCIGPRSBillingChargingCharacteristics sciGPRSBillingChargingCharacteristics) {
 		super();
-		this.fciGPRSBillingChargingCharacteristics = fciGPRSBillingChargingCharacteristics;
-	}
-	
-	public CAMELFCIGPRSBillingChargingCharacteristics getFCIGPRSBillingChargingCharacteristics(){
-		return this.fciGPRSBillingChargingCharacteristics ;
+		this.sciGPRSBillingChargingCharacteristics = sciGPRSBillingChargingCharacteristics;
 	}
 
+	@Override
+	public CAMELSCIGPRSBillingChargingCharacteristics getSCIGPRSBillingChargingCharacteristics() {
+		return this.sciGPRSBillingChargingCharacteristics;
+	}
 	
 	@Override
 	public CAPMessageType getMessageType() {
-		return CAPMessageType.furnishChargingInformationGPRS_Request;
+		return CAPMessageType.sendChargingInformationGPRS_Request;
 	}
 
 	@Override
 	public int getOperationCode() {
-		return CAPOperationCode.furnishChargingInformationGPRS;
+		return CAPOperationCode.sendChargingInformationGPRS;
 	}
 
 	@Override
@@ -123,25 +124,23 @@ public class FurnishChargingInformationGPRSRequestImpl  extends GprsMessageImpl 
 					CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
-
+	
 	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException, MAPParsingComponentException {
-
-		this.fciGPRSBillingChargingCharacteristics = null;
+		this.sciGPRSBillingChargingCharacteristics = null;
 		
 		byte[] buf = ansIS.readOctetStringData(length);
 		AsnInputStream aiss = new AsnInputStream(buf);
 
 		int tag = aiss.readTag();
 
-		if (tag != _ID_CAMELFCIGPRSBillingChargingCharacteristics || aiss.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || aiss.isTagPrimitive())
+		if (tag != _ID_sciGPRSBillingChargingCharacteristics || aiss.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || aiss.isTagPrimitive())
 			throw new CAPParsingComponentException("Error when decoding " + _PrimitiveName
-					+ ": bad tag or tagClass or is primitive of the choice fciGPRSBillingChargingCharacteristics", CAPParsingComponentExceptionReason.MistypedParameter);
+					+ ": bad tag or tagClass or is primitive of the choice sciGPRSBillingChargingCharacteristics", CAPParsingComponentExceptionReason.MistypedParameter);
 
-		this.fciGPRSBillingChargingCharacteristics = new CAMELFCIGPRSBillingChargingCharacteristicsImpl();
-		((CAMELFCIGPRSBillingChargingCharacteristicsImpl) this.fciGPRSBillingChargingCharacteristics).decodeAll(aiss);
-		
+		this.sciGPRSBillingChargingCharacteristics = new CAMELSCIGPRSBillingChargingCharacteristicsImpl();
+		((CAMELSCIGPRSBillingChargingCharacteristicsImpl) this.sciGPRSBillingChargingCharacteristics).decodeAll(aiss);	
 	}
-	
+
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
 		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
@@ -162,33 +161,34 @@ public class FurnishChargingInformationGPRSRequestImpl  extends GprsMessageImpl 
 
 	@Override
 	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		
-		if (this.fciGPRSBillingChargingCharacteristics == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": fciGPRSBillingChargingCharacteristics must not be null");
+		if (this.sciGPRSBillingChargingCharacteristics == null)
+			throw new CAPException("Error while encoding " + _PrimitiveName + ": sciGPRSBillingChargingCharacteristics must not be null");
 		
 		try {
-			asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_CAMELFCIGPRSBillingChargingCharacteristics);
+			asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_sciGPRSBillingChargingCharacteristics);
 			int pos = asnOs.StartContentDefiniteLength();
-			((CAMELFCIGPRSBillingChargingCharacteristicsImpl) this.fciGPRSBillingChargingCharacteristics).encodeData(asnOs);
+			((CAMELSCIGPRSBillingChargingCharacteristicsImpl) this.sciGPRSBillingChargingCharacteristics).encodeData(asnOs);
 			asnOs.FinalizeContent(pos);
 		} catch (AsnException e) {
 			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
-		
 	}
+	
 	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(_PrimitiveName + " [");
 
-		if (this.fciGPRSBillingChargingCharacteristics != null) {
-			sb.append("fciGPRSBillingChargingCharacteristics=");
-			sb.append(this.fciGPRSBillingChargingCharacteristics.toString());
+		if (this.sciGPRSBillingChargingCharacteristics != null) {
+			sb.append("sciGPRSBillingChargingCharacteristics=");
+			sb.append(this.sciGPRSBillingChargingCharacteristics.toString());
+			sb.append(", ");
 		}
-
+		
 		sb.append("]");
 
 		return sb.toString();
 	}
+
 }

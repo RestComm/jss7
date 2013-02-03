@@ -41,6 +41,11 @@ import org.mobicents.protocols.ss7.cap.api.EsiBcsm.TChangeOfPositionSpecificInfo
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.TDisconnectSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.TMidCallSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.TNoAnswerSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiGprs.DetachSpecificInformation;
+import org.mobicents.protocols.ss7.cap.api.EsiGprs.DisconnectSpecificInformation;
+import org.mobicents.protocols.ss7.cap.api.EsiGprs.PDPContextEstablishmentAcknowledgementSpecificInformation;
+import org.mobicents.protocols.ss7.cap.api.EsiGprs.PDPContextEstablishmentSpecificInformation;
+import org.mobicents.protocols.ss7.cap.api.EsiGprs.PdpContextchangeOfPositionSpecificInformation;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.isup.BearerCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
@@ -109,6 +114,39 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.VariablePartDate;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.VariablePartPrice;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.VariablePartTime;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.AOCGPRS;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.AccessPointName;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.CAMELFCIGPRSBillingChargingCharacteristics;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.CAMELSCIGPRSBillingChargingCharacteristics;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.ChargingCharacteristics;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.ChargingResult;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.ChargingRollOver;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.ElapsedTime;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.ElapsedTimeRollOver;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.EndUserAddress;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FreeFormatData;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSCause;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSEvent;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSEventSpecificInformation;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSEventType;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSQoS;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSQoSExtension;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.InitiatingEntity;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.PDPAddress;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.PDPID;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.PDPInitiationType;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.PDPTypeNumber;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.PDPTypeNumberValue;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.PDPTypeOrganization;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.PDPTypeOrganizationValue;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.QualityOfService;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.ROTimeGPRSIfTariffSwitch;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.ROVolumeIfTariffSwitch;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.SGSNCapabilities;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.TimeGPRSIfTariffSwitch;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.TransferredVolume;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.TransferredVolumeRollOver;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.VolumeIfTariffSwitch;
 import org.mobicents.protocols.ss7.inap.api.isup.HighLayerCompatibilityInap;
 import org.mobicents.protocols.ss7.inap.api.primitives.BothwayThroughConnectionInd;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
@@ -124,13 +162,19 @@ import org.mobicents.protocols.ss7.isup.message.parameter.RedirectingNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformation;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
+import org.mobicents.protocols.ss7.map.api.primitives.GSNAddress;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.UUData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GPRSChargingID;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformationGPRS;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.MSClassmark2;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.Ext2QoSSubscribed;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtQoSSubscribed;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OfferedCamel4Functionalities;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.QoSSubscribed;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
 import org.mobicents.protocols.ss7.tcap.asn.comp.GeneralProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.InvokeProblemType;
@@ -303,6 +347,83 @@ public interface CAPParameterFactory {
 	public Problem createProblemInvoke(InvokeProblemType prob);
 	public Problem createProblemResult(ReturnResultProblemType prob);
 	public Problem createProblemError(ReturnErrorProblemType prob);
+	
+
+	public AccessPointName createAccessPointName(byte[] data);
+	public AOCGPRS createAOCGPRS(CAI_GSM0224 aocInitial,AOCSubsequent aocSubsequent);
+	public CAMELFCIGPRSBillingChargingCharacteristics createCAMELFCIGPRSBillingChargingCharacteristics(org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FCIBCCCAMELsequence1 fcIBCCCAMELsequence1);
+	public CAMELSCIGPRSBillingChargingCharacteristics createCAMELSCIGPRSBillingChargingCharacteristics(AOCGPRS aocGPRS, PDPID pdpID);
+	public ChargingCharacteristics createChargingCharacteristics(long maxTransferredVolume) ;
+	public ChargingCharacteristics createChargingCharacteristics(int maxElapsedTime) ;
+	public ChargingResult createChargingResult(TransferredVolume transferredVolume);
+	public ChargingResult createChargingResult(ElapsedTime elapsedTime);
+	public ChargingRollOver createChargingRollOver(ElapsedTimeRollOver elapsedTimeRollOver);
+	public ChargingRollOver createChargingRollOver(TransferredVolumeRollOver transferredVolumeRollOver);	
+	public ElapsedTime createElapsedTime(Integer timeGPRSIfNoTariffSwitch);
+	public ElapsedTime createElapsedTime(TimeGPRSIfTariffSwitch timeGPRSIfTariffSwitch);	
+	public ElapsedTimeRollOver createElapsedTimeRollOver(Integer roTimeGPRSIfNoTariffSwitch);
+	public ElapsedTimeRollOver createElapsedTimeRollOver(ROTimeGPRSIfTariffSwitch roTimeGPRSIfTariffSwitch);
+	public EndUserAddress createEndUserAddress(PDPTypeOrganization pdpTypeOrganization,
+			PDPTypeNumber pdpTypeNumber, PDPAddress pdpAddress);	
+	public org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FCIBCCCAMELsequence1 createFCIBCCCAMELsequence1(FreeFormatData freeFormatData, PDPID pdpID,
+			AppendFreeFormatData appendFreeFormatData);
+	public FreeFormatData createFreeFormatData(byte[] data);
+	public GPRSCause createGPRSCause(int data);
+	public GPRSEvent createGPRSEvent(GPRSEventType gprsEventType,
+			MonitorMode monitorMode);
+	public GPRSEventSpecificInformation createGPRSEventSpecificInformation(LocationInformationGPRS locationInformationGPRS);
+	public GPRSEventSpecificInformation createGPRSEventSpecificInformation(PdpContextchangeOfPositionSpecificInformation pdpContextchangeOfPositionSpecificInformation);
+	public GPRSEventSpecificInformation createGPRSEventSpecificInformation(DetachSpecificInformation detachSpecificInformation);
+	public GPRSEventSpecificInformation createGPRSEventSpecificInformation(DisconnectSpecificInformation disconnectSpecificInformation);
+	public GPRSEventSpecificInformation createGPRSEventSpecificInformation(PDPContextEstablishmentSpecificInformation pdpContextEstablishmentSpecificInformation);
+	public GPRSEventSpecificInformation createGPRSEventSpecificInformation(PDPContextEstablishmentAcknowledgementSpecificInformation pdpContextEstablishmentAcknowledgementSpecificInformation);
+	public GPRSQoSExtension createGPRSQoSExtension(Ext2QoSSubscribed supplementToLongQoSFormat);	
+	public GPRSQoS createGPRSQoS( QoSSubscribed shortQoSFormat);
+	public GPRSQoS createGPRSQoS(ExtQoSSubscribed longQoSFormat);
+	public PDPAddress createPDPAddress(byte[] data);
+	public PDPID createPDPID(int data);
+	public PDPTypeNumber createPDPTypeNumber(int data);
+	public PDPTypeNumber createPDPTypeNumber(PDPTypeNumberValue value);	
+	public PDPTypeOrganization createPDPTypeOrganization( int data);
+	public PDPTypeOrganization createPDPTypeOrganization(PDPTypeOrganizationValue value);
+	public QualityOfService createQualityOfService(GPRSQoS requestedQoS,
+			GPRSQoS subscribedQoS, GPRSQoS negotiatedQoS,
+			GPRSQoSExtension requestedQoSExtension,
+			GPRSQoSExtension subscribedQoSExtension,
+			GPRSQoSExtension negotiatedQoSExtension);
+	public ROTimeGPRSIfTariffSwitch createROTimeGPRSIfTariffSwitch(Integer roTimeGPRSSinceLastTariffSwitch,
+			Integer roTimeGPRSTariffSwitchInterval);
+	public ROVolumeIfTariffSwitch createROVolumeIfTariffSwitch(Integer roVolumeSinceLastTariffSwitch,Integer roVolumeTariffSwitchInterval);
+	public SGSNCapabilities createSGSNCapabilities(int data);
+	public TimeGPRSIfTariffSwitch createTimeGPRSIfTariffSwitch(int timeGPRSSinceLastTariffSwitch,
+			Integer timeGPRSTariffSwitchInterval);
+	public TransferredVolume createTransferredVolume(Long volumeIfNoTariffSwitch);
+	public TransferredVolume createTransferredVolume(VolumeIfTariffSwitch volumeIfTariffSwitch);
+	public TransferredVolumeRollOver createTransferredVolumeRollOver(Integer roVolumeIfNoTariffSwitch);
+	public TransferredVolumeRollOver createTransferredVolumeRollOver(ROVolumeIfTariffSwitch roVolumeIfTariffSwitch);
+	public VolumeIfTariffSwitch createVolumeIfTariffSwitch(long volumeSinceLastTariffSwitch, Long volumeTariffSwitchInterval);
+
+
+	public DetachSpecificInformation createDetachSpecificInformation(InitiatingEntity initiatingEntity, boolean routeingAreaUpdate);
+	public DisconnectSpecificInformation createDisconnectSpecificInformation(InitiatingEntity initiatingEntity, boolean routeingAreaUpdate);	
+	public PdpContextchangeOfPositionSpecificInformation createPdpContextchangeOfPositionSpecificInformation(AccessPointName accessPointName,
+			GPRSChargingID chargingID,
+			LocationInformationGPRS locationInformationGPRS,
+			EndUserAddress endUserAddress, QualityOfService qualityOfService,
+			TimeAndTimezone timeAndTimezone, GSNAddress gsnAddress);
+	public PDPContextEstablishmentAcknowledgementSpecificInformation createPDPContextEstablishmentAcknowledgementSpecificInformation(AccessPointName accessPointName,
+			GPRSChargingID chargingID,
+			LocationInformationGPRS locationInformationGPRS,
+			EndUserAddress endUserAddress, QualityOfService qualityOfService,
+			TimeAndTimezone timeAndTimezone, GSNAddress gsnAddress);
+	public PDPContextEstablishmentSpecificInformation createPDPContextEstablishmentSpecificInformation(AccessPointName accessPointName,
+			EndUserAddress endUserAddress, QualityOfService qualityOfService,
+			LocationInformationGPRS locationInformationGPRS,
+			TimeAndTimezone timeAndTimezone,
+			PDPInitiationType pdpInitiationType, boolean secondaryPDPContext);
+	
+	
+	
 
 }
 

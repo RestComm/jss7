@@ -1,3 +1,24 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package org.mobicents.protocols.ss7.cap.service.gprs;
 
 import static org.testng.Assert.assertEquals;
@@ -17,10 +38,15 @@ import org.mobicents.protocols.ss7.cap.service.gprs.primitive.FreeFormatDataImpl
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.PDPIDImpl;
 import org.testng.annotations.Test;
 
+/**
+ * 
+ * @author Lasith Waruna Perera
+ * 
+ */
 public class FurnishChargingInformationGPRSRequestTest {
 	
 	public byte[] getData() {
-		return new byte[] {48, 20, 48, 18, -96, 16, -128, 8, 48, 6, -128, 1, 5, -127, 1, 2, -127, 1, 2, -126, 1, 1};
+		return new byte[] {4, 20, -96, 18, -96, 16, -128, 8, 48, 6, -128, 1, 5, -127, 1, 2, -127, 1, 2, -126, 1, 1};
 	};
 	
 	public byte[] getFreeFormatData() {
@@ -35,7 +61,7 @@ public class FurnishChargingInformationGPRSRequestTest {
 		FurnishChargingInformationGPRSRequestImpl prim = new FurnishChargingInformationGPRSRequestImpl();
 		prim.decodeAll(asn);
 		
-		assertEquals(tag, Tag.SEQUENCE);
+		assertEquals(tag, Tag.STRING_OCTET);
 		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
 
 		assertEquals(prim.getFCIGPRSBillingChargingCharacteristics().getFCIBCCCAMELsequence1().getFreeFormatData().getData(),this.getFreeFormatData());

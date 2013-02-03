@@ -100,6 +100,7 @@ public class Server extends EventTestHarness  {
 
 		this.capProvider.addCAPDialogListener(this);
 		this.capProvider.getCAPServiceCircuitSwitchedCall().addCAPServiceListener(this);
+		this.capProvider.getCAPServiceGprs().addCAPServiceListener(this);
 
 		this.capProvider.getCAPServiceCircuitSwitchedCall().acivate();
 		this.capProvider.getCAPServiceGprs().acivate();

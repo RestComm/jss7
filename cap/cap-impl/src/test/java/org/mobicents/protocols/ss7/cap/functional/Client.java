@@ -43,6 +43,7 @@ import org.mobicents.protocols.ss7.cap.api.primitives.BCSMEvent;
 import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
 import org.mobicents.protocols.ss7.cap.api.primitives.MonitorMode;
 import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
+import org.mobicents.protocols.ss7.cap.api.primitives.TimeAndTimezone;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCall;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestReportBCSMEventRequest;
@@ -54,9 +55,13 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.RequestedInformationType;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.Tone;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.CAPDialogGprs;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.InitialDpGprsRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSEventType;
 import org.mobicents.protocols.ss7.cap.api.service.sms.CAPDialogSms;
 import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
+import org.mobicents.protocols.ss7.cap.primitives.TimeAndTimezoneImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.InitialDPRequestImpl;
+import org.mobicents.protocols.ss7.cap.service.gprs.InitialDpGprsRequestImpl;
 import org.mobicents.protocols.ss7.inap.api.INAPParameterFactory;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
@@ -68,6 +73,12 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
+import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
@@ -124,6 +135,7 @@ public class Client extends EventTestHarness  {
 		this.capProvider.addCAPDialogListener(this);
 
 		this.capProvider.getCAPServiceCircuitSwitchedCall().addCAPServiceListener(this);
+		this.capProvider.getCAPServiceGprs().addCAPServiceListener(this);
 
 		this.capProvider.getCAPServiceCircuitSwitchedCall().acivate();
 		this.capProvider.getCAPServiceGprs().acivate();
@@ -579,6 +591,69 @@ public class Client extends EventTestHarness  {
 //
 ////		clientCscDialog.send();
 //	}
+	
+	public void sendInitialDpGprs(CAPApplicationContext appCnt) throws CAPException {
+
+		clientGprsDialog = this.capProvider.getCAPServiceGprs().createNewDialog(appCnt, this.thisAddress, this.remoteAddress);
+
+		InitialDpGprsRequest initialDp = getTestInitialDpGprsRequest();
+		clientGprsDialog.addInitialDpGprsRequest(60000,initialDp.getServiceKey(), initialDp.getGPRSEventType(), initialDp.getMsisdn(), initialDp.getImsi(),
+				initialDp.getTimeAndTimezone(), initialDp.getGPRSMSClass(), initialDp.getEndUserAddress(),initialDp.getQualityOfService(), initialDp.getAccessPointName(),
+				initialDp.getRouteingAreaIdentity(), initialDp.getChargingID(), initialDp.getSGSNCapabilities(), initialDp.getLocationInformationGPRS(),
+				initialDp.getPDPInitiationType(), initialDp.getExtensions(), initialDp.getGSNAddress(), initialDp.getSecondaryPDPContext(), initialDp.getImei());
+
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.InitialDpGprsRequest, null, sequence++));
+		clientGprsDialog.send();
+	}
+	
+	
+	public InitialDpGprsRequest getTestInitialDpGprsRequest() {
+		int serviceKey = 2;
+		GPRSEventType gprsEventType =  GPRSEventType.attachChangeOfPosition;
+		ISDNAddressString msisdn = new ISDNAddressStringImpl(AddressNature.international_number, 
+				NumberingPlan.ISDN, "22234");
+		IMSI imsi = new IMSIImpl("1111122222");
+		TimeAndTimezone timeAndTimezone = new TimeAndTimezoneImpl(2005,11,24,13,10,56,0);
+
+		InitialDpGprsRequestImpl res = new InitialDpGprsRequestImpl(serviceKey, gprsEventType, msisdn, imsi, timeAndTimezone,
+				null, null, null, null, null, null, null, null, null, null, null, false, null);
+		
+		return res;	
+	}
+	
+	
+	public static boolean checkTestInitialDpGprsRequest(InitialDpGprsRequest ind) {
+		if (ind.getServiceKey() != 2)
+			return false;
+		if (ind.getGPRSEventType() != GPRSEventType.attachChangeOfPosition)
+			return false;
+		if (ind.getMsisdn() == null)
+			return false;
+		if (!ind.getMsisdn().getAddress().equals("22234"))
+			return false;
+		if (ind.getMsisdn().getAddressNature() !=  AddressNature.international_number)
+			return false;
+		if (ind.getMsisdn().getNumberingPlan() !=  NumberingPlan.ISDN)
+			return false;
+		if (!ind.getImsi().getData().equals("1111122222"))
+			return false;
+		if (ind.getTimeAndTimezone().getYear() != 2005)
+			return false;
+		if (ind.getTimeAndTimezone().getMonth() != 11)
+			return false;
+		if (ind.getTimeAndTimezone().getDay() != 24)
+			return false;
+		if (ind.getTimeAndTimezone().getHour() != 13)
+			return false;
+		if (ind.getTimeAndTimezone().getMinute() != 10)
+			return false;
+		if (ind.getTimeAndTimezone().getSecond() != 56)
+			return false;
+		if (ind.getTimeAndTimezone().getTimeZone() != 0)
+			return false;
+		return true;
+	}	
+
 
 	public void debug(String message) {
 		this.logger.debug(message);

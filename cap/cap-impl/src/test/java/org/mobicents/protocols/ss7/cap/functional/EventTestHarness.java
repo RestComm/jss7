@@ -60,6 +60,23 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestRe
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ResetTimerRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SendChargingInformationRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ApplyChargingGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ApplyChargingReportGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ApplyChargingReportGPRSResponse;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.CAPServiceGprsListener;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.CancelGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ConnectGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ContinueGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.EntityReleasedGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.EntityReleasedGPRSResponse;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.EventReportGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.EventReportGPRSResponse;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.FurnishChargingInformationGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.InitialDpGprsRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ReleaseGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.RequestReportGPRSEventRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ResetTimerGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.SendChargingInformationGPRSRequest;
 import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 
@@ -69,7 +86,8 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
  * @author servey vetyutnev
  *
  */
-public class EventTestHarness implements CAPDialogListener, CAPServiceCircuitSwitchedCallListener {
+public class EventTestHarness implements CAPDialogListener, CAPServiceCircuitSwitchedCallListener,
+														CAPServiceGprsListener{
 
 	private Logger logger = null;
 
@@ -86,6 +104,10 @@ public class EventTestHarness implements CAPDialogListener, CAPServiceCircuitSwi
 	}
 
 	public void compareEvents(List<TestEvent> expectedEvents) {
+		
+		for(TestEvent t: observerdEvents){
+			System.out.println(" = == = = : " + t);
+		}
 
 		if (expectedEvents.size() != this.observerdEvents.size()) {
 			fail("Size of received events: " + this.observerdEvents.size() + ", does not equal expected events: " + expectedEvents.size() + "\n"
@@ -373,5 +395,123 @@ public class EventTestHarness implements CAPDialogListener, CAPServiceCircuitSwi
 		TestEvent te = TestEvent.createReceivedEvent(EventType.CancelRequest, ind, sequence++);
 		this.observerdEvents.add(te);
 	}
+
+	@Override
+	public void onInitialDpGprsRequest(InitialDpGprsRequest ind) {
+		this.logger.debug("InitialDpGprsRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.InitialDpGprsRequest, ind, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onRequestReportGPRSEventRequest(
+			RequestReportGPRSEventRequest ind) {
+		this.logger.debug("RequestReportGPRSEventRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.RequestReportGPRSEventRequest, ind, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onApplyChargingGPRSRequest(ApplyChargingGPRSRequest ind) {
+		this.logger.debug("ApplyChargingGPRSRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.ApplyChargingGPRSRequest, ind, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onEntityReleasedGPRSRequest(EntityReleasedGPRSRequest ind) {
+		this.logger.debug("EntityReleasedGPRSRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.EntityReleasedGPRSRequest, ind, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onEntityReleasedGPRSResponse(EntityReleasedGPRSResponse ind) {
+		this.logger.debug("EntityReleasedGPRSResponse");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.EntityReleasedGPRSResponse, ind, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onConnectGPRSRequest(ConnectGPRSRequest ind) {
+		this.logger.debug("ConnectGPRSRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.ConnectGPRSRequest, ind, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onContinueGPRSRequest(ContinueGPRSRequest ind) {
+		this.logger.debug("ContinueGPRSRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.ContinueGPRSRequest, ind, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onReleaseGPRSRequest(ReleaseGPRSRequest ind) {
+		this.logger.debug("ReleaseGPRSRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.ReleaseGPRSRequest, ind, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onResetTimerGPRSRequest(ResetTimerGPRSRequest ind) {
+		this.logger.debug("ResetTimerGPRSRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.ResetTimerGPRSRequest, ind, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onFurnishChargingInformationGPRSRequest(
+			FurnishChargingInformationGPRSRequest ind) {
+		this.logger.debug("FurnishChargingInformationGPRSRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.FurnishChargingInformationGPRSRequest, ind, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onCancelGPRSRequest(CancelGPRSRequest ind) {
+		this.logger.debug("CancelGPRSRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.CancelGPRSRequest, ind, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onSendChargingInformationGPRSRequest(
+			SendChargingInformationGPRSRequest ind) {
+		this.logger.debug("SendChargingInformationGPRSRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.SendChargingInformationGPRSRequest, ind, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onApplyChargingReportGPRSRequest(
+			ApplyChargingReportGPRSRequest ind) {
+		this.logger.debug("ApplyChargingReportGPRSRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.ApplyChargingReportGPRSRequest, ind, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onApplyChargingReportGPRSResponse(
+			ApplyChargingReportGPRSResponse ind) {
+		this.logger.debug("ApplyChargingReportGPRSResponse");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.ApplyChargingReportGPRSResponse, ind, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onEventReportGPRSRequest(EventReportGPRSRequest ind) {
+		this.logger.debug("EventReportGPRSRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.EventReportGPRSRequest, ind, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onEventReportGPRSResponse(EventReportGPRSResponse ind) {
+		this.logger.debug("EventReportGPRSResponse");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.EventReportGPRSResponse, ind, sequence++);
+		this.observerdEvents.add(te);
+	}
+	
 
 }

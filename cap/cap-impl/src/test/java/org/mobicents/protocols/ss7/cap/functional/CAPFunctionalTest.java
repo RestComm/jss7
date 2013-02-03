@@ -104,7 +104,10 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeInformation;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.Tone;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.CAPDialogGprs;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ContinueGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.InitialDpGprsRequest;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCallImpl;
+import org.mobicents.protocols.ss7.cap.service.gprs.primitive.PDPIDImpl;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfoMessageType;
@@ -3251,6 +3254,123 @@ public class CAPFunctionalTest extends SccpHarness {
 		return new byte[] { 106, 6, 72, 1, 1, 73, 1, 1};
 	}
 
+	
+	/**
+	 * GPRS initial test
+	 * ACN=CAP-v3-gprs-SSH-to-gsmSCF
+	 * 
+	 * TC-BEGIN + InitialDPGPRSRequest
+	 *   TC-CONTINUE + ContinueGPRSRequest
+	 *   TC-END (empty)
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testGPRSCharging() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			
+			@Override
+			public void onContinueGPRSRequest(ContinueGPRSRequest ind) {
+				super.onContinueGPRSRequest(ind);
+				assertEquals(ind.getPDPID().getId(),1);
+				ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+			}
+			
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+				CAPDialogGprs dlg = (CAPDialogGprs) capDialog;
+
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			private int dialogStep = 0;
+			
+			@Override
+			public void onInitialDpGprsRequest(InitialDpGprsRequest ind) {
+				super.onInitialDpGprsRequest(ind);
+				assertTrue(Client.checkTestInitialDpGprsRequest(ind));
+				dialogStep = 1;
+			}
+
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				CAPDialogGprs dlg = (CAPDialogGprs)capDialog;
+
+				try {
+					switch (dialogStep) {
+					case 1: // after InitialDpGPRS
+						dlg.addContinueGPRSRequest(new PDPIDImpl(1));
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.ContinueGPRSRequest, null, sequence++));
+						dlg.send();
+						dialogStep = 0;
+						dlg.close(false);
+						break;
+					}
+				} catch (CAPException e) {
+					this.error("Error while trying to close() Dialog", e);
+				}
+			}
+
+			public void onDialogTimeout(CAPDialog capDialog) {
+				super.onDialogTimeout(capDialog);
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.InitialDpGprsRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
+		clientExpectedEvents.add(te);
+		
+		te = TestEvent.createReceivedEvent(EventType.ContinueGPRSRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+		
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.InitialDpGprsRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+		
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+		
+		te = TestEvent.createSentEvent(EventType.ContinueGPRSRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+		
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		server.capProvider.getCAPServiceGprs().acivate();
+		
+		client.sendInitialDpGprs(CAPApplicationContext.CapV3_gprsSSF_gsmSCF);
+
+		waitForEnd();
+	
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+	
 
 	private void waitForEnd() {
 		try {
@@ -3272,5 +3392,6 @@ public class CAPFunctionalTest extends SccpHarness {
 			fail("Interrupted on wait!");
 		}
 	}
+
 }
 
