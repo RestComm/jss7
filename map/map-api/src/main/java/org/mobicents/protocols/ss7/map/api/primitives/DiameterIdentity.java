@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -27,6 +27,25 @@ package org.mobicents.protocols.ss7.map.api.primitives;
 DiameterIdentity ::= OCTET STRING (SIZE(9..55))
 -- content of DiameterIdentity is defined in IETF RFC 3588 [139]
 
+IETF RFC 3588:
+The DiameterIdentity format is derived from the OctetString AVP
+      Base Format.
+
+         DiameterIdentity  = FQDN
+
+      DiameterIdentity value is used to uniquely identify a Diameter
+      node for purposes of duplicate connection and routing loop
+      detection.
+
+      The contents of the string MUST be the FQDN of the Diameter node.
+      If multiple Diameter nodes run on the same host, each Diameter
+      node MUST be assigned a unique DiameterIdentity.  If a Diameter
+      node can be identified by several FQDNs, a single FQDN should be
+      picked at startup, and used as the only DiameterIdentity for that
+      node, whatever the connection it is sent on.
+
+FQDN=fully qualified domain name
+
 * 
 * @author sergey vetyutnev
 * 
@@ -34,5 +53,7 @@ DiameterIdentity ::= OCTET STRING (SIZE(9..55))
 public interface DiameterIdentity {
 
 	public byte[] getData();
+
+	// TODO: add implementing of internal structure (?)
 
 }

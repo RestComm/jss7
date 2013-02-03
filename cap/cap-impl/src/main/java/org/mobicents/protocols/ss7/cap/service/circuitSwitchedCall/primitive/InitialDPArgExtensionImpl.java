@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -23,6 +23,9 @@
 package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
 import java.io.IOException;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -70,6 +73,10 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
 	public static final int _ID_enhancedDialledServicesAllowed = 11;
 	public static final int _ID_uu_Data = 12;
 
+	private static final String IS_CAP_VERSION_3_OR_LATER = "isCAPVersion3orLater";
+	private static final String GMSC_ADDRESS = "gmscAddress";
+	private static final String FORWARDING_DESTINATION_NUMBER = "forwardingDestinationNumber";
+
 	public static final String _PrimitiveName = "InitialDPArgExtension";
 
 	private ISDNAddressString gmscAddress;
@@ -86,8 +93,14 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
 	private boolean enhancedDialledServicesAllowed;
 	private UUData uuData;	
 
-	private boolean isCAPVersion3orLater;
+	protected boolean isCAPVersion3orLater;
 	
+
+	/**
+	 * This constructor is for deserializing purposes
+	 */
+	public InitialDPArgExtensionImpl() {
+	}
 
 	public InitialDPArgExtensionImpl(boolean isCAPVersion3orLater) {
 		this.isCAPVersion3orLater = isCAPVersion3orLater;
@@ -451,5 +464,29 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
 
 		return sb.toString();
 	}
+	
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<InitialDPArgExtensionImpl> INITIAL_DP_ARG_EXTENSION_XML = new XMLFormat<InitialDPArgExtensionImpl>(InitialDPArgExtensionImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, InitialDPArgExtensionImpl initialDPArgExtension) throws XMLStreamException {
+			initialDPArgExtension.isCAPVersion3orLater = xml.getAttribute(IS_CAP_VERSION_3_OR_LATER, false);
+			
+			initialDPArgExtension.gmscAddress = xml.get(GMSC_ADDRESS, ISDNAddressStringImpl.class);
+			initialDPArgExtension.forwardingDestinationNumber = xml.get(FORWARDING_DESTINATION_NUMBER, CalledPartyNumberCapImpl.class);
+		}
+
+		@Override
+		public void write(InitialDPArgExtensionImpl initialDPArgExtension, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			xml.setAttribute(IS_CAP_VERSION_3_OR_LATER, initialDPArgExtension.isCAPVersion3orLater);
+			
+			if (initialDPArgExtension.getGmscAddress() != null)
+				xml.add((ISDNAddressStringImpl) initialDPArgExtension.getGmscAddress(), GMSC_ADDRESS, ISDNAddressStringImpl.class);
+			if (initialDPArgExtension.getForwardingDestinationNumber() != null)
+				xml.add((CalledPartyNumberCapImpl) initialDPArgExtension.getForwardingDestinationNumber(), FORWARDING_DESTINATION_NUMBER, CalledPartyNumberCapImpl.class);
+		}
+	};
 }
 

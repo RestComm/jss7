@@ -22,6 +22,9 @@
 
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtTeleserviceCode;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TeleserviceCodeValue;
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
@@ -31,7 +34,9 @@ import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
  * @author sergey vetyutnev
  * 
  */
-public class ExtTeleserviceCodeImpl extends OctetStringBase implements ExtTeleserviceCode  {
+public class ExtTeleserviceCodeImpl extends OctetStringBase implements ExtTeleserviceCode {
+
+	private static final String TELE_SERVICE_CODE_VALUE = "teleserviceCodeValue";
 
 	public ExtTeleserviceCodeImpl() {
 		super(1, 5, "ExtTeleserviceCode");
@@ -50,7 +55,7 @@ public class ExtTeleserviceCodeImpl extends OctetStringBase implements ExtTelese
 
 	public byte[] getData() {
 		return data;
-	}	
+	}
 
 	public TeleserviceCodeValue getTeleserviceCodeValue() {
 		if (data == null || data.length < 1)
@@ -81,4 +86,29 @@ public class ExtTeleserviceCodeImpl extends OctetStringBase implements ExtTelese
 
 		return sb.toString();
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<ExtTeleserviceCodeImpl> EXT_BEARER_SERVICE_CODE_XML = new XMLFormat<ExtTeleserviceCodeImpl>(
+			ExtTeleserviceCodeImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, ExtTeleserviceCodeImpl extTeleserviceCode)
+				throws XMLStreamException {
+			Byte integ = xml.get(TELE_SERVICE_CODE_VALUE, Byte.class);
+			if (integ != null) {
+				extTeleserviceCode.data = new byte[] { integ };
+			}
+		}
+
+		@Override
+		public void write(ExtTeleserviceCodeImpl extTeleserviceCode, javolution.xml.XMLFormat.OutputElement xml)
+				throws XMLStreamException {
+			TeleserviceCodeValue bearerServiceCodeValue = extTeleserviceCode.getTeleserviceCodeValue();
+			if (bearerServiceCodeValue != null) {
+				xml.add((byte) bearerServiceCodeValue.getCode(), TELE_SERVICE_CODE_VALUE, Byte.class);
+			}
+		}
+	};
 }

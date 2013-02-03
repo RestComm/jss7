@@ -1,28 +1,31 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and/or its affiliates, and individual
- * contributors as indicated by the @authors tag. All rights reserved.
- * See the copyright.txt in the distribution for a full listing
- * of individual contributors.
- * 
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU General Public License, v. 2.0.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License,
- * v. 2.0 along with this distribution; if not, write to the Free 
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA 02110-1301, USA.
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
 import java.io.IOException;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -39,15 +42,15 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformationEPS;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.TAId;
 import org.mobicents.protocols.ss7.map.primitives.DiameterIdentityImpl;
-import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
+import org.mobicents.protocols.ss7.map.primitives.SequenceBase;
 
 /**
  * @author amit bhayani
  * @author sergey vetyutnev
  * 
  */
-public class LocationInformationEPSImpl implements LocationInformationEPS, MAPAsnPrimitive {
+public class LocationInformationEPSImpl extends SequenceBase implements LocationInformationEPS {
 
 	public static final int _ID_eUtranCellGlobalIdentity = 0;
 	public static final int _ID_trackingAreaIdentity = 1;
@@ -58,7 +61,14 @@ public class LocationInformationEPSImpl implements LocationInformationEPS, MAPAs
 	public static final int _ID_ageOfLocationInformation = 6;
 	public static final int _ID_mme_Name = 7;
 
-	public static final String _PrimitiveName = "LocationInformationEPS";
+	private static final String E_UTRAN_CELL_GLOBAL_IDENTITY = "eUtranCellGlobalIdentity";
+	private static final String TRACKING_AREA_IDENTITY = "trackingAreaIdentity";
+	private static final String EXTENSION_CONTAINER = "extensionContainer";
+	private static final String GEOGRAPHICAL_INFORMATION = "geographicalInformation";
+	private static final String GEODETIC_INFORMATION = "geodeticInformation";
+	private static final String CURRENT_LOCATION_RETRIEVED = "currentLocationRetrieved";
+	private static final String AGE_OF_LOCATION_INFORMATION = "ageOfLocationInformation";
+	private static final String MME_NAME = "mmeName";
 
 	private EUtranCgi eUtranCellGlobalIdentity = null;
 	private TAId trackingAreaIdentity = null;
@@ -73,8 +83,7 @@ public class LocationInformationEPSImpl implements LocationInformationEPS, MAPAs
 	 * 
 	 */
 	public LocationInformationEPSImpl() {
-		super();
-		// TODO Auto-generated constructor stub
+		super("LocationInformationEPS");
 	}
 
 	/**
@@ -90,7 +99,8 @@ public class LocationInformationEPSImpl implements LocationInformationEPS, MAPAs
 	public LocationInformationEPSImpl(EUtranCgi eUtranCellGlobalIdentity, TAId trackingAreaIdentity, MAPExtensionContainer extensionContainer,
 			GeographicalInformation geographicalInformation, GeodeticInformation geodeticInformation, boolean currentLocationRetrieved,
 			Integer ageOfLocationInformation, DiameterIdentity mmeName) {
-		super();
+		super("LocationInformationEPS");
+
 		this.eUtranCellGlobalIdentity = eUtranCellGlobalIdentity;
 		this.trackingAreaIdentity = trackingAreaIdentity;
 		this.extensionContainer = extensionContainer;
@@ -181,76 +191,7 @@ public class LocationInformationEPSImpl implements LocationInformationEPS, MAPAs
 		return this.mmeName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTag()
-	 */
-	public int getTag() throws MAPException {
-		return Tag.SEQUENCE;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTagClass()
-	 */
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getIsPrimitive
-	 * ()
-	 */
-	public boolean getIsPrimitive() {
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeAll(
-	 * org.mobicents.protocols.asn.AsnInputStream)
-	 */
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeData
-	 * (org.mobicents.protocols.asn.AsnInputStream, int)
-	 */
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+	protected void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
 		this.eUtranCellGlobalIdentity = null;
 		this.trackingAreaIdentity = null;
@@ -336,35 +277,6 @@ public class LocationInformationEPSImpl implements LocationInformationEPS, MAPAs
 			} else {
 				ais.advanceElement();
 			}
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
-	 * org.mobicents.protocols.asn.AsnOutputStream)
-	 */
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
-	 * org.mobicents.protocols.asn.AsnOutputStream, int, int)
-	 */
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 
@@ -465,5 +377,55 @@ public class LocationInformationEPSImpl implements LocationInformationEPS, MAPAs
 		sb.append("]");
 		return sb.toString();
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<LocationInformationEPSImpl> LOCATION_INFORMATION_EPS_XML = new XMLFormat<LocationInformationEPSImpl>(LocationInformationEPSImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, LocationInformationEPSImpl locationInformationEPS) throws XMLStreamException {
+			locationInformationEPS.eUtranCellGlobalIdentity = xml.get(E_UTRAN_CELL_GLOBAL_IDENTITY, EUtranCgiImpl.class);
+			locationInformationEPS.trackingAreaIdentity = xml.get(TRACKING_AREA_IDENTITY, TAIdImpl.class);
+			locationInformationEPS.extensionContainer = xml.get(EXTENSION_CONTAINER, MAPExtensionContainerImpl.class);
+			locationInformationEPS.geographicalInformation = xml.get(GEOGRAPHICAL_INFORMATION, GeographicalInformationImpl.class);
+
+			locationInformationEPS.geodeticInformation = xml.get(GEODETIC_INFORMATION, GeodeticInformationImpl.class);
+			Boolean bval = xml.get(CURRENT_LOCATION_RETRIEVED, Boolean.class);
+			if (bval != null)
+				locationInformationEPS.currentLocationRetrieved = bval;
+			locationInformationEPS.ageOfLocationInformation = xml.get(AGE_OF_LOCATION_INFORMATION, Integer.class);
+			locationInformationEPS.mmeName = xml.get(MME_NAME, DiameterIdentityImpl.class);
+		}
+
+		@Override
+		public void write(LocationInformationEPSImpl locationInformationEPS, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			if (locationInformationEPS.eUtranCellGlobalIdentity != null) {
+				xml.add((EUtranCgiImpl) locationInformationEPS.eUtranCellGlobalIdentity, E_UTRAN_CELL_GLOBAL_IDENTITY, EUtranCgiImpl.class);
+			}
+			if (locationInformationEPS.trackingAreaIdentity != null) {
+				xml.add((TAIdImpl) locationInformationEPS.trackingAreaIdentity, TRACKING_AREA_IDENTITY, TAIdImpl.class);
+			}
+			if (locationInformationEPS.extensionContainer != null) {
+				xml.add((MAPExtensionContainerImpl) locationInformationEPS.extensionContainer, EXTENSION_CONTAINER, MAPExtensionContainerImpl.class);
+			}
+			if (locationInformationEPS.geographicalInformation != null) {
+				xml.add((GeographicalInformationImpl) locationInformationEPS.geographicalInformation, GEOGRAPHICAL_INFORMATION, GeographicalInformationImpl.class);
+			}
+
+			if (locationInformationEPS.geodeticInformation != null) {
+				xml.add((GeodeticInformationImpl) locationInformationEPS.geodeticInformation, GEODETIC_INFORMATION, GeodeticInformationImpl.class);
+			}
+			if (locationInformationEPS.currentLocationRetrieved) {
+				xml.add((Boolean) locationInformationEPS.currentLocationRetrieved, CURRENT_LOCATION_RETRIEVED, Boolean.class);
+			}
+			if (locationInformationEPS.ageOfLocationInformation != null) {
+				xml.add((Integer) locationInformationEPS.ageOfLocationInformation, AGE_OF_LOCATION_INFORMATION, Integer.class);
+			}
+			if (locationInformationEPS.mmeName != null) {
+				xml.add((DiameterIdentityImpl) locationInformationEPS.mmeName, MME_NAME, DiameterIdentityImpl.class);
+			}
+		}
+	};
 
 }

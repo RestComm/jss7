@@ -155,6 +155,7 @@ public class AssistRequestInstructionsRequestImpl extends CircuitSwitchedCallMes
 				case _ID_correlationID:
 					this.correlationID = new DigitsImpl();
 					((DigitsImpl) this.correlationID).decodeAll(ais);
+					this.correlationID.setIsGenericNumber();
 					break;
 				case _ID_iPSSPCapabilities:
 					this.iPSSPCapabilities = new IPSSPCapabilitiesImpl();

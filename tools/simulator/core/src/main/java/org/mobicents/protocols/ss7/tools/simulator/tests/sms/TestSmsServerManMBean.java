@@ -23,8 +23,8 @@
 package org.mobicents.protocols.ss7.tools.simulator.tests.sms;
 
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
-import org.mobicents.protocols.ss7.tools.simulator.common.MapProtocolVersion;
-import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
+import org.mobicents.protocols.ss7.tools.simulator.level3.MapProtocolVersion;
+import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
 
 /**
  * 
@@ -39,11 +39,11 @@ public interface TestSmsServerManMBean {
 
 	public void setAddressNature(AddressNatureType val);
 
-	public NumberingPlanType getNumberingPlan();
+	public NumberingPlanMapType getNumberingPlan();
 
 	public String getNumberingPlan_Value();
 
-	public void setNumberingPlan(NumberingPlanType val);
+	public void setNumberingPlan(NumberingPlanMapType val);
 
 	public String getServiceCenterAddress();
 

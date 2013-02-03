@@ -23,11 +23,20 @@
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
 import static org.testng.Assert.*;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.TypeOfShape;
 import org.mobicents.protocols.ss7.map.primitives.DiameterIdentityImpl;
+import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.testng.annotations.Test;
 
 /**
@@ -102,6 +111,45 @@ public class LocationInformationEPSTest {
 		byte[] encodedData = asnOS.toByteArray();
 		byte[] rawData = getEncodedData();		
 		assertTrue( Arrays.equals(rawData,encodedData));
+	}
+
+	@Test(groups = { "functional.xml.serialize", "subscriberInformation" })
+	public void testXMLSerialize() throws Exception {
+
+		EUtranCgiImpl euc = new EUtranCgiImpl(this.getEncodedDataEUtranCgi());
+		TAIdImpl ta = new TAIdImpl(this.getTAId());
+		GeographicalInformationImpl ggi = new GeographicalInformationImpl(TypeOfShape.EllipsoidPointWithUncertaintyCircle, -70.33, -0.5, 58);
+		GeodeticInformationImpl gdi = new GeodeticInformationImpl(3, TypeOfShape.EllipsoidPointWithUncertaintyCircle, 21.5, 171, 8, 11);
+		DiameterIdentityImpl di = new DiameterIdentityImpl(this.getDiameterIdentity());
+		LocationInformationEPSImpl original = new LocationInformationEPSImpl(euc, ta, MAPExtensionContainerTest.GetTestExtensionContainer(), ggi, gdi, true, 5,
+				di);
+		
+		// Writes the area to a file.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+		writer.write(original, "locationInformationEPS", LocationInformationEPSImpl.class);
+		writer.close();
+
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		LocationInformationEPSImpl copy = reader.read("locationInformationEPS", LocationInformationEPSImpl.class);
+
+		assertEquals(copy.getEUtranCellGlobalIdentity().getData(), original.getEUtranCellGlobalIdentity().getData());
+		assertEquals(copy.getTrackingAreaIdentity().getData(), original.getTrackingAreaIdentity().getData());
+		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(copy.getExtensionContainer()));
+		assertEquals(copy.getGeographicalInformation().getLatitude(), original.getGeographicalInformation().getLatitude());
+
+		assertEquals(copy.getGeodeticInformation().getLatitude(), original.getGeodeticInformation().getLatitude());
+		assertEquals(copy.getCurrentLocationRetrieved(), original.getCurrentLocationRetrieved());
+		assertEquals(copy.getAgeOfLocationInformation(), original.getAgeOfLocationInformation());
+		assertEquals(copy.getMmeName().getData(), original.getMmeName().getData());
 	}
 
 }

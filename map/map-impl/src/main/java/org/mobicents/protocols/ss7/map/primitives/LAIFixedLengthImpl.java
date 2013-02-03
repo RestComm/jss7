@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -23,7 +23,9 @@
 package org.mobicents.protocols.ss7.map.primitives;
 
 import java.io.IOException;
-import java.util.Arrays;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -40,6 +42,11 @@ import org.mobicents.protocols.ss7.map.api.primitives.LAIFixedLength;
 */
 public class LAIFixedLengthImpl extends OctetStringBase implements LAIFixedLength {
 
+	private static final String MCC = "mcc";
+	private static final String MNC = "mnc";
+	private static final String LAC = "lac";
+
+	private static final int DEFAULT_INT_VALUE = 0;
 
 	public LAIFixedLengthImpl() {
 		super(5, 5, "LAIFixedLength");
@@ -48,10 +55,13 @@ public class LAIFixedLengthImpl extends OctetStringBase implements LAIFixedLengt
 	public LAIFixedLengthImpl(byte[] data) {
 		super(5, 5, "LAIFixedLength", data);
 	}
-	
+
 	public LAIFixedLengthImpl(int mcc, int mnc, int lac) throws MAPException {
 		super(5, 5, "LAIFixedLength");
+		this.setData(mcc, mnc, lac);
+	}
 
+	public void setData(int mcc, int mnc, int lac) throws MAPException {
 		if (mcc < 1 || mcc > 999)
 			throw new MAPException("Bad mcc value");
 		if (mnc < 0 || mnc > 999)
@@ -178,7 +188,8 @@ public class LAIFixedLengthImpl extends OctetStringBase implements LAIFixedLengt
 		}
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append("LAIFixedLength [");
+		sb.append(this._PrimitiveName);
+		sb.append(" [");
 		if (goodData) {
 			sb.append("MCC=");
 			sb.append(mcc);
@@ -195,26 +206,34 @@ public class LAIFixedLengthImpl extends OctetStringBase implements LAIFixedLengt
 		return sb.toString();
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + Arrays.hashCode(data);
-		return result;
-	}
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<LAIFixedLengthImpl> LAI_FIXED_LENGTH_XML = new XMLFormat<LAIFixedLengthImpl>(LAIFixedLengthImpl.class) {
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		LAIFixedLengthImpl other = (LAIFixedLengthImpl) obj;
-		if (!Arrays.equals(data, other.data))
-			return false;
-		return true;
-	}
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, LAIFixedLengthImpl laiFixedLength) throws XMLStreamException {
+			int mcc = xml.getAttribute(MCC, DEFAULT_INT_VALUE);
+			int mnc = xml.getAttribute(MNC, DEFAULT_INT_VALUE);
+			int lac = xml.getAttribute(LAC, DEFAULT_INT_VALUE);
+
+			try {
+				laiFixedLength.setData(mcc, mnc, lac);
+			} catch (MAPException e) {
+				throw new XMLStreamException("MAPException when deserializing LAIFixedLengthImpl", e);
+			}
+		}
+
+		@Override
+		public void write(LAIFixedLengthImpl laiFixedLength, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			try {
+				xml.setAttribute(MCC, laiFixedLength.getMCC());
+				xml.setAttribute(MNC, laiFixedLength.getMNC());
+				xml.setAttribute(LAC, laiFixedLength.getLac());
+			} catch (MAPException e) {
+				throw new XMLStreamException("MAPException when serializing LAIFixedLengthImpl", e);
+			}
+		}
+	};
 }
 

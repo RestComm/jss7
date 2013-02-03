@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,8 +24,13 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
 import static org.testng.Assert.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -36,7 +41,7 @@ import org.mobicents.protocols.ss7.cap.primitives.BCSMEventImpl;
 import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsTest;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.mobicents.protocols.ss7.inap.primitives.LegIDImpl;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.*;
 
 /**
  * 
@@ -124,7 +129,7 @@ public class RequestReportBCSMEventRequestTest {
 
 	@Test(groups = { "functional.encode","circuitSwitchedCall"})
 	public void testEncode() throws Exception {
-		
+
 		ArrayList<BCSMEvent> bcsmEventList = new ArrayList<BCSMEvent>();
 		LegIDImpl legID = new LegIDImpl(true, LegType.leg2);
 		BCSMEventImpl be = new BCSMEventImpl(EventTypeBCSM.routeSelectFailure, MonitorMode.interrupted, legID, null, false);
@@ -158,6 +163,60 @@ public class RequestReportBCSMEventRequestTest {
 		aos = new AsnOutputStream();
 		elem.encodeAll(aos);
 		assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
+	}
+
+	@Test(groups = { "functional.xml.serialize", "circuitSwitchedCall" })
+	public void testXMLSerialize() throws Exception {
+
+		ArrayList<BCSMEvent> bcsmEventList = new ArrayList<BCSMEvent>();
+		LegIDImpl legID = new LegIDImpl(true, LegType.leg2);
+		BCSMEventImpl be = new BCSMEventImpl(EventTypeBCSM.routeSelectFailure, MonitorMode.interrupted, legID, null, false);
+		bcsmEventList.add(be);
+		legID = new LegIDImpl(true, LegType.leg2);
+		be = new BCSMEventImpl(EventTypeBCSM.oCalledPartyBusy, MonitorMode.interrupted, legID, null, false);
+		bcsmEventList.add(be);
+		legID = new LegIDImpl(true, LegType.leg2);
+		be = new BCSMEventImpl(EventTypeBCSM.oNoAnswer, MonitorMode.interrupted, legID, null, false);
+		bcsmEventList.add(be);
+		legID = new LegIDImpl(true, LegType.leg2);
+		be = new BCSMEventImpl(EventTypeBCSM.oAnswer, MonitorMode.notifyAndContinue, legID, null, false);
+		bcsmEventList.add(be);
+		legID = new LegIDImpl(true, LegType.leg1);
+		be = new BCSMEventImpl(EventTypeBCSM.oDisconnect, MonitorMode.interrupted, legID, null, false);
+		bcsmEventList.add(be);
+		legID = new LegIDImpl(true, LegType.leg2);
+		be = new BCSMEventImpl(EventTypeBCSM.oDisconnect, MonitorMode.interrupted, legID, null, false);
+		bcsmEventList.add(be);
+		legID = new LegIDImpl(true, LegType.leg1);
+		be = new BCSMEventImpl(EventTypeBCSM.oAbandon, MonitorMode.notifyAndContinue, legID, null, false);
+		bcsmEventList.add(be);
+
+		RequestReportBCSMEventRequestImpl original = new RequestReportBCSMEventRequestImpl(bcsmEventList, CAPExtensionsTest.createTestCAPExtensions());
+		original.setInvokeId(26);
+
+		// Writes the area to a file.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+		writer.write(original, "requestReportBCSMEventRequest", RequestReportBCSMEventRequestImpl.class);
+		writer.close();
+
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		RequestReportBCSMEventRequestImpl copy = reader.read("requestReportBCSMEventRequest", RequestReportBCSMEventRequestImpl.class);
+
+		assertEquals(copy.getInvokeId(), original.getInvokeId());
+
+		assertEquals(copy.getBCSMEventList().size(), original.getBCSMEventList().size());
+		assertEquals(copy.getBCSMEventList().get(0).getEventTypeBCSM(), original.getBCSMEventList().get(0).getEventTypeBCSM());
+
+		assertTrue(CAPExtensionsTest.checkTestCAPExtensions(copy.getExtensions()));
 	}
 }
 

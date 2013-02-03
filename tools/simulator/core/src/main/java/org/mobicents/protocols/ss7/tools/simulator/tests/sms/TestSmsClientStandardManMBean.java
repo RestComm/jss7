@@ -29,8 +29,8 @@ import javax.management.MBeanParameterInfo;
 import javax.management.NotCompliantMBeanException;
 import javax.management.StandardMBean;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
-import org.mobicents.protocols.ss7.tools.simulator.common.MapProtocolVersion;
-import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
+import org.mobicents.protocols.ss7.tools.simulator.level3.MapProtocolVersion;
+import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
 
 /**
  * 
@@ -49,7 +49,7 @@ public class TestSmsClientStandardManMBean extends StandardMBean {
 		MBeanAttributeInfo[] attributes = new MBeanAttributeInfo[] { 
 				new MBeanAttributeInfo("AddressNature", AddressNatureType.class.getName(), "AddressNature parameter for AddressString creating", true, true, false),
 				new MBeanAttributeInfo("AddressNature_Value", String.class.getName(), "AddressNature parameter for AddressString creating", true, false, false),
-				new MBeanAttributeInfo("NumberingPlan", NumberingPlanType.class.getName(), "NumberingPlan parameter for AddressString creating", true, true, false),
+				new MBeanAttributeInfo("NumberingPlan", NumberingPlanMapType.class.getName(), "NumberingPlan parameter for AddressString creating", true, true, false),
 				new MBeanAttributeInfo("NumberingPlan_Value", String.class.getName(), "NumberingPlan parameter for AddressString creating", true, false, false),
 				new MBeanAttributeInfo("ServiceCenterAddress", String.class.getName(), "Destination Service center address string", true, true, false),
 				new MBeanAttributeInfo("MapProtocolVersion", MapProtocolVersion.class.getName(), "MAP protocol version", true, true, false),
@@ -97,7 +97,7 @@ public class TestSmsClientStandardManMBean extends StandardMBean {
 						signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
 		};
 
-		return new MBeanInfo(TestSmsServerMan.class.getName(), "SmsClient test parameters management", attributes, null, operations, null);
+		return new MBeanInfo(TestSmsClientMan.class.getName(), "SmsClient test parameters management", attributes, null, operations, null);
 	}
 
 }

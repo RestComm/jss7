@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -33,6 +36,7 @@ import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.IPSSPCapabilities;
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.ByteArrayContainer;
 
 /**
  * 
@@ -47,6 +51,13 @@ public class IPSSPCapabilitiesImpl implements IPSSPCapabilities, CAPAsnPrimitive
 	public static int _Mask_VoiceInformation_VoiceRecognition = 0x08;
 	public static int _Mask_GenerationOfVoiceAnnouncementsFromTextSupported = 0x10;
 
+	private static final String IP_ROUTING_ADDRESS_SUPPORTED = "ipRoutingAddressSupported";
+	private static final String VOICE_BACK_SUPPORTED = "voiceBackSupported";
+	private static final String VOICE_INFORMATION_SUPPORTED_VIA_SPEECH_RECOGNITION = "voiceInformationSupportedViaSpeechRecognition";
+	private static final String VOICE_INFORMATION_SUPPORTED_VIA_VOICE_RECOGNITION = "voiceInformationSupportedViaVoiceRecognition";
+	private static final String GENERATION_OF_VOICE_ANNOUNCEMENTS_FROM_TEXT_SUPPORTED = "generationOfVoiceAnnouncementsFromTextSupported";
+	private static final String EXTRA_DATA = "extraData";
+	
 	public static final String _PrimitiveName = "IPSSPCapabilities";
 
 	private byte[] data;
@@ -58,8 +69,14 @@ public class IPSSPCapabilitiesImpl implements IPSSPCapabilities, CAPAsnPrimitive
 	public IPSSPCapabilitiesImpl(byte[] data) {
 		this.data = data;
 	}
-	
+
 	public IPSSPCapabilitiesImpl(boolean IPRoutingAddressSupported, boolean VoiceBackSupported, boolean VoiceInformationSupportedViaSpeechRecognition,
+			boolean VoiceInformationSupportedViaVoiceRecognition, boolean GenerationOfVoiceAnnouncementsFromTextSupported, byte[] extraData) {
+		setData(IPRoutingAddressSupported, VoiceBackSupported, VoiceInformationSupportedViaSpeechRecognition, VoiceInformationSupportedViaVoiceRecognition,
+				GenerationOfVoiceAnnouncementsFromTextSupported, extraData);
+	}
+
+	public void setData(boolean IPRoutingAddressSupported, boolean VoiceBackSupported, boolean VoiceInformationSupportedViaSpeechRecognition,
 			boolean VoiceInformationSupportedViaVoiceRecognition, boolean GenerationOfVoiceAnnouncementsFromTextSupported, byte[] extraData) {
 		int firstByte = (IPRoutingAddressSupported ? _Mask_IPRoutingAddress : 0) | (VoiceBackSupported ? _Mask_VoiceBack : 0)
 				| (VoiceInformationSupportedViaSpeechRecognition ? _Mask_VoiceInformation_SpeechRecognition : 0)
@@ -252,5 +269,48 @@ public class IPSSPCapabilitiesImpl implements IPSSPCapabilities, CAPAsnPrimitive
 
 		return sb.toString();
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<IPSSPCapabilitiesImpl> IPSSP_CAPABILITIES_XML = new XMLFormat<IPSSPCapabilitiesImpl>(IPSSPCapabilitiesImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, IPSSPCapabilitiesImpl ipsspCapabilities) throws XMLStreamException {
+			boolean IPRoutingAddressSupported = xml.getAttribute(IP_ROUTING_ADDRESS_SUPPORTED, false);
+			boolean voiceBackSupported = xml.getAttribute(VOICE_BACK_SUPPORTED, false);
+			boolean voiceInformationSupportedViaSpeechRecognition = xml.getAttribute(VOICE_INFORMATION_SUPPORTED_VIA_SPEECH_RECOGNITION, false);
+			boolean voiceInformationSupportedViaVoiceRecognition = xml.getAttribute(VOICE_INFORMATION_SUPPORTED_VIA_VOICE_RECOGNITION, false);
+			boolean generationOfVoiceAnnouncementsFromTextSupported = xml.getAttribute(GENERATION_OF_VOICE_ANNOUNCEMENTS_FROM_TEXT_SUPPORTED, false);
+
+			ByteArrayContainer bc = xml.get(EXTRA_DATA, ByteArrayContainer.class);
+			byte[] extraData = null;
+			if (bc != null) {
+				extraData = bc.getData();
+			}
+
+			ipsspCapabilities.setData(IPRoutingAddressSupported, voiceBackSupported, voiceInformationSupportedViaSpeechRecognition,
+					voiceInformationSupportedViaVoiceRecognition, generationOfVoiceAnnouncementsFromTextSupported, extraData);
+		}
+
+		@Override
+		public void write(IPSSPCapabilitiesImpl ipsspCapabilities, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			if (ipsspCapabilities.getIPRoutingAddressSupported())
+				xml.setAttribute(IP_ROUTING_ADDRESS_SUPPORTED, ipsspCapabilities.getIPRoutingAddressSupported());
+			if (ipsspCapabilities.getVoiceBackSupported())
+				xml.setAttribute(VOICE_BACK_SUPPORTED, ipsspCapabilities.getVoiceBackSupported());
+			if (ipsspCapabilities.getVoiceInformationSupportedViaSpeechRecognition())
+				xml.setAttribute(VOICE_INFORMATION_SUPPORTED_VIA_SPEECH_RECOGNITION, ipsspCapabilities.getVoiceInformationSupportedViaSpeechRecognition());
+			if (ipsspCapabilities.getVoiceInformationSupportedViaVoiceRecognition())
+				xml.setAttribute(VOICE_INFORMATION_SUPPORTED_VIA_VOICE_RECOGNITION, ipsspCapabilities.getVoiceInformationSupportedViaVoiceRecognition());
+			if (ipsspCapabilities.getGenerationOfVoiceAnnouncementsFromTextSupported())
+				xml.setAttribute(GENERATION_OF_VOICE_ANNOUNCEMENTS_FROM_TEXT_SUPPORTED, ipsspCapabilities.getGenerationOfVoiceAnnouncementsFromTextSupported());
+
+			if (ipsspCapabilities.getExtraData() != null && ipsspCapabilities.getExtraData().length > 0) {
+				ByteArrayContainer bac = new ByteArrayContainer(ipsspCapabilities.getExtraData());
+				xml.add(bac, EXTRA_DATA, ByteArrayContainer.class);
+			}
+		}
+	};
 }
 

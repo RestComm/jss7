@@ -184,6 +184,7 @@ public class VariablePartImpl implements VariablePart, CAPAsnPrimitive {
 		case _ID_number:
 			this.number = new DigitsImpl();
 			((DigitsImpl) this.number).decodeData(ais, length);
+			this.number.setIsGenericDigits();
 			break;
 		case _ID_time:
 			this.time = new VariablePartTimeImpl();

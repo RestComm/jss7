@@ -49,9 +49,12 @@ import javax.swing.JLabel;
 import org.mobicents.protocols.ss7.tools.simulator.level1.DialogicManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.level1.M3uaManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.level2.SccpManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.level3.CapManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.level3.MapManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHostMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.cap.TestCapScfManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.cap.TestCapSsfManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsClientManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsServerManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientManMBean;
@@ -164,8 +167,9 @@ public class ConnectionForm extends JFrame {
 		// starting the main form
 		SimulatorGuiForm frame = new SimulatorGuiForm();
 		host.addNotificationListener(frame, null, null);
-		frame.startHost(appName + "-local", false, host, host, host.getM3uaMan(), host.getDialogicMan(), host.getSccpMan(), host.getMapMan(),
-				host.getTestUssdClientMan(), host.getTestUssdServerMan(), host.getTestSmsClientMan(), host.getTestSmsServerMan());
+		frame.startHost(appName + "-local", false, host, host, host.getM3uaMan(), host.getDialogicMan(), host.getSccpMan(), host.getMapMan(), host.getCapMan(),
+				host.getTestUssdClientMan(), host.getTestUssdServerMan(), host.getTestSmsClientMan(), host.getTestSmsServerMan(), host.getTestCapScfMan(),
+				host.getTestCapSsfMan());
 		frame.setVisible(true);
 
 		// closing the connection form
@@ -203,6 +207,8 @@ public class ConnectionForm extends JFrame {
 			SccpManMBean sccp = JMX.newMBeanProxy(mbsc, mbeanNameSccp, SccpManMBean.class, false);
 			ObjectName mbeanNameMap = new ObjectName(tagDomain + ":type=MapMan");
 			MapManMBean map = JMX.newMBeanProxy(mbsc, mbeanNameMap, MapManMBean.class, false);
+			ObjectName mbeanNameCap = new ObjectName(tagDomain + ":type=CapMan");
+			CapManMBean cap = JMX.newMBeanProxy(mbsc, mbeanNameCap, CapManMBean.class, false);
 			ObjectName mbeanNameUssdClient = new ObjectName(tagDomain + ":type=TestUssdClientMan");
 			TestUssdClientManMBean ussdClient = JMX.newMBeanProxy(mbsc, mbeanNameUssdClient, TestUssdClientManMBean.class, false);
 			ObjectName mbeanNameUssdServer = new ObjectName(tagDomain + ":type=TestUssdServerMan");
@@ -211,6 +217,10 @@ public class ConnectionForm extends JFrame {
 			TestSmsClientManMBean smsClient = JMX.newMBeanProxy(mbsc, mbeanNameSmsClient, TestSmsClientManMBean.class, false);
 			ObjectName mbeanNameSmsServer = new ObjectName(tagDomain + ":type=TestSmsServerMan");
 			TestSmsServerManMBean smsServer = JMX.newMBeanProxy(mbsc, mbeanNameSmsServer, TestSmsServerManMBean.class, false);
+			ObjectName mbeanNameCapScf = new ObjectName(tagDomain + ":type=TestCapScfMan");
+			TestCapScfManMBean capScf = JMX.newMBeanProxy(mbsc, mbeanNameCapScf, TestCapScfManMBean.class, false);
+			ObjectName mbeanNameCapSsf = new ObjectName(tagDomain + ":type=TestCapSsfMan");
+			TestCapSsfManMBean capSsf = JMX.newMBeanProxy(mbsc, mbeanNameCapSsf, TestCapSsfManMBean.class, false);
 
 			// checking if MBean is workable
 			host.getInstance_L1_Value();
@@ -218,7 +228,7 @@ public class ConnectionForm extends JFrame {
 			// starting the main form
 			SimulatorGuiForm frame = new SimulatorGuiForm();
 			mbsc.addNotificationListener(mbeanNameTesterHost, frame, null, null);
-			frame.startHost(appName + "-remote", true, null, host, m3ua, dialogic, sccp, map, ussdClient, ussdServer, smsClient, smsServer);
+			frame.startHost(appName + "-remote", true, null, host, m3ua, dialogic, sccp, map, cap, ussdClient, ussdServer, smsClient, smsServer, capScf, capSsf);
 			frame.setVisible(true);
 
 			// closing the connection form

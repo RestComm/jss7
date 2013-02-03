@@ -174,7 +174,7 @@ public class Client extends EventTestHarness  {
 		genericNumber.setNumberingPlanIndicator(GenericNumber._NPI_ISDN);
 		genericNumber.setNumberQualifierIndicator(GenericNumber._NQIA_CALLED_NUMBER);
 		genericNumber.setScreeningIndicator(GenericNumber._SI_NETWORK_PROVIDED);
-		Digits correlationID = this.capParameterFactory.createDigits(genericNumber);
+		Digits correlationID = this.capParameterFactory.createDigits_GenericNumber(genericNumber);
 		IPSSPCapabilities ipSSPCapabilities = this.capParameterFactory.createIPSSPCapabilities(true, false, true, false, false, null);
 		clientCscDialog.addAssistRequestInstructionsRequest(correlationID, ipSSPCapabilities, null);
 		this.observerdEvents.add(TestEvent.createSentEvent(EventType.AssistRequestInstructionsRequest, null, sequence++));
@@ -194,7 +194,7 @@ public class Client extends EventTestHarness  {
 		genericNumber.setNumberingPlanIndicator(GenericNumber._NPI_ISDN);
 		genericNumber.setNumberQualifierIndicator(GenericNumber._NQIA_CALLED_NUMBER);
 		genericNumber.setScreeningIndicator(GenericNumber._SI_NETWORK_PROVIDED);
-		Digits assistingSSPIPRoutingAddress = this.capParameterFactory.createDigits(genericNumber);
+		Digits assistingSSPIPRoutingAddress = this.capParameterFactory.createDigits_GenericNumber(genericNumber);
 		clientCscDialog.addEstablishTemporaryConnectionRequest(assistingSSPIPRoutingAddress, null, null, null, null, null, null, null, null, null, null);
 		this.observerdEvents.add(TestEvent.createSentEvent(EventType.EstablishTemporaryConnectionRequest, null, sequence++));
 
@@ -268,7 +268,7 @@ public class Client extends EventTestHarness  {
 		genericNumber.setNumberingPlanIndicator(GenericNumber._NPI_ISDN);
 		genericNumber.setNumberQualifierIndicator(GenericNumber._NQIA_CALLED_NUMBER);
 		genericNumber.setScreeningIndicator(GenericNumber._SI_NETWORK_PROVIDED);
-		Digits correlationID = this.capParameterFactory.createDigits(genericNumber);
+		Digits correlationID = this.capParameterFactory.createDigits_GenericNumber(genericNumber);
 		IPSSPCapabilities ipSSPCapabilities = this.capParameterFactory.createIPSSPCapabilities(true, false, true, false, false, null);
 		clientCscDialog.addAssistRequestInstructionsRequest(correlationID, ipSSPCapabilities, null);
 		this.observerdEvents.add(TestEvent.createSentEvent(EventType.AssistRequestInstructionsRequest, null, sequence++));

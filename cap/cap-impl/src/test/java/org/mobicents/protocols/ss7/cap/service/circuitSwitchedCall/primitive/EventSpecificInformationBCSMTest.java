@@ -22,9 +22,18 @@
 
 package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -46,7 +55,7 @@ import org.mobicents.protocols.ss7.isup.impl.message.parameter.CalledPartyNumber
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.CauseIndicatorsImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
-import org.testng.annotations.*;
+import org.testng.annotations.Test;
 
 /**
  * 
@@ -80,7 +89,8 @@ public class EventSpecificInformationBCSMTest {
 	}
 
 	public byte[] getData7() {
-		return new byte[] { (byte) 169, 13, (byte) 159, 50, 0, (byte) 159, 52, 7, 3, (byte) 144, 33, 114, 16, (byte) 144, 0 };
+		return new byte[] { (byte) 169, 13, (byte) 159, 50, 0, (byte) 159, 52, 7, 3, (byte) 144, 33, 114, 16,
+				(byte) 144, 0 };
 	}
 
 	public byte[] getData8() {
@@ -91,7 +101,7 @@ public class EventSpecificInformationBCSMTest {
 		return new byte[] { (byte) 172, 4, (byte) 128, 2, (byte) 132, (byte) 144 };
 	}
 
-	@Test(groups = { "functional.decode","circuitSwitchedCall.primitive"})
+	@Test(groups = { "functional.decode", "circuitSwitchedCall.primitive" })
 	public void testDecode() throws Exception {
 
 		byte[] data = this.getData1();
@@ -182,12 +192,13 @@ public class EventSpecificInformationBCSMTest {
 		assertEquals(ci.getLocation(), 4);
 	}
 
-	@Test(groups = { "functional.encode","circuitSwitchedCall.primitive"})
+	@Test(groups = { "functional.encode", "circuitSwitchedCall.primitive" })
 	public void testEncode() throws Exception {
 
 		CauseIndicators causeIndicators = new CauseIndicatorsImpl(0, 4, 0, 16, null);
 		CauseCap failureCause = new CauseCapImpl(causeIndicators);
-		RouteSelectFailureSpecificInfo routeSelectFailureSpecificInfo = new RouteSelectFailureSpecificInfoImpl(failureCause);
+		RouteSelectFailureSpecificInfo routeSelectFailureSpecificInfo = new RouteSelectFailureSpecificInfoImpl(
+				failureCause);
 		EventSpecificInformationBCSMImpl elem = new EventSpecificInformationBCSMImpl(routeSelectFailureSpecificInfo);
 		AsnOutputStream aos = new AsnOutputStream();
 		elem.encodeAll(aos);
@@ -195,7 +206,8 @@ public class EventSpecificInformationBCSMTest {
 
 		causeIndicators = new CauseIndicatorsImpl(0, 4, 0, 16, null);
 		CauseCap busyCause = new CauseCapImpl(causeIndicators);
-		OCalledPartyBusySpecificInfoImpl oCalledPartyBusySpecificInfoImpl = new OCalledPartyBusySpecificInfoImpl(busyCause);
+		OCalledPartyBusySpecificInfoImpl oCalledPartyBusySpecificInfoImpl = new OCalledPartyBusySpecificInfoImpl(
+				busyCause);
 		elem = new EventSpecificInformationBCSMImpl(oCalledPartyBusySpecificInfoImpl);
 		aos = new AsnOutputStream();
 		elem.encodeAll(aos);
@@ -230,7 +242,8 @@ public class EventSpecificInformationBCSMTest {
 		assertTrue(Arrays.equals(aos.toByteArray(), this.getData6()));
 
 		CalledPartyNumber cpn = new CalledPartyNumberImpl(3, "1227010900", 1, 1);
-		// int natureOfAddresIndicator, String address, int  numberingPlanIndicator, int internalNetworkNumberIndicator
+		// int natureOfAddresIndicator, String address, int
+		// numberingPlanIndicator, int internalNetworkNumberIndicator
 		CalledPartyNumberCap cpnc = new CalledPartyNumberCapImpl(cpn);
 		TNoAnswerSpecificInfoImpl tNoAnswerSpecificInfo = new TNoAnswerSpecificInfoImpl(true, cpnc);
 		elem = new EventSpecificInformationBCSMImpl(tNoAnswerSpecificInfo);
@@ -252,5 +265,36 @@ public class EventSpecificInformationBCSMTest {
 		elem.encodeAll(aos);
 		assertTrue(Arrays.equals(aos.toByteArray(), this.getData9()));
 	}
-}
 
+	@Test(groups = { "functional.xml.serialize", "circuitSwitchedCall.primitive" })
+	public void testXMLSerializaion() throws Exception {
+		CauseIndicators causeIndicators = new CauseIndicatorsImpl(0, 4, 0, 16, null);
+		CauseCap failureCause = new CauseCapImpl(causeIndicators);
+		RouteSelectFailureSpecificInfo routeSelectFailureSpecificInfo = new RouteSelectFailureSpecificInfoImpl(
+				failureCause);
+		EventSpecificInformationBCSMImpl original = new EventSpecificInformationBCSMImpl(routeSelectFailureSpecificInfo);
+
+		// Writes the area to a file.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for
+										// indentation).
+		writer.write(original, "eventSpecificInformationBCSM", EventSpecificInformationBCSMImpl.class);
+		writer.close();
+
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		EventSpecificInformationBCSMImpl copy = reader.read("eventSpecificInformationBCSM",
+				EventSpecificInformationBCSMImpl.class);
+
+		assertEquals(copy.getRouteSelectFailureSpecificInfo().getFailureCause().getCauseIndicators().getCauseValue(),
+				original.getRouteSelectFailureSpecificInfo().getFailureCause().getCauseIndicators().getCauseValue());
+
+	}
+}

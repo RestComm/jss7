@@ -20,17 +20,18 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.tools.simulator.common;
+package org.mobicents.protocols.ss7.tools.simulator.level3;
 
 import java.util.Hashtable;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.tools.simulator.common.EnumeratedBase;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class NumberingPlanType extends EnumeratedBase {
+public class NumberingPlanMapType extends EnumeratedBase {
 
 	private static final long serialVersionUID = 1L;
 
@@ -63,27 +64,27 @@ public class NumberingPlanType extends EnumeratedBase {
 		stringMap.put(NumberingPlan.reserved.toString(), NumberingPlan.reserved.getIndicator());
 	}
 
-	public NumberingPlanType() {
+	public NumberingPlanMapType() {
 	}
 
-	public NumberingPlanType(int val) throws java.lang.IllegalArgumentException {
+	public NumberingPlanMapType(int val) throws java.lang.IllegalArgumentException {
 		super(val);
 	}
 
-	public NumberingPlanType(Integer val) throws java.lang.IllegalArgumentException {
+	public NumberingPlanMapType(Integer val) throws java.lang.IllegalArgumentException {
 		super(val);
 	}
 
-	public NumberingPlanType(String val) throws java.lang.IllegalArgumentException {
+	public NumberingPlanMapType(String val) throws java.lang.IllegalArgumentException {
 		super(val);
 	}
 
-	public static NumberingPlanType createInstance(String s) {
+	public static NumberingPlanMapType createInstance(String s) {
 		Integer i1 = doCreateInstance(s, stringMap, intMap);
 		if (i1 == null)
-			return new NumberingPlanType(NumberingPlan.unknown.getIndicator());
+			return new NumberingPlanMapType(NumberingPlan.unknown.getIndicator());
 		else
-			return new NumberingPlanType(i1);
+			return new NumberingPlanMapType(i1);
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,14 +24,19 @@ package org.mobicents.protocols.ss7.cap.isup;
 
 import static org.testng.Assert.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.OriginalCalledNumberImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledNumber;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.*;
 
 /**
  * 
@@ -79,5 +84,35 @@ public class OriginalCalledNumberCapTest {
 		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
 		
 //		int natureOfAddresIndicator, String address, int numberingPlanIndicator, int addressRepresentationREstrictedIndicator
+	}
+
+	@Test(groups = { "functional.xml.serialize", "isup" })
+	public void testXMLSerialize() throws Exception {
+
+		OriginalCalledNumberCapImpl original = new OriginalCalledNumberCapImpl(new OriginalCalledNumberImpl(OriginalCalledNumber._NAI_NATIONAL_SN, "12345",
+				OriginalCalledNumber._NPI_TELEX, OriginalCalledNumber._APRI_RESTRICTED));
+
+		// Writes the area to a file.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+		writer.write(original, "originalCalledNumberCap", OriginalCalledNumberCapImpl.class);
+		writer.close();
+
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		OriginalCalledNumberCapImpl copy = reader.read("originalCalledNumberCap", OriginalCalledNumberCapImpl.class);
+
+		assertEquals(copy.getOriginalCalledNumber().getNatureOfAddressIndicator(), original.getOriginalCalledNumber().getNatureOfAddressIndicator());
+		assertEquals(copy.getOriginalCalledNumber().getAddress(), original.getOriginalCalledNumber().getAddress());
+		assertEquals(copy.getOriginalCalledNumber().getNumberingPlanIndicator(), original.getOriginalCalledNumber().getNumberingPlanIndicator());
+		assertEquals(copy.getOriginalCalledNumber().getAddressRepresentationRestrictedIndicator(), original.getOriginalCalledNumber().getAddressRepresentationRestrictedIndicator());
+
 	}
 }

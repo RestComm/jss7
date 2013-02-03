@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,38 +22,49 @@
 
 package org.mobicents.protocols.ss7.cap.primitives;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristicsImpl;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.Test;
 
 /**
  * 
  * @author sergey vetyutnev
+ * @author Amit Bhayani
  * 
  */
 public class CAMELAChBillingChargingCharacteristicsTest {
 
 	public byte[] getData1() {
-		return new byte[] { (byte) 128, 11, (byte) 160, 9, (byte) 128, 2, 46, (byte) 224, (byte) 161, 3, 1, 1, (byte) 255 };
+		return new byte[] { (byte) 128, 11, (byte) 160, 9, (byte) 128, 2, 46, (byte) 224, (byte) 161, 3, 1, 1,
+				(byte) 255 };
 	}
 
 	public byte[] getData2() {
-		return new byte[] { (byte) 128, 35, (byte) 160, 33, (byte) 128, 2, 39, 16, (byte) 161, 23, 1, 1, (byte) 255, (byte) 170, 18, 48, 5, 2, 1, 2,
-				(byte) 129, 0, 48, 9, 2, 1, 3, 10, 1, 1, (byte) 129, 1, (byte) 255, (byte) 130, 2, 3, (byte) 232 };
+		return new byte[] { (byte) 128, 35, (byte) 160, 33, (byte) 128, 2, 39, 16, (byte) 161, 23, 1, 1, (byte) 255,
+				(byte) 170, 18, 48, 5, 2, 1, 2, (byte) 129, 0, 48, 9, 2, 1, 3, 10, 1, 1, (byte) 129, 1, (byte) 255,
+				(byte) 130, 2, 3, (byte) 232 };
 	}
 
 	public byte[] getData3() {
-		return new byte[] { (byte) 128, 33, (byte) 160, 31, (byte) 128, 2, 39, 16, (byte) 129, 1, (byte) 255, (byte) 130, 2, 3, (byte) 232, (byte) 164, 18, 48,
-				5, 2, 1, 2, (byte) 129, 0, 48, 9, 2, 1, 3, 10, 1, 1, (byte) 129, 1, (byte) 255 };
+		return new byte[] { (byte) 128, 33, (byte) 160, 31, (byte) 128, 2, 39, 16, (byte) 129, 1, (byte) 255,
+				(byte) 130, 2, 3, (byte) 232, (byte) 164, 18, 48, 5, 2, 1, 2, (byte) 129, 0, 48, 9, 2, 1, 3, 10, 1, 1,
+				(byte) 129, 1, (byte) 255 };
 	}
 
-	@Test(groups = { "functional.decode","primitives"})
+	@Test(groups = { "functional.decode", "primitives" })
 	public void testDecode() throws Exception {
 
 		byte[] data = this.getData1();
@@ -88,25 +99,28 @@ public class CAMELAChBillingChargingCharacteristicsTest {
 		assertEquals((int) (long) elem.getTariffSwitchInterval(), 1000);
 		assertNull(elem.getAudibleIndicator());
 		assertTrue(CAPExtensionsTest.checkTestCAPExtensions(elem.getExtensions()));
-		
+
 		// TODO: implement unimplemented parameters:
 		// audibleIndicator
 	}
 
-	@Test(groups = { "functional.encode","primitives"})
+	@Test(groups = { "functional.encode", "primitives" })
 	public void testEncode() throws Exception {
 
-		CAMELAChBillingChargingCharacteristicsImpl elem = new CAMELAChBillingChargingCharacteristicsImpl(12000, true, null, null, null, false);
+		CAMELAChBillingChargingCharacteristicsImpl elem = new CAMELAChBillingChargingCharacteristicsImpl(12000, true,
+				null, null, null, false);
 		AsnOutputStream aos = new AsnOutputStream();
 		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 0);
 		assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
 
-		elem = new CAMELAChBillingChargingCharacteristicsImpl(10000, true, 1000L, null, CAPExtensionsTest.createTestCAPExtensions(), false);
+		elem = new CAMELAChBillingChargingCharacteristicsImpl(10000, true, 1000L, null,
+				CAPExtensionsTest.createTestCAPExtensions(), false);
 		aos = new AsnOutputStream();
 		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 0);
 		assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
 
-		elem = new CAMELAChBillingChargingCharacteristicsImpl(10000, true, 1000L, null, CAPExtensionsTest.createTestCAPExtensions(), true);
+		elem = new CAMELAChBillingChargingCharacteristicsImpl(10000, true, 1000L, null,
+				CAPExtensionsTest.createTestCAPExtensions(), true);
 		aos = new AsnOutputStream();
 		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 0);
 		assertTrue(Arrays.equals(aos.toByteArray(), this.getData3()));
@@ -114,7 +128,37 @@ public class CAMELAChBillingChargingCharacteristicsTest {
 		// TODO: implement unimplemented parameters:
 		// audibleIndicator
 
-		//long maxCallPeriodDuration, boolean releaseIfdurationExceeded, Long tariffSwitchInterval,AudibleIndicator audibleIndicator, CAPExtensions extensions, boolean isCAPVersion3orLater
+		// long maxCallPeriodDuration, boolean releaseIfdurationExceeded, Long
+		// tariffSwitchInterval,AudibleIndicator audibleIndicator, CAPExtensions
+		// extensions, boolean isCAPVersion3orLater
+	}
+
+	@Test(groups = { "functional.xml.serialize", "primitives" })
+	public void testXMLSerializaion() throws Exception {
+		CAMELAChBillingChargingCharacteristicsImpl original = new CAMELAChBillingChargingCharacteristicsImpl(12000,
+				true, null, null, null, false);
+
+		// Writes the area to a file.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for
+										// indentation).
+		writer.write(original, "camelAChBillingChargingCharacteristics",
+				CAMELAChBillingChargingCharacteristicsImpl.class);
+		writer.close();
+
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		CAMELAChBillingChargingCharacteristicsImpl copy = reader.read("camelAChBillingChargingCharacteristics",
+				CAMELAChBillingChargingCharacteristicsImpl.class);
+
+		assertEquals(copy.getMaxCallPeriodDuration(), original.getMaxCallPeriodDuration());
+		assertEquals(copy.getReleaseIfdurationExceeded(), original.getReleaseIfdurationExceeded());
 	}
 }
-

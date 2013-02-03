@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -206,7 +206,7 @@ public interface CAPParameterFactory {
 
 	public ExtensionField createExtensionField(Integer localCode, CriticalityType criticalityType, byte[] data);
 	public ExtensionField createExtensionField(long[] globalCode, CriticalityType criticalityType, byte[] data);
-	public CAPExtensions createCAPExtensions(ExtensionField[] fieldsList);
+	public CAPExtensions createCAPExtensions(ArrayList<ExtensionField> fieldsList);
 	
 	public CAMELAChBillingChargingCharacteristics createCAMELAChBillingChargingCharacteristics(byte[] data);
 	public CAMELAChBillingChargingCharacteristics createCAMELAChBillingChargingCharacteristics(long maxCallPeriodDuration, boolean releaseIfdurationExceeded,
@@ -222,9 +222,10 @@ public interface CAPParameterFactory {
 	public BearerCap createBearerCap(UserServiceInformation userServiceInformation) throws CAPException;
 	public BearerCapability createBearerCapability(BearerCap bearerCap);
 
-	public Digits createDigits(byte[] data);
-	public Digits createDigits(GenericNumber genericNumber) throws CAPException;
-	public Digits createDigits(GenericDigits genericDigits) throws CAPException;
+	public Digits createDigits_GenericNumber(byte[] data);
+	public Digits createDigits_GenericDigits(byte[] data);
+	public Digits createDigits_GenericNumber(GenericNumber genericNumber) throws CAPException;
+	public Digits createDigits_GenericDigits(GenericDigits genericDigits) throws CAPException;
 	public CalledPartyNumberCap createCalledPartyNumberCap(byte[] data);
 	public CalledPartyNumberCap createCalledPartyNumberCap(CalledPartyNumber calledPartyNumber) throws CAPException;
 	public CallingPartyNumberCap createCallingPartyNumberCap(byte[] data);
@@ -294,7 +295,6 @@ public interface CAPParameterFactory {
 
 	public AlertingPatternCap createAlertingPatternCap(AlertingPattern alertingPattern);
 	public AlertingPatternCap createAlertingPatternCap(byte[] data);
-	public NAOliInfo createNAOliInfo(byte[] data);
 	public NAOliInfo createNAOliInfo(int value);
 
 	public ScfID createScfID(byte[] data);

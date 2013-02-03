@@ -23,6 +23,10 @@
 package org.mobicents.protocols.ss7.map.primitives;
 
 import java.io.IOException;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -31,6 +35,7 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.CSGIdImpl;
 
 /**
 *
@@ -40,6 +45,10 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 * 
 */
 public abstract class BitStringBase implements MAPAsnPrimitive {
+
+	private static final String DATA = "data";
+
+	private static final String DEFAULT_VALUE = null;
 
 	protected BitSetStrictLength bitString;
 
@@ -194,5 +203,39 @@ public abstract class BitStringBase implements MAPAsnPrimitive {
 
 		return sb.toString();
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<BitStringBase> BIT_STRING_BASE_XML = new XMLFormat<BitStringBase>(BitStringBase.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, BitStringBase bitStringBase) throws XMLStreamException {
+			String s = xml.getAttribute(DATA, DEFAULT_VALUE);
+			if (s != null) {
+				int i1 = 0;
+				bitStringBase.bitString = new BitSetStrictLength(bitStringBase.curLength);
+				for (char ch : s.toCharArray()) {
+					if (ch == '1')
+						bitStringBase.bitString.set(i1);
+					i1++;
+				}
+			}
+		}
+
+		@Override
+		public void write(BitStringBase bitStringBase, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			if (bitStringBase.bitString != null) {
+				StringBuilder sb = new StringBuilder();
+				for (int i1 = 0; i1 < bitStringBase.bitString.getStrictLength(); i1++) {
+					if (bitStringBase.bitString.get(i1))
+						sb.append("1");
+					else
+						sb.append("0");
+				}
+				xml.setAttribute(DATA, sb.toString());
+			}
+		}
+	};
 }
 

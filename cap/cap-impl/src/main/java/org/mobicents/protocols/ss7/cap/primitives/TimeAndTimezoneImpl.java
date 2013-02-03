@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.cap.primitives;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -41,6 +44,14 @@ import org.mobicents.protocols.ss7.cap.api.primitives.TimeAndTimezone;
 public class TimeAndTimezoneImpl implements TimeAndTimezone, CAPAsnPrimitive {
 
 	public static final String _PrimitiveName = "TimeAndTimezone";
+
+	private static final String YEAR = "year";
+	private static final String MONTH = "month";
+	private static final String DAY = "day";
+	private static final String HOUR = "hour";
+	private static final String MINUTE = "minute";
+	private static final String SECOND = "second";
+	private static final String TIME_ZONE = "timeZone";
 
 	private byte[] data;
 	
@@ -320,4 +331,33 @@ public class TimeAndTimezoneImpl implements TimeAndTimezone, CAPAsnPrimitive {
 
 		return sb.toString();
 	}
+	
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<TimeAndTimezoneImpl> TIME_AND_TIMEZONE_XML = new XMLFormat<TimeAndTimezoneImpl>(TimeAndTimezoneImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, TimeAndTimezoneImpl timeAndTimezone) throws XMLStreamException {
+			timeAndTimezone.setYear(xml.getAttribute(YEAR, 0));
+			timeAndTimezone.setMonth(xml.getAttribute(MONTH, 0));
+			timeAndTimezone.setDay(xml.getAttribute(DAY, 0));
+			timeAndTimezone.setHour(xml.getAttribute(HOUR, 0));
+			timeAndTimezone.setMinute(xml.getAttribute(MINUTE, 0));
+			timeAndTimezone.setSecond(xml.getAttribute(SECOND, 0));
+			timeAndTimezone.setTimeZone(xml.getAttribute(TIME_ZONE, 0));
+		}
+
+		@Override
+		public void write(TimeAndTimezoneImpl timeAndTimezone, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			xml.setAttribute(YEAR, timeAndTimezone.getYear());
+			xml.setAttribute(MONTH, timeAndTimezone.getMonth());
+			xml.setAttribute(DAY, timeAndTimezone.getDay());
+			xml.setAttribute(HOUR, timeAndTimezone.getHour());
+			xml.setAttribute(MINUTE, timeAndTimezone.getMinute());
+			xml.setAttribute(SECOND, timeAndTimezone.getSecond());
+			xml.setAttribute(TIME_ZONE, timeAndTimezone.getTimeZone());
+		}
+	};
+
 }

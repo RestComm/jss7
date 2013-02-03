@@ -24,7 +24,12 @@ package org.mobicents.protocols.ss7.map.service.callhandling;
 
 import static org.testng.Assert.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -45,7 +50,7 @@ public class CallReferenceNumberTest {
 		return new byte[] { 19, -6, 61, 61, -22 };
 	};
 	
-	@Test(groups = { "functional.decode", "primitives" })
+	@Test(groups = { "functional.decode", "service.callhandling" })
 	public void testDecode() throws Exception {
 
 		byte[] data = this.getData();
@@ -61,7 +66,7 @@ public class CallReferenceNumberTest {
 		
 	}
 	
-	@Test(groups = { "functional.decode", "primitives" })
+	@Test(groups = { "functional.decode", "service.callhandling" })
 	public void testEncode() throws Exception {
 
 		CallReferenceNumberImpl prim = new CallReferenceNumberImpl(getDataVal());
@@ -70,6 +75,32 @@ public class CallReferenceNumberTest {
 		prim.encodeAll(asn);
 
 		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+	}
+
+	@Test(groups = { "functional.xml.serialize", "service.callhandling" })
+	public void testXMLSerialize() throws Exception {
+
+		CallReferenceNumberImpl original = new CallReferenceNumberImpl(getDataVal());
+		
+		// Writes the area to a file.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+		writer.write(original, "callReferenceNumber", CallReferenceNumberImpl.class);
+		writer.close();
+
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		CallReferenceNumberImpl copy = reader.read("callReferenceNumber", CallReferenceNumberImpl.class);
+
+		assertEquals(copy.getData(), original.getData());
+
 	}
 }
 

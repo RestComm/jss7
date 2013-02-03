@@ -129,6 +129,7 @@ public class PromptAndCollectUserInformationResponseImpl extends CircuitSwitched
 		case _ID_digitsResponse:
 			this.digitsResponse = new DigitsImpl();
 			((DigitsImpl) this.digitsResponse).decodeData(ais, length);
+			this.digitsResponse.setIsGenericDigits();
 			break;
 		default:
 			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag: " + ais.getTag(),

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -23,8 +23,16 @@
 package org.mobicents.protocols.ss7.map.primitives;
 
 import static org.testng.Assert.*;
+
 import org.testng.annotations.*;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 
@@ -108,6 +116,35 @@ public class CellGlobalIdOrServiceAreaIdFixedLengthTest {
 		prim.encodeAll(asn);
 
 		assertTrue(Arrays.equals(asn.toByteArray(), this.getData2()));
+	}
+
+	@Test(groups = { "functional.xml.serialize", "primitives" })
+	public void testXMLSerialize() throws Exception {
+
+		CellGlobalIdOrServiceAreaIdFixedLengthImpl original = new CellGlobalIdOrServiceAreaIdFixedLengthImpl(250, 1, 4444, 3333);
+
+		// Writes the area to a file.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+		writer.write(original, "cellGlobalIdOrServiceAreaIdFixedLength", CellGlobalIdOrServiceAreaIdFixedLengthImpl.class);
+		writer.close();
+
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		CellGlobalIdOrServiceAreaIdFixedLengthImpl copy = reader.read("cellGlobalIdOrServiceAreaIdFixedLength", CellGlobalIdOrServiceAreaIdFixedLengthImpl.class);
+
+		assertEquals(copy.getMCC(), original.getMCC());
+		assertEquals(copy.getMNC(), original.getMNC());
+		assertEquals(copy.getLac(), original.getLac());
+		assertEquals(copy.getCellId(), original.getCellId());
+		
 	}
 }
 

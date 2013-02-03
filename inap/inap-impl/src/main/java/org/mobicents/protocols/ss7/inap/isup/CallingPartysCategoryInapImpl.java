@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.inap.isup;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -46,6 +49,8 @@ public class CallingPartysCategoryInapImpl implements CallingPartysCategoryInap,
 
 	public static final String _PrimitiveName = "CallingPartysCategoryInap";
 
+	private static final String ISUP_CALLING_PARTYS_CATEGORY_XML = "isupCallingPartysCategory";
+
 	private byte[] data;
 
 	public CallingPartysCategoryInapImpl() {
@@ -56,6 +61,10 @@ public class CallingPartysCategoryInapImpl implements CallingPartysCategoryInap,
 	}
 
 	public CallingPartysCategoryInapImpl(CallingPartyCategory callingPartyCategory) throws INAPException {
+		setCallingPartysCategory(callingPartyCategory);
+	}
+
+	public void setCallingPartysCategory(CallingPartyCategory callingPartyCategory) throws INAPException {
 		if (callingPartyCategory == null)
 			throw new INAPException("The callingPartyCategory parameter must not be null");
 		try {
@@ -198,4 +207,29 @@ public class CallingPartysCategoryInapImpl implements CallingPartysCategoryInap,
 
 		return sb.toString();
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<CallingPartysCategoryInapImpl> CALLING_PARTYS_CATEGORY_INAP_XML = new XMLFormat<CallingPartysCategoryInapImpl>(CallingPartysCategoryInapImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, CallingPartysCategoryInapImpl callingPartysCategory) throws XMLStreamException {
+			try {
+				callingPartysCategory.setCallingPartysCategory(xml.get(ISUP_CALLING_PARTYS_CATEGORY_XML, CallingPartyCategoryImpl.class));
+			} catch (INAPException e) {
+				throw new XMLStreamException(e);
+			}
+		}
+
+		@Override
+		public void write(CallingPartysCategoryInapImpl callingPartysCategory, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			try {
+				xml.add(((CallingPartyCategoryImpl) callingPartysCategory.getCallingPartyCategory()), ISUP_CALLING_PARTYS_CATEGORY_XML, CallingPartyCategoryImpl.class);
+			} catch (INAPException e) {
+				throw new XMLStreamException(e);
+			}
+		}
+	};
+
 }

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,18 +20,12 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * Start time:13:31:04 2009-03-30<br>
- * Project: mobicents-isup-stack<br>
- * 
- * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
- *         </a>
- * 
- */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyCategory;
@@ -43,6 +37,10 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyCategory;
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
 public class CallingPartyCategoryImpl extends AbstractISUPParameter implements CallingPartyCategory {
+
+	private static final String CALLING_PARTY_CATEGORY = "callingPartyCategory";
+
+	private static final int DEFAULT_CALLING_PARTY_CATEGORY = 0;
 
 	private byte callingPartyCategory = 0;
 
@@ -92,4 +90,25 @@ public class CallingPartyCategoryImpl extends AbstractISUPParameter implements C
 
 		return _PARAMETER_CODE;
 	}
+
+	@Override
+	public String toString() {
+		return "CallingPartyCategory [callingPartyCategory=" + callingPartyCategory + "]";
+	}
+	
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<CallingPartyCategoryImpl> ISUP_CALLING_PARTY_CATEGORY_XML = new XMLFormat<CallingPartyCategoryImpl>(CallingPartyCategoryImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, CallingPartyCategoryImpl callingPartyCategory) throws XMLStreamException {
+			callingPartyCategory.callingPartyCategory = (byte)xml.getAttribute(CALLING_PARTY_CATEGORY, DEFAULT_CALLING_PARTY_CATEGORY);
+		}
+
+		@Override
+		public void write(CallingPartyCategoryImpl callingPartyCategory, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			xml.setAttribute(CALLING_PARTY_CATEGORY, callingPartyCategory.callingPartyCategory & 0xFF);
+		}
+	};
 }

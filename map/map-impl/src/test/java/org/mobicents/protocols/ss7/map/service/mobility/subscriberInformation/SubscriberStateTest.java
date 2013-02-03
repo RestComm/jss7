@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -23,7 +23,14 @@
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
 import static org.testng.Assert.*;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.NotReachableReason;
@@ -101,5 +108,54 @@ public class SubscriberStateTest {
 		encodedData = asnOS.toByteArray();
 		rawData = getEncodedData3();
 		assertTrue(Arrays.equals(rawData, encodedData));		
+	}
+
+	@Test(groups = { "functional.xml.serialize", "primitives" })
+	public void testXMLSerialize() throws Exception {
+
+		SubscriberStateImpl original = new SubscriberStateImpl(SubscriberStateChoice.assumedIdle, null);
+		
+		// Writes the area to a file.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+		writer.write(original, "subscriberState", SubscriberStateImpl.class);
+		writer.close();
+
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		SubscriberStateImpl copy = reader.read("subscriberState", SubscriberStateImpl.class);
+
+		assertEquals(copy.getSubscriberStateChoice(), original.getSubscriberStateChoice());
+		assertEquals(copy.getNotReachableReason(), original.getNotReachableReason());
+
+
+		original = new SubscriberStateImpl(SubscriberStateChoice.netDetNotReachable, NotReachableReason.imsiDetached);
+		
+		// Writes the area to a file.
+		baos = new ByteArrayOutputStream();
+		writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+		writer.write(original, "subscriberState", SubscriberStateImpl.class);
+		writer.close();
+
+		rawData = baos.toByteArray();
+		serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		bais = new ByteArrayInputStream(rawData);
+		reader = XMLObjectReader.newInstance(bais);
+		copy = reader.read("subscriberState", SubscriberStateImpl.class);
+
+		assertEquals(copy.getSubscriberStateChoice(), original.getSubscriberStateChoice());
+		assertEquals(copy.getNotReachableReason(), original.getNotReachableReason());
 	}
 }

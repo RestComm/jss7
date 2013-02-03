@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -23,6 +23,9 @@
 package org.mobicents.protocols.ss7.cap.isup;
 
 import java.io.IOException;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -47,6 +50,8 @@ public class BearerCapImpl implements BearerCap, CAPAsnPrimitive {
 
 	public static final String _PrimitiveName = "BearerCap";
 
+	private static final String USER_SERVICE_INFORMATION_XML = "userServiceInformation";
+
 	private byte[] data;
 
 	public BearerCapImpl() {
@@ -57,6 +62,10 @@ public class BearerCapImpl implements BearerCap, CAPAsnPrimitive {
 	}
 
 	public BearerCapImpl(UserServiceInformation userServiceInformation) throws CAPException {
+		setUserServiceInformation(userServiceInformation);
+	}
+
+	public void setUserServiceInformation(UserServiceInformation userServiceInformation) throws CAPException {
 		if (userServiceInformation == null)
 			throw new CAPException("The userServiceInformation parameter must not be null");
 		try {
@@ -205,5 +214,29 @@ public class BearerCapImpl implements BearerCap, CAPAsnPrimitive {
 
 		return sb.toString();
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<BearerCapImpl> BEARER_CAP_XML = new XMLFormat<BearerCapImpl>(BearerCapImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, BearerCapImpl bearerCap) throws XMLStreamException {
+			try {
+				bearerCap.setUserServiceInformation(xml.get(USER_SERVICE_INFORMATION_XML, UserServiceInformationImpl.class));
+			} catch (CAPException e) {
+				throw new XMLStreamException(e);
+			}
+		}
+
+		@Override
+		public void write(BearerCapImpl bearerCap, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			try {
+				xml.add(((UserServiceInformationImpl) bearerCap.getUserServiceInformation()), USER_SERVICE_INFORMATION_XML, UserServiceInformationImpl.class);
+			} catch (CAPException e) {
+				throw new XMLStreamException(e);
+			}
+		}
+	};
 }
 

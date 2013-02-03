@@ -1,28 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
- *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */
-
-/*
- JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -47,10 +25,14 @@ package org.mobicents.protocols.ss7.map.primitives;
 import java.io.IOException;
 import java.util.Arrays;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.ByteArrayContainer;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
@@ -61,6 +43,11 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPPrivateExtension;
  * 
  */
 public class MAPPrivateExtensionImpl implements MAPPrivateExtension, MAPAsnPrimitive {
+
+	private static final String OID = "oid";
+	private static final String DATA = "data";
+
+	private static final String DEFAULT_STRING = null;
 
 	private long[] oId;
 	private byte[] data;
@@ -291,9 +278,39 @@ public class MAPPrivateExtensionImpl implements MAPPrivateExtension, MAPAsnPrimi
 		return true;
 	}
 
-	
-	// ...............................
-	
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<MAPPrivateExtensionImpl> MAP_PRIVATE_EXTENSION_XML = new XMLFormat<MAPPrivateExtensionImpl>(MAPPrivateExtensionImpl.class) {
 
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, MAPPrivateExtensionImpl mapPrivateExtension) throws XMLStreamException {
+			String globalCode = xml.getAttribute(OID, DEFAULT_STRING);
+			if (globalCode != null) {
+				OidContainer oid = new OidContainer();
+				try {
+					oid.parseSerializedData(globalCode);
+				} catch (NumberFormatException e) {
+					throw new XMLStreamException("NumberFormatException when parsing oid in MAPPrivateExtension", e);
+				}
+				mapPrivateExtension.oId = oid.getData();
+			}
+			ByteArrayContainer bc = xml.get(DATA, ByteArrayContainer.class);
+			if (bc != null) {
+				mapPrivateExtension.data = bc.getData();
+			}
+		}
 
+		@Override
+		public void write(MAPPrivateExtensionImpl mapPrivateExtension, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			if (mapPrivateExtension.oId != null) {
+				OidContainer oid = new OidContainer(mapPrivateExtension.oId);
+				xml.setAttribute(OID, oid.getSerializedData());
+			}
+			if (mapPrivateExtension.data != null) {
+				ByteArrayContainer bac = new ByteArrayContainer(mapPrivateExtension.data);
+				xml.add(bac, DATA, ByteArrayContainer.class);
+			}
+		}
+	};
 }

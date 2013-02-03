@@ -24,7 +24,12 @@ package org.mobicents.protocols.ss7.cap.isup;
 
 import static org.testng.Assert.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -63,6 +68,7 @@ public class DigitsTest {
 		int tag = ais.readTag();
 		assertEquals(tag, 29);
 		elem.decodeAll(ais);
+		elem.setIsGenericDigits();
 		GenericDigits gd = elem.getGenericDigits();
 		assertEquals(gd.getEncodingScheme(), 2);
 		assertEquals(gd.getTypeOfDigits(), 1);
@@ -74,6 +80,7 @@ public class DigitsTest {
 		tag = ais.readTag();
 		assertEquals(tag, 29);
 		elem.decodeAll(ais);
+		elem.setIsGenericNumber();
 		GenericNumber gn = elem.getGenericNumber();
 		assertEquals(gn.getNatureOfAddressIndicator(), 4);
 		assertTrue(gn.getAddress().equals("7010900"));
@@ -100,6 +107,76 @@ public class DigitsTest {
 		assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
 		// int natureOfAddresIndicator, String address, int numberQualifierIndicator, int numberingPlanIndicator, int addressRepresentationREstrictedIndicator,
 		// boolean numberIncomplete, int screeningIndicator
+	}
+
+	private byte[] getEncodedData() {
+		return new byte[] { 0x21, 0x43, 0x65 };
+	}
+
+	@Test(groups = { "functional.xml.serialize", "isup" })
+	public void testXMLSerialize() throws Exception {
+
+		GenericDigitsImpl gd = new GenericDigitsImpl(GenericDigits._ENCODING_SCHEME_BCD_ODD, GenericDigits._TOD_BGCI, getEncodedData());
+		DigitsImpl original = new DigitsImpl(gd);
+
+		// Writes the area to a file.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+		writer.write(original, "digits", DigitsImpl.class);
+		writer.close();
+
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		DigitsImpl copy = reader.read("digits", DigitsImpl.class);
+
+		assertEquals(copy.getIsGenericDigits(), original.getIsGenericDigits());
+		assertEquals(copy.getIsGenericNumber(), original.getIsGenericNumber());
+		
+		assertEquals(copy.getGenericDigits().getEncodingScheme(), original.getGenericDigits().getEncodingScheme());
+		assertEquals(copy.getGenericDigits().getTypeOfDigits(), original.getGenericDigits().getTypeOfDigits());
+		assertEquals(copy.getGenericDigits().getEncodedDigits(), original.getGenericDigits().getEncodedDigits());
+
+
+		GenericNumberImpl gn = new GenericNumberImpl(GenericNumber._NAI_NATIONAL_SN, "12345", GenericNumber._NQIA_CONNECTED_NUMBER, GenericNumber._NPI_TELEX,
+				GenericNumber._APRI_ALLOWED, GenericNumber._NI_INCOMPLETE, GenericNumber._SI_USER_PROVIDED_VERIFIED_FAILED);
+		original = new DigitsImpl(gn);
+
+		// Writes the area to a file.
+		baos = new ByteArrayOutputStream();
+		writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+		writer.write(original, "digits", DigitsImpl.class);
+		writer.close();
+
+		rawData = baos.toByteArray();
+		serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		bais = new ByteArrayInputStream(rawData);
+		reader = XMLObjectReader.newInstance(bais);
+		copy = reader.read("digits", DigitsImpl.class);
+
+		assertEquals(copy.getIsGenericDigits(), original.getIsGenericDigits());
+		assertEquals(copy.getIsGenericNumber(), original.getIsGenericNumber());
+
+		assertEquals(copy.getGenericNumber().getNatureOfAddressIndicator(), original.getGenericNumber().getNatureOfAddressIndicator());
+		assertEquals(copy.getGenericNumber().getAddress(), original.getGenericNumber().getAddress());
+		assertEquals(copy.getGenericNumber().getNumberQualifierIndicator(), original.getGenericNumber().getNumberQualifierIndicator());
+		assertEquals(copy.getGenericNumber().getNumberingPlanIndicator(), original.getGenericNumber().getNumberingPlanIndicator());
+		assertEquals(copy.getGenericNumber().isNumberIncomplete(), original.getGenericNumber().isNumberIncomplete());
+		assertEquals(copy.getGenericNumber().getAddressRepresentationRestrictedIndicator(), original.getGenericNumber().getAddressRepresentationRestrictedIndicator());
+		assertEquals(copy.getGenericNumber().getScreeningIndicator(), original.getGenericNumber().getScreeningIndicator());
+		assertEquals(copy.getGenericNumber().isOddFlag(), original.getGenericNumber().isOddFlag());
+		
 	}
 }
 

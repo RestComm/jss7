@@ -57,7 +57,7 @@ public class SccpManStandardMBean extends StandardMBean {
 				new MBeanAttributeInfo("GlobalTitleType_Value", String.class.getName(), "GlobalTitle type for creating SccpAddress (when routing on GT)", true, false, false),
 				new MBeanAttributeInfo("NatureOfAddress", NatureOfAddressType.class.getName(), "NatureOfAddress parameter for creating SccpAddress (when routing on GT)", true, true, false),
 				new MBeanAttributeInfo("NatureOfAddress_Value", String.class.getName(), "NatureOfAddress parameter for creating SccpAddress (when routing on GT)", true, false, false),
-				new MBeanAttributeInfo("NumberingPlan", NumberingPlanType.class.getName(), "NumberingPlan parameter for creating SccpAddress (when routing on GT)", true, true, false),
+				new MBeanAttributeInfo("NumberingPlan", NumberingPlanSccpType.class.getName(), "NumberingPlan parameter for creating SccpAddress (when routing on GT)", true, true, false),
 				new MBeanAttributeInfo("NumberingPlan_Value", String.class.getName(), "NumberingPlan parameter for creating SccpAddress (when routing on GT)", true, false, false),
 				new MBeanAttributeInfo("TranslationType", int.class.getName(), "Translation Type parameter for creating SccpAddress (when routing on GT)", true, true, false),
 				new MBeanAttributeInfo("CallingPartyAddressDigits", String.class.getName(), 

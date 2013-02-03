@@ -24,13 +24,21 @@ package org.mobicents.protocols.ss7.cap.isup;
 
 import static org.testng.Assert.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.CalledPartyNumberImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.CallingPartyNumberImpl;
+import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
 import org.testng.annotations.*;
 
 /**
@@ -83,6 +91,39 @@ public class CallingPartyNumberCapTest {
 		
 //		int natureOfAddresIndicator, String address, int numberingPlanIndicator, int numberIncompleteIndicator, int addressRepresentationREstrictedIndicator,
 //		int screeningIndicator
+	}
+
+	@Test(groups = { "functional.xml.serialize", "isup" })
+	public void testXMLSerialize() throws Exception {
+
+		CallingPartyNumberCapImpl original = new CallingPartyNumberCapImpl(
+				new CallingPartyNumberImpl(NAINumber._NAI_NATIONAL_SN, "12345", CallingPartyNumber._NPI_TELEX, CallingPartyNumber._NI_INCOMPLETE,
+						CallingPartyNumber._APRI_ALLOWED, CallingPartyNumber._SI_USER_PROVIDED_FAILED));
+
+		// Writes the area to a file.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+		writer.write(original, "callingPartyNumberCap", CallingPartyNumberCapImpl.class);
+		writer.close();
+
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		CallingPartyNumberCapImpl copy = reader.read("callingPartyNumberCap", CallingPartyNumberCapImpl.class);
+
+		assertEquals(copy.getCallingPartyNumber().getNatureOfAddressIndicator(), original.getCallingPartyNumber().getNatureOfAddressIndicator());
+		assertEquals(copy.getCallingPartyNumber().getAddress(), original.getCallingPartyNumber().getAddress());
+		assertEquals(copy.getCallingPartyNumber().getNumberingPlanIndicator(), original.getCallingPartyNumber().getNumberingPlanIndicator());
+		assertEquals(copy.getCallingPartyNumber().getNumberIncompleteIndicator(), original.getCallingPartyNumber().getNumberIncompleteIndicator());
+		assertEquals(copy.getCallingPartyNumber().getAddressRepresentationRestrictedIndicator(), original.getCallingPartyNumber().getAddressRepresentationRestrictedIndicator());
+		assertEquals(copy.getCallingPartyNumber().getScreeningIndicator(), original.getCallingPartyNumber().getScreeningIndicator());
+
 	}
 }
 

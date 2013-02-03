@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -68,6 +71,23 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
  */
 public class EventSpecificInformationBCSMImpl implements EventSpecificInformationBCSM, CAPAsnPrimitive {
 
+	private static final String ROUTE_SELECT_FAILURE_SPECIFIC_INFO = "routeSelectFailureSpecificInfo";
+	private static final String O_CALLED_PARTY_BUSY_SPECIFIC_INFO = "oCalledPartyBusySpecificInfo";
+	private static final String O_NO_ANSWER_SPECIFIC_INFO = "oNoAnswerSpecificInfo";
+	private static final String O_ANSWER_SPECIFIC_INFO = "oAnswerSpecificInfo";
+	private static final String O_MID_CALL_SPECIFIC_INFO = "oMidCallSpecificInfo";
+	private static final String O_DISCONNECT_SPECIFIC_INFO = "oDisconnectSpecificInfo";
+	private static final String T_BUSY_SPECIFIC_INFO = "tBusySpecificInfo";
+	private static final String T_NO_ANSWER_SPECIFIC_INFO = "tNoAnswerSpecificInfo";
+	private static final String T_ANSWER_SPECIFIC_INFO = "tAnswerSpecificInfo";
+	private static final String T_MID_CALL_SPECIFIC_INFO = "tMidCallSpecificInfo";
+	private static final String T_DISCONNECT_SPECIFIC_INFO = "tDisconnectSpecificInfo";
+	private static final String O_TERM_SPECIFIC_INFO = "oTermSeizedSpecificInfo";
+	private static final String CALL_ACCEPTED_SPECIFIC_INFO = "callAcceptedSpecificInfo";
+	private static final String O_ABONDON_SPECIFIC_INFO = "oAbandonSpecificInfo";
+	private static final String O_CHANGE_OF_POSITION_SPECIFIC_INFO = "oChangeOfPositionSpecificInfo";
+	private static final String T_CHANGE_OF_POSITION_SPECIFIC_INFO = "tChangeOfPositionSpecificInfo";
+
 	public static final int _ID_routeSelectFailureSpecificInfo = 2;
 	public static final int _ID_oCalledPartyBusySpecificInfo = 3;
 	public static final int _ID_oNoAnswerSpecificInfo = 4;
@@ -85,7 +105,7 @@ public class EventSpecificInformationBCSMImpl implements EventSpecificInformatio
 	public static final int _ID_oChangeOfPositionSpecificInfo = 50;
 	public static final int _ID_tChangeOfPositionSpecificInfo = 51;
 
-	public static final String _PrimitiveName = "EventSpecificInformationBCSM";	
+	public static final String _PrimitiveName = "EventSpecificInformationBCSM";
 
 	private RouteSelectFailureSpecificInfo routeSelectFailureSpecificInfo;
 	private OCalledPartyBusySpecificInfo oCalledPartyBusySpecificInfo;
@@ -104,75 +124,73 @@ public class EventSpecificInformationBCSMImpl implements EventSpecificInformatio
 	private OChangeOfPositionSpecificInfo oChangeOfPositionSpecificInfo;
 	private TChangeOfPositionSpecificInfo tChangeOfPositionSpecificInfo;
 
-	
 	public EventSpecificInformationBCSMImpl() {
 	}
-	
+
 	public EventSpecificInformationBCSMImpl(RouteSelectFailureSpecificInfo routeSelectFailureSpecificInfo) {
 		this.routeSelectFailureSpecificInfo = routeSelectFailureSpecificInfo;
 	}
-	
+
 	public EventSpecificInformationBCSMImpl(OCalledPartyBusySpecificInfo oCalledPartyBusySpecificInfo) {
 		this.oCalledPartyBusySpecificInfo = oCalledPartyBusySpecificInfo;
 	}
-	
+
 	public EventSpecificInformationBCSMImpl(ONoAnswerSpecificInfo oNoAnswerSpecificInfo) {
 		this.oNoAnswerSpecificInfo = oNoAnswerSpecificInfo;
 	}
-	
+
 	public EventSpecificInformationBCSMImpl(OAnswerSpecificInfo oAnswerSpecificInfo) {
 		this.oAnswerSpecificInfo = oAnswerSpecificInfo;
 	}
-	
+
 	public EventSpecificInformationBCSMImpl(OMidCallSpecificInfo oMidCallSpecificInfo) {
 		this.oMidCallSpecificInfo = oMidCallSpecificInfo;
 	}
-	
+
 	public EventSpecificInformationBCSMImpl(ODisconnectSpecificInfo oDisconnectSpecificInfo) {
 		this.oDisconnectSpecificInfo = oDisconnectSpecificInfo;
 	}
-	
+
 	public EventSpecificInformationBCSMImpl(TBusySpecificInfo tBusySpecificInfo) {
 		this.tBusySpecificInfo = tBusySpecificInfo;
 	}
-	
+
 	public EventSpecificInformationBCSMImpl(TNoAnswerSpecificInfo tNoAnswerSpecificInfo) {
 		this.tNoAnswerSpecificInfo = tNoAnswerSpecificInfo;
 	}
-	
+
 	public EventSpecificInformationBCSMImpl(TAnswerSpecificInfo tAnswerSpecificInfo) {
 		this.tAnswerSpecificInfo = tAnswerSpecificInfo;
 	}
-	
+
 	public EventSpecificInformationBCSMImpl(TMidCallSpecificInfo tMidCallSpecificInfo) {
 		this.tMidCallSpecificInfo = tMidCallSpecificInfo;
 	}
-	
+
 	public EventSpecificInformationBCSMImpl(TDisconnectSpecificInfo tDisconnectSpecificInfo) {
 		this.tDisconnectSpecificInfo = tDisconnectSpecificInfo;
 	}
-	
+
 	public EventSpecificInformationBCSMImpl(OTermSeizedSpecificInfo oTermSeizedSpecificInfo) {
 		this.oTermSeizedSpecificInfo = oTermSeizedSpecificInfo;
 	}
-	
+
 	public EventSpecificInformationBCSMImpl(CallAcceptedSpecificInfo callAcceptedSpecificInfo) {
 		this.callAcceptedSpecificInfo = callAcceptedSpecificInfo;
 	}
-	
+
 	public EventSpecificInformationBCSMImpl(OAbandonSpecificInfo oAbandonSpecificInfo) {
 		this.oAbandonSpecificInfo = oAbandonSpecificInfo;
 	}
-	
+
 	public EventSpecificInformationBCSMImpl(OChangeOfPositionSpecificInfo oChangeOfPositionSpecificInfo) {
 		this.oChangeOfPositionSpecificInfo = oChangeOfPositionSpecificInfo;
 	}
-	
+
 	public EventSpecificInformationBCSMImpl(TChangeOfPositionSpecificInfo tChangeOfPositionSpecificInfo) {
 		this.tChangeOfPositionSpecificInfo = tChangeOfPositionSpecificInfo;
 	}
 
-	
 	@Override
 	public RouteSelectFailureSpecificInfo getRouteSelectFailureSpecificInfo() {
 		return routeSelectFailureSpecificInfo;
@@ -310,14 +328,14 @@ public class EventSpecificInformationBCSMImpl implements EventSpecificInformatio
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
+					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -327,18 +345,19 @@ public class EventSpecificInformationBCSMImpl implements EventSpecificInformatio
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
+					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException,
+			MAPParsingComponentException, IOException, AsnException {
 
 		this.routeSelectFailureSpecificInfo = null;
 		this.oCalledPartyBusySpecificInfo = null;
@@ -414,7 +433,7 @@ public class EventSpecificInformationBCSMImpl implements EventSpecificInformatio
 				ais.advanceElementData(length);
 				break;
 			case _ID_oAbandonSpecificInfo:
-				this.oAbandonSpecificInfo=new OAbandonSpecificInfoImpl();
+				this.oAbandonSpecificInfo = new OAbandonSpecificInfoImpl();
 				((OAbandonSpecificInfoImpl) this.oAbandonSpecificInfo).decodeData(ais, length);
 				break;
 			case _ID_oChangeOfPositionSpecificInfo:
@@ -576,10 +595,150 @@ public class EventSpecificInformationBCSMImpl implements EventSpecificInformatio
 			sb.append(tChangeOfPositionSpecificInfo.toString());
 			sb.append("]");
 		}
-		
+
 		sb.append("]");
 
 		return sb.toString();
 	}
-}
 
+	protected static final XMLFormat<EventSpecificInformationBCSMImpl> EVENT_SPECIFIC_INFORMATION_BCSM_XML = new XMLFormat<EventSpecificInformationBCSMImpl>(
+			EventSpecificInformationBCSMImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml,
+				EventSpecificInformationBCSMImpl eventSpecificInformationBCSM) throws XMLStreamException {
+			eventSpecificInformationBCSM.routeSelectFailureSpecificInfo = xml.get(ROUTE_SELECT_FAILURE_SPECIFIC_INFO,
+					RouteSelectFailureSpecificInfoImpl.class);
+
+			eventSpecificInformationBCSM.oCalledPartyBusySpecificInfo = xml.get(O_CALLED_PARTY_BUSY_SPECIFIC_INFO,
+					OCalledPartyBusySpecificInfoImpl.class);
+
+			eventSpecificInformationBCSM.oNoAnswerSpecificInfo = xml.get(O_NO_ANSWER_SPECIFIC_INFO,
+					ONoAnswerSpecificInfoImpl.class);
+
+			eventSpecificInformationBCSM.oAnswerSpecificInfo = xml.get(O_ANSWER_SPECIFIC_INFO,
+					OAnswerSpecificInfoImpl.class);
+			
+//			eventSpecificInformationBCSM.oMidCallSpecificInfo = xml.get(O_MID_CALL_SPECIFIC_INFO,
+//					OMidCallSpecificInfoImpl.class);
+			
+			eventSpecificInformationBCSM.oDisconnectSpecificInfo = xml.get(O_DISCONNECT_SPECIFIC_INFO,
+					ODisconnectSpecificInfoImpl.class);	
+			
+			eventSpecificInformationBCSM.tBusySpecificInfo = xml.get(T_BUSY_SPECIFIC_INFO,
+					TBusySpecificInfoImpl.class);		
+			
+			eventSpecificInformationBCSM.tNoAnswerSpecificInfo = xml.get(T_NO_ANSWER_SPECIFIC_INFO,
+					TNoAnswerSpecificInfoImpl.class);
+			
+			eventSpecificInformationBCSM.tAnswerSpecificInfo = xml.get(T_ANSWER_SPECIFIC_INFO,
+					TAnswerSpecificInfoImpl.class);
+			
+//			eventSpecificInformationBCSM.tMidCallSpecificInfo = xml.get(T_MID_CALL_SPECIFIC_INFO,
+//					TMidCallSpecificInfoImpl.class);
+			
+			eventSpecificInformationBCSM.tDisconnectSpecificInfo = xml.get(T_DISCONNECT_SPECIFIC_INFO,
+					TDisconnectSpecificInfoImpl.class);
+			
+//			eventSpecificInformationBCSM.oTermSeizedSpecificInfo = xml.get(O_TERM_SPECIFIC_INFO,
+//					OTermSeizedSpecificInfoImpl.class);
+			
+//			eventSpecificInformationBCSM.callAcceptedSpecificInfo = xml.get(CALL_ACCEPTED_SPECIFIC_INFO,
+//					CallAcceptedSpecificInfoImpl.class);
+			
+			eventSpecificInformationBCSM.oAbandonSpecificInfo = xml.get(O_ABONDON_SPECIFIC_INFO,
+					OAbandonSpecificInfoImpl.class);
+			
+//			eventSpecificInformationBCSM.oChangeOfPositionSpecificInfo = xml.get(O_CHANGE_OF_POSITION_SPECIFIC_INFO,
+//					OChangeOfPositionSpecificInfoImpl.class);
+			
+//			eventSpecificInformationBCSM.tChangeOfPositionSpecificInfo = xml.get(T_CHANGE_OF_POSITION_SPECIFIC_INFO,
+//					TChangeOfPositionSpecificInfoImpl.class);
+		}
+
+		@Override
+		public void write(EventSpecificInformationBCSMImpl eventSpecificInformationBCSM,
+				javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			if (eventSpecificInformationBCSM.routeSelectFailureSpecificInfo != null) {
+				xml.add((RouteSelectFailureSpecificInfoImpl) eventSpecificInformationBCSM.routeSelectFailureSpecificInfo,
+						ROUTE_SELECT_FAILURE_SPECIFIC_INFO, RouteSelectFailureSpecificInfoImpl.class);
+			}
+
+			if (eventSpecificInformationBCSM.oCalledPartyBusySpecificInfo != null) {
+				xml.add((OCalledPartyBusySpecificInfoImpl) eventSpecificInformationBCSM.oCalledPartyBusySpecificInfo,
+						O_CALLED_PARTY_BUSY_SPECIFIC_INFO, OCalledPartyBusySpecificInfoImpl.class);
+			}
+
+			if (eventSpecificInformationBCSM.oNoAnswerSpecificInfo != null) {
+				xml.add((ONoAnswerSpecificInfoImpl) eventSpecificInformationBCSM.oNoAnswerSpecificInfo,
+						O_NO_ANSWER_SPECIFIC_INFO, ONoAnswerSpecificInfoImpl.class);
+			}
+
+			if (eventSpecificInformationBCSM.oAnswerSpecificInfo != null) {
+				xml.add((OAnswerSpecificInfoImpl) eventSpecificInformationBCSM.oAnswerSpecificInfo,
+						O_ANSWER_SPECIFIC_INFO, OAnswerSpecificInfoImpl.class);
+			}
+
+//			if (eventSpecificInformationBCSM.oMidCallSpecificInfo != null) {
+//				xml.add((OMidCallSpecificInfoImpl) eventSpecificInformationBCSM.oMidCallSpecificInfo,
+//						O_MID_CALL_SPECIFIC_INFO, OMidCallSpecificInfoImpl.class);
+//			}
+			
+			if (eventSpecificInformationBCSM.oDisconnectSpecificInfo != null) {
+				xml.add((ODisconnectSpecificInfoImpl) eventSpecificInformationBCSM.oDisconnectSpecificInfo,
+						O_DISCONNECT_SPECIFIC_INFO, ODisconnectSpecificInfoImpl.class);
+			}
+			
+			if (eventSpecificInformationBCSM.tBusySpecificInfo != null) {
+				xml.add((TBusySpecificInfoImpl) eventSpecificInformationBCSM.tBusySpecificInfo,
+						T_BUSY_SPECIFIC_INFO, TBusySpecificInfoImpl.class);
+			}
+			
+			if (eventSpecificInformationBCSM.tNoAnswerSpecificInfo != null) {
+				xml.add((TNoAnswerSpecificInfoImpl) eventSpecificInformationBCSM.tNoAnswerSpecificInfo,
+						T_NO_ANSWER_SPECIFIC_INFO, TNoAnswerSpecificInfoImpl.class);
+			}
+			
+			if (eventSpecificInformationBCSM.tAnswerSpecificInfo != null) {
+				xml.add((TAnswerSpecificInfoImpl) eventSpecificInformationBCSM.tAnswerSpecificInfo,
+						T_ANSWER_SPECIFIC_INFO, TAnswerSpecificInfoImpl.class);
+			}
+			
+//			if (eventSpecificInformationBCSM.tMidCallSpecificInfo != null) {
+//				xml.add((TMidCallSpecificInfoImpl) eventSpecificInformationBCSM.tMidCallSpecificInfo,
+//						T_MID_CALL_SPECIFIC_INFO, TMidCallSpecificInfoImpl.class);
+//			}
+			
+			if (eventSpecificInformationBCSM.tDisconnectSpecificInfo != null) {
+				xml.add((TDisconnectSpecificInfoImpl) eventSpecificInformationBCSM.tDisconnectSpecificInfo,
+						T_DISCONNECT_SPECIFIC_INFO, TDisconnectSpecificInfoImpl.class);
+			}
+			
+//			if (eventSpecificInformationBCSM.oTermSeizedSpecificInfo != null) {
+//				xml.add((OTermSeizedSpecificInfoImpl) eventSpecificInformationBCSM.oTermSeizedSpecificInfo,
+//						O_TERM_SPECIFIC_INFO, OTermSeizedSpecificInfoImpl.class);
+//			}
+			
+//			if (eventSpecificInformationBCSM.callAcceptedSpecificInfo != null) {
+//				xml.add((CallAcceptedSpecificInfoImpl) eventSpecificInformationBCSM.callAcceptedSpecificInfo,
+//						CALL_ACCEPTED_SPECIFIC_INFO, CallAcceptedSpecificInfoImpl.class);
+//			}
+			
+			if (eventSpecificInformationBCSM.oAbandonSpecificInfo != null) {
+				xml.add((OAbandonSpecificInfoImpl) eventSpecificInformationBCSM.oAbandonSpecificInfo,
+						O_ABONDON_SPECIFIC_INFO, OAbandonSpecificInfoImpl.class);
+			}
+			
+//			if (eventSpecificInformationBCSM.oChangeOfPositionSpecificInfo != null) {
+//				xml.add((OChangeOfPositionSpecificInfo) eventSpecificInformationBCSM.oChangeOfPositionSpecificInfo,
+//						O_CHANGE_OF_POSITION_SPECIFIC_INFO, OChangeOfPositionSpecificInfoImpl.class);
+//			}
+			
+//			if (eventSpecificInformationBCSM.tChangeOfPositionSpecificInfo != null) {
+//				xml.add((TChangeOfPositionSpecificInfoImpl) eventSpecificInformationBCSM.tChangeOfPositionSpecificInfo,
+//						T_CHANGE_OF_POSITION_SPECIFIC_INFO, TChangeOfPositionSpecificInfoImpl.class);
+//			}
+
+		}
+	};
+}

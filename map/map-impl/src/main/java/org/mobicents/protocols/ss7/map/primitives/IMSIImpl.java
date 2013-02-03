@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,6 +22,9 @@
 
 package org.mobicents.protocols.ss7.map.primitives;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 
 /**
@@ -30,6 +33,8 @@ import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
  * 
  */
 public class IMSIImpl extends TbcdString implements IMSI {
+
+	private static final String NUMBER = "number";
 
 	public IMSIImpl() {
 		super(3, 8, "IMSI");
@@ -42,4 +47,20 @@ public class IMSIImpl extends TbcdString implements IMSI {
 	public String getData() {
 		return this.data;
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<IMSIImpl> IMSI_XML = new XMLFormat<IMSIImpl>(IMSIImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, IMSIImpl imsi) throws XMLStreamException {
+			imsi.data = xml.getAttribute(NUMBER, "");
+		}
+
+		@Override
+		public void write(IMSIImpl imsi, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			xml.setAttribute(NUMBER, imsi.data);
+		}
+	};
 }

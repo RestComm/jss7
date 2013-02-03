@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.inap.primitives;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -35,13 +38,15 @@ import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfoDpAssignment;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfoMessageType;
 
-
 /**
-* 
-* @author sergey vetyutnev
-* 
-*/
+ * 
+ * @author sergey vetyutnev
+ * 
+ */
 public class MiscCallInfoImpl implements MiscCallInfo, INAPAsnPrimitive {
+
+	private static final String MESSAGE_TYPE = "messageType";
+	private static final String DP_ASSIGNMENT = "dpAssignment";
 
 	public static final int _ID_messageType = 0;
 	public static final int _ID_dpAssignment = 1;
@@ -49,17 +54,16 @@ public class MiscCallInfoImpl implements MiscCallInfo, INAPAsnPrimitive {
 	public static final String _PrimitiveName = "MiscCallInfo";
 
 	private MiscCallInfoMessageType messageType;
-	private MiscCallInfoDpAssignment dpAssignment;	
+	private MiscCallInfoDpAssignment dpAssignment;
 
-	
 	public MiscCallInfoImpl() {
 	}
-	
+
 	public MiscCallInfoImpl(MiscCallInfoMessageType messageType, MiscCallInfoDpAssignment dpAssignment) {
 		this.messageType = messageType;
 		this.dpAssignment = dpAssignment;
 	}
-	
+
 	@Override
 	public MiscCallInfoMessageType getMessageType() {
 		return messageType;
@@ -69,9 +73,7 @@ public class MiscCallInfoImpl implements MiscCallInfo, INAPAsnPrimitive {
 	public MiscCallInfoDpAssignment getDpAssignment() {
 		return dpAssignment;
 	}
-	
-	
-	
+
 	@Override
 	public int getTag() throws INAPException {
 		return Tag.SEQUENCE;
@@ -93,11 +95,11 @@ public class MiscCallInfoImpl implements MiscCallInfo, INAPAsnPrimitive {
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new INAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					INAPParsingComponentExceptionReason.MistypedParameter);
+			throw new INAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, INAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new INAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					INAPParsingComponentExceptionReason.MistypedParameter);
+			throw new INAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, INAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -106,15 +108,16 @@ public class MiscCallInfoImpl implements MiscCallInfo, INAPAsnPrimitive {
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new INAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					INAPParsingComponentExceptionReason.MistypedParameter);
+			throw new INAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, INAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new INAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					INAPParsingComponentExceptionReason.MistypedParameter);
-		}		
+			throw new INAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, INAPParsingComponentExceptionReason.MistypedParameter);
+		}
 	}
 
-	private void _decode(AsnInputStream asnIS, int length) throws INAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream asnIS, int length) throws INAPParsingComponentException, IOException,
+			AsnException {
 
 		this.messageType = null;
 		this.dpAssignment = null;
@@ -126,15 +129,15 @@ public class MiscCallInfoImpl implements MiscCallInfo, INAPAsnPrimitive {
 				break;
 
 			int tag = ais.readTag();
-			
+
 			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 				switch (tag) {
 				case _ID_messageType:
-					i1 = (int)ais.readInteger();
+					i1 = (int) ais.readInteger();
 					this.messageType = MiscCallInfoMessageType.getInstance(i1);
 					break;
 				case _ID_dpAssignment:
-					i1 = (int)ais.readInteger();
+					i1 = (int) ais.readInteger();
 					this.dpAssignment = MiscCallInfoDpAssignment.getInstance(i1);
 					break;
 
@@ -148,19 +151,20 @@ public class MiscCallInfoImpl implements MiscCallInfo, INAPAsnPrimitive {
 		}
 
 		if (this.messageType == null)
-			throw new INAPParsingComponentException("Error while decoding " + _PrimitiveName + ": messageType is mandatory but not found ",
+			throw new INAPParsingComponentException("Error while decoding " + _PrimitiveName
+					+ ": messageType is mandatory but not found ",
 					INAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws INAPException {
-		
+
 		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 	}
 
 	@Override
 	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws INAPException {
-		
+
 		try {
 			asnOs.writeTag(tagClass, false, tag);
 			int pos = asnOs.StartContentDefiniteLength();
@@ -207,5 +211,38 @@ public class MiscCallInfoImpl implements MiscCallInfo, INAPAsnPrimitive {
 
 		return sb.toString();
 	}
-}
 
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<MiscCallInfoImpl> MISC_CALL_INFO_XML = new XMLFormat<MiscCallInfoImpl>(
+			MiscCallInfoImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, MiscCallInfoImpl miscCallInfo)
+				throws XMLStreamException {
+			Integer integ = xml.get(MESSAGE_TYPE, Integer.class);
+			if (integ != null) {
+				miscCallInfo.messageType = MiscCallInfoMessageType.getInstance(integ);
+			}
+
+			integ = xml.get(DP_ASSIGNMENT, Integer.class);
+			if (integ != null) {
+				miscCallInfo.dpAssignment = MiscCallInfoDpAssignment.getInstance(integ);
+			}
+		}
+
+		@Override
+		public void write(MiscCallInfoImpl miscCallInfo, javolution.xml.XMLFormat.OutputElement xml)
+				throws XMLStreamException {
+
+			if (miscCallInfo.messageType != null) {
+				xml.add(miscCallInfo.messageType.getCode(), MESSAGE_TYPE, Integer.class);
+			}
+
+			if (miscCallInfo.dpAssignment != null) {
+				xml.add(miscCallInfo.dpAssignment.getCode(), DP_ASSIGNMENT, Integer.class);
+			}
+		}
+	};
+}

@@ -220,12 +220,12 @@ public interface UserTeleserviceInformation extends ISUPParameter {
 
 	public void setEHighLayerCharIdentification(int highLayerCharIdentification);
 
-	public int getEVidedoTelephonyCharIdentification();
+	public int getEVideoTelephonyCharIdentification();
 
-	public void setEVidedoTelephonyCharIdentification(int eVidedoTelephonyCharIdentification);
+	public void setEVideoTelephonyCharIdentification(int eVidedoTelephonyCharIdentification);
 
 	public boolean isEHighLayerCharIdentificationPresent();
 
-	public boolean isEVidedoTelephonyCharIdentificationPresent();
+	public boolean isEVideoTelephonyCharIdentificationPresent();
 
 }

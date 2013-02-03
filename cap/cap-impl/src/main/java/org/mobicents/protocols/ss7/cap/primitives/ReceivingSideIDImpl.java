@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.cap.primitives;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -42,25 +45,26 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
  */
 public class ReceivingSideIDImpl implements ReceivingSideID, CAPAsnPrimitive {
 
+	private static final String RECEIVING_SIDE_ID = "receivingSideID";
+
 	public static final int _ID_receivingSideID = 1;
 
 	public static final String _PrimitiveName = "ReceivingSideID";
 
 	private LegType receivingSideID;
 
-	
 	public ReceivingSideIDImpl() {
 	}
 
 	public ReceivingSideIDImpl(LegType receivingSideID) {
 		this.receivingSideID = receivingSideID;
 	}
-	
+
 	@Override
 	public LegType getReceivingSideID() {
 		return receivingSideID;
 	}
-	
+
 	@Override
 	public int getTag() throws CAPException {
 		return _ID_receivingSideID;
@@ -83,14 +87,14 @@ public class ReceivingSideIDImpl implements ReceivingSideID, CAPAsnPrimitive {
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
+					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -100,29 +104,33 @@ public class ReceivingSideIDImpl implements ReceivingSideID, CAPAsnPrimitive {
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
+					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException,
+			MAPParsingComponentException, IOException, AsnException {
 
 		this.receivingSideID = null;
-		
-		if (ansIS.getTag() != _ID_receivingSideID || ansIS.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ansIS.isTagPrimitive())
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-					+ ": choice receivingSideID has bad tag or tagClass or is not primitive", CAPParsingComponentExceptionReason.MistypedParameter);
 
-		int i1 = (int)ansIS.readIntegerData(length); 
+		if (ansIS.getTag() != _ID_receivingSideID || ansIS.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC
+				|| !ansIS.isTagPrimitive())
+			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+					+ ": choice receivingSideID has bad tag or tagClass or is not primitive",
+					CAPParsingComponentExceptionReason.MistypedParameter);
+
+		int i1 = (int) ansIS.readIntegerData(length);
 		this.receivingSideID = LegType.getInstance(i1);
 		if (this.receivingSideID == null)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad LegType parameter",
+			throw new CAPParsingComponentException(
+					"Error while decoding " + _PrimitiveName + ": bad LegType parameter",
 					CAPParsingComponentExceptionReason.MistypedParameter);
 	}
 
@@ -163,7 +171,7 @@ public class ReceivingSideIDImpl implements ReceivingSideID, CAPAsnPrimitive {
 		StringBuilder sb = new StringBuilder();
 		sb.append(_PrimitiveName);
 		sb.append(" [");
-		
+
 		if (this.receivingSideID != null) {
 			sb.append("receivingSideID=");
 			sb.append(receivingSideID.toString());
@@ -173,4 +181,23 @@ public class ReceivingSideIDImpl implements ReceivingSideID, CAPAsnPrimitive {
 
 		return sb.toString();
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<ReceivingSideIDImpl> RECEIVING_SIDE_ID_XML = new XMLFormat<ReceivingSideIDImpl>(
+			ReceivingSideIDImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, ReceivingSideIDImpl receivingSideID)
+				throws XMLStreamException {
+			receivingSideID.receivingSideID = LegType.getInstance(xml.get(RECEIVING_SIDE_ID, Integer.class));
+		}
+
+		@Override
+		public void write(ReceivingSideIDImpl receivingSideID, javolution.xml.XMLFormat.OutputElement xml)
+				throws XMLStreamException {
+			xml.add(receivingSideID.receivingSideID.getCode(), RECEIVING_SIDE_ID, Integer.class);
+		}
+	};
 }

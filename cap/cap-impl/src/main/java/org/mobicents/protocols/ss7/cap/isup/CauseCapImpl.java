@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.cap.isup;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -38,26 +41,33 @@ import org.mobicents.protocols.ss7.isup.impl.message.parameter.CauseIndicatorsIm
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
 
 /**
-*
-* 
-* @author sergey vetyutnev
-* 
-*/
+ * 
+ * @author sergey vetyutnev
+ * @author Amit Bhayani
+ * 
+ */
 public class CauseCapImpl implements CauseCap, CAPAsnPrimitive {
+
+	private static final String CAUSE_INDICATORS = "causeIndicators";
 
 	public static final String _PrimitiveName = "CauseCap";
 
+	private static final String ISUP_CAUSE_INDICATORS_XML = "isupCauseIndicators";
+
 	private byte[] data;
-	
-	
+
 	public CauseCapImpl() {
 	}
-	
+
 	public CauseCapImpl(byte[] data) {
 		this.data = data;
 	}
 
 	public CauseCapImpl(CauseIndicators causeIndicators) throws CAPException {
+		setCauseIndicators(causeIndicators);
+	}
+
+	public void setCauseIndicators(CauseIndicators causeIndicators) throws CAPException {
 		if (causeIndicators == null)
 			throw new CAPException("The causeIndicators parameter must not be null");
 		try {
@@ -76,7 +86,7 @@ public class CauseCapImpl implements CauseCap, CAPAsnPrimitive {
 	public CauseIndicators getCauseIndicators() throws CAPException {
 		if (this.data == null)
 			throw new CAPException("The data has not been filled");
-		
+
 		try {
 			CauseIndicatorsImpl ln = new CauseIndicatorsImpl();
 			ln.decode(this.data);
@@ -108,14 +118,14 @@ public class CauseCapImpl implements CauseCap, CAPAsnPrimitive {
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (CAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
+					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -125,25 +135,26 @@ public class CauseCapImpl implements CauseCap, CAPAsnPrimitive {
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (CAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
+					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, CAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException,
+			CAPParsingComponentException, IOException, AsnException {
 
 		this.data = ansIS.readOctetStringData(length);
 		if (this.data.length < 2 || this.data.length > 32)
-			throw new CAPParsingComponentException(
-					"Error while decoding " + _PrimitiveName + ": data must be from 2 to 32 bytes length, found: " + this.data.length,
+			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+					+ ": data must be from 2 to 32 bytes length, found: " + this.data.length,
 					CAPParsingComponentExceptionReason.MistypedParameter);
-		
+
 	}
 
 	@Override
@@ -206,4 +217,28 @@ public class CauseCapImpl implements CauseCap, CAPAsnPrimitive {
 
 		return sb.toString();
 	}
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<CauseCapImpl> CAUSE_CAP_XML = new XMLFormat<CauseCapImpl>(CauseCapImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, CauseCapImpl causeCap) throws XMLStreamException {
+			try {
+				causeCap.setCauseIndicators(xml.get(ISUP_CAUSE_INDICATORS_XML, CauseIndicatorsImpl.class));
+			} catch (CAPException e) {
+				throw new XMLStreamException(e);
+			}
+		}
+
+		@Override
+		public void write(CauseCapImpl causeCap, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			try {
+				xml.add(((CauseIndicatorsImpl) causeCap.getCauseIndicators()), ISUP_CAUSE_INDICATORS_XML, CauseIndicatorsImpl.class);
+			} catch (CAPException e) {
+				throw new XMLStreamException(e);
+			}
+		}
+	};
 }

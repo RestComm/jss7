@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -37,9 +40,13 @@ import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 /**
  * 
  * @author sergey vetyutnev
+ * @author Amit Bhayani
  * 
  */
 public class CallSegmentToCancelImpl implements CallSegmentToCancel, CAPAsnPrimitive {
+
+	private static final String INVOKE_ID = "invokeID";
+	private static final String CALL_SEGMENT_ID = "callSegmentID";
 
 	public static final int _ID_invokeID = 0;
 	public static final int _ID_callSegmentID = 1;
@@ -47,9 +54,8 @@ public class CallSegmentToCancelImpl implements CallSegmentToCancel, CAPAsnPrimi
 	public static final String _PrimitiveName = "CallSegmentToCancel";
 
 	private Integer invokeID;
-	private Integer callSegmentID;	
-	
-	
+	private Integer callSegmentID;
+
 	public CallSegmentToCancelImpl() {
 	}
 
@@ -57,7 +63,7 @@ public class CallSegmentToCancelImpl implements CallSegmentToCancel, CAPAsnPrimi
 		this.invokeID = invokeID;
 		this.callSegmentID = callSegmentID;
 	}
-	
+
 	@Override
 	public Integer getInvokeID() {
 		return invokeID;
@@ -90,11 +96,11 @@ public class CallSegmentToCancelImpl implements CallSegmentToCancel, CAPAsnPrimi
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -104,15 +110,16 @@ public class CallSegmentToCancelImpl implements CallSegmentToCancel, CAPAsnPrimi
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException,
+			AsnException {
 
 		this.invokeID = null;
 		this.callSegmentID = null;
@@ -146,7 +153,7 @@ public class CallSegmentToCancelImpl implements CallSegmentToCancel, CAPAsnPrimi
 	@Override
 	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
 		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-		
+
 	}
 
 	@Override
@@ -170,7 +177,7 @@ public class CallSegmentToCancelImpl implements CallSegmentToCancel, CAPAsnPrimi
 				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_invokeID, this.invokeID);
 			if (this.callSegmentID != null)
 				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_callSegmentID, this.callSegmentID);
-			
+
 		} catch (IOException e) {
 			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		} catch (AsnException e) {
@@ -198,5 +205,33 @@ public class CallSegmentToCancelImpl implements CallSegmentToCancel, CAPAsnPrimi
 
 		return sb.toString();
 	}
-}
 
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<CallSegmentToCancelImpl> CALL_SEGMENT_TO_CANCEL_XML = new XMLFormat<CallSegmentToCancelImpl>(
+			CallSegmentToCancelImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, CallSegmentToCancelImpl callSegmentToCancel)
+				throws XMLStreamException {
+
+			callSegmentToCancel.invokeID = xml.get(INVOKE_ID, Integer.class);
+			callSegmentToCancel.callSegmentID = xml.get(CALL_SEGMENT_ID, Integer.class);
+		}
+
+		@Override
+		public void write(CallSegmentToCancelImpl callSegmentToCancel, javolution.xml.XMLFormat.OutputElement xml)
+				throws XMLStreamException {
+
+			if (callSegmentToCancel.invokeID != null) {
+				xml.add(((Integer) callSegmentToCancel.invokeID), INVOKE_ID, Integer.class);
+			}
+
+			if (callSegmentToCancel.callSegmentID != null) {
+				xml.add(((Integer) callSegmentToCancel.callSegmentID), CALL_SEGMENT_ID, Integer.class);
+			}
+
+		}
+	};
+}

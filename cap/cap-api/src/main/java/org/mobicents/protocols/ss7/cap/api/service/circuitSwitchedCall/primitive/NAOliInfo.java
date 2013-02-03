@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -36,9 +36,7 @@ NAOliInfo ::= OCTET STRING (SIZE (1))
 */
 public interface NAOliInfo {
 
-	public byte[] getData();
-
-	public Integer getValue();
+	public int getData();
 	
 	// TODO: implement getting info according to ANSI T1.113-1995
 

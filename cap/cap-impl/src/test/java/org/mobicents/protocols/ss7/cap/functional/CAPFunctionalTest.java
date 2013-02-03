@@ -1163,7 +1163,7 @@ public class CAPFunctionalTest extends SccpHarness {
 						genericNumber.setNumberingPlanIndicator(GenericNumber._NPI_DATA);
 						genericNumber.setNumberQualifierIndicator(GenericNumber._NQIA_CALLING_PARTY_NUMBER);
 						genericNumber.setScreeningIndicator(GenericNumber._SI_USER_PROVIDED_VERIFIED_FAILED);
-						Digits digitsResponse = this.capParameterFactory.createDigits(genericNumber);
+						Digits digitsResponse = this.capParameterFactory.createDigits_GenericNumber(genericNumber);
 						dlg.addPromptAndCollectUserInformationResponse_DigitsResponse(promptAndCollectUserInformationInvokeId, digitsResponse);
 						this.observerdEvents.add(TestEvent.createSentEvent(EventType.PromptAndCollectUserInformationResponse, null, sequence++));
 						dlg.send();
@@ -2990,7 +2990,7 @@ public class CAPFunctionalTest extends SccpHarness {
 					genericNumber.setNumberingPlanIndicator(GenericNumber._NPI_DATA);
 					genericNumber.setNumberQualifierIndicator(GenericNumber._NQIA_CALLING_PARTY_NUMBER);
 					genericNumber.setScreeningIndicator(GenericNumber._SI_USER_PROVIDED_VERIFIED_FAILED);
-					Digits digitsResponse = this.capParameterFactory.createDigits(genericNumber);
+					Digits digitsResponse = this.capParameterFactory.createDigits_GenericNumber(genericNumber);
 					dlg.addPromptAndCollectUserInformationResponse_DigitsResponse(invokeId3, digitsResponse);
 					this.observerdEvents.add(TestEvent.createSentEvent(EventType.PromptAndCollectUserInformationResponse, null, sequence++));
 

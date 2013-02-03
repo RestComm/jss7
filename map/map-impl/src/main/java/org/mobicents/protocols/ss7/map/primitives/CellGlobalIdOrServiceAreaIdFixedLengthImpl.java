@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -23,15 +23,14 @@
 package org.mobicents.protocols.ss7.map.primitives;
 
 import java.io.IOException;
-import java.util.Arrays;
 
-import org.mobicents.protocols.asn.AsnException;
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdFixedLength;
 
 
@@ -40,19 +39,29 @@ import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaI
 * @author sergey vetyutnev
 * 
 */
-public class CellGlobalIdOrServiceAreaIdFixedLengthImpl implements CellGlobalIdOrServiceAreaIdFixedLength, MAPAsnPrimitive {
+public class CellGlobalIdOrServiceAreaIdFixedLengthImpl extends OctetStringBase implements CellGlobalIdOrServiceAreaIdFixedLength {
 
-	private byte[] data;
+	private static final String MCC = "mcc";
+	private static final String MNC = "mnc";
+	private static final String LAC = "lac";
+	private static final String CELL_ID = "cellId";
+
+	private static final int DEFAULT_INT_VALUE = 0;
 
 	public CellGlobalIdOrServiceAreaIdFixedLengthImpl() {
+		super(7, 7, "CellGlobalIdOrServiceAreaIdFixedLength");
 	}
 
 	public CellGlobalIdOrServiceAreaIdFixedLengthImpl(byte[] data) {
-		this.data = data;
+		super(7, 7, "CellGlobalIdOrServiceAreaIdFixedLength", data);
 	}
 
 	public CellGlobalIdOrServiceAreaIdFixedLengthImpl(int mcc, int mnc, int lac, int cellId) throws MAPException {
+		super(7, 7, "CellGlobalIdOrServiceAreaIdFixedLength");
+		this.setData(mcc, mnc, lac, cellId);
+	}
 
+	public void setData(int mcc, int mnc, int lac, int cellId) throws MAPException {
 		if (mcc < 1 || mcc > 999)
 			throw new MAPException("Bad mcc value");
 		if (mnc < 0 || mnc > 999)
@@ -172,83 +181,6 @@ public class CellGlobalIdOrServiceAreaIdFixedLengthImpl implements CellGlobalIdO
 		return res;
 	}
 
-	
-	public int getTag() throws MAPException {
-		return Tag.STRING_OCTET;
-	}
-
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
-
-	public boolean getIsPrimitive() {
-		return false;
-	}
-
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding CellGlobalIdOrServiceAreaIdFixedLength: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding CellGlobalIdOrServiceAreaIdFixedLength: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding CellGlobalIdOrServiceAreaIdFixedLength: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding CellGlobalIdOrServiceAreaIdFixedLength: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
-
-		try {
-			this.data = ansIS.readOctetStringData(length);
-			if (this.data.length != 7)
-				throw new MAPParsingComponentException("Error decoding CellGlobalIdOrServiceAreaIdFixedLength: the CellGlobalIdOrServiceAreaIdFixedLength field must contain from 7 to 7 octets. Contains: " + length,
-						MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding CellGlobalIdOrServiceAreaIdFixedLength: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}	
-
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET);
-	}
-
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		
-		try {
-			asnOs.writeTag(tagClass, true, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding CellGlobalIdOrServiceAreaIdFixedLength: " + e.getMessage(), e);
-		}
-	}
-
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-
-		if (this.data == null)
-			throw new MAPException("Error while encoding the CellGlobalIdOrServiceAreaIdFixedLength: data is not defined");
-		if (this.data.length != 7)
-			throw new MAPException("Error while encoding the CellGlobalIdOrServiceAreaIdFixedLength: field length must be equal 7");
-
-		asnOs.writeOctetStringData(this.data);
-	}
-	
 	@Override
 	public String toString() {
 		
@@ -268,7 +200,8 @@ public class CellGlobalIdOrServiceAreaIdFixedLengthImpl implements CellGlobalIdO
 		}
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append("CellGlobalIdOrServiceAreaIdFixedLength [");
+		sb.append(this._PrimitiveName);
+		sb.append(" [");
 		if (goodData) {
 			sb.append("MCC=");
 			sb.append(mcc);
@@ -286,39 +219,38 @@ public class CellGlobalIdOrServiceAreaIdFixedLengthImpl implements CellGlobalIdO
 		
 		return sb.toString();
 	}
-	
-	private String printDataArr() {
-		StringBuilder sb = new StringBuilder();
-		if( this.data!=null ) {
-			for( int b : this.data ) {
-				sb.append(b);
-				sb.append(" ");
+
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<CellGlobalIdOrServiceAreaIdFixedLengthImpl> CELL_GLOBAL_ID_OR_SERVICE_AREA_ID_FIXED_LENGTH_XML = new XMLFormat<CellGlobalIdOrServiceAreaIdFixedLengthImpl>(
+			CellGlobalIdOrServiceAreaIdFixedLengthImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, CellGlobalIdOrServiceAreaIdFixedLengthImpl cellGlobalIdOrServiceAreaIdFixedLength) throws XMLStreamException {
+			int mcc = xml.getAttribute(MCC, DEFAULT_INT_VALUE);
+			int mnc = xml.getAttribute(MNC, DEFAULT_INT_VALUE);
+			int lac = xml.getAttribute(LAC, DEFAULT_INT_VALUE);
+			int cellId = xml.getAttribute(CELL_ID, DEFAULT_INT_VALUE);
+
+			try {
+				cellGlobalIdOrServiceAreaIdFixedLength.setData(mcc, mnc, lac, cellId);
+			} catch (MAPException e) {
+				throw new XMLStreamException("MAPException when deserializing CellGlobalIdOrServiceAreaIdFixedLengthImpl", e);
 			}
 		}
-		
-		return sb.toString();
-	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + Arrays.hashCode(data);
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		CellGlobalIdOrServiceAreaIdFixedLengthImpl other = (CellGlobalIdOrServiceAreaIdFixedLengthImpl) obj;
-		if (!Arrays.equals(data, other.data))
-			return false;
-		return true;
-	}
+		@Override
+		public void write(CellGlobalIdOrServiceAreaIdFixedLengthImpl cellGlobalIdOrServiceAreaIdFixedLength, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			try {
+				xml.setAttribute(MCC, cellGlobalIdOrServiceAreaIdFixedLength.getMCC());
+				xml.setAttribute(MNC, cellGlobalIdOrServiceAreaIdFixedLength.getMNC());
+				xml.setAttribute(LAC, cellGlobalIdOrServiceAreaIdFixedLength.getLac());
+				xml.setAttribute(CELL_ID, cellGlobalIdOrServiceAreaIdFixedLength.getCellId());
+			} catch (MAPException e) {
+				throw new XMLStreamException("MAPException when serializing CellGlobalIdOrServiceAreaIdFixedLengthImpl", e);
+			}
+		}
+	};
 }
 

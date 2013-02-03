@@ -1,6 +1,6 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012.
- * and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,9 +22,11 @@
 
 package org.mobicents.protocols.ss7.cap;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPMessage;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 
 /**
  * 
@@ -33,6 +35,9 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
  * 
  */
 public abstract class MessageImpl implements CAPMessage {
+	
+	private static final String INVOKE_ID = "invokeId";
+	
 	private long invokeId;
 	private CAPDialog capDialog;
 
@@ -51,4 +56,20 @@ public abstract class MessageImpl implements CAPMessage {
 	public void setCAPDialog(CAPDialog capDialog) {
 		this.capDialog = capDialog;
 	}
+	
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<MessageImpl> CAP_MESSAGE_XML = new XMLFormat<MessageImpl>(MessageImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, MessageImpl message) throws XMLStreamException {
+			message.invokeId = xml.getAttribute(INVOKE_ID, -1l);
+		}
+
+		@Override
+		public void write(MessageImpl message, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			xml.setAttribute(INVOKE_ID, message.invokeId);
+		}
+	};
 }

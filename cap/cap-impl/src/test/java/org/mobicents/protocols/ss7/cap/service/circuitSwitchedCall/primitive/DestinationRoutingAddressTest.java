@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,15 +24,20 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
 import static org.testng.Assert.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.*;
 
 /**
  * 
@@ -74,6 +79,36 @@ public class DestinationRoutingAddressTest {
 		assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
 		
 		//int natureOfAddresIndicator, String address, int numberingPlanIndicator, int internalNetworkNumberIndicator
+	}
+
+	@Test(groups = { "functional.xml.serialize", "circuitSwitchedCall.primitive" })
+	public void testXMLSerialize() throws Exception {
+
+		ArrayList<CalledPartyNumberCap> cpnl = new ArrayList<CalledPartyNumberCap>();
+		CalledPartyNumberCapImpl cpn = new CalledPartyNumberCapImpl(getIntData1());
+		cpnl.add(cpn);
+		DestinationRoutingAddressImpl original = new DestinationRoutingAddressImpl(cpnl);
+
+		// Writes the area to a file.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+		writer.write(original, "destinationRoutingAddress", DestinationRoutingAddressImpl.class);
+		writer.close();
+
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		DestinationRoutingAddressImpl copy = reader.read("destinationRoutingAddress", DestinationRoutingAddressImpl.class);
+
+		assertEquals(copy.getCalledPartyNumber().size(), original.getCalledPartyNumber().size());
+		assertEquals(copy.getCalledPartyNumber().get(0).getData(), original.getCalledPartyNumber().get(0).getData());
+
 	}
 }
 

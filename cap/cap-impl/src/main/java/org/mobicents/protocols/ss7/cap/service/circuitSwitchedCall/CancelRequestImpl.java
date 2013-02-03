@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -38,12 +41,17 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CallSegmentToCancelImpl;
 
 /**
-*
-* 
-* @author sergey vetyutnev
-* 
-*/
+ * 
+ * 
+ * @author sergey vetyutnev
+ * @author Amit Bhayani
+ * 
+ */
 public class CancelRequestImpl extends CircuitSwitchedCallMessageImpl implements CancelRequest {
+
+	private static final String INVOKE_ID = "invokeID";
+	private static final String ALL_REQUESTS = "allRequests";
+	private static final String CALL_SEGMENT_TO_CANCEL = "callSegmentToCancel";
 
 	public static final int _ID_invokeID = 0;
 	public static final int _ID_allRequests = 1;
@@ -54,7 +62,7 @@ public class CancelRequestImpl extends CircuitSwitchedCallMessageImpl implements
 	private Integer invokeID;
 	private boolean allRequests;
 	private CallSegmentToCancel callSegmentToCancel;
-	
+
 	public CancelRequestImpl() {
 	}
 
@@ -129,11 +137,11 @@ public class CancelRequestImpl extends CircuitSwitchedCallMessageImpl implements
 			int length = ansIS.readLength();
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -143,11 +151,11 @@ public class CancelRequestImpl extends CircuitSwitchedCallMessageImpl implements
 		try {
 			this._decode(ansIS, length);
 		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -174,8 +182,8 @@ public class CancelRequestImpl extends CircuitSwitchedCallMessageImpl implements
 			((CallSegmentToCancelImpl) this.callSegmentToCancel).decodeData(ais, length);
 			break;
 		default:
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag: " + ais.getTag(),
-					CAPParsingComponentExceptionReason.MistypedParameter);
+			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag: "
+					+ ais.getTag(), CAPParsingComponentExceptionReason.MistypedParameter);
 		}
 	}
 
@@ -207,9 +215,10 @@ public class CancelRequestImpl extends CircuitSwitchedCallMessageImpl implements
 			choiceCnt++;
 		if (this.callSegmentToCancel != null)
 			choiceCnt++;
-		
+
 		if (choiceCnt != 1)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": only one choice must be definite, found: " + choiceCnt);
+			throw new CAPException("Error while encoding " + _PrimitiveName
+					+ ": only one choice must be definite, found: " + choiceCnt);
 
 		try {
 			if (this.invokeID != null)
@@ -246,5 +255,35 @@ public class CancelRequestImpl extends CircuitSwitchedCallMessageImpl implements
 
 		return sb.toString();
 	}
-}
 
+	/**
+	 * XML Serialization/Deserialization
+	 */
+	protected static final XMLFormat<CancelRequestImpl> CANCEL_REQUEST_XML = new XMLFormat<CancelRequestImpl>(
+			CancelRequestImpl.class) {
+
+		@Override
+		public void read(javolution.xml.XMLFormat.InputElement xml, CancelRequestImpl cancelRequest)
+				throws XMLStreamException {
+			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, cancelRequest);
+			cancelRequest.invokeID = xml.get(INVOKE_ID, Integer.class);
+			Boolean bval = xml.get(ALL_REQUESTS, Boolean.class);
+			if (bval != null)
+				cancelRequest.allRequests = bval;
+			cancelRequest.callSegmentToCancel = xml.get(CALL_SEGMENT_TO_CANCEL, CallSegmentToCancelImpl.class);
+		}
+
+		@Override
+		public void write(CancelRequestImpl cancelRequest, javolution.xml.XMLFormat.OutputElement xml)
+				throws XMLStreamException {
+			
+			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(cancelRequest, xml);
+			
+			xml.add(cancelRequest.invokeID, INVOKE_ID, Integer.class);
+			if (cancelRequest.allRequests)
+				xml.add(cancelRequest.allRequests, ALL_REQUESTS, Boolean.class);
+			xml.add((CallSegmentToCancelImpl) cancelRequest.callSegmentToCancel, CALL_SEGMENT_TO_CANCEL,
+					CallSegmentToCancelImpl.class);
+		}
+	};
+}

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,13 +24,19 @@ package org.mobicents.protocols.ss7.cap.isup;
 
 import static org.testng.Assert.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.UserServiceInformationImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformation;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.*;
 
 /**
  * 
@@ -78,6 +84,41 @@ public class BearerCapTest {
 //		aos = new AsnOutputStream();
 //		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 0);
 //		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
+	}
+
+	@Test(groups = { "functional.xml.serialize", "isup" })
+	public void testXMLSerialize() throws Exception {
+
+		UserServiceInformationImpl original0 = new UserServiceInformationImpl();
+		original0.setCodingStandart(UserServiceInformation._CS_INTERNATIONAL);
+		original0.setInformationTransferCapability(UserServiceInformation._ITS_VIDEO);
+		original0.setTransferMode(UserServiceInformation._TM_PACKET);
+		original0.setInformationTransferRate(UserServiceInformation._ITR_64x2);
+
+		BearerCapImpl original = new BearerCapImpl(original0);
+
+		// Writes the area to a file.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+		writer.write(original, "bearerCap", BearerCapImpl.class);
+		writer.close();
+
+		byte[] rawData = baos.toByteArray();
+		String serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+		BearerCapImpl copy = reader.read("bearerCap", BearerCapImpl.class);
+
+		assertEquals(copy.getUserServiceInformation().getCodingStandart(), original.getUserServiceInformation().getCodingStandart());
+		assertEquals(copy.getUserServiceInformation().getInformationTransferCapability(), original.getUserServiceInformation().getInformationTransferCapability());
+		assertEquals(copy.getUserServiceInformation().getTransferMode(), original.getUserServiceInformation().getTransferMode());
+		assertEquals(copy.getUserServiceInformation().getInformationTransferRate(), original.getUserServiceInformation().getInformationTransferRate());
+
 	}
 }
 
