@@ -104,10 +104,6 @@ public class EventTestHarness implements CAPDialogListener, CAPServiceCircuitSwi
 	}
 
 	public void compareEvents(List<TestEvent> expectedEvents) {
-		
-		for(TestEvent t: observerdEvents){
-			System.out.println(" = == = = : " + t);
-		}
 
 		if (expectedEvents.size() != this.observerdEvents.size()) {
 			fail("Size of received events: " + this.observerdEvents.size() + ", does not equal expected events: " + expectedEvents.size() + "\n"

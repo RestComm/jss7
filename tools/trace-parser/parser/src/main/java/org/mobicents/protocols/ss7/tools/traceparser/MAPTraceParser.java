@@ -71,7 +71,25 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestRe
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ResetTimerRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SendChargingInformationRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ActivityTestGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ActivityTestGPRSResponse;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ApplyChargingGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ApplyChargingReportGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ApplyChargingReportGPRSResponse;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.CAPServiceGprsListener;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.CancelGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ConnectGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ContinueGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.EntityReleasedGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.EntityReleasedGPRSResponse;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.EventReportGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.EventReportGPRSResponse;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.FurnishChargingInformationGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.InitialDpGprsRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ReleaseGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.RequestReportGPRSEventRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ResetTimerGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.SendChargingInformationGPRSRequest;
 import org.mobicents.protocols.ss7.cap.api.service.sms.CAPServiceSmsListener;
 import org.mobicents.protocols.ss7.map.MAPDialogImpl;
 import org.mobicents.protocols.ss7.map.MAPProviderImpl;
@@ -1980,5 +1998,107 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 	public void onTCUserAbort(TCUserAbortIndication ind) {
 		this.curTcapDialog = (DialogImpl)ind.getDialog();
 	}
+
+	@Override
+	public void onInitialDpGprsRequest(InitialDpGprsRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onRequestReportGPRSEventRequest(
+			RequestReportGPRSEventRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onApplyChargingGPRSRequest(ApplyChargingGPRSRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onEntityReleasedGPRSRequest(EntityReleasedGPRSRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onEntityReleasedGPRSResponse(EntityReleasedGPRSResponse ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onConnectGPRSRequest(ConnectGPRSRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onContinueGPRSRequest(ContinueGPRSRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onReleaseGPRSRequest(ReleaseGPRSRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onResetTimerGPRSRequest(ResetTimerGPRSRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onFurnishChargingInformationGPRSRequest(
+			FurnishChargingInformationGPRSRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCancelGPRSRequest(CancelGPRSRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSendChargingInformationGPRSRequest(
+			SendChargingInformationGPRSRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onApplyChargingReportGPRSRequest(
+			ApplyChargingReportGPRSRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onApplyChargingReportGPRSResponse(
+			ApplyChargingReportGPRSResponse ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onEventReportGPRSRequest(EventReportGPRSRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onEventReportGPRSResponse(EventReportGPRSResponse ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
 
