@@ -80,7 +80,7 @@ public class AnyTimeInterrogationResponseTest {
 		assertEquals(locInfo.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getMCC(), 724);
 		assertEquals(locInfo.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getMNC(), 34);
 		assertEquals(locInfo.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getLac(), 31134);
-		assertEquals(locInfo.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getCellId(), 10656);
+		assertEquals(locInfo.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getCellIdOrServiceAreaCode(), 10656);
 		assertTrue(locInfo.getMscNumber().getAddress().equals("553496629910"));
 		assertEquals(locInfo.getMscNumber().getAddressNature(), AddressNature.international_number);
 		assertEquals(locInfo.getMscNumber().getNumberingPlan(), NumberingPlan.ISDN);

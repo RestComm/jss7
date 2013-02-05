@@ -62,13 +62,15 @@ import org.mobicents.protocols.ss7.map.api.primitives.AdditionalNumberType;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
-import org.mobicents.protocols.ss7.map.api.primitives.DiameterIdentity;
+import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdFixedLength;
+import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdOrLAI;
 import org.mobicents.protocols.ss7.map.api.primitives.EMLPPPriority;
 import org.mobicents.protocols.ss7.map.api.primitives.ExtExternalSignalInfo;
 import org.mobicents.protocols.ss7.map.api.primitives.ExternalSignalInfo;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.LAIFixedLength;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NAEAPreferredCI;
@@ -115,7 +117,6 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIu;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIuA;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIuB;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
-import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.AgeIndicator;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancelLocationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancelLocationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancellationType;
@@ -127,41 +128,25 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.U
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformationGPRS;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.NumberPortabilityStatus;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberState;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberStateChoice;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.AccessRestrictionData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BearerServiceCodeValue;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CSAllocationRetentionPriority;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CSGSubscriptionData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.Category;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ChargingCharacteristics;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.EPSSubscriptionData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBearerServiceCode;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtSSInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtTeleserviceCode;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.GPRSSubscriptionData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.InsertSubscriberDataRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.InsertSubscriberDataResponse;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.LCSInformation;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.LSAInformation;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.MCSSInfo;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.NetworkAccessMode;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ODBData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ODBGeneralData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OfferedCamel4CSIs;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.RegionalSubscriptionResponse;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SGSNCAMELSubscriptionInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SubscriberStatus;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TeleserviceCodeValue;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.VlrCamelSubscriptionInfo;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.VoiceBroadcastData;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.VoiceGroupCallData;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ZoneCode;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequest;
 import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageRequest;
 import org.mobicents.protocols.ss7.map.api.service.sms.InformServiceCentreRequest;
@@ -192,10 +177,8 @@ import org.mobicents.protocols.ss7.map.api.smstpdu.NumberingPlanIdentification;
 import org.mobicents.protocols.ss7.map.api.smstpdu.SmsSubmitTpdu;
 import org.mobicents.protocols.ss7.map.api.smstpdu.TypeOfNumber;
 import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
-import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
-import org.mobicents.protocols.ss7.map.service.callhandling.ExtendedRoutingInfoImpl;
 import org.mobicents.protocols.ss7.map.service.callhandling.RoutingInfoImpl;
 import org.mobicents.protocols.ss7.map.service.callhandling.SendRoutingInformationRequestImpl;
 import org.mobicents.protocols.ss7.map.service.callhandling.SendRoutingInformationResponseImpl;
@@ -507,7 +490,7 @@ public class MAPFunctionalTest extends SccpHarness {
 
 		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
 		serverExpectedEvents.add(te);
-
+		
 		client.actionA();
 		waitForEnd();
 		client.compareEvents(clientExpectedEvents);
@@ -6304,40 +6287,47 @@ public class MAPFunctionalTest extends SccpHarness {
 				assertEquals(type, InterrogationType.forwarding);
 				
 				IMSI imsi = this.mapParameterFactory.createIMSI("011220200198227");
-						
-				ISDNAddressString roamingNumber = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, 
-																			NumberingPlan.ISDN, "79273605819");
-				RoutingInfo routingInfo = this.mapParameterFactory.createRoutingInfo(roamingNumber);
-				ExtendedRoutingInfo extRoutingInfo = this.mapParameterFactory.createExtendedRoutingInfo(routingInfo);
-		
-				CUGCheckInfo cugCheckInfo = null;
-				boolean cugSubscriptionFlag = false;
-				SubscriberInfo subscriberInfo = null; 
-				ArrayList<SSCode> ssList  = null;
-				ExtBasicServiceCode basicService = null; 
-				boolean forwardingInterrogationRequired = false;
-				ISDNAddressString vmscAddress = null; 
-				MAPExtensionContainer extensionContainer  = null; 
-				NAEAPreferredCI naeaPreferredCI  = null;
-				CCBSIndicators ccbsIndicators = null;
-				NumberPortabilityStatus nrPortabilityStatus = null; 
-				Integer istAlertTimer = null;
-				SupportedCamelPhases supportedCamelPhases = null; 
-				OfferedCamel4CSIs offeredCamel4CSIs = null; 
-				RoutingInfo routingInfo2 = null; 
-				ArrayList<SSCode> ssList2 = null;
-				ExtBasicServiceCode basicService2 = null; 
-				AllowedServices allowedServices = null;
-				UnavailabilityCause unavailabilityCause = null; 
-				boolean releaseResourcesSupported = false;
-				ExternalSignalInfo gsmBearerCapability = null; 
-				
+
 				try {
-					d.addSendRoutingInformationResponse(ind.getInvokeId(), imsi, extRoutingInfo, cugCheckInfo,
-							cugSubscriptionFlag, subscriberInfo, ssList, basicService, forwardingInterrogationRequired,
-							vmscAddress, extensionContainer, naeaPreferredCI, ccbsIndicators, msisdn, nrPortabilityStatus,
-							istAlertTimer, supportedCamelPhases, offeredCamel4CSIs, routingInfo2, ssList2, basicService2,
-							allowedServices, unavailabilityCause, releaseResourcesSupported, gsmBearerCapability);
+					ISDNAddressString roamingNumber = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN,
+							"79273605819");
+					RoutingInfo routingInfo = this.mapParameterFactory.createRoutingInfo(roamingNumber);
+					ExtendedRoutingInfo extRoutingInfo = this.mapParameterFactory.createExtendedRoutingInfo(routingInfo);
+
+					CUGCheckInfo cugCheckInfo = null;
+					boolean cugSubscriptionFlag = false;
+					CellGlobalIdOrServiceAreaIdFixedLength cellGlobalIdOrServiceAreaIdFixedLength = this.mapParameterFactory
+							.createCellGlobalIdOrServiceAreaIdFixedLength(250, 1, 1111, 222);
+					LAIFixedLength laiFixedLength = this.mapParameterFactory.createLAIFixedLength(250, 1, 1111);
+					CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI = this.mapParameterFactory
+							.createCellGlobalIdOrServiceAreaIdOrLAI(cellGlobalIdOrServiceAreaIdFixedLength);
+					LocationInformationGPRS locationInformationGPRS = this.mapParameterFactory.createLocationInformationGPRS(cellGlobalIdOrServiceAreaIdOrLAI,
+							null, null, null, null, null, false, null, false, null);
+					SubscriberInfo subscriberInfo = this.mapParameterFactory.createSubscriberInfo(null, null, null, locationInformationGPRS, null, null, null,
+							null, null);
+					ArrayList<SSCode> ssList = null;
+					ExtBasicServiceCode basicService = null;
+					boolean forwardingInterrogationRequired = false;
+					ISDNAddressString vmscAddress = null;
+					MAPExtensionContainer extensionContainer = null;
+					NAEAPreferredCI naeaPreferredCI = null;
+					CCBSIndicators ccbsIndicators = null;
+					NumberPortabilityStatus nrPortabilityStatus = null;
+					Integer istAlertTimer = null;
+					SupportedCamelPhases supportedCamelPhases = null;
+					OfferedCamel4CSIs offeredCamel4CSIs = null;
+					RoutingInfo routingInfo2 = null;
+					ArrayList<SSCode> ssList2 = null;
+					ExtBasicServiceCode basicService2 = null;
+					AllowedServices allowedServices = null;
+					UnavailabilityCause unavailabilityCause = null;
+					boolean releaseResourcesSupported = false;
+					ExternalSignalInfo gsmBearerCapability = null;
+
+					d.addSendRoutingInformationResponse(ind.getInvokeId(), imsi, extRoutingInfo, cugCheckInfo, cugSubscriptionFlag, subscriberInfo, ssList,
+							basicService, forwardingInterrogationRequired, vmscAddress, extensionContainer, naeaPreferredCI, ccbsIndicators, msisdn,
+							nrPortabilityStatus, istAlertTimer, supportedCamelPhases, offeredCamel4CSIs, routingInfo2, ssList2, basicService2, allowedServices,
+							unavailabilityCause, releaseResourcesSupported, gsmBearerCapability);
 				} catch (MAPException e) {
 					this.error("Error while adding SendRoutingInformationResponse", e);
 					fail("Error while adding SendRoutingInformationResponse");
@@ -6393,6 +6383,8 @@ public class MAPFunctionalTest extends SccpHarness {
 
 		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
 		serverExpectedEvents.add(te);
+
+//		this.saveTrafficInFile();
 
 		client.sendSendRoutingInformation_V3();
 		waitForEnd();

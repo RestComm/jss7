@@ -56,12 +56,12 @@ public class CellGlobalIdOrServiceAreaIdFixedLengthImpl extends OctetStringBase 
 		super(7, 7, "CellGlobalIdOrServiceAreaIdFixedLength", data);
 	}
 
-	public CellGlobalIdOrServiceAreaIdFixedLengthImpl(int mcc, int mnc, int lac, int cellId) throws MAPException {
+	public CellGlobalIdOrServiceAreaIdFixedLengthImpl(int mcc, int mnc, int lac, int cellIdOrServiceAreaCode) throws MAPException {
 		super(7, 7, "CellGlobalIdOrServiceAreaIdFixedLength");
-		this.setData(mcc, mnc, lac, cellId);
+		this.setData(mcc, mnc, lac, cellIdOrServiceAreaCode);
 	}
 
-	public void setData(int mcc, int mnc, int lac, int cellId) throws MAPException {
+	public void setData(int mcc, int mnc, int lac, int cellIdOrServiceAreaCode) throws MAPException {
 		if (mcc < 1 || mcc > 999)
 			throw new MAPException("Bad mcc value");
 		if (mnc < 0 || mnc > 999)
@@ -96,8 +96,8 @@ public class CellGlobalIdOrServiceAreaIdFixedLengthImpl extends OctetStringBase 
 
 		data[3] = (byte)(lac / 256);
 		data[4] = (byte)(lac % 256);
-		data[5] = (byte)(cellId / 256);
-		data[6] = (byte)(cellId % 256);
+		data[5] = (byte)(cellIdOrServiceAreaCode / 256);
+		data[6] = (byte)(cellIdOrServiceAreaCode % 256);
 	}
 
 	public byte[] getData() {
@@ -170,7 +170,7 @@ public class CellGlobalIdOrServiceAreaIdFixedLengthImpl extends OctetStringBase 
 		return res;
 	}
 
-	public int getCellId() throws MAPException {
+	public int getCellIdOrServiceAreaCode() throws MAPException {
 
 		if (data == null)
 			throw new MAPException("Data must not be empty");
@@ -194,7 +194,7 @@ public class CellGlobalIdOrServiceAreaIdFixedLengthImpl extends OctetStringBase 
 			mcc = this.getMCC();
 			mnc = this.getMNC();
 			lac = this.getLac();
-			cellId = this.getCellId();
+			cellId = this.getCellIdOrServiceAreaCode();
 			goodData = true;
 		} catch (MAPException e) {
 		}
@@ -246,7 +246,7 @@ public class CellGlobalIdOrServiceAreaIdFixedLengthImpl extends OctetStringBase 
 				xml.setAttribute(MCC, cellGlobalIdOrServiceAreaIdFixedLength.getMCC());
 				xml.setAttribute(MNC, cellGlobalIdOrServiceAreaIdFixedLength.getMNC());
 				xml.setAttribute(LAC, cellGlobalIdOrServiceAreaIdFixedLength.getLac());
-				xml.setAttribute(CELL_ID, cellGlobalIdOrServiceAreaIdFixedLength.getCellId());
+				xml.setAttribute(CELL_ID, cellGlobalIdOrServiceAreaIdFixedLength.getCellIdOrServiceAreaCode());
 			} catch (MAPException e) {
 				throw new XMLStreamException("MAPException when serializing CellGlobalIdOrServiceAreaIdFixedLengthImpl", e);
 			}

@@ -150,7 +150,37 @@ public abstract class SccpHarness {
 		((Mtp3UserPartImpl) this.mtp3UserPart2).saveTrafficInFile = true;
 
 		try {
-			FileOutputStream fs = new FileOutputStream("MsgLog.txt", false);
+			FileOutputStream fs = new FileOutputStream("MsgLog.pcap", false);
+
+			// pcap global header
+			fs.write(0xd4);
+			fs.write(0xc3);
+			fs.write(0xb2);
+			fs.write(0xa1);
+
+			fs.write(2);
+			fs.write(0);
+			fs.write(4);
+			fs.write(0);
+
+			fs.write(0);
+			fs.write(0);
+			fs.write(0);
+			fs.write(0);
+			fs.write(0);
+			fs.write(0);
+			fs.write(0);
+			fs.write(0);
+
+			fs.write(0xFF);
+			fs.write(0xFF);
+			fs.write(0);
+			fs.write(0);
+			fs.write(1);
+			fs.write(0);
+			fs.write(0);
+			fs.write(0);
+
 			fs.close();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

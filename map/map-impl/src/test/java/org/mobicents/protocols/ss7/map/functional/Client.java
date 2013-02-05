@@ -454,12 +454,13 @@ public class Client extends EventTestHarness {
 
 		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.shortMsgMORelayContext, MAPApplicationContextVersion.version2);
 
-		AddressString orgiReference = this.mapParameterFactory.createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628968300");
-		AddressString destReference = this.mapParameterFactory.createAddressString(AddressNature.international_number, NumberingPlan.land_mobile,
-				"204208300008002");
+//		AddressString orgiReference = this.mapParameterFactory.createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628968300");
+//		AddressString destReference = this.mapParameterFactory.createAddressString(AddressNature.international_number, NumberingPlan.land_mobile,
+//				"204208300008002");
+//		clientDialogSms = this.mapProvider.getMAPServiceSms().createNewDialog(appCnt, this.thisAddress, orgiReference, this.remoteAddress, destReference);
 
-		clientDialogSms = this.mapProvider.getMAPServiceSms().createNewDialog(appCnt, this.thisAddress, orgiReference, this.remoteAddress, destReference);
-		clientDialogSms.setExtentionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
+		clientDialogSms = this.mapProvider.getMAPServiceSms().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+//		clientDialogSms.setExtentionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
 
 		IMSI imsi1 = this.mapParameterFactory.createIMSI("250991357999");
 		SM_RP_DA sm_RP_DA = this.mapParameterFactory.createSM_RP_DA(imsi1);

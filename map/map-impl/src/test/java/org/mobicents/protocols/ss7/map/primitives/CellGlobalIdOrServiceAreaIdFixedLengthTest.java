@@ -72,7 +72,7 @@ public class CellGlobalIdOrServiceAreaIdFixedLengthTest {
 		assertEquals(prim.getMCC(), 250);
 		assertEquals(prim.getMNC(), 1);
 		assertEquals(prim.getLac(), 4444);
-		assertEquals(prim.getCellId(), 3333);
+		assertEquals(prim.getCellIdOrServiceAreaCode(), 3333);
 
 		
 		data = this.getData2();
@@ -88,7 +88,7 @@ public class CellGlobalIdOrServiceAreaIdFixedLengthTest {
 		assertEquals(prim.getMCC(), 11);
 		assertEquals(prim.getMNC(), 246);
 		assertEquals(prim.getLac(), 333);
-		assertEquals(prim.getCellId(), 444);
+		assertEquals(prim.getCellIdOrServiceAreaCode(), 444);
 	}
 	
 	@Test(groups = { "functional.decode", "primitives" })
@@ -143,7 +143,7 @@ public class CellGlobalIdOrServiceAreaIdFixedLengthTest {
 		assertEquals(copy.getMCC(), original.getMCC());
 		assertEquals(copy.getMNC(), original.getMNC());
 		assertEquals(copy.getLac(), original.getLac());
-		assertEquals(copy.getCellId(), original.getCellId());
+		assertEquals(copy.getCellIdOrServiceAreaCode(), original.getCellIdOrServiceAreaCode());
 		
 	}
 }

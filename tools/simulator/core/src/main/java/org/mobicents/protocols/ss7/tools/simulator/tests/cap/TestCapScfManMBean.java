@@ -46,6 +46,19 @@ public interface TestCapScfManMBean {
 	
 	public String closeCurrentDialog();
 
-	public String performAssistRequestInstructions(String msg);
+	public String performInitiateCallAttempt(String msg);
+
+
+	public String performApplyCharging(String msg);
+
+	public String performCancel(String msg);
+
+	public String performConnect(String msg);
+
+	public String performContinue(String msg);
+
+	public String performReleaseCall(String msg);
+
+	public String performRequestReportBCSMEvent(String msg);
 
 }

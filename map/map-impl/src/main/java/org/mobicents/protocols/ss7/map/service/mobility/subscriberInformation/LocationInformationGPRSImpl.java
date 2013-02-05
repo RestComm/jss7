@@ -39,19 +39,20 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformationGPRS;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RAIdentity;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.LSAIdentity;
+import org.mobicents.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdFixedLengthImpl;
 import org.mobicents.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdOrLAIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
-import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
+import org.mobicents.protocols.ss7.map.primitives.LAIFixedLengthImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
+import org.mobicents.protocols.ss7.map.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.LSAIdentityImpl;
 
 /**
  * @author amit bhayani
+ * @author sergey vetyutnev
  * 
  */
-public class LocationInformationGPRSImpl implements LocationInformationGPRS, MAPAsnPrimitive {
-
-	public static final String _PrimitiveName = "LocationInformationGPRS";
+public class LocationInformationGPRSImpl extends SequenceBase implements LocationInformationGPRS {
 
 	public static final int _ID_cellGlobalIdOrServiceAreaIdOrLAI = 0;
 	private static final int _ID_routeingAreaIdentity = 1;
@@ -79,7 +80,7 @@ public class LocationInformationGPRSImpl implements LocationInformationGPRS, MAP
 	 * 
 	 */
 	public LocationInformationGPRSImpl() {
-		// TODO Auto-generated constructor stub
+		super("LocationInformationGPRS");
 	}
 
 	/**
@@ -98,7 +99,8 @@ public class LocationInformationGPRSImpl implements LocationInformationGPRS, MAP
 			GeographicalInformation geographicalInformation, ISDNAddressString sgsnNumber, LSAIdentity selectedLSAIdentity,
 			MAPExtensionContainer extensionContainer, boolean saiPresent, GeodeticInformation geodeticInformation, boolean currentLocationRetrieved,
 			Integer ageOfLocationInformation) {
-		super();
+		super("LocationInformationGPRS");
+
 		this.cellGlobalIdOrServiceAreaIdOrLAI = cellGlobalIdOrServiceAreaIdOrLAI;
 		this.routeingAreaIdentity = routeingAreaIdentity;
 		this.geographicalInformation = geographicalInformation;
@@ -211,76 +213,35 @@ public class LocationInformationGPRSImpl implements LocationInformationGPRS, MAP
 		return this.ageOfLocationInformation;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTag()
-	 */
-	public int getTag() throws MAPException {
-		return Tag.SEQUENCE;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTagClass()
-	 */
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getIsPrimitive
-	 * ()
-	 */
-	public boolean getIsPrimitive() {
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeAll(
-	 * org.mobicents.protocols.asn.AsnInputStream)
-	 */
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
+	public static CellGlobalIdOrServiceAreaIdOrLAI decodeCellGlobalIdOrServiceAreaIdOrLAI(AsnInputStream ais, String primitiveName)
+			throws MAPParsingComponentException, AsnException, IOException {
+		if (ais.isTagPrimitive()) {
+			// nonstandard case when there is no external container 
+			int len = ais.readLength();
+			if (len == 7) {
+				CellGlobalIdOrServiceAreaIdFixedLengthImpl val = new CellGlobalIdOrServiceAreaIdFixedLengthImpl();
+				val.decodeData(ais, len);
+				CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI = new CellGlobalIdOrServiceAreaIdOrLAIImpl(val);
+				return cellGlobalIdOrServiceAreaIdOrLAI;
+			} else if (len == 5) {
+				LAIFixedLengthImpl val = new LAIFixedLengthImpl();
+				val.decodeData(ais, len);
+				CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI = new CellGlobalIdOrServiceAreaIdOrLAIImpl(val);
+				return cellGlobalIdOrServiceAreaIdOrLAI;
+			} else {
+				throw new MAPParsingComponentException("Error while decoding " + primitiveName
+						+ " cellGlobalIdOrServiceAreaIdOrLAI: Parameter length must be 5 or 7", MAPParsingComponentExceptionReason.MistypedParameter);
+			}
+		} else {
+			CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI = new CellGlobalIdOrServiceAreaIdOrLAIImpl();
+			AsnInputStream ais2 = ais.readSequenceStream();
+			ais2.readTag();
+			((CellGlobalIdOrServiceAreaIdOrLAIImpl) cellGlobalIdOrServiceAreaIdOrLAI).decodeAll(ais2);
+			return cellGlobalIdOrServiceAreaIdOrLAI;
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeData
-	 * (org.mobicents.protocols.asn.AsnInputStream, int)
-	 */
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+	protected void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
 		this.cellGlobalIdOrServiceAreaIdOrLAI = null;
 		this.routeingAreaIdentity = null;
@@ -306,13 +267,7 @@ public class LocationInformationGPRSImpl implements LocationInformationGPRS, MAP
 
 				switch (tag) {
 				case _ID_cellGlobalIdOrServiceAreaIdOrLAI:
-					if (ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " cellGlobalIdOrServiceAreaIdOrLAI: Parameter is primitive",
-								MAPParsingComponentExceptionReason.MistypedParameter);
-					this.cellGlobalIdOrServiceAreaIdOrLAI = new CellGlobalIdOrServiceAreaIdOrLAIImpl();
-					AsnInputStream ais2 = ais.readSequenceStream();
-					ais2.readTag();
-					((CellGlobalIdOrServiceAreaIdOrLAIImpl)this.cellGlobalIdOrServiceAreaIdOrLAI).decodeAll(ais2);
+					this.cellGlobalIdOrServiceAreaIdOrLAI = decodeCellGlobalIdOrServiceAreaIdOrLAI(ais, _PrimitiveName);
 					break;
 				case _ID_routeingAreaIdentity:
 					if (!ais.isTagPrimitive())
@@ -386,35 +341,6 @@ public class LocationInformationGPRSImpl implements LocationInformationGPRS, MAP
 			} else {
 				ais.advanceElement();
 			}
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
-	 * org.mobicents.protocols.asn.AsnOutputStream)
-	 */
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
-	 * org.mobicents.protocols.asn.AsnOutputStream, int, int)
-	 */
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 

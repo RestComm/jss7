@@ -22,14 +22,15 @@
 
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 import java.util.Arrays;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdFixedLength;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdFixedLengthImpl;
 import org.mobicents.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdOrLAIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.LAIFixedLengthImpl;
@@ -44,8 +45,21 @@ import org.testng.annotations.Test;
 public class LocationInformationGPRSTest {
 
 	private byte[] getEncodedData() {
-		return new byte[] { 16, 57, -96, 7, -127, 5, 82, -16, 16, 17, 92, -127, 6, 11, 12, 13, 14, 15, 16, -126, 8, 31, 32, 33, 34, 35, 36, 37, 38, -125, 4,
+		return new byte[] { 48, 57, -96, 7, -127, 5, 82, -16, 16, 17, 92, -127, 6, 11, 12, 13, 14, 15, 16, -126, 8, 31, 32, 33, 34, 35, 36, 37, 38, -125, 4,
 				-111, 86, 52, 18, -124, 3, 91, 92, 93, -122, 0, -121, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, -120, 0, -119, 1, 13 };
+	}
+
+	private byte[] getEncodedData_2() {
+		return new byte[] { 48, 55, (byte) 128, 5, 82, -16, 16, 17, 92, -127, 6, 11, 12, 13, 14, 15, 16, -126, 8, 31, 32, 33, 34, 35, 36, 37, 38, -125, 4,
+				-111, 86, 52, 18, -124, 3, 91, 92, 93, -122, 0, -121, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, -120, 0, -119, 1, 13 };
+	}
+
+	private byte[] getEncodedData_3() {
+		return new byte[] { 48, 11, -96, 9, -128, 7, 82, -15, 32, 17, 93, 12, -6 };
+	}
+
+	private byte[] getEncodedData_4() {
+		return new byte[] { 48, 9, (byte) 128, 7, 82, -15, 32, 17, 93, 12, -6 };
 	}
 
 	private byte[] getEncodedDataRAIdentity() {
@@ -66,9 +80,9 @@ public class LocationInformationGPRSTest {
 
 	@Test(groups = { "functional.decode","subscriberInformation"})
 	public void testDecode() throws Exception {
-		
+
 		byte[] rawData = getEncodedData();
-		
+
 		AsnInputStream asn = new AsnInputStream(rawData);
 
 		int tag = asn.readTag();
@@ -87,6 +101,60 @@ public class LocationInformationGPRSTest {
 		assertTrue(Arrays.equals(impl.getGeodeticInformation().getData(), this.getGeodeticInformation()));
 		assertTrue(impl.isCurrentLocationRetrieved());
 		assertEquals((int)impl.getAgeOfLocationInformation(), 13);
+
+
+		rawData = getEncodedData_2();
+
+		asn = new AsnInputStream(rawData);
+
+		tag = asn.readTag();
+		impl = new LocationInformationGPRSImpl();
+		impl.decodeAll(asn);
+		assertEquals(tag, Tag.SEQUENCE);
+
+		assertEquals(impl.getCellGlobalIdOrServiceAreaIdOrLAI().getLAIFixedLength().getMCC(), 250);
+		assertEquals(impl.getCellGlobalIdOrServiceAreaIdOrLAI().getLAIFixedLength().getMNC(), 1);
+		assertEquals(impl.getCellGlobalIdOrServiceAreaIdOrLAI().getLAIFixedLength().getLac(), 4444);
+		assertTrue(Arrays.equals(impl.getRouteingAreaIdentity().getData(), this.getEncodedDataRAIdentity()));
+		assertTrue(Arrays.equals(impl.getGeographicalInformation().getData(), this.getGeographicalInformation()));
+		assertTrue(impl.getSGSNNumber().getAddress().equals("654321"));
+		assertTrue(Arrays.equals(impl.getLSAIdentity().getData(), this.getEncodedDataLSAIdentity()));
+		assertTrue(impl.isSaiPresent());
+		assertTrue(Arrays.equals(impl.getGeodeticInformation().getData(), this.getGeodeticInformation()));
+		assertTrue(impl.isCurrentLocationRetrieved());
+		assertEquals((int)impl.getAgeOfLocationInformation(), 13);
+
+
+		rawData = getEncodedData_3();
+
+		asn = new AsnInputStream(rawData);
+
+		tag = asn.readTag();
+		impl = new LocationInformationGPRSImpl();
+		impl.decodeAll(asn);
+		assertEquals(tag, Tag.SEQUENCE);
+
+		assertEquals(impl.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getMCC(), 251);
+		assertEquals(impl.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getMNC(), 2);
+		assertEquals(impl.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getLac(), 4445);
+		assertEquals(impl.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getCellIdOrServiceAreaCode(), 3322);
+		assertNull(impl.getRouteingAreaIdentity());
+
+
+		rawData = getEncodedData_4();
+
+		asn = new AsnInputStream(rawData);
+
+		tag = asn.readTag();
+		impl = new LocationInformationGPRSImpl();
+		impl.decodeAll(asn);
+		assertEquals(tag, Tag.SEQUENCE);
+
+		assertEquals(impl.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getMCC(), 251);
+		assertEquals(impl.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getMNC(), 2);
+		assertEquals(impl.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getLac(), 4445);
+		assertEquals(impl.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getCellIdOrServiceAreaCode(), 3322);
+		assertNull(impl.getRouteingAreaIdentity());
 	}
 	
 	@Test(groups = { "functional.encode","subscriberInformation"})
@@ -105,9 +173,19 @@ public class LocationInformationGPRSTest {
 		impl.encodeAll(asnOS);
 		byte[] encodedData = asnOS.toByteArray();
 		byte[] rawData = getEncodedData();		
-		
-		// TODO: fix a test
-//		assertTrue( Arrays.equals(rawData,encodedData));
+
+		assertTrue( Arrays.equals(rawData,encodedData));
+
+
+		CellGlobalIdOrServiceAreaIdFixedLength v1 = new CellGlobalIdOrServiceAreaIdFixedLengthImpl(251, 2, 4445, 3322);
+		cgi = new CellGlobalIdOrServiceAreaIdOrLAIImpl(v1);
+		impl = new LocationInformationGPRSImpl(cgi, null, null, null, null, null, false, null, false, null);
+		asnOS = new AsnOutputStream();
+		impl.encodeAll(asnOS);
+		encodedData = asnOS.toByteArray();
+		rawData = getEncodedData_3();		
+
+		assertTrue( Arrays.equals(rawData,encodedData));
 	}
 
 }

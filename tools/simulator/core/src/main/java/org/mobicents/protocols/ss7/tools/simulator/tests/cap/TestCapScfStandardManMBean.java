@@ -64,7 +64,14 @@ public class TestCapScfStandardManMBean extends StandardMBean {
 
 				new MBeanOperationInfo("closeCurrentDialog", "Closing the current dialog", null, String.class.getName(), MBeanOperationInfo.ACTION),
 
-				new MBeanOperationInfo("performAssistRequestInstructions", "Open a new Dialog and sending AssistRequestInstructions", null, String.class.getName(), MBeanOperationInfo.ACTION),
+				new MBeanOperationInfo("performInitiateCallAttempt", "Open a new Dialog and sending InitiateCallAttempt", null, String.class.getName(), MBeanOperationInfo.ACTION),
+
+				new MBeanOperationInfo("performApplyCharging", "Sending ApplyCharging", null, String.class.getName(), MBeanOperationInfo.ACTION),
+				new MBeanOperationInfo("performCancel", "Sending Cancel", null, String.class.getName(), MBeanOperationInfo.ACTION),
+				new MBeanOperationInfo("performConnect", "Sending Connect", null, String.class.getName(), MBeanOperationInfo.ACTION),
+				new MBeanOperationInfo("performContinue", "Sending Continue", null, String.class.getName(), MBeanOperationInfo.ACTION),
+				new MBeanOperationInfo("performReleaseCall", "Sending ReleaseCall", null, String.class.getName(), MBeanOperationInfo.ACTION),
+				new MBeanOperationInfo("performRequestReportBCSMEvent", "Sending RequestReportBCSMEvent", null, String.class.getName(), MBeanOperationInfo.ACTION),
 
 				new MBeanOperationInfo("putCapApplicationContext", "CAP application context: " +
 						"34:V4_capscf_ssfGeneric", 

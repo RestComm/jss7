@@ -82,8 +82,11 @@ public class TestCapScfMan extends TesterBase implements TestCapScfManMBean, Sto
 
 	private boolean isStarted = false;
 	private int countInitialDp = 0;
-	private int countInitiateCallAttempt = 0;
 	private int countAssistRequestInstructions = 0;
+	private int countApplyChargingReport = 0;
+	private int countEventReportBCSM = 0;
+
+	private int countInitiateCallAttempt = 0;
 	private String currentRequestDef = "";
 	private CAPDialogCircuitSwitchedCall currentDialog = null;
 
@@ -150,6 +153,10 @@ public class TestCapScfMan extends TesterBase implements TestCapScfManMBean, Sto
 		sb.append(countInitiateCallAttempt);
 		sb.append("<br>countAssistRequestInstructions-");
 		sb.append(countAssistRequestInstructions);
+		sb.append(", countApplyChargingReport-");
+		sb.append(countApplyChargingReport);
+		sb.append(", countEventReportBCSM-");
+		sb.append(countEventReportBCSM);
 		sb.append("</html>");
 		return sb.toString();
 	}
@@ -209,11 +216,48 @@ public class TestCapScfMan extends TesterBase implements TestCapScfManMBean, Sto
 	}
 
 	@Override
-	public String performAssistRequestInstructions(String msg) {
+	public String performInitiateCallAttempt(String msg) {
+		return "Not yet supported";
+		// TODO: implement it for CAP V4
+	}
+
+	@Override
+	public String performApplyCharging(String msg) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
+	public String performCancel(String msg) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String performConnect(String msg) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String performContinue(String msg) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String performReleaseCall(String msg) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String performRequestReportBCSMEvent(String msg) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
 	@Override
 	public void onCAPMessage(CAPMessage msg) {
 		this.testerHost.sendNotif(SOURCE_NAME, "Rsvd: " + msg.getMessageType().toString(), msg.toString(), Level.DEBUG);
@@ -250,18 +294,12 @@ public class TestCapScfMan extends TesterBase implements TestCapScfManMBean, Sto
 
 	@Override
 	public void onApplyChargingReportRequest(ApplyChargingReportRequest arg0) {
-		// TODO Auto-generated method stub
-		
+		this.countApplyChargingReport++;
+		currentRequestDef += "Rsvd applyChargingReport;";
 	}
 
 	@Override
 	public void onApplyChargingRequest(ApplyChargingRequest arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onAssistRequestInstructionsRequest(AssistRequestInstructionsRequest arg0) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -316,8 +354,8 @@ public class TestCapScfMan extends TesterBase implements TestCapScfManMBean, Sto
 
 	@Override
 	public void onEventReportBCSMRequest(EventReportBCSMRequest arg0) {
-		// TODO Auto-generated method stub
-		
+		this.countEventReportBCSM++;
+		currentRequestDef += "Rsvd eventReportBCSM;";
 	}
 
 	@Override
@@ -327,9 +365,15 @@ public class TestCapScfMan extends TesterBase implements TestCapScfManMBean, Sto
 	}
 
 	@Override
-	public void onInitialDPRequest(InitialDPRequest arg0) {
-		// TODO Auto-generated method stub
-		
+	public void onInitialDPRequest(InitialDPRequest ind) {
+		this.countInitialDp++;
+		currentRequestDef += "Rsvd initialDp;";
+	}
+
+	@Override
+	public void onAssistRequestInstructionsRequest(AssistRequestInstructionsRequest arg0) {
+		this.countAssistRequestInstructions++;
+		currentRequestDef += "Rsvd assistRequestInstructions;";
 	}
 
 	@Override

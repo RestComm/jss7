@@ -63,6 +63,6 @@ public interface CellGlobalIdOrServiceAreaIdFixedLength extends Serializable {
 	 * 
 	 * @return
 	 */
-	public int getCellId() throws MAPException;
+	public int getCellIdOrServiceAreaCode() throws MAPException;
 
 }

@@ -606,8 +606,8 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 		return new CellGlobalIdOrServiceAreaIdFixedLengthImpl(data);
 	}
 
-	public CellGlobalIdOrServiceAreaIdFixedLength createCellGlobalIdOrServiceAreaIdFixedLength(int mcc, int mnc, int lac, int cellId) throws MAPException {
-		return new CellGlobalIdOrServiceAreaIdFixedLengthImpl(mcc, mnc, lac, cellId);
+	public CellGlobalIdOrServiceAreaIdFixedLength createCellGlobalIdOrServiceAreaIdFixedLength(int mcc, int mnc, int lac, int cellIdOrServiceAreaCode) throws MAPException {
+		return new CellGlobalIdOrServiceAreaIdFixedLengthImpl(mcc, mnc, lac, cellIdOrServiceAreaCode);
 	}
 
 	public LAIFixedLength createLAIFixedLength(byte[] data) {
