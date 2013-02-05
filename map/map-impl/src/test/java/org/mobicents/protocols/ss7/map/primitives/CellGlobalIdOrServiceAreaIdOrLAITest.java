@@ -125,7 +125,7 @@ public class CellGlobalIdOrServiceAreaIdOrLAITest {
 		assertEquals(copy.getCellGlobalIdOrServiceAreaIdFixedLength().getMCC(), original.getCellGlobalIdOrServiceAreaIdFixedLength().getMCC());
 		assertEquals(copy.getCellGlobalIdOrServiceAreaIdFixedLength().getMNC(), original.getCellGlobalIdOrServiceAreaIdFixedLength().getMNC());
 		assertEquals(copy.getCellGlobalIdOrServiceAreaIdFixedLength().getLac(), original.getCellGlobalIdOrServiceAreaIdFixedLength().getLac());
-		assertEquals(copy.getCellGlobalIdOrServiceAreaIdFixedLength().getCellId(), original.getCellGlobalIdOrServiceAreaIdFixedLength().getCellId());
+		assertEquals(copy.getCellGlobalIdOrServiceAreaIdFixedLength().getCellIdOrServiceAreaCode(), original.getCellGlobalIdOrServiceAreaIdFixedLength().getCellIdOrServiceAreaCode());
 
 
 		LAIFixedLengthImpl par2 = new LAIFixedLengthImpl(250, 1, 4444);

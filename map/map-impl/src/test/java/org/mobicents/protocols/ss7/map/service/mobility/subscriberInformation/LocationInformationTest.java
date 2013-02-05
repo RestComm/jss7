@@ -102,7 +102,7 @@ public class LocationInformationTest {
 		assertEquals((int) impl.getAgeOfLocationInformation(), 0);
 		assertEquals(impl.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getMCC(), 250);
 		assertEquals(impl.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getMNC(), 1);
-		assertEquals(impl.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getCellId(), 2212);
+		assertEquals(impl.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getCellIdOrServiceAreaCode(), 2212);
 		assertEquals(impl.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getLac(), 111);
 		assertEquals(impl.getVlrNumber().getAddressNature(), AddressNature.international_number);
 		assertEquals(impl.getVlrNumber().getNumberingPlan(), NumberingPlan.ISDN);
@@ -119,7 +119,7 @@ public class LocationInformationTest {
 		assertEquals((int) impl.getAgeOfLocationInformation(), 0);
 		assertEquals(impl.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getMCC(), 250);
 		assertEquals(impl.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getMNC(), 1);
-		assertEquals(impl.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getCellId(), 2212);
+		assertEquals(impl.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getCellIdOrServiceAreaCode(), 2212);
 		assertEquals(impl.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getLac(), 111);
 		assertEquals(impl.getVlrNumber().getAddressNature(), AddressNature.international_number);
 		assertEquals(impl.getVlrNumber().getNumberingPlan(), NumberingPlan.ISDN);
@@ -156,7 +156,7 @@ public class LocationInformationTest {
 		assertEquals(ln.getScreeningIndicator(), 3);
 		assertEquals(impl.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getMCC(), 250);
 		assertEquals(impl.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getMNC(), 1);
-		assertEquals(impl.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getCellId(), 2212);
+		assertEquals(impl.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getCellIdOrServiceAreaCode(), 2212);
 		assertEquals(impl.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getLac(), 111);
 		assertTrue(Arrays.equals(impl.getSelectedLSAId().getData(), getDataLSAIdentity()));
 		assertTrue(impl.getMscNumber().getAddress().equals("888222666"));
@@ -267,8 +267,8 @@ public class LocationInformationTest {
 		assertEquals(copy.getGeographicalInformation().getLatitude(), original.getGeographicalInformation().getLatitude());
 		assertEquals(copy.getVlrNumber().getAddress(), original.getVlrNumber().getAddress());
 		assertEquals(copy.getLocationNumber().getLocationNumber().getAddress(), original.getLocationNumber().getLocationNumber().getAddress());
-		assertEquals(copy.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getCellId(), original
-				.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getCellId());
+		assertEquals(copy.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getCellIdOrServiceAreaCode(), original
+				.getCellGlobalIdOrServiceAreaIdOrLAI().getCellGlobalIdOrServiceAreaIdFixedLength().getCellIdOrServiceAreaCode());
 
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(copy.getExtensionContainer()));
 		assertEquals(copy.getSelectedLSAId().getData(), original.getSelectedLSAId().getData());

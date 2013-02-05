@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -59,6 +59,7 @@ import org.mobicents.protocols.ss7.map.primitives.GSNAddressImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMEIImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.LocationInformationGPRSImpl;
 
 /**
  *
@@ -738,10 +739,11 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
 								"Error while decoding " + _PrimitiveName + ": Parameter [cellIdOrSai [13] CellGlobalIdOrServiceAreaIdOrLAI] is primitive",
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					}
-					this.cellIdOrSai = new CellGlobalIdOrServiceAreaIdOrLAIImpl();
-					AsnInputStream ais2 = ais.readSequenceStream();
-					ais2.readTag();
-					((CellGlobalIdOrServiceAreaIdOrLAIImpl) this.cellIdOrSai).decodeAll(ais2);
+					this.cellIdOrSai = LocationInformationGPRSImpl.decodeCellGlobalIdOrServiceAreaIdOrLAI(ais, _PrimitiveName);
+//					this.cellIdOrSai = new CellGlobalIdOrServiceAreaIdOrLAIImpl();
+//					AsnInputStream ais2 = ais.readSequenceStream();
+//					ais2.readTag();
+//					((CellGlobalIdOrServiceAreaIdOrLAIImpl) this.cellIdOrSai).decodeAll(ais2);
 					break;
 				case _TAG_H_GMLC_ADDRESS:
 					// h-gmlc-Address [14] GSN-Address
@@ -861,7 +863,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
 								MAPParsingComponentExceptionReason.MistypedParameter);
 					}
 					this.targetServingNodeForHandover = new ServingNodeAddressImpl();
-					ais2 = ais.readSequenceStream();
+					AsnInputStream ais2 = ais.readSequenceStream();
 					ais2.readTag();
 					((ServingNodeAddressImpl) this.targetServingNodeForHandover).decodeAll(ais2);
 					break;
