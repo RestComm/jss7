@@ -453,6 +453,7 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 
 		this.sctpManagement.start();
 		this.sctpManagement.removeAllResourses();
+		Thread.sleep(500); // waiting for freeing ip ports
 
 		// init M3UA stack
 		this.m3uaMgmt = new M3UAManagementImpl("SimM3uaServer_" + name);

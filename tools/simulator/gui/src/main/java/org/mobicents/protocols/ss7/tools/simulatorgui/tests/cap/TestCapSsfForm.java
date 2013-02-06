@@ -38,6 +38,8 @@ import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import java.awt.FlowLayout;
+import javax.swing.BoxLayout;
+import javax.swing.JScrollPane;
 
 /**
  * 
@@ -130,30 +132,16 @@ public class TestCapSsfForm extends TestingForm {
 		gbc_btEventReportBCSM.gridy = 1;
 		panel.add(btEventReportBCSM, gbc_btEventReportBCSM);
 		
-		lbState = new JLabel("-");
-		GridBagConstraints gbc_lbState = new GridBagConstraints();
-		gbc_lbState.gridwidth = 3;
-		gbc_lbState.gridx = 1;
-		gbc_lbState.gridy = 6;
-		panel.add(lbState, gbc_lbState);
-		
 		panel_1 = new JPanel();
 		panel_c.add(panel_1, BorderLayout.SOUTH);
-		GridBagLayout gbl_panel_1 = new GridBagLayout();
-		gbl_panel_1.columnWidths = new int[]{376, 4, 0};
-		gbl_panel_1.rowHeights = new int[]{0, 14, 0};
-		gbl_panel_1.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
-		gbl_panel_1.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
-		panel_1.setLayout(gbl_panel_1);
+		panel_1.setLayout(new BoxLayout(panel_1, BoxLayout.Y_AXIS));
 		
 		lbResult = new JLabel("-");
 		lbResult.setHorizontalAlignment(SwingConstants.LEFT);
-		GridBagConstraints gbc_lbResult = new GridBagConstraints();
-		gbc_lbResult.fill = GridBagConstraints.BOTH;
-		gbc_lbResult.insets = new Insets(0, 0, 5, 5);
-		gbc_lbResult.gridx = 0;
-		gbc_lbResult.gridy = 0;
-		panel_1.add(lbResult, gbc_lbResult);
+		panel_1.add(lbResult);
+		
+		lbState = new JLabel("-");
+		panel_1.add(lbState);
 		
 		this.setDialogClosed();
 	}

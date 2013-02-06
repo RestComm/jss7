@@ -98,6 +98,12 @@ public class TestCapSsfMan extends TesterBase implements TestCapSsfManMBean, Sto
 	private int countApplyChargingReport = 0;
 	private int countEventReportBCSM = 0;
 	private int countInitiateCallAttempt = 0;
+	private int countApplyCharging = 0;
+	private int countCancel = 0;
+	private int countConnect = 0;
+	private int countContinue = 0;
+	private int countReleaseCall = 0;
+	private int countRequestReportBCSMEvent = 0;
 	private String currentRequestDef = "";
 	private CAPDialogCircuitSwitchedCall currentDialog = null;
 
@@ -162,12 +168,24 @@ public class TestCapSsfMan extends TesterBase implements TestCapSsfManMBean, Sto
 		sb.append(countInitialDp);
 		sb.append(", countInitiateCallAttempt-");
 		sb.append(countInitiateCallAttempt);
-		sb.append("<br>countAssistRequestInstructions-");
+		sb.append(", countAssistRequestInstructions-");
 		sb.append(countAssistRequestInstructions);
-		sb.append(", countApplyChargingReport-");
+		sb.append("<br>countApplyChargingReport-");
 		sb.append(countApplyChargingReport);
 		sb.append(", countEventReportBCSM-");
 		sb.append(countEventReportBCSM);
+		sb.append(", countApplyCharging-");
+		sb.append(countApplyCharging);
+		sb.append("<br>countCancel-");
+		sb.append(countCancel);
+		sb.append(", countConnect-");
+		sb.append(countConnect);
+		sb.append(", countContinue-");
+		sb.append(countContinue);
+		sb.append("<br>countReleaseCall-");
+		sb.append(countReleaseCall);
+		sb.append(", countRequestReportBCSMEvent-");
+		sb.append(countRequestReportBCSMEvent);
 		sb.append("</html>");
 		return sb.toString();
 	}
@@ -424,8 +442,8 @@ public class TestCapSsfMan extends TesterBase implements TestCapSsfManMBean, Sto
 
 	@Override
 	public void onApplyChargingRequest(ApplyChargingRequest arg0) {
-		// TODO Auto-generated method stub
-		
+		this.countApplyCharging++;
+		currentRequestDef += "Rsvd applyCharging;";
 	}
 
 	@Override
@@ -448,14 +466,14 @@ public class TestCapSsfMan extends TesterBase implements TestCapSsfManMBean, Sto
 
 	@Override
 	public void onCancelRequest(CancelRequest arg0) {
-		// TODO Auto-generated method stub
-		
+		this.countCancel++;
+		currentRequestDef += "Rsvd cancel;";
 	}
 
 	@Override
 	public void onConnectRequest(ConnectRequest arg0) {
-		// TODO Auto-generated method stub
-		
+		this.countConnect++;
+		currentRequestDef += "Rsvd Connect;";
 	}
 
 	@Override
@@ -466,8 +484,8 @@ public class TestCapSsfMan extends TesterBase implements TestCapSsfManMBean, Sto
 
 	@Override
 	public void onContinueRequest(ContinueRequest arg0) {
-		// TODO Auto-generated method stub
-		
+		this.countContinue++;
+		currentRequestDef += "Rsvd continue;";
 	}
 
 	@Override
@@ -520,14 +538,14 @@ public class TestCapSsfMan extends TesterBase implements TestCapSsfManMBean, Sto
 
 	@Override
 	public void onReleaseCallRequest(ReleaseCallRequest arg0) {
-		// TODO Auto-generated method stub
-		
+		this.countReleaseCall++;
+		currentRequestDef += "Rsvd releaseCall;";
 	}
 
 	@Override
 	public void onRequestReportBCSMEventRequest(RequestReportBCSMEventRequest arg0) {
-		// TODO Auto-generated method stub
-		
+		this.countRequestReportBCSMEvent++;
+		currentRequestDef += "Rsvd requestReportBCSMEvent;";
 	}
 
 	@Override

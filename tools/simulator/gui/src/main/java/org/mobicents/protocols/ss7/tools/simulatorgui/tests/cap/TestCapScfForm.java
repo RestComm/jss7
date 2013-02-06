@@ -36,6 +36,7 @@ import java.awt.Insets;
 import javax.swing.JLabel;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.BoxLayout;
 
 /**
  * 
@@ -63,7 +64,7 @@ public class TestCapScfForm extends TestingForm {
 		super(owner);
 		
 		JPanel panel = new JPanel();
-		panel_c.add(panel, BorderLayout.CENTER);
+		panel_c.add(panel, BorderLayout.NORTH);
 		GridBagLayout gbl_panel = new GridBagLayout();
 		gbl_panel.columnWidths = new int[]{0, 0, 0, 0, 0, 0};
 		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
@@ -167,28 +168,15 @@ public class TestCapScfForm extends TestingForm {
 		gbc_btRequestReportBcsmEvent.gridy = 2;
 		panel.add(btRequestReportBcsmEvent, gbc_btRequestReportBcsmEvent);
 		
-		lbState = new JLabel("-");
-		GridBagConstraints gbc_lbState = new GridBagConstraints();
-		gbc_lbState.insets = new Insets(0, 0, 0, 5);
-		gbc_lbState.gridwidth = 2;
-		gbc_lbState.gridx = 1;
-		gbc_lbState.gridy = 6;
-		panel.add(lbState, gbc_lbState);
-		
 		panel_1 = new JPanel();
 		panel_c.add(panel_1, BorderLayout.SOUTH);
-		GridBagLayout gbl_panel_1 = new GridBagLayout();
-		gbl_panel_1.columnWidths = new int[]{0, 0};
-		gbl_panel_1.rowHeights = new int[]{0, 0};
-		gbl_panel_1.columnWeights = new double[]{0.0, Double.MIN_VALUE};
-		gbl_panel_1.rowWeights = new double[]{0.0, Double.MIN_VALUE};
-		panel_1.setLayout(gbl_panel_1);
+		panel_1.setLayout(new BoxLayout(panel_1, BoxLayout.Y_AXIS));
 		
 		lbResult = new JLabel("-");
-		GridBagConstraints gbc_lbResult = new GridBagConstraints();
-		gbc_lbResult.gridx = 0;
-		gbc_lbResult.gridy = 0;
-		panel_1.add(lbResult, gbc_lbResult);
+		panel_1.add(lbResult);
+		
+		lbState = new JLabel("-");
+		panel_1.add(lbState);
 
 		this.setDialogClosed();
 	}
