@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.primitives;
+package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
@@ -36,6 +36,7 @@ import javolution.xml.XMLObjectWriter;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsTest;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristicsImpl;
 import org.testng.annotations.Test;
 
@@ -135,8 +136,8 @@ public class CAMELAChBillingChargingCharacteristicsTest {
 
 	@Test(groups = { "functional.xml.serialize", "primitives" })
 	public void testXMLSerializaion() throws Exception {
-		CAMELAChBillingChargingCharacteristicsImpl original = new CAMELAChBillingChargingCharacteristicsImpl(12000,
-				true, null, null, null, false);
+		CAMELAChBillingChargingCharacteristicsImpl original = new CAMELAChBillingChargingCharacteristicsImpl(12000, true, 8000L, null,
+				CAPExtensionsTest.createTestCAPExtensions(), false);
 
 		// Writes the area to a file.
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -160,5 +161,7 @@ public class CAMELAChBillingChargingCharacteristicsTest {
 
 		assertEquals(copy.getMaxCallPeriodDuration(), original.getMaxCallPeriodDuration());
 		assertEquals(copy.getReleaseIfdurationExceeded(), original.getReleaseIfdurationExceeded());
+		assertEquals((long)copy.getTariffSwitchInterval(), (long)original.getTariffSwitchInterval());
+		assertTrue(CAPExtensionsTest.checkTestCAPExtensions(copy.getExtensions()));
 	}
 }

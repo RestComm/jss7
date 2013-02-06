@@ -34,8 +34,15 @@ import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
+import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.CauseCapImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSMImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.CalledPartyNumberImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.CauseIndicatorsImpl;
+import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
 import org.testng.annotations.Test;
 
 /**
@@ -43,52 +50,43 @@ import org.testng.annotations.Test;
  * @author sergey vetyutnev
  * 
  */
-public class RouteSelectFailureSpecificInfoTest {
+public class OAbandonSpecificInfoTest {
 
-	public byte[] getData() {
-		return new byte[] { (byte) 162, 4, (byte) 128, 2, (byte) 132, (byte) 144 };
+	public byte[] getData1() {
+		return new byte[] { (byte) 48, 3, (byte) 159, 50, 0 };
 	}
 
-	public byte[] getIntData() {
-		return new byte[] { (byte) 132, (byte) 144 };
-	}
-
-	@Test(groups = { "functional.decode","circuitSwitchedCall.primitive"})
+	@Test(groups = { "functional.decode", "circuitSwitchedCall.primitive" })
 	public void testDecode() throws Exception {
 
-		byte[] data = this.getData();
+		byte[] data = this.getData1();
 		AsnInputStream ais = new AsnInputStream(data);
-		RouteSelectFailureSpecificInfoImpl elem = new RouteSelectFailureSpecificInfoImpl();
+		OAbandonSpecificInfoImpl elem = new OAbandonSpecificInfoImpl();
 		int tag = ais.readTag();
 		elem.decodeAll(ais);
-		assertTrue(Arrays.equals(elem.getFailureCause().getData(), this.getIntData()));
+		assertTrue(elem.getRouteNotPermitted());
 	}
 
-	@Test(groups = { "functional.encode","circuitSwitchedCall.primitive"})
+	@Test(groups = { "functional.encode", "circuitSwitchedCall.primitive" })
 	public void testEncode() throws Exception {
 
-		CauseCapImpl cause = new CauseCapImpl(this.getIntData());
-		RouteSelectFailureSpecificInfoImpl elem = new RouteSelectFailureSpecificInfoImpl(cause);
+		OAbandonSpecificInfoImpl elem = new OAbandonSpecificInfoImpl(true);
 		AsnOutputStream aos = new AsnOutputStream();
-		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 2);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
-		
+		elem.encodeAll(aos);
+		assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
 	}
-	
-	@Test(groups = { "functional.xml.serialize","circuitSwitchedCall.primitive"})
-	public void testXMLSerializaion() throws Exception {
 
-		CauseCapImpl cause = new CauseCapImpl(this.getIntData());
-		RouteSelectFailureSpecificInfoImpl original = new RouteSelectFailureSpecificInfoImpl(cause);
-		
-		
+	@Test(groups = { "functional.xml.serialize", "circuitSwitchedCall.primitive" })
+	public void testXMLSerializaion() throws Exception {
+		OAbandonSpecificInfoImpl original = new OAbandonSpecificInfoImpl(true);
+
 		// Writes the area to a file.
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
 		// writer.setBinding(binding); // Optional.
 		writer.setIndentation("\t"); // Optional (use tabulation for
 										// indentation).
-		writer.write(original, "RouteSelectFailureSpecificInfoImpl", RouteSelectFailureSpecificInfoImpl.class);
+		writer.write(original, "oAbandonSpecificInfo", OAbandonSpecificInfoImpl.class);
 		writer.close();
 
 		byte[] rawData = baos.toByteArray();
@@ -98,11 +96,9 @@ public class RouteSelectFailureSpecificInfoTest {
 
 		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
 		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
-		RouteSelectFailureSpecificInfoImpl copy = reader.read("RouteSelectFailureSpecificInfoImpl", RouteSelectFailureSpecificInfoImpl.class);
-		
-		assertEquals(copy.getFailureCause().getCauseIndicators().getLocation(), original.getFailureCause().getCauseIndicators().getLocation());
-		assertEquals(copy.getFailureCause().getCauseIndicators().getCauseValue(), original.getFailureCause().getCauseIndicators().getCauseValue());
-		assertEquals(copy.getFailureCause().getCauseIndicators().getCodingStandard(), original.getFailureCause().getCauseIndicators().getCodingStandard());
-		
+		OAbandonSpecificInfoImpl copy = reader.read("oAbandonSpecificInfo", OAbandonSpecificInfoImpl.class);
+
+		assertEquals(copy.getRouteNotPermitted(), original.getRouteNotPermitted());
 	}
+
 }

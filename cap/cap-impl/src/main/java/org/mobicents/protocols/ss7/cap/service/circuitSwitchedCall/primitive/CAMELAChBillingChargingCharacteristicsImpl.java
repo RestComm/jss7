@@ -379,11 +379,12 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
 			CAMELAChBillingChargingCharacteristicsImpl.class) {
 
 		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml,
-				CAMELAChBillingChargingCharacteristicsImpl camelAChBillingChargingCharacteristics) throws XMLStreamException {
+		public void read(javolution.xml.XMLFormat.InputElement xml, CAMELAChBillingChargingCharacteristicsImpl camelAChBillingChargingCharacteristics)
+				throws XMLStreamException {
 			camelAChBillingChargingCharacteristics.maxCallPeriodDuration = xml.get(MAX_CALL_PERIOD_DURATION, Long.class);
 			camelAChBillingChargingCharacteristics.releaseIfdurationExceeded = xml.get(RELEASED_IF_DURATION_EXCEEDED, Boolean.class);
 			camelAChBillingChargingCharacteristics.tariffSwitchInterval = xml.get(TARIFF_SWITCH_INTERVAL, Long.class);
+			camelAChBillingChargingCharacteristics.extensions = xml.get(EXTENSIONS, CAPExtensionsImpl.class);
 			// TODO AudibleIndicatorImpl is not yet implemented
 			// oAnswerSpecificInfo.audibleIndicator = xml.get(AUDIBLE_INDICATOR,
 			// AudibleIndicatorImpl.class);
@@ -391,8 +392,8 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
 		}
 
 		@Override
-		public void write(CAMELAChBillingChargingCharacteristicsImpl camelAChBillingChargingCharacteristics,
-				javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+		public void write(CAMELAChBillingChargingCharacteristicsImpl camelAChBillingChargingCharacteristics, javolution.xml.XMLFormat.OutputElement xml)
+				throws XMLStreamException {
 
 			xml.add(camelAChBillingChargingCharacteristics.maxCallPeriodDuration, MAX_CALL_PERIOD_DURATION, Long.class);
 			xml.add(camelAChBillingChargingCharacteristics.releaseIfdurationExceeded, RELEASED_IF_DURATION_EXCEEDED, Boolean.class);
@@ -400,6 +401,10 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
 			if (camelAChBillingChargingCharacteristics.tariffSwitchInterval != null) {
 				xml.add(camelAChBillingChargingCharacteristics.tariffSwitchInterval, TARIFF_SWITCH_INTERVAL, Long.class);
 			}
+			if (camelAChBillingChargingCharacteristics.extensions != null) {
+				xml.add((CAPExtensionsImpl) camelAChBillingChargingCharacteristics.extensions, EXTENSIONS, CAPExtensionsImpl.class);
+			}
+
 
 			// TODO AudibleIndicatorImpl is not yet implemented
 			// if(oAnswerSpecificInfo.audibleIndicator != null){

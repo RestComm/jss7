@@ -123,8 +123,8 @@ public class TimeDurationChargingResultTest {
 	public void testXMLSerializaion() throws Exception {
 		ReceivingSideID partyToCharge = new ReceivingSideIDImpl(LegType.leg1);
 		TimeInformation ti = new TimeInformationImpl(26);
-		TimeDurationChargingResultImpl original = new TimeDurationChargingResultImpl(partyToCharge, ti, false, false,
-				null, null);
+		TimeDurationChargingResultImpl original = new TimeDurationChargingResultImpl(partyToCharge, ti, true, true,
+				CAPExtensionsTest.createTestCAPExtensions(), null);
 
 		// Writes the area to a file.
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -146,8 +146,36 @@ public class TimeDurationChargingResultTest {
 				TimeDurationChargingResultImpl.class);
 
 		assertEquals(copy.getPartyToCharge().getReceivingSideID(), original.getPartyToCharge().getReceivingSideID());
-		assertEquals(copy.getTimeInformation().getTimeIfNoTariffSwitch(), original.getTimeInformation()
-				.getTimeIfNoTariffSwitch());
+		assertEquals((int) copy.getTimeInformation().getTimeIfNoTariffSwitch(), (int) original.getTimeInformation().getTimeIfNoTariffSwitch());
+		assertEquals(copy.getLegActive(), original.getLegActive());
+		assertEquals(copy.getCallLegReleasedAtTcpExpiry(), original.getCallLegReleasedAtTcpExpiry());
+		assertTrue(CAPExtensionsTest.checkTestCAPExtensions(copy.getExtensions()));
 
+
+		original = new TimeDurationChargingResultImpl(partyToCharge, ti, false, false, null, null);
+
+		// Writes the area to a file.
+		baos = new ByteArrayOutputStream();
+		writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for
+										// indentation).
+		writer.write(original, "timeDurationChargingResult", TimeDurationChargingResultImpl.class);
+		writer.close();
+
+		rawData = baos.toByteArray();
+		serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		bais = new ByteArrayInputStream(rawData);
+		reader = XMLObjectReader.newInstance(bais);
+		copy = reader.read("timeDurationChargingResult", TimeDurationChargingResultImpl.class);
+
+		assertEquals(copy.getPartyToCharge().getReceivingSideID(), original.getPartyToCharge().getReceivingSideID());
+		assertEquals((int) copy.getTimeInformation().getTimeIfNoTariffSwitch(), (int) original.getTimeInformation().getTimeIfNoTariffSwitch());
+		assertEquals(copy.getLegActive(), original.getLegActive());
+		assertEquals(copy.getCallLegReleasedAtTcpExpiry(), original.getCallLegReleasedAtTcpExpiry());
+		assertNull(copy.getExtensions());
 	}
 }

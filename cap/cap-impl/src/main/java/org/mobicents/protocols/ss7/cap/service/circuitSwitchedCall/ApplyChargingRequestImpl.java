@@ -310,10 +310,12 @@ public class ApplyChargingRequestImpl extends CircuitSwitchedCallMessageImpl imp
 			
 			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(applyChargingRequest, xml);
 			
-			xml.add((CAMELAChBillingChargingCharacteristicsImpl) applyChargingRequest.aChBillingChargingCharacteristics,
-					A_CH_BILLING_CHARGING_CHARACTERISTICS, CAMELAChBillingChargingCharacteristicsImpl.class);
+			if (applyChargingRequest.aChBillingChargingCharacteristics != null)
+				xml.add((CAMELAChBillingChargingCharacteristicsImpl) applyChargingRequest.aChBillingChargingCharacteristics,
+						A_CH_BILLING_CHARGING_CHARACTERISTICS, CAMELAChBillingChargingCharacteristicsImpl.class);
 
-			xml.add((SendingSideIDImpl) applyChargingRequest.partyToCharge, PARTY_TO_CHARGE, SendingSideIDImpl.class);
+			if (applyChargingRequest.partyToCharge != null)
+				xml.add((SendingSideIDImpl) applyChargingRequest.partyToCharge, PARTY_TO_CHARGE, SendingSideIDImpl.class);
 
 			if (applyChargingRequest.aChChargingAddress != null) {
 				// TODO AChChargingAddressImpl is not implemented yet

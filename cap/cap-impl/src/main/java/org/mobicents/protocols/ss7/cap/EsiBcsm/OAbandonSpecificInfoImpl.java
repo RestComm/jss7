@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -33,9 +33,8 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
-import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAbandonSpecificInfo;
-import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
+import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
@@ -43,73 +42,34 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
  * @author sergey vetyutnev
  * 
  */
-public class OAbandonSpecificInfoImpl implements OAbandonSpecificInfo, CAPAsnPrimitive {
+public class OAbandonSpecificInfoImpl extends SequenceBase implements OAbandonSpecificInfo {
 
 	private static final String ROUTE_NOT_PERMITTED = "routeNotPermitted";
 
 	public static final int _ID_routeNotPermitted = 50;
 
-	public static final String _PrimitiveName = "OAbandonSpecificInfo";
 	private boolean routeNotPermitted;
 
 	public OAbandonSpecificInfoImpl() {
+		super("OAbandonSpecificInfo");
 	}
 
 	public OAbandonSpecificInfoImpl(boolean routeNotPermitted) {
+		super("OAbandonSpecificInfo");
 		this.routeNotPermitted = routeNotPermitted;
 	}
 
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
 
 	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
+	public boolean getRouteNotPermitted() {
+		return routeNotPermitted;
 	}
 
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
+	public void setRouteNotPermitted(boolean newValue) {
+		routeNotPermitted = newValue;
 	}
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
-
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
-					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
-
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
-					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException,
+	protected void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException,
 			MAPParsingComponentException, IOException, AsnException {
 
 		this.routeNotPermitted = false;
@@ -135,24 +95,6 @@ public class OAbandonSpecificInfoImpl implements OAbandonSpecificInfo, CAPAsnPri
 			} else {
 				ais.advanceElement();
 			}
-		}
-	}
-
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
-	}
-
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-
-		try {
-			asnOs.writeTag(tagClass, false, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 
@@ -185,15 +127,6 @@ public class OAbandonSpecificInfoImpl implements OAbandonSpecificInfo, CAPAsnPri
 		return sb.toString();
 	}
 
-	@Override
-	public boolean getRouteNotPermitted() {
-		return routeNotPermitted;
-	}
-
-	public void setRouteNotPermitted(boolean newValue) {
-		routeNotPermitted = newValue;
-	}
-
 	/**
 	 * XML Serialization/Deserialization
 	 */
@@ -203,13 +136,16 @@ public class OAbandonSpecificInfoImpl implements OAbandonSpecificInfo, CAPAsnPri
 		@Override
 		public void read(javolution.xml.XMLFormat.InputElement xml, OAbandonSpecificInfoImpl oAbandonSpecificInfo)
 				throws XMLStreamException {
-			oAbandonSpecificInfo.routeNotPermitted = xml.get(ROUTE_NOT_PERMITTED, Boolean.class);
+			Boolean bval = xml.get(ROUTE_NOT_PERMITTED, Boolean.class);
+			if (bval != null)
+				oAbandonSpecificInfo.routeNotPermitted = bval;
 		}
 
 		@Override
 		public void write(OAbandonSpecificInfoImpl oAbandonSpecificInfo, javolution.xml.XMLFormat.OutputElement xml)
 				throws XMLStreamException {
-			xml.add(oAbandonSpecificInfo.routeNotPermitted, ROUTE_NOT_PERMITTED, Boolean.class);
+			if (oAbandonSpecificInfo.routeNotPermitted)
+				xml.add(oAbandonSpecificInfo.routeNotPermitted, ROUTE_NOT_PERMITTED, Boolean.class);
 		}
 	};
 }

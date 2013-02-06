@@ -75,9 +75,9 @@ public class ODisconnectSpecificInfoTest {
 		ODisconnectSpecificInfoImpl copy = reader
 				.read("oDisconnectSpecificInfoImpl", ODisconnectSpecificInfoImpl.class);
 
-		assertEquals(copy.getReleaseCause().getCauseIndicators().getLocation(), original.getReleaseCause()
-				.getCauseIndicators().getLocation());
-
+		assertEquals(copy.getReleaseCause().getCauseIndicators().getLocation(), original.getReleaseCause().getCauseIndicators().getLocation());
+		assertEquals(copy.getReleaseCause().getCauseIndicators().getCauseValue(), original.getReleaseCause().getCauseIndicators().getCauseValue());
+		assertEquals(copy.getReleaseCause().getCauseIndicators().getCodingStandard(), original.getReleaseCause().getCauseIndicators().getCodingStandard());
 	}
 
 }

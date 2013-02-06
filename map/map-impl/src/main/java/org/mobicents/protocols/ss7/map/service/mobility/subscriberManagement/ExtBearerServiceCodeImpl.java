@@ -37,6 +37,7 @@ import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 public class ExtBearerServiceCodeImpl extends OctetStringBase implements ExtBearerServiceCode {
 
 	private static final String BEARER_SERVICE_CODE_VALUE = "bearerServiceCodeValue";
+	private static final String DEFAULT_STRING_VALUE = null;
 
 	public ExtBearerServiceCodeImpl() {
 		super(1, 5, "ExtBearerServiceCode");
@@ -48,7 +49,10 @@ public class ExtBearerServiceCodeImpl extends OctetStringBase implements ExtBear
 
 	public ExtBearerServiceCodeImpl(BearerServiceCodeValue value) {
 		super(1, 5, "ExtBearerServiceCode");
+		setBearerServiceCode(value);
+	}
 
+	public void setBearerServiceCode(BearerServiceCodeValue value) {
 		if (value != null)
 			this.data = new byte[] { (byte) (value.getBearerServiceCode()) };
 	}
@@ -94,10 +98,15 @@ public class ExtBearerServiceCodeImpl extends OctetStringBase implements ExtBear
 			ExtBearerServiceCodeImpl.class) {
 
 		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml, ExtBearerServiceCodeImpl extBearerServiceCode)
-				throws XMLStreamException {
-			Byte integ = xml.get(BEARER_SERVICE_CODE_VALUE, Byte.class);
-			extBearerServiceCode.data = new byte[]{integ};
+		public void read(javolution.xml.XMLFormat.InputElement xml, ExtBearerServiceCodeImpl extBearerServiceCode) throws XMLStreamException {			
+			String val = xml.getAttribute(BEARER_SERVICE_CODE_VALUE, DEFAULT_STRING_VALUE);
+			if (val != null) {
+				extBearerServiceCode.setBearerServiceCode(Enum.valueOf(BearerServiceCodeValue.class, val));
+			}
+
+//			Byte integ = xml.get(BEARER_SERVICE_CODE_VALUE, Byte.class);
+//			extBearerServiceCode.data = new byte[]{integ};
+
 //			if (integ != null) {
 //				BearerServiceCodeValue bearerServiceCodeValue = BearerServiceCodeValue.getInstance(integ);
 //				extBearerServiceCode.data = new byte[]{(byte)bearerServiceCodeValue.getCode()};
@@ -107,12 +116,15 @@ public class ExtBearerServiceCodeImpl extends OctetStringBase implements ExtBear
 		}
 
 		@Override
-		public void write(ExtBearerServiceCodeImpl extBearerServiceCode, javolution.xml.XMLFormat.OutputElement xml)
-				throws XMLStreamException {
-			BearerServiceCodeValue bearerServiceCodeValue = extBearerServiceCode.getBearerServiceCodeValue();
-			if (bearerServiceCodeValue != null) {
-				xml.add((byte) bearerServiceCodeValue.getBearerServiceCode(), BEARER_SERVICE_CODE_VALUE, Byte.class);
-			}
+		public void write(ExtBearerServiceCodeImpl extBearerServiceCode, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+			BearerServiceCodeValue val = extBearerServiceCode.getBearerServiceCodeValue();
+			if (val != null)
+				xml.setAttribute(BEARER_SERVICE_CODE_VALUE, val.toString());
+
+//			BearerServiceCodeValue bearerServiceCodeValue = extBearerServiceCode.getBearerServiceCodeValue();
+//			if (bearerServiceCodeValue != null) {
+//				xml.add((byte) bearerServiceCodeValue.getBearerServiceCode(), BEARER_SERVICE_CODE_VALUE, Byte.class);
+//			}
 		}
 	};
 }

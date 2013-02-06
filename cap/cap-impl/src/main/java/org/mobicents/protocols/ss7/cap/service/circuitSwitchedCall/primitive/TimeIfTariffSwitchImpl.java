@@ -35,7 +35,7 @@ import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeIfTariffSwitch;
-import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
+import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
@@ -44,7 +44,7 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
  * @author Amit Bhayani
  * 
  */
-public class TimeIfTariffSwitchImpl implements TimeIfTariffSwitch, CAPAsnPrimitive {
+public class TimeIfTariffSwitchImpl extends SequenceBase implements TimeIfTariffSwitch {
 
 	private static final String TIME_SINCE_TARIFF_SWITCH = "timeSinceTariffSwitch";
 	private static final String TARIFF_SWITCH_INTERVAL = "tariffSwitchInterval";
@@ -52,15 +52,15 @@ public class TimeIfTariffSwitchImpl implements TimeIfTariffSwitch, CAPAsnPrimiti
 	public static final int _ID_timeSinceTariffSwitch = 0;
 	public static final int _ID_tariffSwitchInterval = 1;
 
-	public static final String _PrimitiveName = "TimeIfTariffSwitch";
-
 	private int timeSinceTariffSwitch;
 	private Integer tariffSwitchInterval;
 
 	public TimeIfTariffSwitchImpl() {
+		super("TimeIfTariffSwitch");
 	}
 
 	public TimeIfTariffSwitchImpl(int timeSinceTariffSwitch, Integer tariffSwitchInterval) {
+		super("TimeIfTariffSwitch");
 		this.timeSinceTariffSwitch = timeSinceTariffSwitch;
 		this.tariffSwitchInterval = tariffSwitchInterval;
 	}
@@ -75,57 +75,7 @@ public class TimeIfTariffSwitchImpl implements TimeIfTariffSwitch, CAPAsnPrimiti
 		return tariffSwitchInterval;
 	}
 
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
-
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
-
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
-
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
-
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
-					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
-
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
-					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException,
+	protected void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException,
 			MAPParsingComponentException, IOException, AsnException {
 
 		this.timeSinceTariffSwitch = -1;
@@ -160,24 +110,6 @@ public class TimeIfTariffSwitchImpl implements TimeIfTariffSwitch, CAPAsnPrimiti
 			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
 					+ ": timeSinceTariffSwitch is mandatory but not found",
 					CAPParsingComponentExceptionReason.MistypedParameter);
-	}
-
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
-
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
 	}
 
 	@Override
@@ -231,7 +163,10 @@ public class TimeIfTariffSwitchImpl implements TimeIfTariffSwitch, CAPAsnPrimiti
 		@Override
 		public void read(javolution.xml.XMLFormat.InputElement xml, TimeIfTariffSwitchImpl timeIfTariffSwitch)
 				throws XMLStreamException {
-			timeIfTariffSwitch.timeSinceTariffSwitch = xml.get(TIME_SINCE_TARIFF_SWITCH, Integer.class);
+			Integer ival = xml.get(TIME_SINCE_TARIFF_SWITCH, Integer.class);
+			if (ival != null)
+				timeIfTariffSwitch.timeSinceTariffSwitch = ival;
+
 			timeIfTariffSwitch.tariffSwitchInterval = xml.get(TARIFF_SWITCH_INTERVAL, Integer.class);
 		}
 

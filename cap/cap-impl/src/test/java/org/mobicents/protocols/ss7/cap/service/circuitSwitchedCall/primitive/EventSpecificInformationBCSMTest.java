@@ -37,6 +37,7 @@ import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.ss7.cap.EsiBcsm.OAbandonSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.OAnswerSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.OCalledPartyBusySpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.ODisconnectSpecificInfoImpl;
@@ -46,6 +47,7 @@ import org.mobicents.protocols.ss7.cap.EsiBcsm.TAnswerSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.TBusySpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.TDisconnectSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.TNoAnswerSpecificInfoImpl;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAbandonSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.RouteSelectFailureSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
@@ -99,6 +101,10 @@ public class EventSpecificInformationBCSMTest {
 
 	public byte[] getData9() {
 		return new byte[] { (byte) 172, 4, (byte) 128, 2, (byte) 132, (byte) 144 };
+	}
+
+	public byte[] getData10() {
+		return new byte[] { (byte) 181, 3, (byte) 159, 50, 0 };
 	}
 
 	@Test(groups = { "functional.decode", "circuitSwitchedCall.primitive" })
@@ -190,6 +196,13 @@ public class EventSpecificInformationBCSMTest {
 		assertEquals(ci.getCauseValue(), 16);
 		assertEquals(ci.getCodingStandard(), 0);
 		assertEquals(ci.getLocation(), 4);
+
+		data = this.getData10();
+		ais = new AsnInputStream(data);
+		elem = new EventSpecificInformationBCSMImpl();
+		tag = ais.readTag();
+		elem.decodeAll(ais);
+		assertTrue(elem.getOAbandonSpecificInfo().getRouteNotPermitted());
 	}
 
 	@Test(groups = { "functional.encode", "circuitSwitchedCall.primitive" })
@@ -264,6 +277,12 @@ public class EventSpecificInformationBCSMTest {
 		aos = new AsnOutputStream();
 		elem.encodeAll(aos);
 		assertTrue(Arrays.equals(aos.toByteArray(), this.getData9()));
+
+		OAbandonSpecificInfo oAbandonSpecificInfo = new OAbandonSpecificInfoImpl(true);
+		elem = new EventSpecificInformationBCSMImpl(oAbandonSpecificInfo);
+		aos = new AsnOutputStream();
+		elem.encodeAll(aos);
+		assertTrue(Arrays.equals(aos.toByteArray(), this.getData10()));
 	}
 
 	@Test(groups = { "functional.xml.serialize", "circuitSwitchedCall.primitive" })
@@ -296,5 +315,250 @@ public class EventSpecificInformationBCSMTest {
 		assertEquals(copy.getRouteSelectFailureSpecificInfo().getFailureCause().getCauseIndicators().getCauseValue(),
 				original.getRouteSelectFailureSpecificInfo().getFailureCause().getCauseIndicators().getCauseValue());
 
+
+		causeIndicators = new CauseIndicatorsImpl(0, 4, 0, 16, null);
+		CauseCap busyCause = new CauseCapImpl(causeIndicators);
+		OCalledPartyBusySpecificInfoImpl oCalledPartyBusySpecificInfoImpl = new OCalledPartyBusySpecificInfoImpl(
+				busyCause);
+		original = new EventSpecificInformationBCSMImpl(oCalledPartyBusySpecificInfoImpl);
+
+		// Writes the area to a file.
+		baos = new ByteArrayOutputStream();
+		writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for
+										// indentation).
+		writer.write(original, "eventSpecificInformationBCSM", EventSpecificInformationBCSMImpl.class);
+		writer.close();
+
+		rawData = baos.toByteArray();
+		serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		bais = new ByteArrayInputStream(rawData);
+		reader = XMLObjectReader.newInstance(bais);
+		copy = reader.read("eventSpecificInformationBCSM", EventSpecificInformationBCSMImpl.class);
+
+		assertEquals(copy.getOCalledPartyBusySpecificInfo().getBusyCause().getCauseIndicators().getCauseValue(), original.getOCalledPartyBusySpecificInfo()
+				.getBusyCause().getCauseIndicators().getCauseValue());
+
+
+		ONoAnswerSpecificInfoImpl oNoAnswerSpecificInfo = new ONoAnswerSpecificInfoImpl();
+		original = new EventSpecificInformationBCSMImpl(oNoAnswerSpecificInfo);
+
+		// Writes the area to a file.
+		baos = new ByteArrayOutputStream();
+		writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for
+										// indentation).
+		writer.write(original, "eventSpecificInformationBCSM", EventSpecificInformationBCSMImpl.class);
+		writer.close();
+
+		rawData = baos.toByteArray();
+		serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		bais = new ByteArrayInputStream(rawData);
+		reader = XMLObjectReader.newInstance(bais);
+		copy = reader.read("eventSpecificInformationBCSM", EventSpecificInformationBCSMImpl.class);
+
+		assertNotNull(copy.getONoAnswerSpecificInfo());
+
+	
+		OAnswerSpecificInfoImpl oAnswerSpecificInfo = new OAnswerSpecificInfoImpl();
+		original = new EventSpecificInformationBCSMImpl(oAnswerSpecificInfo);
+
+		// Writes the area to a file.
+		baos = new ByteArrayOutputStream();
+		writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for
+										// indentation).
+		writer.write(original, "eventSpecificInformationBCSM", EventSpecificInformationBCSMImpl.class);
+		writer.close();
+
+		rawData = baos.toByteArray();
+		serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		bais = new ByteArrayInputStream(rawData);
+		reader = XMLObjectReader.newInstance(bais);
+		copy = reader.read("eventSpecificInformationBCSM", EventSpecificInformationBCSMImpl.class);
+
+		assertNotNull(copy.getOAnswerSpecificInfo());
+
+		
+		causeIndicators = new CauseIndicatorsImpl(0, 4, 0, 16, null);
+		CauseCap releaseCause = new CauseCapImpl(causeIndicators);
+		ODisconnectSpecificInfoImpl oDisconnectSpecificInfo = new ODisconnectSpecificInfoImpl(releaseCause);
+		original = new EventSpecificInformationBCSMImpl(oDisconnectSpecificInfo);
+
+		// Writes the area to a file.
+		baos = new ByteArrayOutputStream();
+		writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for
+										// indentation).
+		writer.write(original, "eventSpecificInformationBCSM", EventSpecificInformationBCSMImpl.class);
+		writer.close();
+
+		rawData = baos.toByteArray();
+		serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		bais = new ByteArrayInputStream(rawData);
+		reader = XMLObjectReader.newInstance(bais);
+		copy = reader.read("eventSpecificInformationBCSM", EventSpecificInformationBCSMImpl.class);
+
+		assertEquals(copy.getODisconnectSpecificInfo().getReleaseCause().getCauseIndicators().getCauseValue(), original.getODisconnectSpecificInfo()
+				.getReleaseCause().getCauseIndicators().getCauseValue());
+
+		
+		causeIndicators = new CauseIndicatorsImpl(0, 4, 0, 16, null);
+		busyCause = new CauseCapImpl(causeIndicators);
+		TBusySpecificInfoImpl tBusySpecificInfo = new TBusySpecificInfoImpl(busyCause, false, false, null);
+		original = new EventSpecificInformationBCSMImpl(tBusySpecificInfo);
+
+		// Writes the area to a file.
+		baos = new ByteArrayOutputStream();
+		writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for
+										// indentation).
+		writer.write(original, "eventSpecificInformationBCSM", EventSpecificInformationBCSMImpl.class);
+		writer.close();
+
+		rawData = baos.toByteArray();
+		serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		bais = new ByteArrayInputStream(rawData);
+		reader = XMLObjectReader.newInstance(bais);
+		copy = reader.read("eventSpecificInformationBCSM", EventSpecificInformationBCSMImpl.class);
+
+		assertEquals(copy.getTBusySpecificInfo().getBusyCause().getCauseIndicators().getCauseValue(), original.getTBusySpecificInfo().getBusyCause()
+				.getCauseIndicators().getCauseValue());
+
+
+		CalledPartyNumber cpn = new CalledPartyNumberImpl(3, "1227010900", 1, 1);
+		// int natureOfAddresIndicator, String address, int
+		// numberingPlanIndicator, int internalNetworkNumberIndicator
+		CalledPartyNumberCap cpnc = new CalledPartyNumberCapImpl(cpn);
+		TNoAnswerSpecificInfoImpl tNoAnswerSpecificInfo = new TNoAnswerSpecificInfoImpl(true, cpnc);
+		original = new EventSpecificInformationBCSMImpl(tNoAnswerSpecificInfo);
+
+		// Writes the area to a file.
+		baos = new ByteArrayOutputStream();
+		writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for
+										// indentation).
+		writer.write(original, "eventSpecificInformationBCSM", EventSpecificInformationBCSMImpl.class);
+		writer.close();
+
+		rawData = baos.toByteArray();
+		serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		bais = new ByteArrayInputStream(rawData);
+		reader = XMLObjectReader.newInstance(bais);
+		copy = reader.read("eventSpecificInformationBCSM", EventSpecificInformationBCSMImpl.class);
+
+		assertEquals(copy.getTNoAnswerSpecificInfo().getForwardingDestinationNumber().getCalledPartyNumber().getAddress(), original.getTNoAnswerSpecificInfo()
+				.getForwardingDestinationNumber().getCalledPartyNumber().getAddress());
+
+		
+		CalledPartyNumber calledPartyNumber = new CalledPartyNumberImpl();
+		calledPartyNumber.setAddress("73645");
+		calledPartyNumber.setInternalNetworkNumberIndicator(CalledPartyNumber._INN_ROUTING_ALLOWED);
+		calledPartyNumber.setNumberingPlanIndicator(CalledPartyNumber._NPI_ISDN);
+		calledPartyNumber.setNatureOfAddresIndicator(CalledPartyNumber._NAI_INTERNATIONAL_NUMBER);
+		CalledPartyNumberCap destinationAddress = new CalledPartyNumberCapImpl(calledPartyNumber);
+		TAnswerSpecificInfoImpl tAnswerSpecificInfo = new TAnswerSpecificInfoImpl(destinationAddress, false, true, null, null, null);
+//		CalledPartyNumberCap destinationAddress, boolean orCall, boolean forwardedCall,
+//		ChargeIndicator chargeIndicator, ExtBasicServiceCode extBasicServiceCode,
+//		ExtBasicServiceCode extBasicServiceCode2
+		original = new EventSpecificInformationBCSMImpl(tAnswerSpecificInfo);
+
+		// Writes the area to a file.
+		baos = new ByteArrayOutputStream();
+		writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for
+										// indentation).
+		writer.write(original, "eventSpecificInformationBCSM", EventSpecificInformationBCSMImpl.class);
+		writer.close();
+
+		rawData = baos.toByteArray();
+		serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		bais = new ByteArrayInputStream(rawData);
+		reader = XMLObjectReader.newInstance(bais);
+		copy = reader.read("eventSpecificInformationBCSM", EventSpecificInformationBCSMImpl.class);
+
+		assertEquals(copy.getTAnswerSpecificInfo().getDestinationAddress().getCalledPartyNumber().getAddress(), original.getTAnswerSpecificInfo()
+				.getDestinationAddress().getCalledPartyNumber().getAddress());
+		assertEquals(copy.getTAnswerSpecificInfo().getForwardedCall(), original.getTAnswerSpecificInfo().getForwardedCall());
+		assertEquals(copy.getTAnswerSpecificInfo().getOrCall(), original.getTAnswerSpecificInfo().getOrCall());
+
+	
+		causeIndicators = new CauseIndicatorsImpl(0, 4, 0, 16, null);
+		releaseCause = new CauseCapImpl(causeIndicators);
+		TDisconnectSpecificInfoImpl tDisconnectSpecificInfo = new TDisconnectSpecificInfoImpl(releaseCause);
+		original = new EventSpecificInformationBCSMImpl(tDisconnectSpecificInfo);
+
+		// Writes the area to a file.
+		baos = new ByteArrayOutputStream();
+		writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for
+										// indentation).
+		writer.write(original, "eventSpecificInformationBCSM", EventSpecificInformationBCSMImpl.class);
+		writer.close();
+
+		rawData = baos.toByteArray();
+		serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		bais = new ByteArrayInputStream(rawData);
+		reader = XMLObjectReader.newInstance(bais);
+		copy = reader.read("eventSpecificInformationBCSM", EventSpecificInformationBCSMImpl.class);
+
+		assertEquals(copy.getTDisconnectSpecificInfo().getReleaseCause().getCauseIndicators().getCauseValue(), original.getTDisconnectSpecificInfo()
+				.getReleaseCause().getCauseIndicators().getCauseValue());
+
+		
+		OAbandonSpecificInfo oAbandonSpecificInfo = new OAbandonSpecificInfoImpl(true);
+		original = new EventSpecificInformationBCSMImpl(oAbandonSpecificInfo);
+
+		// Writes the area to a file.
+		baos = new ByteArrayOutputStream();
+		writer = XMLObjectWriter.newInstance(baos);
+		// writer.setBinding(binding); // Optional.
+		writer.setIndentation("\t"); // Optional (use tabulation for
+										// indentation).
+		writer.write(original, "eventSpecificInformationBCSM", EventSpecificInformationBCSMImpl.class);
+		writer.close();
+
+		rawData = baos.toByteArray();
+		serializedEvent = new String(rawData);
+
+		System.out.println(serializedEvent);
+
+		bais = new ByteArrayInputStream(rawData);
+		reader = XMLObjectReader.newInstance(bais);
+		copy = reader.read("eventSpecificInformationBCSM", EventSpecificInformationBCSMImpl.class);
+
+		assertEquals(copy.getOAbandonSpecificInfo().getRouteNotPermitted(), original.getOAbandonSpecificInfo().getRouteNotPermitted());
 	}
 }

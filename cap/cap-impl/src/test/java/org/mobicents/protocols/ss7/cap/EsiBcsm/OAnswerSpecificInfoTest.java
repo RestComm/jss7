@@ -1,6 +1,6 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
- * and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,6 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+
 package org.mobicents.protocols.ss7.cap.EsiBcsm;
 
 import static org.testng.Assert.assertEquals;
@@ -54,13 +55,14 @@ public class OAnswerSpecificInfoTest {
 	public void testXMLSerializaion() throws Exception {
 		CalledPartyNumberImpl calledPartyNumber = new CalledPartyNumberImpl(0, "111222333", 1, 1);
 		CalledPartyNumberCapImpl forwardingDestinationNumber = new CalledPartyNumberCapImpl(calledPartyNumber);
-		ExtTeleserviceCodeImpl extTeleservice = new ExtTeleserviceCodeImpl(
-				TeleserviceCodeValue.allSpeechTransmissionServices);
+		ExtTeleserviceCodeImpl extTeleservice = new ExtTeleserviceCodeImpl(TeleserviceCodeValue.allSpeechTransmissionServices);
+		ExtTeleserviceCodeImpl extTeleservice2 = new ExtTeleserviceCodeImpl(TeleserviceCodeValue.allShortMessageServices);
 
 		ExtBasicServiceCode extBasicSer = new ExtBasicServiceCodeImpl(extTeleservice);
+		ExtBasicServiceCode extBasicSer2 = new ExtBasicServiceCodeImpl(extTeleservice2);
 
 		OAnswerSpecificInfoImpl original = new OAnswerSpecificInfoImpl(forwardingDestinationNumber, false, true, null,
-				extBasicSer, null);
+				extBasicSer, extBasicSer2);
 
 		// Writes the area to a file.
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -84,5 +86,9 @@ public class OAnswerSpecificInfoTest {
 				.getCalledPartyNumber().getAddress());
 		assertEquals(copy.getOrCall(), original.getOrCall());
 		assertEquals(copy.getForwardedCall(), original.getForwardedCall());
+		assertEquals(copy.getExtBasicServiceCode().getExtTeleservice().getTeleserviceCodeValue(), original.getExtBasicServiceCode().getExtTeleservice()
+				.getTeleserviceCodeValue());
+		assertEquals(copy.getExtBasicServiceCode2().getExtTeleservice().getTeleserviceCodeValue(), original.getExtBasicServiceCode2().getExtTeleservice()
+				.getTeleserviceCodeValue());
 	}
 }

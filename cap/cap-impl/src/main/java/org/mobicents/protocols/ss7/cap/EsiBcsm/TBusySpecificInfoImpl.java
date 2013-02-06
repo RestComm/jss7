@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -33,13 +33,12 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
-import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.TBusySpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
 import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.CauseCapImpl;
-import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
+import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
@@ -47,7 +46,7 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
  * @author sergey vetyutnev
  * 
  */
-public class TBusySpecificInfoImpl implements TBusySpecificInfo, CAPAsnPrimitive {
+public class TBusySpecificInfoImpl extends SequenceBase implements TBusySpecificInfo {
 
 	private static final String BUSY_CAUSE = "busyCause";
 	private static final String CALL_FORWARDED = "callForwarded";
@@ -59,18 +58,18 @@ public class TBusySpecificInfoImpl implements TBusySpecificInfo, CAPAsnPrimitive
 	public static final int _ID_routeNotPermitted = 51;
 	public static final int _ID_forwardingDestinationNumber = 52;
 
-	public static final String _PrimitiveName = "TBusySpecificInfo";
-
 	private CauseCap busyCause;
 	private boolean callForwarded;
 	private boolean routeNotPermitted;
 	private CalledPartyNumberCap forwardingDestinationNumber;
 
 	public TBusySpecificInfoImpl() {
+		super("TBusySpecificInfo");
 	}
 
 	public TBusySpecificInfoImpl(CauseCap busyCause, boolean callForwarded, boolean routeNotPermitted,
 			CalledPartyNumberCap forwardingDestinationNumber) {
+		super("TBusySpecificInfo");
 		this.busyCause = busyCause;
 		this.callForwarded = callForwarded;
 		this.routeNotPermitted = routeNotPermitted;
@@ -97,57 +96,7 @@ public class TBusySpecificInfoImpl implements TBusySpecificInfo, CAPAsnPrimitive
 		return forwardingDestinationNumber;
 	}
 
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
-
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
-
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
-
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
-
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
-					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
-
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
-					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException,
+	protected void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException,
 			MAPParsingComponentException, IOException, AsnException {
 
 		this.busyCause = null;
@@ -192,24 +141,6 @@ public class TBusySpecificInfoImpl implements TBusySpecificInfo, CAPAsnPrimitive
 	}
 
 	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
-	}
-
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-
-		try {
-			asnOs.writeTag(tagClass, false, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
-
-	@Override
 	public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
 		try {
@@ -248,7 +179,7 @@ public class TBusySpecificInfoImpl implements TBusySpecificInfo, CAPAsnPrimitive
 			sb.append(", routeNotPermitted");
 		}
 		if (this.forwardingDestinationNumber != null) {
-			sb.append("forwardingDestinationNumber= [");
+			sb.append(", forwardingDestinationNumber= [");
 			sb.append(forwardingDestinationNumber);
 			sb.append("]");
 		}
@@ -269,8 +200,12 @@ public class TBusySpecificInfoImpl implements TBusySpecificInfo, CAPAsnPrimitive
 				throws XMLStreamException {
 			tBusySpecificInfo.busyCause = xml.get(BUSY_CAUSE, CauseCapImpl.class);
 
-			tBusySpecificInfo.callForwarded = xml.get(CALL_FORWARDED, Boolean.class);
-			tBusySpecificInfo.routeNotPermitted = xml.get(ROUTE_NOT_PERMITTED, Boolean.class);
+			Boolean bval = xml.get(CALL_FORWARDED, Boolean.class);
+			if (bval != null)
+				tBusySpecificInfo.callForwarded = bval;
+			bval = xml.get(ROUTE_NOT_PERMITTED, Boolean.class);
+			if (bval != null)
+				tBusySpecificInfo.routeNotPermitted = bval;
 
 			tBusySpecificInfo.forwardingDestinationNumber = xml.get(FORWARDING_DESTINATION_NUMBER,
 					CalledPartyNumberCapImpl.class);
@@ -283,8 +218,10 @@ public class TBusySpecificInfoImpl implements TBusySpecificInfo, CAPAsnPrimitive
 				xml.add((CauseCapImpl) tBusySpecificInfo.busyCause, BUSY_CAUSE, CauseCapImpl.class);
 			}
 
-			xml.add(tBusySpecificInfo.callForwarded, CALL_FORWARDED, Boolean.class);
-			xml.add(tBusySpecificInfo.routeNotPermitted, ROUTE_NOT_PERMITTED, Boolean.class);
+			if (tBusySpecificInfo.callForwarded)
+				xml.add(tBusySpecificInfo.callForwarded, CALL_FORWARDED, Boolean.class);
+			if (tBusySpecificInfo.routeNotPermitted)
+				xml.add(tBusySpecificInfo.routeNotPermitted, ROUTE_NOT_PERMITTED, Boolean.class);
 
 			if (tBusySpecificInfo.forwardingDestinationNumber != null) {
 				xml.add((CalledPartyNumberCapImpl) tBusySpecificInfo.forwardingDestinationNumber,

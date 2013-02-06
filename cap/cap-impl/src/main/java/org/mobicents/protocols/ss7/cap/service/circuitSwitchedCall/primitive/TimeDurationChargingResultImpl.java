@@ -39,9 +39,9 @@ import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeDurationChargingResult;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeInformation;
-import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsImpl;
 import org.mobicents.protocols.ss7.cap.primitives.ReceivingSideIDImpl;
+import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
@@ -50,7 +50,7 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
  * @author Amit Bhayani
  * 
  */
-public class TimeDurationChargingResultImpl implements TimeDurationChargingResult, CAPAsnPrimitive {
+public class TimeDurationChargingResultImpl extends SequenceBase implements TimeDurationChargingResult {
 
 	private static final String PARTY_TO_CHARGE = "partyToCharge";
 	private static final String TIME_INFORMATION = "timeInformation";
@@ -66,8 +66,6 @@ public class TimeDurationChargingResultImpl implements TimeDurationChargingResul
 	public static final int _ID_extensions = 4;
 	public static final int _ID_aChChargingAddress = 5;
 
-	public static final String _PrimitiveName = "TimeDurationChargingResult";
-
 	private ReceivingSideID partyToCharge;
 	private TimeInformation timeInformation;
 	private boolean legActive;
@@ -76,11 +74,13 @@ public class TimeDurationChargingResultImpl implements TimeDurationChargingResul
 	private AChChargingAddress aChChargingAddress;
 
 	public TimeDurationChargingResultImpl() {
+		super("TimeDurationChargingResult");
 	}
 
 	public TimeDurationChargingResultImpl(ReceivingSideID partyToCharge, TimeInformation timeInformation,
 			boolean legActive, boolean callLegReleasedAtTcpExpiry, CAPExtensions extensions,
 			AChChargingAddress aChChargingAddress) {
+		super("TimeDurationChargingResult");
 		this.partyToCharge = partyToCharge;
 		this.timeInformation = timeInformation;
 		this.legActive = legActive;
@@ -119,57 +119,7 @@ public class TimeDurationChargingResultImpl implements TimeDurationChargingResul
 		return aChChargingAddress;
 	}
 
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
-
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
-
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
-
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
-
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
-					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
-
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
-					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException,
+	protected void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException,
 			MAPParsingComponentException, IOException, AsnException {
 
 		this.partyToCharge = null;
@@ -229,24 +179,6 @@ public class TimeDurationChargingResultImpl implements TimeDurationChargingResul
 			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
 					+ ": partyToCharge and timeInformation are mandatory but not found",
 					CAPParsingComponentExceptionReason.MistypedParameter);
-	}
-
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
-
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
 	}
 
 	@Override
@@ -332,9 +264,13 @@ public class TimeDurationChargingResultImpl implements TimeDurationChargingResul
 				TimeDurationChargingResultImpl timeDurationChargingResult) throws XMLStreamException {
 			timeDurationChargingResult.partyToCharge = xml.get(PARTY_TO_CHARGE, ReceivingSideIDImpl.class);
 			timeDurationChargingResult.timeInformation = xml.get(TIME_INFORMATION, TimeInformationImpl.class);
-			timeDurationChargingResult.legActive = xml.get(LEG_ACTIVE, Boolean.class);
-			timeDurationChargingResult.callLegReleasedAtTcpExpiry = xml.get(CALL_LEG_RELEASED_AT_TCP_EXPIRY,
-					Boolean.class);
+			
+			Boolean bval = xml.get(LEG_ACTIVE, Boolean.class);
+			if (bval != null)
+				timeDurationChargingResult.legActive = bval;
+			bval = xml.get(CALL_LEG_RELEASED_AT_TCP_EXPIRY, Boolean.class);
+			if (bval != null)
+				timeDurationChargingResult.callLegReleasedAtTcpExpiry = bval;
 
 			// TODO AChChargingAddressImpl is not yet implemented
 			// timeDurationChargingResult.aChChargingAddress = xml
@@ -348,15 +284,16 @@ public class TimeDurationChargingResultImpl implements TimeDurationChargingResul
 		public void write(TimeDurationChargingResultImpl timeDurationChargingResult,
 				javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
 
-			xml.add((ReceivingSideIDImpl) timeDurationChargingResult.partyToCharge, PARTY_TO_CHARGE,
-					ReceivingSideIDImpl.class);
+			if (timeDurationChargingResult.partyToCharge != null)
+				xml.add((ReceivingSideIDImpl) timeDurationChargingResult.partyToCharge, PARTY_TO_CHARGE, ReceivingSideIDImpl.class);
 
-			xml.add((TimeInformationImpl) timeDurationChargingResult.timeInformation, TIME_INFORMATION,
-					TimeInformationImpl.class);
+			if (timeDurationChargingResult.timeInformation != null)
+				xml.add((TimeInformationImpl) timeDurationChargingResult.timeInformation, TIME_INFORMATION, TimeInformationImpl.class);
 
-			xml.add(timeDurationChargingResult.legActive, LEG_ACTIVE, Boolean.class);
-			xml.add(timeDurationChargingResult.callLegReleasedAtTcpExpiry, CALL_LEG_RELEASED_AT_TCP_EXPIRY,
-					Boolean.class);
+			if (timeDurationChargingResult.legActive)
+				xml.add(timeDurationChargingResult.legActive, LEG_ACTIVE, Boolean.class);
+			if (timeDurationChargingResult.callLegReleasedAtTcpExpiry)
+				xml.add(timeDurationChargingResult.callLegReleasedAtTcpExpiry, CALL_LEG_RELEASED_AT_TCP_EXPIRY, Boolean.class);
 
 			// TODO AChChargingAddressImpl is not yet implemented
 			// xml.add((AChChargingAddressImpl)
@@ -364,7 +301,8 @@ public class TimeDurationChargingResultImpl implements TimeDurationChargingResul
 			// A_CH_CHARGING_ADDRESS,
 			// AChChargingAddressImpl.class);
 
-			xml.add((CAPExtensionsImpl) timeDurationChargingResult.extensions, EXTENSIONS, CAPExtensionsImpl.class);
+			if (timeDurationChargingResult.extensions != null)
+				xml.add((CAPExtensionsImpl) timeDurationChargingResult.extensions, EXTENSIONS, CAPExtensionsImpl.class);
 
 		}
 	};

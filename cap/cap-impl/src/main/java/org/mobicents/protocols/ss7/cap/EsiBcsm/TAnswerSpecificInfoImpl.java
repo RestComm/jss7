@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -33,12 +33,11 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
-import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.ChargeIndicator;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.TAnswerSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
-import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
+import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtBasicServiceCodeImpl;
@@ -48,7 +47,7 @@ import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Ext
  * @author sergey vetyutnev
  * 
  */
-public class TAnswerSpecificInfoImpl implements TAnswerSpecificInfo, CAPAsnPrimitive {
+public class TAnswerSpecificInfoImpl extends SequenceBase implements TAnswerSpecificInfo {
 
 	private static final String DESTINATION_ADDRESS = "destinationAddress";
 	private static final String OR_CALL = "orCall";
@@ -64,8 +63,6 @@ public class TAnswerSpecificInfoImpl implements TAnswerSpecificInfo, CAPAsnPrimi
 	public static final int _ID_extbasicServiceCode = 54;
 	public static final int _ID_extbasicServiceCode2 = 55;
 
-	public static final String _PrimitiveName = "TAnswerSpecificInfo";
-
 	private CalledPartyNumberCap destinationAddress;
 	private boolean orCall;
 	private boolean forwardedCall;
@@ -74,11 +71,13 @@ public class TAnswerSpecificInfoImpl implements TAnswerSpecificInfo, CAPAsnPrimi
 	private ExtBasicServiceCode extBasicServiceCode2;
 
 	public TAnswerSpecificInfoImpl() {
+		super("TAnswerSpecificInfo");
 	}
 
 	public TAnswerSpecificInfoImpl(CalledPartyNumberCap destinationAddress, boolean orCall, boolean forwardedCall,
 			ChargeIndicator chargeIndicator, ExtBasicServiceCode extBasicServiceCode,
 			ExtBasicServiceCode extBasicServiceCode2) {
+		super("TAnswerSpecificInfo");
 		this.destinationAddress = destinationAddress;
 		this.orCall = orCall;
 		this.forwardedCall = forwardedCall;
@@ -117,57 +116,7 @@ public class TAnswerSpecificInfoImpl implements TAnswerSpecificInfo, CAPAsnPrimi
 		return extBasicServiceCode2;
 	}
 
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
-
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
-
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
-
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
-
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
-					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
-
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
-					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException,
+	protected void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException,
 			MAPParsingComponentException, IOException, AsnException {
 
 		this.destinationAddress = null;
@@ -218,24 +167,6 @@ public class TAnswerSpecificInfoImpl implements TAnswerSpecificInfo, CAPAsnPrimi
 			} else {
 				ais.advanceElement();
 			}
-		}
-	}
-
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
-	}
-
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-
-		try {
-			asnOs.writeTag(tagClass, false, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
 		}
 	}
 
@@ -311,8 +242,13 @@ public class TAnswerSpecificInfoImpl implements TAnswerSpecificInfo, CAPAsnPrimi
 		public void read(javolution.xml.XMLFormat.InputElement xml, TAnswerSpecificInfoImpl oAnswerSpecificInfo)
 				throws XMLStreamException {
 			oAnswerSpecificInfo.destinationAddress = xml.get(DESTINATION_ADDRESS, CalledPartyNumberCapImpl.class);
-			oAnswerSpecificInfo.orCall = xml.get(OR_CALL, Boolean.class);
-			oAnswerSpecificInfo.forwardedCall = xml.get(FORWARDED_CALL, Boolean.class);
+
+			Boolean bval = xml.get(OR_CALL, Boolean.class);
+			if (bval != null)
+				oAnswerSpecificInfo.orCall = bval;
+			bval = xml.get(FORWARDED_CALL, Boolean.class);
+			if (bval != null)
+				oAnswerSpecificInfo.forwardedCall = bval;
 
 			// oAnswerSpecificInfo.chargeIndicator = xml.get(CHARGE_INDICATOR,
 			// ChargeIndicatorImpl.class);
@@ -330,8 +266,10 @@ public class TAnswerSpecificInfoImpl implements TAnswerSpecificInfo, CAPAsnPrimi
 						CalledPartyNumberCapImpl.class);
 			}
 
-			xml.add(oAnswerSpecificInfo.orCall, OR_CALL, Boolean.class);
-			xml.add(oAnswerSpecificInfo.forwardedCall, FORWARDED_CALL, Boolean.class);
+			if (oAnswerSpecificInfo.orCall)
+				xml.add(oAnswerSpecificInfo.orCall, OR_CALL, Boolean.class);
+			if (oAnswerSpecificInfo.forwardedCall)
+				xml.add(oAnswerSpecificInfo.forwardedCall, FORWARDED_CALL, Boolean.class);
 
 			if (oAnswerSpecificInfo.chargeIndicator != null) {
 				// TODO ChargeIndicatorImpl not yet implemented
