@@ -47,7 +47,7 @@ public interface UserServiceInformation extends ISUPParameter {
 	
 	public static final int _LAYER2_IDENTIFIER=0x2;
 	
-	public static final int _LAYER3_IDENTIFIER=0x0;
+	public static final int _LAYER3_IDENTIFIER=0x3;
 	
 	//CODING STANDART OPTIONS
 	public static final int _CS_CCITT=0;
