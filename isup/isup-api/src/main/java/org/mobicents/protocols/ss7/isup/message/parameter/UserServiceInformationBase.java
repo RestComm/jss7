@@ -35,14 +35,14 @@ public interface UserServiceInformationBase extends ISUPParameter {
 	//for parameters list see ITU-T Q.763 (12/1999) 3.57
 	//Recommendation Q.931 (05/98) Table 4-6/Q.931 Bearer capability information element
 	//Dialogic User Service Information structure : http://www.dialogic.com/webhelp/NASignaling/Release%205.1/NA_ISUP_Layer_Dev_Ref_Manual/user_service_information.htm
-	
+
 	//LAYER IDENTIFIERS
 	public static final int _LAYER1_IDENTIFIER=0x1;
-	
+
 	public static final int _LAYER2_IDENTIFIER=0x2;
-	
-	public static final int _LAYER3_IDENTIFIER=0x0;
-	
+
+	public static final int _LAYER3_IDENTIFIER=0x3;
+
 	//CODING STANDART OPTIONS
 	public static final int _CS_CCITT=0;
 	
