@@ -39,8 +39,10 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformationGPRS;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RAIdentity;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.LSAIdentity;
+import org.mobicents.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdFixedLengthImpl;
 import org.mobicents.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdOrLAIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.LAIFixedLengthImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.LSAIdentityImpl;
@@ -280,6 +282,34 @@ public class LocationInformationGPRSImpl implements LocationInformationGPRS, MAP
 		}
 	}
 
+	public static CellGlobalIdOrServiceAreaIdOrLAI decodeCellGlobalIdOrServiceAreaIdOrLAI(AsnInputStream ais, String primitiveName)
+			throws MAPParsingComponentException, AsnException, IOException {
+		if (ais.isTagPrimitive()) {
+			// nonstandard case when there is no external container 
+			int len = ais.readLength();
+			if (len == 7) {
+				CellGlobalIdOrServiceAreaIdFixedLengthImpl val = new CellGlobalIdOrServiceAreaIdFixedLengthImpl();
+				val.decodeData(ais, len);
+				CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI = new CellGlobalIdOrServiceAreaIdOrLAIImpl(val);
+				return cellGlobalIdOrServiceAreaIdOrLAI;
+			} else if (len == 5) {
+				LAIFixedLengthImpl val = new LAIFixedLengthImpl();
+				val.decodeData(ais, len);
+				CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI = new CellGlobalIdOrServiceAreaIdOrLAIImpl(val);
+				return cellGlobalIdOrServiceAreaIdOrLAI;
+			} else {
+				throw new MAPParsingComponentException("Error while decoding " + primitiveName
+						+ " cellGlobalIdOrServiceAreaIdOrLAI: Parameter length must be 5 or 7", MAPParsingComponentExceptionReason.MistypedParameter);
+			}
+		} else {
+			CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI = new CellGlobalIdOrServiceAreaIdOrLAIImpl();
+			AsnInputStream ais2 = ais.readSequenceStream();
+			ais2.readTag();
+			((CellGlobalIdOrServiceAreaIdOrLAIImpl) cellGlobalIdOrServiceAreaIdOrLAI).decodeAll(ais2);
+			return cellGlobalIdOrServiceAreaIdOrLAI;
+		}
+	}
+
 	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
 		this.cellGlobalIdOrServiceAreaIdOrLAI = null;
@@ -306,13 +336,14 @@ public class LocationInformationGPRSImpl implements LocationInformationGPRS, MAP
 
 				switch (tag) {
 				case _ID_cellGlobalIdOrServiceAreaIdOrLAI:
-					if (ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " cellGlobalIdOrServiceAreaIdOrLAI: Parameter is primitive",
-								MAPParsingComponentExceptionReason.MistypedParameter);
-					this.cellGlobalIdOrServiceAreaIdOrLAI = new CellGlobalIdOrServiceAreaIdOrLAIImpl();
-					AsnInputStream ais2 = ais.readSequenceStream();
-					ais2.readTag();
-					((CellGlobalIdOrServiceAreaIdOrLAIImpl)this.cellGlobalIdOrServiceAreaIdOrLAI).decodeAll(ais2);
+					this.cellGlobalIdOrServiceAreaIdOrLAI = decodeCellGlobalIdOrServiceAreaIdOrLAI(ais, _PrimitiveName);
+//					if (ais.isTagPrimitive())
+//						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + " cellGlobalIdOrServiceAreaIdOrLAI: Parameter is primitive",
+//								MAPParsingComponentExceptionReason.MistypedParameter);
+//					this.cellGlobalIdOrServiceAreaIdOrLAI = new CellGlobalIdOrServiceAreaIdOrLAIImpl();
+//					AsnInputStream ais2 = ais.readSequenceStream();
+//					ais2.readTag();
+//					((CellGlobalIdOrServiceAreaIdOrLAIImpl)this.cellGlobalIdOrServiceAreaIdOrLAI).decodeAll(ais2);
 					break;
 				case _ID_routeingAreaIdentity:
 					if (!ais.isTagPrimitive())

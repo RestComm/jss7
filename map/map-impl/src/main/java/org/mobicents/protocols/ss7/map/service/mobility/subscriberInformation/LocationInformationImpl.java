@@ -259,13 +259,14 @@ public class LocationInformationImpl implements LocationInformation, MAPAsnPrimi
 					((LocationNumberMapImpl) this.locationNumber).decodeAll(ais);
 					break;
 				case _ID_cellGlobalIdOrServiceAreaIdOrLAI:
-					if (ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-								+ " cellGlobalIdOrServiceAreaIdOrLAI: Parameter is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-					this.cellGlobalIdOrServiceAreaIdOrLAI = new CellGlobalIdOrServiceAreaIdOrLAIImpl();
-					AsnInputStream ais2 = ais.readSequenceStream();
-					ais2.readTag();
-					((CellGlobalIdOrServiceAreaIdOrLAIImpl) this.cellGlobalIdOrServiceAreaIdOrLAI).decodeAll(ais2);
+					this.cellGlobalIdOrServiceAreaIdOrLAI = LocationInformationGPRSImpl.decodeCellGlobalIdOrServiceAreaIdOrLAI(ais, _PrimitiveName);
+//					if (ais.isTagPrimitive())
+//						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+//								+ " cellGlobalIdOrServiceAreaIdOrLAI: Parameter is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+//					this.cellGlobalIdOrServiceAreaIdOrLAI = new CellGlobalIdOrServiceAreaIdOrLAIImpl();
+//					AsnInputStream ais2 = ais.readSequenceStream();
+//					ais2.readTag();
+//					((CellGlobalIdOrServiceAreaIdOrLAIImpl) this.cellGlobalIdOrServiceAreaIdOrLAI).decodeAll(ais2);
 					break;
 				case _ID_extensionContainer:
 					if (ais.isTagPrimitive())
