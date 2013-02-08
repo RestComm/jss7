@@ -431,6 +431,11 @@ public class DialogImpl implements Dialog {
 
 	}
 
+	@Override
+	public ReentrantLock getDialogLock() {
+		return this.dialogLock;
+	}
+
 	/**
 	 * @return the acn
 	 */
@@ -1874,7 +1879,7 @@ public class DialogImpl implements Dialog {
 		}
 	}
 
-	protected synchronized void setState(TRPseudoState newState) {
+	protected void setState(TRPseudoState newState) {
 		try {
 			this.dialogLock.lock();
 			// add checks?

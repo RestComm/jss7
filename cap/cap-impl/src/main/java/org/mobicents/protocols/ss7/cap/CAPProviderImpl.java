@@ -365,7 +365,9 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		}
 
 		CAPDialogImpl capDialogImpl = ((CAPServiceBaseImpl) perfSer).createNewDialogIncoming(capAppCtx, tcBeginIndication.getDialog());
-		synchronized (capDialogImpl) {
+		try {
+			capDialogImpl.getTcapDialog().getDialogLock().lock();
+
 			this.addDialog(capDialogImpl);
 			capDialogImpl.tcapMessageType = MessageType.Begin;
 			capDialogImpl.receivedGprsReferenceNumber = referenceNumber;
@@ -393,6 +395,8 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 				DialogImpl dimp = (DialogImpl)tcBeginIndication.getDialog();
 				dimp.getPrevewDialogData().setUpperDialog(capDialogImpl);
 			}
+		} finally {
+			capDialogImpl.getTcapDialog().getDialogLock().unlock();
 		}
 	}
 
@@ -442,7 +446,9 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		}
 		capDialogImpl.tcapMessageType = MessageType.Continue;
 
-		synchronized (capDialogImpl) {
+		try {
+			capDialogImpl.getTcapDialog().getDialogLock().lock();
+
 			if (this.getTCAPProvider().getPreviewMode()) {
 				CAPGprsReferenceNumberImpl referenceNumber = null;
 				UserInformation userInfo = tcContinueIndication.getUserInformation();
@@ -535,6 +541,8 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
 				finishComponentProcessingState(capDialogImpl);
 			}
+		} finally {
+			capDialogImpl.getTcapDialog().getDialogLock().unlock();
 		}
 	}	
 
@@ -555,7 +563,9 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		}
 		capDialogImpl.tcapMessageType = MessageType.End;
 
-		synchronized (capDialogImpl) {
+		try {
+			capDialogImpl.getTcapDialog().getDialogLock().lock();
+
 			if (this.getTCAPProvider().getPreviewMode()) {
 
 				capDialogImpl.setState(CAPDialogState.Active);
@@ -636,6 +646,8 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
 				capDialogImpl.setState(CAPDialogState.Expunged);
 			}
+		} finally {
+			capDialogImpl.getTcapDialog().getDialogLock().unlock();
 		}
 	}	
 
@@ -648,7 +660,9 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		CAPDialogImpl capDialogImpl = (CAPDialogImpl) this.getCAPDialog(((InvokeImpl) invoke).getDialog().getLocalDialogId());
 
 		if (capDialogImpl != null) {
-			synchronized (capDialogImpl) {
+			try {
+				capDialogImpl.getTcapDialog().getDialogLock().lock();
+
 				if (capDialogImpl.getState() != CAPDialogState.Expunged) {
 //				if (capDialogImpl.getState() != CAPDialogState.Expunged && !capDialogImpl.getNormalDialogShutDown()) {
 
@@ -660,6 +674,8 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 					
 					perfSer.deliverInvokeTimeout(capDialogImpl, invoke);
 				}
+			} finally {
+				capDialogImpl.getTcapDialog().getDialogLock().unlock();
 			}
 		}
 	}
@@ -670,12 +686,16 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		CAPDialogImpl capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getLocalDialogId());
 
 		if (capDialogImpl != null) {
-			synchronized (capDialogImpl) {
+			try {
+				capDialogImpl.getTcapDialog().getDialogLock().lock();
+
 				if (capDialogImpl.getState() != CAPDialogState.Expunged) {
 //				if (capDialogImpl.getState() != CAPDialogState.Expunged && !capDialogImpl.getNormalDialogShutDown()) {
 
 					this.deliverDialogTimeout(capDialogImpl);
 				}
+			} finally {
+				capDialogImpl.getTcapDialog().getDialogLock().unlock();
 			}
 		}
 	}
@@ -686,8 +706,12 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		CAPDialogImpl capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getLocalDialogId());
 
 		if (capDialogImpl != null) {
-			synchronized (capDialogImpl) {
+			try {
+				capDialogImpl.getTcapDialog().getDialogLock().lock();
+
 				this.deliverDialogRelease(capDialogImpl);
+			} finally {
+				capDialogImpl.getTcapDialog().getDialogLock().unlock();
 			}
 		}
 	}
@@ -708,12 +732,16 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		}
 		capDialogImpl.tcapMessageType = MessageType.Abort;
 
-		synchronized (capDialogImpl) {
+		try {
+			capDialogImpl.getTcapDialog().getDialogLock().lock();
+
 			PAbortCauseType pAbortCause = tcPAbortIndication.getPAbortCause();
 
 			this.deliverDialogProviderAbort(capDialogImpl, pAbortCause);
 
 			capDialogImpl.setState(CAPDialogState.Expunged);
+		} finally {
+			capDialogImpl.getTcapDialog().getDialogLock().unlock();
 		}
 	}
 
@@ -733,7 +761,9 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 		}
 		capDialogImpl.tcapMessageType = MessageType.Abort;
 
-		synchronized (capDialogImpl) {
+		try {
+			capDialogImpl.getTcapDialog().getDialogLock().lock();
+
 			CAPGeneralAbortReason generalReason = null;
 //			CAPGeneralAbortReason generalReason = CAPGeneralAbortReason.BadReceivedData;
 			CAPUserAbortReason userReason = null;
@@ -792,6 +822,8 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			this.deliverDialogUserAbort(capDialogImpl, generalReason, userReason);
 
 			capDialogImpl.setState(CAPDialogState.Expunged);
+		} finally {
+			capDialogImpl.getTcapDialog().getDialogLock().unlock();
 		}
 	}
 
@@ -811,13 +843,17 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 			return;
 		}
 
-		synchronized (capDialogImpl) {
+		try {
+			capDialogImpl.getTcapDialog().getDialogLock().lock();
+
 			this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.MessageCannotBeDeliveredToThePeer);
 
 			if (capDialogImpl.getState() == CAPDialogState.InitialSent) {
 //				capDialogImpl.setNormalDialogShutDown();
 				capDialogImpl.setState(CAPDialogState.Expunged);
 			}
+		} finally {
+			capDialogImpl.getTcapDialog().getDialogLock().unlock();
 		}
 	}
 

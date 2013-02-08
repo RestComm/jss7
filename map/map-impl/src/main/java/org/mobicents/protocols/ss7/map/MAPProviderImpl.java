@@ -600,7 +600,9 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		}
 
 		MAPDialogImpl mapDialogImpl = ((MAPServiceBaseImpl) perfSer).createNewDialogIncoming(mapAppCtx, tcBeginIndication.getDialog());
-		synchronized (mapDialogImpl) {
+		try {
+			mapDialogImpl.getTcapDialog().getDialogLock().lock();
+
 			this.addDialog(mapDialogImpl);
 			mapDialogImpl.tcapMessageType = MessageType.Begin;
 			mapDialogImpl.receivedOrigReference = origReference;
@@ -631,9 +633,11 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			finishComponentProcessingState(mapDialogImpl);
 
 			if (this.getTCAPProvider().getPreviewMode()) {
-				DialogImpl dimp = (DialogImpl)tcBeginIndication.getDialog();
+				DialogImpl dimp = (DialogImpl) tcBeginIndication.getDialog();
 				dimp.getPrevewDialogData().setUpperDialog(mapDialogImpl);
 			}
+		} finally {
+			mapDialogImpl.getTcapDialog().getDialogLock().unlock();
 		}
 	}
 
@@ -682,7 +686,9 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			return;
 		}
 
-		synchronized (mapDialogImpl) {
+		try {
+			mapDialogImpl.getTcapDialog().getDialogLock().lock();
+
 			mapDialogImpl.tcapMessageType = MessageType.Continue;
 
 			if (this.getTCAPProvider().getPreviewMode()) {
@@ -864,6 +870,8 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 				finishComponentProcessingState(mapDialogImpl);
 			}
+		} finally {
+			mapDialogImpl.getTcapDialog().getDialogLock().unlock();
 		}
 	}
 
@@ -883,7 +891,9 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			return;
 		}
 
-		synchronized (mapDialogImpl) {
+		try {
+			mapDialogImpl.getTcapDialog().getDialogLock().lock();
+
 			mapDialogImpl.tcapMessageType = MessageType.End;
 
 			if (this.getTCAPProvider().getPreviewMode()) {
@@ -1066,6 +1076,8 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 				mapDialogImpl.setState(MAPDialogState.EXPUNGED);
 			}
+		} finally {
+			mapDialogImpl.getTcapDialog().getDialogLock().unlock();
 		}
 	}
 
@@ -1078,7 +1090,9 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		MAPDialogImpl mapDialogImpl = (MAPDialogImpl) this.getMAPDialog(((InvokeImpl) invoke).getDialog().getLocalDialogId());
 
 		if (mapDialogImpl != null) {
-			synchronized (mapDialogImpl) {
+			try {
+				mapDialogImpl.getTcapDialog().getDialogLock().lock();
+
 				if (mapDialogImpl.getState() != MAPDialogState.EXPUNGED) {
 
 					// Getting the MAP Service that serves the MAP Dialog
@@ -1090,6 +1104,8 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 					perfSer.deliverInvokeTimeout(mapDialogImpl, invoke);
 				}
+			} finally {
+				mapDialogImpl.getTcapDialog().getDialogLock().unlock();
 			}
 		}
 	}
@@ -1099,10 +1115,14 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		MAPDialogImpl mapDialogImpl = (MAPDialogImpl) this.getMAPDialog(tcapDialog.getLocalDialogId());
 
 		if (mapDialogImpl != null) {
-			synchronized (mapDialogImpl) {
+			try {
+				mapDialogImpl.getTcapDialog().getDialogLock().lock();
+
 				if (mapDialogImpl.getState() != MAPDialogState.EXPUNGED) {
 					this.deliverDialogTimeout(mapDialogImpl);
 				}
+			} finally {
+				mapDialogImpl.getTcapDialog().getDialogLock().unlock();
 			}
 		}
 	}
@@ -1112,8 +1132,12 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		MAPDialogImpl mapDialogImpl = this.removeDialog(tcapDialog.getLocalDialogId());
 
 		if (mapDialogImpl != null) {
-			synchronized (mapDialogImpl) {
+			try {
+				mapDialogImpl.getTcapDialog().getDialogLock().lock();
+
 				this.deliverDialogRelease(mapDialogImpl);
+			} finally {
+				mapDialogImpl.getTcapDialog().getDialogLock().unlock();
 			}
 		}
 	}
@@ -1133,7 +1157,9 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			return;
 		}
 
-		synchronized (mapDialogImpl) {
+		try {
+			mapDialogImpl.getTcapDialog().getDialogLock().lock();
+
 			mapDialogImpl.tcapMessageType = MessageType.Abort;
 
 			PAbortCauseType pAbortCause = tcPAbortIndication.getPAbortCause();
@@ -1183,6 +1209,8 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				this.deliverDialogProviderAbort(mapDialogImpl, abortProviderReason, abortSource, null);
 
 			mapDialogImpl.setState(MAPDialogState.EXPUNGED);
+		} finally {
+			mapDialogImpl.getTcapDialog().getDialogLock().unlock();
 		}
 	}
 
@@ -1205,7 +1233,9 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			return;
 		}
 
-		synchronized (mapDialogImpl) {
+		try {
+			mapDialogImpl.getTcapDialog().getDialogLock().lock();
+
 			mapDialogImpl.tcapMessageType = MessageType.Abort;
 
 			// Trying to parse an userInfo APDU if it exists
@@ -1391,6 +1421,8 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			}
 
 			mapDialogImpl.setState(MAPDialogState.EXPUNGED);
+		} finally {
+			mapDialogImpl.getTcapDialog().getDialogLock().unlock();
 		}
 	}
 
@@ -1590,7 +1622,9 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			return;
 		}
 
-		synchronized (mapDialogImpl) {
+		try {
+			mapDialogImpl.getTcapDialog().getDialogLock().lock();
+
 			if (mapDialogImpl.getState() == MAPDialogState.INITIAL_SENT) {
 				// If a TC-NOTICE indication primitive is received before the
 				// dialogue has been confirmed (i.e. no backward message is
@@ -1607,6 +1641,8 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 				// indicating "message cannot be delivered to the peer".
 				this.deliverDialogNotice(mapDialogImpl, MAPNoticeProblemDiagnostic.MessageCannotBeDeliveredToThePeer);
 			}
+		} finally {
+			mapDialogImpl.getTcapDialog().getDialogLock().unlock();
 		}
 	}
 

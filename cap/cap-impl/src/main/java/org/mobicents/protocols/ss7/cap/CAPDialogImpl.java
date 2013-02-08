@@ -221,7 +221,9 @@ public abstract class CAPDialogImpl implements CAPDialog {
 		if (this.tcapDialog.getPreviewMode())
 			return;
 
-		synchronized (this) {
+		try {
+			this.getTcapDialog().getDialogLock().lock();
+
 			switch (this.tcapDialog.getState()) {
 
 			case Idle:
@@ -259,6 +261,8 @@ public abstract class CAPDialogImpl implements CAPDialog {
 			case Expunged: // dialog has been terminated on TC level, cant send
 				throw new CAPException("Dialog has been terminated, can not send primitives!");
 			}
+		} finally {
+			this.getTcapDialog().getDialogLock().unlock();
 		}
 	}
 
@@ -283,7 +287,9 @@ public abstract class CAPDialogImpl implements CAPDialog {
 		if (this.tcapDialog.getPreviewMode())
 			return;
 
-		synchronized (this) {
+		try {
+			this.getTcapDialog().getDialogLock().lock();
+
 			switch (this.tcapDialog.getState()) {
 			case InitialReceived:
 				ApplicationContextName acn = this.capProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
@@ -313,6 +319,8 @@ public abstract class CAPDialogImpl implements CAPDialog {
 			case Expunged: // dialog has been terminated on TC level, cant send
 				throw new CAPException("Dialog has been terminated, can not send primitives!");
 			}
+		} finally {
+			this.getTcapDialog().getDialogLock().unlock();
 		}
 	}
 
@@ -349,7 +357,9 @@ public abstract class CAPDialogImpl implements CAPDialog {
 		if (this.tcapDialog.getPreviewMode())
 			return;
 
-		synchronized (this) {
+		try {
+			this.getTcapDialog().getDialogLock().lock();
+
 			// Dialog is not started or has expunged - we need not send
 			// TC-U-ABORT,
 			// only Dialog removing
@@ -363,6 +373,8 @@ public abstract class CAPDialogImpl implements CAPDialog {
 					this.getReturnMessageOnError());
 
 			this.setState(CAPDialogState.Expunged);
+		} finally {
+			this.getTcapDialog().getDialogLock().unlock();
 		}
 	}
 
