@@ -299,7 +299,7 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
 	}
 
 	@Override
-	public CAPExtensions createCAPExtensions(ExtensionField[] fieldsList) {
+	public CAPExtensions createCAPExtensions(ArrayList<ExtensionField> fieldsList) {
 		return new CAPExtensionsImpl(fieldsList);
 	}
 

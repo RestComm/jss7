@@ -44,22 +44,22 @@ public class CAPExtensionsImpl implements CAPExtensions, CAPAsnPrimitive {
 
 	public static final String _PrimitiveName = "CAPExtensions";
 
-	private ExtensionField[] extensionFields;
+	private ArrayList<ExtensionField> extensionFields;
 
 	public CAPExtensionsImpl() {
 	}
 
-	public CAPExtensionsImpl(ExtensionField[] fieldsList) {
+	public CAPExtensionsImpl(ArrayList<ExtensionField> fieldsList) {
 		this.extensionFields = fieldsList;
 	}
 	
 	@Override
-	public ExtensionField[] getExtensionFields() {
+	public ArrayList<ExtensionField> getExtensionFields() {
 		return extensionFields;
 	}
 
 	@Override
-	public void setExtensionFields(ExtensionField[] fieldsList) {
+	public void setExtensionFields(ArrayList<ExtensionField> fieldsList) {
 		this.extensionFields = fieldsList;
 	}
 	
@@ -109,9 +109,8 @@ public class CAPExtensionsImpl implements CAPExtensions, CAPAsnPrimitive {
 
 	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		this.extensionFields = null;
+		this.extensionFields = new ArrayList<ExtensionField>();
 
-		ArrayList<ExtensionField> res = new ArrayList<ExtensionField>();
 		AsnInputStream ais = ansIS.readSequenceStreamData(length);
 		while (true) {
 			if (ais.available() == 0)
@@ -124,11 +123,8 @@ public class CAPExtensionsImpl implements CAPExtensions, CAPAsnPrimitive {
 
 			ExtensionFieldImpl elem = new ExtensionFieldImpl();
 			elem.decodeAll(ais);
-			res.add(elem);
+			this.extensionFields.add(elem);
 		}
-
-		this.extensionFields = new ExtensionField[res.size()];
-		res.toArray(this.extensionFields);
 	}
 
 	@Override
@@ -155,7 +151,7 @@ public class CAPExtensionsImpl implements CAPExtensions, CAPAsnPrimitive {
 
 		if (this.extensionFields == null)
 			throw new CAPException("Error while decoding " + _PrimitiveName + ": extensionFields field must not be null");
-		if (this.extensionFields.length < 1 || this.extensionFields.length > 10)
+		if (this.extensionFields.size() < 1 || this.extensionFields.size() > 10)
 			throw new CAPException("Error while decoding " + _PrimitiveName + ": extensionFields field length must be from 1 to 10");
 
 		for (ExtensionField fld : this.extensionFields) {

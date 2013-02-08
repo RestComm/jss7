@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.cap.primitives;
 import static org.testng.Assert.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -77,16 +78,19 @@ public class CAPExtensionsTest {
 			e.printStackTrace();
 		}
 		ExtensionFieldImpl a2 = new ExtensionFieldImpl(3, CriticalityType.typeAbort, aos.toByteArray());
-		CAPExtensionsImpl elem = new CAPExtensionsImpl(new ExtensionField[] { a1, a2 });
+		ArrayList<ExtensionField> efl = new ArrayList<ExtensionField>();
+		efl.add(a1);
+		efl.add(a2);
+		CAPExtensionsImpl elem = new CAPExtensionsImpl(efl);
 		return elem;
 	}
 
 	public static boolean checkTestCAPExtensions(CAPExtensions elem) {
-		if (elem.getExtensionFields() == null || elem.getExtensionFields().length != 2)
+		if (elem.getExtensionFields() == null || elem.getExtensionFields().size() != 2)
 			return false;
 		
-		ExtensionField a1 = elem.getExtensionFields()[0];
-		ExtensionField a2 = elem.getExtensionFields()[1];
+		ExtensionField a1 = elem.getExtensionFields().get(0);
+		ExtensionField a2 = elem.getExtensionFields().get(1);
 		if (a1.getLocalCode() != 2 || a2.getLocalCode() != 3)
 			return false;
 		if (a1.getCriticalityType() != CriticalityType.typeIgnore || a2.getCriticalityType() != CriticalityType.typeAbort)

@@ -162,7 +162,7 @@ public interface CAPParameterFactory {
 
 	public ExtensionField createExtensionField(Integer localCode, CriticalityType criticalityType, byte[] data);
 	public ExtensionField createExtensionField(long[] globalCode, CriticalityType criticalityType, byte[] data);
-	public CAPExtensions createCAPExtensions(ExtensionField[] fieldsList);
+	public CAPExtensions createCAPExtensions(ArrayList<ExtensionField> fieldsList);
 	
 	public CAMELAChBillingChargingCharacteristics createCAMELAChBillingChargingCharacteristics(byte[] data);
 	public CAMELAChBillingChargingCharacteristics createCAMELAChBillingChargingCharacteristics(long maxCallPeriodDuration, boolean releaseIfdurationExceeded,
