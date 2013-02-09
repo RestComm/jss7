@@ -46,15 +46,15 @@ import org.testng.annotations.*;
 public class CalledPartyBCDNumberTest {
 
 	public byte[] getData1() {
-		return new byte[] { (byte) 159, 56, 7, 17, 20, (byte) 135, 8, 80, 64, (byte) 247 };
+		return new byte[] { (byte) 159, 56, 7, (byte) 145, 20, (byte) 135, 8, 80, 64, (byte) 247 };
 	}
 
 	public byte[] getData2() {
-		return new byte[] { (byte) 159, 56, 6, 21, (byte) 232, 50, (byte) 155, (byte) 253, 6 };
+		return new byte[] { (byte) 159, 56, 6, (byte) 149, (byte) 232, 50, (byte) 155, (byte) 253, 6 };
 	}
 
 	public byte[] getIntData1() {
-		return new byte[] { 17, 20, (byte) 135, 8, 80, 64, (byte) 247 };
+		return new byte[] { (byte) 145, 20, (byte) 135, 8, 80, 64, (byte) 247 };
 	}
 
 	@Test(groups = { "functional.decode","primitives"})
@@ -92,13 +92,13 @@ public class CalledPartyBCDNumberTest {
 		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 56);
 		assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
 
-		elem = new CalledPartyBCDNumberImpl(AddressNature.international_number, NumberingPlan.ISDN, "41788005047", false);
+		elem = new CalledPartyBCDNumberImpl(AddressNature.international_number, NumberingPlan.ISDN, "41788005047");
 		aos = new AsnOutputStream();
 		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 56);
 		assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
 
 		// GSM 7-bit default alphabet definition and the SMS packing rules
-		elem = new CalledPartyBCDNumberImpl(AddressNature.international_number, NumberingPlan.spare_5, "hello", false);
+		elem = new CalledPartyBCDNumberImpl(AddressNature.international_number, NumberingPlan.spare_5, "hello");
 		aos = new AsnOutputStream();
 		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 56);
 		assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
@@ -107,7 +107,7 @@ public class CalledPartyBCDNumberTest {
 	@Test(groups = { "functional.xml.serialize", "primitives" })
 	public void testXMLSerialize() throws Exception {
 
-		CalledPartyBCDNumberImpl original = new CalledPartyBCDNumberImpl(AddressNature.international_number, NumberingPlan.ISDN, "41788005047", true);
+		CalledPartyBCDNumberImpl original = new CalledPartyBCDNumberImpl(AddressNature.international_number, NumberingPlan.ISDN, "41788005047");
 		
 		// Writes the area to a file.
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();

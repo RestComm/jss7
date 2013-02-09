@@ -54,7 +54,7 @@ public class CalledPartyBCDNumberImpl extends OctetStringBase implements CalledP
 	private static final String NAI = "nai";
 	private static final String NPI = "npi";
 	private static final String NUMBER = "number";
-	private static final String IS_EXTENSION = "isExtension";
+//	private static final String IS_EXTENSION = "isExtension";
 
 	private static final String DEFAULT_STRING_VALUE = null;
 
@@ -70,13 +70,13 @@ public class CalledPartyBCDNumberImpl extends OctetStringBase implements CalledP
 		super(1, 41, "CalledPartyBCDNumber", data);
 	}
 
-	public CalledPartyBCDNumberImpl(AddressNature addressNature, NumberingPlan numberingPlan, String address, boolean isExtension) throws CAPException {
+	public CalledPartyBCDNumberImpl(AddressNature addressNature, NumberingPlan numberingPlan, String address) throws CAPException {
 		super(1, 41, "CalledPartyBCDNumber");
 
-		this.setParameters(addressNature, numberingPlan, address, isExtension);
+		this.setParameters(addressNature, numberingPlan, address);
 	}
 
-	protected void setParameters(AddressNature addressNature, NumberingPlan numberingPlan, String address, boolean isExtension) throws CAPException {
+	protected void setParameters(AddressNature addressNature, NumberingPlan numberingPlan, String address) throws CAPException {
 
 		if (addressNature == null || numberingPlan == null || address == null)
 			throw new CAPException("Error when encoding " + _PrimitiveName + ": addressNature, numberingPlan or address is empty");
@@ -85,11 +85,11 @@ public class CalledPartyBCDNumberImpl extends OctetStringBase implements CalledP
 
 		ByteArrayOutputStream stm = new ByteArrayOutputStream();
 
-		int nature = 0;
-		if (isExtension)
-			nature = 0x80;
-		else
-			nature = 0;
+		int nature = 0x80;
+//		if (!isExtension)
+//			nature = 0x80;
+//		else
+//			nature = 0;
 		nature = nature | (addressNature.getIndicator() << 4);
 		nature = nature | (numberingPlan.getIndicator());
 		stm.write(nature);
@@ -161,9 +161,9 @@ public class CalledPartyBCDNumberImpl extends OctetStringBase implements CalledP
 
 		int nature = this.data[0];
 		if ((nature & NO_EXTENSION_MASK) == 0x80)
-			return true;
-		else
 			return false;
+		else
+			return true;
 	}
 
 	public String getAddress() {
@@ -262,7 +262,7 @@ public class CalledPartyBCDNumberImpl extends OctetStringBase implements CalledP
 					numberingPlan = Enum.valueOf(NumberingPlan.class, npi);
 				}
 
-				calledPartyBCDNumber.setParameters(addressNature, numberingPlan, xml.getAttribute(NUMBER, ""), xml.getAttribute(IS_EXTENSION, false));
+				calledPartyBCDNumber.setParameters(addressNature, numberingPlan, xml.getAttribute(NUMBER, ""));
 			} catch (CAPException e) {
 				throw new XMLStreamException("CAPException when CalledPartyBCDNumber data setting", e);
 			}
@@ -275,9 +275,9 @@ public class CalledPartyBCDNumberImpl extends OctetStringBase implements CalledP
 			xml.setAttribute(NUMBER, calledPartyBCDNumber.getAddress());
 			xml.setAttribute(NAI, calledPartyBCDNumber.getAddressNature().toString());
 			xml.setAttribute(NPI, calledPartyBCDNumber.getNumberingPlan().toString());
-			if (calledPartyBCDNumber.isExtension()) {
-				xml.setAttribute(IS_EXTENSION, true);
-			}
+//			if (calledPartyBCDNumber.isExtension()) {
+//				xml.setAttribute(IS_EXTENSION, true);
+//			}
 		}
 	};
 }

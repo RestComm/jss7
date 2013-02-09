@@ -333,7 +333,7 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
 						b[byteLength] |= this.syncMode << 6;						
 						b[byteLength] |= this.negotiation << 5;
 						b[byteLength++] |= this.userRate;
-						
+
 						if(this.syncMode==_SA_SYNC)
 						{
 							//5b
@@ -342,14 +342,14 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
 							b[byteLength] |= this.nicOnRx << 3;
 							b[byteLength] |= this.fcOnTx << 2;
 							b[byteLength++] |= this.fcOnRx << 1;
-							
+
 							//5c
 							b[byteLength] |= this.stopBits << 5;
 							b[byteLength] |= this.dataBits << 3;
 							b[byteLength++] |= this.parity;
-							
+
 							//5d
-							b[byteLength] |= 0x80;
+//							b[byteLength] |= 0x80;
 							b[byteLength] |= this.duplexMode << 6;
 							b[byteLength++] |= this.modemType;																					
 						}	
@@ -378,7 +378,7 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
 							b[byteLength++] |= this.parity;
 							
 							//5d
-							b[byteLength] |= 0x80;
+//							b[byteLength] |= 0x80;
 							b[byteLength] |= this.duplexMode << 6;
 							b[byteLength++] |= this.modemType;																					
 						}	
@@ -399,12 +399,13 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
 						b[byteLength++] |= this.parity;
 						
 						//5d
-						b[byteLength] |= 0x80;
+//						b[byteLength] |= 0x80;
 						b[byteLength] |= this.duplexMode << 6;
 						b[byteLength++] |= this.modemType;		
 					}						
 					break;
 			}
+			b[byteLength - 1] |= 0x80;
 		}
 		
 		if(this.l2UserInformation>0)
@@ -421,11 +422,12 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
 			
 			if(this.l3UserInformation==_L3_ISO_9577)
 			{
-				b[byteLength] |= 0x80;
+//				b[byteLength] |= 0x80;
 				b[byteLength++] |=(this.l3Protocol>>4) & 0x0F;
 				
 				b[byteLength++] |= this.l3Protocol & 0x0F;
 			}	
+			b[byteLength - 1] |= 0x80;
 		}
 		
 		return b;
