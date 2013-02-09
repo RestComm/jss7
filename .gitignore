@@ -42,3 +42,5 @@ PutObjectStoreDirHere
 # ignore mvn-rpmbuild repo
 /.m2
 *debuglog.txt
+${env.JBOSS_HOME}
+debuglog.txt.*
