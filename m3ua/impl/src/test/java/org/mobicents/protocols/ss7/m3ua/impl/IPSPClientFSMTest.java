@@ -742,6 +742,12 @@ public class IPSPClientFSMTest {
 			
 		}
 
+		@Override
+		public boolean isUp() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
 	}
 
 	class TransportManagement implements Management {

@@ -264,6 +264,12 @@ public class M3UAManagementTest {
 			
 		}
 
+		@Override
+		public boolean isUp() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
 	}
 
 	class TransportManagement implements Management {

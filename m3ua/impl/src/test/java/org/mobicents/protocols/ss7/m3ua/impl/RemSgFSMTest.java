@@ -1274,6 +1274,12 @@ public class RemSgFSMTest {
 			this.started = false;
 		}
 
+		@Override
+		public boolean isUp() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
 	}
 
 	class TransportManagement implements Management {
