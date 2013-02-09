@@ -39,9 +39,16 @@ import org.mobicents.protocols.ss7.cap.api.primitives.MonitorMode;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCall;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestReportBCSMEventRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.RequestReportGPRSEventRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSEvent;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSEventType;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.PDPID;
 import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.InitialDPRequestImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.RequestReportBCSMEventRequestImpl;
+import org.mobicents.protocols.ss7.cap.service.gprs.RequestReportGPRSEventRequestImpl;
+import org.mobicents.protocols.ss7.cap.service.gprs.primitive.GPRSEventImpl;
+import org.mobicents.protocols.ss7.cap.service.gprs.primitive.PDPIDImpl;
 import org.mobicents.protocols.ss7.inap.api.INAPParameterFactory;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
@@ -132,6 +139,18 @@ public class Server extends EventTestHarness  {
 		return res;
 	}
 
+	
+	public RequestReportGPRSEventRequest getRequestReportGPRSEventRequest() {
+		ArrayList<GPRSEvent> gprsEvent = new ArrayList<GPRSEvent>();
+		GPRSEvent event = new GPRSEventImpl(GPRSEventType.attachChangeOfPosition, MonitorMode.notifyAndContinue);
+		gprsEvent.add(event);
+		PDPID pdpID = new PDPIDImpl(2);
+		
+		RequestReportGPRSEventRequestImpl res = new RequestReportGPRSEventRequestImpl(gprsEvent, pdpID);
+		return res;
+	}
+	
+	
 	public void onDialogRequest(CAPDialog capDialog, CAPGprsReferenceNumber capGprsReferenceNumber) {
 		super.onDialogRequest(capDialog, capGprsReferenceNumber);
 		serverCscDialog = capDialog;

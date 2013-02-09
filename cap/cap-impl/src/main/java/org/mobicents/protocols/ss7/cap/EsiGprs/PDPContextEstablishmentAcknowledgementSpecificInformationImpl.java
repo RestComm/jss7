@@ -130,7 +130,7 @@ public class PDPContextEstablishmentAcknowledgementSpecificInformationImpl exten
 	}
 
 	public int getTag() throws CAPException {
-		return _ID_PDPContextEstablishmentAcknowledgementSpecificInformation;
+		return Tag.SEQUENCE;
 	}
 
 	public int getTagClass() {

@@ -38,6 +38,10 @@ public class SGSNCapabilitiesImpl extends OctetStringLength1Base implements SGSN
 	public SGSNCapabilitiesImpl(int data) {
 		super("SGSNCapabilities", data);
 	}
+	
+	public SGSNCapabilitiesImpl(boolean aoCSupportedBySGSN){
+		super("SGSNCapabilities", (aoCSupportedBySGSN?0x01:0x00));
+	}
 
 	@Override
 	public int getData() {

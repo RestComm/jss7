@@ -41,7 +41,7 @@ public class EventReportGPRSResponseImpl extends GprsMessageImpl  implements Eve
 
 	@Override
 	public CAPMessageType getMessageType() {
-		return CAPMessageType.eventReportGPRS_Request;
+		return CAPMessageType.eventReportGPRS_Response;
 	}
 
 	@Override

@@ -126,7 +126,7 @@ public class PDPContextEstablishmentSpecificInformationImpl  extends SequenceBas
 	}
 
 	public int getTag() throws CAPException {
-		return _ID_PDPContextEstablishmentSpecificInformation;
+		return Tag.SEQUENCE;
 	}
 
 	public int getTagClass() {

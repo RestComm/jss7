@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import org.apache.log4j.Logger;
 import static org.testng.Assert.*;
 
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.CAPDialogImpl;
 import org.mobicents.protocols.ss7.cap.CAPProviderImpl;
 import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
@@ -56,29 +57,51 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.Tone;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.CAPDialogGprs;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.InitialDpGprsRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.RequestReportGPRSEventRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.ChargingResult;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSCause;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSEvent;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSEventSpecificInformation;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSEventType;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.PDPID;
 import org.mobicents.protocols.ss7.cap.api.service.sms.CAPDialogSms;
 import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.primitives.TimeAndTimezoneImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.InitialDPRequestImpl;
+import org.mobicents.protocols.ss7.cap.service.gprs.ApplyChargingReportGPRSRequestImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.InitialDpGprsRequestImpl;
+import org.mobicents.protocols.ss7.cap.service.gprs.primitive.ChargingResultImpl;
+import org.mobicents.protocols.ss7.cap.service.gprs.primitive.ElapsedTimeImpl;
+import org.mobicents.protocols.ss7.cap.service.gprs.primitive.GPRSCauseImpl;
+import org.mobicents.protocols.ss7.cap.service.gprs.primitive.GPRSEventSpecificInformationImpl;
+import org.mobicents.protocols.ss7.cap.service.gprs.primitive.PDPIDImpl;
 import org.mobicents.protocols.ss7.inap.api.INAPParameterFactory;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfoMessageType;
+import org.mobicents.protocols.ss7.inap.primitives.MiscCallInfoImpl;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
+import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformationGPRS;
+import org.mobicents.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdOrLAIImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.LAIFixedLengthImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.GeodeticInformationImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.GeographicalInformationImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.LocationInformationGPRSImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.RAIdentityImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.LSAIdentityImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
@@ -597,7 +620,7 @@ public class Client extends EventTestHarness  {
 		clientGprsDialog = this.capProvider.getCAPServiceGprs().createNewDialog(appCnt, this.thisAddress, this.remoteAddress);
 
 		InitialDpGprsRequest initialDp = getTestInitialDpGprsRequest();
-		clientGprsDialog.addInitialDpGprsRequest(60000,initialDp.getServiceKey(), initialDp.getGPRSEventType(), initialDp.getMsisdn(), initialDp.getImsi(),
+		clientGprsDialog.addInitialDpGprsRequest(initialDp.getServiceKey(), initialDp.getGPRSEventType(), initialDp.getMsisdn(), initialDp.getImsi(),
 				initialDp.getTimeAndTimezone(), initialDp.getGPRSMSClass(), initialDp.getEndUserAddress(),initialDp.getQualityOfService(), initialDp.getAccessPointName(),
 				initialDp.getRouteingAreaIdentity(), initialDp.getChargingID(), initialDp.getSGSNCapabilities(), initialDp.getLocationInformationGPRS(),
 				initialDp.getPDPInitiationType(), initialDp.getExtensions(), initialDp.getGSNAddress(), initialDp.getSecondaryPDPContext(), initialDp.getImei());
@@ -605,7 +628,6 @@ public class Client extends EventTestHarness  {
 		this.observerdEvents.add(TestEvent.createSentEvent(EventType.InitialDpGprsRequest, null, sequence++));
 		clientGprsDialog.send();
 	}
-	
 	
 	public InitialDpGprsRequest getTestInitialDpGprsRequest() {
 		int serviceKey = 2;
@@ -654,6 +676,75 @@ public class Client extends EventTestHarness  {
 		return true;
 	}	
 
+	
+	public static boolean checkRequestReportGPRSEventRequest(RequestReportGPRSEventRequest ind) {
+		
+		if (ind.getGPRSEvent().size() != 1)
+			return false;
+		if (ind.getGPRSEvent().get(0).getGPRSEventType() == GPRSEventType.attachChangeOfPosition)
+			return false;
+		if (ind.getGPRSEvent().get(0).getMonitorMode() == MonitorMode.notifyAndContinue)
+			return false;
+		if (ind.getPDPID().getId() != 2)
+			return false;
+		
+		return true;
+	}
+	
+	public void sendApplyChargingReportGPRSRequest() throws CAPException {
+		ElapsedTimeImpl elapsedTime = new ElapsedTimeImpl(new Integer(5320));
+		ChargingResult chargingResult= new ChargingResultImpl(elapsedTime);
+		boolean active = true;
+		clientGprsDialog.addApplyChargingReportGPRSRequest(chargingResult, null, active, null, null);
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.ApplyChargingReportGPRSRequest, null, sequence++));
+		clientGprsDialog.send();
+	}
+	
+	public void sendActivityTestGPRSRequest(CAPApplicationContext appCnt) throws CAPException {
+
+		clientGprsDialog = this.capProvider.getCAPServiceGprs().createNewDialog(appCnt, this.thisAddress, this.remoteAddress);
+		clientGprsDialog.addActivityTestGPRSRequest();
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.ActivityTestGPRSRequest, null, sequence++));
+		clientGprsDialog.send();
+	}
+	
+	
+	public void sendEventReportGPRSRequest(CAPApplicationContext appCnt) throws CAPException {
+
+		clientGprsDialog = this.capProvider.getCAPServiceGprs().createNewDialog(appCnt, this.thisAddress, this.remoteAddress);
+		
+		GPRSEventType gprsEventType = GPRSEventType.attachChangeOfPosition;
+		MiscCallInfo miscGPRSInfo = new MiscCallInfoImpl(MiscCallInfoMessageType.notification, null);
+		LAIFixedLengthImpl lai;
+		try {
+			lai = new LAIFixedLengthImpl(250, 1, 4444);
+		} catch (MAPException e) {
+			throw new CAPException(e.getMessage(), e);
+		}
+		CellGlobalIdOrServiceAreaIdOrLAIImpl cgi = new CellGlobalIdOrServiceAreaIdOrLAIImpl(lai);
+		RAIdentityImpl ra = new RAIdentityImpl(new byte[]{11, 12, 13, 14, 15, 16});
+		GeographicalInformationImpl ggi = new GeographicalInformationImpl(new byte[]{31, 32, 33, 34, 35, 36, 37, 38});
+		ISDNAddressStringImpl sgsn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "654321");
+		LSAIdentityImpl lsa = new LSAIdentityImpl(new byte[]{91, 92, 93});
+		GeodeticInformationImpl gdi = new GeodeticInformationImpl(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9,10 });
+		LocationInformationGPRS locationInformationGPRS = new LocationInformationGPRSImpl(cgi, ra, ggi, sgsn, lsa, null, true, gdi, true, 13);
+		GPRSEventSpecificInformation gprsEventSpecificInformation = new GPRSEventSpecificInformationImpl(locationInformationGPRS);
+		PDPID pdpID = new PDPIDImpl(1);
+		clientGprsDialog.addEventReportGPRSRequest(gprsEventType, miscGPRSInfo, gprsEventSpecificInformation, pdpID);
+
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.EventReportGPRSRequest, null, sequence++));
+		clientGprsDialog.send();
+	}
+	
+	public void sendReleaseGPRSRequest(CAPApplicationContext appCnt) throws CAPException {
+
+		clientGprsDialog = this.capProvider.getCAPServiceGprs().createNewDialog(appCnt, this.thisAddress, this.remoteAddress);
+		GPRSCause gprsCause = new GPRSCauseImpl(5);
+		PDPID pdpID = new PDPIDImpl(2);
+		clientGprsDialog.addReleaseGPRSRequest(gprsCause, pdpID);
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.ReleaseGPRSRequest, null, sequence++));
+		clientGprsDialog.send();
+	}
 
 	public void debug(String message) {
 		this.logger.debug(message);

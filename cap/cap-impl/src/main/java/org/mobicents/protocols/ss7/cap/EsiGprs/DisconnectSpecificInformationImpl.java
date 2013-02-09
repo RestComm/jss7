@@ -72,7 +72,7 @@ public class DisconnectSpecificInformationImpl  extends SequenceBase  implements
 	}
 	
 	public int getTag() throws CAPException {
-		return _ID_DisconnectSpecificInformation;
+		return Tag.SEQUENCE;
 	}
 
 	public int getTagClass() {

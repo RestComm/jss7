@@ -62,5 +62,9 @@ public interface CAPServiceGprsListener extends CAPServiceListener {
 	public void onEventReportGPRSRequest(EventReportGPRSRequest ind);
 	
 	public void onEventReportGPRSResponse(EventReportGPRSResponse ind);
+	
+	public void onActivityTestGPRSRequest(ActivityTestGPRSRequest ind);
+	
+	public void onActivityTestGPRSResponse(ActivityTestGPRSResponse ind);
 
 }

@@ -28,25 +28,25 @@ import org.mobicents.protocols.ss7.cap.api.CAPMessageType;
 import org.mobicents.protocols.ss7.cap.api.CAPOperationCode;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.cap.api.service.gprs.ApplyChargingReportGPRSResponse;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ActivityTestGPRSResponse;
 
 /**
  * 
  * @author Lasith Waruna Perera
  * 
  */
-public class ApplyChargingReportGPRSResponseImpl extends GprsMessageImpl  implements ApplyChargingReportGPRSResponse {
+public class ActivityTestGPRSResponseImpl extends GprsMessageImpl implements ActivityTestGPRSResponse {
 
-	public static final String _PrimitiveName = "ApplyChargingReportGPRSResponse";
+	public static final String _PrimitiveName = "ActivityTestGPRSResponse";
 
 	@Override
 	public CAPMessageType getMessageType() {
-		return CAPMessageType.applyChargingReportGPRS_Response;
+		return CAPMessageType.activityTestGPRS_Response;
 	}
 
 	@Override
 	public int getOperationCode() {
-		return CAPOperationCode.applyChargingReportGPRS;
+		return CAPOperationCode.activityTestGPRS;
 	}
 
 	@Override

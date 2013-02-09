@@ -77,34 +77,6 @@ public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
 	protected CAPDialogGprsImpl(CAPApplicationContext appCntx, Dialog tcapDialog, CAPProviderImpl capProviderImpl, CAPServiceBase capService) {
 		super(appCntx, tcapDialog, capProviderImpl, capService);
 	}
-	
-	
-	
-//	CAP V3 ACN	cap3-gprssf-scf	ACN = 0.4.0.0.1.21.3.50				
-//			
-//			CAP V3	gprsScfActivationPackage		initialDPGPRS				78		
-//					gprsEventHandlingPackage		requestReportGPRSEvent	*	81	eventReportGPRS			80
-//					gprsChargingPackage				applyChargingGPRS			71	applyChargingReportGPRS	72
-//					gprsExceptionInformationPackage	entityReleasedGPRS			76		
-//					gprsConnectPackage				connectGPRS					74		
-//					gprsProcessingPackage			continueGPRS				75		
-//					gprsReleasePackage				releaseGPRS	  *				79		
-//					gprsTimerPackage				resetTimerGPRS				82	//////////////	
-//					gprsBillingPackage				furnishChargingInformationGPRS	77		
-//					gprsCancelPackage				cancelGPRS					73		
-//					gprsChargeAdvicePackage			sendChargingInformationGPRS	83		
-	
-	
-//	CAP V3 ACN	cap3-gsmscf-gprsssf	ACN = 0.4.0.0.1.21.3.51				
-//			
-//			CAP V3	gprsReleasePackage			releaseGPRS		 *				79		
-//					gprsEventHandlingPackage	requestReportGPRSEvent	*		81	eventReportGPRS			80
-//					gprsBillingPackage			furnishChargingInformationGPRS*	77		
-//					gprsChargingPackage			applyChargingGPRS	*			71	applyChargingReportGPRS	72
-//					gprsActivityTestPackage		activityTestGPRS	//////		70		
-//					gprsCancelPackage			cancelGPRS						73		
-
-
 
 	@Override
 	public Long addInitialDpGprsRequest(int serviceKey,
@@ -292,9 +264,10 @@ public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
 	public Long addEntityReleasedGPRSRequest(int customInvokeTimeout,
 			GPRSCause gprsCause, PDPID pdpID) throws CAPException {
 		
-		if (this.appCntx != CAPApplicationContext.CapV3_gprsSSF_gsmSCF )
+		if (this.appCntx != CAPApplicationContext.CapV3_gprsSSF_gsmSCF && 
+				this.appCntx != CAPApplicationContext.CapV3_gsmSCF_gprsSSF )
 			throw new CAPException(
-					"Bad application context name for EntityReleasedGPRSRequest: must be CapV3_gprsSSF_gsmSCF");
+					"Bad application context name for EntityReleasedGPRSRequest: must be CapV3_gsmSCF_gprsSSF or CapV3_gsmSCF_gprsSSF");
 
 		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class1);
 		if (customInvokeTimeout == _Timer_Default)
@@ -333,9 +306,11 @@ public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
 
 	@Override
 	public void addEntityReleasedGPRSResponse(long invokeId) throws CAPException {
-		if (this.appCntx != CAPApplicationContext.CapV3_gprsSSF_gsmSCF )
+		
+		if (this.appCntx != CAPApplicationContext.CapV3_gprsSSF_gsmSCF && 
+				this.appCntx != CAPApplicationContext.CapV3_gsmSCF_gprsSSF )
 			throw new CAPException(
-					"Bad application context name for EntityReleasedGPRSResponse: must be CapV3_gprsSSF_gsmSCF");
+					"Bad application context name for EntityReleasedGPRSResponse: must be CapV3_gsmSCF_gprsSSF or CapV3_gsmSCF_gprsSSF");
 
 		ReturnResultLast resultLast = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
 
@@ -356,12 +331,12 @@ public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
 	@Override
 	public Long addConnectGPRSRequest(int customInvokeTimeout,
 			AccessPointName accessPointName, PDPID pdpID) throws CAPException {
-	
 		
-		if (this.appCntx != CAPApplicationContext.CapV3_gprsSSF_gsmSCF )
+		if (this.appCntx != CAPApplicationContext.CapV3_gprsSSF_gsmSCF && 
+				this.appCntx != CAPApplicationContext.CapV3_gsmSCF_gprsSSF )
 			throw new CAPException(
-					"Bad application context name for ConnectGPRSRequest: must be CapV3_gsmSCF_gprsSSF");
-
+					"Bad application context name for ConnectGPRSRequest: must be CapV3_gsmSCF_gprsSSF or CapV3_gsmSCF_gprsSSF");
+		
 		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class2);
 		if (customInvokeTimeout == _Timer_Default)
 			invoke.setTimeout(_Timer_Gprs_Short);
@@ -406,10 +381,11 @@ public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
 	@Override
 	public Long addContinueGPRSRequest(int customInvokeTimeout, PDPID pdpID)
 			throws CAPException {
-	
-		if (this.appCntx != CAPApplicationContext.CapV3_gprsSSF_gsmSCF )
+		
+		if (this.appCntx != CAPApplicationContext.CapV3_gprsSSF_gsmSCF && 
+				this.appCntx != CAPApplicationContext.CapV3_gsmSCF_gprsSSF )
 			throw new CAPException(
-					"Bad application context name for ContinueGPRSRequest: must be CapV3_gsmSCF_gprsSSF");
+					"Bad application context name for ContinueGPRSRequest: must be CapV3_gsmSCF_gprsSSF or CapV3_gsmSCF_gprsSSF");
 
 		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class2);
 		if (customInvokeTimeout == _Timer_Default)
@@ -458,7 +434,7 @@ public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
 			GPRSCause gprsCause, PDPID pdpID) throws CAPException {
 		
 		if (this.appCntx != CAPApplicationContext.CapV3_gprsSSF_gsmSCF && 
-				this.appCntx != CAPApplicationContext.CapV3_gsmSCF_gprsSSF)
+				this.appCntx != CAPApplicationContext.CapV3_gsmSCF_gprsSSF )
 			throw new CAPException(
 					"Bad application context name for ReleaseGPRSRequest: must be CapV3_gsmSCF_gprsSSF or CapV3_gsmSCF_gprsSSF");
 
@@ -510,9 +486,11 @@ public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
 	public Long addResetTimerGPRSRequest(int customInvokeTimeout,
 			TimerID timerID, int timerValue) throws CAPException {
 	
-		if (this.appCntx != CAPApplicationContext.CapV3_gprsSSF_gsmSCF )
+		if (this.appCntx != CAPApplicationContext.CapV3_gprsSSF_gsmSCF && 
+				this.appCntx != CAPApplicationContext.CapV3_gsmSCF_gprsSSF )
 			throw new CAPException(
-					"Bad application context name for ResetTimerGPRSRequest: must be CapV3_gprsSSF_gsmSCF");
+					"Bad application context name for ResetTimerGPRSRequest: must be CapV3_gsmSCF_gprsSSF or CapV3_gsmSCF_gprsSSF");
+
 
 		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class2);
 		if (customInvokeTimeout == _Timer_Default)
@@ -564,9 +542,9 @@ public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
 			throws CAPException {
 		
 		if (this.appCntx != CAPApplicationContext.CapV3_gprsSSF_gsmSCF && 
-				this.appCntx != CAPApplicationContext.CapV3_gsmSCF_gprsSSF)
+				this.appCntx != CAPApplicationContext.CapV3_gsmSCF_gprsSSF )
 			throw new CAPException(
-					"Bad application context name for FurnishChargingInformationGPRSRequest: must be CapV3_gsmSCF_gprsSSF OR CapV3_gsmSCF_gprsSSF");
+					"Bad application context name for FurnishChargingInformationGPRSRequest: must be CapV3_gsmSCF_gprsSSF or CapV3_gsmSCF_gprsSSF");
 
 		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class2);
 		if (customInvokeTimeout == _Timer_Default)
@@ -613,10 +591,10 @@ public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
 	public Long addCancelGPRSRequest(int customInvokeTimeout, PDPID pdpID)
 			throws CAPException {
 		
-		if (this.appCntx != CAPApplicationContext.CapV3_gprsSSF_gsmSCF 
-				&& this.appCntx != CAPApplicationContext.CapV3_gsmSCF_gprsSSF)
+		if (this.appCntx != CAPApplicationContext.CapV3_gprsSSF_gsmSCF && 
+				this.appCntx != CAPApplicationContext.CapV3_gsmSCF_gprsSSF )
 			throw new CAPException(
-					"Bad application context name for CancelGPRSRequest: must be CapV3_gsmSCF_gprsSSF OR CapV3_gsmSCF_gprsSSF");
+					"Bad application context name for CancelGPRSRequest: must be CapV3_gsmSCF_gprsSSF or CapV3_gsmSCF_gprsSSF");
 
 		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class2);
 		if (customInvokeTimeout == _Timer_Default)
@@ -666,10 +644,11 @@ public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
 			int customInvokeTimeout,
 			CAMELSCIGPRSBillingChargingCharacteristics sciGPRSBillingChargingCharacteristics)
 			throws CAPException {
-
-		if (this.appCntx != CAPApplicationContext.CapV3_gprsSSF_gsmSCF )
+		
+		if (this.appCntx != CAPApplicationContext.CapV3_gprsSSF_gsmSCF && 
+				this.appCntx != CAPApplicationContext.CapV3_gsmSCF_gprsSSF )
 			throw new CAPException(
-					"Bad application context name for SendChargingInformationGPRSRequest: must be CapV3_gsmSCF_gprsSSF");
+					"Bad application context name for SendChargingInformationGPRSRequest: must be CapV3_gsmSCF_gprsSSF or CapV3_gsmSCF_gprsSSF");
 
 		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class2);
 		if (customInvokeTimeout == _Timer_Default)
@@ -720,10 +699,11 @@ public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
 			ChargingResult chargingResult, QualityOfService qualityOfService,
 			boolean active, PDPID pdpID, ChargingRollOver chargingRollOver)
 			throws CAPException {
-	
-		if (this.appCntx != CAPApplicationContext.CapV3_gprsSSF_gsmSCF )
+		
+		if (this.appCntx != CAPApplicationContext.CapV3_gprsSSF_gsmSCF && 
+				this.appCntx != CAPApplicationContext.CapV3_gsmSCF_gprsSSF )
 			throw new CAPException(
-					"Bad application context name for ApplyChargingReportGPRSRequest: must be CapV3_gprsSSF_gsmSCF");
+					"Bad application context name for ApplyChargingReportGPRSRequest: must be CapV3_gsmSCF_gprsSSF or CapV3_gsmSCF_gprsSSF");
 
 		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class1);
 		if (customInvokeTimeout == _Timer_Default)
@@ -763,9 +743,11 @@ public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
 
 	@Override
 	public void addApplyChargingReportGPRSResponse(long invokeId) throws CAPException {
-		if (this.appCntx != CAPApplicationContext.CapV3_gprsSSF_gsmSCF )
+		
+		if (this.appCntx != CAPApplicationContext.CapV3_gprsSSF_gsmSCF && 
+				this.appCntx != CAPApplicationContext.CapV3_gsmSCF_gprsSSF )
 			throw new CAPException(
-					"Bad application context name for ApplyChargingReportGPRSResponse: must be CapV3_gprsSSF_gsmSCF");
+					"Bad application context name for ApplyChargingReportGPRSResponse: must be CapV3_gsmSCF_gprsSSF or CapV3_gsmSCF_gprsSSF");
 
 		ReturnResultLast resultLast = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
 
@@ -790,10 +772,11 @@ public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
 			GPRSEventType gprsEventType, MiscCallInfo miscGPRSInfo,
 			GPRSEventSpecificInformation gprsEventSpecificInformation,
 			PDPID pdpID) throws CAPException {
-
-		if (this.appCntx != CAPApplicationContext.CapV3_gprsSSF_gsmSCF )
+		
+		if (this.appCntx != CAPApplicationContext.CapV3_gprsSSF_gsmSCF && 
+				this.appCntx != CAPApplicationContext.CapV3_gsmSCF_gprsSSF )
 			throw new CAPException(
-					"Bad application context name for EventReportGPRSRequest: must be CapV3_gprsSSF_gsmSCF");
+					"Bad application context name for EventReportGPRSRequest: must be CapV3_gsmSCF_gprsSSF or CapV3_gsmSCF_gprsSSF");
 
 		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class1);
 		if (customInvokeTimeout == _Timer_Default)
@@ -832,9 +815,64 @@ public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
 
 	@Override
 	public void addEventReportGPRSResponse(long invokeId) throws CAPException {
-		if (this.appCntx != CAPApplicationContext.CapV3_gprsSSF_gsmSCF )
+		
+		if (this.appCntx != CAPApplicationContext.CapV3_gprsSSF_gsmSCF && 
+				this.appCntx != CAPApplicationContext.CapV3_gsmSCF_gprsSSF )
 			throw new CAPException(
-					"Bad application context name for RequestReportGPRSEventRequest: must be CapV3_gprsSSF_gsmSCF");
+					"Bad application context name for RequestReportGPRSEventRequest: must be CapV3_gsmSCF_gprsSSF or CapV3_gsmSCF_gprsSSF");
+
+		ReturnResultLast resultLast = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
+
+		resultLast.setInvokeId(invokeId);
+
+		// we need not Operation Code because no answer
+
+		this.sendReturnResultLastComponent(resultLast);
+	}
+
+	@Override
+	public Long addActivityTestGPRSRequest() throws CAPException {
+		return addActivityTestGPRSRequest(_Timer_Default);
+	}
+	
+	@Override
+	public Long addActivityTestGPRSRequest(int customInvokeTimeout) throws CAPException {
+
+		if (this.appCntx != CAPApplicationContext.CapV3_gprsSSF_gsmSCF && 
+				this.appCntx != CAPApplicationContext.CapV3_gsmSCF_gprsSSF )
+			throw new CAPException(
+					"Bad application context name for ActivityTestGPRSRequest: must be CapV3_gsmSCF_gprsSSF or CapV3_gsmSCF_gprsSSF");
+
+		Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class3);
+		if (customInvokeTimeout == _Timer_Default)
+			invoke.setTimeout(_Timer_Gprs_Short);
+		else
+			invoke.setTimeout(customInvokeTimeout);
+
+		OperationCode oc = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+		oc.setLocalOperationCode((long)CAPOperationCode.activityTestGPRS);
+		invoke.setOperationCode(oc);
+
+		Long invokeId;
+		try {
+			invokeId = this.tcapDialog.getNewInvokeId();
+			invoke.setInvokeId(invokeId);
+		} catch (TCAPException e) {
+			throw new CAPException(e.getMessage(), e);
+		}
+
+		this.sendInvokeComponent(invoke);
+		
+		return invokeId;
+	}
+	
+	@Override
+	public void addActivityTestGPRSResponse(long invokeId) throws CAPException {
+		
+		if (this.appCntx != CAPApplicationContext.CapV3_gprsSSF_gsmSCF && 
+				this.appCntx != CAPApplicationContext.CapV3_gsmSCF_gprsSSF )
+			throw new CAPException(
+					"Bad application context name for ActivityTestGPRSResponse: must be CapV3_gsmSCF_gprsSSF or CapV3_gsmSCF_gprsSSF");
 
 		ReturnResultLast resultLast = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
 

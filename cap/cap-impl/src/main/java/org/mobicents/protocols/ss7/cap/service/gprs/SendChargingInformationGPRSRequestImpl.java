@@ -32,6 +32,7 @@ import org.mobicents.protocols.ss7.cap.api.CAPMessageType;
 import org.mobicents.protocols.ss7.cap.api.CAPOperationCode;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.cap.api.primitives.TimerID;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.SendChargingInformationGPRSRequest;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.CAMELSCIGPRSBillingChargingCharacteristics;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.CAMELSCIGPRSBillingChargingCharacteristicsImpl;
@@ -77,7 +78,7 @@ public class SendChargingInformationGPRSRequestImpl extends GprsMessageImpl impl
 
 	@Override
 	public int getTag() throws CAPException {
-		return Tag.STRING_OCTET;
+		return Tag.SEQUENCE;
 	}
 
 	@Override
@@ -87,7 +88,7 @@ public class SendChargingInformationGPRSRequestImpl extends GprsMessageImpl impl
 
 	@Override
 	public boolean getIsPrimitive() {
-		return true;
+		return false;
 	}
 
 	@Override
@@ -127,18 +128,36 @@ public class SendChargingInformationGPRSRequestImpl extends GprsMessageImpl impl
 	
 	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException, MAPParsingComponentException {
 		this.sciGPRSBillingChargingCharacteristics = null;
+
+		AsnInputStream ais = ansIS.readSequenceStreamData(length);
+		while (true) {
+			if (ais.available() == 0)
+				break;
+
+			int tag = ais.readTag();
+
+			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+				switch (tag) {	
+				case _ID_sciGPRSBillingChargingCharacteristics:
+					if (ais.isTagPrimitive())
+						throw new CAPParsingComponentException(
+								"Error while decoding " + _PrimitiveName + ".sciGPRSBillingChargingCharacteristics: Parameter is primitive",
+								CAPParsingComponentExceptionReason.MistypedParameter);
+					this.sciGPRSBillingChargingCharacteristics = new CAMELSCIGPRSBillingChargingCharacteristicsImpl();
+					((CAMELSCIGPRSBillingChargingCharacteristicsImpl) this.sciGPRSBillingChargingCharacteristics).decodeAll(ais);
+					break;
+
+				default:
+					ais.advanceElement();
+					break;
+				}
+			} else {
+				ais.advanceElement();
+			}
+		}
+
+	
 		
-		byte[] buf = ansIS.readOctetStringData(length);
-		AsnInputStream aiss = new AsnInputStream(buf);
-
-		int tag = aiss.readTag();
-
-		if (tag != _ID_sciGPRSBillingChargingCharacteristics || aiss.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || aiss.isTagPrimitive())
-			throw new CAPParsingComponentException("Error when decoding " + _PrimitiveName
-					+ ": bad tag or tagClass or is primitive of the choice sciGPRSBillingChargingCharacteristics", CAPParsingComponentExceptionReason.MistypedParameter);
-
-		this.sciGPRSBillingChargingCharacteristics = new CAMELSCIGPRSBillingChargingCharacteristicsImpl();
-		((CAMELSCIGPRSBillingChargingCharacteristicsImpl) this.sciGPRSBillingChargingCharacteristics).decodeAll(aiss);	
 	}
 
 	@Override
@@ -164,14 +183,8 @@ public class SendChargingInformationGPRSRequestImpl extends GprsMessageImpl impl
 		if (this.sciGPRSBillingChargingCharacteristics == null)
 			throw new CAPException("Error while encoding " + _PrimitiveName + ": sciGPRSBillingChargingCharacteristics must not be null");
 		
-		try {
-			asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_sciGPRSBillingChargingCharacteristics);
-			int pos = asnOs.StartContentDefiniteLength();
-			((CAMELSCIGPRSBillingChargingCharacteristicsImpl) this.sciGPRSBillingChargingCharacteristics).encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
+		((CAMELSCIGPRSBillingChargingCharacteristicsImpl) this.sciGPRSBillingChargingCharacteristics).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_sciGPRSBillingChargingCharacteristics);
+		
 	}
 	
 	
@@ -183,7 +196,7 @@ public class SendChargingInformationGPRSRequestImpl extends GprsMessageImpl impl
 		if (this.sciGPRSBillingChargingCharacteristics != null) {
 			sb.append("sciGPRSBillingChargingCharacteristics=");
 			sb.append(this.sciGPRSBillingChargingCharacteristics.toString());
-			sb.append(", ");
+			sb.append(" ");
 		}
 		
 		sb.append("]");

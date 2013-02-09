@@ -69,9 +69,12 @@ public enum CAPMessageType {
 	initialDPGPRS_Request,
 	requestReportGPRSEvent_Request,
 	eventReportGPRS_Request,
+	eventReportGPRS_Response,
 	applyChargingGPRS_Request,
 	applyChargingReportGPRS_Request,
+	applyChargingReportGPRS_Response,
 	entityReleasedGPRS_Request,
+	entityReleasedGPRS_Response,
 	connectGPRS_Request,
 	continueGPRS_Request,
 	releaseGPRS_Request,
@@ -80,6 +83,7 @@ public enum CAPMessageType {
 	cancelGPRS_Request,
 	sendChargingInformationGPRS_Request,
 	activityTestGPRS_Request,
+	activityTestGPRS_Response,
 	
 	// SMS
 	initialDPSMS_Request,

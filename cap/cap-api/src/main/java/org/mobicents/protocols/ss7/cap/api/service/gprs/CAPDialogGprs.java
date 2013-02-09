@@ -138,4 +138,9 @@ public interface CAPDialogGprs extends CAPDialog {
 	
 	public void addEventReportGPRSResponse(long invokeId) throws CAPException;
 	
+	public Long addActivityTestGPRSRequest() throws CAPException ;
+	public Long addActivityTestGPRSRequest(int customInvokeTimeout) throws CAPException;
+	
+	public void addActivityTestGPRSResponse(long invokeId) throws CAPException;
+	
 }

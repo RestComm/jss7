@@ -60,6 +60,8 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestRe
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ResetTimerRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SendChargingInformationRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ActivityTestGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ActivityTestGPRSResponse;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.ApplyChargingGPRSRequest;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.ApplyChargingReportGPRSRequest;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.ApplyChargingReportGPRSResponse;
@@ -509,5 +511,17 @@ public class EventTestHarness implements CAPDialogListener, CAPServiceCircuitSwi
 		this.observerdEvents.add(te);
 	}
 	
-
+	@Override
+	public void onActivityTestGPRSRequest(ActivityTestGPRSRequest ind){
+		this.logger.debug("ActivityTestGPRSRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.ActivityTestGPRSRequest, ind, sequence++);
+		this.observerdEvents.add(te);
+	}
+	
+	@Override
+	public void onActivityTestGPRSResponse(ActivityTestGPRSResponse ind){
+		this.logger.debug("ActivityTestGPRSResponse");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.ActivityTestGPRSResponse, ind, sequence++);
+		this.observerdEvents.add(te);
+	}
 }

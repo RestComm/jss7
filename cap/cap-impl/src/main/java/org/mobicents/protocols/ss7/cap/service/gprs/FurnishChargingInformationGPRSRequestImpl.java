@@ -133,7 +133,7 @@ public class FurnishChargingInformationGPRSRequestImpl  extends GprsMessageImpl 
 
 		int tag = aiss.readTag();
 
-		if (tag != _ID_CAMELFCIGPRSBillingChargingCharacteristics || aiss.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || aiss.isTagPrimitive())
+		if (tag != Tag.SEQUENCE || aiss.getTagClass() != Tag.CLASS_UNIVERSAL|| aiss.isTagPrimitive())
 			throw new CAPParsingComponentException("Error when decoding " + _PrimitiveName
 					+ ": bad tag or tagClass or is primitive of the choice fciGPRSBillingChargingCharacteristics", CAPParsingComponentExceptionReason.MistypedParameter);
 
@@ -167,7 +167,7 @@ public class FurnishChargingInformationGPRSRequestImpl  extends GprsMessageImpl 
 			throw new CAPException("Error while encoding " + _PrimitiveName + ": fciGPRSBillingChargingCharacteristics must not be null");
 		
 		try {
-			asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_CAMELFCIGPRSBillingChargingCharacteristics);
+			asnOs.writeTag(Tag.CLASS_UNIVERSAL, false, Tag.SEQUENCE);
 			int pos = asnOs.StartContentDefiniteLength();
 			((CAMELFCIGPRSBillingChargingCharacteristicsImpl) this.fciGPRSBillingChargingCharacteristics).encodeData(asnOs);
 			asnOs.FinalizeContent(pos);

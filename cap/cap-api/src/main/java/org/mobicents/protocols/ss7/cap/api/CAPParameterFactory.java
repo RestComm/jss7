@@ -395,6 +395,7 @@ public interface CAPParameterFactory {
 			Integer roTimeGPRSTariffSwitchInterval);
 	public ROVolumeIfTariffSwitch createROVolumeIfTariffSwitch(Integer roVolumeSinceLastTariffSwitch,Integer roVolumeTariffSwitchInterval);
 	public SGSNCapabilities createSGSNCapabilities(int data);
+	public SGSNCapabilities createSGSNCapabilities(boolean aoCSupportedBySGSN);
 	public TimeGPRSIfTariffSwitch createTimeGPRSIfTariffSwitch(int timeGPRSSinceLastTariffSwitch,
 			Integer timeGPRSTariffSwitchInterval);
 	public TransferredVolume createTransferredVolume(Long volumeIfNoTariffSwitch);

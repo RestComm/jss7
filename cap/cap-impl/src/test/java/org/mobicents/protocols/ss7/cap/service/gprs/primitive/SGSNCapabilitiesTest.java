@@ -65,7 +65,6 @@ public class SGSNCapabilitiesTest {
 		prim.decodeAll(asn);
 		assertEquals(tag, Tag.STRING_OCTET);
 		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
-		
 		assertTrue(prim.getAoCSupportedBySGSN());
 	}
 	
@@ -81,6 +80,18 @@ public class SGSNCapabilitiesTest {
 		asn = new AsnOutputStream();
 		prim.encodeAll(asn);
 		assertTrue(Arrays.equals(asn.toByteArray(), this.getData2()));
+		
+		
+		prim = new SGSNCapabilitiesImpl(true);
+		asn = new AsnOutputStream();
+		prim.encodeAll(asn);
+		assertTrue(Arrays.equals(asn.toByteArray(), this.getData2()));
+		
+		prim = new SGSNCapabilitiesImpl(false);
+		asn = new AsnOutputStream();
+		prim.encodeAll(asn);
+		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+		
 	}
 	
 }

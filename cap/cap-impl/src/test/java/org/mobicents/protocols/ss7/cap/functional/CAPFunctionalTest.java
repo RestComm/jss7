@@ -88,6 +88,7 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ResetTime
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SendChargingInformationRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AOCBeforeAnswer;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AOCSubsequent;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAI_GSM0224;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristics;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CollectedDigits;
@@ -103,19 +104,67 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeDurationChargingResult;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeInformation;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.Tone;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ActivityTestGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ActivityTestGPRSResponse;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ApplyChargingGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ApplyChargingReportGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ApplyChargingReportGPRSResponse;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.CAPDialogGprs;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ConnectGPRSRequest;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.ContinueGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.EventReportGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.EventReportGPRSResponse;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.FurnishChargingInformationGPRSRequest;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.InitialDpGprsRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ReleaseGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.RequestReportGPRSEventRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.ResetTimerGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.SendChargingInformationGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.AOCGPRS;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.AccessPointName;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.CAMELSCIGPRSBillingChargingCharacteristics;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.ChargingCharacteristics;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.ChargingResult;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FreeFormatData;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSEventSpecificInformation;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSEventType;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.PDPID;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCallImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.AOCSubsequentImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CAI_GSM0224Impl;
+import org.mobicents.protocols.ss7.cap.service.gprs.ApplyChargingReportGPRSRequestImpl;
+import org.mobicents.protocols.ss7.cap.service.gprs.primitive.AOCGPRSImpl;
+import org.mobicents.protocols.ss7.cap.service.gprs.primitive.AccessPointNameImpl;
+import org.mobicents.protocols.ss7.cap.service.gprs.primitive.CAMELFCIGPRSBillingChargingCharacteristicsImpl;
+import org.mobicents.protocols.ss7.cap.service.gprs.primitive.CAMELSCIGPRSBillingChargingCharacteristicsImpl;
+import org.mobicents.protocols.ss7.cap.service.gprs.primitive.ChargingCharacteristicsImpl;
+import org.mobicents.protocols.ss7.cap.service.gprs.primitive.ChargingResultImpl;
+import org.mobicents.protocols.ss7.cap.service.gprs.primitive.ElapsedTimeImpl;
+import org.mobicents.protocols.ss7.cap.service.gprs.primitive.FCIBCCCAMELsequence1Impl;
+import org.mobicents.protocols.ss7.cap.service.gprs.primitive.FreeFormatDataImpl;
+import org.mobicents.protocols.ss7.cap.service.gprs.primitive.GPRSEventSpecificInformationImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.PDPIDImpl;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfoMessageType;
+import org.mobicents.protocols.ss7.inap.primitives.MiscCallInfoImpl;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
+import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformationGPRS;
+import org.mobicents.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdOrLAIImpl;
+import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.LAIFixedLengthImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.GeodeticInformationImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.GeographicalInformationImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.LocationInformationGPRSImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.RAIdentityImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.LSAIdentityImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -3253,44 +3302,84 @@ public class CAPFunctionalTest extends SccpHarness {
 	public static byte[] getMessageBadTag() {
 		return new byte[] { 106, 6, 72, 1, 1, 73, 1, 1};
 	}
-
 	
 	/**
-	 * GPRS initial test
-	 * ACN=CAP-v3-gprs-SSH-to-gsmSCF
+	 * GPSR messageflow 1
+	 * ACN=cap3-gprssf-scf
 	 * 
-	 * TC-BEGIN + InitialDPGPRSRequest
-	 *   TC-CONTINUE + ContinueGPRSRequest
-	 *   TC-END (empty)
+	 * TC-BEGIN + InitialDPGPRSRequest + originationReference=1001
+	 *   TC-CONTINUE + requestReportGPRSEventRequest + destinationReference=1001 + originationReference=2001
+	 *   TC-CONTINUE + furnishChargingInformationGPRSRequest
+	 * TC-CONTINUE + eventReportGPRSRequest
+	 *   TC-CONTINUE + eventReportGPRSResponse
+	 *   TC-CONTINUE + resetTimerGPRSRequest
+	 *   TC-CONTINUE + applyChargingGPRSRequest + connectGPRSRequest
+	 * TC-CONTINUE + applyChargingReportGPRSRequest
+	 *   TC-END + applyChargingReportGPRSResponse
 	 */
 	@Test(groups = { "functional.flow", "dialog" })
-	public void testGPRSCharging() throws Exception {
+	public void testGPRS1() throws Exception {
 
 		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			private int dialogStep;
 			
 			@Override
-			public void onContinueGPRSRequest(ContinueGPRSRequest ind) {
-				super.onContinueGPRSRequest(ind);
-				assertEquals(ind.getPDPID().getId(),1);
+			public void onApplyChargingReportGPRSResponse(ApplyChargingReportGPRSResponse ind){
+				super.onApplyChargingReportGPRSResponse(ind);
+			}
+			
+			
+			@Override
+			public void onEventReportGPRSResponse(EventReportGPRSResponse ind){
+				super.onEventReportGPRSResponse(ind);
+			}
+			
+
+			@Override
+			public void onRequestReportGPRSEventRequest(RequestReportGPRSEventRequest ind) {
+				super.onRequestReportGPRSEventRequest(ind);
+				checkRequestReportGPRSEventRequest(ind);
 				ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
 			}
-			
-			@Override
-			public void onDialogDelimiter(CAPDialog capDialog) {
-				super.onDialogDelimiter(capDialog);
-				CAPDialogGprs dlg = (CAPDialogGprs) capDialog;
 
-			}
-		};
+			public void onFurnishChargingInformationGPRSRequest(FurnishChargingInformationGPRSRequest ind) {
+				super.onFurnishChargingInformationGPRSRequest(ind);
 
-		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
-			private int dialogStep = 0;
+				byte[] bFreeFormatData = new byte[] { 48, 6, -128, 1, 5, -127, 1, 2};
+				assertEquals(ind.getFCIGPRSBillingChargingCharacteristics().getFCIBCCCAMELsequence1().getFreeFormatData().getData(),bFreeFormatData);
+				assertEquals(ind.getFCIGPRSBillingChargingCharacteristics().getFCIBCCCAMELsequence1().getPDPID().getId(),2);
+				assertEquals(ind.getFCIGPRSBillingChargingCharacteristics().getFCIBCCCAMELsequence1().getAppendFreeFormatData(), AppendFreeFormatData.append);
 			
-			@Override
-			public void onInitialDpGprsRequest(InitialDpGprsRequest ind) {
-				super.onInitialDpGprsRequest(ind);
-				assertTrue(Client.checkTestInitialDpGprsRequest(ind));
+				ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
 				dialogStep = 1;
+			}
+
+			@Override
+			public void onApplyChargingGPRSRequest(ApplyChargingGPRSRequest ind) {
+				super.onApplyChargingGPRSRequest(ind);
+				
+				assertEquals(ind.getChargingCharacteristics().getMaxTransferredVolume(), 200L);
+				assertEquals(ind.getTariffSwitchInterval().intValue(), 24);
+				assertEquals(ind.getPDPID().getId(),2);
+				
+				ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+			}
+
+			@Override
+			public void onConnectGPRSRequest(ConnectGPRSRequest ind) {
+				super.onConnectGPRSRequest(ind);
+				assertTrue(Arrays.equals(ind.getAccessPointName().getData(),new byte[]{52 ,20, 30}));
+				assertEquals(ind.getPDPID().getId(),2);
+				ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+				dialogStep = 2;
+			}
+			
+			@Override
+			public void onResetTimerGPRSRequest(ResetTimerGPRSRequest ind){
+				super.onResetTimerGPRSRequest(ind);
+				assertEquals(ind.getTimerValue(),12);
+				assertEquals(ind.getTimerID(),TimerID.tssf);
+				ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
 			}
 
 			@Override
@@ -3301,12 +3390,148 @@ public class CAPFunctionalTest extends SccpHarness {
 
 				try {
 					switch (dialogStep) {
-					case 1: // after InitialDpGPRS
-						dlg.addContinueGPRSRequest(new PDPIDImpl(1));
-						this.observerdEvents.add(TestEvent.createSentEvent(EventType.ContinueGPRSRequest, null, sequence++));
+					case 1: // after FurnishChargingInformationGPRSRequest
+						GPRSEventType gprsEventType = GPRSEventType.attachChangeOfPosition;
+						MiscCallInfo miscGPRSInfo = new MiscCallInfoImpl(MiscCallInfoMessageType.notification, null);
+						LAIFixedLengthImpl lai;
+						try {
+							lai = new LAIFixedLengthImpl(250, 1, 4444);
+						} catch (MAPException e) {
+							throw new CAPException(e.getMessage(), e);
+						}
+						CellGlobalIdOrServiceAreaIdOrLAIImpl cgi = new CellGlobalIdOrServiceAreaIdOrLAIImpl(lai);
+						RAIdentityImpl ra = new RAIdentityImpl(new byte[]{11, 12, 13, 14, 15, 16});
+						GeographicalInformationImpl ggi = new GeographicalInformationImpl(new byte[]{31, 32, 33, 34, 35, 36, 37, 38});
+						ISDNAddressStringImpl sgsn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "654321");
+						LSAIdentityImpl lsa = new LSAIdentityImpl(new byte[]{91, 92, 93});
+						GeodeticInformationImpl gdi = new GeodeticInformationImpl(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9,10 });
+						LocationInformationGPRS locationInformationGPRS = new LocationInformationGPRSImpl(cgi, ra, ggi, sgsn, lsa, null, true, gdi, true, 13);
+						GPRSEventSpecificInformation gprsEventSpecificInformation = new GPRSEventSpecificInformationImpl(locationInformationGPRS);
+						PDPID pdpID = new PDPIDImpl(1);
+						dlg.addEventReportGPRSRequest(gprsEventType, miscGPRSInfo, gprsEventSpecificInformation, pdpID);
+
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.EventReportGPRSRequest, null, sequence++));
 						dlg.send();
 						dialogStep = 0;
+						break;
+					case 2: // after ConnectRequest
+						ElapsedTimeImpl elapsedTime = new ElapsedTimeImpl(new Integer(5320));
+						ChargingResult chargingResult= new ChargingResultImpl(elapsedTime);
+						boolean active = true;
+					    dlg.addApplyChargingReportGPRSRequest(chargingResult, null, active, null, null);
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.ApplyChargingReportGPRSRequest, null, sequence++));
+						dlg.send();
+						dialogStep = 0;
+						
+						break;
+
+					}
+				} catch (CAPException e) {
+					this.error("Error while trying to close() Dialog", e);
+				}
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			private int dialogStep = 0;
+			private long applyChargingReportGPRSResponse;
+			private long eventReportGPRSResponse;
+			@Override
+			public void onInitialDpGprsRequest(InitialDpGprsRequest ind) {
+				super.onInitialDpGprsRequest(ind);
+				assertTrue(Client.checkTestInitialDpGprsRequest(ind));
+				dialogStep = 1;
+			}
+
+			public void onEventReportGPRSRequest(EventReportGPRSRequest ind) {
+				super.onEventReportGPRSRequest(ind);
+				assertEquals(ind.getGPRSEventType(), GPRSEventType.attachChangeOfPosition);
+				assertNotNull(ind.getMiscGPRSInfo().getMessageType());
+				assertNull(ind.getMiscGPRSInfo().getDpAssignment());
+				assertEquals(ind.getMiscGPRSInfo().getMessageType(), MiscCallInfoMessageType.notification);
+				dialogStep = 2;
+				ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+				eventReportGPRSResponse = ind.getInvokeId();
+				
+			}
+
+			public void onApplyChargingReportGPRSRequest(ApplyChargingReportGPRSRequest ind) {
+				super.onApplyChargingReportGPRSRequest(ind);
+
+				assertEquals(ind.getChargingResult().getElapsedTime().getTimeGPRSIfNoTariffSwitch().intValue(),5320);
+				assertNull(ind.getChargingResult().getTransferredVolume());
+				assertNull(ind.getQualityOfService());
+				assertTrue(ind.getActive());
+				assertNull(ind.getPDPID());
+				assertNull(ind.getChargingRollOver());
+				
+				ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+				applyChargingReportGPRSResponse = ind.getInvokeId();
+				
+				dialogStep = 3;
+			}
+
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				CAPDialogGprs dlg = (CAPDialogGprs)capDialog;
+
+				try {
+					switch (dialogStep) {
+					case 1: // after InitialDp
+
+						RequestReportGPRSEventRequest rrc = this.getRequestReportGPRSEventRequest();
+						dlg.addRequestReportGPRSEventRequest(rrc.getGPRSEvent(), rrc.getPDPID());
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.RequestReportGPRSEventRequest, null, sequence++));
+						dlg.send();
+
+						byte[] bFreeFormatData = new byte[] { 48, 6, -128, 1, 5, -127, 1, 2};
+
+						FreeFormatData freeFormatData = new FreeFormatDataImpl(bFreeFormatData);
+						PDPID pdpID = new PDPIDImpl(2);
+						FCIBCCCAMELsequence1Impl fcIBCCCAMELsequence1 = new FCIBCCCAMELsequence1Impl(freeFormatData, 
+								pdpID, AppendFreeFormatData.append);
+						
+						CAMELFCIGPRSBillingChargingCharacteristicsImpl fciGPRSBillingChargingCharacteristics = new 
+								CAMELFCIGPRSBillingChargingCharacteristicsImpl(fcIBCCCAMELsequence1);
+						
+						dlg.addFurnishChargingInformationGPRSRequest(fciGPRSBillingChargingCharacteristics);
+						dlg.send();
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.FurnishChargingInformationGPRSRequest, null, sequence++));
+						
+						
+						dialogStep = 0;
+
+						break;
+
+					case 2: // after eventReportGPRSRequest
+						dlg.addEventReportGPRSResponse(eventReportGPRSResponse);
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.EventReportGPRSResponse, null, sequence++));
+						dlg.send();
+						
+						dlg.addResetTimerGPRSRequest(TimerID.tssf, 12);
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.ResetTimerGPRSRequest, null, sequence++));
+						dlg.send();
+						
+						ChargingCharacteristics chargingCharacteristics = new ChargingCharacteristicsImpl(200L);;
+						Integer tariffSwitchInterval = new Integer(24);
+						PDPID pdpIDApplyCharging = new PDPIDImpl(2);
+						dlg.addApplyChargingGPRSRequest(chargingCharacteristics, tariffSwitchInterval, pdpIDApplyCharging);
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.ApplyChargingGPRSRequest, null, sequence++));
+						
+						AccessPointName accessPointName = new AccessPointNameImpl(new byte[]{52 ,20, 30});
+						PDPID pdpIDConnectRequest = new PDPIDImpl(2);
+						dlg.addConnectGPRSRequest(accessPointName, pdpIDConnectRequest);
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.ConnectGPRSRequest, null, sequence++));
+						dlg.send();
+						dialogStep = 0;
+						break;
+					case 3:
+						dlg.addApplyChargingReportGPRSResponse(applyChargingReportGPRSResponse);
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.ApplyChargingReportGPRSResponse, null, sequence++));
 						dlg.close(false);
+						dialogStep = 0;
 						break;
 					}
 				} catch (CAPException e) {
@@ -3314,9 +3539,6 @@ public class CAPFunctionalTest extends SccpHarness {
 				}
 			}
 
-			public void onDialogTimeout(CAPDialog capDialog) {
-				super.onDialogTimeout(capDialog);
-			}
 		};
 
 		long stamp = System.currentTimeMillis();
@@ -3328,40 +3550,105 @@ public class CAPFunctionalTest extends SccpHarness {
 
 		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
 		clientExpectedEvents.add(te);
-		
-		te = TestEvent.createReceivedEvent(EventType.ContinueGPRSRequest, null, count++, stamp);
+
+		te = TestEvent.createReceivedEvent(EventType.RequestReportGPRSEventRequest, null, count++, stamp);
 		clientExpectedEvents.add(te);
-		
+
 		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
 		clientExpectedEvents.add(te);
 
-		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp));
+		te = TestEvent.createReceivedEvent(EventType.FurnishChargingInformationGPRSRequest, null, count++, stamp);
 		clientExpectedEvents.add(te);
 
-		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.EventReportGPRSRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+		
+		te = TestEvent.createReceivedEvent(EventType.EventReportGPRSResponse, null, count++, stamp );
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp );
+		clientExpectedEvents.add(te);
+		
+		te = TestEvent.createReceivedEvent(EventType.ResetTimerGPRSRequest, null, count++, stamp );
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp );
+		clientExpectedEvents.add(te);
+		
+		te = TestEvent.createReceivedEvent(EventType.ApplyChargingGPRSRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ConnectGPRSRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+		
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp );
+		clientExpectedEvents.add(te);
+		
+		te = TestEvent.createSentEvent(EventType.ApplyChargingReportGPRSRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+		
+		te = TestEvent.createReceivedEvent(EventType.ApplyChargingReportGPRSResponse, null, count++, stamp  );
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp  );
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp +  _TCAP_DIALOG_RELEASE_TIMEOUT));
 		clientExpectedEvents.add(te);
 
 		count = 0;
 		// Server side events
 		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
-		
 		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
 		te = TestEvent.createReceivedEvent(EventType.InitialDpGprsRequest, null, count++, stamp);
 		serverExpectedEvents.add(te);
-		
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.RequestReportGPRSEventRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.FurnishChargingInformationGPRSRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.EventReportGPRSRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
 		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
 		serverExpectedEvents.add(te);
 		
-		te = TestEvent.createSentEvent(EventType.ContinueGPRSRequest, null, count++, stamp);
+		te = TestEvent.createSentEvent(EventType.EventReportGPRSResponse, null, count++, stamp);
 		serverExpectedEvents.add(te);
 		
-		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		te = TestEvent.createSentEvent(EventType.ResetTimerGPRSRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+		
+		te = TestEvent.createSentEvent(EventType.ApplyChargingGPRSRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+		
+		te = TestEvent.createSentEvent(EventType.ConnectGPRSRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+		
+		te = TestEvent.createReceivedEvent(EventType.ApplyChargingReportGPRSRequest, null, count++, stamp);
 		serverExpectedEvents.add(te);
 
-		server.capProvider.getCAPServiceGprs().acivate();
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
 		
+		te = TestEvent.createSentEvent(EventType.ApplyChargingReportGPRSResponse, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp +  _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+
+		client.suppressInvokeTimeout();
 		client.sendInitialDpGprs(CAPApplicationContext.CapV3_gprsSSF_gsmSCF);
 
 		waitForEnd();
@@ -3371,6 +3658,514 @@ public class CAPFunctionalTest extends SccpHarness {
 
 	}
 	
+	
+	/**
+	 * GPSR messageflow 2
+	 * ACN=cap3-gsmscf-gprsssf
+	 * 
+	 * TC-BEGIN + activityTestGPRSSRequest + destinationReference=1001 + originationReference=2001
+	 *   TC-CONTINUE + activityTestGPRSSResponse + destinationReference=2001 + originationReference=1001
+	 * TC-CONTINUE + furnishChargingInformationGPRSRequest + continueGPRSRequest
+	 *   TC-CONTINUE + eventReportGPRSRequest
+	 * TC-END + eventReportGPRSResponse + cancelGPRSRequest
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testGPRS2() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			private int dialogStep;
+			private long eventReportGPRSResponse ;
+
+			@Override
+			public void onActivityTestGPRSResponse(ActivityTestGPRSResponse ind) {
+				super.onActivityTestGPRSResponse(ind);
+				dialogStep = 1;
+			}
+			
+			public void onEventReportGPRSRequest(EventReportGPRSRequest ind) {
+				super.onEventReportGPRSRequest(ind);
+				assertEquals(ind.getGPRSEventType(), GPRSEventType.attachChangeOfPosition);
+				assertNotNull(ind.getMiscGPRSInfo().getMessageType());
+				assertNull(ind.getMiscGPRSInfo().getDpAssignment());
+				assertEquals(ind.getMiscGPRSInfo().getMessageType(), MiscCallInfoMessageType.notification);
+
+				ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+				eventReportGPRSResponse = ind.getInvokeId();
+				dialogStep = 2;
+			}
+
+
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				CAPDialogGprs dlg = (CAPDialogGprs)capDialog;
+
+				try {
+					switch (dialogStep) {
+					case 1: 
+						byte[] bFreeFormatData = new byte[] { 48, 6, -128, 1, 5, -127, 1, 2};
+						FreeFormatData freeFormatData = new FreeFormatDataImpl(bFreeFormatData);
+						PDPID pdpID = new PDPIDImpl(2);
+						FCIBCCCAMELsequence1Impl fcIBCCCAMELsequence1 = new FCIBCCCAMELsequence1Impl(freeFormatData, 
+								pdpID, AppendFreeFormatData.append);
+						CAMELFCIGPRSBillingChargingCharacteristicsImpl fciGPRSBillingChargingCharacteristics = new 
+								CAMELFCIGPRSBillingChargingCharacteristicsImpl(fcIBCCCAMELsequence1);
+						
+						dlg.addFurnishChargingInformationGPRSRequest(fciGPRSBillingChargingCharacteristics);
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.FurnishChargingInformationGPRSRequest, null, sequence++));
+						
+						dlg.addContinueGPRSRequest(pdpID);
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.ContinueGPRSRequest, null, sequence++));
+						
+
+						dlg.send();
+
+						dialogStep = 0;
+						break;
+					case 2: 
+						dlg.addEventReportGPRSResponse(eventReportGPRSResponse);
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.EventReportGPRSResponse, null, sequence++));
+						
+						PDPID pdpIDCancelGPRS = new PDPIDImpl(2);
+						dlg.addCancelGPRSRequest(pdpIDCancelGPRS);
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.CancelGPRSRequest, null, sequence++));
+						dlg.close(false);
+						dialogStep = 0;
+						
+						break;
+
+					}
+				} catch (CAPException e) {
+					this.error("Error while trying to close() Dialog", e);
+				}
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			private int dialogStep = 0;
+			private long activityTestGPRSRequest;
+
+			@Override
+			public void onActivityTestGPRSRequest(ActivityTestGPRSRequest ind) {
+				super.onActivityTestGPRSRequest(ind);
+
+				ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+				activityTestGPRSRequest = ind.getInvokeId();
+				dialogStep = 1;
+			}
+
+			@Override
+			public void onFurnishChargingInformationGPRSRequest(FurnishChargingInformationGPRSRequest ind) {
+				super.onFurnishChargingInformationGPRSRequest(ind);
+
+				byte[] bFreeFormatData = new byte[] { 48, 6, -128, 1, 5, -127, 1, 2};
+				assertEquals(ind.getFCIGPRSBillingChargingCharacteristics().getFCIBCCCAMELsequence1().getFreeFormatData().getData(),bFreeFormatData);
+				assertEquals(ind.getFCIGPRSBillingChargingCharacteristics().getFCIBCCCAMELsequence1().getPDPID().getId(),2);
+				assertEquals(ind.getFCIGPRSBillingChargingCharacteristics().getFCIBCCCAMELsequence1().getAppendFreeFormatData(), AppendFreeFormatData.append);
+			
+				ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+			}
+			
+			@Override
+			public void onContinueGPRSRequest(ContinueGPRSRequest ind) {
+				super.onContinueGPRSRequest(ind);
+				
+				assertEquals(ind.getPDPID().getId(),2);
+
+				ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+				dialogStep = 2;
+			}
+			
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				CAPDialogGprs dlg = (CAPDialogGprs)capDialog;
+
+				try {
+					switch (dialogStep) {
+					case 1: // after ActivityTestGPRS
+						dlg.addActivityTestGPRSResponse(activityTestGPRSRequest);
+						dlg.send();
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.ActivityTestGPRSResponse, null, sequence++));
+			
+						dialogStep = 0;
+
+						break;
+
+					case 2:  
+						GPRSEventType gprsEventType = GPRSEventType.attachChangeOfPosition;
+						MiscCallInfo miscGPRSInfo = new MiscCallInfoImpl(MiscCallInfoMessageType.notification, null);
+						LAIFixedLengthImpl lai;
+						try {
+							lai = new LAIFixedLengthImpl(250, 1, 4444);
+						} catch (MAPException e) {
+							throw new CAPException(e.getMessage(), e);
+						}
+						CellGlobalIdOrServiceAreaIdOrLAIImpl cgi = new CellGlobalIdOrServiceAreaIdOrLAIImpl(lai);
+						RAIdentityImpl ra = new RAIdentityImpl(new byte[]{11, 12, 13, 14, 15, 16});
+						GeographicalInformationImpl ggi = new GeographicalInformationImpl(new byte[]{31, 32, 33, 34, 35, 36, 37, 38});
+						ISDNAddressStringImpl sgsn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "654321");
+						LSAIdentityImpl lsa = new LSAIdentityImpl(new byte[]{91, 92, 93});
+						GeodeticInformationImpl gdi = new GeodeticInformationImpl(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9,10 });
+						LocationInformationGPRS locationInformationGPRS = new LocationInformationGPRSImpl(cgi, ra, ggi, sgsn, lsa, null, true, gdi, true, 13);
+						GPRSEventSpecificInformation gprsEventSpecificInformation = new GPRSEventSpecificInformationImpl(locationInformationGPRS);
+						PDPID pdpID = new PDPIDImpl(1);
+						dlg.addEventReportGPRSRequest(gprsEventType, miscGPRSInfo, gprsEventSpecificInformation, pdpID);
+
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.EventReportGPRSRequest, null, sequence++));
+						dlg.send();
+						dialogStep = 0;
+						break;
+					}
+				} catch (CAPException e) {
+					this.error("Error while trying to close() Dialog", e);
+				}
+			}
+
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.ActivityTestGPRSRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ActivityTestGPRSResponse, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.FurnishChargingInformationGPRSRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+	
+		te = TestEvent.createSentEvent(EventType.ContinueGPRSRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.EventReportGPRSRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp );
+		clientExpectedEvents.add(te);
+		
+		te = TestEvent.createSentEvent(EventType.EventReportGPRSResponse, null, count++, stamp );
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.CancelGPRSRequest, null, count++, stamp );
+		clientExpectedEvents.add(te);
+		
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp +  _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+		
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ActivityTestGPRSRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ActivityTestGPRSResponse, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.FurnishChargingInformationGPRSRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ContinueGPRSRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+		
+		te = TestEvent.createSentEvent(EventType.EventReportGPRSRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+		
+		te = TestEvent.createReceivedEvent(EventType.EventReportGPRSResponse, null, count++, stamp);
+		serverExpectedEvents.add(te);
+		
+		te = TestEvent.createReceivedEvent(EventType.CancelGPRSRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+		
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp  );
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp +  _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+		
+		client.suppressInvokeTimeout();
+		client.sendActivityTestGPRSRequest(CAPApplicationContext.CapV3_gsmSCF_gprsSSF);
+
+		waitForEnd();
+	
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+	
+	/**
+	 * GPSR messageflow 3
+	 * ACN=cap3-gprssf-scf
+	 * 
+	 * TC-BEGIN + eventReportGPRSRequest + destinationReference=2001 + originationReference=1001
+	 *   TC-END + eventReportGPRSResponse + connectGPRSRequest + sendChargingInformationGPRSRequest + destinationReference=1001 + originationReference=2001
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testGPRS3() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			
+			@Override
+			public void onEventReportGPRSResponse(EventReportGPRSResponse ind){
+				super.onEventReportGPRSResponse(ind);
+			}
+
+			@Override
+			public void onSendChargingInformationGPRSRequest(SendChargingInformationGPRSRequest ind) {
+				super.onSendChargingInformationGPRSRequest(ind);
+			
+				assertEquals((int) ind.getSCIGPRSBillingChargingCharacteristics().getAOCGPRS().getAOCInitial().getE1(), 1);
+				assertNull(ind.getSCIGPRSBillingChargingCharacteristics().getAOCGPRS().getAOCSubsequent().getCAI_GSM0224().getE1());
+				assertNull(ind.getSCIGPRSBillingChargingCharacteristics().getAOCGPRS().getAOCSubsequent().getCAI_GSM0224().getE2());
+				assertNull(ind.getSCIGPRSBillingChargingCharacteristics().getAOCGPRS().getAOCSubsequent().getCAI_GSM0224().getE3());
+				assertNull(ind.getSCIGPRSBillingChargingCharacteristics().getAOCGPRS().getAOCSubsequent().getCAI_GSM0224().getE6());
+				assertNull(ind.getSCIGPRSBillingChargingCharacteristics().getAOCGPRS().getAOCSubsequent().getCAI_GSM0224().getE7());
+				assertEquals((int) ind.getSCIGPRSBillingChargingCharacteristics().getAOCGPRS().getAOCSubsequent().getTariffSwitchInterval(), 222);
+				assertEquals(ind.getSCIGPRSBillingChargingCharacteristics().getPDPID().getId(), 1);
+				
+				ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+			}
+
+			@Override
+			public void onConnectGPRSRequest(ConnectGPRSRequest ind) {
+				super.onConnectGPRSRequest(ind);
+				assertTrue(Arrays.equals(ind.getAccessPointName().getData(),new byte[]{52 ,20, 30}));
+				assertEquals(ind.getPDPID().getId(),2);
+				ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+			}
+	
+
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			private int dialogStep = 0;
+			private long eventReportGPRSResponse;
+
+			public void onEventReportGPRSRequest(EventReportGPRSRequest ind) {
+				super.onEventReportGPRSRequest(ind);
+				assertEquals(ind.getGPRSEventType(), GPRSEventType.attachChangeOfPosition);
+				assertNotNull(ind.getMiscGPRSInfo().getMessageType());
+				assertNull(ind.getMiscGPRSInfo().getDpAssignment());
+				assertEquals(ind.getMiscGPRSInfo().getMessageType(), MiscCallInfoMessageType.notification);
+				dialogStep = 1;
+				ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+				eventReportGPRSResponse = ind.getInvokeId();
+				
+			}
+
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				CAPDialogGprs dlg = (CAPDialogGprs)capDialog;
+
+				try {
+					switch (dialogStep) {
+
+					case 1: 
+						dlg.addEventReportGPRSResponse(eventReportGPRSResponse);
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.EventReportGPRSResponse, null, sequence++));
+						
+						AccessPointName accessPointName = new AccessPointNameImpl(new byte[]{52 ,20, 30});
+						PDPID pdpIDConnectRequest = new PDPIDImpl(2);
+						dlg.addConnectGPRSRequest(accessPointName, pdpIDConnectRequest);
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.ConnectGPRSRequest, null, sequence++));
+						
+						CAI_GSM0224 aocInitial =  new CAI_GSM0224Impl(1, 2, 3, 4, 5, 6, 7);
+						CAI_GSM0224Impl cai_GSM0224 = new CAI_GSM0224Impl(null, null, null, 4, 5, null, null);
+						AOCSubsequent aocSubsequent = new AOCSubsequentImpl(cai_GSM0224, 222);	
+						AOCGPRS aocGPRS  = new AOCGPRSImpl( aocInitial, aocSubsequent);
+						PDPID pdpID = new PDPIDImpl(1);
+						CAMELSCIGPRSBillingChargingCharacteristics sciGPRSBillingChargingCharacteristics = 
+								new CAMELSCIGPRSBillingChargingCharacteristicsImpl(aocGPRS, pdpID);
+						dlg.addSendChargingInformationGPRSRequest(sciGPRSBillingChargingCharacteristics);
+						this.observerdEvents.add(TestEvent.createSentEvent(EventType.SendChargingInformationGPRSRequest, null, sequence++));
+						
+						dlg.close(false);
+						dialogStep = 0;
+						
+						break;
+					}
+				} catch (CAPException e) {
+					this.error("Error while trying to close() Dialog", e);
+				}
+			}
+
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		
+		TestEvent te = TestEvent.createSentEvent(EventType.EventReportGPRSRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.EventReportGPRSResponse, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ConnectGPRSRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.SendChargingInformationGPRSRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp  );
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp +  _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.EventReportGPRSRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.EventReportGPRSResponse, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ConnectGPRSRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.SendChargingInformationGPRSRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp +  _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.suppressInvokeTimeout();
+		client.sendEventReportGPRSRequest(CAPApplicationContext.CapV3_gprsSSF_gsmSCF);
+
+		waitForEnd();
+	
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+	
+	/**
+	 * GPSR messageflow 4
+	 * ACN=cap3-gsmscf-gprsssf
+	 * 
+	 * TC-BEGIN + releaseGPRSRequest + destinationReference=1001 + originationReference=2001
+	 *   TC-END + destinationReference=2001 + originationReference=1001
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testGPRS4() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			
+			private int dialogStep = 0;
+			
+			@Override
+			public void onReleaseGPRSRequest(ReleaseGPRSRequest ind) {
+				super.onReleaseGPRSRequest(ind);
+				assertEquals(ind.getGPRSCause().getData(),5);
+				assertEquals(ind.getPDPID().getId(),2);
+				ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+				dialogStep = 1;
+			}
+
+			@Override
+			public void onDialogDelimiter(CAPDialog capDialog) {
+				super.onDialogDelimiter(capDialog);
+
+				CAPDialogGprs dlg = (CAPDialogGprs)capDialog;
+
+				try {
+					switch (dialogStep) {
+					case 1: 
+						dlg.close(false);
+						dialogStep = 0;
+						break;
+					}
+				} catch (CAPException e) {
+					this.error("Error while trying to close() Dialog", e);
+				}
+			}
+
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.ReleaseGPRSRequest, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
+		clientExpectedEvents.add(te);
+		
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp  );
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp +  _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ReleaseGPRSRequest, null, count++, stamp);
+		serverExpectedEvents.add(te);
+		
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+		serverExpectedEvents.add(te);
+		
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp +  _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+		
+		client.suppressInvokeTimeout();
+		client.sendReleaseGPRSRequest(CAPApplicationContext.CapV3_gsmSCF_gprsSSF);
+
+		waitForEnd();
+	
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
 
 	private void waitForEnd() {
 		try {

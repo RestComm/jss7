@@ -10,15 +10,17 @@
 	  	</groups>
 	  	 -->
 	  	<packages>
-      		<package name="org.mobicents.protocols.ss7.cap" />
+      	 	<package name="org.mobicents.protocols.ss7.cap" />
       		<package name="org.mobicents.protocols.ss7.cap.dialog" />
       		<package name="org.mobicents.protocols.ss7.cap.errors" />
       		<package name="org.mobicents.protocols.ss7.cap.EsiBcsm" />
-      		<package name="org.mobicents.protocols.ss7.cap.functional" />
+      		<package name="org.mobicents.protocols.ss7.cap.functional" /> 
       		<package name="org.mobicents.protocols.ss7.cap.isup" />
       		<package name="org.mobicents.protocols.ss7.cap.primitives" />
       		<package name="org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall" />
-      		<package name="org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive" />
+      		<package name="org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive" /> 
+      		<package name="org.mobicents.protocols.ss7.cap.service.gprs" />
+      		<package name="org.mobicents.protocols.ss7.cap.service.gprs.primitive" />
   		 </packages>
 	</test>
 	

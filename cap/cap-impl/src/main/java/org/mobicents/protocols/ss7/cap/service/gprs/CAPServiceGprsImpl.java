@@ -42,6 +42,8 @@ import org.mobicents.protocols.ss7.cap.api.service.gprs.CAPServiceGprsListener;
 import org.mobicents.protocols.ss7.cap.api.dialog.ServingCheckData;
 import org.mobicents.protocols.ss7.cap.api.dialog.ServingCheckResult;
 import org.mobicents.protocols.ss7.cap.dialog.ServingCheckDataImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.ActivityTestRequestImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.ActivityTestResponseImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCallImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.InitialDPRequestImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -143,7 +145,8 @@ public class CAPServiceGprsImpl extends CAPServiceBaseImpl implements CAPService
 			}
 			break;
 		case CAPOperationCode.entityReleasedGPRS:
-			if (acn == CAPApplicationContext.CapV3_gprsSSF_gsmSCF ) {
+			if (acn == CAPApplicationContext.CapV3_gprsSSF_gsmSCF || 
+					acn == CAPApplicationContext.CapV3_gsmSCF_gprsSSF ) {
 				if (compType == ComponentType.Invoke) {
 					this.entityReleasedGPRSRequest(parameter, capDialogGprsImpl, invokeId);
 				}
@@ -154,21 +157,23 @@ public class CAPServiceGprsImpl extends CAPServiceBaseImpl implements CAPService
 			}
 			break;
 		case CAPOperationCode.connectGPRS:
-			if (acn == CAPApplicationContext.CapV3_gprsSSF_gsmSCF ) {
+			if (acn == CAPApplicationContext.CapV3_gprsSSF_gsmSCF || 
+					acn == CAPApplicationContext.CapV3_gsmSCF_gprsSSF) {
 				if (compType == ComponentType.Invoke) {
 					this.connectGPRSRequest(parameter, capDialogGprsImpl, invokeId);
 				}
 			}
 			break;
 		case CAPOperationCode.continueGPRS:
-			if (acn == CAPApplicationContext.CapV3_gprsSSF_gsmSCF ) {
+			if ( acn == CAPApplicationContext.CapV3_gprsSSF_gsmSCF || 
+					acn == CAPApplicationContext.CapV3_gsmSCF_gprsSSF ) {
 				if (compType == ComponentType.Invoke) {
 					this.continueGPRSRequest(parameter, capDialogGprsImpl, invokeId);
 				}
 			}
 			break;
 		case CAPOperationCode.releaseGPRS:
-			if (acn == CAPApplicationContext.CapV3_gprsSSF_gsmSCF  || 
+			if (acn == CAPApplicationContext.CapV3_gprsSSF_gsmSCF || 
 					acn == CAPApplicationContext.CapV3_gsmSCF_gprsSSF) {
 				if (compType == ComponentType.Invoke) {
 					this.releaseGPRSRequest(parameter, capDialogGprsImpl, invokeId);
@@ -176,7 +181,8 @@ public class CAPServiceGprsImpl extends CAPServiceBaseImpl implements CAPService
 			}
 			break;
 		case CAPOperationCode.resetTimerGPRS:
-			if (acn == CAPApplicationContext.CapV3_gprsSSF_gsmSCF ) {
+			if (acn == CAPApplicationContext.CapV3_gprsSSF_gsmSCF || 
+					acn == CAPApplicationContext.CapV3_gsmSCF_gprsSSF) {
 				if (compType == ComponentType.Invoke) {
 					this.resetTimerGPRSRequest(parameter, capDialogGprsImpl, invokeId);
 				}
@@ -199,14 +205,16 @@ public class CAPServiceGprsImpl extends CAPServiceBaseImpl implements CAPService
 			}
 			break;
 		case CAPOperationCode.sendChargingInformationGPRS:
-			if (acn == CAPApplicationContext.CapV3_gprsSSF_gsmSCF ) {
+			if (acn == CAPApplicationContext.CapV3_gprsSSF_gsmSCF || 
+					acn == CAPApplicationContext.CapV3_gsmSCF_gprsSSF) {
 				if (compType == ComponentType.Invoke) {
 					this.sendChargingInformationGPRSRequest(parameter, capDialogGprsImpl, invokeId);
 				}
 			}
 			break;
 		case CAPOperationCode.applyChargingReportGPRS:
-			if (acn == CAPApplicationContext.CapV3_gprsSSF_gsmSCF ) {
+			if (acn == CAPApplicationContext.CapV3_gprsSSF_gsmSCF || 
+					acn == CAPApplicationContext.CapV3_gsmSCF_gprsSSF) {
 				if (compType == ComponentType.Invoke) {
 					this.applyChargingReportGPRSRequest(parameter, capDialogGprsImpl, invokeId);
 				}
@@ -216,7 +224,8 @@ public class CAPServiceGprsImpl extends CAPServiceBaseImpl implements CAPService
 			}
 			break;
 		case CAPOperationCode.eventReportGPRS:
-			if (acn == CAPApplicationContext.CapV3_gprsSSF_gsmSCF ) {
+			if (acn == CAPApplicationContext.CapV3_gprsSSF_gsmSCF || 
+					acn == CAPApplicationContext.CapV3_gsmSCF_gprsSSF) {
 				if (compType == ComponentType.Invoke) {
 					this.eventReportGPRSRequest(parameter, capDialogGprsImpl, invokeId);
 				}
@@ -225,7 +234,17 @@ public class CAPServiceGprsImpl extends CAPServiceBaseImpl implements CAPService
 				}
 			}
 			break;
-
+		case CAPOperationCode.activityTestGPRS:
+			if (acn == CAPApplicationContext.CapV3_gprsSSF_gsmSCF || 
+					acn == CAPApplicationContext.CapV3_gsmSCF_gprsSSF) {
+				if (compType == ComponentType.Invoke) {
+					this.activityTestRequest(parameter, capDialogGprsImpl, invokeId);
+				}
+				if (compType == ComponentType.ReturnResultLast) {
+					this.activityTestResponse(parameter, capDialogGprsImpl, invokeId);
+				}
+			}
+			break;
 		default:
 			throw new CAPParsingComponentException("", CAPParsingComponentExceptionReason.UnrecognizedOperation);
 		}
@@ -482,7 +501,7 @@ public class CAPServiceGprsImpl extends CAPServiceBaseImpl implements CAPService
 			throw new CAPParsingComponentException("Error while decoding furnishChargingInformationGPRSRequest: Parameter is mandatory but not found",
 					CAPParsingComponentExceptionReason.MistypedParameter);
 
-		if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+		if (parameter.getTag() != Tag.STRING_OCTET || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || !parameter.isPrimitive())
 			throw new CAPParsingComponentException("Error while decoding furnishChargingInformationGPRSRequest: Bad tag or tagClass or parameter is primitive, received tag="
 					+ parameter.getTag(), CAPParsingComponentExceptionReason.MistypedParameter);
 
@@ -649,4 +668,39 @@ public class CAPServiceGprsImpl extends CAPServiceBaseImpl implements CAPService
 			}
 		}
 	}
+	
+	private void activityTestRequest(Parameter parameter, CAPDialogGprsImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
+
+		ActivityTestGPRSRequestImpl ind = new ActivityTestGPRSRequestImpl();
+
+		ind.setInvokeId(invokeId);
+		ind.setCAPDialog(capDialogImpl);
+
+		for (CAPServiceListener serLis : this.serviceListeners) {
+			try {
+				serLis.onCAPMessage(ind);
+				((CAPServiceGprsListener) serLis).onActivityTestGPRSRequest(ind);
+			} catch (Exception e) {
+				loger.error("Error processing activityTestGPRSRequest: " + e.getMessage(), e);
+			}
+		}
+	}
+
+	private void activityTestResponse(Parameter parameter, CAPDialogGprsImpl capDialogImpl, Long invokeId) throws CAPParsingComponentException {
+
+		ActivityTestGPRSResponseImpl ind = new ActivityTestGPRSResponseImpl();
+
+		ind.setInvokeId(invokeId);
+		ind.setCAPDialog(capDialogImpl);
+
+		for (CAPServiceListener serLis : this.serviceListeners) {
+			try {
+				serLis.onCAPMessage(ind);
+				((CAPServiceGprsListener) serLis).onActivityTestGPRSResponse(ind);
+			} catch (Exception e) {
+				loger.error("Error processing activityTestGPRSResponse: " + e.getMessage(), e);
+			}
+		}
+	}
+	
 }

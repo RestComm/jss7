@@ -27,7 +27,9 @@ package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
  * 
  */
 public enum PDPTypeNumberValue {
-	PPP(0x01); 
+	PPP(0x01),
+	IPV4(0x21),
+	IPV6(0x57); 
 
 	private int code;
 
@@ -43,6 +45,10 @@ public enum PDPTypeNumberValue {
 		switch (code) {
 		case 0x01:
 			return PDPTypeNumberValue.PPP;
+		case 0x21:
+			return PDPTypeNumberValue.IPV4;
+		case 0x57:
+			return PDPTypeNumberValue.IPV6;
 		default:
 			return null;
 		}

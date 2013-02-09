@@ -130,7 +130,7 @@ public class PdpContextchangeOfPositionSpecificInformationImpl extends SequenceB
 	}
 	
 	public int getTag() throws CAPException {
-		return _ID_PdpContextchangeOfPositionSpecificInformation;
+		return Tag.SEQUENCE;
 	}
 
 	public int getTagClass() {

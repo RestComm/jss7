@@ -78,22 +78,18 @@ public class ChargingResultImpl  implements ChargingResult , CAPAsnPrimitive{
 			return _ID_transferredVolume;
 		}else{
 			return _ID_elapsedTime;
-		}
-		
+		}		
 	}
 	
 	@Override
 	public int getTagClass() {
 		return Tag.CLASS_CONTEXT_SPECIFIC;
+
 	}
 	
 	@Override
 	public boolean getIsPrimitive() {	
-		if(transferredVolume!=null){
-			return ((TransferredVolumeImpl)transferredVolume).getIsPrimitive();
-		}else{
-			return ((ElapsedTimeImpl)elapsedTime).getIsPrimitive();
-		}
+		return false;
 	}
 	
 	@Override

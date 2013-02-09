@@ -42,7 +42,7 @@ import org.testng.annotations.Test;
 public class ChargingResultTest {
 	
 	public byte[] getData() {
-		return new byte[] {-127, 3, -128, 1, 24};
+		return new byte[] {-95, 3, -128, 1, 24};
 	};
 	
 	public byte[] getData1() {
@@ -50,7 +50,7 @@ public class ChargingResultTest {
 	};
 	
 	public byte[] getData2() {
-		return new byte[] {-128, 3, -128, 1, 25};
+		return new byte[] {-96, 3, -128, 1, 25};
 	};
 	
 	public byte[] getData3() {
@@ -67,7 +67,7 @@ public class ChargingResultTest {
 		prim.decodeAll(asn);
 		assertEquals(tag, ChargingResultImpl._ID_elapsedTime);
 		assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
-		assertTrue(prim.getIsPrimitive());
+		assertFalse(prim.getIsPrimitive());
 		assertEquals(prim.getElapsedTime().getTimeGPRSIfNoTariffSwitch().intValue(),24);
 		assertNull(prim.getTransferredVolume());
 		
@@ -93,7 +93,7 @@ public class ChargingResultTest {
 		prim.decodeAll(asn);
 		assertEquals(tag, ChargingResultImpl._ID_transferredVolume);
 		assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
-		assertTrue(prim.getIsPrimitive());
+		assertFalse(prim.getIsPrimitive());
 		assertEquals(prim.getTransferredVolume().getVolumeIfNoTariffSwitch().longValue(),25);
 		assertNull(prim.getElapsedTime());
 		

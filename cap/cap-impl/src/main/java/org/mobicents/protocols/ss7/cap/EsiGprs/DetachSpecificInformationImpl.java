@@ -73,7 +73,7 @@ public class DetachSpecificInformationImpl extends SequenceBase implements Detac
 	}
 	
 	public int getTag() throws CAPException {
-		return _ID_DetachSpecificInformation;
+		return Tag.SEQUENCE;
 	}
 
 	public int getTagClass() {

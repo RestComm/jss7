@@ -46,7 +46,7 @@ import org.testng.annotations.Test;
 public class FurnishChargingInformationGPRSRequestTest {
 	
 	public byte[] getData() {
-		return new byte[] {4, 20, -96, 18, -96, 16, -128, 8, 48, 6, -128, 1, 5, -127, 1, 2, -127, 1, 2, -126, 1, 1};
+		return new byte[] { 4, 20, 48, 18, -96, 16, -128, 8, 48, 6, -128, 1, 5, -127, 1, 2, -127, 1, 2, -126, 1, 1};
 	};
 	
 	public byte[] getFreeFormatData() {
@@ -82,7 +82,6 @@ public class FurnishChargingInformationGPRSRequestTest {
 		FurnishChargingInformationGPRSRequestImpl prim = new FurnishChargingInformationGPRSRequestImpl(fciGPRSBillingChargingCharacteristics);
 		AsnOutputStream asn = new AsnOutputStream();
 		prim.encodeAll(asn);
-
 		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
 	}
 	

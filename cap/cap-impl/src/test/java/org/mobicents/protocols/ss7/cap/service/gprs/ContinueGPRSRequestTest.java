@@ -23,6 +23,7 @@ package org.mobicents.protocols.ss7.cap.service.gprs;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertNull;
 
 import java.util.Arrays;
 
@@ -43,6 +44,11 @@ public class ContinueGPRSRequestTest {
 	public byte[] getData() {
 		return new byte[] {48, 3, -128, 1, 2};
 	};
+	
+	public byte[] getDataLiveTrace() {
+		return new byte[] {0x30,0x00};
+	}
+	
 
 	@Test(groups = { "functional.decode", "primitives" })
 	public void testDecode() throws Exception {
@@ -57,6 +63,19 @@ public class ContinueGPRSRequestTest {
 		assertEquals(prim.getPDPID().getId(),2);
 	}
 	
+	@Test(groups = { "functional.decode", "primitives" })
+	public void testDecodeLiveTrace() throws Exception {
+		byte[] data = this.getDataLiveTrace();
+		AsnInputStream asn = new AsnInputStream(data);
+		int tag = asn.readTag();
+		ContinueGPRSRequestImpl prim = new ContinueGPRSRequestImpl();
+		prim.decodeAll(asn);
+		
+		assertEquals(tag, Tag.SEQUENCE);
+		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
+		assertNull(prim.getPDPID());
+	}
+	
 	@Test(groups = { "functional.encode", "primitives" })
 	public void testEncode() throws Exception {
 		
@@ -65,6 +84,14 @@ public class ContinueGPRSRequestTest {
 		AsnOutputStream asn = new AsnOutputStream();
 		prim.encodeAll(asn);
 		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+	}
+	
+	@Test(groups = { "functional.encode", "primitives" })
+	public void testEncodeLiveTrace() throws Exception {
+		ContinueGPRSRequestImpl prim = new ContinueGPRSRequestImpl(null);
+		AsnOutputStream asn = new AsnOutputStream();
+		prim.encodeAll(asn);
+		assertTrue(Arrays.equals(asn.toByteArray(), this.getDataLiveTrace()));
 	}
 	
 }

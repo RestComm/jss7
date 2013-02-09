@@ -1125,6 +1125,11 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
 	public SGSNCapabilities createSGSNCapabilities(int data) {
 		return new SGSNCapabilitiesImpl(data);
 	}
+	
+	@Override
+	public SGSNCapabilities createSGSNCapabilities(boolean aoCSupportedBySGSN){
+		return new SGSNCapabilitiesImpl(aoCSupportedBySGSN);
+	}
 
 	@Override
 	public TimeGPRSIfTariffSwitch createTimeGPRSIfTariffSwitch(

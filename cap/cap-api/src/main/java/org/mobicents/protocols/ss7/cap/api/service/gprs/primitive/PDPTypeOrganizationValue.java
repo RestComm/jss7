@@ -21,7 +21,11 @@
  */
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
-
+/**
+ * 
+ * @author Lasith Waruna Perera
+ * 
+ */
 public enum PDPTypeOrganizationValue {
 	ETSI(0x01), 
 	IETF(0x02); 

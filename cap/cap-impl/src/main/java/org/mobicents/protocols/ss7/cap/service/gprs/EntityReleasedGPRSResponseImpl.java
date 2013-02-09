@@ -41,7 +41,7 @@ public class EntityReleasedGPRSResponseImpl extends GprsMessageImpl implements E
 
 	@Override
 	public CAPMessageType getMessageType() {
-		return CAPMessageType.entityReleasedGPRS_Request;
+		return CAPMessageType.entityReleasedGPRS_Response;
 	}
 
 	@Override
