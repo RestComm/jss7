@@ -73,7 +73,7 @@ import org.testng.annotations.Test;
 public class PDPContextEstablishmentSpecificInformationTest {
 	
 	public byte[] getData() {
-		return new byte[] { -92, -127, -127, -128, 3, 52, 20, 30, -95, 11,
+		return new byte[] { -80, -127, -127, -128, 3, 52, 20, 30, -95, 11,
 				-128, 1, -15, -127, 1, 1, -126, 3, 4, 7, 7, -94, 35, -96, 5,
 				-128, 3, 4, 7, 7, -95, 4, -127, 2, 1, 7, -94, 5, -128, 3, 4, 7,
 				7, -93, 3, -128, 1, 52, -92, 3, -128, 1, 53, -91, 3, -128, 1,
@@ -138,7 +138,7 @@ public class PDPContextEstablishmentSpecificInformationTest {
 		PDPContextEstablishmentSpecificInformationImpl prim = new PDPContextEstablishmentSpecificInformationImpl();
 		prim.decodeAll(asn);
 		
-		assertEquals(tag,PDPContextEstablishmentSpecificInformationImpl._ID_PDPContextEstablishmentSpecificInformation);
+		assertEquals(tag,Tag.SEQUENCE);
 		assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
 		
 		assertTrue(Arrays.equals(prim.getAccessPointName().getData(),this.getAccessPointNameData()));
@@ -209,7 +209,7 @@ public class PDPContextEstablishmentSpecificInformationTest {
 				accessPointName, endUserAddress, qualityOfService, locationInformationGPRS, timeAndTimezone, PDPInitiationType.networkInitiated, true);
 		AsnOutputStream asn = new AsnOutputStream();
 		prim.encodeAll(asn);
-		
+
 		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
 	}
 	

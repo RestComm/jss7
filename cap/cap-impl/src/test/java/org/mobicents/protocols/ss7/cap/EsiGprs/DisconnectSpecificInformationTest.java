@@ -40,7 +40,7 @@ import org.testng.annotations.Test;
 public class DisconnectSpecificInformationTest {
 	
 	public byte[] getData() {
-		return new byte[] { -93, 5, -128, 1, 2, -127, 0};
+		return new byte[] { -80, 5, -128, 1, 2, -127, 0};
 	};
 
 	@Test(groups = { "functional.decode", "primitives" })
@@ -51,7 +51,7 @@ public class DisconnectSpecificInformationTest {
 		DisconnectSpecificInformationImpl prim = new DisconnectSpecificInformationImpl();
 		prim.decodeAll(asn);
 		
-		assertEquals(tag,DisconnectSpecificInformationImpl._ID_DisconnectSpecificInformation);
+		assertEquals(tag,Tag.SEQUENCE);
 		assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
 		
 		assertEquals(prim.getInitiatingEntity(), InitiatingEntity.hlr);
@@ -65,6 +65,7 @@ public class DisconnectSpecificInformationTest {
 		DisconnectSpecificInformationImpl prim = new DisconnectSpecificInformationImpl(InitiatingEntity.hlr, true);	
 		AsnOutputStream asn = new AsnOutputStream();
 		prim.encodeAll(asn);
+
 		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
 	}
 	

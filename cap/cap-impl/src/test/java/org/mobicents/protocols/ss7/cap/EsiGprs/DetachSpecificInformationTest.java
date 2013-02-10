@@ -40,7 +40,7 @@ import org.testng.annotations.Test;
 public class DetachSpecificInformationTest {
 	
 	public byte[] getData() {
-		return new byte[] { -94, 5, -128, 1, 2, -127, 0};
+		return new byte[] { -80, 5, -128, 1, 2, -127, 0};
 	};
 
 	@Test(groups = { "functional.decode", "primitives" })
@@ -51,7 +51,7 @@ public class DetachSpecificInformationTest {
 		DetachSpecificInformationImpl prim = new DetachSpecificInformationImpl();
 		prim.decodeAll(asn);
 		
-		assertEquals(tag,DetachSpecificInformationImpl._ID_DetachSpecificInformation);
+		assertEquals(tag,Tag.SEQUENCE);
 		assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
 		
 		assertEquals(prim.getInitiatingEntity(), InitiatingEntity.hlr);
@@ -65,7 +65,7 @@ public class DetachSpecificInformationTest {
 		DetachSpecificInformationImpl prim = new DetachSpecificInformationImpl(InitiatingEntity.hlr, true);	
 		AsnOutputStream asn = new AsnOutputStream();
 		prim.encodeAll(asn);
-		
+
 		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
 	}
 	

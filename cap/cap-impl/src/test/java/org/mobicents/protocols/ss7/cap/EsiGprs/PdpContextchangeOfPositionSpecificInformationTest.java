@@ -76,7 +76,7 @@ import org.testng.annotations.Test;
 public class PdpContextchangeOfPositionSpecificInformationTest {
 	
 	public byte[] getData() {
-		return new byte[] { -95, -127, -119, -128, 3, 52, 20, 30, -127, 4, 41,
+		return new byte[] { -80, -127, -119, -128, 3, 52, 20, 30, -127, 4, 41,
 				42, 43, 44, -94, 57, -96, 7, -127, 5, 82, -16, 16, 17, 92,
 				-127, 6, 11, 12, 13, 14, 15, 16, -126, 8, 31, 32, 33, 34, 35,
 				36, 37, 38, -125, 4, -111, 86, 52, 18, -124, 3, 91, 92, 93,
@@ -148,7 +148,7 @@ public class PdpContextchangeOfPositionSpecificInformationTest {
 		PdpContextchangeOfPositionSpecificInformationImpl prim = new PdpContextchangeOfPositionSpecificInformationImpl();
 		prim.decodeAll(asn);
 		
-		assertEquals(tag,PdpContextchangeOfPositionSpecificInformationImpl._ID_PdpContextchangeOfPositionSpecificInformation);
+		assertEquals(tag,Tag.SEQUENCE);
 		assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
 		
 		assertTrue(Arrays.equals(prim.getAccessPointName().getData(),this.getAccessPointNameData()));
@@ -219,7 +219,7 @@ public class PdpContextchangeOfPositionSpecificInformationTest {
 				accessPointName, chargingID, locationInformationGPRS, endUserAddress, qualityOfService, timeAndTimezone, gsnAddress);
 		AsnOutputStream asn = new AsnOutputStream();
 		prim.encodeAll(asn);
-		
+
 		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
 	}
 	
