@@ -218,7 +218,9 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		if (this.tcapDialog.getPreviewMode())
 			return;
 
-		synchronized (this) {
+		try {
+			this.getTcapDialog().getDialogLock().lock();
+
 			// Dialog is not started or has expunged - we need not send
 			// TC-U-ABORT,
 			// only Dialog removing
@@ -232,6 +234,8 @@ public abstract class MAPDialogImpl implements MAPDialog {
 			this.extContainer = null;
 
 			this.setState(MAPDialogState.EXPUNGED);
+		} finally {
+			this.getTcapDialog().getDialogLock().unlock();
 		}
 	}
 
@@ -240,7 +244,9 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		if (this.tcapDialog.getPreviewMode())
 			return;
 
-		synchronized (this) {
+		try {
+			this.getTcapDialog().getDialogLock().lock();
+
 			// Dialog must be in the InitialReceived state
 			if (this.getState() != MAPDialogState.INITIAL_RECEIVED) {
 				throw new MAPException("Refuse can be called in the Dialog InitialReceived state");
@@ -251,6 +257,8 @@ public abstract class MAPDialogImpl implements MAPDialog {
 			this.extContainer = null;
 
 			this.setState(MAPDialogState.EXPUNGED);
+		} finally {
+			this.getTcapDialog().getDialogLock().unlock();
 		}
 	}
 
@@ -259,7 +267,9 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		if (this.tcapDialog.getPreviewMode())
 			return;
 
-		synchronized (this) {
+		try {
+			this.getTcapDialog().getDialogLock().lock();
+
 			switch (this.tcapDialog.getState()) {
 			case InitialReceived:
 				ApplicationContextName acn = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
@@ -287,6 +297,8 @@ public abstract class MAPDialogImpl implements MAPDialog {
 			case Expunged: // dialog has been terminated on TC level, cant send
 				throw new MAPException("Dialog has been terminated, can not send primitives!");
 			}
+		} finally {
+			this.getTcapDialog().getDialogLock().unlock();
 		}
 	}
 
@@ -322,7 +334,9 @@ public abstract class MAPDialogImpl implements MAPDialog {
 		if (this.tcapDialog.getPreviewMode())
 			return;
 
-		synchronized (this) {
+		try {
+			this.getTcapDialog().getDialogLock().lock();
+
 			switch (this.tcapDialog.getState()) {
 
 			case Idle:
@@ -361,6 +375,8 @@ public abstract class MAPDialogImpl implements MAPDialog {
 			case Expunged: // dialog has been terminated on TC level, cant send
 				throw new MAPException("Dialog has been terminated, can not send primitives!");
 			}
+		} finally {
+			this.getTcapDialog().getDialogLock().unlock();
 		}
 	}
 

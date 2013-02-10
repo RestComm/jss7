@@ -67,7 +67,11 @@ public class UserServiceInformationTest {
 	private byte[] getData2() {
 		return new byte[] { (byte) 184, (byte) 216, (byte) 147 };
 	}
-	
+
+	private byte[] getData3() {
+		return new byte[] { -128, -112, -95, -62, -30 };
+	}
+
 	@Test(groups = { "functional.decode", "parameter" })
 	public void testDecode() throws Exception {
 
@@ -138,6 +142,40 @@ public class UserServiceInformationTest {
 		assertEquals(prim.getModemType(), 0);
 		assertEquals(prim.getL3Protocol(), 0);
 
+
+		prim = new UserServiceInformationImpl();
+		prim.decode(getData3());
+
+		assertEquals(prim.getCodingStandart(), UserServiceInformation._CS_CCITT);
+		assertEquals(prim.getInformationTransferCapability(), UserServiceInformation._ITS_SPEECH);
+		assertEquals(prim.getTransferMode(), UserServiceInformation._TM_CIRCUIT);
+		assertEquals(prim.getInformationTransferRate(), UserServiceInformation._ITR_64);
+
+		assertEquals(prim.getCustomInformationTransferRate(), 0);
+		assertEquals(prim.getL1UserInformation(), UserServiceInformation._L1_ITUT_110);
+		assertEquals(prim.getL2UserInformation(), UserServiceInformation._L2_Q921);
+		assertEquals(prim.getL3UserInformation(), UserServiceInformation._L3_Q931);
+		assertEquals(prim.getSyncMode(), 0);
+		assertEquals(prim.getNegotiation(), 0);
+		assertEquals(prim.getUserRate(), 0);
+		assertEquals(prim.getIntermediateRate(), 0);
+		assertEquals(prim.getNicOnTx(), 0);
+		assertEquals(prim.getNicOnRx(), 0);
+		assertEquals(prim.getFlowControlOnTx(), 0);
+		assertEquals(prim.getFlowControlOnRx(), 0);
+		assertEquals(prim.getHDR(), 0);
+		assertEquals(prim.getMultiframe(), 0);
+		assertEquals(prim.getMode(), 0);
+		assertEquals(prim.getLLINegotiation(), 0);
+		assertEquals(prim.getAssignor(), 0);
+		assertEquals(prim.getInBandNegotiation(), 0);
+		assertEquals(prim.getStopBits(), 0);
+		assertEquals(prim.getDataBits(), 0);
+		assertEquals(prim.getParity(), 0);
+		assertEquals(prim.getDuplexMode(), 0);
+		assertEquals(prim.getModemType(), 0);
+		assertEquals(prim.getL3Protocol(), 0);
+
 		// TODO: now tested only for a case l1UserInformation = 0 && l2UserInformation == 0 && l2UserInformation == 0
 		// we need to test other case encoding/decoding
 	}
@@ -166,6 +204,22 @@ public class UserServiceInformationTest {
 		prim.setCustomInformationTransferRate(19);
 
 		data = getData2();
+		encodedData = prim.encode();
+
+		assertTrue(Arrays.equals(data, encodedData));
+
+
+
+		prim = new UserServiceInformationImpl();
+		prim.setCodingStandart(UserServiceInformation._CS_CCITT);
+		prim.setInformationTransferCapability(UserServiceInformation._ITS_SPEECH);
+		prim.setTransferMode(UserServiceInformation._TM_CIRCUIT);
+		prim.setInformationTransferRate(UserServiceInformation._ITR_64);
+		prim.setL1UserInformation(UserServiceInformation._L1_ITUT_110);
+		prim.setL2UserInformation(UserServiceInformation._L2_Q921);
+		prim.setL3UserInformation(UserServiceInformation._L3_Q931);
+
+		data = getData3();
 		encodedData = prim.encode();
 
 		assertTrue(Arrays.equals(data, encodedData));

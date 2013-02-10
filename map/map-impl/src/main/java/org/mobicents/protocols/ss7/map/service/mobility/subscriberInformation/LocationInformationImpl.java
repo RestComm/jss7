@@ -239,10 +239,10 @@ public class LocationInformationImpl extends SequenceBase implements LocationInf
 					((LocationNumberMapImpl) this.locationNumber).decodeAll(ais);
 					break;
 				case _ID_cellGlobalIdOrServiceAreaIdOrLAI:
-					if (ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-								+ " cellGlobalIdOrServiceAreaIdOrLAI: Parameter is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
 					this.cellGlobalIdOrServiceAreaIdOrLAI = LocationInformationGPRSImpl.decodeCellGlobalIdOrServiceAreaIdOrLAI(ais, _PrimitiveName);
+//					if (ais.isTagPrimitive())
+//						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+//								+ " cellGlobalIdOrServiceAreaIdOrLAI: Parameter is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
 //					this.cellGlobalIdOrServiceAreaIdOrLAI = new CellGlobalIdOrServiceAreaIdOrLAIImpl();
 //					AsnInputStream ais2 = ais.readSequenceStream();
 //					ais2.readTag();

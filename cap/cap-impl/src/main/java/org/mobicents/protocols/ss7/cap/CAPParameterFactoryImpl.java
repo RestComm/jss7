@@ -360,8 +360,8 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
 	}
 
 	@Override
-	public CalledPartyBCDNumber createCalledPartyBCDNumber(AddressNature addressNature, NumberingPlan numberingPlan, String address, boolean isExtension) throws CAPException {
-		return new CalledPartyBCDNumberImpl(addressNature, numberingPlan, address, isExtension);
+	public CalledPartyBCDNumber createCalledPartyBCDNumber(AddressNature addressNature, NumberingPlan numberingPlan, String address) throws CAPException {
+		return new CalledPartyBCDNumberImpl(addressNature, numberingPlan, address);
 	}
 
 	

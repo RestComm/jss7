@@ -200,9 +200,9 @@ public interface CAPParameterFactory {
 
 	public BCSMEvent createBCSMEvent(EventTypeBCSM eventTypeBCSM, MonitorMode monitorMode, LegID legID, DpSpecificCriteria dpSpecificCriteria,
 			boolean automaticRearm);
-	
+
 	public CalledPartyBCDNumber createCalledPartyBCDNumber(byte[] data);
-	public CalledPartyBCDNumber createCalledPartyBCDNumber(AddressNature addressNature, NumberingPlan numberingPlan, String address, boolean isExtension) throws CAPException;
+	public CalledPartyBCDNumber createCalledPartyBCDNumber(AddressNature addressNature, NumberingPlan numberingPlan, String address) throws CAPException;
 
 	public ExtensionField createExtensionField(Integer localCode, CriticalityType criticalityType, byte[] data);
 	public ExtensionField createExtensionField(long[] globalCode, CriticalityType criticalityType, byte[] data);

@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.tcap.api.tc.dialog;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
@@ -305,5 +307,10 @@ public interface Dialog {
 	 * @return Returns if a dialog works in preview mode
 	 */
 	public boolean getPreviewMode();
+
+	/**
+	 * @return This ReentrantLock object should for synchronizing of Dialog using in multithread environment 
+	 */
+	public ReentrantLock getDialogLock();
 
 }
