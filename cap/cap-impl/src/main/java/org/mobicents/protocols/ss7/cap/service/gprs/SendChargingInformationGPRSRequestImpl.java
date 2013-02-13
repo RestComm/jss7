@@ -32,7 +32,6 @@ import org.mobicents.protocols.ss7.cap.api.CAPMessageType;
 import org.mobicents.protocols.ss7.cap.api.CAPOperationCode;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
-import org.mobicents.protocols.ss7.cap.api.primitives.TimerID;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.SendChargingInformationGPRSRequest;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.CAMELSCIGPRSBillingChargingCharacteristics;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.CAMELSCIGPRSBillingChargingCharacteristicsImpl;
@@ -139,14 +138,17 @@ public class SendChargingInformationGPRSRequestImpl extends GprsMessageImpl impl
 			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 				switch (tag) {	
 				case _ID_sciGPRSBillingChargingCharacteristics:
-					if (ais.isTagPrimitive())
+					if (!ais.isTagPrimitive())
 						throw new CAPParsingComponentException(
 								"Error while decoding " + _PrimitiveName + ".sciGPRSBillingChargingCharacteristics: Parameter is primitive",
 								CAPParsingComponentExceptionReason.MistypedParameter);
+					length = ais.readLength();
+					byte[] buf = ais.readOctetStringData(length);
+					AsnInputStream ais2 = new AsnInputStream(buf);
+					tag = ais2.readTag();
 					this.sciGPRSBillingChargingCharacteristics = new CAMELSCIGPRSBillingChargingCharacteristicsImpl();
-					((CAMELSCIGPRSBillingChargingCharacteristicsImpl) this.sciGPRSBillingChargingCharacteristics).decodeAll(ais);
+					((CAMELSCIGPRSBillingChargingCharacteristicsImpl) this.sciGPRSBillingChargingCharacteristics).decodeAll(ais2);	
 					break;
-
 				default:
 					ais.advanceElement();
 					break;
@@ -156,7 +158,9 @@ public class SendChargingInformationGPRSRequestImpl extends GprsMessageImpl impl
 			}
 		}
 
-	
+		if (this.sciGPRSBillingChargingCharacteristics == null)
+			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": sciGPRSBillingChargingCharacteristics is mandatory but not found",
+					CAPParsingComponentExceptionReason.MistypedParameter);
 		
 	}
 
@@ -182,8 +186,15 @@ public class SendChargingInformationGPRSRequestImpl extends GprsMessageImpl impl
 	public void encodeData(AsnOutputStream asnOs) throws CAPException {
 		if (this.sciGPRSBillingChargingCharacteristics == null)
 			throw new CAPException("Error while encoding " + _PrimitiveName + ": sciGPRSBillingChargingCharacteristics must not be null");
-		
-		((CAMELSCIGPRSBillingChargingCharacteristicsImpl) this.sciGPRSBillingChargingCharacteristics).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_sciGPRSBillingChargingCharacteristics);
+	
+		try {
+			asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, true, _ID_sciGPRSBillingChargingCharacteristics);
+			int pos = asnOs.StartContentDefiniteLength();
+			((CAMELSCIGPRSBillingChargingCharacteristicsImpl) this.sciGPRSBillingChargingCharacteristics).encodeAll(asnOs);
+			asnOs.FinalizeContent(pos);
+		} catch (AsnException e) {
+			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+		}
 		
 	}
 	

@@ -50,10 +50,10 @@ import org.testng.annotations.Test;
 public class SendChargingInformationGPRSRequestTest {
 	
 	public byte[] getData() {
-		return new byte[] { 48, 44, -96, 42, -96, 37, -96, 21, -128, 1, 1,
-				-127, 1, 2, -126, 1, 3, -125, 1, 4, -124, 1, 5, -123, 1, 6,
-				-122, 1, 7, -95, 12, -96, 6, -125, 1, 4, -124, 1, 5, -127, 2,
-				0, -34, -127, 1, 1 };
+		return new byte[] { 48, 46, -128, 44, 48, 42, -96, 37, -96, 21, -128,
+				1, 1, -127, 1, 2, -126, 1, 3, -125, 1, 4, -124, 1, 5, -123, 1,
+				6, -122, 1, 7, -95, 12, -96, 6, -125, 1, 4, -124, 1, 5, -127,
+				2, 0, -34, -127, 1, 1 };
 	};
 	
 	@Test(groups = { "functional.decode", "primitives" })
@@ -100,7 +100,7 @@ public class SendChargingInformationGPRSRequestTest {
 				
 		AsnOutputStream asn = new AsnOutputStream();
 		prim.encodeAll(asn);
-		
+	
 		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
 	}
 	
