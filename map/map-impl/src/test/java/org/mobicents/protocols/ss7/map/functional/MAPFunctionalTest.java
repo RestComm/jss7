@@ -1097,6 +1097,96 @@ public class MAPFunctionalTest extends SccpHarness {
 
 	}
 
+	/**
+	 * Rejecting a dialog because of service is inactive 
+	 * 
+	 * TC-BEGIN + alertServiceCentre V2
+	 *   TC-ABORT + DialogReject+ACNNotSupported
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testRejectServiceIsNotActive() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+
+			@Override
+			public void onDialogReject(MAPDialog mapDialog, MAPRefuseReason refuseReason, ApplicationContextName alternativeApplicationContext,
+					MAPExtensionContainer extensionContainer) {
+				super.onDialogReject(mapDialog, refuseReason, alternativeApplicationContext, extensionContainer);
+
+				assertEquals(refuseReason, MAPRefuseReason.ApplicationContextNotSupported);
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.AlertServiceCentreIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogReject, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+
+		server.mapProvider.getMAPServiceSms().deactivate();
+//		this.saveTrafficInFile();
+		
+		client.sendAlertServiceCentreRequestV2();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	/**
+	 * Rejecting a dialog because of service is inactive - MAP V1 
+	 * 
+	 * TC-BEGIN + alertServiceCentre V1
+	 *   TC-ABORT + DialogReject+ACNNotSupported 
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testRejectServiceIsNotActiveV1() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.AlertServiceCentreIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+
+		server.mapProvider.getMAPServiceSms().deactivate();
+		this.saveTrafficInFile();
+		
+		client.sendAlertServiceCentreRequestV1();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
 
 	/**
 	 * Below are test for MAP Component processing

@@ -570,8 +570,12 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		if (perfSer == null) {
 			StringBuffer s = new StringBuffer();
 			s.append("Unsupported ApplicationContextName is received: ");
-			for (long l : acn.getOid()) {
-				s.append(l).append(", ");
+			if (acn != null) {
+				for (long l : acn.getOid()) {
+					s.append(l).append(", ");
+				}
+			} else {
+				s.append("MAP V1");
 			}
 
 			loger.error(s.toString());
@@ -588,8 +592,12 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 		if (!perfSer.isActivated()) {
 			StringBuffer s = new StringBuffer();
 			s.append("ApplicationContextName of non activated MAPService is received: ");
-			for (long l : acn.getOid()) {
-				s.append(l).append(", ");
+			if (acn != null) {
+				for (long l : acn.getOid()) {
+					s.append(l).append(", ");
+				}
+			} else {
+				s.append("MAP V1");
 			}
 
 			try {
@@ -597,6 +605,8 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 			} catch (MAPException e1) {
 				loger.error("Error while firing TC-U-ABORT. ", e1);
 			}
+
+			return;
 		}
 
 		MAPDialogImpl mapDialogImpl = ((MAPServiceBaseImpl) perfSer).createNewDialogIncoming(mapAppCtx, tcBeginIndication.getDialog());
