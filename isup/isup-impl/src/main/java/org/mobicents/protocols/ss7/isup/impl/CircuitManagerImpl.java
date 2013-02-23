@@ -95,7 +95,7 @@ public class CircuitManagerImpl implements CircuitManager {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.isup.CircuitManager#getDPC(int,int)
+	 * @see org.mobicents.protocols.ss7.isup.CircuitManager#getChannelID(int,int)
 	 */
 	@Override
 	public long getChannelID(int cic,int dpc)

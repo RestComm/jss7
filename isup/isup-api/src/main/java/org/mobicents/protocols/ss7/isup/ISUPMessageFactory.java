@@ -28,7 +28,6 @@
  */
 package org.mobicents.protocols.ss7.isup;
 
-import java.io.Serializable;
 import org.mobicents.protocols.ss7.isup.message.AddressCompleteMessage;
 import org.mobicents.protocols.ss7.isup.message.AnswerMessage;
 import org.mobicents.protocols.ss7.isup.message.ApplicationTransportMessage;
@@ -84,260 +83,208 @@ import org.mobicents.protocols.ss7.isup.message.UserPartTestMessage;
  * Start time:12:04:59 2009-09-04<br>
  * Project: mobicents-isup-stack<br>
  * 
- * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski
- *         </a>
+ * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface ISUPMessageFactory {
 
-	/**
-	 * @return
-	 */
-	//InitialAddressMessage createIAM(CircuitIdentificationCode ci);
-	InitialAddressMessage createIAM(int cic);
+    AddressCompleteMessage createACM();
 
-	/**
-	 * @return
-	 */
-	AddressCompleteMessage createACM();
+    AddressCompleteMessage createACM(int cic);
 
-	/**
-	 * @return
-	 */
-	ReleaseMessage createREL(int cic);
+    AnswerMessage createANM();
 
-	/**
-	 * @return
-	 */
-	ReleaseCompleteMessage createRLC();
+    AnswerMessage createANM(int cic);
 
-	/**
-	 * @return
-	 */
-	ApplicationTransportMessage createAPT(int cic);
+    ApplicationTransportMessage createAPT();
 
-	/**
-	 * @return
-	 */
-	AnswerMessage createANM();
+    ApplicationTransportMessage createAPT(int cic);
 
-	/**
-	 * @return
-	 */
-	CallProgressMessage createCPG(int cic);
+    BlockingAckMessage createBLA();
 
-	/**
-	 * @return
-	 */
-	CircuitGroupResetAckMessage createGRA();
+    BlockingAckMessage createBLA(int cic);
 
-	/**
-	 * @return
-	 */
-	ConfusionMessage createCNF(int cic);
+    BlockingMessage createBLO();
 
+    BlockingMessage createBLO(int cic);
 
+    ContinuityCheckRequestMessage createCCR();
 
-	/**
-	 * @return
-	 */
-	ConnectMessage createCON();
+    ContinuityCheckRequestMessage createCCR(int cic);
 
-	/**
-	 * @return
-	 */
-	ContinuityMessage createCOT();
+    CircuitGroupBlockingMessage createCGB();
 
-	/**
-	 * @return
-	 */
-	FacilityRejectedMessage createFRJ(int cic);
+    CircuitGroupBlockingMessage createCGB(int cic);
 
-	/**
-	 * @return
-	 */
-	InformationMessage createINF();
+    CircuitGroupBlockingAckMessage createCGBA();
 
-	/**
-	 * @return
-	 */
-	InformationRequestMessage createINR(int cic);
+    CircuitGroupBlockingAckMessage createCGBA(int cic);
 
-	/**
-	 * @return
-	 */
-	SubsequentAddressMessage createSAM(int cic);
+    CircuitGroupUnblockingMessage createCGU();
 
-	/**
-	 * @return
-	 */
-	SubsequentDirectoryNumberMessage createSDN(int cic);
+    CircuitGroupUnblockingMessage createCGU(int cic);
 
-	/**
-	 * @return
-	 */
-	ForwardTransferMessage createFOT(int cic);
+    CircuitGroupUnblockingAckMessage createCGUA();
 
-	/**
-	 * @return
-	 */
-	ResumeMessage createRES(int cic);
+    CircuitGroupUnblockingAckMessage createCGUA(int cic);
 
-	/**
-	 * @return
-	 */
-	BlockingMessage createBLO(int cic);
+    ChargeInformationMessage createCIM();
 
-	/**
-	 * @return
-	 */
-	BlockingAckMessage createBLA();
+    ChargeInformationMessage createCIM(int cic);
 
-	/**
-	 * @return
-	 */
-	ContinuityCheckRequestMessage createCCR(int cic);
+    ConfusionMessage createCNF();
 
-	/**
-	 * @return
-	 */
-	LoopbackAckMessage createLPA();
+    ConfusionMessage createCNF(int cic);
 
-	/**
-	 * @return
-	 */
-	LoopPreventionMessage createLPP(int cic);
+    ISUPMessage createCommand(int commandCode);
 
-	/**
-	 * @return
-	 */
-	OverloadMessage createOLM(int cic);
+    ISUPMessage createCommand(int commandCode, int cic);
 
-	/**
-	 * @return
-	 */
-	SuspendMessage createSUS(int cic);
+    ConnectMessage createCON();
 
-	/**
-	 * @return
-	 */
-	ResetCircuitMessage createRSC(int cic);
+    ConnectMessage createCON(int cic);
 
-	/**
-	 * @return
-	 */
-	UnblockingMessage createUBL(int cic);
+    ContinuityMessage createCOT();
 
-	/**
-	 * @return
-	 */
-	UnblockingAckMessage createUBA();
+    ContinuityMessage createCOT(int cic);
 
-	/**
-	 * @return
-	 */
-	UnequippedCICMessage createUCIC(int cic);
+    CallProgressMessage createCPG();
 
-	/**
-	 * @return
-	 */
-	CircuitGroupBlockingMessage createCGB(int cic);
+    CallProgressMessage createCPG(int cic);
 
-	/**
-	 * @return
-	 */
-	CircuitGroupBlockingAckMessage createCGBA();
+    CircuitGroupQueryMessage createCQM();
 
-	/**
-	 * @return
-	 */
-	CircuitGroupUnblockingMessage createCGU(int cic);
+    CircuitGroupQueryMessage createCQM(int cic);
 
-	/**
-	 * @return
-	 */
-	CircuitGroupUnblockingAckMessage createCGUA();
+    CircuitGroupQueryResponseMessage createCQR();
 
-	/**
-	 * @return
-	 */
-	CircuitGroupResetMessage createGRS(int cic);
+    CircuitGroupQueryResponseMessage createCQR(int cic);
 
-	/**
-	 * @return
-	 */
-	CircuitGroupQueryResponseMessage createCQR();
+    FacilityAcceptedMessage createFAA();
 
-	/**
-	 * @return
-	 */
-	CircuitGroupQueryMessage createCQM(int cic);
+    FacilityAcceptedMessage createFAA(int cic);
 
-	/**
-	 * @return
-	 */
-	FacilityAcceptedMessage createFAA();
+    FacilityMessage createFAC();
 
-	/**
-	 * @return
-	 */
-	FacilityRequestMessage createFAR(int cic);
+    FacilityMessage createFAC(int cic);
 
-	/**
-	 * @return
-	 */
-	PassAlongMessage createPAM(int cic);
+    FacilityRequestMessage createFAR();
 
-	/**
-	 * @return
-	 */
-	PreReleaseInformationMessage createPRI(int cic);
+    FacilityRequestMessage createFAR(int cic);
 
-	/**
-	 * @return
-	 */
-	FacilityMessage createFAC(int cic);
+    ForwardTransferMessage createFOT();
 
-	/**
-	 * @return
-	 */
-	NetworkResourceManagementMessage createNRM(int cic);
+    ForwardTransferMessage createFOT(int cic);
 
-	/**
-	 * @return
-	 */
-	IdentificationRequestMessage createIDR(int cic);
+    FacilityRejectedMessage createFRJ();
 
-	/**
-	 * @return
-	 */
-	IdentificationResponseMessage createIRS();
+    FacilityRejectedMessage createFRJ(int cic);
 
-	/**
-	 * @return
-	 */
-	SegmentationMessage createSGM(int cic);
+    CircuitGroupResetAckMessage createGRA();
 
-	/**
-	 * @return
-	 */
-	ChargeInformationMessage createCIM(int cic);
+    CircuitGroupResetAckMessage createGRA(int cic);
 
-	/**
-	 * @return
-	 */
-	UserPartAvailableMessage createUPA(int cic);
+    CircuitGroupResetMessage createGRS();
 
-	/**
-	 * @return
-	 */
-	UserPartTestMessage createUPT(int cic);
+    CircuitGroupResetMessage createGRS(int cic);
 
-	/**
-	 * @return
-	 */
-	User2UserInformationMessage createUSR(int cic);
-	
-	
-	ISUPMessage createCommand(int commandCode);
+    InitialAddressMessage createIAM();
+
+    InitialAddressMessage createIAM(int cic);
+
+    IdentificationRequestMessage createIDR();
+
+    IdentificationRequestMessage createIDR(int cic);
+
+    InformationMessage createINF();
+
+    InformationMessage createINF(int cic);
+
+    InformationRequestMessage createINR();
+
+    InformationRequestMessage createINR(int cic);
+
+    IdentificationResponseMessage createIRS();
+
+    IdentificationResponseMessage createIRS(int cic);
+
+    LoopbackAckMessage createLPA();
+
+    LoopbackAckMessage createLPA(int cic);
+
+    LoopPreventionMessage createLPP();
+
+    LoopPreventionMessage createLPP(int cic);
+
+    NetworkResourceManagementMessage createNRM();
+
+    NetworkResourceManagementMessage createNRM(int cic);
+
+    OverloadMessage createOLM();
+
+    OverloadMessage createOLM(int cic);
+
+    PassAlongMessage createPAM();
+
+    PassAlongMessage createPAM(int cic);
+
+    PreReleaseInformationMessage createPRI();
+
+    PreReleaseInformationMessage createPRI(int cic);
+
+    ReleaseMessage createREL();
+
+    ReleaseMessage createREL(int cic);
+
+    ResumeMessage createRES();
+
+    ResumeMessage createRES(int cic);
+
+    ReleaseCompleteMessage createRLC();
+
+    ReleaseCompleteMessage createRLC(int cic);
+
+    ResetCircuitMessage createRSC();
+
+    ResetCircuitMessage createRSC(int cic);
+
+    SubsequentAddressMessage createSAM();
+
+    SubsequentAddressMessage createSAM(int cic);
+
+    SubsequentDirectoryNumberMessage createSDN();
+
+    SubsequentDirectoryNumberMessage createSDN(int cic);
+
+    SegmentationMessage createSGM();
+
+    SegmentationMessage createSGM(int cic);
+
+    SuspendMessage createSUS();
+
+    SuspendMessage createSUS(int cic);
+
+    UnblockingAckMessage createUBA();
+
+    UnblockingAckMessage createUBA(int cic);
+
+    UnblockingMessage createUBL();
+
+    UnblockingMessage createUBL(int cic);
+
+    UnequippedCICMessage createUCIC();
+
+    UnequippedCICMessage createUCIC(int cic);
+
+    UserPartAvailableMessage createUPA();
+
+    UserPartAvailableMessage createUPA(int cic);
+
+    UserPartTestMessage createUPT();
+
+    UserPartTestMessage createUPT(int cic);
+
+    User2UserInformationMessage createUSR();
+
+    User2UserInformationMessage createUSR(int cic);
 
 }
