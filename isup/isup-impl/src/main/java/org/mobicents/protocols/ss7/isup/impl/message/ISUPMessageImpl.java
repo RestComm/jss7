@@ -183,7 +183,6 @@ public abstract class ISUPMessageImpl extends AbstractISUPMessage {
 		}
 		((AbstractISUPParameter)this.cic).encode(bos);
 		for (ISUPParameter p : parameters.values()) {
-			// System.err.println("ENCODE F: "+p.getCode()+"---> "+Utils.toHex(p.encode()));
 			((AbstractISUPParameter)p).encode(bos);
 		}
 	}
