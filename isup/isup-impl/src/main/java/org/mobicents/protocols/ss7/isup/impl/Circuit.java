@@ -113,7 +113,21 @@ class Circuit {
 		onStop();
 	}
 	
-	/**
+    /**
+     * @return the cic
+     */
+    public int getCic() {
+        return cic;
+    }
+
+    /**
+     * @return the dpc
+     */
+    public int getDpc() {
+        return dpc;
+    }
+
+    /**
 	 * @param timerId
 	 * @return
 	 */

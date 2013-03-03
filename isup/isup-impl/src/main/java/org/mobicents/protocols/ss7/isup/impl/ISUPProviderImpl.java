@@ -157,9 +157,23 @@ public class ISUPProviderImpl implements ISUPProvider {
 		if (!msg.hasAllMandatoryParameters()) {
 			throw new ParameterException("Message does not have all required parameters!");
 		}
-		getCircuit(msg,dpc).send(msg);
+		sendOnCircuit(getCircuit(msg,dpc),msg);
 	}
 
+	void sendOnCircuit(Circuit c,ISUPMessage msg) throws ParameterException, IOException {
+	    if(c == null ){
+	        throw new NullPointerException();
+	    }
+	    if(msg == null){
+	        throw new NullPointerException();
+	    }
+	    
+	    if(msg.getCircuitIdentificationCode() == null || msg.getCircuitIdentificationCode().getCIC() != c.getDpc()){
+	        throw new IllegalArgumentException();
+	    }
+	    c.send(msg);
+	}
+	
 	public boolean cancelTimer(int cic,int dpc, int timerId) {
 		long channelID=this.stack.getCircuitManager().getChannelID(cic,dpc);
 		if (this.cic2Circuit.containsKey(channelID)) {
