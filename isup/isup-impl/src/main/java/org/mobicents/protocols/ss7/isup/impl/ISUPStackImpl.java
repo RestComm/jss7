@@ -60,12 +60,6 @@ public class ISUPStackImpl implements ISUPStack, Mtp3UserPartListener {
 	private Logger logger = Logger.getLogger(ISUPStackImpl.class);
 
 	private State state = State.IDLE;
-	// dont quite like the idea of so many threads... but.
-	// private ExecutorService executor;
-	// private ExecutorService layer3exec;
-
-	// protected ConcurrentLinkedQueue<byte[]> txDataQueue = new
-	// ConcurrentLinkedQueue<byte[]>();
 
 	private Mtp3UserPart mtp3UserPart = null;
 	private CircuitManager circuitManager = null;
@@ -76,15 +70,20 @@ public class ISUPStackImpl implements ISUPStack, Mtp3UserPartListener {
 
 	private Scheduler scheduler;
 	
+	public ISUPStackImpl(final Scheduler scheduler,final int localSpc,final int ni,final boolean automaticTimerMessages) {
+        super();
+        this.scheduler=scheduler;       
+        this.provider = new ISUPProviderImpl(this, scheduler , ni, localSpc,automaticTimerMessages);
+        this.parameterFactory = this.provider.getParameterFactory();
+        this.messageFactory = this.provider.getMessageFactory();
+        
+        this.state = State.CONFIGURED;
+    }
+	
 	public ISUPStackImpl(Scheduler scheduler,int localSpc,int ni) {
-		super();
-		this.scheduler=scheduler;		
-		this.provider = new ISUPProviderImpl(this, scheduler , ni, localSpc);
-		this.parameterFactory = this.provider.getParameterFactory();
-		this.messageFactory = this.provider.getMessageFactory();
-		
-		this.state = State.CONFIGURED;
-	}
+        this(scheduler, localSpc,ni,true);
+    }
+	
 
 	public ISUPProvider getIsupProvider() {
 		return provider;
@@ -140,14 +139,6 @@ public class ISUPStackImpl implements ISUPStack, Mtp3UserPartListener {
 	/**
      *
      */
-	/*public void configure(Properties props) {
-		if (state != State.IDLE) {
-			throw new IllegalStateException("Stack already been configured or is already running!");
-		}
-
-		
-		this.state = State.CONFIGURED;
-	}*/
 
 	public Mtp3UserPart getMtp3UserPart() {
 		return mtp3UserPart;
