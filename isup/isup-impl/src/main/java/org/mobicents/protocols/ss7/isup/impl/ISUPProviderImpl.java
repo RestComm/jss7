@@ -28,13 +28,9 @@ package org.mobicents.protocols.ss7.isup.impl;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 import javolution.util.FastList;
-import javolution.util.FastMap;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -50,7 +46,6 @@ import org.mobicents.protocols.ss7.isup.impl.message.ISUPMessageFactoryImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.ISUPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
-
 import org.mobicents.protocols.ss7.scheduler.Scheduler;
 /**
  * @author baranowb
@@ -58,23 +53,26 @@ import org.mobicents.protocols.ss7.scheduler.Scheduler;
  */
 public class ISUPProviderImpl implements ISUPProvider {
 
-	private static final Logger logger = Logger.getLogger(ISUPProviderImpl.class);
+    protected static final Logger logger = Logger.getLogger(ISUPProviderImpl.class);
 
-	protected final transient List<ISUPListener> listeners = new FastList<ISUPListener>();
+    protected final List<ISUPListener> listeners = new FastList<ISUPListener>();
 
-	protected transient ISUPStackImpl stack;
-	protected transient ISUPMessageFactory messageFactory;
-	protected transient ISUPParameterFactory parameterFactory;
-	private transient Scheduler scheduler;
+    protected final transient ISUPStackImpl stack;
+    protected final transient ISUPMessageFactory messageFactory;
+    protected final transient ISUPParameterFactory parameterFactory;
+    protected final transient Scheduler scheduler;
 	
-	protected final transient ConcurrentHashMap<Long,Circuit> cic2Circuit = new ConcurrentHashMap<Long,Circuit>();
-	protected int ni, localSpc;
-	public ISUPProviderImpl(ISUPStackImpl isupStackImpl,Scheduler scheduler, int ni, int localSpc) {
+    protected final transient ConcurrentHashMap<Long,Circuit> cic2Circuit = new ConcurrentHashMap<Long,Circuit>();
+    protected final int ni;
+    protected final int localSpc;
+    protected final boolean automaticTimerMessages;
+	public ISUPProviderImpl(ISUPStackImpl isupStackImpl,Scheduler scheduler, int ni, int localSpc, boolean automaticTimerMessages) {
 		this.stack = isupStackImpl;
 		this.scheduler=scheduler;
 		
 		this.ni=ni;
 		this.localSpc=localSpc;
+		this.automaticTimerMessages = automaticTimerMessages;
 		
 		this.parameterFactory = new ISUPParameterFactoryImpl();
 		this.messageFactory = new ISUPMessageFactoryImpl(this.parameterFactory);
@@ -90,7 +88,11 @@ public class ISUPProviderImpl implements ISUPProvider {
 		return this.localSpc;
 	}
 
-	/*
+    public boolean isAutomaticTimerMessages() {
+        return automaticTimerMessages;
+    }
+
+    /*
 	 * (non-Javadoc)
 	 * 
 	 * @see

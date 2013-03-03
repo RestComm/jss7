@@ -196,18 +196,7 @@ class Circuit {
 		int si = Mtp3._SI_SERVICE_ISUP;
 		int ni = this.provider.getNi();
 		int sls = message.getSls() & 0x0F; //promote
-//		int ssi = ni << 2;
 
-	
-//		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-//		// encoding routing label
-//		bout.write((byte) (((ssi & 0x0F) << 4) | (si & 0x0F)));
-//		bout.write((byte) dpc);
-//		bout.write((byte) (((dpc >> 8) & 0x3F) | ((opc & 0x03) << 6)));
-//		bout.write((byte) (opc >> 2));
-//		bout.write((byte) (((opc >> 10) & 0x0F) | ((sls & 0x0F) << 4)));
-//		bout.write(encoded);
-//		byte[] msg = bout.toByteArray();
 
 		Mtp3TransferPrimitiveFactory factory = this.provider.stack.getMtp3UserPart().getMtp3TransferPrimitiveFactory();
 		Mtp3TransferPrimitive msg = factory.createMtp3TransferPrimitive(si, ni, 0, opc, dpc, sls, encoded);
@@ -935,9 +924,15 @@ class Circuit {
 				// start T1
 				startT1();
 				// send
-				provider.send(t1t5encodedREL);
+				if(provider.isAutomaticTimerMessages())
+				    try{
+				        //TODO: CI required ?
+				        provider.send(t1t5encodedREL);
+				    }catch(Exception e){
+				        e.printStackTrace();
+				    }
 				// notify user
-				ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t1t5REL, ISUPTimeoutEvent.T1 , dpc);
+				final ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t1t5REL, ISUPTimeoutEvent.T1 , dpc);
 				provider.deliver(timeoutEvent);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -986,13 +981,17 @@ class Circuit {
 					// restart T5
 					startT5();
 					// send
-					ResetCircuitMessage rcm = provider.getMessageFactory().createRSC(cic);
-					// avoid provider method, since we dont want other timer to be
-					// setup.
-					provider.sendMessage(rcm, dpc);
-
+					if(provider.isAutomaticTimerMessages())
+    					try{
+        					final ResetCircuitMessage rcm = provider.getMessageFactory().createRSC(cic);
+        					// avoid provider method, since we dont want other timer to be
+        					// setup.
+        					provider.sendMessage(rcm, dpc);
+    					} catch(Exception e){
+    					    e.printStackTrace();
+    					}
 					// notify user
-					ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t1t5REL, ISUPTimeoutEvent.T5 , dpc);
+					final ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t1t5REL, ISUPTimeoutEvent.T5 , dpc);
 					provider.deliver(timeoutEvent);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -1037,22 +1036,22 @@ class Circuit {
 				//cancel it
 				this.cancel();
 				// send REL
-				ReleaseMessage rel = provider.getMessageFactory().createREL(cic);
-
-				try {
-					CauseIndicators ci = provider.getParameterFactory().createCauseIndicators();
-					// TODO: add CI values
-					rel.setCauseIndicators(ci);
-					provider.sendMessage(rel, dpc);
-				} catch (ParameterException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				if(provider.isAutomaticTimerMessages())
+    				try {
+    	                final ReleaseMessage rel = provider.getMessageFactory().createREL(cic);
+    	                final CauseIndicators ci = provider.getParameterFactory().createCauseIndicators();
+    					ci.setCauseValue(CauseIndicators._CV_NORMAL_UNSPECIFIED);
+    					rel.setCauseIndicators(ci);
+    					provider.sendMessage(rel, dpc);
+    				} catch (ParameterException e) {
+    					// TODO Auto-generated catch block
+    					e.printStackTrace();
+    				} catch (IOException e) {
+    					// TODO Auto-generated catch block
+    					e.printStackTrace();
+    				}
 				// notify user
-				ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t7AddressMessage, ISUPTimeoutEvent.T7 , dpc);
+				final ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t7AddressMessage, ISUPTimeoutEvent.T7 , dpc);
 				t7AddressMessage = null;
 				provider.deliver(timeoutEvent);
 			} catch (Exception e) {
@@ -1100,9 +1099,14 @@ class Circuit {
 				// start T12
 				startT12();
 				// send
-				provider.send(t12t13encodedBLO);
+				if(provider.isAutomaticTimerMessages())
+				    try{
+				        provider.send(t12t13encodedBLO);
+				    }catch(Exception e){
+				        e.printStackTrace();
+				    }
 				// notify user
-				ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t12t13BLO, ISUPTimeoutEvent.T12 , dpc);
+				final ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t12t13BLO, ISUPTimeoutEvent.T12 , dpc);
 				provider.deliver(timeoutEvent);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1151,9 +1155,14 @@ class Circuit {
 				// restart T13
 				startT13();
 				// send
-				provider.send(t12t13encodedBLO);
+				if(provider.isAutomaticTimerMessages())
+				    try{
+				        provider.send(t12t13encodedBLO);
+				    }catch(Exception e){
+				        e.printStackTrace();
+				    }
 				// notify user
-				ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t12t13BLO, ISUPTimeoutEvent.T13 , dpc);
+				final ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t12t13BLO, ISUPTimeoutEvent.T13 , dpc);
 				provider.deliver(timeoutEvent);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1200,9 +1209,14 @@ class Circuit {
 				// start T14				
 				startT14();
 				// send
-				provider.send(t14t15encodedUBL);
+				if(provider.isAutomaticTimerMessages())
+				    try{
+				        provider.send(t14t15encodedUBL);
+				    }catch(Exception e){
+				        e.printStackTrace();
+				    }
 				// notify user
-				ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t14t15UBL, ISUPTimeoutEvent.T14 , dpc);
+				final ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t14t15UBL, ISUPTimeoutEvent.T14 , dpc);
 				provider.deliver(timeoutEvent);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1251,9 +1265,14 @@ class Circuit {
 				// start
 				startT15();
 				// send
-				provider.send(t14t15encodedUBL);
+				if(provider.isAutomaticTimerMessages())
+				    try{
+				        provider.send(t14t15encodedUBL);
+				    } catch(Exception e){
+				        e.printStackTrace();
+				    }
 				// notify user
-				ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t14t15UBL, ISUPTimeoutEvent.T15 , dpc);
+				final ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t14t15UBL, ISUPTimeoutEvent.T15 , dpc);
 				provider.deliver(timeoutEvent);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1300,9 +1319,14 @@ class Circuit {
 				// start T14
 				startT16();
 				// send
-				provider.send(t16t17encodedRSC);
+				if(provider.isAutomaticTimerMessages())
+				    try{
+				        provider.send(t16t17encodedRSC);
+				    }catch(Exception e){
+				        e.printStackTrace();
+				    }
 				// notify user
-				ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t16t17RSC, ISUPTimeoutEvent.T16 , dpc);
+				final ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t16t17RSC, ISUPTimeoutEvent.T16 , dpc);
 				provider.deliver(timeoutEvent);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1351,9 +1375,14 @@ class Circuit {
 				// restart T17
 				startT17();
 				// send
-				provider.send(t16t17encodedRSC);
+				if(provider.isAutomaticTimerMessages())
+				    try{
+				        provider.send(t16t17encodedRSC);
+				    }catch(Exception e){
+				        e.printStackTrace();
+				    }
 				// notify user
-				ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t16t17RSC, ISUPTimeoutEvent.T17 , dpc);
+				final ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t16t17RSC, ISUPTimeoutEvent.T17 , dpc);
 				provider.deliver(timeoutEvent);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1400,9 +1429,14 @@ class Circuit {
 				// start T18
 				startT18();
 				// send
-				provider.send(t18t19encodedCGB);
+				if(provider.isAutomaticTimerMessages())
+				    try{
+				        provider.send(t18t19encodedCGB);
+				    }catch(Exception e){
+				        e.printStackTrace();
+				    }
 				// notify user
-				ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t18t19CGB, ISUPTimeoutEvent.T18 , dpc);
+				final ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t18t19CGB, ISUPTimeoutEvent.T18 , dpc);
 				provider.deliver(timeoutEvent);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1451,9 +1485,14 @@ class Circuit {
 				// restart T19
 				startT19();
 				// send
+				if(provider.isAutomaticTimerMessages())
+				    try{
 				provider.send(t18t19encodedCGB);
+				    }catch(Exception e){
+				        e.printStackTrace();
+				    }
 				// notify user
-				ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t18t19CGB, ISUPTimeoutEvent.T19 , dpc);
+				final ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t18t19CGB, ISUPTimeoutEvent.T19 , dpc);
 				provider.deliver(timeoutEvent);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1500,9 +1539,14 @@ class Circuit {
 				// start T20
 				startT20();
 				// send
-				provider.send(t20t21encodedCGU);
+				if(provider.isAutomaticTimerMessages())
+				    try{
+				        provider.send(t20t21encodedCGU);
+				    }catch(Exception e){
+				        e.printStackTrace();
+				    }
 				// notify user
-				ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t20t21CGU, ISUPTimeoutEvent.T20 , dpc);
+				final ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t20t21CGU, ISUPTimeoutEvent.T20 , dpc);
 				provider.deliver(timeoutEvent);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1551,9 +1595,14 @@ class Circuit {
 				// restart T21
 				startT21();
 				// send
-				provider.send(t20t21encodedCGU);
+				if(provider.isAutomaticTimerMessages())
+				    try{
+				        provider.send(t20t21encodedCGU);
+				    }catch(Exception e){
+				        e.printStackTrace();
+				    }
 				// notify user
-				ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t20t21CGU, ISUPTimeoutEvent.T21 , dpc);
+				final ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t20t21CGU, ISUPTimeoutEvent.T21 , dpc);
 				provider.deliver(timeoutEvent);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1600,9 +1649,14 @@ class Circuit {
 				// start T22
 				startT22();
 				// send
-				provider.send(t22t23encodedGRS);
+				if(provider.isAutomaticTimerMessages())
+				    try{
+				        provider.send(t22t23encodedGRS);
+				    }catch(Exception e){
+				        e.printStackTrace();
+				    }
 				// notify user
-				ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t22t23GRS, ISUPTimeoutEvent.T22 , dpc);
+				final ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t22t23GRS, ISUPTimeoutEvent.T22 , dpc);
 				provider.deliver(timeoutEvent);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1651,9 +1705,14 @@ class Circuit {
 				// restart T23
 				startT23();
 				// send
-				provider.send(t22t23encodedGRS);
+				if(provider.isAutomaticTimerMessages())
+				    try{
+				        provider.send(t22t23encodedGRS);
+				    }catch(Exception e){
+				        e.printStackTrace();
+				    }
 				// notify user
-				ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t22t23GRS, ISUPTimeoutEvent.T23 , dpc);
+				final ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t22t23GRS, ISUPTimeoutEvent.T23 , dpc);
 				provider.deliver(timeoutEvent);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1698,9 +1757,11 @@ class Circuit {
 				// remove us
 				this.cancel();
 				// notify user
-				ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t28CQM, ISUPTimeoutEvent.T28 , dpc);
-				provider.deliver(timeoutEvent);
+				final CircuitGroupQueryMessage msg = t28CQM;
 				t28CQM = null;
+				ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, msg, ISUPTimeoutEvent.T28 , dpc);
+				provider.deliver(timeoutEvent);
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -1743,27 +1804,29 @@ class Circuit {
 				lock.lock();
 				// remove us
 				this.cancel();
+				// send REL
+				if(provider.isAutomaticTimerMessages())
+                    try {
+                        final ReleaseMessage rel = provider.getMessageFactory().createREL(cic);
+                        final CauseIndicators ci = provider.getParameterFactory().createCauseIndicators();
+                        ci.setCauseValue(CauseIndicators._CV_NORMAL_UNSPECIFIED);
+                        rel.setCauseIndicators(ci);
+                        provider.sendMessage(rel,dpc);
+                    } catch (ParameterException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+				final InformationRequestMessage msg = t33INR;
+				t33INR = null;
 				// notify user
-				ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, t33INR, ISUPTimeoutEvent.T33 , dpc);
+				final ISUPTimeoutEvent timeoutEvent = new ISUPTimeoutEvent(provider, msg, ISUPTimeoutEvent.T33 , dpc);
 				provider.deliver(timeoutEvent);
 				// FIXME: do this after call, to prevent send of another msg
-				t33INR = null;
-
-				// send REL
-				ReleaseMessage rel = provider.getMessageFactory().createREL(cic);
-
-				try {
-					CauseIndicators ci = provider.getParameterFactory().createCauseIndicators();
-					// TODO: add CI values
-					rel.setCauseIndicators(ci);
-					provider.sendMessage(rel,dpc);
-				} catch (ParameterException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {

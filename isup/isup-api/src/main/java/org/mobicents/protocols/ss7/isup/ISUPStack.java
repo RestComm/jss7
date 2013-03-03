@@ -28,13 +28,7 @@
  */
 package org.mobicents.protocols.ss7.isup;
 
-import java.util.Properties;
-
-import javax.naming.ConfigurationException;
-
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
-
-import org.mobicents.protocols.ss7.scheduler.Scheduler;
 
 /**
  * Start time:09:07:18 2009-08-30<br>
