@@ -1438,8 +1438,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 
 	@Override
 	public void onErrorComponent(MAPDialog mapDialog, Long invokeId, MAPErrorMessage mapErrorMessage) {
-		// TODO Auto-generated method stub
-		
+		msgDetailBuffer.add(mapErrorMessage.toString());
 	}
 
 	@Override

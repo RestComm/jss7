@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -37,7 +37,9 @@ ReportSM-DeliveryStatusRes ::= SEQUENCE {
 MAP V2:
 RESULT
 	storedMSISDN ISDN-AddressString
-
+	-- optional
+	-- storedMSISDN must be absent in version 1
+	-- storedMSISDN must be present in version greater 1
 * 
 * 
 * 

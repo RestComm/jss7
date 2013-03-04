@@ -24,7 +24,7 @@ package org.mobicents.protocols.ss7.map.service.sms;
 
 import java.util.Arrays;
 
-import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
+import static org.testng.Assert.*;import org.testng.annotations.*;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;

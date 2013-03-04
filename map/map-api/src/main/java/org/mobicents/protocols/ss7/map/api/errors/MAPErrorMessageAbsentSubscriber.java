@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -26,25 +26,34 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
 *
-* absentSubscriber  ERROR ::= {
-* 	PARAMETER
-* 		AbsentSubscriberParam
-* 		-- optional
-* 		-- AbsentSubscriberParam must not be used in version <3
-* 	CODE	local:27 }
-* 
-* 
-* AbsentSubscriberParam ::= SEQUENCE {
-* 	extensionContainer	ExtensionContainer	OPTIONAL,
-* 	...,
-* 	absentSubscriberReason	[0] AbsentSubscriberReason	OPTIONAL}
-* 
+MAP V2-3
+absentSubscriber  ERROR ::= {
+	PARAMETER
+ 		AbsentSubscriberParam
+ 		-- optional
+ 		-- AbsentSubscriberParam must not be used in version <3
+ 	CODE	local:27 }
+
+AbsentSubscriberParam ::= SEQUENCE {
+ 	extensionContainer	ExtensionContainer	OPTIONAL,
+ 	...,
+ 	absentSubscriberReason	[0] AbsentSubscriberReason	OPTIONAL}
+ 
+MAP V1
+AbsentSubscriber ::= ERROR
+	PARAMETER
+	mwd-Set BOOLEAN
+	-- optional
+	-- mwd-Set must be absent in version greater 1
+ 
+ 
 * 
 * @author sergey vetyutnev
 * 
 */
 public interface MAPErrorMessageAbsentSubscriber extends MAPErrorMessage {
 	
+	// following is for MAP V3 only
 	public MAPExtensionContainer getExtensionContainer();
 
 	public AbsentSubscriberReason getAbsentSubscriberReason();
@@ -53,6 +62,10 @@ public interface MAPErrorMessageAbsentSubscriber extends MAPErrorMessage {
 
 	public void setAbsentSubscriberReason(AbsentSubscriberReason absentSubscriberReason);
 
-}
+	// following is for MAP V1 only
+	public Boolean getMwdSet();
 
+	public void setMwdSet(Boolean val);
+
+}
 

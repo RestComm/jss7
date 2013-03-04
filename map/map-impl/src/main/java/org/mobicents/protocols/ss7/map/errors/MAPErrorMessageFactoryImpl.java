@@ -213,6 +213,10 @@ public class MAPErrorMessageFactoryImpl implements MAPErrorMessageFactory {
 		return new MAPErrorMessageAbsentSubscriberImpl(extensionContainer, absentSubscriberReason);
 	}
 
+	public MAPErrorMessageAbsentSubscriber createMAPErrorMessageAbsentSubscriber(Boolean mwdSet) {
+		return new MAPErrorMessageAbsentSubscriberImpl(mwdSet);
+	}
+
 	public MAPErrorMessageUnauthorizedLCSClient createMAPErrorMessageUnauthorizedLCSClient(UnauthorizedLCSClientDiagnostic unauthorizedLCSClientDiagnostic,
 			MAPExtensionContainer extensionContainer) {
 		return new MAPErrorMessageUnauthorizedLCSClientImpl(unauthorizedLCSClientDiagnostic, extensionContainer);
