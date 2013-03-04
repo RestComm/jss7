@@ -57,8 +57,8 @@ public class SendRoutingInfoForSMResponseImpl extends SmsMessageImpl implements 
 	private LocationInfoWithLMSI locationInfoWithLMSI;
 	private MAPExtensionContainer extensionContainer;
 	private Boolean mwdSet;
-	
-	
+
+
 	public SendRoutingInfoForSMResponseImpl() {
 	}	
 	

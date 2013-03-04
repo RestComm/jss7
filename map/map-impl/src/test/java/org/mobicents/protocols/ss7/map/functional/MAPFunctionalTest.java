@@ -3518,11 +3518,12 @@ public class MAPFunctionalTest extends SccpHarness {
 	}
 
 	/**
+	 * MAP V3
 	 * TC-BEGIN + ReportSMDeliveryStatusRequest
 	 * TC-END + ReportSMDeliveryStatusResponse  
 	 */
 	@Test(groups = { "functional.flow", "dialog" })
-	public void testReportSMDeliveryStatusRequest() throws Exception {
+	public void testReportSMDeliveryStatusRequestV3() throws Exception {
 		// Action_Sms_ReportSMDeliveryStatus
 
 		Client client = new Client(stack1, this, peer1Address, peer2Address) {
@@ -3640,7 +3641,136 @@ public class MAPFunctionalTest extends SccpHarness {
 		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
 		serverExpectedEvents.add(te);
 
-		client.sendReportSMDeliveryStatus();
+		client.sendReportSMDeliveryStatus3();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	/**
+	 * MAP V2
+	 * TC-BEGIN + ReportSMDeliveryStatusRequest
+	 * TC-END + ReportSMDeliveryStatusResponse  
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testReportSMDeliveryStatusRequestV2() throws Exception {
+		// Action_Sms_ReportSMDeliveryStatus
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onReportSMDeliveryStatusResponse(ReportSMDeliveryStatusResponse reportSMDeliveryStatusRespInd) {
+				super.onReportSMDeliveryStatusResponse(reportSMDeliveryStatusRespInd);
+				ISDNAddressString storedMSISDN = reportSMDeliveryStatusRespInd.getStoredMSISDN();
+				MAPExtensionContainer extensionContainer = reportSMDeliveryStatusRespInd.getExtensionContainer();
+
+				Assert.assertNotNull(storedMSISDN);
+				Assert.assertEquals(storedMSISDN.getAddressNature(), AddressNature.network_specific_number);
+				Assert.assertEquals(storedMSISDN.getNumberingPlan(), NumberingPlan.national);
+				Assert.assertEquals(storedMSISDN.getAddress(), "111000111");
+				Assert.assertNull(extensionContainer);
+
+			}
+
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onReportSMDeliveryStatusRequest(ReportSMDeliveryStatusRequest reportSMDeliveryStatusInd) {
+				super.onReportSMDeliveryStatusRequest(reportSMDeliveryStatusInd);
+
+				MAPDialogSms d = reportSMDeliveryStatusInd.getMAPDialog();
+
+				ISDNAddressString msisdn = reportSMDeliveryStatusInd.getMsisdn();
+				AddressString sca = reportSMDeliveryStatusInd.getServiceCentreAddress();
+				SMDeliveryOutcome sMDeliveryOutcome = reportSMDeliveryStatusInd.getSMDeliveryOutcome();
+
+				Integer absentSubscriberDiagnosticSM = reportSMDeliveryStatusInd.getAbsentSubscriberDiagnosticSM();
+				MAPExtensionContainer extensionContainer = reportSMDeliveryStatusInd.getExtensionContainer();
+				boolean gprsSupportIndicator = reportSMDeliveryStatusInd.getGprsSupportIndicator();
+				boolean deliveryOutcomeIndicator = reportSMDeliveryStatusInd.getDeliveryOutcomeIndicator();
+				SMDeliveryOutcome additionalSMDeliveryOutcome = reportSMDeliveryStatusInd.getAdditionalSMDeliveryOutcome();
+				Integer additionalAbsentSubscriberDiagnosticSM = reportSMDeliveryStatusInd.getAdditionalAbsentSubscriberDiagnosticSM();
+
+				Assert.assertNotNull(msisdn);
+				Assert.assertEquals(msisdn.getAddressNature(), AddressNature.international_number);
+				Assert.assertEquals(msisdn.getNumberingPlan(), NumberingPlan.ISDN);
+				Assert.assertEquals(msisdn.getAddress(), "111222333");
+				Assert.assertNotNull(sca);
+				Assert.assertEquals(sca.getAddressNature(), AddressNature.network_specific_number);
+				Assert.assertEquals(sca.getNumberingPlan(), NumberingPlan.national);
+				Assert.assertEquals(sca.getAddress(), "999000");
+				Assert.assertEquals(sMDeliveryOutcome, SMDeliveryOutcome.absentSubscriber);
+
+				Assert.assertNull(absentSubscriberDiagnosticSM);
+				Assert.assertFalse(gprsSupportIndicator);
+				Assert.assertFalse(deliveryOutcomeIndicator);
+				Assert.assertNull(additionalSMDeliveryOutcome);
+				Assert.assertNull(additionalAbsentSubscriberDiagnosticSM);
+				Assert.assertNull(extensionContainer);
+
+				ISDNAddressString storedMSISDN = this.mapParameterFactory.createISDNAddressString(AddressNature.network_specific_number,
+						NumberingPlan.national, "111000111");
+
+				try {
+					d.addReportSMDeliveryStatusResponse(reportSMDeliveryStatusInd.getInvokeId(), storedMSISDN, null);
+				} catch (MAPException e) {
+					this.error("Error while adding ReportSMDeliveryStatusResponse", e);
+				}
+
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.ReportSMDeliveryStatusRespIndication, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending the empty ForwardShortMessageResponse", e);
+					fail("Error while sending the empty ForwardShortMessageResponse");
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.ReportSMDeliveryStatusIndication, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ReportSMDeliveryStatusRespIndication, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.ReportSMDeliveryStatusIndication, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.ReportSMDeliveryStatusRespIndication, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendReportSMDeliveryStatus2();
 		waitForEnd();
 		client.compareEvents(clientExpectedEvents);
 		server.compareEvents(serverExpectedEvents);

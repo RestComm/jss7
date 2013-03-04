@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -210,6 +210,15 @@ public class MAPErrorMessageTest   {
 		return par;
 	}
 
+	private Parameter getDataAbsentSubscriberV1() {
+		Parameter par = new ParameterImpl();
+		par.setData(new byte[] { (byte) 255 });
+		par.setPrimitive(true);
+		par.setTagClass(Tag.CLASS_UNIVERSAL);
+		par.setTag(Tag.BOOLEAN);
+		return par;
+	}
+
 	private Parameter getDataUnauthorizedLCSClientFull() {
 		Parameter par = new ParameterImpl();
 		par.setData(new byte[] { (byte) 128, 1, 2, (byte) 161, 39, (byte) 160, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11,
@@ -414,6 +423,17 @@ public class MAPErrorMessageTest   {
 		MAPErrorMessageAbsentSubscriber emAbsentSubscriber = em.getEmAbsentSubscriber();
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(emAbsentSubscriber.getExtensionContainer()));
 		assertEquals( emAbsentSubscriber.getAbsentSubscriberReason(),AbsentSubscriberReason.purgedMS);
+		assertNull( emAbsentSubscriber.getMwdSet());
+
+		p = getDataAbsentSubscriberV1();
+		em = (MAPErrorMessageImpl)fact.createMessageFromErrorCode((long) MAPErrorCode.absentSubscriber);
+		ais = new AsnInputStream(p.getData(), p.getTagClass(), p.isPrimitive(), p.getTag());
+		em.decodeData(ais, p.getData().length);
+		assertTrue(em.isEmAbsentSubscriber());
+		emAbsentSubscriber = em.getEmAbsentSubscriber();
+		assertNull(emAbsentSubscriber.getExtensionContainer());
+		assertNull(emAbsentSubscriber.getAbsentSubscriberReason());
+		assertTrue(emAbsentSubscriber.getMwdSet());
 
 		p = getDataUnauthorizedLCSClientFull();
 		em = (MAPErrorMessageImpl) fact.createMessageFromErrorCode((long) MAPErrorCode.unauthorizedLCSClient);
@@ -635,6 +655,16 @@ public class MAPErrorMessageTest   {
 		p.setPrimitive(em.getIsPrimitive());
 		p.setData(aos.toByteArray());
 		assertParameter( getDataAbsentSubscriberFull(),p);
+
+		em = (MAPErrorMessageImpl) fact.createMAPErrorMessageAbsentSubscriber(true);
+		aos = new AsnOutputStream();
+		em.encodeData(aos);
+		p = new ParameterImpl();
+		p.setTagClass(em.getTagClass());
+		p.setTag(em.getTag());
+		p.setPrimitive(em.getIsPrimitive());
+		p.setData(aos.toByteArray());
+		assertParameter( getDataAbsentSubscriberV1(),p);
 
 		em = (MAPErrorMessageImpl) fact.createMAPErrorMessageUnauthorizedLCSClient(UnauthorizedLCSClientDiagnostic.callToClientNotSetup,
 				MAPExtensionContainerTest.GetTestExtensionContainer());

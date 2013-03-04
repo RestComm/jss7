@@ -443,9 +443,8 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 		oc.setLocalOperationCode((long) MAPOperationCode.reportSM_DeliveryStatus);
 		resultLast.setOperationCode(oc);
 
-		if (storedMSISDN != null || extensionContainer != null) {
-
-			ReportSMDeliveryStatusResponseImpl resp = new ReportSMDeliveryStatusResponseImpl(storedMSISDN, extensionContainer);
+		if (vers.getVersion() == 3 && (storedMSISDN != null || extensionContainer != null) || vers.getVersion() == 2 && storedMSISDN != null) {
+			ReportSMDeliveryStatusResponseImpl resp = new ReportSMDeliveryStatusResponseImpl(vers.getVersion(), storedMSISDN, extensionContainer);
 			AsnOutputStream aos = new AsnOutputStream();
 			resp.encodeData(aos);
 

@@ -228,7 +228,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 				if (compType == ComponentType.Invoke)
 					this.reportSMDeliveryStatusRequest(parameter, mapDialogSmsImpl, invokeId);
 				else
-					this.reportSMDeliveryStatusResponse(parameter, mapDialogSmsImpl, invokeId);
+					this.reportSMDeliveryStatusResponse(parameter, mapDialogSmsImpl, invokeId, vers);
 			}
 			break;
 
@@ -513,15 +513,23 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 		}
 	}
 	
-	private void reportSMDeliveryStatusResponse(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
-		
-		ReportSMDeliveryStatusResponseImpl ind = new ReportSMDeliveryStatusResponseImpl();
+	private void reportSMDeliveryStatusResponse(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId, long mapProtocolVersion)
+			throws MAPParsingComponentException {
+
+		ReportSMDeliveryStatusResponseImpl ind = new ReportSMDeliveryStatusResponseImpl(mapProtocolVersion);
 
 		if (parameter != null) {
-			if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
-				throw new MAPParsingComponentException(
-						"Error while decoding reportSMDeliveryStatusResponse: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
-						MAPParsingComponentExceptionReason.MistypedParameter);
+			if (mapProtocolVersion >= 3) {
+				if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+					throw new MAPParsingComponentException(
+							"Error while decoding reportSMDeliveryStatusResponse: Bad tag or tagClass or parameter is primitive, received tag="
+									+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+			} else {
+				if (parameter.getTag() != Tag.STRING_OCTET || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || !parameter.isPrimitive())
+					throw new MAPParsingComponentException(
+							"Error while decoding reportSMDeliveryStatusResponse: Bad tag or tagClass or parameter is primitive, received tag="
+									+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+			}
 
 			byte[] buf = parameter.getData();
 			AsnInputStream ais = new AsnInputStream(buf);

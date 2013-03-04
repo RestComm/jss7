@@ -65,6 +65,8 @@ public interface MAPErrorMessageFactory {
 	public MAPErrorMessageAbsentSubscriberSM createMAPErrorMessageAbsentSubscriberSM(Integer absentSubscriberDiagnosticSM,
 			MAPExtensionContainer extensionContainer, Integer additionalAbsentSubscriberDiagnosticSM);
 
+	public MAPErrorMessageAbsentSubscriber createMAPErrorMessageAbsentSubscriber(Boolean mwdSet);
+
 	public MAPErrorMessageSubscriberBusyForMtSms createMAPErrorMessageSubscriberBusyForMtSms(MAPExtensionContainer extensionContainer,
 			Boolean gprsConnectionSuspended);
 

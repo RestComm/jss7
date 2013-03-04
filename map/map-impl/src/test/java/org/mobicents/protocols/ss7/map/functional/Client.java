@@ -537,8 +537,8 @@ public class Client extends EventTestHarness {
 		clientDialogSms.send();
 
 	}
-	
-	public void sendReportSMDeliveryStatus() throws Exception {
+
+	public void sendReportSMDeliveryStatus3() throws Exception {
 
 		this.mapProvider.getMAPServiceSms().acivate();
 
@@ -568,9 +568,28 @@ public class Client extends EventTestHarness {
 
 		this.observerdEvents.add(TestEvent.createSentEvent(EventType.ReportSMDeliveryStatusIndication, null, sequence++));
 		clientDialogSms.send();
-
 	}	
-	
+
+	public void sendReportSMDeliveryStatus2() throws Exception {
+
+		this.mapProvider.getMAPServiceSms().acivate();
+
+		MAPApplicationContext appCnt = null;
+
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.shortMsgGatewayContext, MAPApplicationContextVersion.version2);
+
+		clientDialogSms = this.mapProvider.getMAPServiceSms().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+
+		ISDNAddressString msisdn1 = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
+		AddressString serviceCentreAddress = this.mapParameterFactory.createAddressString(AddressNature.network_specific_number, NumberingPlan.national,
+				"999000");
+		SMDeliveryOutcome sMDeliveryOutcome = SMDeliveryOutcome.absentSubscriber;
+		clientDialogSms.addReportSMDeliveryStatusRequest(sequence, msisdn1, serviceCentreAddress, sMDeliveryOutcome, null, null, false, false, null, null);
+
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.ReportSMDeliveryStatusIndication, null, sequence++));
+		clientDialogSms.send();
+	}
+
 	public void sendSendRoutingInfoForSM() throws Exception {
 
 		this.mapProvider.getMAPServiceSms().acivate();
