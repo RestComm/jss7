@@ -497,24 +497,23 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 			if (imsi != null)
 				destImsi = imsi.getData();
 		}
-		String serviceCentreAddr = null;
+		AddressString serviceCentreAddr = null;
 		
 		if (oa != null) {
-			AddressString sca = oa.getServiceCentreAddressOA();
-			if (sca != null)
-				serviceCentreAddr = sca.getAddress();
+			serviceCentreAddr = oa.getServiceCentreAddressOA();
 		}
 
 		try {
 			String msg = null;
-			String origIsdnNumber = null;
+//			String origIsdnNumber = null;
+			SmsDeliverTpdu dTpdu = null;
 			if (si != null) {
 				SmsTpdu tpdu = si.decodeTpdu(false);
 				if (tpdu instanceof SmsDeliverTpdu) {
-					SmsDeliverTpdu dTpdu = (SmsDeliverTpdu) tpdu;
-					AddressField af = dTpdu.getOriginatingAddress();
-					if (af != null)
-						origIsdnNumber = af.getAddressValue();
+					dTpdu = (SmsDeliverTpdu) tpdu;
+//					AddressField af = dTpdu.getOriginatingAddress();
+//					if (af != null)
+//						origIsdnNumber = af.getAddressValue();
 					UserData ud = dTpdu.getUserData();
 					if (ud != null) {
 						ud.decode();
@@ -522,7 +521,7 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 					}
 				}
 			}
-			String uData = this.createMtData(curDialog.getLocalDialogId(), destImsi, origIsdnNumber, serviceCentreAddr);
+			String uData = this.createMtData(curDialog, destImsi, dTpdu, serviceCentreAddr);
 			this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: mtReq: " + msg, uData, Level.DEBUG);
 		} catch (MAPException e) {
 			this.testerHost.sendNotif(SOURCE_NAME, "Exception when decoding MtForwardShortMessageRequest tpdu : " + e.getMessage(), e, Level.ERROR);
@@ -585,17 +584,22 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 		}		
 	}
 
-	private String createMtData(long dialogId, String destImsi, String origIsdnNumber, String serviceCentreAddr) {
+	private String createMtData(MAPDialogSms dialog, String destImsi, SmsDeliverTpdu dTpdu, AddressString serviceCentreAddr) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("dialogId=");
-		sb.append(dialogId);
-		sb.append(", destImsi=\"");
+		sb.append(dialog.getLocalDialogId());
+		sb.append(",\ndestImsi=\"");
 		sb.append(destImsi);
-		sb.append(", origIsdnNumber=\"");
-		sb.append(origIsdnNumber);
-		sb.append("\", serviceCentreAddr=\"");
+		sb.append(",\"\nserviceCentreAddr=\"");
 		sb.append(serviceCentreAddr);
-		sb.append("\"");
+		sb.append(",\"\nsmsDeliverTpdu=");
+		sb.append(dTpdu);
+
+		sb.append(",\nRemoteAddress=");
+		sb.append(dialog.getRemoteAddress());
+		sb.append(",\nLocalAddress=");
+		sb.append(dialog.getLocalAddress());
+
 		return sb.toString();
 	}
 
@@ -616,7 +620,8 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 		MAPDialogSms curDialog = ind.getMAPDialog();
 		long invokeId = ind.getInvokeId();
 
-		String uData = this.createSriData(curDialog.getLocalDialogId(), ind.getMsisdn().getAddress(), ind.getServiceCentreAddress().getAddress());
+//		String uData = this.createSriData(curDialog.getLocalDialogId(), ind.getMsisdn().getAddress(), ind.getServiceCentreAddress().getAddress());
+		String uData = this.createSriData(ind);
 		this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: sriReq", uData, Level.DEBUG);
 
 
@@ -633,35 +638,37 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 			this.needSendClose = true;
 
 			this.countSriResp++;
-			uData = this.createSriRespData(curDialog.getLocalDialogId(), this.testerHost.getConfigurationData().getTestSmsClientConfigurationData()
-					.getSriResponseImsi(), this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getSriResponseVlr());
+			uData = this.createSriRespData(curDialog.getLocalDialogId(), imsi, li);
 			this.testerHost.sendNotif(SOURCE_NAME, "Sent: sriResp", uData, Level.DEBUG);
 		} catch (MAPException e) {
 			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking addSendRoutingInfoForSMResponse() : " + e.getMessage(), e, Level.ERROR);
 		}
 	}
 
-	private String createSriData(long dialogId, String destIsdnNumber, String serviceCentreAddr) {
+	private String createSriData(SendRoutingInfoForSMRequest ind) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("dialogId=");
-		sb.append(dialogId);
-		sb.append(", destIsdnNumber=\"");
-		sb.append(destIsdnNumber);
-		sb.append("\", serviceCentreAddr=\"");
-		sb.append(serviceCentreAddr);
-		sb.append("\"");
+		sb.append(ind.getMAPDialog().getLocalDialogId());
+		sb.append(",\nsriReq=");
+		sb.append(ind);
+
+		sb.append(",\nRemoteAddress=");
+		sb.append(ind.getMAPDialog().getRemoteAddress());
+		sb.append(",\nLocalAddress=");
+		sb.append(ind.getMAPDialog().getLocalAddress());
+
 		return sb.toString();
 	}
 
-	private String createSriRespData(long dialogId, String imsi, String vlrNumber) {
+	private String createSriRespData(long dialogId, IMSI imsi, LocationInfoWithLMSI li) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("dialogId=");
 		sb.append(dialogId);
-		sb.append(", imsi=\"");
+		sb.append(",\n imsi=");
 		sb.append(imsi);
-		sb.append("\", vlrNumber=\"");
-		sb.append(vlrNumber);
-		sb.append("\"");
+		sb.append(",\n locationInfo=");
+		sb.append(li);
+		sb.append(",\n");
 		return sb.toString();
 	}
 
