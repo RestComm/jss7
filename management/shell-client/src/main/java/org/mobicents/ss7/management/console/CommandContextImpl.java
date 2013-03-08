@@ -37,6 +37,8 @@ public class CommandContextImpl implements CommandContext {
 
 	public static final String CONNECTED_AUTHENTICATING_MESSAGE = "Authenticating against configured security realm";
 	
+	public static final String CLOSING_CONNECTION_MESSAGE = "Closing this connection";
+	
 	private MessageFactory messageFactory = ChannelProvider.provider().getMessageFactory();
 
 	private String prompt;
@@ -207,6 +209,8 @@ public class CommandContextImpl implements CommandContext {
 					this.printLine(message.toString());
 					this.disconnectController();
 				}
+			} else if(mesage.contains(CLOSING_CONNECTION_MESSAGE)){
+				this.disconnectController();
 			}
 		} catch (Exception e) {
 			this.printLine(e.getMessage());
@@ -294,7 +298,7 @@ public class CommandContextImpl implements CommandContext {
 			}
 		} catch (IOException e) {
 			this.printLine(e.getMessage());
-			this.terminateSession();
+			this.disconnectController();
 		}
 	}
 
