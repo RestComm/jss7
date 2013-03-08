@@ -37,6 +37,7 @@
 	</properties>
 
 	<modules>
+		<module>docs</module>
 		<module>scheduler</module>
 		<module>congestion</module>
 		<module>management</module>
