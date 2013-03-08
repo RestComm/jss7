@@ -115,8 +115,9 @@ public class ShellServer extends Task {
 
 		try {
 			skey.cancel();
-			if (channel != null) {
-				channel.close();
+			if (this.channel != null) {
+				this.channel.close();
+				this.channel = null;
 			}
 			serverChannel.close();
 			selector.close();
@@ -215,23 +216,57 @@ public class ShellServer extends Task {
 	}
 
 	private void accept() throws IOException {
-		channel = serverChannel.accept();
-		skey.cancel();
-		skey = channel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+		ShellChannel channelTmp = serverChannel.accept();
 
-		channel.send(messageFactory.createMessage(String.format(CONNECTED_MESSAGE, this.version.getProperty("name"),
-				this.version.getProperty("version"), this.version.getProperty("vendor"))));
+		if (logger.isDebugEnabled()) {
+			logger.debug("Accepting client connection. Remote Address= " + channelTmp.getRemoteAddress());
+		}
+
+		if (this.channel != null) {
+			String exitmessage = "Already client from " + this.channel.getRemoteAddress()
+					+ " is connected. Closing this connection";
+			
+			logger.warn(exitmessage);
+
+			channelTmp.sendImmediate(messageFactory.createMessage(exitmessage));
+
+			channelTmp.close();
+			return;
+		}
+
+		this.channel = channelTmp;
+
+		// skey.cancel();
+		// skey = this.channel.register(selector, SelectionKey.OP_READ |
+		// SelectionKey.OP_WRITE);
+		this.channel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+
+		String messageToSend = String.format(CONNECTED_MESSAGE, this.version.getProperty("name"),
+				this.version.getProperty("version"), this.version.getProperty("vendor"));
+		this.channel.send(messageFactory.createMessage(messageToSend));
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Sent message to remote client= " + messageToSend);
+		}
+
 	}
 
 	private void closeChannel() throws IOException {
-		if (channel != null) {
+		if (this.channel != null) {
 			try {
 				this.channel.close();
 			} catch (IOException e) {
 				logger.error("Error closing channel", e);
 			}
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("Closed client connection. Remote Address= " + this.channel.getRemoteAddress());
+			}
+
+			this.channel = null;
 		}
-		skey.cancel();
-		skey = serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+
+		// skey.cancel();
+		// skey = serverChannel.register(selector, SelectionKey.OP_ACCEPT);
 	}
 }

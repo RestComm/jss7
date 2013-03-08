@@ -86,7 +86,7 @@ public class Client {
         	return provider.getMessageFactory().createMessage("Not yet connected");
         }
 
-        int count = 300;
+        int count = 30;
         wrote = false;
 
         // Wait for 300 secs to get message
@@ -118,7 +118,7 @@ public class Client {
             }
             count--;
         }// end of while
-        return null;
+        throw new IOException("No response from server");
 
     }
 
