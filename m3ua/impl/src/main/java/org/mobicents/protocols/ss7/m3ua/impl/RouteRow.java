@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.m3ua.impl;
 import javolution.util.FastSet;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.m3ua.State;
 import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3Primitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
@@ -31,7 +32,7 @@ import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class RouteRow implements AsStateListener {
 	private static final Logger logger = Logger.getLogger(RouteRow.class);
@@ -59,8 +60,8 @@ public class RouteRow implements AsStateListener {
 		this.servedByAsSet.add(asImpl);
 		asImpl.addAsStateListener(this);
 	}
-	
-	protected int servedByAsSize(){
+
+	protected int servedByAsSize() {
 		return this.servedByAsSet.size();
 	}
 
@@ -92,6 +93,17 @@ public class RouteRow implements AsStateListener {
 		// Send MTP3 PAUSE to MTP3 user only if its not already sent for this
 		// DPC
 		if (this.mtp3Status != Mtp3Primitive.PAUSE) {
+
+			for (FastSet.Record r = this.servedByAsSet.head(), end = this.servedByAsSet.tail(); (r = r.getNext()) != end;) {
+				AsImpl asImplTmp = this.servedByAsSet.valueOf(r);
+				if ((asImplTmp.getState().getName().equals(State.STATE_ACTIVE))
+						|| (asImplTmp.getState().getName().equals(State.STATE_PENDING))) {
+					// If there are more AS in ACTIVE || PENDING state, no need
+					// to call PAUSE for this DPC
+					return;
+				}
+			}
+
 			this.mtp3Status = Mtp3Primitive.PAUSE;
 			Mtp3PausePrimitive mtp3PausePrimitive = new Mtp3PausePrimitive(this.dpc);
 			this.m3uaManagement.sendPauseMessageToLocalUser(mtp3PausePrimitive);

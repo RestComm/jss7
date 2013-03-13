@@ -22,6 +22,7 @@
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
@@ -71,6 +72,7 @@ import org.mobicents.protocols.ss7.mtp.Mtp3Primitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3StatusPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitiveFactory;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPartListener;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
@@ -464,6 +466,177 @@ public class RemSgFSMTest {
 		ASPDownAck aspDownAck = (ASPDownAck) messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE,
 				MessageType.ASP_DOWN_ACK);
 		localAspFactory.read(aspDownAck);
+	}
+
+	@Test
+	public void testTwoAsInLoadBalance() throws Exception {
+		int m3uaManagementEventsSeq = 0;
+
+		Mtp3TransferPrimitiveFactory factory = this.clientM3UAMgmt.getMtp3TransferPrimitiveFactory();
+		
+		this.transportManagement.addAssociation(null, 0, null, 0, "testAssoc1");
+
+		this.transportManagement.addAssociation(null, 0, null, 0, "testAssoc2");
+
+		// Define 1st AS
+		AsImpl remAs1 = (AsImpl) this.clientM3UAMgmt.createAs("testas1", Functionality.AS, ExchangeType.SE, null, null,
+				null, 1, null);
+		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AsCreated, System
+				.currentTimeMillis(), new Object[] { remAs1 }, m3uaManagementEventsSeq++)));
+
+		// Define 2nd AS
+		AsImpl remAs2 = (AsImpl) clientM3UAMgmt.createAs("testas2", Functionality.AS, ExchangeType.SE, null, null, null,
+				1, null);
+		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AsCreated, System
+				.currentTimeMillis(), new Object[] { remAs2 }, m3uaManagementEventsSeq++)));
+
+		// Define AspFactory 1
+		AspFactoryImpl aspFactoryImpl1 = (AspFactoryImpl) clientM3UAMgmt.createAspFactory("testasp1", "testAssoc1");
+		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AspFactoryCreated,
+				System.currentTimeMillis(), new Object[] { aspFactoryImpl1 }, m3uaManagementEventsSeq++)));
+
+		// Define AspFactory 2
+		AspFactoryImpl aspFactoryImpl2 = (AspFactoryImpl) clientM3UAMgmt.createAspFactory("testasp2", "testAssoc2");
+		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AspFactoryCreated,
+				System.currentTimeMillis(), new Object[] { aspFactoryImpl2 }, m3uaManagementEventsSeq++)));
+		
+		// TODO : Call start from management
+		aspFactoryImpl1.start();
+		aspFactoryImpl2.start();
+		
+		AspImpl remAsp1 = clientM3UAMgmt.assignAspToAs("testas1", "testasp1");
+		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AspAssignedToAs,
+				System.currentTimeMillis(), new Object[] { remAs1, remAsp1 }, m3uaManagementEventsSeq++)));
+
+		AspImpl remAsp2 = clientM3UAMgmt.assignAspToAs("testas2", "testasp2");
+		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AspAssignedToAs,
+				System.currentTimeMillis(), new Object[] { remAs2, remAsp2 }, m3uaManagementEventsSeq++)));
+		
+		// Create Route
+		this.clientM3UAMgmt.addRoute(2, -1, -1, "testas1");
+		this.clientM3UAMgmt.addRoute(2, -1, -1, "testas2");
+		
+		// Signal for Communication UP
+		TestAssociation testAssociation1 = (TestAssociation) this.transportManagement.getAssociation("testAssoc1");
+		testAssociation1.signalCommUp();
+		
+		// Signal for Communication UP
+		TestAssociation testAssociation2 = (TestAssociation) this.transportManagement.getAssociation("testAssoc2");
+		testAssociation2.signalCommUp();
+		
+		// Once communication is UP, ASP_UP should have been sent.
+		assertTrue(validateMessage(testAssociation1, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP, -1, -1));
+		assertTrue(validateMessage(testAssociation2, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP, -1, -1));
+		
+		
+		// The other side will send ASP_UP_ACK and after that NTFY(AS-INACTIVE)
+		// for both the AS
+		M3UAMessageImpl message = messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE,
+				MessageType.ASP_UP_ACK);
+		aspFactoryImpl1.read(message);
+		aspFactoryImpl2.read(message);
+		
+		Notify notify = (Notify) messageFactory.createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
+		Status status = parmFactory.createStatus(Status.STATUS_AS_State_Change, Status.INFO_AS_INACTIVE);
+		notify.setStatus(status);
+		aspFactoryImpl1.read(notify);
+		aspFactoryImpl2.read(notify);
+		
+		// The other side will send ASP_ACTIVE_ACK and after that NTFY(AS-ACTIVE)
+		ASPActiveAck aspActiveAck = (ASPActiveAck) messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE,
+				MessageType.ASP_ACTIVE_ACK);
+		aspFactoryImpl1.read(aspActiveAck);
+		aspFactoryImpl2.read(aspActiveAck);
+		
+		notify = (Notify) messageFactory.createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
+		status = parmFactory.createStatus(Status.STATUS_AS_State_Change, Status.INFO_AS_ACTIVE);
+		notify.setStatus(status);
+		aspFactoryImpl1.read(notify);
+		
+		// Check if MTP3 RESUME received
+		// lets wait for 2second to receive the MTP3 primitive before giving up
+		semaphore.tryAcquire(2000, TimeUnit.MILLISECONDS);
+		
+		//The route should be RESUME
+		Mtp3Primitive mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
+		assertNotNull(mtp3Primitive);
+		assertEquals(Mtp3Primitive.RESUME, mtp3Primitive.getType());
+		
+		aspFactoryImpl2.read(notify);
+		
+		
+		// Send Transfer Message and check load balancing behavior
+		// int si, int ni, int mp, int opc, int dpc, int sls, byte[] data,
+		// RoutingLabelFormat pointCodeFormat
+		
+		testAssociation1.clearRxMessages();
+		testAssociation2.clearRxMessages();
+		
+		for (int sls = 0; sls < 256; sls++) {
+			Mtp3TransferPrimitive mtp3TransferPrimitive = factory.createMtp3TransferPrimitive(3, 1, 0, 1, 2, sls,
+					new byte[] { 1, 2, 3, 4 });
+			clientM3UAMgmt.sendMessage(mtp3TransferPrimitive);
+		}
+
+		for (int count = 0; count < 128; count++) {
+			assertTrue(validateMessage(testAssociation1, MessageClass.TRANSFER_MESSAGES, MessageType.PAYLOAD, -1, -1));
+		}
+
+		for (int count = 0; count < 128; count++) {
+			assertTrue(validateMessage(testAssociation2, MessageClass.TRANSFER_MESSAGES, MessageType.PAYLOAD, -1, -1));
+		}
+		
+		
+		// No more messages to be transmitted
+		assertFalse(validateMessage(testAssociation1, MessageClass.TRANSFER_MESSAGES, MessageType.PAYLOAD, -1, -1));
+		assertFalse(validateMessage(testAssociation2, MessageClass.TRANSFER_MESSAGES, MessageType.PAYLOAD, -1, -1));
+		
+		//Bring down one AS1
+		// Lets stop ASP Factory
+		aspFactoryImpl1.stop();
+		
+		ASPDownAck aspDownAck = (ASPDownAck) messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE,
+				MessageType.ASP_DOWN_ACK);
+		aspFactoryImpl1.read(aspDownAck);
+		
+		// lets wait for 3 seconds to receive the MTP3 primitive before giving
+		// up. We know Pending timeout is 2 secs
+		semaphore.tryAcquire(3000, TimeUnit.MILLISECONDS);
+		// PAUSE for DPC 2
+		mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
+		assertNull(mtp3Primitive);
+		
+		
+		//Lets send the Payload again and this time it will be always go from AS2
+		testAssociation1.clearRxMessages();
+		testAssociation2.clearRxMessages();
+		
+		for (int sls = 0; sls < 256; sls++) {
+			Mtp3TransferPrimitive mtp3TransferPrimitive = factory.createMtp3TransferPrimitive(3, 1, 0, 1, 2, sls,
+					new byte[] { 1, 2, 3, 4 });
+			clientM3UAMgmt.sendMessage(mtp3TransferPrimitive);
+		}
+
+		for (int count = 0; count < 256; count++) {
+			assertTrue(validateMessage(testAssociation2, MessageClass.TRANSFER_MESSAGES, MessageType.PAYLOAD, -1, -1));
+		}
+		
+		assertFalse(validateMessage(testAssociation1, MessageClass.TRANSFER_MESSAGES, MessageType.PAYLOAD, -1, -1));
+		assertFalse(validateMessage(testAssociation2, MessageClass.TRANSFER_MESSAGES, MessageType.PAYLOAD, -1, -1));
+		
+		//Bring down one AS2
+		// Lets stop ASP Factory
+		aspFactoryImpl2.stop();
+		aspFactoryImpl2.read(aspDownAck);
+		
+		// lets wait for 3 seconds to receive the MTP3 primitive before giving
+		// up. We know Pending timeout is 2 secs
+		semaphore.tryAcquire(3000, TimeUnit.MILLISECONDS);
+		// PAUSE for DPC 2
+		mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
+		assertNotNull(mtp3Primitive);
+		assertEquals(Mtp3Primitive.PAUSE, mtp3Primitive.getType());
+		assertEquals(2, mtp3Primitive.getAffectedDpc());
 	}
 
 	@Test
@@ -864,19 +1037,19 @@ public class RemSgFSMTest {
 		testAssociation2.signalCommUp();
 		assertEquals(AspState.UP_SENT, this.getAspState(asp2LocalFSM));
 		assertEquals(remAsp2.getState().getName(), State.STATE_DOWN);
-		
+
 		// ASP_UP should have been sent.
 		assertTrue(validateMessage(testAssociation2, MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP, -1, -1));
 		// Far end send ASP_UP_ACK
 		message = messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP_ACK);
 		aspFactory2.read(message);
-		
+
 		// ASP2 now is INACTIVE as ASP1 is still ACTIVATING
 		assertEquals(AspState.INACTIVE, this.getAspState(asp2LocalFSM));
 		assertEquals(remAsp2.getState().getName(), State.STATE_INACTIVE);
 		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AspInactive, System
 				.currentTimeMillis(), new Object[] { remAsp2 }, m3uaManagementEventsSeq++)));
-		
+
 		// Bring down ASP1
 		// 5.2.1. 1+1 Sparing, Withdrawal of ASP, Backup Override
 		testAssociation1.signalCommLost();
@@ -885,12 +1058,12 @@ public class RemSgFSMTest {
 		assertEquals(remAsp1.getState().getName(), State.STATE_DOWN);
 		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AspDown, System
 				.currentTimeMillis(), new Object[] { remAsp1 }, m3uaManagementEventsSeq++)));
-		
+
 		assertEquals(AsState.PENDING, this.getAsState(asPeerFSM));
 		assertEquals(remAs.getState().getName(), State.STATE_PENDING);
 		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AsPending, System
 				.currentTimeMillis(), new Object[] { remAs }, m3uaManagementEventsSeq++)));
-		
+
 		// Aslo the ASP_ACTIVE for ASP2 should have been sent
 		assertEquals(AspState.ACTIVE_SENT, this.getAspState(asp2LocalFSM));
 		assertTrue(validateMessage(testAssociation2, MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE, -1,
@@ -903,7 +1076,7 @@ public class RemSgFSMTest {
 				MessageType.ASP_ACTIVE_ACK);
 		aspActiveAck.setRoutingContext(rc);
 		aspFactory2.read(aspActiveAck);
-		
+
 		assertEquals(AspState.ACTIVE, this.getAspState(asp2LocalFSM));
 		assertEquals(remAsp2.getState().getName(), State.STATE_ACTIVE);
 		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AspActive, System
@@ -919,7 +1092,7 @@ public class RemSgFSMTest {
 		assertEquals(AsState.ACTIVE, this.getAsState(asPeerFSM));
 		assertEquals(remAs.getState().getName(), State.STATE_ACTIVE);
 		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AsActive, System
-				.currentTimeMillis(), new Object[] { remAs }, m3uaManagementEventsSeq++)));		
+				.currentTimeMillis(), new Object[] { remAs }, m3uaManagementEventsSeq++)));
 
 		assertNull(testAssociation1.txPoll());
 		assertNull(testAssociation2.txPoll());
@@ -1151,6 +1324,10 @@ public class RemSgFSMTest {
 
 		TestAssociation(String name) {
 			this.name = name;
+		}
+		
+		void clearRxMessages(){
+			this.messageRxFromUserPart.clear();
 		}
 
 		M3UAMessage txPoll() {
@@ -1655,13 +1832,13 @@ public class RemSgFSMTest {
 		@Override
 		public void onServiceStarted() {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void onServiceStopped() {
 			// TODO Auto-generated method stub
-			
+
 		}
 	}
 }
