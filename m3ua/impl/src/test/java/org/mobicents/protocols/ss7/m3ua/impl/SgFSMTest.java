@@ -22,6 +22,7 @@
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
@@ -51,6 +52,7 @@ import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.M3UAManagementEventListener;
 import org.mobicents.protocols.ss7.m3ua.State;
+import org.mobicents.protocols.ss7.m3ua.impl.RemSgFSMTest.TestAssociation;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.message.M3UAMessageImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.message.MessageFactoryImpl;
@@ -62,6 +64,8 @@ import org.mobicents.protocols.ss7.m3ua.impl.parameter.ProtocolDataImpl;
 import org.mobicents.protocols.ss7.m3ua.message.M3UAMessage;
 import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
 import org.mobicents.protocols.ss7.m3ua.message.MessageType;
+import org.mobicents.protocols.ss7.m3ua.message.aspsm.ASPDownAck;
+import org.mobicents.protocols.ss7.m3ua.message.asptm.ASPActiveAck;
 import org.mobicents.protocols.ss7.m3ua.message.mgmt.Notify;
 import org.mobicents.protocols.ss7.m3ua.parameter.DestinationPointCode;
 import org.mobicents.protocols.ss7.m3ua.parameter.ErrorCode;
@@ -831,6 +835,159 @@ public class SgFSMTest {
 		// assertNull(testAssociation2.txPoll());
 
 	}
+	
+	@Test
+	public void testTwoAsInLoadBalance() throws Exception {
+		int m3uaManagementEventsSeq = 0;
+
+		Mtp3TransferPrimitiveFactory factory = this.serverM3UAMgmt.getMtp3TransferPrimitiveFactory();
+		
+		this.transportManagement.addAssociation(null, 0, null, 0, "testAssoc1");
+
+		this.transportManagement.addAssociation(null, 0, null, 0, "testAssoc2");
+
+		// Define 1st AS
+		AsImpl remAs1 = (AsImpl) this.serverM3UAMgmt.createAs("testas1", Functionality.SGW, ExchangeType.SE, null, null,
+				null, 1, null);
+		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AsCreated, System
+				.currentTimeMillis(), new Object[] { remAs1 }, m3uaManagementEventsSeq++)));
+
+		// Define 2nd AS
+		AsImpl remAs2 = (AsImpl) serverM3UAMgmt.createAs("testas2", Functionality.SGW, ExchangeType.SE, null, null, null,
+				1, null);
+		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AsCreated, System
+				.currentTimeMillis(), new Object[] { remAs2 }, m3uaManagementEventsSeq++)));
+
+		// Define AspFactory 1
+		AspFactoryImpl aspFactoryImpl1 = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp1", "testAssoc1");
+		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AspFactoryCreated,
+				System.currentTimeMillis(), new Object[] { aspFactoryImpl1 }, m3uaManagementEventsSeq++)));
+
+		// Define AspFactory 2
+		AspFactoryImpl aspFactoryImpl2 = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp2", "testAssoc2");
+		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AspFactoryCreated,
+				System.currentTimeMillis(), new Object[] { aspFactoryImpl2 }, m3uaManagementEventsSeq++)));
+		
+		// TODO : Call start from management
+		aspFactoryImpl1.start();
+		aspFactoryImpl2.start();
+		
+		AspImpl remAsp1 = serverM3UAMgmt.assignAspToAs("testas1", "testasp1");
+		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AspAssignedToAs,
+				System.currentTimeMillis(), new Object[] { remAs1, remAsp1 }, m3uaManagementEventsSeq++)));
+
+		AspImpl remAsp2 = serverM3UAMgmt.assignAspToAs("testas2", "testasp2");
+		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AspAssignedToAs,
+				System.currentTimeMillis(), new Object[] { remAs2, remAsp2 }, m3uaManagementEventsSeq++)));
+		
+		// Create Route
+		this.serverM3UAMgmt.addRoute(2, -1, -1, "testas1");
+		this.serverM3UAMgmt.addRoute(2, -1, -1, "testas2");
+		
+		// Signal for Communication UP
+		TestAssociation testAssociation1 = (TestAssociation) this.transportManagement.getAssociation("testAssoc1");
+		testAssociation1.signalCommUp();
+		
+		// Signal for Communication UP
+		TestAssociation testAssociation2 = (TestAssociation) this.transportManagement.getAssociation("testAssoc2");
+		testAssociation2.signalCommUp();
+
+		
+		// Check for ASP_UP for ASP1/2
+		M3UAMessageImpl message = messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP);
+		aspFactoryImpl1.read(message);
+		aspFactoryImpl2.read(message);
+		
+		// Check for ASP_ACTIVE for ASP1/2
+		message = messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE);
+		aspFactoryImpl1.read(message);
+		
+		// Check if MTP3 RESUME received
+		// lets wait for 2second to receive the MTP3 primitive before giving up
+		semaphore.tryAcquire(2000, TimeUnit.MILLISECONDS);
+		
+		//The route should be RESUME
+		Mtp3Primitive mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
+		assertNotNull(mtp3Primitive);
+		assertEquals(Mtp3Primitive.RESUME, mtp3Primitive.getType());
+		
+		aspFactoryImpl2.read(message);
+		
+		
+		// Send Transfer Message and check load balancing behavior
+		// int si, int ni, int mp, int opc, int dpc, int sls, byte[] data,
+		// RoutingLabelFormat pointCodeFormat
+		
+		testAssociation1.clearRxMessages();
+		testAssociation2.clearRxMessages();
+		
+		for (int sls = 0; sls < 256; sls++) {
+			Mtp3TransferPrimitive mtp3TransferPrimitive = factory.createMtp3TransferPrimitive(3, 1, 0, 1, 2, sls,
+					new byte[] { 1, 2, 3, 4 });
+			serverM3UAMgmt.sendMessage(mtp3TransferPrimitive);
+		}
+
+		for (int count = 0; count < 128; count++) {
+			assertTrue(validateMessage(testAssociation1, MessageClass.TRANSFER_MESSAGES, MessageType.PAYLOAD, -1, -1));
+		}
+
+		for (int count = 0; count < 128; count++) {
+			assertTrue(validateMessage(testAssociation2, MessageClass.TRANSFER_MESSAGES, MessageType.PAYLOAD, -1, -1));
+		}
+		
+		//No more messages to be transmitted
+		assertFalse(validateMessage(testAssociation1, MessageClass.TRANSFER_MESSAGES, MessageType.PAYLOAD, -1, -1));
+		assertFalse(validateMessage(testAssociation2, MessageClass.TRANSFER_MESSAGES, MessageType.PAYLOAD, -1, -1));
+		
+		// bring DOWN ASP1.
+		message = messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_INACTIVE);
+		aspFactoryImpl1.read(message);
+		
+		message = messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN);
+		aspFactoryImpl1.read(message);
+		
+		// lets wait for 3 seconds to receive the MTP3 primitive before giving
+		// up. We know Pending timeout is 2 secs
+		semaphore.tryAcquire(3000, TimeUnit.MILLISECONDS);
+		// PAUSE for DPC 2
+		mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
+		assertNull(mtp3Primitive);
+		
+		
+		//Lets send the Payload again and this time it will be always go from AS2
+		testAssociation1.clearRxMessages();
+		testAssociation2.clearRxMessages();
+		
+		for (int sls = 0; sls < 256; sls++) {
+			Mtp3TransferPrimitive mtp3TransferPrimitive = factory.createMtp3TransferPrimitive(3, 1, 0, 1, 2, sls,
+					new byte[] { 1, 2, 3, 4 });
+			serverM3UAMgmt.sendMessage(mtp3TransferPrimitive);
+		}
+
+		for (int count = 0; count < 256; count++) {
+			assertTrue(validateMessage(testAssociation2, MessageClass.TRANSFER_MESSAGES, MessageType.PAYLOAD, -1, -1));
+		}
+		
+		//No more messages to be transmitted
+		assertFalse(validateMessage(testAssociation1, MessageClass.TRANSFER_MESSAGES, MessageType.PAYLOAD, -1, -1));
+		assertFalse(validateMessage(testAssociation2, MessageClass.TRANSFER_MESSAGES, MessageType.PAYLOAD, -1, -1));
+		
+		// bring DOWN ASP2.
+		message = messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_INACTIVE);
+		aspFactoryImpl2.read(message);
+		
+		message = messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN);
+		aspFactoryImpl2.read(message);
+		
+		// lets wait for 3 seconds to receive the MTP3 primitive before giving
+		// up. We know Pending timeout is 2 secs
+		semaphore.tryAcquire(3000, TimeUnit.MILLISECONDS);
+		// PAUSE for DPC 2
+		mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
+		assertNotNull(mtp3Primitive);
+		assertEquals(Mtp3Primitive.PAUSE, mtp3Primitive.getType());
+		assertEquals(2, mtp3Primitive.getAffectedDpc());
+	}	
 
 	@Test
 	public void testTwoAspInAsLoadshare() throws Exception {
@@ -1364,6 +1521,10 @@ public class SgFSMTest {
 
 		M3UAMessage txPoll() {
 			return messageRxFromUserPart.poll();
+		}
+		
+		void clearRxMessages(){
+			this.messageRxFromUserPart.clear();
 		}
 
 		@Override
