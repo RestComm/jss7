@@ -198,27 +198,42 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 
 			seqControl = seqControl & slsFilter;
 			this.msgDeliveryExecutors[this.slsTable[seqControl]].execute(hdl);
+		} else {
+			logger.error(String.format(
+					"Received Mtp3TransferPrimitive=%s but Mtp3UserPart is not started. Message will be dropped", msg));
 		}
 	}
 
 	protected void sendPauseMessageToLocalUser(Mtp3PausePrimitive msg) {
 		if (this.isStarted) {
-			MsgSystemDeliveryHandler hdl = new MsgSystemDeliveryHandler(msg, null, null);
+			MsgSystemDeliveryHandler hdl = new MsgSystemDeliveryHandler(msg);
 			this.msgDeliveryExecutorSystem.execute(hdl);
+		} else {
+			logger.error(String.format(
+					"Received Mtp3PausePrimitive=%s but Mtp3PausePrimitive is not started. Message will be dropped",
+					msg));
 		}
 	}
 
 	protected void sendResumeMessageToLocalUser(Mtp3ResumePrimitive msg) {
 		if (this.isStarted) {
-			MsgSystemDeliveryHandler hdl = new MsgSystemDeliveryHandler(null, msg, null);
+			MsgSystemDeliveryHandler hdl = new MsgSystemDeliveryHandler(msg);
 			this.msgDeliveryExecutorSystem.execute(hdl);
+		} else {
+			logger.error(String.format(
+					"Received Mtp3ResumePrimitive=%s but Mtp3PausePrimitive is not started. Message will be dropped",
+					msg));
 		}
 	}
 
 	protected void sendStatusMessageToLocalUser(Mtp3StatusPrimitive msg) {
 		if (this.isStarted) {
-			MsgSystemDeliveryHandler hdl = new MsgSystemDeliveryHandler(null, null, msg);
+			MsgSystemDeliveryHandler hdl = new MsgSystemDeliveryHandler(msg);
 			this.msgDeliveryExecutorSystem.execute(hdl);
+		} else {
+			logger.error(String.format(
+					"Received Mtp3StatusPrimitive=%s but Mtp3PausePrimitive is not started. Message will be dropped",
+					msg));
 		}
 	}
 
@@ -250,20 +265,19 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 				} catch (Exception e) {
 					logger.error("Exception while delivering a system messages to the MTP3-user: " + e.getMessage(), e);
 				}
+			} else {
+				logger.error(String.format(
+						"Received Mtp3TransferPrimitive=%s but Mtp3UserPart is not started. Message will be dropped", msg));
 			}
 		}
 	}
 
 	private class MsgSystemDeliveryHandler implements Runnable {
 
-		private Mtp3PausePrimitive pauseMsg;
-		private Mtp3ResumePrimitive resumeMsg;
-		private Mtp3StatusPrimitive statusMsg;
+		Mtp3Primitive msg;
 
-		public MsgSystemDeliveryHandler(Mtp3PausePrimitive pauseMsg, Mtp3ResumePrimitive resumeMsg, Mtp3StatusPrimitive statusMsg) {
-			this.pauseMsg = pauseMsg;
-			this.resumeMsg = resumeMsg;
-			this.statusMsg = statusMsg;
+		public MsgSystemDeliveryHandler(Mtp3Primitive msg) {
+			this.msg = msg;
 		}
 
 		@Override
@@ -271,16 +285,19 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 			if (isStarted) {
 				try {
 					for (Mtp3UserPartListener lsn : userListeners) {
-						if (this.pauseMsg != null)
-							lsn.onMtp3PauseMessage(this.pauseMsg);
-						if (this.resumeMsg != null)
-							lsn.onMtp3ResumeMessage(this.resumeMsg);
-						if (this.statusMsg != null)
-							lsn.onMtp3StatusMessage(this.statusMsg);
+						if (this.msg.getType() == Mtp3Primitive.PAUSE)
+							lsn.onMtp3PauseMessage((Mtp3PausePrimitive)this.msg);
+						if (this.msg.getType() == Mtp3Primitive.RESUME)
+							lsn.onMtp3ResumeMessage((Mtp3ResumePrimitive)this.msg);
+						if (this.msg.getType() == Mtp3Primitive.STATUS)
+							lsn.onMtp3StatusMessage((Mtp3StatusPrimitive)this.msg);
 					}
 				} catch (Exception e) {
 					logger.error("Exception while delivering a payload messages to the MTP3-user: " + e.getMessage(), e);
 				}
+			} else {
+				logger.error(String.format(
+						"Received Mtp3Primitive=%s but Mtp3UserPart is not started. Message will be dropped", msg));
 			}
 		}
 	}
