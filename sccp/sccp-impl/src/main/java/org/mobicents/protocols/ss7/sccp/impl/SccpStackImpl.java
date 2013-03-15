@@ -628,6 +628,9 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 					return;
 				}
 				if (remoteSpc.isRemoteSpcProhibited()) {
+					if (logger.isEnabledFor(Level.WARN)) {
+						logger.warn(String.format("Incoming Mtp3 Message for nonlocal dpc=%d. But RemoteSpc is Prohibited", dpc));
+					}
 					return;
 				}			
 				Mtp3ServiceAccessPoint sap = this.router.findMtp3ServiceAccessPoint(dpc, sls);
@@ -651,7 +654,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
 			// process only SCCP messages
 			if (mtp3Msg.getSi() != Mtp3._SI_SERVICE_SCCP){
-				logger.warn(String.format("Received Mtp3TransferPrimitive from lower layer with Service Indicator=%d whic is not SCCP. Dropping this message", mtp3Msg.getSi()));
+				logger.warn(String.format("Received Mtp3TransferPrimitive from lower layer with Service Indicator=%d which is not SCCP. Dropping this message", mtp3Msg.getSi()));
 				return;
 			}
 
@@ -760,6 +763,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 				sccpRoutingControl.routeMssgFromMtp(msgAddr);
 			} else {
 				// TODO: implement non-addresses message processing (these are connected-oriented messages in the connected phase)
+				logger.warn(String.format("Rx SCCP message which is not instance of SccpAddressedMessage or SccpSegmentableMessage. Will be dropped. Message=", msg));
 			}
 		} catch (IOException e) {
 			logger.error("IOException while decoding SCCP message: " + e.getMessage(), e);
