@@ -88,6 +88,7 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
 	private static final String ASSOCIATION_NAME = "assocName";
 	private static final String MAX_SEQUENCE_NUMBER = "maxseqnumber";
 	private static final String ASP_ID = "aspid";
+	private static final String HEART_BEAT = "heartbeat";
 
 	protected String name;
 
@@ -129,19 +130,26 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
 
 	protected AspFactoryStopTimer aspFactoryStopTimer = null;
 
+	protected HeartBeatTimer heartBeatTimer = null;
+	private boolean isHeartBeatEnabled = false;
+
 	public AspFactoryImpl() {
 		// clean transmission buffer
 		txBuffer.clear();
 		txBuffer.rewind();
 		txBuffer.flip();
+
+		this.heartBeatTimer = new HeartBeatTimer(this);
 	}
 
-	public AspFactoryImpl(String name, int maxSequenceNumber, long aspId) {
+	public AspFactoryImpl(String name, int maxSequenceNumber, long aspId, boolean isHeartBeatEnabled) {
 		this();
 		this.name = name;
 		this.maxSequenceNumber = maxSequenceNumber;
 		this.slsTable = new int[this.maxSequenceNumber];
 		this.aspid = parameterFactory.createASPIdentifier(aspId);
+
+		this.isHeartBeatEnabled = isHeartBeatEnabled;
 	}
 
 	/**
@@ -171,6 +179,10 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
 		if (this.association == null)
 			return;
 
+		if (this.isHeartBeatEnabled) {
+			this.heartBeatTimer.cancel();
+		}
+
 		if (this.functionality == Functionality.AS
 				|| (this.functionality == Functionality.SGW && this.exchangeType == ExchangeType.DE)
 				|| (this.functionality == Functionality.IPSP && this.exchangeType == ExchangeType.DE)
@@ -187,7 +199,7 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
 						FSM aspLocalFSM = aspImpl.getLocalFSM();
 						aspLocalFSM.signal(TransitionState.ASP_DOWN_SENT);
 
-						AsImpl peerAs = (AsImpl)aspImpl.getAs();
+						AsImpl peerAs = (AsImpl) aspImpl.getAs();
 						FSM asPeerFSM = peerAs.getPeerFSM();
 
 						asPeerFSM.setAttribute(AsImpl.ATTRIBUTE_ASP, aspImpl);
@@ -209,7 +221,7 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
 						FSM aspLocalFSM = aspImpl.getLocalFSM();
 						aspLocalFSM.signal(TransitionState.COMM_DOWN);
 
-						AsImpl peerAs = (AsImpl)aspImpl.getAs();
+						AsImpl peerAs = (AsImpl) aspImpl.getAs();
 						FSM asPeerFSM = peerAs.getPeerFSM();
 						asPeerFSM.setAttribute(AsImpl.ATTRIBUTE_ASP, aspImpl);
 						asPeerFSM.signal(TransitionState.ASP_DOWN);
@@ -217,8 +229,8 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
 						logger.error(e.getMessage(), e);
 					}
 				}
-				
-				//Finally stop the association
+
+				// Finally stop the association
 				this.transportManagement.stopAssociation(this.association.getName());
 			}
 
@@ -385,6 +397,9 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
 				Heartbeat hrtBeat = (Heartbeat) message;
 				this.aspStateMaintenanceHandler.handleHeartbeat(hrtBeat);
 				break;
+			case MessageType.HEARTBEAT_ACK:
+				// Nothing to do
+				break;
 			default:
 				logger.error(String.format("Received ASPSM with invalid MessageType=%d message=%s",
 						message.getMessageType(), message));
@@ -517,6 +532,11 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
 	}
 
 	private void handleCommDown() {
+
+		if (this.isHeartBeatEnabled) {
+			this.heartBeatTimer.cancel();
+		}
+
 		for (FastList.Node<Asp> n = aspList.head(), end = aspList.tail(); (n = n.getNext()) != end;) {
 			AspImpl aspImpl = (AspImpl) n.getValue();
 			try {
@@ -530,7 +550,7 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
 					aspPeerFSM.signal(TransitionState.COMM_DOWN);
 				}
 
-				AsImpl asImpl = (AsImpl)aspImpl.getAs();
+				AsImpl asImpl = (AsImpl) aspImpl.getAs();
 
 				FSM asLocalFSM = asImpl.getLocalFSM();
 				if (asLocalFSM != null) {
@@ -562,6 +582,12 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
 	}
 
 	private void handleCommUp() {
+
+		if (this.isHeartBeatEnabled) {
+			this.heartBeatTimer.reset();
+			this.m3UAManagementImpl.m3uaScheduler.execute(this.heartBeatTimer);
+		}
+
 		if (this.functionality == Functionality.AS
 				|| (this.functionality == Functionality.SGW && this.exchangeType == ExchangeType.DE)
 				|| (this.functionality == Functionality.IPSP && this.exchangeType == ExchangeType.DE)
@@ -609,6 +635,8 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
 			long aspIdTemp = xml.getAttribute(ASP_ID, aspFactoryImpl.generateId());
 
 			aspFactoryImpl.aspid = aspFactoryImpl.parameterFactory.createASPIdentifier(aspIdTemp);
+
+			aspFactoryImpl.isHeartBeatEnabled = xml.getAttribute(HEART_BEAT, false);
 		}
 
 		@Override
@@ -619,6 +647,7 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
 			xml.setAttribute(STARTED, aspFactoryImpl.started);
 			xml.setAttribute(MAX_SEQUENCE_NUMBER, aspFactoryImpl.maxSequenceNumber);
 			xml.setAttribute(ASP_ID, aspFactoryImpl.aspid.getAspId());
+			xml.setAttribute(HEART_BEAT, aspFactoryImpl.isHeartBeatEnabled);
 		}
 	};
 
@@ -680,6 +709,9 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
 		if (association.getIpChannelType() == IpChannelType.SCTP) {
 			// TODO where is streamNumber stored?
 			m3UAMessage = this.messageFactory.createSctpMessage(m3uadata);
+			if (this.isHeartBeatEnabled) {
+				this.heartBeatTimer.reset();
+			}
 			this.read(m3UAMessage);
 		} else {
 			ByteBuffer buffer = ByteBuffer.wrap(m3uadata);
@@ -687,6 +719,10 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
 				m3UAMessage = this.messageFactory.createMessage(buffer);
 				if (m3UAMessage == null)
 					break;
+
+				if (this.isHeartBeatEnabled) {
+					this.heartBeatTimer.reset();
+				}
 				this.read(m3UAMessage);
 			}
 		}
@@ -708,7 +744,8 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
 
 	public void show(StringBuffer sb) {
 		sb.append(M3UAOAMMessages.SHOW_ASP_NAME).append(this.name).append(M3UAOAMMessages.SHOW_ASPID)
-				.append(this.aspid.getAspId()).append(M3UAOAMMessages.SHOW_SCTP_ASSOC).append(this.associationName)
+				.append(this.aspid.getAspId()).append(M3UAOAMMessages.SHOW_HEARTBEAT_ENABLED)
+				.append(this.isHeartBeatEnabled).append(M3UAOAMMessages.SHOW_SCTP_ASSOC).append(this.associationName)
 				.append(M3UAOAMMessages.SHOW_STARTED).append(this.started);
 
 		sb.append(M3UAOAMMessages.NEW_LINE);

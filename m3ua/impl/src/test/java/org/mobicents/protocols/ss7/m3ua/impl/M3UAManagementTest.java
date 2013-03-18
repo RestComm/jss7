@@ -1,6 +1,6 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
- * and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -97,7 +97,7 @@ public class M3UAManagementTest {
 		NetworkAppearance na = factory.createNetworkAppearance(12l);
 		AsImpl as1 = (AsImpl)this.m3uaMgmt.createAs("AS1", Functionality.AS, ExchangeType.SE, null, rc, null, 1, na);
 
-		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl)this.m3uaMgmt.createAspFactory("ASP1", "ASPAssoc1");
+		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl)this.m3uaMgmt.createAspFactory("ASP1", "ASPAssoc1", false);
 
 		this.m3uaMgmt.assignAspToAs("AS1", "ASP1");
 

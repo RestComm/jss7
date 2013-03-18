@@ -110,6 +110,8 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 	private ScheduledExecutorService fsmTicker;
 
 	protected int maxAsForRoute = 2;
+	
+	protected int timeBetweenHeartbeat = 10000; //10 sec default
 
 	private M3UARouteManagement routeManagement = null;
 
@@ -174,6 +176,14 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 
 	public void setMaxAsForRoute(int maxAsForRoute) {
 		this.maxAsForRoute = maxAsForRoute;
+	}
+	
+	public int getHeartbeatTime(){
+		return this.timeBetweenHeartbeat;
+	}
+	
+	public void setHeartbeatTime(int timeBetweenHeartbeat){
+		this.timeBetweenHeartbeat = timeBetweenHeartbeat;
 	}
 
 	public Management getTransportManagement() {
@@ -420,6 +430,18 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 
 		return as;
 	}
+	
+	/**
+	 * Create new {@link AspFactoryImpl} without passing optional aspid and heartbeat is false
+	 * 
+	 * @param aspName
+	 * @param associationName
+	 * @return
+	 * @throws Exception
+	 */
+	public AspFactory createAspFactory(String aspName, String associationName) throws Exception {
+		return this.createAspFactory(aspName, associationName, false);
+	}	
 
 	/**
 	 * Create new {@link AspFactoryImpl} without passing optional aspid
@@ -429,7 +451,7 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 	 * @return
 	 * @throws Exception
 	 */
-	public AspFactory createAspFactory(String aspName, String associationName) throws Exception {
+	public AspFactory createAspFactory(String aspName, String associationName, boolean isHeartBeatEnabled) throws Exception {
 		long aspid = 0l;
 		boolean regenerateFlag = true;
 
@@ -451,7 +473,7 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 			}// for
 		}// while
 
-		return this.createAspFactory(aspName, associationName, aspid);
+		return this.createAspFactory(aspName, associationName, aspid, isHeartBeatEnabled);
 	}
 
 	/**
@@ -459,7 +481,7 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 	 * Create new {@link AspFactoryImpl}
 	 * </p>
 	 * <p>
-	 * Command is m3ua asp create <asp-name> <sctp-association> aspid <aspid>
+	 * Command is m3ua asp create <asp-name> <sctp-association> aspid <aspid> heartbeat <true|false>
 	 * </p>
 	 * <p>
 	 * asp-name and sctp-association is mandatory where as aspid is optional. If
@@ -472,7 +494,7 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 	 * @return
 	 * @throws Exception
 	 */
-	public AspFactory createAspFactory(String aspName, String associationName, long aspid) throws Exception {
+	public AspFactory createAspFactory(String aspName, String associationName, long aspid, boolean isHeartBeatEnabled) throws Exception {
 		AspFactoryImpl factory = this.getAspFactory(aspName);
 
 		if (factory != null) {
@@ -499,7 +521,7 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 			}
 		}
 
-		factory = new AspFactoryImpl(aspName, this.getMaxSequenceNumber(), aspid);
+		factory = new AspFactoryImpl(aspName, this.getMaxSequenceNumber(), aspid, isHeartBeatEnabled);
 		factory.setM3UAManagement(this);
 		factory.setAssociation(association);
 		factory.setTransportManagement(this.transportManagement);

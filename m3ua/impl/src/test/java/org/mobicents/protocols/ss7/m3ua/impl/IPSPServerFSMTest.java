@@ -1,6 +1,6 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
- * and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -141,7 +141,7 @@ public class IPSPServerFSMTest {
 				rc, null, 1, null);
 		FSM asLocalFSM = remAs.getLocalFSM();
 
-		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
+		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp", "testAssoc1", false);
 
 		AspImpl remAsp = serverM3UAMgmt.assignAspToAs("testas", "testasp");
 
@@ -239,7 +239,7 @@ public class IPSPServerFSMTest {
 				null, null, 1, null);
 		FSM asLocalFSM = remAs.getLocalFSM();
 
-		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
+		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp", "testAssoc1", false);
 
 		AspImpl remAsp = serverM3UAMgmt.assignAspToAs("testas", "testasp");
 
@@ -340,7 +340,7 @@ public class IPSPServerFSMTest {
 		AsImpl remAs = (AsImpl) serverM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, IPSPType.SERVER,
 				rc, trModType, 1, null);
 
-		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
+		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp", "testAssoc1", false);
 
 		AspImpl remAsp = serverM3UAMgmt.assignAspToAs("testas", "testasp");
 
@@ -432,7 +432,7 @@ public class IPSPServerFSMTest {
 				rc, trModType, 1, null);
 		FSM asLocalFSM = remAs.getLocalFSM();
 
-		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
+		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp", "testAssoc1", false);
 
 		AspImpl remAsp = serverM3UAMgmt.assignAspToAs("testas", "testasp");
 

@@ -1,6 +1,6 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
- * and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -302,7 +302,7 @@ public class M3UAShellExecutor implements ShellExecutor {
 				return M3UAOAMMessages.INVALID_COMMAND;
 			} else if (args[1].equals("asp")) {
 
-				if (args.length < 3 || args.length > 7) {
+				if (args.length < 3 || args.length > 9) {
 					return M3UAOAMMessages.INVALID_COMMAND;
 				}
 
@@ -326,9 +326,11 @@ public class M3UAShellExecutor implements ShellExecutor {
 
 					AspFactory factory = null;
 					if (args.length == 5) {
-						factory = this.m3uaManagement.createAspFactory(aspname, assocName);
+						factory = this.m3uaManagement.createAspFactory(aspname, assocName, false);
 					} else {
 						int count = 5;
+						long aspid = 0;
+						boolean isHeartBeatEnabled = false;
 						while (count < args.length) {
 							String key = args[count++];
 							if (key == null) {
@@ -336,13 +338,14 @@ public class M3UAShellExecutor implements ShellExecutor {
 							}
 
 							if (key.equals("aspid")) {
-								long aspid = Long.parseLong(args[count++]);
-								factory = this.m3uaManagement.createAspFactory(aspname, assocName, aspid);
+								aspid = Long.parseLong(args[count++]);
+							} else if (key.equals("heartbeat")) {
+								isHeartBeatEnabled = Boolean.parseBoolean(args[count++]);
 							} else {
 								return M3UAOAMMessages.INVALID_COMMAND;
 							}
 						}
-
+						factory = this.m3uaManagement.createAspFactory(aspname, assocName, aspid,isHeartBeatEnabled);
 					}
 					return String.format(M3UAOAMMessages.CREATE_ASP_SUCESSFULL, factory.getName());
 				} else if (raspCmd.equals("destroy")) {

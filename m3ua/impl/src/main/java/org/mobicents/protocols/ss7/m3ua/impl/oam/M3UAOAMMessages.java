@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -131,6 +131,8 @@ public interface M3UAOAMMessages {
 	public static final String SHOW_SCTP_ASSOC = " sctpAssoc=";
 	
 	public static final String SHOW_ASPID = " aspid=";
+	
+	public static final String SHOW_HEARTBEAT_ENABLED = " heartbeat=";
 	
 	public static final String SHOW_STARTED = " started=";
 	

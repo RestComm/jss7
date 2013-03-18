@@ -86,6 +86,18 @@ public interface M3UAManagement {
 	 * @param maxAsForRoute
 	 */
 	public void setMaxAsForRoute(int maxAsForRoute);
+	
+	/**
+	 * Returns the time in millisecond between two heartbeats
+	 * @return
+	 */
+	public int getHeartbeatTime();
+	
+	/**
+	 * Set the time in milliseconds between two heartbeats. Heartbeat is only sent when MUA association is idle.
+	 * @param timeBetweenHeartbeat
+	 */
+	public void setHeartbeatTime(int timeBetweenHeartbeat);
 
 	/**
 	 * Start M3UA stack
@@ -162,9 +174,9 @@ public interface M3UAManagement {
 	 * @throws Exception
 	 */
 	public As destroyAs(String asName) throws Exception;
-
+	
 	/**
-	 * Create a new {@link AspFactory}. Unique ASP id is assigned
+	 * Create a new {@link AspFactory}. Unique ASP id is assigned. HEARTBEAT is disabled
 	 * 
 	 * @param aspName
 	 *            unique name of this AspFactory
@@ -173,7 +185,21 @@ public interface M3UAManagement {
 	 * @return newly created AspFactory
 	 * @throws Exception
 	 */
-	public AspFactory createAspFactory(String aspName, String associationName) throws Exception;
+	public AspFactory createAspFactory(String aspName, String associationName) throws Exception;	
+
+	/**
+	 * Create a new {@link AspFactory}. Unique ASP id is assigned
+	 * 
+	 * @param aspName
+	 *            unique name of this AspFactory
+	 * @param associationName
+	 *            the underlying SCTP Association to be used
+	 * @param isHeartBeatEnabled
+	 * 			Is the HEARTBEAT enabled for this association         
+	 * @return newly created AspFactory
+	 * @throws Exception
+	 */
+	public AspFactory createAspFactory(String aspName, String associationName, boolean isHeartBeatEnabled) throws Exception;
 
 	/**
 	 * Create a new {@link AspFactory}.
@@ -183,10 +209,12 @@ public interface M3UAManagement {
 	 * @param associationName
 	 * @param aspid
 	 *            unique asp id
+	 * @param isHeartBeatEnabled
+	 * 			Is the HEARTBEAT enabled for this association                  
 	 * @return newly created AspFactory
 	 * @throws Exception
 	 */
-	public AspFactory createAspFactory(String aspName, String associationName, long aspid) throws Exception;
+	public AspFactory createAspFactory(String aspName, String associationName, long aspid, boolean isHeartBeatEnabled) throws Exception;
 
 	/**
 	 * Destroys the {@link AspFactory} that matches the passed aspName. All the
