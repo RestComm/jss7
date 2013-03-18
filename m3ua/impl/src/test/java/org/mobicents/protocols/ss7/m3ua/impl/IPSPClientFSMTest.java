@@ -1,6 +1,6 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
- * and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -142,7 +142,7 @@ public class IPSPClientFSMTest {
 		// As as = rsgw.createAppServer("testas", rc, rKey, trModType);
 		AsImpl asImpl = (AsImpl)this.clientM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, null, rc, null, 1, null);
 
-		AspFactoryImpl localAspFactory = (AspFactoryImpl)this.clientM3UAMgmt.createAspFactory("testasp", "testAssoc1");
+		AspFactoryImpl localAspFactory = (AspFactoryImpl)this.clientM3UAMgmt.createAspFactory("testasp", "testAssoc1", false);
 		localAspFactory.start();
 
 		AspImpl aspImpl = this.clientM3UAMgmt.assignAspToAs("testas", "testasp");
@@ -252,7 +252,7 @@ public class IPSPClientFSMTest {
 		// As as = rsgw.createAppServer("testas", rc, rKey, trModType);
 		AsImpl asImpl = (AsImpl)this.clientM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, null, null, null, 1, null);
 
-		AspFactoryImpl localAspFactory = (AspFactoryImpl)this.clientM3UAMgmt.createAspFactory("testasp", "testAssoc1");
+		AspFactoryImpl localAspFactory = (AspFactoryImpl)this.clientM3UAMgmt.createAspFactory("testasp", "testAssoc1", false);
 		localAspFactory.start();
 
 		AspImpl aspImpl = clientM3UAMgmt.assignAspToAs("testas", "testasp");
@@ -343,7 +343,7 @@ public class IPSPClientFSMTest {
 		AsImpl asImpl = (AsImpl)this.clientM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.SE, null, rc, null, 1, null);
 		FSM asPeerFSM = asImpl.getPeerFSM();
 
-		AspFactoryImpl localAspFactory = (AspFactoryImpl)clientM3UAMgmt.createAspFactory("testasp", "testAssoc");
+		AspFactoryImpl localAspFactory = (AspFactoryImpl)clientM3UAMgmt.createAspFactory("testasp", "testAssoc", false);
 		localAspFactory.start();
 
 		AspImpl aspImpl = clientM3UAMgmt.assignAspToAs("testas", "testasp");
@@ -476,7 +476,7 @@ public class IPSPClientFSMTest {
 		// As as = rsgw.createAppServer("testas", rc, rKey, trModType);
 		AsImpl asImpl = (AsImpl)this.clientM3UAMgmt.createAs("testas", Functionality.IPSP, ExchangeType.DE, null, rc, null, 1, null);
 
-		AspFactoryImpl localAspFactory = (AspFactoryImpl)this.clientM3UAMgmt.createAspFactory("testasp", "testAssoc1");
+		AspFactoryImpl localAspFactory = (AspFactoryImpl)this.clientM3UAMgmt.createAspFactory("testasp", "testAssoc1", false);
 		localAspFactory.start();
 
 		AspImpl aspImpl = clientM3UAMgmt.assignAspToAs("testas", "testasp");

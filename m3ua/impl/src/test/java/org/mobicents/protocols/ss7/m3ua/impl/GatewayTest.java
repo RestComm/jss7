@@ -1,6 +1,6 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
- * and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -209,7 +209,7 @@ public class GatewayTest {
 			// 3. Create ASP
 			// m3ua asp create ip <local-ip> port <local-port> remip <remip>
 			// remport <remport> <asp-name>
-			localAspFactory = (AspFactoryImpl)m3uaMgmt.createAspFactory("client-testasp", CLIENT_ASSOCIATION_NAME);
+			localAspFactory = (AspFactoryImpl)m3uaMgmt.createAspFactory("client-testasp", CLIENT_ASSOCIATION_NAME, false);
 
 			// 4. Assign ASP to AS
 			localAsp = m3uaMgmt.assignAspToAs("client-testas", "client-testasp");
@@ -285,7 +285,7 @@ public class GatewayTest {
 
 			// 5. Create RASP
 			// m3ua rasp create <asp-name> <assoc-name>"
-			remAspFactory = (AspFactoryImpl)m3uaMgmt.createAspFactory("server-testasp", SERVER_ASSOCIATION_NAME);
+			remAspFactory = (AspFactoryImpl)m3uaMgmt.createAspFactory("server-testasp", SERVER_ASSOCIATION_NAME, false);
 
 			// 6. Assign ASP to AS
 			remAsp = m3uaMgmt.assignAspToAs("server-testas", "server-testasp");

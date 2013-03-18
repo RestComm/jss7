@@ -1,6 +1,6 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
- * and individual contributors
+ * TeleStax, Open Source Cloud Communications  
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -52,7 +52,6 @@ import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.M3UAManagementEventListener;
 import org.mobicents.protocols.ss7.m3ua.State;
-import org.mobicents.protocols.ss7.m3ua.impl.RemSgFSMTest.TestAssociation;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.message.M3UAMessageImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.message.MessageFactoryImpl;
@@ -64,8 +63,6 @@ import org.mobicents.protocols.ss7.m3ua.impl.parameter.ProtocolDataImpl;
 import org.mobicents.protocols.ss7.m3ua.message.M3UAMessage;
 import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
 import org.mobicents.protocols.ss7.m3ua.message.MessageType;
-import org.mobicents.protocols.ss7.m3ua.message.aspsm.ASPDownAck;
-import org.mobicents.protocols.ss7.m3ua.message.asptm.ASPActiveAck;
 import org.mobicents.protocols.ss7.m3ua.message.mgmt.Notify;
 import org.mobicents.protocols.ss7.m3ua.parameter.DestinationPointCode;
 import org.mobicents.protocols.ss7.m3ua.parameter.ErrorCode;
@@ -164,7 +161,7 @@ public class SgFSMTest {
 
 		FSM asLocalFSM = remAs.getLocalFSM();
 
-		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
+		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp", "testAssoc1",false);
 
 		// Check if M3UAManagementEventListener received event
 		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AspFactoryCreated,
@@ -308,7 +305,7 @@ public class SgFSMTest {
 
 		FSM asLocalFSM = remAs.getLocalFSM();
 
-		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
+		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp", "testAssoc1",false);
 
 		// Check if M3UAManagementEventListener received event
 		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AspFactoryCreated,
@@ -469,7 +466,7 @@ public class SgFSMTest {
 
 		// AspFactory aspFactory = sgw.createAspFactory("testasp", "127.0.0.1",
 		// 2777);
-		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
+		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp", "testAssoc1",false);
 
 		// Check if M3UAManagementEventListener received event
 		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AspFactoryCreated,
@@ -648,13 +645,13 @@ public class SgFSMTest {
 		FSM asLocalFSM = remAs.getLocalFSM();
 
 		//Create first ASPFactory
-		AspFactoryImpl aspFactory1 = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp1", "testAssoc1");
+		AspFactoryImpl aspFactory1 = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp1", "testAssoc1",false);
 		// Check if M3UAManagementEventListener received event
 		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AspFactoryCreated,
 				System.currentTimeMillis(), new Object[] { aspFactory1 }, m3uaManagementEventsSeq++)));
 
 		//Create Second ASPFactory
-		AspFactoryImpl aspFactory2 = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp2", "testAssoc2");
+		AspFactoryImpl aspFactory2 = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp2", "testAssoc2",false);
 		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AspFactoryCreated,
 				System.currentTimeMillis(), new Object[] { aspFactory2 }, m3uaManagementEventsSeq++)));		
 
@@ -859,12 +856,12 @@ public class SgFSMTest {
 				.currentTimeMillis(), new Object[] { remAs2 }, m3uaManagementEventsSeq++)));
 
 		// Define AspFactory 1
-		AspFactoryImpl aspFactoryImpl1 = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp1", "testAssoc1");
+		AspFactoryImpl aspFactoryImpl1 = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp1", "testAssoc1",false);
 		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AspFactoryCreated,
 				System.currentTimeMillis(), new Object[] { aspFactoryImpl1 }, m3uaManagementEventsSeq++)));
 
 		// Define AspFactory 2
-		AspFactoryImpl aspFactoryImpl2 = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp2", "testAssoc2");
+		AspFactoryImpl aspFactoryImpl2 = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp2", "testAssoc2",false);
 		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AspFactoryCreated,
 				System.currentTimeMillis(), new Object[] { aspFactoryImpl2 }, m3uaManagementEventsSeq++)));
 		
@@ -1032,12 +1029,12 @@ public class SgFSMTest {
 		// 2+0 sparing loadsharing
 		remAs.setMinAspActiveForLb(2);
 
-		AspFactoryImpl aspFactory1 = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp1", "testAssoc1");
+		AspFactoryImpl aspFactory1 = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp1", "testAssoc1",false);
 		// Check if M3UAManagementEventListener received event
 		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AspFactoryCreated,
 				System.currentTimeMillis(), new Object[] { aspFactory1 }, m3uaManagementEventsSeq++)));		
 
-		AspFactoryImpl aspFactory2 = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp2", "testAssoc2");
+		AspFactoryImpl aspFactory2 = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp2", "testAssoc2",false);
 		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AspFactoryCreated,
 				System.currentTimeMillis(), new Object[] { aspFactory2 }, m3uaManagementEventsSeq++)));		
 
@@ -1255,7 +1252,7 @@ public class SgFSMTest {
 				trModType, 1, null);
 		// AspFactory aspFactory = sgw.createAspFactory("testasp", "127.0.0.1",
 		// 2777);
-		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
+		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp", "testAssoc1",false);
 
 		AspImpl remAsp = serverM3UAMgmt.assignAspToAs("testas", "testasp");
 		FSM aspPeerFSM = remAsp.getPeerFSM();
@@ -1339,7 +1336,7 @@ public class SgFSMTest {
 				.currentTimeMillis(), new Object[] { remAs }, m3uaManagementEventsSeq++)));
 		FSM asLocalFSM = remAs.getLocalFSM();
 
-		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp", "testAssoc1");
+		AspFactoryImpl aspFactoryImpl = (AspFactoryImpl) serverM3UAMgmt.createAspFactory("testasp", "testAssoc1",false);
 		// Check if M3UAManagementEventListener received event
 		assertTrue(this.m3uaManagementEventListenerImpl.validateEvent(new TestEvent(TestEventType.AspFactoryCreated,
 				System.currentTimeMillis(), new Object[] { aspFactoryImpl }, m3uaManagementEventsSeq++)));		
