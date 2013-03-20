@@ -507,8 +507,8 @@ Assigned to :
                 <section
                         id="shell_m3ua_asp_side_create">
                         <title>Create ASP</title>
-                        <para>Application Server Process (ASP) can be created by issuing command with following structure:</para>
-                        <programlisting>m3ua asp create &lt;asp-name&gt; &lt;sctp-association&gt; aspid &lt;aspid&gt;</programlisting>
+                        <para>Application Server Process (ASP) can be created by issuing command with the following structure:</para>
+                        <programlisting>m3ua asp create &lt;asp-name&gt; &lt;sctp-association&gt; aspid &lt;aspid&gt; heartbeat &lt;true|false&gt;</programlisting>
                         <para>Where:</para>
                         <variablelist>
                                 <varlistentry>
@@ -529,12 +529,33 @@ Assigned to :
                                                 <para>Identifier for this newly created Application Server Process. If this is not passed, next available aspid will be used.
 </para>
                                         </listitem>
-                                </varlistentry>                                                         
+                                </varlistentry>   
+ <varlistentry>
+                                        <term>heartbeat</term>
+                                        <listitem>
+                                                <para>If this parameter is enabled (value set to
+						true), then heartbeat mechanism is enabled
+						between M3UA peers. When this is enabled,
+						it sends a Heartbeat message every 10
+						seconds. If there is no response for the 
+						third heartbeat then it assumes that the 
+						underlying network is dead. So it closes 
+						the connection and attempts to connect 
+						again. The M3UA peers are brought back to 
+						the same state as they were prior to 
+						dying.
+
+						This is an optional parameter and if left
+						unspecified, heartbeat mechanism is 
+						disabled.
+</para>
+                                        </listitem>
+                                </varlistentry>                                                      
                         </variablelist>
                         <example>
                                 <title>ASP creation</title>
                                 <screen>
-mobicents(127.0.0.1:3435)>m3ua asp create ASP1 Assoc1
+mobicents(127.0.0.1:3435)>m3ua asp create ASP1 Assoc1 aspid 12 heartbeat true
 Successfully created AS name=ASP1
                                 </screen>
                         </example>
