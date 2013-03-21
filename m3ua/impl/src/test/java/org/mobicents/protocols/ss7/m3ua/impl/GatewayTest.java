@@ -35,6 +35,7 @@ import org.mobicents.protocols.sctp.ManagementImpl;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.IPSPType;
+import org.mobicents.protocols.ss7.m3ua.Util;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
@@ -100,6 +101,7 @@ public class GatewayTest {
 		server = new Server();
 
 		this.sctpManagement = new ManagementImpl("GatewayTest");
+		this.sctpManagement.setPersistDir(Util.getTmpTestDir());
 		this.sctpManagement.setSingleThread(true);
 		this.sctpManagement.setConnectDelay(1000 * 5);// setting connection
 														// delay to 5 secs
@@ -107,6 +109,7 @@ public class GatewayTest {
 		this.sctpManagement.removeAllResourses();
 
 		this.m3uaMgmt = new M3UAManagementImpl("GatewayTest");
+		this.m3uaMgmt.setPersistDir(Util.getTmpTestDir());
 		this.m3uaMgmt.setTransportManagement(this.sctpManagement);
 		this.m3uaMgmt.addMtp3UserPartListener(mtp3UserPartListener);
 		this.m3uaMgmt.start();

@@ -22,11 +22,14 @@
 
 package org.mobicents.protocols.ss7.sccp.impl;
 
+import java.io.File;
 import java.io.FileOutputStream;
 
+import org.mobicents.protocols.ss7.Util;
 import org.mobicents.protocols.ss7.sccp.Router;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.SccpResource;
+import org.mobicents.protocols.ss7.sccp.SccpStack;
 
 /**
  * @author amit bhayani
@@ -61,9 +64,22 @@ public abstract class SccpHarness {
 	}
 
 	protected void createStack1() {
-		sccpStack1 = new SccpStackImpl(sccpStack1Name);
+		sccpStack1 = createStack(sccpStack1Name);
+		
 	}
+	
+	protected void createStack2() {
+        sccpStack2 = createStack(sccpStack2Name);
+    }
 
+	protected SccpStackImpl createStack(final String name){
+	    SccpStackImpl stack = new SccpStackImpl(name);
+	    final String dir = Util.getTmpTestDir();
+	    if(dir!=null){
+	        stack.setPersistDir(dir);
+	    }
+	    return stack;
+	}
 	protected void setUpStack1() throws Exception {
 		createStack1();
 
@@ -84,9 +100,7 @@ public abstract class SccpHarness {
 
 	}
 
-	protected void createStack2() {
-		sccpStack2 = new SccpStackImpl(sccpStack2Name);
-	}
+	
 
 	protected void setUpStack2() throws Exception {
 		createStack2();
@@ -150,7 +164,36 @@ public abstract class SccpHarness {
 		((Mtp3UserPartImpl) this.mtp3UserPart2).saveTrafficInFile = true;
 
 		try {
-			FileOutputStream fs = new FileOutputStream("MsgLog.txt", false);
+			FileOutputStream fs = new FileOutputStream(Util.getTmpTestDir()+File.separator+"MsgLog.pcap", false);
+
+			// pcap global header
+			fs.write(0xd4);
+			fs.write(0xc3);
+			fs.write(0xb2);
+			fs.write(0xa1);
+
+			fs.write(2);
+			fs.write(0);
+			fs.write(4);
+			fs.write(0);
+
+			fs.write(0);
+			fs.write(0);
+			fs.write(0);
+			fs.write(0);
+			fs.write(0);
+			fs.write(0);
+			fs.write(0);
+			fs.write(0);
+
+			fs.write(0xFF);
+			fs.write(0xFF);
+			fs.write(0);
+			fs.write(0);
+			fs.write(1);
+			fs.write(0);
+			fs.write(0);
+			fs.write(0);
 			fs.close();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

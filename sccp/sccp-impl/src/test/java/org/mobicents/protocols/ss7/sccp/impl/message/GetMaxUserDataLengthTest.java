@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.sccp.impl.message;
 
 import static org.testng.Assert.assertEquals;
 
+import org.mobicents.protocols.ss7.Util;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
 import org.mobicents.protocols.ss7.sccp.LongMessageRuleType;
@@ -48,6 +49,7 @@ public class GetMaxUserDataLengthTest {
 
 	@BeforeMethod
 	public void setUp() {
+	    stack.setPersistDir(Util.getTmpTestDir());
 		stack.start();
 		stack.removeAllResourses();
 	}

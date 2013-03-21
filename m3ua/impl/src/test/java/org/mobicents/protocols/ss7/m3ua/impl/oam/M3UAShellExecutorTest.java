@@ -38,6 +38,7 @@ import org.mobicents.protocols.api.ManagementEventListener;
 import org.mobicents.protocols.api.PayloadData;
 import org.mobicents.protocols.api.Server;
 import org.mobicents.protocols.api.ServerListener;
+import org.mobicents.protocols.ss7.m3ua.Util;
 import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl;
 
 /**
@@ -64,9 +65,10 @@ public class M3UAShellExecutorTest {
 		m3uaExec = new M3UAShellExecutor();
 
 		this.transportManagement = new TransportManagement();
-
+		this.transportManagement.setPersistDir(Util.getTmpTestDir());
 		this.clientM3UAMgmt = new M3UAManagementImpl("M3UAShellExecutorTest");
 		this.clientM3UAMgmt.setTransportManagement(this.transportManagement);
+		this.clientM3UAMgmt.setPersistDir(Util.getTmpTestDir());
 		this.clientM3UAMgmt.start();
 
 	}

@@ -83,24 +83,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<artifactId>maven-clean-plugin</artifactId>
-				<configuration>
-					<filesets>
-						<fileset>
-							<directory>.</directory>
-							<includes>
-								<include>*_sccpresource*.xml</include>
-								<include>*_sccprouter*.xml</include>
-								<include>debuglog.txt</include>
-							</includes>
-							<!-- <excludes> <exclude>**/important.log</exclude> <exclude>**/another-important.log</exclude> 
-								</excludes> -->
-							<followSymlinks>false</followSymlinks>
-						</fileset>
-					</filesets>
-				</configuration>
-			</plugin>
 			<!-- plugin> <artifactId>maven-assembly-plugin</artifactId> <configuration> 
 				<descriptors> <descriptor> src/main/assembly/pojo.xml </descriptor> </descriptors> 
 				<finalName>a${pom.artifactId}</finalName> </configuration> <executions> <execution> 
