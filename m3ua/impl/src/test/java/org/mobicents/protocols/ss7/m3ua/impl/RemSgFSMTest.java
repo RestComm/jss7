@@ -80,6 +80,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.mobicents.protocols.ss7.m3ua.Util;
 
 /**
  * Tests the FSM of client side AS and ASP's
@@ -115,12 +116,15 @@ public class RemSgFSMTest {
 	public void setUp() throws Exception {
 		semaphore = new Semaphore(0);
 		this.transportManagement = new TransportManagement();
+		this.transportManagement.setPersistDir(Util.getTmpTestDir());
 		this.m3uaManagementEventListenerImpl = new M3UAManagementEventListenerImpl();
 		this.clientM3UAMgmt = new M3UAManagementImpl("RemSgFSMTest");
+		this.clientM3UAMgmt.setPersistDir(Util.getTmpTestDir());
 		this.clientM3UAMgmt.addM3UAManagementEventListener(this.m3uaManagementEventListenerImpl);
 		this.clientM3UAMgmt.setTransportManagement(this.transportManagement);
 		this.mtp3UserPartListener = new Mtp3UserPartListenerimpl();
 		this.clientM3UAMgmt.addMtp3UserPartListener(this.mtp3UserPartListener);
+		this.clientM3UAMgmt.setPersistDir(Util.getTmpTestDir());
 		this.clientM3UAMgmt.start();
 
 	}

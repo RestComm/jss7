@@ -24,10 +24,13 @@ package org.mobicents.protocols.ss7.sccp.impl.messageflow;
 
 import static org.testng.Assert.assertEquals;
 
+import org.mobicents.protocols.ss7.Util;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.LongMessageRuleType;
+import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.sccp.impl.Mtp3UserPartImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
+import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImplProxy;
 import org.mobicents.protocols.ss7.sccp.impl.User;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
@@ -55,27 +58,34 @@ public class MessageMultiSapTest extends SccpHarness {
 
 	@BeforeClass
 	public void setUpClass() throws Exception {
-		this.sccpStack1Name = "MessageTransferTestSccpStack1";
-		this.sccpStack2Name = "MessageTransferTestSccpStack2";
+		this.sccpStack1Name = "sspTestSccpStack1";
+		this.sccpStack2Name = "sspTestSccpStack2";
 	}
 
 	@AfterClass
 	public void tearDownClass() throws Exception {
 	}
 
-	
-	protected void createStack1() {
-		sccpStack1 = new SccpStackImplProxy("sspTestSccpStack1");
-		sccpProvider1 = sccpStack1.getSccpProvider();
+    protected void createStack1() {
+        sccpStack1 = createStack(sccpStack1Name);
+        sccpStack1.setMtp3UserPart(2, mtp3UserPart11);
+        sccpProvider1 = sccpStack1.getSccpProvider();
+    }
 
-		sccpStack1.setMtp3UserPart(2, mtp3UserPart11);
-	}
-
-	
-	protected void createStack2() {
-		sccpStack2 = new SccpStackImplProxy("sspTestSccpStack2");
-		sccpProvider2= sccpStack2.getSccpProvider();
-	}
+    protected void createStack2() {
+        sccpStack2 = createStack(sccpStack2Name);
+        sccpProvider2 = sccpStack2.getSccpProvider();
+    }
+    
+    @Override
+    protected SccpStackImpl createStack(String name) {
+        SccpStackImpl stack = new SccpStackImplProxy(name);
+        final String dir = Util.getTmpTestDir();
+        if(dir!=null){
+            stack.setPersistDir(dir);
+        }
+        return stack;
+    }
 
 	@BeforeMethod
 	public void setUp() throws Exception {

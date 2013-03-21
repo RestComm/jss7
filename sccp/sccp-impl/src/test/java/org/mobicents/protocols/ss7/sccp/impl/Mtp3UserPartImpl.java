@@ -23,11 +23,13 @@
 package org.mobicents.protocols.ss7.sccp.impl;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mobicents.protocols.ss7.Util;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
 import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
@@ -227,7 +229,7 @@ public class Mtp3UserPartImpl extends Mtp3UserPartBaseImpl {
 				byte[] ethPart = stm4.toByteArray();
 				
 				// pcap header 
-				FileOutputStream fs = new FileOutputStream("MsgLog.pcap", true);
+				FileOutputStream fs = new FileOutputStream(Util.getTmpTestDir()+File.separator+"MsgLog.pcap", true);
 				int ln = ethPart.length;
 
 				fs.write(0);

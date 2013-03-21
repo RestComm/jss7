@@ -25,9 +25,12 @@ package org.mobicents.protocols.ss7.sccp.impl.mgmt.ssp;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import org.mobicents.protocols.ss7.Util;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystemImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
+import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImplProxy;
 import org.mobicents.protocols.ss7.sccp.impl.User;
 import org.mobicents.protocols.ss7.sccp.impl.mgmt.Mtp3PrimitiveMessage;
@@ -57,25 +60,33 @@ public class SSPTest extends SccpHarness {
 
 	@BeforeClass
 	public void setUpClass() throws Exception {
-		this.sccpStack1Name = "SSPTestSccpStack1";
-		this.sccpStack2Name = "SSPTestSccpStack2";
+		this.sccpStack1Name = "sspTestSccpStack1";
+		this.sccpStack2Name = "sspTestSccpStack2";
 	}
 
 	@AfterClass
 	public void tearDownClass() throws Exception {
 	}
 
-	
-	protected void createStack1() {
-		sccpStack1 = new SccpStackImplProxy("sspTestSccpStack1");
-		sccpProvider1 = sccpStack1.getSccpProvider();
-	}
+    protected void createStack1() {
+        sccpStack1 = createStack(sccpStack1Name);
+        sccpProvider1 = sccpStack1.getSccpProvider();
+    }
 
-	
-	protected void createStack2() {
-		sccpStack2 = new SccpStackImplProxy("sspTestSccpStack2");
-		sccpProvider2= sccpStack2.getSccpProvider();
-	}
+    protected void createStack2() {
+        sccpStack2 = createStack(sccpStack2Name);
+        sccpProvider2 = sccpStack2.getSccpProvider();
+    }
+    
+    @Override
+    protected SccpStackImpl createStack(String name) {
+        SccpStackImpl stack = new SccpStackImplProxy(name);
+        final String dir = Util.getTmpTestDir();
+        if(dir!=null){
+            stack.setPersistDir(dir);
+        }
+        return stack;
+    }
 
 	@BeforeMethod
 	public void setUp() throws Exception {

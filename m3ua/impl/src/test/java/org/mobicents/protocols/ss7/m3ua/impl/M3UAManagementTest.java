@@ -42,6 +42,7 @@ import org.mobicents.protocols.api.Server;
 import org.mobicents.protocols.api.ServerListener;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
+import org.mobicents.protocols.ss7.m3ua.Util;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.parameter.NetworkAppearance;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
@@ -78,6 +79,7 @@ public class M3UAManagementTest {
 		this.transportManagement = new TransportManagement();
 
 		this.m3uaMgmt = new M3UAManagementImpl("M3UAManagementTest");
+		this.m3uaMgmt.setPersistDir(Util.getTmpTestDir());
 		this.m3uaMgmt.setTransportManagement(this.transportManagement);
 		this.m3uaMgmt.start();
 		this.m3uaMgmt.removeAllResourses();
@@ -108,6 +110,7 @@ public class M3UAManagementTest {
 		this.m3uaMgmt.stop();
 
 		M3UAManagementImpl m3uaMgmt1 = new M3UAManagementImpl("M3UAManagementTest");
+		m3uaMgmt1.setPersistDir(Util.getTmpTestDir());
 		m3uaMgmt1.setTransportManagement(this.transportManagement);
 		m3uaMgmt1.start();
 

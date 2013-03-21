@@ -52,6 +52,7 @@ import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.M3UAManagementEventListener;
 import org.mobicents.protocols.ss7.m3ua.State;
+import org.mobicents.protocols.ss7.m3ua.Util;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
 import org.mobicents.protocols.ss7.m3ua.impl.message.M3UAMessageImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.message.MessageFactoryImpl;
@@ -119,7 +120,9 @@ public class SgFSMTest {
 		semaphore = new Semaphore(0);
 		this.m3uaManagementEventListenerImpl = new M3UAManagementEventListenerImpl();
 		this.transportManagement = new TransportManagement();
+		this.transportManagement.setPersistDir(Util.getTmpTestDir());
 		this.serverM3UAMgmt = new M3UAManagementImpl("SgFSMTest");
+		this.serverM3UAMgmt.setPersistDir(Util.getTmpTestDir());
 		this.serverM3UAMgmt.addM3UAManagementEventListener(this.m3uaManagementEventListenerImpl);
 		this.serverM3UAMgmt.setTransportManagement(this.transportManagement);
 		this.mtp3UserPartListener = new Mtp3UserPartListenerimpl();

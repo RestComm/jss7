@@ -29,6 +29,7 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 
+import org.mobicents.protocols.ss7.Util;
 import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
@@ -93,6 +94,7 @@ public class SccpExecutorTest {
 		Mtp3UserPartImpl mtp3UserPartImpl = new Mtp3UserPartImpl();
 
 		this.sccpStack = new SccpStackImpl("SccpExecutorTest");
+		this.sccpStack.setPersistDir(Util.getTmpTestDir());
 		this.sccpStack.setMtp3UserPart(1, mtp3UserPartImpl);
 		this.sccpStack.start();
 		this.sccpStack.removeAllResourses();

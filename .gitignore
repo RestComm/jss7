@@ -44,3 +44,6 @@ PutObjectStoreDirHere
 *debuglog.txt
 ${env.JBOSS_HOME}
 debuglog.txt.*
+
+#generated doc src
+docs/sources-*/src
