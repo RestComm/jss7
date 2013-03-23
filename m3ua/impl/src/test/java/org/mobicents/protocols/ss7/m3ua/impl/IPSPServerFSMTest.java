@@ -114,9 +114,7 @@ public class IPSPServerFSMTest {
 
 	@AfterMethod
 	public void tearDown() throws Exception {
-		serverM3UAMgmt.getAppServers().clear();
-		serverM3UAMgmt.getAspfactories().clear();
-		serverM3UAMgmt.getRoute().clear();
+		serverM3UAMgmt.removeAllResourses();
 		serverM3UAMgmt.stop();
 	}
 

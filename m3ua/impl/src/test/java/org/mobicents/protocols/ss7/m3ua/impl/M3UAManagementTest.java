@@ -23,13 +23,13 @@
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+
 import java.util.List;
 import java.util.Map;
 
 import javolution.util.FastMap;
-
-import org.testng.annotations.*;
-import static org.testng.Assert.*;
 
 import org.mobicents.protocols.api.Association;
 import org.mobicents.protocols.api.AssociationListener;
@@ -40,12 +40,18 @@ import org.mobicents.protocols.api.ManagementEventListener;
 import org.mobicents.protocols.api.PayloadData;
 import org.mobicents.protocols.api.Server;
 import org.mobicents.protocols.api.ServerListener;
+import org.mobicents.protocols.ss7.m3ua.As;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.Util;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.parameter.NetworkAppearance;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 /**
  * Test the serialization/de-serialization
@@ -116,12 +122,12 @@ public class M3UAManagementTest {
 
 		assertEquals(1, m3uaMgmt1.getAppServers().size());
 		assertEquals(1, m3uaMgmt1.getAspfactories().size());
-		FastMap<String, AsImpl[]> route = m3uaMgmt1.getRoute();
+		Map<String, As[]> route = m3uaMgmt1.getRoute();
 		assertEquals(1, route.size());
 		
 		// Make sure AS is not null
-		AsImpl[] asList = route.get("123:1:1");
-		AsImpl routeAs = asList[0];
+		As[] asList = route.get("123:1:1");
+		As routeAs = asList[0];
 		assertNotNull(routeAs);
 		
 		AsImpl managementAs = (AsImpl)m3uaMgmt1.getAppServers().get(0);

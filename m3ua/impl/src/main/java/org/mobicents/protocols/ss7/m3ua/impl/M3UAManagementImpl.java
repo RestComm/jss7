@@ -29,6 +29,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -303,8 +304,8 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 		return aspfactories.unmodifiable();
 	}
 
-	public FastMap<String, AsImpl[]> getRoute() {
-		return this.routeManagement.route;
+	public Map<String, As[]> getRoute() {
+		return this.routeManagement.route.unmodifiable();
 	}
 
 	protected As getAs(String asName) {
@@ -392,11 +393,11 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 			throw new Exception(String.format(M3UAOAMMessages.DESTROY_AS_FAILED_ASP_ASSIGNED, asName));
 		}
 
-		for (FastMap.Entry<String, AsImpl[]> e = this.routeManagement.route.head(), end = this.routeManagement.route
+		for (FastMap.Entry<String, As[]> e = this.routeManagement.route.head(), end = this.routeManagement.route
 				.tail(); (e = e.getNext()) != end;) {
-			AsImpl[] asList = e.getValue();
+			As[] asList = e.getValue();
 			for (int count = 0; count < asList.length; count++) {
-				AsImpl asTemp = asList[count];
+				AsImpl asTemp = (AsImpl)asList[count];
 				if (asTemp != null && asTemp.equals(as)) {
 					throw new Exception(String.format(M3UAOAMMessages.AS_USED_IN_ROUTE_ERROR, asName, e.getKey()));
 				}

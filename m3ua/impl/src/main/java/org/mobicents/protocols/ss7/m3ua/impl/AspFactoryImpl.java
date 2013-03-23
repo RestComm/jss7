@@ -155,8 +155,15 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
 	/**
 	 * @return the aspid
 	 */
-	protected ASPIdentifier getAspid() {
+	public ASPIdentifier getAspid() {
 		return aspid;
+	}
+
+	/**
+	 * @return the isHeartBeatEnabled
+	 */
+	public boolean isHeartBeatEnabled() {
+		return isHeartBeatEnabled;
 	}
 
 	public void setM3UAManagement(M3UAManagementImpl m3uaManagement) {

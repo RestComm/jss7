@@ -24,23 +24,28 @@ package org.mobicents.protocols.ss7.m3ua;
 import java.util.List;
 
 import org.mobicents.protocols.api.Association;
+import org.mobicents.protocols.ss7.m3ua.parameter.ASPIdentifier;
 
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public interface AspFactory {
 
 	public String getName();
-	
+
 	public Association getAssociation();
-	
+
 	public List<Asp> getAspList();
-	
+
 	public boolean getStatus();
-	
+
 	public Functionality getFunctionality();
-	
+
 	public IPSPType getIpspType();
+
+	public ASPIdentifier getAspid();
+
+	public boolean isHeartBeatEnabled();
 }
