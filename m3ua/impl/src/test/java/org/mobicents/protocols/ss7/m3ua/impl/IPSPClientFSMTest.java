@@ -112,9 +112,7 @@ public class IPSPClientFSMTest {
 
 	@AfterMethod
 	public void tearDown() throws Exception {
-		clientM3UAMgmt.getAppServers().clear();
-		clientM3UAMgmt.getAspfactories().clear();
-		clientM3UAMgmt.getRoute().clear();
+		clientM3UAMgmt.removeAllResourses();
 		clientM3UAMgmt.stop();
 	}
 

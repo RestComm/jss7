@@ -81,7 +81,7 @@ public class M3UARouteManagement {
 	/**
 	 * persists key vs corresponding As that servers for this key
 	 */
-	protected RouteMap<String, AsImpl[]> route = new RouteMap<String, AsImpl[]>();
+	protected RouteMap<String, As[]> route = new RouteMap<String, As[]>();
 
 	/**
 	 * Persists DPC vs As's serving this DPC. Used for notifying M3UA-user of
@@ -165,15 +165,15 @@ public class M3UARouteManagement {
 	 * from xml file.
 	 */
 	protected void reset() {
-		for (RouteMap.Entry<String, AsImpl[]> e = this.route.head(), end = this.route.tail(); (e = e.getNext()) != end;) {
+		for (RouteMap.Entry<String, As[]> e = this.route.head(), end = this.route.tail(); (e = e.getNext()) != end;) {
 			String key = e.getKey();
-			AsImpl[] asList = e.getValue();
+			As[] asList = e.getValue();
 
 			try {
 				String[] keys = key.split(KEY_SEPARATOR);
 				int dpc = Integer.parseInt(keys[0]);
 				for (count = 0; count < asList.length; count++) {
-					AsImpl asImpl = asList[count];
+					AsImpl asImpl = (AsImpl)asList[count];
 					if (asImpl != null) {
 						this.addAsToDPC(dpc, asImpl);
 					}
@@ -213,12 +213,12 @@ public class M3UARouteManagement {
 		String key = (new StringBuffer().append(dpc).append(KEY_SEPARATOR).append(opc).append(KEY_SEPARATOR).append(si))
 				.toString();
 
-		AsImpl[] asArray = route.get(key);
+		As[] asArray = route.get(key);
 
 		if (asArray != null) {
 			// check is this As is already added
 			for (int count = 0; count < asArray.length; count++) {
-				AsImpl asTemp = asArray[count];
+				AsImpl asTemp = (AsImpl)asArray[count];
 				if (asTemp != null && asImpl.equals(asTemp)) {
 					throw new Exception(String.format("As=%s already added for dpc=%d opc=%d si=%d", asImpl.getName(),
 							dpc, opc, si));
@@ -241,8 +241,7 @@ public class M3UARouteManagement {
 
 		}
 
-		throw new Exception(String.format("dpc=%d opc=%d si=%d combination already has maximum possible As",
-				asImpl.getName(), dpc, opc, si));
+		throw new Exception(String.format("dpc=%d opc=%d si=%d combination already has maximum possible As", dpc, opc, si));
 	}
 
 	/**
@@ -273,7 +272,7 @@ public class M3UARouteManagement {
 		String key = (new StringBuffer().append(dpc).append(KEY_SEPARATOR).append(opc).append(KEY_SEPARATOR).append(si))
 				.toString();
 
-		AsImpl[] asArray = route.get(key);
+		As[] asArray = route.get(key);
 
 		if (asArray == null) {
 			throw new Exception(String.format("No AS=%s configured  for dpc=%d opc=%d si=%d", asImpl.getName(), dpc,
@@ -281,7 +280,7 @@ public class M3UARouteManagement {
 		}
 
 		for (int count = 0; count < asArray.length; count++) {
-			AsImpl asTemp = asArray[count];
+			AsImpl asTemp = (AsImpl)asArray[count];
 			if (asTemp != null && asImpl.equals(asTemp)) {
 				asArray[count] = null;
 				this.m3uaManagement.store();
@@ -317,7 +316,7 @@ public class M3UARouteManagement {
 
 		String key = (new StringBuffer().append(dpc).append(KEY_SEPARATOR).append(opc).append(KEY_SEPARATOR).append(si))
 				.toString();
-		AsImpl[] asArray = route.get(key);
+		As[] asArray = route.get(key);
 
 		if (asArray == null) {
 			key = (new StringBuffer().append(dpc).append(KEY_SEPARATOR).append(opc).append(KEY_SEPARATOR)
@@ -341,7 +340,7 @@ public class M3UARouteManagement {
 		count = (count >> this.asSlsShiftPlaces);
 
 		// First attempt
-		AsImpl asImpl = asArray[count];
+		AsImpl asImpl = (AsImpl)asArray[count];
 		if (this.isAsActive(asImpl)) {
 			return asImpl;
 		}
@@ -354,7 +353,7 @@ public class M3UARouteManagement {
 				// restart from 0
 				count = 0;
 			}
-			asImpl = asArray[count];
+			asImpl = (AsImpl)asArray[count];
 			if (this.isAsActive(asImpl)) {
 				return asImpl;
 			}
@@ -407,13 +406,13 @@ public class M3UARouteManagement {
 		// Now decide if we should remove As from RouteRow? If the same As is
 		// assigned as route for different key combination we shouldn't remove
 		// it from RouteRow
-		for (RouteMap.Entry<String, AsImpl[]> e = this.route.head(), end = this.route.tail(); (e = e.getNext()) != end;) {
+		for (RouteMap.Entry<String, As[]> e = this.route.head(), end = this.route.tail(); (e = e.getNext()) != end;) {
 			String key = e.getKey();
 			String[] keys = key.split(KEY_SEPARATOR);
 			if (keys[0].equals(Integer.toString(dpc))) {
-				AsImpl[] asList = e.getValue();
+				As[] asList = e.getValue();
 				for (count = 0; count < asList.length; count++) {
-					AsImpl asTemp = asList[count];
+					AsImpl asTemp = (AsImpl)asList[count];
 					if (asTemp != null && asTemp.equals(asImpl)) {
 						return;
 					}

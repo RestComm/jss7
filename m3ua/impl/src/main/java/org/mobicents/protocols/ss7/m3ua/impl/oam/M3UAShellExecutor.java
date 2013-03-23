@@ -24,8 +24,8 @@ package org.mobicents.protocols.ss7.m3ua.impl.oam;
 
 import java.util.Arrays;
 import java.util.List;
-
-import javolution.util.FastMap;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.m3ua.As;
@@ -230,21 +230,22 @@ public class M3UAShellExecutor implements ShellExecutor {
 	}
 
 	private String showRoutes() {
-		FastMap<String, AsImpl[]> route = this.m3uaManagement.getRoute();
+		Map<String, As[]> route = this.m3uaManagement.getRoute();
 
 		if (route.size() == 0) {
 			return M3UAOAMMessages.NO_ROUTE_DEFINED_YET;
 		}
 		StringBuffer sb = new StringBuffer();
-		for (FastMap.Entry<String, AsImpl[]> e = route.head(), end = route.tail(); (e = e.getNext()) != end;) {
-			String key = e.getKey();
-			AsImpl[] asList = e.getValue();
+		
+		Set<String> keys = route.keySet();
+		for(String key : keys){
+			As[] asList = route.get(key);
 
 			sb.append(M3UAOAMMessages.NEW_LINE);
 			sb.append(key);
 			sb.append(M3UAOAMMessages.TAB);
 			for (int i = 0; i < asList.length; i++) {
-				AsImpl asImpl = asList[i];
+				As asImpl = asList[i];
 				if (asImpl != null) {
 					sb.append(asImpl.getName());
 					sb.append(M3UAOAMMessages.COMMA);

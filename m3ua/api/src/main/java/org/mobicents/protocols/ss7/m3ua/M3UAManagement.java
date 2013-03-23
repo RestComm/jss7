@@ -22,6 +22,7 @@
 package org.mobicents.protocols.ss7.m3ua;
 
 import java.util.List;
+import java.util.Map;
 
 import org.mobicents.protocols.ss7.m3ua.parameter.NetworkAppearance;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
@@ -86,15 +87,18 @@ public interface M3UAManagement {
 	 * @param maxAsForRoute
 	 */
 	public void setMaxAsForRoute(int maxAsForRoute);
-	
+
 	/**
 	 * Returns the time in millisecond between two heartbeats
+	 * 
 	 * @return
 	 */
 	public int getHeartbeatTime();
-	
+
 	/**
-	 * Set the time in milliseconds between two heartbeats. Heartbeat is only sent when MUA association is idle.
+	 * Set the time in milliseconds between two heartbeats. Heartbeat is only
+	 * sent when MUA association is idle.
+	 * 
 	 * @param timeBetweenHeartbeat
 	 */
 	public void setHeartbeatTime(int timeBetweenHeartbeat);
@@ -174,9 +178,10 @@ public interface M3UAManagement {
 	 * @throws Exception
 	 */
 	public As destroyAs(String asName) throws Exception;
-	
+
 	/**
-	 * Create a new {@link AspFactory}. Unique ASP id is assigned. HEARTBEAT is disabled
+	 * Create a new {@link AspFactory}. Unique ASP id is assigned. HEARTBEAT is
+	 * disabled
 	 * 
 	 * @param aspName
 	 *            unique name of this AspFactory
@@ -185,7 +190,7 @@ public interface M3UAManagement {
 	 * @return newly created AspFactory
 	 * @throws Exception
 	 */
-	public AspFactory createAspFactory(String aspName, String associationName) throws Exception;	
+	public AspFactory createAspFactory(String aspName, String associationName) throws Exception;
 
 	/**
 	 * Create a new {@link AspFactory}. Unique ASP id is assigned
@@ -195,11 +200,12 @@ public interface M3UAManagement {
 	 * @param associationName
 	 *            the underlying SCTP Association to be used
 	 * @param isHeartBeatEnabled
-	 * 			Is the HEARTBEAT enabled for this association         
+	 *            Is the HEARTBEAT enabled for this association
 	 * @return newly created AspFactory
 	 * @throws Exception
 	 */
-	public AspFactory createAspFactory(String aspName, String associationName, boolean isHeartBeatEnabled) throws Exception;
+	public AspFactory createAspFactory(String aspName, String associationName, boolean isHeartBeatEnabled)
+			throws Exception;
 
 	/**
 	 * Create a new {@link AspFactory}.
@@ -210,11 +216,12 @@ public interface M3UAManagement {
 	 * @param aspid
 	 *            unique asp id
 	 * @param isHeartBeatEnabled
-	 * 			Is the HEARTBEAT enabled for this association                  
+	 *            Is the HEARTBEAT enabled for this association
 	 * @return newly created AspFactory
 	 * @throws Exception
 	 */
-	public AspFactory createAspFactory(String aspName, String associationName, long aspid, boolean isHeartBeatEnabled) throws Exception;
+	public AspFactory createAspFactory(String aspName, String associationName, long aspid, boolean isHeartBeatEnabled)
+			throws Exception;
 
 	/**
 	 * Destroys the {@link AspFactory} that matches the passed aspName. All the
@@ -323,4 +330,12 @@ public interface M3UAManagement {
 	 * @param m3uaManagementEventListener
 	 */
 	public void removeM3UAManagementEventListener(M3UAManagementEventListener m3uaManagementEventListener);
+
+	/**
+	 * Returns the Route table/Map with DPC as key and list of {@link As} array
+	 * as potential As that can route Payload to this DPC
+	 * 
+	 * @return
+	 */
+	public Map<String, As[]> getRoute();
 }
