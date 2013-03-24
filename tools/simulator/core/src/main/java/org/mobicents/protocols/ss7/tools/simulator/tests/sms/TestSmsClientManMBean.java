@@ -55,6 +55,25 @@ public interface TestSmsClientManMBean {
 
 	public void setMapProtocolVersion(MapProtocolVersion val);	
 
+// ........................
+	public SRIReaction getSRIReaction();
+
+	public String getSRIReaction_Value();
+
+	public void setSRIReaction(SRIReaction val);	
+
+	public SRIInformServiceCenter getSRIInformServiceCenter();
+
+	public String getSRIInformServiceCenter_Value();
+
+	public void setSRIInformServiceCenter(SRIInformServiceCenter val);	
+
+	public boolean isSRIScAddressNotIncluded();
+
+	public void setSRIScAddressNotIncluded(boolean val);	
+	// ........................
+
+
 	public String getSRIResponseImsi();
 
 	public void setSRIResponseImsi(String val);	
@@ -91,6 +110,12 @@ public interface TestSmsClientManMBean {
 	public void putNumberingPlan(String val);
 
 	public void putMapProtocolVersion(String val);
+
+	// ........................
+	public void putSRIReaction(String val);
+
+	public void putSRIInformServiceCenter(String val);
+	// ........................
 
 	public void putTypeOfNumber(String val);
 

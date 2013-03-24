@@ -45,6 +45,7 @@ import org.mobicents.protocols.ss7.map.api.service.sms.InformServiceCentreReques
 import org.mobicents.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPDialogSms;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSmsListener;
+import org.mobicents.protocols.ss7.map.api.service.sms.MWStatus;
 import org.mobicents.protocols.ss7.map.api.service.sms.MoForwardShortMessageRequest;
 import org.mobicents.protocols.ss7.map.api.service.sms.MoForwardShortMessageResponse;
 import org.mobicents.protocols.ss7.map.api.service.sms.MtForwardShortMessageRequest;
@@ -99,6 +100,9 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 	private int countMtFsmResp = 0;
 	private int countMoFsmReq = 0;
 	private int countMoFsmResp = 0;
+	private int countIscReq = 0;
+	private int countErrRcvd = 0;
+	private int countErrSent = 0;
 	private String currentRequestDef = "";
 	private boolean needSendSend = false;
 	private boolean needSendClose = false;
@@ -323,6 +327,12 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 		sb.append(countMoFsmReq);
 		sb.append(", countMoFsmResp-");
 		sb.append(countMoFsmResp);
+		sb.append(", countIscReq-");
+		sb.append(countIscReq);
+		sb.append(", countErrRcvd-");
+		sb.append(countErrRcvd);
+		sb.append(", countErrSent-");
+		sb.append(countErrSent);
 		sb.append("</html>");
 		return sb.toString();
 	}
@@ -726,26 +736,37 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 		String destImsi = "";
 		if (ind.getIMSI() != null)
 			destImsi = ind.getIMSI().getData();
-		String uData = this.createSriRespData(invokeId, destImsi, vlrNum);
-		this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: sriReq", uData, Level.DEBUG);
+		String uData = this.createSriRespData(invokeId, ind);
+		this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: sriResp", uData, Level.DEBUG);
 
 		if (curDialog.getUserObject() != null && vlrNum != null && !vlrNum.equals("") && destImsi != null && !destImsi.equals("")) {
-			// sending SMS
 			MoMessageData mmd = (MoMessageData) curDialog.getUserObject();
-			doMtForwardSM(mmd.msg, destImsi, vlrNum, mmd.origIsdnNumber, this.testerHost.getConfigurationData().getTestSmsServerConfigurationData()
-					.getServiceCenterAddress());
+			mmd.vlrNum = vlrNum;
+			mmd.destImsi = destImsi;
+
+//			// sending SMS
+//			doMtForwardSM(mmd.msg, destImsi, vlrNum, mmd.origIsdnNumber, this.testerHost.getConfigurationData().getTestSmsServerConfigurationData()
+//					.getServiceCenterAddress());
 		}
 	}
 
-	private String createSriRespData(long dialogId, String imsi, String vlrNumber) {
+	private String createSriRespData(long dialogId, SendRoutingInfoForSMResponse ind) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("dialogId=");
 		sb.append(dialogId);
-		sb.append(", imsi=\"");
-		sb.append(imsi);
-		sb.append("\", vlrNumber=\"");
-		sb.append(vlrNumber);
+		sb.append(", ind=\"");
+		sb.append(ind);
 		sb.append("\"");
+		return sb.toString();
+	}
+
+	private String createIscReqData(long dialogId, MWStatus mwStatus) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("dialogId=");
+		sb.append(dialogId);
+		sb.append(",\n mwStatus=");
+		sb.append(mwStatus);
+		sb.append(",\n");
 		return sb.toString();
 	}
 
@@ -762,9 +783,18 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 	}
 
 	@Override
-	public void onInformServiceCentreRequest(InformServiceCentreRequest informServiceCentreInd) {
-		// TODO Auto-generated method stub
-		
+	public void onInformServiceCentreRequest(InformServiceCentreRequest ind) {
+		if (!isStarted)
+			return;
+
+		this.countSriResp++;
+		currentRequestDef += "Rsvd IscReq;";
+
+		MAPDialogSms curDialog = ind.getMAPDialog();
+		long invokeId = curDialog.getLocalDialogId();
+		MWStatus mwStatus = ind.getMwStatus();
+		String uData = this.createIscReqData(invokeId, mwStatus);
+		this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: iscReq", uData, Level.DEBUG);
 	}
 
 	@Override
@@ -799,8 +829,39 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 		}
 	}
 
+	@Override
+	public void onDialogClose(MAPDialog mapDialog) {
+		if (mapDialog.getUserObject() != null) {
+			MoMessageData mmd = (MoMessageData) mapDialog.getUserObject();
+			if (mmd.vlrNum != null && mmd.destImsi != null) {
+				// sending SMS
+				doMtForwardSM(mmd.msg, mmd.destImsi, mmd.vlrNum, mmd.origIsdnNumber, this.testerHost.getConfigurationData().getTestSmsServerConfigurationData()
+						.getServiceCenterAddress());
+			}
+		}
+		
+		try {
+			if (needSendSend) {
+				needSendSend = false;
+				mapDialog.send();
+			}
+		} catch (Exception e) {
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking send() : " + e.getMessage(), e, Level.ERROR);
+		}
+		try {
+			if (needSendClose) {
+				needSendClose = false;
+				mapDialog.close(false);
+			}
+		} catch (Exception e) {
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking close() : " + e.getMessage(), e, Level.ERROR);
+		}
+	}
+
 	private class MoMessageData {
 		public String msg;
 		public String origIsdnNumber;
+		public String vlrNum;
+		public String destImsi;
 	}
 }
