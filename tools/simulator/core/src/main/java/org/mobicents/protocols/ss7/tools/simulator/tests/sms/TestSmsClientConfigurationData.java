@@ -59,6 +59,10 @@ public class TestSmsClientConfigurationData {
 	protected TypeOfNumber typeOfNumber = TypeOfNumber.InternationalNumber;
 	protected NumberingPlanIdentification numberingPlanIdentification = NumberingPlanIdentification.ISDNTelephoneNumberingPlan;
 	protected SmsCodingType smsCodingType = new SmsCodingType(SmsCodingType.VAL_GSM7);
+
+	protected SRIReaction sriReaction = new SRIReaction(SRIReaction.VAL_RETURN_SUCCESS);
+	protected SRIInformServiceCenter sriInformServiceCenter = new SRIInformServiceCenter(SRIInformServiceCenter.MWD_NO);
+	protected boolean sriScAddressNotIncluded = false;
 	
 	public AddressNature getAddressNature() {
 		return addressNature;
@@ -90,6 +94,30 @@ public class TestSmsClientConfigurationData {
 
 	public void setMapProtocolVersion(MapProtocolVersion mapProtocolVersion) {
 		this.mapProtocolVersion = mapProtocolVersion;
+	}
+
+	public SRIReaction getSRIReaction() {
+		return sriReaction;
+	}
+
+	public void setSRIReaction(SRIReaction val) {
+		sriReaction = val;
+	}
+
+	public SRIInformServiceCenter getSRIInformServiceCenter() {
+		return sriInformServiceCenter;
+	}
+
+	public void setSRIInformServiceCenter(SRIInformServiceCenter val) {
+		sriInformServiceCenter = val;
+	}
+
+	public boolean isSRIScAddressNotIncluded() {
+		return sriScAddressNotIncluded;
+	}
+
+	public void setSRIScAddressNotIncluded(boolean val) {
+		sriScAddressNotIncluded = val;
 	}
 
 	public String getSriResponseImsi() {
