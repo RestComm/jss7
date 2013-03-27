@@ -62,8 +62,8 @@ public interface MAPErrorMessageFactory {
 	public MAPErrorMessageUnknownSubscriber createMAPErrorMessageUnknownSubscriber(MAPExtensionContainer extensionContainer,
 			UnknownSubscriberDiagnostic unknownSubscriberDiagnostic);
 
-	public MAPErrorMessageAbsentSubscriberSM createMAPErrorMessageAbsentSubscriberSM(Integer absentSubscriberDiagnosticSM,
-			MAPExtensionContainer extensionContainer, Integer additionalAbsentSubscriberDiagnosticSM);
+	public MAPErrorMessageAbsentSubscriberSM createMAPErrorMessageAbsentSubscriberSM(AbsentSubscriberDiagnosticSM absentSubscriberDiagnosticSM,
+			MAPExtensionContainer extensionContainer, AbsentSubscriberDiagnosticSM additionalAbsentSubscriberDiagnosticSM);
 
 	public MAPErrorMessageAbsentSubscriber createMAPErrorMessageAbsentSubscriber(Boolean mwdSet);
 
