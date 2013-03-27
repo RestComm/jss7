@@ -53,17 +53,11 @@ public class SccpCommandHandler extends CommandHandlerWithHelp {
 		rule.addChild("delete");
 		rule.addChild("show");
 		
-		Node primaryAddress = parent.addChild("primary_add");
-		primaryAddress.addChild("create");
-		primaryAddress.addChild("modify");
-		primaryAddress.addChild("delete");
-		primaryAddress.addChild("show");
-		
-		Node secondaryAddress = parent.addChild("backup_add");
-		secondaryAddress.addChild("create");
-		secondaryAddress.addChild("modify");
-		secondaryAddress.addChild("delete");
-		secondaryAddress.addChild("show");
+		Node address = parent.addChild("address");
+		address.addChild("create");
+		address.addChild("modify");
+		address.addChild("delete");
+		address.addChild("show");
 		
 		Node rsp = parent.addChild("rsp");
 		rsp.addChild("create");
