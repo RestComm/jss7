@@ -334,7 +334,7 @@ public class ReportSMDeliveryStatusRequestImpl extends SmsMessageImpl implements
 		try {
 			((ISDNAddressStringImpl)this.msisdn).encodeAll(asnOs);
 			((AddressStringImpl)this.serviceCentreAddress).encodeAll(asnOs);
-			if (this.mapProtocolVersion >= 1)
+			if (this.mapProtocolVersion > 1)
 				asnOs.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, this.sMDeliveryOutcome.getCode());
 
 			if (this.absentSubscriberDiagnosticSM != null)
