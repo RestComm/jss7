@@ -48,6 +48,10 @@ public class TestSmsClientConfigurationData {
 	protected static final String TYPE_OF_NUMBER = "typeOfNumber";
 	protected static final String NUMBERING_PLAN_IDENTIFICATION = "numberingPlanIdentification";
 	protected static final String SMS_CODING_TYPE = "smsCodingType";
+	protected static final String SRI_REACTION = "sriReaction";
+	protected static final String SRI_INFORM_SERVICE_CENTER = "sriInformServiceCenter";
+	protected static final String SRI_SC_ADDRESS_NOT_INCLUDED = "sriScAddressNotIncluded";
+	protected static final String MT_FSM_REACTION = "mtFSMReaction";
 
 	protected AddressNature addressNature = AddressNature.international_number;
 	protected NumberingPlan numberingPlan = NumberingPlan.ISDN;
@@ -63,6 +67,7 @@ public class TestSmsClientConfigurationData {
 	protected SRIReaction sriReaction = new SRIReaction(SRIReaction.VAL_RETURN_SUCCESS);
 	protected SRIInformServiceCenter sriInformServiceCenter = new SRIInformServiceCenter(SRIInformServiceCenter.MWD_NO);
 	protected boolean sriScAddressNotIncluded = false;
+	protected MtFSMReaction mtFSMReaction = new MtFSMReaction(MtFSMReaction.VAL_RETURN_SUCCESS);
 	
 	public AddressNature getAddressNature() {
 		return addressNature;
@@ -120,6 +125,14 @@ public class TestSmsClientConfigurationData {
 		sriScAddressNotIncluded = val;
 	}
 
+	public MtFSMReaction getMtFSMReaction() {
+		return mtFSMReaction;
+	}
+
+	public void setMtFSMReaction(MtFSMReaction val) {
+		mtFSMReaction = val;
+	}
+
 	public String getSriResponseImsi() {
 		return sriResponseImsi;
 	}
@@ -172,6 +185,7 @@ public class TestSmsClientConfigurationData {
 
 		public void write(TestSmsClientConfigurationData srv, OutputElement xml) throws XMLStreamException {
 			xml.setAttribute(SMSC_SSN, srv.smscSsn);
+			xml.setAttribute(SRI_SC_ADDRESS_NOT_INCLUDED, srv.sriScAddressNotIncluded);
 
 			xml.add(srv.serviceCenterAddress, SERVICE_CENTER_ADDRESS, String.class);
 			xml.add(srv.sriResponseImsi, SRI_RESPONSE_IMSI, String.class);
@@ -183,10 +197,15 @@ public class TestSmsClientConfigurationData {
 			xml.add(srv.typeOfNumber.toString(), TYPE_OF_NUMBER, String.class);
 			xml.add(srv.numberingPlanIdentification.toString(), NUMBERING_PLAN_IDENTIFICATION, String.class);
 			xml.add(srv.smsCodingType.toString(), SMS_CODING_TYPE, String.class);
+
+			xml.add(srv.sriReaction.toString(), SRI_REACTION, String.class);
+			xml.add(srv.sriInformServiceCenter.toString(), SRI_INFORM_SERVICE_CENTER, String.class);
+			xml.add(srv.mtFSMReaction.toString(), MT_FSM_REACTION, String.class);
 		}
 
 		public void read(InputElement xml, TestSmsClientConfigurationData srv) throws XMLStreamException {
 			srv.smscSsn = xml.getAttribute(SMSC_SSN).toInt();
+			srv.sriScAddressNotIncluded = xml.getAttribute(SRI_SC_ADDRESS_NOT_INCLUDED).toBoolean();
 
 			srv.serviceCenterAddress = (String) xml.get(SERVICE_CENTER_ADDRESS, String.class);
 			srv.sriResponseImsi = (String) xml.get(SRI_RESPONSE_IMSI, String.class);
@@ -204,6 +223,13 @@ public class TestSmsClientConfigurationData {
 			srv.numberingPlanIdentification = NumberingPlanIdentification.valueOf(npi);
 			String sct = (String) xml.get(SMS_CODING_TYPE, String.class);
 			srv.smsCodingType = SmsCodingType.createInstance(sct);
+
+			String sriR = (String) xml.get(SRI_REACTION, String.class);
+			srv.sriReaction = SRIReaction.createInstance(sriR);
+			String sriIsc = (String) xml.get(SRI_INFORM_SERVICE_CENTER, String.class);
+			srv.sriInformServiceCenter = SRIInformServiceCenter.createInstance(sriIsc);
+			String mtFsmR = (String) xml.get(MT_FSM_REACTION, String.class);
+			srv.mtFSMReaction = MtFSMReaction.createInstance(mtFsmR);
 		}
 	};
 

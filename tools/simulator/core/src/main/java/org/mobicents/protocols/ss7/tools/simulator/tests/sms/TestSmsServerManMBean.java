@@ -81,6 +81,10 @@ public interface TestSmsServerManMBean {
 
 	public void setSmsCodingType(SmsCodingType val);
 
+	public boolean isSendSrsmdsIfError();
+
+	public void setSendSrsmdsIfError(boolean val);
+
 
 	public void putAddressNature(String val);
 

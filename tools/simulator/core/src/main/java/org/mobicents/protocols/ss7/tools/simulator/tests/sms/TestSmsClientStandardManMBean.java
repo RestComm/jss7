@@ -59,6 +59,8 @@ public class TestSmsClientStandardManMBean extends StandardMBean {
 				new MBeanAttributeInfo("SRIInformServiceCenter", SRIInformServiceCenter.class.getName(), "SRI response - InformServiceCenter", true, true, false),
 				new MBeanAttributeInfo("SRIInformServiceCenter_Value", String.class.getName(), "SRI response - InformServiceCenter", true, false, false),
 				new MBeanAttributeInfo("SRIScAddressNotIncluded", Boolean.class.getName(), "SRI response ServiceCenter Address is not included in MWD", true, true, true),
+				new MBeanAttributeInfo("MtFSMReaction", MtFSMReaction.class.getName(), "MtFSM response type", true, true, false),
+				new MBeanAttributeInfo("MtFSMReaction_Value", String.class.getName(), "MtFSM response type", true, false, false),
 				new MBeanAttributeInfo("SRIResponseImsi", String.class.getName(), "IMSI for auto sendRoutingInfoForSM response", true, true, false),
 				new MBeanAttributeInfo("SRIResponseVlr", String.class.getName(), "VLR address for auto sendRoutingInfoForSM response", true, true, false),
 				new MBeanAttributeInfo("SmscSsn", int.class.getName(), "SMSC SSN for outgoing SccpAddress (default value: 8)", true, true, false),
@@ -96,6 +98,10 @@ public class TestSmsClientStandardManMBean extends StandardMBean {
 						signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
 				new MBeanOperationInfo("putSRIInformServiceCenter", "SRI response - InformServiceCenter: " +
 						"1:MwdNo,2:MwdMcef,3:MwdMnrf,4:MwdMcefMnrf,5:MwdMnrg", 
+						signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
+				new MBeanOperationInfo("putMtFSMReaction", "MtFSM response type: " +
+						"1:ReturnSuccess,2:SMDeliveryFailure_ReturnMemoryCapacityExceeded,3:SMDeliveryFailure_UnknownServiceCentre,"+
+						"4:ReturnErrorSystemFailure,5:ReturnAbsentSubscriberError,6:ReturnErrorSubscriberBusyForMtSms", 
 						signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
 				new MBeanOperationInfo("putTypeOfNumber", "TypeOfNumber parameter for SMS tpdu destAddress: " +
 						"0:Unknown,1:InternationalNumber,2:NationalNumber,3:NetworkSpecificNumber,4:SubscriberNumber,5:Alphanumeric,6:AbbreviatedNumber,7:Reserved",

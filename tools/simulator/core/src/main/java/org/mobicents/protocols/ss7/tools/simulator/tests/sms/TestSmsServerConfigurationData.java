@@ -47,6 +47,7 @@ public class TestSmsServerConfigurationData {
 	protected static final String TYPE_OF_NUMBER = "typeOfNumber";
 	protected static final String NUMBERING_PLAN_IDENTIFICATION = "numberingPlanIdentification";
 	protected static final String SMS_CODING_TYPE = "smsCodingType";
+	protected static final String SEND_SRSMDS_IF_ERROR = "sendSrsmdsIfError";
 
 	protected AddressNature addressNature = AddressNature.international_number;
 	protected NumberingPlan numberingPlan = NumberingPlan.ISDN;
@@ -57,6 +58,7 @@ public class TestSmsServerConfigurationData {
 	protected TypeOfNumber typeOfNumber = TypeOfNumber.InternationalNumber;
 	protected NumberingPlanIdentification numberingPlanIdentification = NumberingPlanIdentification.ISDNTelephoneNumberingPlan;
 	protected SmsCodingType smsCodingType = new SmsCodingType(SmsCodingType.VAL_GSM7);
+	protected boolean sendSrsmdsIfError = false;
 
 	public AddressNature getAddressNature() {
 		return addressNature;
@@ -130,11 +132,21 @@ public class TestSmsServerConfigurationData {
 		this.smsCodingType = smsCodingType;
 	}
 
+	public boolean isSendSrsmdsIfError() {
+		return sendSrsmdsIfError;
+	}
+
+	public void setSendSrsmdsIfError(boolean val) {
+		sendSrsmdsIfError = val;
+		
+	}
+
 	protected static final XMLFormat<TestSmsServerConfigurationData> XML = new XMLFormat<TestSmsServerConfigurationData>(TestSmsServerConfigurationData.class) {
 
 		public void write(TestSmsServerConfigurationData srv, OutputElement xml) throws XMLStreamException {
 			xml.setAttribute(HLR_SSN, srv.hlrSsn);
 			xml.setAttribute(VLR_SSN, srv.vlrSsn);
+			xml.setAttribute(SEND_SRSMDS_IF_ERROR, srv.sendSrsmdsIfError);
 
 			xml.add(srv.serviceCenterAddress, SERVICE_CENTER_ADDRESS, String.class);
 
@@ -149,6 +161,7 @@ public class TestSmsServerConfigurationData {
 		public void read(InputElement xml, TestSmsServerConfigurationData srv) throws XMLStreamException {
 			srv.hlrSsn = xml.getAttribute(HLR_SSN).toInt();
 			srv.vlrSsn = xml.getAttribute(VLR_SSN).toInt();
+			srv.sendSrsmdsIfError = xml.getAttribute(SEND_SRSMDS_IF_ERROR).toBoolean();
 			
 			srv.serviceCenterAddress = (String) xml.get(SERVICE_CENTER_ADDRESS, String.class);
 			
