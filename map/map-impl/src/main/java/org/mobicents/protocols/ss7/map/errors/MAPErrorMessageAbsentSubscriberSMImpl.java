@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -31,6 +31,7 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
+import org.mobicents.protocols.ss7.map.api.errors.AbsentSubscriberDiagnosticSM;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorCode;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageAbsentSubscriberSM;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
@@ -45,13 +46,13 @@ public class MAPErrorMessageAbsentSubscriberSMImpl extends MAPErrorMessageImpl i
 
 	public static final int additionalAbsentSubscriberDiagnosticSM_TAG = 0x00;
 	
-	private Integer absentSubscriberDiagnosticSM;
+	private AbsentSubscriberDiagnosticSM absentSubscriberDiagnosticSM;
 	private MAPExtensionContainer extensionContainer;
-	private Integer additionalAbsentSubscriberDiagnosticSM;
+	private AbsentSubscriberDiagnosticSM additionalAbsentSubscriberDiagnosticSM;
 
 	
-	public MAPErrorMessageAbsentSubscriberSMImpl(Integer absentSubscriberDiagnosticSM, MAPExtensionContainer extensionContainer,
-			Integer additionalAbsentSubscriberDiagnosticSM) {
+	public MAPErrorMessageAbsentSubscriberSMImpl(AbsentSubscriberDiagnosticSM absentSubscriberDiagnosticSM, MAPExtensionContainer extensionContainer,
+			AbsentSubscriberDiagnosticSM additionalAbsentSubscriberDiagnosticSM) {
 		super((long) MAPErrorCode.absentSubscriberSM);
 
 		this.absentSubscriberDiagnosticSM = absentSubscriberDiagnosticSM;
@@ -64,7 +65,7 @@ public class MAPErrorMessageAbsentSubscriberSMImpl extends MAPErrorMessageImpl i
 	}
 	
 	
-	public Integer getAbsentSubscriberDiagnosticSM() {
+	public AbsentSubscriberDiagnosticSM getAbsentSubscriberDiagnosticSM() {
 		return this.absentSubscriberDiagnosticSM;
 	}
 
@@ -72,11 +73,11 @@ public class MAPErrorMessageAbsentSubscriberSMImpl extends MAPErrorMessageImpl i
 		return this.extensionContainer;
 	}
 
-	public Integer getAdditionalAbsentSubscriberDiagnosticSM() {
+	public AbsentSubscriberDiagnosticSM getAdditionalAbsentSubscriberDiagnosticSM() {
 		return this.additionalAbsentSubscriberDiagnosticSM;
 	}
 	
-	public void setAbsentSubscriberDiagnosticSM(Integer absentSubscriberDiagnosticSM) {
+	public void setAbsentSubscriberDiagnosticSM(AbsentSubscriberDiagnosticSM absentSubscriberDiagnosticSM) {
 		this.absentSubscriberDiagnosticSM = absentSubscriberDiagnosticSM;
 	}
 
@@ -84,7 +85,7 @@ public class MAPErrorMessageAbsentSubscriberSMImpl extends MAPErrorMessageImpl i
 		this.extensionContainer = extensionContainer;
 	}
 
-	public void setAdditionalAbsentSubscriberDiagnosticSM(Integer additionalAbsentSubscriberDiagnosticSM) {
+	public void setAdditionalAbsentSubscriberDiagnosticSM(AbsentSubscriberDiagnosticSM additionalAbsentSubscriberDiagnosticSM) {
 		this.additionalAbsentSubscriberDiagnosticSM = additionalAbsentSubscriberDiagnosticSM;
 	}
 	
@@ -159,7 +160,7 @@ public class MAPErrorMessageAbsentSubscriberSMImpl extends MAPErrorMessageImpl i
 			case Tag.CLASS_UNIVERSAL:
 				switch (tag) {
 				case Tag.INTEGER:
-					this.absentSubscriberDiagnosticSM = (int)ais.readInteger();
+					this.absentSubscriberDiagnosticSM = AbsentSubscriberDiagnosticSM.getInstance((int) ais.readInteger());
 					break;
 
 				case Tag.SEQUENCE:
@@ -176,7 +177,7 @@ public class MAPErrorMessageAbsentSubscriberSMImpl extends MAPErrorMessageImpl i
 			case Tag.CLASS_CONTEXT_SPECIFIC:
 				switch (tag) {
 				case additionalAbsentSubscriberDiagnosticSM_TAG:
-					this.additionalAbsentSubscriberDiagnosticSM = (int)ais.readInteger();
+					this.additionalAbsentSubscriberDiagnosticSM = AbsentSubscriberDiagnosticSM.getInstance((int)ais.readInteger());
 					break;
 
 				default:
@@ -216,11 +217,11 @@ public class MAPErrorMessageAbsentSubscriberSMImpl extends MAPErrorMessageImpl i
 
 		try {
 			if (this.absentSubscriberDiagnosticSM != null)
-				aos.writeInteger(this.absentSubscriberDiagnosticSM);
+				aos.writeInteger(this.absentSubscriberDiagnosticSM.getCode());
 			if (this.extensionContainer != null)
 				((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(aos);
 			if (this.additionalAbsentSubscriberDiagnosticSM != null)
-				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, additionalAbsentSubscriberDiagnosticSM_TAG, this.additionalAbsentSubscriberDiagnosticSM);
+				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, additionalAbsentSubscriberDiagnosticSM_TAG, this.additionalAbsentSubscriberDiagnosticSM.getCode());
 
 		} catch (IOException e) {
 			throw new MAPException("IOException when encoding MAPErrorMessageAbsentSubscriberSM: " + e.getMessage(), e);

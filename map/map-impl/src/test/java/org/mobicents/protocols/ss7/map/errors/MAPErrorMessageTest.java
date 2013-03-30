@@ -31,6 +31,7 @@ import org.testng.annotations.*;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.map.api.errors.AbsentSubscriberDiagnosticSM;
 import org.mobicents.protocols.ss7.map.api.errors.AbsentSubscriberReason;
 import org.mobicents.protocols.ss7.map.api.errors.AdditionalNetworkResource;
 import org.mobicents.protocols.ss7.map.api.errors.AdditionalRoamingNotAllowedCause;
@@ -124,8 +125,8 @@ public class MAPErrorMessageTest   {
 
 	private Parameter getDataAbsentSubscriberSMFull() {
 		Parameter par = new ParameterImpl();
-		par.setData(new byte[] { 2, 1, 11, 48, 39, (byte) 160, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5,
-				21, 22, 23, 24, 25, 26, (byte) 161, 3, 31, 32, 33, (byte) 128, 1, 22 });
+		par.setData(new byte[] { 2, 1, 0, 48, 39, (byte) 160, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5,
+				21, 22, 23, 24, 25, 26, (byte) 161, 3, 31, 32, 33, (byte) 128, 1, 6 });
 		par.setPrimitive(false);
 		par.setTagClass(Tag.CLASS_UNIVERSAL);
 		par.setTag(Tag.SEQUENCE);
@@ -329,7 +330,7 @@ public class MAPErrorMessageTest   {
 		em.decodeData(ais, p.getData().length);
 		assertTrue(em.isEmAbsentSubscriberSM());
 		MAPErrorMessageAbsentSubscriberSM emAbsentSubscriberSMImpl = em.getEmAbsentSubscriberSM();
-		assertEquals( (int) emAbsentSubscriberSMImpl.getAbsentSubscriberDiagnosticSM(),1);
+		assertEquals(emAbsentSubscriberSMImpl.getAbsentSubscriberDiagnosticSM(), AbsentSubscriberDiagnosticSM.IMSIDetached);
 		assertNull(emAbsentSubscriberSMImpl.getAdditionalAbsentSubscriberDiagnosticSM());
 		assertNull(emAbsentSubscriberSMImpl.getExtensionContainer());
 
@@ -339,8 +340,8 @@ public class MAPErrorMessageTest   {
 		em.decodeData(ais, p.getData().length);
 		assertTrue(em.isEmAbsentSubscriberSM());
 		emAbsentSubscriberSMImpl = em.getEmAbsentSubscriberSM();
-		assertEquals( (int) emAbsentSubscriberSMImpl.getAbsentSubscriberDiagnosticSM(),11);
-		assertEquals( (int) emAbsentSubscriberSMImpl.getAdditionalAbsentSubscriberDiagnosticSM(),22);
+		assertEquals(emAbsentSubscriberSMImpl.getAbsentSubscriberDiagnosticSM(), AbsentSubscriberDiagnosticSM.NoPagingResponseViaTheMSC);
+		assertEquals(emAbsentSubscriberSMImpl.getAdditionalAbsentSubscriberDiagnosticSM(), AbsentSubscriberDiagnosticSM.GPRSDetached);
 		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(emAbsentSubscriberSMImpl.getExtensionContainer()));
 
 		p = getDataSystemFailure();
@@ -552,7 +553,7 @@ public class MAPErrorMessageTest   {
 		p.setData(aos.toByteArray());
 		assertParameter( getDataSmDeliveryFailureFull(),p);
 
-		em = (MAPErrorMessageImpl)fact.createMAPErrorMessageAbsentSubscriberSM(1, null, null);
+		em = (MAPErrorMessageImpl)fact.createMAPErrorMessageAbsentSubscriberSM(AbsentSubscriberDiagnosticSM.IMSIDetached, null, null);
 		aos = new AsnOutputStream();
 		em.encodeData(aos);
 		p = new ParameterImpl();
@@ -562,7 +563,8 @@ public class MAPErrorMessageTest   {
 		p.setData(aos.toByteArray());
 		assertParameter( getDataAbsentSubscriberSM(),p);
 
-		em = (MAPErrorMessageImpl)fact.createMAPErrorMessageAbsentSubscriberSM(11, MAPExtensionContainerTest.GetTestExtensionContainer(), 22);
+		em = (MAPErrorMessageImpl) fact.createMAPErrorMessageAbsentSubscriberSM(AbsentSubscriberDiagnosticSM.NoPagingResponseViaTheMSC,
+				MAPExtensionContainerTest.GetTestExtensionContainer(), AbsentSubscriberDiagnosticSM.GPRSDetached);
 		aos = new AsnOutputStream();
 		em.encodeData(aos);
 		p = new ParameterImpl();

@@ -386,10 +386,10 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 		if (this.appCntx.getApplicationContextName() != MAPApplicationContextName.shortMsgGatewayContext
 				|| (vers != MAPApplicationContextVersion.version1 && vers != MAPApplicationContextVersion.version2 && vers != MAPApplicationContextVersion.version3))
 			throw new MAPException("Bad application context name for addReportSMDeliveryStatusRequest: must be shortMsgGatewayContext_V1, V2 or V3");
-		
-		if (msisdn == null || serviceCentreAddress == null || sMDeliveryOutcome == null)
+
+		if (msisdn == null || serviceCentreAddress == null || (vers != MAPApplicationContextVersion.version1 && sMDeliveryOutcome == null))
 			throw new MAPException("msisdn, serviceCentreAddress and sMDeliveryOutcome must not be null");
-		
+
 		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
 		if (customInvokeTimeout == _Timer_Default)
 			invoke.setTimeout(_Timer_s);
