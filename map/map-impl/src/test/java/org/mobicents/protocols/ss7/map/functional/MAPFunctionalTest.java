@@ -2709,7 +2709,7 @@ public class MAPFunctionalTest extends SccpHarness {
 				Assert.assertEquals(sca.getAddressNature(), AddressNature.network_specific_number);
 				Assert.assertEquals(sca.getNumberingPlan(), NumberingPlan.national);
 				Assert.assertEquals(sca.getAddress(), "999000");
-				Assert.assertEquals(sMDeliveryOutcome, SMDeliveryOutcome.absentSubscriber);
+				Assert.assertNull(sMDeliveryOutcome);
 				Assert.assertNull(absentSubscriberDiagnosticSM);
 				Assert.assertFalse(gprsSupportIndicator);
 				Assert.assertFalse(deliveryOutcomeIndicator);

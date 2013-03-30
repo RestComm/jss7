@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -53,15 +53,15 @@ public interface MAPErrorMessageAbsentSubscriberSM extends MAPErrorMessage {
 	
 	public MAPExtensionContainer getExtensionContainer();
 
-	public Integer getAbsentSubscriberDiagnosticSM();
+	public AbsentSubscriberDiagnosticSM getAbsentSubscriberDiagnosticSM();
 
-	public Integer getAdditionalAbsentSubscriberDiagnosticSM();
+	public AbsentSubscriberDiagnosticSM getAdditionalAbsentSubscriberDiagnosticSM();
 
-	public void setAbsentSubscriberDiagnosticSM(Integer absentSubscriberDiagnosticSM);
+	public void setAbsentSubscriberDiagnosticSM(AbsentSubscriberDiagnosticSM absentSubscriberDiagnosticSM);
 
 	public void setExtensionContainer(MAPExtensionContainer extensionContainer);
 
-	public void setAdditionalAbsentSubscriberDiagnosticSM(Integer additionalAbsentSubscriberDiagnosticSM);
+	public void setAdditionalAbsentSubscriberDiagnosticSM(AbsentSubscriberDiagnosticSM additionalAbsentSubscriberDiagnosticSM);
 	
 }
 

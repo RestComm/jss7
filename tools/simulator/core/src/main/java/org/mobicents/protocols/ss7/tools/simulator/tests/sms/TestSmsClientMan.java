@@ -30,8 +30,10 @@ import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
+import org.mobicents.protocols.ss7.map.api.errors.AbsentSubscriberDiagnosticSM;
 import org.mobicents.protocols.ss7.map.api.errors.CallBarringCause;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
+import org.mobicents.protocols.ss7.map.api.errors.SMEnumeratedDeliveryFailureCause;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
@@ -104,6 +106,10 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 	private int countMoFsmReq = 0;
 	private int countMoFsmResp = 0;
 	private int countIscReq = 0;
+	private int countRsmdsReq = 0;
+	private int countRsmdsResp = 0;
+	private int countAscReq = 0;
+	private int countAscResp = 0;
 	private int countErrRcvd = 0;
 	private int countErrSent = 0;
 	private String currentRequestDef = "";
@@ -232,23 +238,42 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 		this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().setSRIScAddressNotIncluded(val);
 		this.testerHost.markStore();
 	}
+	@Override
+	public MtFSMReaction getMtFSMReaction() {
+		return this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getMtFSMReaction();
+	}
+
+	@Override
+	public String getMtFSMReaction_Value() {
+		return this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getMtFSMReaction().toString();
+	}
+
+	@Override
+	public void setMtFSMReaction(MtFSMReaction val) {
+		this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().setMtFSMReaction(val);
+		this.testerHost.markStore();
+	}
 
 	@Override
 	public void putSRIReaction(String val) {
-		// TODO Auto-generated method stub
-		
+		SRIReaction x = SRIReaction.createInstance(val);
+		if (x != null)
+			this.setSRIReaction(x);
 	}
 
 	@Override
 	public void putSRIInformServiceCenter(String val) {
-		// TODO Auto-generated method stub
-		
+		SRIInformServiceCenter x = SRIInformServiceCenter.createInstance(val);
+		if (x != null)
+			this.setSRIInformServiceCenter(x);
 	}
-	
-	
-	
-	
-	
+
+	@Override
+	public void putMtFSMReaction(String val) {
+		MtFSMReaction x = MtFSMReaction.createInstance(val);
+		if (x != null)
+			this.setMtFSMReaction(x);
+	}
 	
 	@Override
 	public String getSRIResponseImsi() {
@@ -401,6 +426,14 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 		sb.append(countMoFsmResp);
 		sb.append(", countIscReq-");
 		sb.append(countIscReq);
+		sb.append(", countRsmdsReq-");
+		sb.append(countRsmdsReq);
+		sb.append(", countRsmdsResp-");
+		sb.append(countRsmdsResp);
+		sb.append(", countAscReq-");
+		sb.append(countAscReq);
+		sb.append(", countAscResp-");
+		sb.append(countAscResp);
 		sb.append(", countErrRcvd-");
 		sb.append(countErrRcvd);
 		sb.append(", countErrSent-");
@@ -535,6 +568,62 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 		return sb.toString();
 	}
 
+	@Override
+	public String performAlertServiceCentre(String destIsdnNumber) {
+		if (!isStarted)
+			return "The tester is not started";
+		if (destIsdnNumber == null || destIsdnNumber.equals(""))
+			return "DestIsdnNumber is empty";
+
+		currentRequestDef = "";
+
+		return doAlertServiceCentre(destIsdnNumber, this.getServiceCenterAddress());
+	}
+
+	private String doAlertServiceCentre(String destIsdnNumber, String serviceCentreAddr) {
+
+		MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
+
+		MAPApplicationContextVersion vers;
+		MAPApplicationContextName acn = MAPApplicationContextName.shortMsgAlertContext;
+		switch (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getMapProtocolVersion().intValue()) {
+		case MapProtocolVersion.VAL_MAP_V1:
+			vers = MAPApplicationContextVersion.version1;
+			break;
+		default:
+			vers = MAPApplicationContextVersion.version2;
+			break;
+		}
+		MAPApplicationContext mapAppContext = MAPApplicationContext.getInstance(acn, vers);
+
+		try {
+			ISDNAddressString msisdn = mapProvider.getMAPParameterFactory().createISDNAddressString(
+					this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getAddressNature(),
+					this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getNumberingPlan(), destIsdnNumber);
+			AddressString serviceCentreAddressDA = mapProvider.getMAPParameterFactory().createAddressString(
+					this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getAddressNature(),
+					this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getNumberingPlan(), serviceCentreAddr);
+
+			MAPDialogSms curDialog = mapProvider.getMAPServiceSms().createNewDialog(mapAppContext, this.mapMan.createOrigAddress(), null,
+					this.mapMan.createDestAddress(serviceCentreAddr, this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getSmscSsn()),
+					null);
+
+			curDialog.addAlertServiceCentreRequest(msisdn, serviceCentreAddressDA);
+			curDialog.send();
+			if (vers == MAPApplicationContextVersion.version1)
+				curDialog.release();
+
+			String ascData = "isdnNumber=" + destIsdnNumber + ", serviceCentreAddr=" + serviceCentreAddr;
+			currentRequestDef += "Sent ascReq;";
+			this.countAscReq++;
+			this.testerHost.sendNotif(SOURCE_NAME, "Sent: ascReq", ascData, Level.DEBUG);
+
+			return "AlertServiceCentreRequest has been sent";
+		} catch (MAPException ex) {
+			return "Exception when sending AlertServiceCentreRequest: " + ex.toString();
+		}
+	}
+
 
 	@Override
 	public void onForwardShortMessageRequest(ForwardShortMessageRequest ind) {
@@ -551,18 +640,83 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 			this.onMtRequest(da, oa, si, curDialog);
 
 			try {
-				curDialog.addForwardShortMessageResponse(invokeId);
+				if (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getMtFSMReaction().intValue() == MtFSMReaction.VAL_RETURN_SUCCESS) {
+					curDialog.addForwardShortMessageResponse(invokeId);
+					this.countMtFsmResp++;
+					this.testerHost.sendNotif(SOURCE_NAME, "Sent: mtResp", "", Level.DEBUG);
+				} else {
+					sendMtError(curDialog, invokeId);
+				}
+
 				this.needSendClose = true;
 
-				this.countMtFsmResp++;
-				this.testerHost.sendNotif(SOURCE_NAME, "Sent: mtResp", "", Level.DEBUG);
 			} catch (MAPException e) {
 				this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking addMtForwardShortMessageResponse : " + e.getMessage(), e, Level.ERROR);
 			}
 		}
 	}
 
-	private void onMtRequest(SM_RP_DA da, SM_RP_OA oa, SmsSignalInfo si, MAPDialogSms curDialog){
+	private void sendMtError(MAPDialogSms curDialog, long invokeId) throws MAPException {
+		MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
+		String uData;
+		switch (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getMtFSMReaction().intValue()) {
+		case MtFSMReaction.VAL_ERROR_MEMORY_CAPACITY_EXCEEDED:
+		case MtFSMReaction.VAL_ERROR_UNKNOWN_SERVICE_CENTRE:
+			SMEnumeratedDeliveryFailureCause smEnumeratedDeliveryFailureCause;
+			if (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getMtFSMReaction().intValue() == MtFSMReaction.VAL_ERROR_MEMORY_CAPACITY_EXCEEDED)
+				smEnumeratedDeliveryFailureCause = SMEnumeratedDeliveryFailureCause.memoryCapacityExceeded;
+			else
+				smEnumeratedDeliveryFailureCause = SMEnumeratedDeliveryFailureCause.unknownServiceCentre;
+			MAPErrorMessage mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageSMDeliveryFailure(
+					smEnumeratedDeliveryFailureCause, null, null);
+			curDialog.sendErrorComponent(invokeId, mapErrorMessage);
+			
+			this.countErrSent++;
+			uData = this.createErrorData(curDialog.getLocalDialogId(), (int)invokeId, mapErrorMessage);
+			this.testerHost.sendNotif(SOURCE_NAME, "Sent: errSmDelFail", uData, Level.DEBUG);
+			break;
+		case MtFSMReaction.VAL_ERROR_ABSENT_SUBSCRIBER:
+			mapErrorMessage = null;
+			switch (curDialog.getApplicationContext().getApplicationContextVersion()) {
+			case version1:
+				mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageAbsentSubscriber(null);
+				break;
+			case version2:
+				mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageAbsentSubscriber(null, null);
+				break;
+			default:
+				mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageAbsentSubscriberSM(
+						AbsentSubscriberDiagnosticSM.IMSIDetached, null, null);
+				break;
+			}
+
+			curDialog.sendErrorComponent(invokeId, mapErrorMessage);
+			
+			this.countErrSent++;
+			uData = this.createErrorData(curDialog.getLocalDialogId(), (int)invokeId, mapErrorMessage);
+			this.testerHost.sendNotif(SOURCE_NAME, "Sent: errAbsSubs", uData, Level.DEBUG);
+			break;
+		case MtFSMReaction.VAL_ERROR_SUBSCRIBER_BUSY_FOR_MT_SMS:
+			mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageSubscriberBusyForMtSms(null, null);
+			curDialog.sendErrorComponent(invokeId, mapErrorMessage);
+			
+			this.countErrSent++;
+			uData = this.createErrorData(curDialog.getLocalDialogId(), (int)invokeId, mapErrorMessage);
+			this.testerHost.sendNotif(SOURCE_NAME, "Sent: errSubBusyForMt", uData, Level.DEBUG);
+			break;
+		case MtFSMReaction.VAL_ERROR_SYSTEM_FAILURE:
+			mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageSystemFailure(
+					(long) curDialog.getApplicationContext().getApplicationContextVersion().getVersion(), NetworkResource.vmsc, null, null);
+			curDialog.sendErrorComponent(invokeId, mapErrorMessage);
+			
+			this.countErrSent++;
+			uData = this.createErrorData(curDialog.getLocalDialogId(), (int)invokeId, mapErrorMessage);
+			this.testerHost.sendNotif(SOURCE_NAME, "Sent: errSysFail", uData, Level.DEBUG);
+			break;
+		}
+	}
+
+	private void onMtRequest(SM_RP_DA da, SM_RP_OA oa, SmsSignalInfo si, MAPDialogSms curDialog) {
 
 		this.countMtFsmReq++;
 
@@ -580,15 +734,11 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 
 		try {
 			String msg = null;
-//			String origIsdnNumber = null;
 			SmsDeliverTpdu dTpdu = null;
 			if (si != null) {
 				SmsTpdu tpdu = si.decodeTpdu(false);
 				if (tpdu instanceof SmsDeliverTpdu) {
 					dTpdu = (SmsDeliverTpdu) tpdu;
-//					AddressField af = dTpdu.getOriginatingAddress();
-//					if (af != null)
-//						origIsdnNumber = af.getAddressValue();
 					UserData ud = dTpdu.getUserData();
 					if (ud != null) {
 						ud.decode();
@@ -649,11 +799,16 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 		this.onMtRequest(da, oa, si, curDialog);
 
 		try {
-			curDialog.addMtForwardShortMessageResponse(invokeId, null, null);
+			if (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getMtFSMReaction().intValue() == MtFSMReaction.VAL_RETURN_SUCCESS) {
+				curDialog.addMtForwardShortMessageResponse(invokeId, null, null);
+				this.countMtFsmResp++;
+				this.testerHost.sendNotif(SOURCE_NAME, "Sent: mtResp", "", Level.DEBUG);
+			} else {
+				sendMtError(curDialog, invokeId);
+			}
+			
 			this.needSendClose = true;
 
-			this.countMtFsmResp++;
-			this.testerHost.sendNotif(SOURCE_NAME, "Sent: mtResp", "", Level.DEBUG);
 		} catch (MAPException e) {
 			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking addMtForwardShortMessageResponse : " + e.getMessage(), e, Level.ERROR);
 		}		
@@ -736,16 +891,26 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 				break;
 
 			case SRIReaction.VAL_ERROR_ABSENT_SUBSCRIBER:
-				Boolean mwdSet = null;
-				if (curDialog.getApplicationContext().getApplicationContextVersion().getVersion() > 1)
-					informServiceCentrePossible = true;
-				else {
+				MAPErrorMessage mapErrorMessage = null;
+				switch (curDialog.getApplicationContext().getApplicationContextVersion()) {
+				case version1:
+					Boolean mwdSet = null;
 					if (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getSRIInformServiceCenter().intValue() == SRIInformServiceCenter.MWD_mnrf
 							|| this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getSRIInformServiceCenter().intValue() == SRIInformServiceCenter.MWD_mcef_mnrf)
 						mwdSet = true;
+					mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageAbsentSubscriber(mwdSet);
+					break;
+				case version2:
+					mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageAbsentSubscriber(null, null);
+					informServiceCentrePossible = true;
+					break;
+				default:
+					mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageAbsentSubscriberSM(
+							AbsentSubscriberDiagnosticSM.IMSIDetached, null, null);
+					informServiceCentrePossible = true;
+					break;
 				}
 
-				MAPErrorMessage mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageAbsentSubscriber(mwdSet);
 				curDialog.sendErrorComponent(invokeId, mapErrorMessage);
 				
 				this.countErrSent++;
@@ -865,9 +1030,29 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 	}
 
 	@Override
-	public void onReportSMDeliveryStatusRequest(ReportSMDeliveryStatusRequest reportSMDeliveryStatusInd) {
-		// TODO Auto-generated method stub
-		
+	public void onReportSMDeliveryStatusRequest(ReportSMDeliveryStatusRequest ind) {
+		if (!isStarted)
+			return;
+
+		this.countRsmdsReq++;
+
+		MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
+		MAPDialogSms curDialog = ind.getMAPDialog();
+		long invokeId = ind.getInvokeId();
+
+		this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: rsmdsReq", ind.toString(), Level.DEBUG);
+
+		try {
+			curDialog.addReportSMDeliveryStatusResponse(invokeId, null, null);
+
+			this.countRsmdsResp++;
+			this.testerHost.sendNotif(SOURCE_NAME, "Sent: rsmdsResp", "", Level.DEBUG);
+
+			this.needSendClose = true;
+
+		} catch (MAPException e) {
+			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking ReportSMDeliveryStatusResponse : " + e.getMessage(), e, Level.ERROR);
+		}
 	}
 
 	@Override
@@ -889,9 +1074,16 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 	}
 
 	@Override
-	public void onAlertServiceCentreResponse(AlertServiceCentreResponse alertServiceCentreInd) {
-		// TODO Auto-generated method stub
-		
+	public void onAlertServiceCentreResponse(AlertServiceCentreResponse ind) {
+		if (!isStarted)
+			return;
+
+		this.countAscResp++;
+
+		MAPDialogSms curDialog = ind.getMAPDialog();
+		long invokeId = curDialog.getLocalDialogId();
+		currentRequestDef += "Rsvd ascResp;";
+		this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: ascResp", "", Level.DEBUG);
 	}
 
 	@Override

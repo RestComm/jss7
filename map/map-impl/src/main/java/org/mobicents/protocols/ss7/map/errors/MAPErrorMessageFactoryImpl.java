@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.errors;
 
+import org.mobicents.protocols.ss7.map.api.errors.AbsentSubscriberDiagnosticSM;
 import org.mobicents.protocols.ss7.map.api.errors.AdditionalRoamingNotAllowedCause;
 import org.mobicents.protocols.ss7.map.api.errors.CUGRejectCause;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
@@ -192,8 +193,8 @@ public class MAPErrorMessageFactoryImpl implements MAPErrorMessageFactory {
 		return new MAPErrorMessageUnknownSubscriberImpl(extensionContainer, unknownSubscriberDiagnostic);
 	}
 
-	public MAPErrorMessageAbsentSubscriberSM createMAPErrorMessageAbsentSubscriberSM(Integer absentSubscriberDiagnosticSM,
-			MAPExtensionContainer extensionContainer, Integer additionalAbsentSubscriberDiagnosticSM) {
+	public MAPErrorMessageAbsentSubscriberSM createMAPErrorMessageAbsentSubscriberSM(AbsentSubscriberDiagnosticSM absentSubscriberDiagnosticSM,
+			MAPExtensionContainer extensionContainer, AbsentSubscriberDiagnosticSM additionalAbsentSubscriberDiagnosticSM) {
 		return new MAPErrorMessageAbsentSubscriberSMImpl(absentSubscriberDiagnosticSM, extensionContainer, additionalAbsentSubscriberDiagnosticSM);
 	}
 

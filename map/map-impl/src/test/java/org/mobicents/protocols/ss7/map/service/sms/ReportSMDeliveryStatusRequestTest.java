@@ -44,7 +44,11 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
  *
  */
 public class ReportSMDeliveryStatusRequestTest  {
-	
+
+	private byte[] getEncodedData_V1() {
+		return new byte[] { 48, 16, 4, 6, -111, 39, 34, 51, 19, 17, 4, 6, -111, 1, -112, 115, 84, -13 };
+	}
+
 	private byte[] getEncodedData() {
 		return new byte[] { 48, 19, 4, 6, -111, 39, 34, 51, 19, 17, 4, 6, -111, 1, -112, 115, 84, -13, 10, 1, 1 };
 	}
@@ -62,7 +66,7 @@ public class ReportSMDeliveryStatusRequestTest  {
 		AsnInputStream asn = new AsnInputStream(rawData);
 
 		int tag = asn.readTag();
-		ReportSMDeliveryStatusRequestImpl ind = new ReportSMDeliveryStatusRequestImpl(3);
+		ReportSMDeliveryStatusRequestImpl ind = new ReportSMDeliveryStatusRequestImpl(2);
 		ind.decodeAll(asn);
 
 		assertEquals( tag,Tag.SEQUENCE);
@@ -104,6 +108,27 @@ public class ReportSMDeliveryStatusRequestTest  {
 		assertEquals( (boolean)ind.getDeliveryOutcomeIndicator(),false);		
 		assertEquals( ind.getAdditionalSMDeliveryOutcome(),SMDeliveryOutcome.memoryCapacityExceeded);
 		assertEquals( (int) ind.getAdditionalAbsentSubscriberDiagnosticSM(),555);		
+
+
+		rawData = getEncodedData_V1();
+		asn = new AsnInputStream(rawData);
+
+		tag = asn.readTag();
+		ind = new ReportSMDeliveryStatusRequestImpl(1);
+		ind.decodeAll(asn);
+
+		assertEquals( tag,Tag.SEQUENCE);
+		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
+
+		msisdn = ind.getMsisdn();
+		assertEquals( msisdn.getAddressNature(),AddressNature.international_number);
+		assertEquals( msisdn.getNumberingPlan(),NumberingPlan.ISDN);
+		assertEquals( msisdn.getAddress(),"7222333111");
+		sca = ind.getServiceCentreAddress();
+		assertEquals( sca.getAddressNature(),AddressNature.international_number);
+		assertEquals( sca.getNumberingPlan(),NumberingPlan.ISDN);
+		assertEquals( sca.getAddress(),"100937453");
+		assertNull(ind.getSMDeliveryOutcome());
 	}
 
 	@Test(groups = { "functional.encode","service.sms"})
@@ -111,7 +136,7 @@ public class ReportSMDeliveryStatusRequestTest  {
 
 		ISDNAddressString msisdn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "7222333111");
 		AddressString sca = new AddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "100937453");
-		ReportSMDeliveryStatusRequestImpl ind = new ReportSMDeliveryStatusRequestImpl(3, msisdn, sca, SMDeliveryOutcome.absentSubscriber,
+		ReportSMDeliveryStatusRequestImpl ind = new ReportSMDeliveryStatusRequestImpl(2, msisdn, sca, SMDeliveryOutcome.absentSubscriber,
 				null, null, false, false, null, null);
 		
 		AsnOutputStream asnOS = new AsnOutputStream();
@@ -119,6 +144,16 @@ public class ReportSMDeliveryStatusRequestTest  {
 		
 		byte[] encodedData = asnOS.toByteArray();
 		byte[] rawData = getEncodedData();		
+		assertTrue( Arrays.equals(rawData,encodedData));
+
+		
+		ind = new ReportSMDeliveryStatusRequestImpl(1, msisdn, sca, null, null, null, false, false, null, null);
+
+		asnOS = new AsnOutputStream();
+		ind.encodeAll(asnOS);
+		
+		encodedData = asnOS.toByteArray();
+		rawData = getEncodedData_V1();		
 		assertTrue( Arrays.equals(rawData,encodedData));
 
 		

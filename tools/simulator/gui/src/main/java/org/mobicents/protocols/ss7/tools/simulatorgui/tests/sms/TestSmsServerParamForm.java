@@ -47,6 +47,7 @@ import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TypeOfNumberType;
 import org.mobicents.protocols.ss7.tools.simulatorgui.M3uaForm;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JCheckBox;
 
 /**
  * 
@@ -67,6 +68,7 @@ public class TestSmsServerParamForm extends JDialog {
 	private JComboBox cbNumberingPlanIdentification;
 	private JTextField tbServiceCenterAddress;
 	private JComboBox cbSmsCodingType;
+	private JCheckBox cbSendSrsmdsIfError;
 
 	public TestSmsServerParamForm(JFrame owner) {
 		super(owner, true);
@@ -74,7 +76,7 @@ public class TestSmsServerParamForm extends JDialog {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setTitle("SMS test server settings");
-		setBounds(100, 100, 539, 470);
+		setBounds(100, 100, 539, 504);
 		
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.CENTER);
@@ -164,7 +166,7 @@ public class TestSmsServerParamForm extends JDialog {
 				loadDataA();
 			}
 		});
-		button.setBounds(10, 374, 246, 23);
+		button.setBounds(10, 401, 246, 23);
 		panel.add(button);
 		
 		JButton button_1 = new JButton("Load default values for side B");
@@ -173,7 +175,7 @@ public class TestSmsServerParamForm extends JDialog {
 				loadDataB();
 			}
 		});
-		button_1.setBounds(266, 374, 255, 23);
+		button_1.setBounds(266, 401, 255, 23);
 		panel.add(button_1);
 		
 		JButton button_2 = new JButton("Cancel");
@@ -182,7 +184,7 @@ public class TestSmsServerParamForm extends JDialog {
 				getJFrame().dispose();
 			}
 		});
-		button_2.setBounds(404, 408, 117, 23);
+		button_2.setBounds(404, 435, 117, 23);
 		panel.add(button_2);
 		
 		JButton button_3 = new JButton("Save");
@@ -193,7 +195,7 @@ public class TestSmsServerParamForm extends JDialog {
 				}
 			}
 		});
-		button_3.setBounds(180, 408, 117, 23);
+		button_3.setBounds(180, 435, 117, 23);
 		panel.add(button_3);
 		
 		JButton button_4 = new JButton("Reload");
@@ -202,7 +204,7 @@ public class TestSmsServerParamForm extends JDialog {
 				reloadData();
 			}
 		});
-		button_4.setBounds(10, 408, 144, 23);
+		button_4.setBounds(10, 435, 144, 23);
 		panel.add(button_4);
 		
 		JLabel lblOriginationServiceCenter = new JLabel("Origination Service center address string");
@@ -221,6 +223,10 @@ public class TestSmsServerParamForm extends JDialog {
 		cbSmsCodingType = new JComboBox();
 		cbSmsCodingType.setBounds(214, 339, 307, 20);
 		panel.add(cbSmsCodingType);
+		
+		cbSendSrsmdsIfError = new JCheckBox("Send reportSM-DeliveryStatus if error");
+		cbSendSrsmdsIfError.setBounds(8, 367, 513, 25);
+		panel.add(cbSendSrsmdsIfError);
 	}
 
 	public void setData(TestSmsServerManMBean smsServer) {
@@ -244,6 +250,7 @@ public class TestSmsServerParamForm extends JDialog {
 		tbServiceCenterAddress.setText(this.smsServer.getServiceCenterAddress());
 		tbHlrSsn.setText(((Integer)this.smsServer.getHlrSsn()).toString());
 		tbVlrSsn.setText(((Integer)this.smsServer.getVlrSsn()).toString());
+		cbSendSrsmdsIfError.setSelected(this.smsServer.isSendSrsmdsIfError());
 	}
 
 	private void loadDataA() {
@@ -258,6 +265,7 @@ public class TestSmsServerParamForm extends JDialog {
 		tbServiceCenterAddress.setText("");
 		tbHlrSsn.setText("6");
 		tbVlrSsn.setText("8");
+		cbSendSrsmdsIfError.setSelected(false);
 	}
 
 	private void loadDataB() {
@@ -290,6 +298,7 @@ public class TestSmsServerParamForm extends JDialog {
 		this.smsServer.setServiceCenterAddress(tbServiceCenterAddress.getText());
 		this.smsServer.setHlrSsn(hlrSsn);
 		this.smsServer.setVlrSsn(vlrSsn);
+		this.smsServer.setSendSrsmdsIfError(cbSendSrsmdsIfError.isSelected());
 
 		return true;
 	}

@@ -55,7 +55,6 @@ public interface TestSmsClientManMBean {
 
 	public void setMapProtocolVersion(MapProtocolVersion val);	
 
-// ........................
 	public SRIReaction getSRIReaction();
 
 	public String getSRIReaction_Value();
@@ -71,7 +70,12 @@ public interface TestSmsClientManMBean {
 	public boolean isSRIScAddressNotIncluded();
 
 	public void setSRIScAddressNotIncluded(boolean val);	
-	// ........................
+
+	public MtFSMReaction getMtFSMReaction();
+
+	public String getMtFSMReaction_Value();
+
+	public void setMtFSMReaction(MtFSMReaction val);	
 
 
 	public String getSRIResponseImsi();
@@ -111,11 +115,11 @@ public interface TestSmsClientManMBean {
 
 	public void putMapProtocolVersion(String val);
 
-	// ........................
 	public void putSRIReaction(String val);
 
 	public void putSRIInformServiceCenter(String val);
-	// ........................
+
+	public void putMtFSMReaction(String val);
 
 	public void putTypeOfNumber(String val);
 
@@ -126,8 +130,10 @@ public interface TestSmsClientManMBean {
 
 	public String getCurrentRequestDef();
 
-	
+
 	public String performMoForwardSM(String msg, String destIsdnNumber, String origIsdnNumber);
+
+	public String performAlertServiceCentre(String destIsdnNumber);
 
 	public String closeCurrentDialog();
 

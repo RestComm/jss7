@@ -186,7 +186,7 @@ public class TestSmsServerForm extends TestingForm {
 				sendSRIForSM_Mtforwardsm();
 			}
 		});
-		btnSendSriforsmmtforwardsm.setBounds(174, 0, 207, 23);
+		btnSendSriforsmmtforwardsm.setBounds(174, 0, 234, 23);
 		panel_1.add(btnSendSriforsmmtforwardsm);
 		
 		JButton btnSendMtforwardsm = new JButton("Send MtForwardSM");
@@ -195,7 +195,7 @@ public class TestSmsServerForm extends TestingForm {
 				sendMtforwardsm();
 			}
 		});
-		btnSendMtforwardsm.setBounds(391, 0, 180, 23);
+		btnSendMtforwardsm.setBounds(414, 0, 180, 23);
 		panel_1.add(btnSendMtforwardsm);
 		
 		JLabel label_1 = new JLabel("Operation result");
