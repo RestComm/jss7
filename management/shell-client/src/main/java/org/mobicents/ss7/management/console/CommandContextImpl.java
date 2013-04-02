@@ -36,6 +36,7 @@ import org.mobicents.ss7.management.transceiver.MessageFactory;
 public class CommandContextImpl implements CommandContext {
 
 	public static final String CONNECTED_AUTHENTICATING_MESSAGE = "Authenticating against configured security realm";
+	public static final String CONNECTED_AUTHENTICATION_FAILED = "Authentication failed";
 	
 	public static final String CLOSING_CONNECTION_MESSAGE = "Closing this connection";
 	
@@ -204,8 +205,8 @@ public class CommandContextImpl implements CommandContext {
 				
 				password = this.console.readLine("Passowrd:", '*');
 				Message message = this.client.run(messageFactory.createMessage(password));
-				
-				if(message != null){
+				mesage = message.toString();
+				if(mesage.equals(CONNECTED_AUTHENTICATION_FAILED)){
 					this.printLine(message.toString());
 					this.disconnectController();
 				}
