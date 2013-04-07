@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.tools.simulator.level1;
 
 import javolution.xml.stream.XMLStreamException;
 
+import javolution.text.CharArray;
 import javolution.util.FastList;
 import javolution.xml.XMLFormat;
 
@@ -39,6 +40,7 @@ import org.mobicents.protocols.ss7.m3ua.IPSPType;
  */
 public class M3uaConfigurationData {
 
+	protected static final String STORE_PCAP_TRACE = "storePcapTrace";
 	protected static final String IS_SCTP_SERVER = "isSctpServer";
 	protected static final String LOCAL_HOST = "localHost";
 	protected static final String LOCAL_PORT = "localPort";
@@ -56,6 +58,7 @@ public class M3uaConfigurationData {
 	protected static final String ROUTING_CONTEXT = "routingConext";
 	protected static final String NETWORK_APPEARANCE = "networkAppearance";
 
+	private boolean storePcapTrace = false;
 	private boolean isSctpServer = false;
 	private String localHost;
 	private int localPort;
@@ -73,6 +76,14 @@ public class M3uaConfigurationData {
 	private ExchangeType m3uaExchangeType = ExchangeType.SE;
 	private IPSPType m3uaIPSPType = IPSPType.CLIENT;
 
+
+	public boolean getStorePcapTrace() {
+		return storePcapTrace;
+	}
+
+	public void setStorePcapTrace(boolean val) {
+		storePcapTrace = val;
+	}
 
 	public boolean getIsSctpServer() {
 		return isSctpServer;
@@ -227,6 +238,7 @@ public class M3uaConfigurationData {
 	protected static final XMLFormat<M3uaConfigurationData> XML = new XMLFormat<M3uaConfigurationData>(M3uaConfigurationData.class) {
 
 		public void write(M3uaConfigurationData m3ua, OutputElement xml) throws XMLStreamException {
+			xml.setAttribute(STORE_PCAP_TRACE, m3ua.storePcapTrace);
 			xml.setAttribute(IS_SCTP_SERVER, m3ua.isSctpServer);
 			xml.setAttribute(LOCAL_PORT, m3ua.localPort);
 			xml.setAttribute(REMOTE_PORT, m3ua.remotePort);
@@ -248,6 +260,10 @@ public class M3uaConfigurationData {
 		}
 
 		public void read(InputElement xml, M3uaConfigurationData m3ua) throws XMLStreamException {
+			CharArray ca = xml.getAttribute(STORE_PCAP_TRACE);
+			if (ca != null)
+				m3ua.storePcapTrace = ca.toBoolean();
+
 			m3ua.isSctpServer = xml.getAttribute(IS_SCTP_SERVER).toBoolean();
 			m3ua.localPort = xml.getAttribute(LOCAL_PORT).toInt();
 			m3ua.remotePort = xml.getAttribute(REMOTE_PORT).toInt();

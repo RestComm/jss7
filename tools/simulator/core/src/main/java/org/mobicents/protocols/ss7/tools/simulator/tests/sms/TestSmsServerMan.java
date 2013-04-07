@@ -32,16 +32,13 @@ import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
-import org.mobicents.protocols.ss7.map.api.errors.AbsentSubscriberDiagnosticSM;
-import org.mobicents.protocols.ss7.map.api.errors.CallBarringCause;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.errors.SMEnumeratedDeliveryFailureCause;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
-import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
-import org.mobicents.protocols.ss7.map.api.primitives.NetworkResource;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequest;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreResponse;
@@ -80,6 +77,7 @@ import org.mobicents.protocols.ss7.map.smstpdu.DataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.ProtocolIdentifierImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.SmsDeliverTpduImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.UserDataImpl;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.mobicents.protocols.ss7.tools.simulator.common.TesterBase;
@@ -413,7 +411,7 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 	
 	private String curDestIsdnNumber = null;
 
-	private String doSendSri(String destIsdnNumber, String serviceCentreAddr, MoMessageData messageData) {
+	private String doSendSri(String destIsdnNumber, String serviceCentreAddr, MtMessageData messageData) {
 
 		MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
 
@@ -447,7 +445,9 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 							null,
 							this.mapMan.createDestAddress(destIsdnNumber, this.testerHost.getConfigurationData().getTestSmsServerConfigurationData()
 									.getHlrSsn()), null);
-			curDialog.setUserObject(messageData);
+			HostMessageData hostMessageData = new HostMessageData();
+			hostMessageData.mtMessageData = messageData;
+			curDialog.setUserObject(hostMessageData);
 
 			curDialog.addSendRoutingInfoForSMRequest(msisdn, true, serviceCentreAddress, null, false, null, null, null);
 			curDialog.send();
@@ -491,7 +491,7 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 
 		currentRequestDef = "";
 
-		MoMessageData mmd = new MoMessageData();
+		MtMessageData mmd = new MtMessageData();
 		mmd.msg = msg;
 		mmd.origIsdnNumber = origIsdnNumber;
 
@@ -569,16 +569,39 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 			MAPDialogSms curDialog = mapProvider.getMAPServiceSms().createNewDialog(mapAppContext, this.mapMan.createOrigAddress(), null,
 					this.mapMan.createDestAddress(vlrNumber, this.testerHost.getConfigurationData().getTestSmsServerConfigurationData().getVlrSsn()), null);
 
-			if (this.testerHost.getConfigurationData().getTestSmsServerConfigurationData().getMapProtocolVersion().intValue() <= 2)
-				curDialog.addForwardShortMessageRequest(da, oa, si, false);
-			else
-				curDialog.addMtForwardShortMessageRequest(da, oa, si, false, null);
-			curDialog.send();
+			if (si.getData().length < 110 || vers == MAPApplicationContextVersion.version1) {
+				if (this.testerHost.getConfigurationData().getTestSmsServerConfigurationData().getMapProtocolVersion().intValue() <= 2)
+					curDialog.addForwardShortMessageRequest(da, oa, si, false);
+				else
+					curDialog.addMtForwardShortMessageRequest(da, oa, si, false, null);
+				curDialog.send();
 
-			String mtData = createMtData(curDialog.getLocalDialogId(), destImsi, vlrNumber, origIsdnNumber, serviceCentreAddr);
-			currentRequestDef += "Sent mtReq;";
-			this.countMtFsmReq++;
-			this.testerHost.sendNotif(SOURCE_NAME, "Sent: mtReq: " + msg, mtData, Level.DEBUG);
+				String mtData = createMtData(curDialog.getLocalDialogId(), destImsi, vlrNumber, origIsdnNumber, serviceCentreAddr);
+				currentRequestDef += "Sent mtReq;";
+				this.countMtFsmReq++;
+				this.testerHost.sendNotif(SOURCE_NAME, "Sent: mtReq: " + msg, mtData, Level.DEBUG);
+			} else {
+				ResendMessageData md = new ResendMessageData();
+				md.da = da;
+				md.oa = oa;
+				md.si = si;
+				md.destImsi = destImsi;
+				md.vlrNumber = vlrNumber;
+				md.origIsdnNumber = origIsdnNumber;
+				md.serviceCentreAddr = serviceCentreAddr;
+				md.msg = msg;
+
+				HostMessageData hmd = (HostMessageData) curDialog.getUserObject();
+				if (hmd == null) {
+					hmd = new HostMessageData();
+					curDialog.setUserObject(hmd);
+				}
+				hmd.resendMessageData = md;
+
+				curDialog.send();
+				currentRequestDef += "Sent emptTBegin;";
+				this.testerHost.sendNotif(SOURCE_NAME, "Sent: emptTBegin", "", Level.DEBUG);
+			}
 
 			return "MtForwardShortMessageRequest has been sent";
 		} catch (MAPException ex) {
@@ -773,9 +796,12 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 		this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: sriResp", uData, Level.DEBUG);
 
 		if (curDialog.getUserObject() != null && vlrNum != null && !vlrNum.equals("") && destImsi != null && !destImsi.equals("")) {
-			MoMessageData mmd = (MoMessageData) curDialog.getUserObject();
-			mmd.vlrNum = vlrNum;
-			mmd.destImsi = destImsi;
+			HostMessageData hmd = (HostMessageData) curDialog.getUserObject();
+			MtMessageData mmd = hmd.mtMessageData;
+			if (mmd != null) {
+				mmd.vlrNum = vlrNum;
+				mmd.destImsi = destImsi;
+			}
 
 //			// sending SMS
 //			doMtForwardSM(mmd.msg, destImsi, vlrNum, mmd.origIsdnNumber, this.testerHost.getConfigurationData().getTestSmsServerConfigurationData()
@@ -875,30 +901,85 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 	}
 
 	@Override
+	public void onDialogRequest(MAPDialog arg0, AddressString arg1, AddressString arg2, MAPExtensionContainer arg3) {
+		int i1 = 0;
+	}
+
+	@Override
 	public void onDialogDelimiter(MAPDialog mapDialog) {
+
+		if (mapDialog.getApplicationContext().getApplicationContextName() == MAPApplicationContextName.shortMsgMTRelayContext
+				|| mapDialog.getApplicationContext().getApplicationContextName() == MAPApplicationContextName.shortMsgMORelayContext) {
+			if (mapDialog.getUserObject() != null) {
+				HostMessageData hmd = (HostMessageData) mapDialog.getUserObject();
+				ResendMessageData md = hmd.resendMessageData;
+				if (md != null) {
+					try {
+						MAPDialogSms dlg = (MAPDialogSms) mapDialog;
+
+						if (dlg.getApplicationContext().getApplicationContextVersion().getVersion() <= 2)
+							dlg.addForwardShortMessageRequest(md.da, md.oa, md.si, false);
+						else
+							dlg.addMoForwardShortMessageRequest(md.da, md.oa, md.si, null, null);
+						mapDialog.send();
+
+						String mtData = createMtData(mapDialog.getLocalDialogId(), md.destImsi, md.vlrNumber, md.origIsdnNumber, md.serviceCentreAddr);
+						currentRequestDef += "Rcvd emptTCont;Sent moReq;";
+						this.countMoFsmReq++;
+						this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: emptTCont", "", Level.DEBUG);
+						this.testerHost.sendNotif(SOURCE_NAME, "Sent: moReq: " + md.msg, mtData, Level.DEBUG);
+					} catch (Exception e) {
+						this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking close() : " + e.getMessage(), e, Level.ERROR);
+						return;
+					}
+					hmd.resendMessageData = null;
+					return;
+				}
+			}
+		}
+
 		try {
 			if (needSendSend) {
 				needSendSend = false;
 				mapDialog.send();
+				return;
 			}
 		} catch (Exception e) {
 			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking send() : " + e.getMessage(), e, Level.ERROR);
+			return;
 		}
 		try {
 			if (needSendClose) {
 				needSendClose = false;
 				mapDialog.close(false);
+				return;
 			}
 		} catch (Exception e) {
 			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking close() : " + e.getMessage(), e, Level.ERROR);
+			return;
+		}
+
+		if (mapDialog.getApplicationContext().getApplicationContextName() == MAPApplicationContextName.shortMsgMTRelayContext
+				|| mapDialog.getApplicationContext().getApplicationContextName() == MAPApplicationContextName.shortMsgMORelayContext) {
+			// this is an empty first TC-BEGIN for MO SMS
+			try {
+				mapDialog.send();
+				currentRequestDef += "Rcvd emptTBeg;Sent emptTCont;";
+				this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: emptTBeg", "", Level.DEBUG);
+				this.testerHost.sendNotif(SOURCE_NAME, "Sent: emptTCont", "", Level.DEBUG);
+			} catch (Exception e) {
+				this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking send() : " + e.getMessage(), e, Level.ERROR);
+			}
+			return;
 		}
 	}
 
 	@Override
 	public void onDialogClose(MAPDialog mapDialog) {
 		if (mapDialog.getUserObject() != null) {
-			MoMessageData mmd = (MoMessageData) mapDialog.getUserObject();
-			if (mmd.vlrNum != null && mmd.destImsi != null) {
+			HostMessageData hmd = (HostMessageData) mapDialog.getUserObject();
+			MtMessageData mmd = hmd.mtMessageData;
+			if (mmd != null && mmd.vlrNum != null && mmd.destImsi != null) {
 				// sending SMS
 				doMtForwardSM(mmd.msg, mmd.destImsi, mmd.vlrNum, mmd.origIsdnNumber, this.testerHost.getConfigurationData().getTestSmsServerConfigurationData()
 						.getServiceCenterAddress());
@@ -925,13 +1006,11 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 
 	@Override
 	public void onErrorComponent(MAPDialog dlg, Long invokeId, MAPErrorMessage msg) {
-		super.onErrorComponent(dlg, invokeId, msg);
-
 		// if an error for (mt)ForwardSM or SRI requests 
 		if (dlg.getApplicationContext().getApplicationContextName() != MAPApplicationContextName.shortMsgMTRelayContext
-				|| dlg.getApplicationContext().getApplicationContextName() != MAPApplicationContextName.shortMsgMORelayContext || dlg.getUserObject() != null
-				|| ((MoMessageData) dlg.getUserObject()).msg != null) {
-			if (this.testerHost.getConfigurationData().getTestSmsServerConfigurationData().isSendSrsmdsIfError()) {
+				|| dlg.getApplicationContext().getApplicationContextName() != MAPApplicationContextName.shortMsgMORelayContext
+				|| (dlg.getUserObject() != null && ((HostMessageData) dlg.getUserObject()).mtMessageData != null && ((HostMessageData) dlg.getUserObject()).mtMessageData.msg != null)) {
+			if (this.testerHost.getConfigurationData().getTestSmsServerConfigurationData().isSendSrsmdsIfError() && curDestIsdnNumber != null) {
 				try {
 					MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
 					MAPApplicationContextVersion vers = dlg.getApplicationContext().getApplicationContextVersion();
@@ -943,6 +1022,7 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 							null,
 							this.mapMan.createDestAddress(curDestIsdnNumber, this.testerHost.getConfigurationData().getTestSmsServerConfigurationData()
 									.getHlrSsn()), null);
+					curDestIsdnNumber = null;
 
 					ISDNAddressString msisdn = mapProvider.getMAPParameterFactory().createISDNAddressString(
 							this.testerHost.getConfigurationData().getTestSmsServerConfigurationData().getAddressNature(),
@@ -972,12 +1052,39 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 				}
 			}
 		}
+
+		super.onErrorComponent(dlg, invokeId, msg);
+
+//		needSendClose = true;
 	}
 
-	private class MoMessageData {
+	@Override
+	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem, boolean isLocalOriginated) {
+		super.onRejectComponent(mapDialog, invokeId, problem, isLocalOriginated);
+		if (isLocalOriginated)
+			needSendClose = true;
+	}
+
+	private class HostMessageData {
+		public MtMessageData mtMessageData;
+		public ResendMessageData resendMessageData;
+	}
+
+	private class MtMessageData {
 		public String msg;
 		public String origIsdnNumber;
 		public String vlrNum;
 		public String destImsi;
+	}
+
+	private class ResendMessageData {
+		public SM_RP_DA da;
+		public SM_RP_OA oa;
+		public SmsSignalInfo si;
+		public String msg;
+		public String destImsi;
+		public String vlrNumber;
+		public String origIsdnNumber;
+		public String serviceCentreAddr;
 	}
 }

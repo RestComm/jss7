@@ -41,6 +41,7 @@ import org.mobicents.protocols.ss7.tools.simulator.level1.M3uaManMBean;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JCheckBox;
 
 /**
  * 
@@ -68,13 +69,14 @@ public class M3uaForm extends JDialog {
 	private JLabel lblMuaExchangeType;
 	private JComboBox cbM3uaExchangeType;
 	private JComboBox cbM3uaIPSPType;
+	private JCheckBox cbStorePcapTrace;
 
 	public M3uaForm(JFrame owner) {
 		super(owner, true);
 		
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
-		setBounds(100, 100, 534, 552);
+		setBounds(100, 100, 534, 586);
 		setTitle("M3UA settings");
 		
 		JPanel panel = new JPanel();
@@ -112,7 +114,7 @@ public class M3uaForm extends JDialog {
 				getJFrame().dispose();
 			}
 		});
-		btnCance.setBounds(401, 490, 117, 23);
+		btnCance.setBounds(401, 517, 117, 23);
 		panel.add(btnCance);
 		
 		JButton btnSave = new JButton("Save");
@@ -123,7 +125,7 @@ public class M3uaForm extends JDialog {
 				}
 			}
 		});
-		btnSave.setBounds(274, 490, 117, 23);
+		btnSave.setBounds(274, 517, 117, 23);
 		panel.add(btnSave);
 
 		JButton btLoadA = new JButton("Load default values for side A");
@@ -132,7 +134,7 @@ public class M3uaForm extends JDialog {
 				loadDataA();
 			}
 		});
-		btLoadA.setBounds(10, 456, 254, 23);
+		btLoadA.setBounds(10, 483, 254, 23);
 		panel.add(btLoadA);
 
 		JButton btLoadB = new JButton("Load default values for side B");
@@ -141,7 +143,7 @@ public class M3uaForm extends JDialog {
 				loadDataB();
 			}
 		});
-		btLoadB.setBounds(274, 456, 244, 23);
+		btLoadB.setBounds(274, 483, 244, 23);
 		panel.add(btLoadB);
 
 		JButton btReload = new JButton("Reload");
@@ -150,7 +152,7 @@ public class M3uaForm extends JDialog {
 				reloadData();
 			}
 		});
-		btReload.setBounds(10, 490, 144, 23);
+		btReload.setBounds(10, 517, 144, 23);
 		panel.add(btReload);
 		
 		tbLocalPort = new JTextField();
@@ -257,6 +259,10 @@ public class M3uaForm extends JDialog {
 		JLabel lblMuaNetworkAppearance = new JLabel("M3UA network appearance");
 		lblMuaNetworkAppearance.setBounds(10, 421, 177, 14);
 		panel.add(lblMuaNetworkAppearance);
+		
+		cbStorePcapTrace = new JCheckBox("Storing all transmitted/received data into MsgLog_*.pcap file");
+		cbStorePcapTrace.setBounds(10, 444, 508, 25);
+		panel.add(cbStorePcapTrace);
 	}
 
 	public void setData(M3uaManMBean m3ua) {
@@ -294,6 +300,8 @@ public class M3uaForm extends JDialog {
 		tbM3uaSi.setText(((Integer)this.m3ua.getM3uaSi()).toString());
 		tbM3uaRoutingContext.setText(((Long)this.m3ua.getM3uaRoutingContext()).toString());
 		tbM3uaNetworkAppearance.setText(((Long)this.m3ua.getM3uaNetworkAppearance()).toString());
+
+		this.cbStorePcapTrace.setSelected(this.m3ua.getStorePcapTrace());
 	}
 
 	private void loadDataA() {
@@ -318,6 +326,8 @@ public class M3uaForm extends JDialog {
 		tbM3uaSi.setText("3");
 		tbM3uaRoutingContext.setText("101");
 		tbM3uaNetworkAppearance.setText("102");
+
+		this.cbStorePcapTrace.setSelected(false);
 	}
 
 	private void loadDataB() {
@@ -342,6 +352,8 @@ public class M3uaForm extends JDialog {
 		tbM3uaSi.setText("3");
 		tbM3uaRoutingContext.setText("101");
 		tbM3uaNetworkAppearance.setText("102");
+
+		this.cbStorePcapTrace.setSelected(false);
 	}
 
 	private boolean saveData() {
@@ -418,6 +430,8 @@ public class M3uaForm extends JDialog {
 		this.m3ua.setM3uaSi(si);
 		this.m3ua.setM3uaRoutingContext(routingContext);
 		this.m3ua.setM3uaNetworkAppearance(networkAppearance);
+
+		this.m3ua.setStorePcapTrace(this.cbStorePcapTrace.isSelected());
 		
 		return true;
 	}

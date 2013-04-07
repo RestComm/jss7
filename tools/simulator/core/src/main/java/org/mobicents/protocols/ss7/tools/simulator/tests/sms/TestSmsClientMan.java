@@ -78,6 +78,7 @@ import org.mobicents.protocols.ss7.map.smstpdu.ProtocolIdentifierImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.SmsSubmitTpduImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.UserDataImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.ValidityPeriodImpl;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.mobicents.protocols.ss7.tools.simulator.common.TesterBase;
@@ -537,16 +538,32 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 					this.mapMan.createDestAddress(serviceCentreAddr, this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getSmscSsn()),
 					null);
 
-			if (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getMapProtocolVersion().intValue() <= 2)
-				curDialog.addForwardShortMessageRequest(da, oa, si, false);
-			else
-				curDialog.addMoForwardShortMessageRequest(da, oa, si, null, null);
-			curDialog.send();
+			if (si.getData().length < 110 || vers == MAPApplicationContextVersion.version1) {
+				if (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getMapProtocolVersion().intValue() <= 2)
+					curDialog.addForwardShortMessageRequest(da, oa, si, false);
+				else
+					curDialog.addMoForwardShortMessageRequest(da, oa, si, null, null);
+				curDialog.send();
 
-			String mtData = createMoData(curDialog.getLocalDialogId(), destIsdnNumber, origIsdnNumber, serviceCentreAddr);
-			currentRequestDef += "Sent moReq;";
-			this.countMoFsmReq++;
-			this.testerHost.sendNotif(SOURCE_NAME, "Sent: moReq: " + msg, mtData, Level.DEBUG);
+				String mtData = createMoData(curDialog.getLocalDialogId(), destIsdnNumber, origIsdnNumber, serviceCentreAddr);
+				currentRequestDef += "Sent moReq;";
+				this.countMoFsmReq++;
+				this.testerHost.sendNotif(SOURCE_NAME, "Sent: moReq: " + msg, mtData, Level.DEBUG);
+			} else {
+				ResendMessageData md = new ResendMessageData();
+				md.da = da;
+				md.oa = oa;
+				md.si = si;
+				md.destIsdnNumber = destIsdnNumber;
+				md.origIsdnNumber = origIsdnNumber;
+				md.serviceCentreAddr = serviceCentreAddr;
+				md.msg = msg;
+				curDialog.setUserObject(md);
+
+				curDialog.send();
+				currentRequestDef += "Sent emptTBegin;";
+				this.testerHost.sendNotif(SOURCE_NAME, "Sent: emptTBegin", "", Level.DEBUG);
+			}
 
 			return "MoForwardShortMessageRequest has been sent";
 		} catch (MAPException ex) {
@@ -1098,22 +1115,92 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 
 	@Override
 	public void onDialogDelimiter(MAPDialog mapDialog) {
+
+		if (mapDialog.getApplicationContext().getApplicationContextName() == MAPApplicationContextName.shortMsgMTRelayContext
+				|| mapDialog.getApplicationContext().getApplicationContextName() == MAPApplicationContextName.shortMsgMORelayContext) {
+			if (mapDialog.getUserObject() != null) {
+				ResendMessageData md = (ResendMessageData) mapDialog.getUserObject();
+				try {
+					MAPDialogSms dlg = (MAPDialogSms) mapDialog;
+
+					if (dlg.getApplicationContext().getApplicationContextVersion().getVersion() <= 2)
+						dlg.addForwardShortMessageRequest(md.da, md.oa, md.si, false);
+					else
+						dlg.addMoForwardShortMessageRequest(md.da, md.oa, md.si, null, null);
+					mapDialog.send();
+
+					String mtData = createMoData(mapDialog.getLocalDialogId(), md.destIsdnNumber, md.origIsdnNumber, md.serviceCentreAddr);
+					currentRequestDef += "Rcvd emptTCont;Sent moReq;";
+					this.countMoFsmReq++;
+					this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: emptTCont", "", Level.DEBUG);
+					this.testerHost.sendNotif(SOURCE_NAME, "Sent: moReq: " + md.msg, mtData, Level.DEBUG);
+				} catch (Exception e) {
+					this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking close() : " + e.getMessage(), e, Level.ERROR);
+					return;
+				}
+				mapDialog.setUserObject(null);
+				return;
+			}
+		}
+		
 		try {
 			if (needSendSend) {
 				needSendSend = false;
 				mapDialog.send();
+				return;
 			}
 		} catch (Exception e) {
 			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking send() : " + e.getMessage(), e, Level.ERROR);
+			return;
 		}
 		try {
 			if (needSendClose) {
 				needSendClose = false;
 				mapDialog.close(false);
+				return;
 			}
 		} catch (Exception e) {
 			this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking close() : " + e.getMessage(), e, Level.ERROR);
+			return;
 		}
+
+		if (mapDialog.getApplicationContext().getApplicationContextName() == MAPApplicationContextName.shortMsgMTRelayContext
+				|| mapDialog.getApplicationContext().getApplicationContextName() == MAPApplicationContextName.shortMsgMORelayContext) {
+			// this is an empty first TC-BEGIN for MO SMS
+			try {
+				mapDialog.send();
+				currentRequestDef += "Rcvd emptTBeg;Sent emptTCont;";
+				this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: emptTBeg", "", Level.DEBUG);
+				this.testerHost.sendNotif(SOURCE_NAME, "Sent: emptTCont", "", Level.DEBUG);
+			} catch (Exception e) {
+				this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking send() : " + e.getMessage(), e, Level.ERROR);
+			}
+			return;
+		}
+	}
+
+	@Override
+	public void onErrorComponent(MAPDialog dlg, Long invokeId, MAPErrorMessage msg) {
+		super.onErrorComponent(dlg, invokeId, msg);
+
+//		needSendClose = true;
+	}
+
+	@Override
+	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem, boolean isLocalOriginated) {
+		super.onRejectComponent(mapDialog, invokeId, problem, isLocalOriginated);
+		if (isLocalOriginated)
+			needSendClose = true;
+	}
+
+	private class ResendMessageData {
+		public SM_RP_DA da;
+		public SM_RP_OA oa;
+		public SmsSignalInfo si;
+		public String msg;
+		public String destIsdnNumber;
+		public String origIsdnNumber;
+		public String serviceCentreAddr;
 	}
 }
 

@@ -60,7 +60,7 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 	private TesterHost testerHost;
 	private ManagementImpl sctpManagement;
 	private ParameterFactoryImpl factory = new ParameterFactoryImpl();
-	private M3UAManagementImpl m3uaMgmt; 
+	private M3UAManagementProxyImpl m3uaMgmt; 
 	private boolean isSctpConnectionUp = false;
 	private boolean isM3uaConnectionActive = false;
 	private Association assoc;
@@ -150,6 +150,17 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 		this.testerHost.getConfigurationData().getM3uaConfigurationData().setIsSctpServer(val);
 		this.testerHost.markStore();
 	}
+
+	@Override
+	public boolean getStorePcapTrace() {
+		return this.testerHost.getConfigurationData().getM3uaConfigurationData().getStorePcapTrace();
+	}
+
+	@Override
+	public void setStorePcapTrace(boolean val) {
+		this.testerHost.getConfigurationData().getM3uaConfigurationData().setStorePcapTrace(val);
+		this.testerHost.markStore();
+	}	
 
 	@Override
 	public BIpChannelType getSctpIPChannelType() {
@@ -386,11 +397,12 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 		try {
 			this.isSctpConnectionUp = false;
 			this.isM3uaConnectionActive = false;
-			this.initM3ua(this.testerHost.getConfigurationData().getM3uaConfigurationData().getIsSctpServer(), this.testerHost.getConfigurationData()
-					.getM3uaConfigurationData().getLocalHost(), this.testerHost.getConfigurationData().getM3uaConfigurationData().getLocalPort(),
-					this.testerHost.getConfigurationData().getM3uaConfigurationData().getRemoteHost(), this.testerHost.getConfigurationData()
-							.getM3uaConfigurationData().getRemotePort(), this.testerHost.getConfigurationData().getM3uaConfigurationData().getIpChannelType(),
-					this.testerHost.getConfigurationData().getM3uaConfigurationData().getSctpExtraHostAddressesArray());
+			this.initM3ua(this.testerHost.getConfigurationData().getM3uaConfigurationData().getStorePcapTrace(), this.testerHost.getConfigurationData()
+					.getM3uaConfigurationData().getIsSctpServer(), this.testerHost.getConfigurationData().getM3uaConfigurationData().getLocalHost(),
+					this.testerHost.getConfigurationData().getM3uaConfigurationData().getLocalPort(), this.testerHost.getConfigurationData()
+							.getM3uaConfigurationData().getRemoteHost(), this.testerHost.getConfigurationData().getM3uaConfigurationData().getRemotePort(),
+					this.testerHost.getConfigurationData().getM3uaConfigurationData().getIpChannelType(), this.testerHost.getConfigurationData()
+							.getM3uaConfigurationData().getSctpExtraHostAddressesArray());
 			this.testerHost.sendNotif(SOURCE_NAME, "M3UA has been started", "", Level.INFO);
 			return true;
 		} catch (Throwable e) {
@@ -439,7 +451,7 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 		}
 	}
 
-	private void initM3ua(boolean isSctpServer, String localHost, int localPort, String remoteHost, int remotePort, IpChannelType ipChannelType,
+	private void initM3ua(boolean storePcapTrace, boolean isSctpServer, String localHost, int localPort, String remoteHost, int remotePort, IpChannelType ipChannelType,
 			String[] extraHostAddresses) throws Exception {
 
 		this.stopM3ua();
@@ -456,10 +468,15 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 		Thread.sleep(500); // waiting for freeing ip ports
 
 		// init M3UA stack
-		this.m3uaMgmt = new M3UAManagementImpl("SimM3uaServer_" + name);
+		this.m3uaMgmt = new M3UAManagementProxyImpl("SimM3uaServer_" + name);
 		this.m3uaMgmt.setTransportManagement(this.sctpManagement);
 		this.m3uaMgmt.start();
 		this.m3uaMgmt.removeAllResourses();
+
+		// starting pcap trace storing if it is configured
+		if (storePcapTrace) {
+			this.m3uaMgmt.startPcapTrace("MsgLog_" + name + ".pcap");
+		}
 
 		// configure SCTP stack
 		String SERVER_NAME = "Server_" + name;
@@ -529,6 +546,6 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 
 	public Mtp3UserPart getMtp3UserPart() {
 		return this.m3uaMgmt;
-	}	
+	}
 }
 
