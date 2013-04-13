@@ -101,15 +101,13 @@ public abstract class MessageHarness {
 	@Test(groups = { "functional.encode","functional.decode","message"})
 	public void testOne() throws Exception {
 
-		byte[] defaultBody = getDefaultBody();
-		// AddressCompleteMessageImpl acm=new
-		// AddressCompleteMessageImpl(this,message);
-		AbstractISUPMessage msg = (AbstractISUPMessage) getDefaultMessage();
+		final byte[] defaultBody = getDefaultBody();
+		final AbstractISUPMessage msg = (AbstractISUPMessage) getDefaultMessage();
 		msg.decode(defaultBody,parameterFactory);
-		byte[] encodedBody = msg.encode();
-		boolean equal = Arrays.equals(defaultBody, encodedBody);
+		final byte[] encodedBody = msg.encode();
+		final boolean equal = Arrays.equals(defaultBody, encodedBody);
 		assertTrue(equal,makeStringCompare(defaultBody, encodedBody));
-		CircuitIdentificationCode cic = msg.getCircuitIdentificationCode();
+		final CircuitIdentificationCode cic = msg.getCircuitIdentificationCode();
 		assertNotNull(cic,"CircuitIdentificationCode must not be null");
 		assertEquals( getDefaultCIC(),cic.getCIC(),"CircuitIdentificationCode value does not match");
 

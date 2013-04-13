@@ -124,7 +124,7 @@ class ReleaseMessageImpl extends ISUPMessageImpl implements ReleaseMessage {
 	
 	protected void decodeOptionalBody(ISUPParameterFactory parameterFactory, byte[] parameterBody, byte parameterCode) throws ParameterException {
 
-		switch ((int) parameterCode) {
+		switch (parameterCode & 0xFF) {
 		case RedirectionNumber._PARAMETER_CODE:
 			RedirectionNumber rn = parameterFactory.createRedirectionNumber();
 			((AbstractISUPParameter) rn).decode(parameterBody);

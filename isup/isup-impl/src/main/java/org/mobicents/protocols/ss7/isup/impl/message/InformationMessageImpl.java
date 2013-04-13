@@ -186,7 +186,7 @@ public class InformationMessageImpl extends ISUPMessageImpl implements Informati
 	 */
 
 	protected void decodeOptionalBody(ISUPParameterFactory parameterFactory, byte[] parameterBody, byte parameterCode) throws ParameterException {
-		switch ((int) parameterCode) {
+		switch (parameterCode & 0xFF) {
 
 		case CallingPartyCategory._PARAMETER_CODE:
 			CallingPartyCategory RS = parameterFactory.createCallingPartyCategory();

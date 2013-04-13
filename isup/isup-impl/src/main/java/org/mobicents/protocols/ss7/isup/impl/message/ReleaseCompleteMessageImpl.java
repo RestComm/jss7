@@ -90,8 +90,8 @@ class ReleaseCompleteMessageImpl extends ISUPMessageImpl implements ReleaseCompl
 	
 	protected void decodeOptionalBody(ISUPParameterFactory parameterFactory,byte[] parameterBody, byte parameterCode) throws ParameterException {
 
-		switch ((int) parameterCode) {
-		case _INDEX_O_CauseIndicators:
+		switch (parameterCode & 0xFF) {
+		case CauseIndicators._PARAMETER_CODE:
 			CauseIndicators cpn = parameterFactory.createCauseIndicators();
 			((AbstractISUPParameter)cpn).decode(parameterBody);
 			this.setCauseIndicators(cpn);
@@ -103,11 +103,11 @@ class ReleaseCompleteMessageImpl extends ISUPMessageImpl implements ReleaseCompl
 	}
 
 	public CauseIndicators getCauseIndicators() {
-		return (CauseIndicators) super.v_Parameters.get(_INDEX_O_CauseIndicators);
+		return (CauseIndicators) super.o_Parameters.get(_INDEX_O_CauseIndicators);
 	}
 
 	public void setCauseIndicators(CauseIndicators v) {
-		super.v_Parameters.put(_INDEX_O_CauseIndicators, v);
+		super.o_Parameters.put(_INDEX_O_CauseIndicators, v);
 	}
 
 	/*

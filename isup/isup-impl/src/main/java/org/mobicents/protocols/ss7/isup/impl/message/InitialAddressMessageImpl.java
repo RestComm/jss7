@@ -247,7 +247,7 @@ public class InitialAddressMessageImpl extends ISUPMessageImpl implements Initia
 	protected void decodeOptionalBody(ISUPParameterFactory parameterFactory, byte[] parameterBody, byte parameterCode) throws ParameterException {
 
 		// TODO Auto-generated method stub
-		switch ((int) parameterCode) {
+		switch (parameterCode & 0xFF) {
 		case TransitNetworkSelection._PARAMETER_CODE:
 			TransitNetworkSelection v = parameterFactory.createTransitNetworkSelection();
 			((AbstractISUPParameter) v).decode(parameterBody);
