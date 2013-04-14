@@ -30,8 +30,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
+import java.util.HashMap;
 import java.util.Map;
 
 import javolution.text.TextBuilder;
@@ -188,7 +187,9 @@ public class SccpResourceImpl implements SccpResource {
 	}
 
 	public Map<Integer, RemoteSubSystem> getRemoteSsns() {
-		return remoteSsns.unmodifiable();
+		Map<Integer, RemoteSubSystem> remoteSsnsTmp = new HashMap<Integer, RemoteSubSystem>();
+		remoteSsnsTmp.putAll(remoteSsns);
+		return remoteSsnsTmp;
 	}
 
 	public void addRemoteSpc(int remoteSpcId, int remoteSpc, int remoteSpcFlag, int mask) throws Exception {
@@ -255,7 +256,9 @@ public class SccpResourceImpl implements SccpResource {
 	}
 
 	public Map<Integer, RemoteSignalingPointCode> getRemoteSpcs() {
-		return remoteSpcs.unmodifiable();
+		Map<Integer, RemoteSignalingPointCode> remoteSpcsTmp = new HashMap<Integer, RemoteSignalingPointCode>();
+		remoteSpcsTmp.putAll(remoteSpcs);
+		return remoteSpcsTmp;
 	}
 
 	public void addConcernedSpc(int concernedSpcId, int remoteSpc) throws Exception {
@@ -321,7 +324,9 @@ public class SccpResourceImpl implements SccpResource {
 	}
 
 	public Map<Integer, ConcernedSignalingPointCode> getConcernedSpcs() {
-		return concernedSpcs.unmodifiable();
+		Map<Integer, ConcernedSignalingPointCode> concernedSpcsTmp = new HashMap<Integer, ConcernedSignalingPointCode>();
+		concernedSpcsTmp.putAll(concernedSpcs);
+		return concernedSpcsTmp;
 	}
 
 	public void removeAllResourses() {

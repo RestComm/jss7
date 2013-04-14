@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 import javolution.text.TextBuilder;
@@ -41,21 +42,15 @@ import javolution.xml.XMLObjectWriter;
 import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.sccp.ConcernedSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
 import org.mobicents.protocols.ss7.sccp.LongMessageRule;
 import org.mobicents.protocols.ss7.sccp.LongMessageRuleType;
 import org.mobicents.protocols.ss7.sccp.Mtp3ServiceAccessPoint;
 import org.mobicents.protocols.ss7.sccp.OriginationType;
-import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
-import org.mobicents.protocols.ss7.sccp.RemoteSubSystem;
 import org.mobicents.protocols.ss7.sccp.Router;
 import org.mobicents.protocols.ss7.sccp.Rule;
 import org.mobicents.protocols.ss7.sccp.RuleType;
 import org.mobicents.protocols.ss7.sccp.SccpStack;
-import org.mobicents.protocols.ss7.sccp.impl.ConcernedSignalingPointCodeMap;
-import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCodeMap;
-import org.mobicents.protocols.ss7.sccp.impl.RemoteSubSystemMap;
 import org.mobicents.protocols.ss7.sccp.impl.oam.SccpOAMMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0001;
 import org.mobicents.protocols.ss7.sccp.parameter.GT0010;
@@ -354,11 +349,15 @@ public class RouterImpl implements Router {
 	}
 
 	public Map<Integer, Rule> getRules() {
-		return rulesMap.unmodifiable();
+		Map<Integer, Rule> rulesMapTmp = new HashMap<Integer, Rule>();
+		rulesMapTmp.putAll(rulesMap);
+		return rulesMapTmp;
 	}
 
 	public Map<Integer, SccpAddress> getRoutingAddresses() {
-		return routingAddresses.unmodifiable();
+		Map<Integer, SccpAddress> routingAddressesTmp = new HashMap<Integer, SccpAddress>();
+		routingAddressesTmp.putAll(routingAddresses);
+		return routingAddressesTmp;
 	}
 
 //	public Map<Integer, SccpAddress> getBackupAddresses() {
@@ -366,11 +365,15 @@ public class RouterImpl implements Router {
 //	}
 
 	public Map<Integer, LongMessageRule> getLongMessageRules() {
-		return longMessageRules.unmodifiable();
+		Map<Integer, LongMessageRule> longMessageRulesTmp = new HashMap<Integer, LongMessageRule>();
+		longMessageRulesTmp.putAll(longMessageRules);
+		return longMessageRulesTmp;
 	}
 
 	public Map<Integer, Mtp3ServiceAccessPoint> getMtp3ServiceAccessPoints() {
-		return saps.unmodifiable();
+		Map<Integer, Mtp3ServiceAccessPoint> sapsTmp = new HashMap<Integer, Mtp3ServiceAccessPoint>();
+		sapsTmp.putAll(saps);
+		return sapsTmp;
 	}
 
 	public void addRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, OriginationType originationType, SccpAddress pattern, String mask,
