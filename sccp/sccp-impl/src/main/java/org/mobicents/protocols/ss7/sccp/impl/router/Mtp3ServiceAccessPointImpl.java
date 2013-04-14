@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.router;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javolution.util.FastMap;
@@ -77,7 +78,9 @@ public class Mtp3ServiceAccessPointImpl implements Mtp3ServiceAccessPoint, XMLSe
 	}
 
 	public Map<Integer, Mtp3Destination> getMtp3Destinations() {
-		return this.dpcList.unmodifiable();
+		Map<Integer, Mtp3Destination> dpcListTmp = new HashMap<Integer, Mtp3Destination>();
+		dpcListTmp.putAll(dpcList);
+		return dpcListTmp;
 	}
 
 	public void addMtp3Destination(int destId, int firstDpc, int lastDpc, int firstSls, int lastSls, int slsMask)

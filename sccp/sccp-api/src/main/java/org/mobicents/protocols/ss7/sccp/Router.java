@@ -42,16 +42,6 @@ public interface Router {
 	
 	public SccpAddress getRoutingAddress(int id);
 
-//	public void addBackupAddress(int id, SccpAddress backupAddress) throws Exception;
-//
-//	public void modifyBackupAddress(int id, SccpAddress backupAddress) throws Exception;
-//
-//	public void removeBackupAddress(int id) throws Exception;
-//
-//	public Map<Integer, SccpAddress> getBackupAddresses();
-//	
-//	public SccpAddress getBackupAddress(int id);
-
 	public void addMtp3ServiceAccessPoint(int id, int mtp3Id, int opc, int ni) throws Exception;
 
 	public void modifyMtp3ServiceAccessPoint(int id, int mtp3Id, int opc, int ni) throws Exception;
