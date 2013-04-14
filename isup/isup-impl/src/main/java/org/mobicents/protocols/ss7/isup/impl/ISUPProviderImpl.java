@@ -168,7 +168,7 @@ public class ISUPProviderImpl implements ISUPProvider {
 	        throw new NullPointerException();
 	    }
 	    
-	    if(msg.getCircuitIdentificationCode() == null || msg.getCircuitIdentificationCode().getCIC() != c.getDpc()){
+	    if(msg.getCircuitIdentificationCode() == null || msg.getCircuitIdentificationCode().getCIC() != c.getCic()){
 	        throw new IllegalArgumentException();
 	    }
 	    c.send(msg);
