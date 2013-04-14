@@ -173,7 +173,7 @@ public class CallProgressMessageImpl extends ISUPMessageImpl implements CallProg
 	 */
 	
 	protected void decodeOptionalBody(ISUPParameterFactory parameterFactory, byte[] parameterBody, byte parameterCode) throws ParameterException {
-		switch ((int) parameterCode) {
+		switch (parameterCode & 0xFF) {
 		case CauseIndicators._PARAMETER_CODE:
 			CauseIndicators CI = parameterFactory.createCauseIndicators();
 			((AbstractISUPParameter) CI).decode(parameterBody);
