@@ -60,7 +60,7 @@ overlapping-dialogue (8)
 -- cause is typically obtained when both the gsmSCF and gprsSSF
 -- open a new dialogue at the same time.
 -- no-reason-given shall be set when any other reasons above do not apply
-END –- of CAP-U-ABORT-Data
+END - of CAP-U-ABORT-Data
  * 
  * @author sergey vetyutnev
  * 
