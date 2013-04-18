@@ -20,27 +20,28 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
+package org.mobicents.protocols.ss7.map.primitives;
+
+import org.mobicents.protocols.ss7.map.api.primitives.TMSI;
 
 /**
  * 
-
-UMTS-SecurityContextData ::= SEQUENCE {
-	ck			CK,
-	ik			IK,
-	ksi			KSI,
-	... }
-
- * 
- * @author sergey vetyutnev
+ * @author Lasith Waruna Perera
  * 
  */
-public interface UMTSSecurityContextData {
+public class TMSIImpl extends OctetStringBase implements TMSI{
 
-	public CK getCK();
+	public TMSIImpl(byte[] data) {
+		super(1, 4, "TMSI", data);
+	}
+	
+	public TMSIImpl() {
+		super(1, 4, "TMSI");
+	}
 
-	public IK getIK();
-
-	public KSI getKSI();
+	@Override
+	public byte[] getData() {
+		return this.data;
+	}
 
 }
