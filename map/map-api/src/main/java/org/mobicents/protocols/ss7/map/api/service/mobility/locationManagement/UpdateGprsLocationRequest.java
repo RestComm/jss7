@@ -26,6 +26,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.GSNAddress;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
  * 
@@ -70,7 +71,7 @@ UpdateGprsLocationArg ::= SEQUENCE {
  * @author sergey vetyutnev
  * 
  */
-public interface UpdateGprsLocationRequest {
+public interface UpdateGprsLocationRequest extends MobilityMessage {
 
 	public IMSI getImsi();
 

@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
 
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
  * 
@@ -40,7 +41,7 @@ UpdateGprsLocationRes ::= SEQUENCE {
  * @author sergey vetyutnev
  * 
  */
-public interface UpdateGprsLocationResponse {
+public interface UpdateGprsLocationResponse extends MobilityMessage {
 
 	public ISDNAddressString getHlrNumber();
 
