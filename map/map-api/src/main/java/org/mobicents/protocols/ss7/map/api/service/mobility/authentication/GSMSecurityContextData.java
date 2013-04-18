@@ -36,8 +36,8 @@ GSM-SecurityContextData ::= SEQUENCE {
  */
 public interface GSMSecurityContextData {
 
-	public byte[] getKc();
+	public Kc getKc();
 
-	public byte[] getCksn();
+	public Cksn getCksn();
 
 }

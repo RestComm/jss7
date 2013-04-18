@@ -38,6 +38,10 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiReques
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancelLocationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancelLocationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SendIdentificationRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SendIdentificationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateGprsLocationRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateGprsLocationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationRequest;
@@ -512,6 +516,34 @@ public class EventTestHarness implements MAPDialogListener, MAPServiceSupplement
 	public void onInsertSubscriberDataResponse(InsertSubscriberDataResponse response) {
 		this.logger.debug("onInsertSubscriberDataResponse");
 		TestEvent te = TestEvent.createReceivedEvent(EventType.InsertSubscriberDataResp, response, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onSendIdentificationRequest(SendIdentificationRequest request) {
+		this.logger.debug("onSendIdentificationRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.SendIdentification, request, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onSendIdentificationResponse(SendIdentificationResponse response) {
+		this.logger.debug("onSendIdentificationResponse");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.SendIdentificationResp, response, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onUpdateGprsLocationRequest(UpdateGprsLocationRequest request) {
+		this.logger.debug("onUpdateGprsLocationRequest");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.UpdateGprsLocation, request, sequence++);
+		this.observerdEvents.add(te);
+	}
+
+	@Override
+	public void onUpdateGprsLocationResponse(UpdateGprsLocationResponse response) {
+		this.logger.debug("onUpdateGprsLocationResponse");
+		TestEvent te = TestEvent.createReceivedEvent(EventType.UpdateGprsLocationResp, response, sequence++);
 		this.observerdEvents.add(te);
 	}
 }

@@ -47,6 +47,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.EMLPPPriority;
 import org.mobicents.protocols.ss7.map.api.primitives.ExtExternalSignalInfo;
 import org.mobicents.protocols.ss7.map.api.primitives.ExtProtocolId;
 import org.mobicents.protocols.ss7.map.api.primitives.ExternalSignalInfo;
+import org.mobicents.protocols.ss7.map.api.primitives.GSNAddress;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
@@ -79,10 +80,14 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.imei.RequestedEquipm
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.AgeIndicator;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancellationType;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.EPSInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.IMSIWithLMSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ISTSupportIndicator;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LocationArea;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SGSNCapability;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.TypeOfUpdate;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UESRVCCCapability;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UsedRATType;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.AccessRestrictionData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BearerServiceCodeValue;
@@ -124,16 +129,24 @@ import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.map.primitives.AlertingPatternImpl;
 import org.mobicents.protocols.ss7.map.primitives.ExtExternalSignalInfoImpl;
 import org.mobicents.protocols.ss7.map.primitives.ExternalSignalInfoImpl;
+import org.mobicents.protocols.ss7.map.primitives.GSNAddressImpl;
+import org.mobicents.protocols.ss7.map.primitives.IMEIImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.mobicents.protocols.ss7.map.primitives.SignalInfoImpl;
+import org.mobicents.protocols.ss7.map.primitives.TMSIImpl;
 import org.mobicents.protocols.ss7.map.service.callhandling.CallReferenceNumberImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.ADDInfoImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.EPSInfoImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.IMSIWithLMSIImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.ISRInformationImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.LACImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.LocationAreaImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.PagingAreaImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.SGSNCapabilityImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.SendIdentificationRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.CategoryImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtBearerServiceCodeImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtTeleserviceCodeImpl;
@@ -728,6 +741,88 @@ public class Client extends EventTestHarness {
 
 	}
 
+	
+	public void sendSendIdentification_V2() throws Exception {
+
+		this.mapProvider.getMAPServiceMobility().acivate();
+
+		MAPApplicationContext appCnt = null;
+
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.interVlrInfoRetrievalContext, MAPApplicationContextVersion.version2);
+
+		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+		
+		TMSIImpl tmsi = new TMSIImpl(new byte[] { 1, 2, 3, 4 });
+		
+		clientDialogMobility.addSendIdentificationRequest(tmsi, null, false, null,
+				null, null, null, false, null, null);
+
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.SendIdentification, null, sequence++));
+		clientDialogMobility.send();
+
+	}
+	
+	public void sendSendIdentification_V3() throws Exception {
+
+		this.mapProvider.getMAPServiceMobility().acivate();
+
+		MAPApplicationContext appCnt = null;
+
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.interVlrInfoRetrievalContext, MAPApplicationContextVersion.version3);
+
+		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+		
+		TMSIImpl tmsi = new TMSIImpl(new byte[] { 1, 2, 3, 4 });
+		
+		clientDialogMobility.addSendIdentificationRequest(tmsi, null, false, null,
+				null, null, null, false, null, null);
+
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.SendIdentification, null, sequence++));
+		clientDialogMobility.send();
+
+	}
+	
+	
+	public void sendUpdateGprsLocation_V3() throws Exception {
+
+		this.mapProvider.getMAPServiceMobility().acivate();
+
+		MAPApplicationContext appCnt = null;
+
+		appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.gprsLocationUpdateContext, MAPApplicationContextVersion.version3);
+
+		clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
+
+		IMSI imsi = new IMSIImpl("111222");
+		ISDNAddressString sgsnNumber = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "22228");
+		GSNAddress sgsnAddress = new GSNAddressImpl(new byte[] { 23, 5, 38, 48, 81, 5 });
+		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
+		SGSNCapability sgsnCapability = new SGSNCapabilityImpl(true, extensionContainer,
+				null, false, null,
+				null, null, false, null, 
+				null, false, null);
+		boolean informPreviousNetworkEntity = true;
+		boolean psLCSNotSupportedByUE = true;
+		GSNAddress vGmlcAddress = new GSNAddressImpl(new byte[] { 23, 5, 38, 48, 81, 5 });
+		ADDInfo addInfo = new ADDInfoImpl(new IMEIImpl("12341234"), false);
+		EPSInfo epsInfo = new EPSInfoImpl(new ISRInformationImpl(true, true, true));
+		boolean servingNodeTypeIndicator = true;
+		boolean skipSubscriberDataUpdate = true;
+		UsedRATType usedRATType = UsedRATType.gan;
+		boolean gprsSubscriptionDataNotNeeded = true;
+		boolean nodeTypeIndicator = true;
+		boolean areaRestricted = true;
+		boolean ueReachableIndicator = true;
+		boolean epsSubscriptionDataNotNeeded = true;
+		UESRVCCCapability uesrvccCapability = UESRVCCCapability.ueSrvccSupported;
+		
+		clientDialogMobility.addUpdateGprsLocationRequest(imsi, sgsnNumber, sgsnAddress, extensionContainer, sgsnCapability, informPreviousNetworkEntity,
+				psLCSNotSupportedByUE, vGmlcAddress, addInfo, epsInfo, servingNodeTypeIndicator, skipSubscriberDataUpdate, usedRATType, gprsSubscriptionDataNotNeeded, nodeTypeIndicator, areaRestricted, ueReachableIndicator, epsSubscriptionDataNotNeeded, uesrvccCapability);
+
+		this.observerdEvents.add(TestEvent.createSentEvent(EventType.UpdateGprsLocation, null, sequence++));
+		clientDialogMobility.send();
+
+	}
 
 	public void sendProvideRoamingNumber() throws Exception {
 

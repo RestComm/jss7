@@ -84,7 +84,7 @@ public interface UpdateGprsLocationRequest {
 
 	public boolean getInformPreviousNetworkEntity();
 
-	public boolean geTpsLCSNotSupportedByUE();
+	public boolean getPsLCSNotSupportedByUE();
 
 	public GSNAddress getVGmlcAddress();
 

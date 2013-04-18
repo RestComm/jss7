@@ -43,6 +43,11 @@ public enum MAPMessageType {
 	cancelLocation_Response,
 	insertSubscriberData_Request,
 	insertSubscriberData_Response,
+	sendIdentification_Request,
+	sendIdentification_Response,
+	updateGprsLocation_Request,
+	updateGprsLocation_Response,
+	
 	
 	// -- supplementary
 	processUnstructuredSSRequest_Request,

@@ -125,6 +125,10 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiReques
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancelLocationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancelLocationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SendIdentificationRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SendIdentificationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateGprsLocationRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateGprsLocationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationRequest;
@@ -2107,6 +2111,30 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 
 	@Override
 	public void onActivityTestGPRSResponse(ActivityTestGPRSResponse ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSendIdentificationRequest(SendIdentificationRequest request) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSendIdentificationResponse(SendIdentificationResponse response) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onUpdateGprsLocationRequest(UpdateGprsLocationRequest request) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onUpdateGprsLocationResponse(UpdateGprsLocationResponse response) {
 		// TODO Auto-generated method stub
 		
 	}

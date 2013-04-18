@@ -122,10 +122,16 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.C
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancellationType;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.IMSIWithLMSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PagingArea;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SendIdentificationRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SendIdentificationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedFeatures;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.TypeOfUpdate;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UESRVCCCapability;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateGprsLocationRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateGprsLocationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UsedRATType;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformationGPRS;
@@ -177,6 +183,7 @@ import org.mobicents.protocols.ss7.map.api.smstpdu.NumberingPlanIdentification;
 import org.mobicents.protocols.ss7.map.api.smstpdu.SmsSubmitTpdu;
 import org.mobicents.protocols.ss7.map.api.smstpdu.TypeOfNumber;
 import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
+import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.mobicents.protocols.ss7.map.service.callhandling.RoutingInfoImpl;
@@ -184,6 +191,8 @@ import org.mobicents.protocols.ss7.map.service.callhandling.SendRoutingInformati
 import org.mobicents.protocols.ss7.map.service.callhandling.SendRoutingInformationResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.TripletListTest;
 import org.mobicents.protocols.ss7.map.service.mobility.imei.CheckImeiRequestImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.SendIdentificationRequestImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateGprsLocationRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.InsertSubscriberDataRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.InsertSubscriberDataResponseImpl;
 import org.mobicents.protocols.ss7.map.service.sms.SmsSignalInfoImpl;
@@ -6728,6 +6737,313 @@ public class MAPFunctionalTest extends SccpHarness {
 		server.compareEvents(serverExpectedEvents);
 
 	}	
+	
+	/**
+	 * TC-BEGIN + sendIdentificationRequest MAV V2
+	 * TC-END + sendIdentificationResponse
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testSendIdentification_V2() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onSendIdentificationResponse(SendIdentificationResponse ind) {
+				super.onSendIdentificationResponse(ind);
+				assertEquals( ind.getImsi().getData(),"011220200198227");
+				assertNull(ind.getExtensionContainer());
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onSendIdentificationRequest(SendIdentificationRequest ind) {
+				super.onSendIdentificationRequest(ind);
+			
+				MAPDialogMobility d = ind.getMAPDialog();
+
+				assertTrue(Arrays.equals(ind.getTmsi().getData(), new byte[] { 1, 2, 3, 4 }));
+				long mapProtocolVersion= ((SendIdentificationRequestImpl)ind).getMapProtocolVersion();
+			
+				assertEquals(mapProtocolVersion, 2);
+				
+				IMSI imsi= new IMSIImpl("011220200198227");
+
+				try {
+					d.addSendIdentificationResponse(ind.getInvokeId(), imsi, null, null,
+							null);
+					
+				} catch (MAPException e) {
+					this.error("Error while adding SendIdentificationResponse", e);
+					fail("Error while adding SendIdentificationResponse");
+				}
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.SendIdentificationResp, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending the SendIdentificationResponse", e);
+					fail("Error while sending the empty SendIdentificationResponse");
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.SendIdentification, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.SendIdentificationResp, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.SendIdentification, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.SendIdentificationResp, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendSendIdentification_V2();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}	
+	
+	/**
+	 * TC-BEGIN + sendIdentificationRequest MAV V3
+	 * TC-END + sendIdentificationResponse
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testSendIdentification_V3() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onSendIdentificationResponse(SendIdentificationResponse ind) {
+				super.onSendIdentificationResponse(ind);
+				assertEquals( ind.getImsi().getData(),"011220200198227");
+				assertNull(ind.getExtensionContainer());
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onSendIdentificationRequest(SendIdentificationRequest ind) {
+				super.onSendIdentificationRequest(ind);
+			
+				MAPDialogMobility d = ind.getMAPDialog();
+
+				assertTrue(Arrays.equals(ind.getTmsi().getData(), new byte[] { 1, 2, 3, 4 }));
+				long mapProtocolVersion= ((SendIdentificationRequestImpl)ind).getMapProtocolVersion();
+				assertEquals(mapProtocolVersion, 3);
+				
+				IMSI imsi= new IMSIImpl("011220200198227");
+
+				try {
+					d.addSendIdentificationResponse(ind.getInvokeId(), imsi, null, null,
+							null);
+				} catch (MAPException e) {
+					this.error("Error while adding SendIdentificationResponse", e);
+					fail("Error while adding SendIdentificationResponse");
+				}
+			}
+
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.SendIdentificationResp, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending the SendIdentificationResponse", e);
+					fail("Error while sending the empty SendIdentificationResponse");
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.SendIdentification, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.SendIdentificationResp, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.SendIdentification, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.SendIdentificationResp, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendSendIdentification_V3();
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}
+
+	/**
+	 * TC-BEGIN + UpdateGprsLocationRequest MAV V3
+	 * TC-END + UpdateGprsLocationResponse
+	 */
+	@Test(groups = { "functional.flow", "dialog" })
+	public void testUpdateGprsLocation_V3() throws Exception {
+
+		Client client = new Client(stack1, this, peer1Address, peer2Address) {
+			@Override
+			public void onUpdateGprsLocationResponse(UpdateGprsLocationResponse ind) {
+				super.onUpdateGprsLocationResponse(ind);
+				assertTrue(ind.getHlrNumber().getAddress().equals("22228"));
+				assertEquals(ind.getHlrNumber().getAddressNature(), AddressNature.international_number);
+				assertEquals(ind.getHlrNumber().getNumberingPlan(), NumberingPlan.ISDN);
+				assertTrue(ind.getAddCapability());
+				assertTrue(ind.getSgsnMmeSeparationSupported());
+			}
+		};
+
+		Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+			@Override
+			public void onUpdateGprsLocationRequest(UpdateGprsLocationRequest ind) {
+				super.onUpdateGprsLocationRequest(ind);
+			
+				MAPDialogMobility d = ((UpdateGprsLocationRequestImpl)ind).getMAPDialog();
+
+				assertTrue(ind.getImsi().getData().equals("111222"));
+				assertTrue(ind.getSgsnNumber().getAddress().equals("22228"));
+				assertEquals(ind.getSgsnNumber().getAddressNature(), AddressNature.international_number);
+				assertEquals(ind.getSgsnNumber().getNumberingPlan(), NumberingPlan.ISDN);
+				assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(ind.getExtensionContainer()));
+				assertTrue(ind.getSGSNCapability().getSolsaSupportIndicator());
+				assertTrue(ind.getInformPreviousNetworkEntity());
+				assertTrue(ind.getPsLCSNotSupportedByUE());
+				assertTrue(ind.getADDInfo().getImeisv().getIMEI().equals("12341234"));
+				assertTrue(ind.getEPSInfo().getIsrInformation().getCancelSGSN());
+				assertTrue(ind.getServingNodeTypeIndicator());
+				assertTrue(ind.getSkipSubscriberDataUpdate());
+				assertEquals(ind.getUsedRATType(),UsedRATType.gan);
+				assertTrue(ind.getGprsSubscriptionDataNotNeeded());
+				assertTrue(ind.getNodeTypeIndicator());
+				assertTrue(ind.getAreaRestricted());
+				assertTrue(ind.getUeReachableIndicator());
+				assertTrue(ind.getEpsSubscriptionDataNotNeeded());
+				assertEquals(ind.getUESRVCCCapability(),UESRVCCCapability.ueSrvccSupported);
+				
+				ISDNAddressString hlrNumber = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "22228");
+
+				try {
+					d.addUpdateGprsLocationResponse(((UpdateGprsLocationRequestImpl)ind).getInvokeId(), hlrNumber, null, true, true);
+				} catch (MAPException e) {
+					this.error("Error while adding UpdateGprsLocationResponse", e);
+					fail("Error while adding UpdateGprsLocationResponse");
+				}
+			}
+			
+			@Override
+			public void onDialogDelimiter(MAPDialog mapDialog) {
+				super.onDialogDelimiter(mapDialog);
+				try {
+					this.observerdEvents.add(TestEvent.createSentEvent(EventType.UpdateGprsLocationResp, null, sequence++));
+					mapDialog.close(false);
+				} catch (MAPException e) {
+					this.error("Error while sending the empty UpdateGprsLocationResponse", e);
+					fail("Error while sending the empty UpdateGprsLocationResponse");
+				}
+			}
+		};
+
+		long stamp = System.currentTimeMillis();
+		int count = 0;
+		// Client side events
+		List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+		TestEvent te = TestEvent.createSentEvent(EventType.UpdateGprsLocation, null, count++, stamp);
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.UpdateGprsLocationResp, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		clientExpectedEvents.add(te);
+
+		count = 0;
+		// Server side events
+		List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+		te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.UpdateGprsLocation, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createSentEvent(EventType.UpdateGprsLocationResp, null, count++, stamp);
+		serverExpectedEvents.add(te);
+
+		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+		serverExpectedEvents.add(te);
+
+		client.sendUpdateGprsLocation_V3();
+
+		waitForEnd();
+		client.compareEvents(clientExpectedEvents);
+		server.compareEvents(serverExpectedEvents);
+
+	}	
+	
 	
 	private void waitForEnd() {
 		try {

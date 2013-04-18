@@ -100,7 +100,7 @@ public interface SendIdentificationRequest extends MobilityMessage {
 
 	public ISDNAddressString getNewVLRNumber();
 
-	public LMSI getLmsi();
+	public LMSI getNewLmsi();
 
 }
 
