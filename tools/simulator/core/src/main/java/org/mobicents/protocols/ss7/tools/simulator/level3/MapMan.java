@@ -22,9 +22,6 @@
 
 package org.mobicents.protocols.ss7.tools.simulator.level3;
 
-import javolution.xml.XMLFormat;
-import javolution.xml.stream.XMLStreamException;
-
 import org.apache.log4j.Level;
 import org.mobicents.protocols.ss7.map.MAPStackImpl;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
@@ -37,7 +34,6 @@ import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
-import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
 
 /**
@@ -49,31 +45,10 @@ public class MapMan implements MapManMBean, Stoppable {
 
 	public static String SOURCE_NAME = "MAP";
 
-	private static final String LOCAL_SSN = "localSsn";
-	private static final String REMOTE_SSN = "remoteSsn";
-	private static final String REMOTE_ADDRESS_DIGITS = "remoteAddressDigits";
-	private static final String ORIG_REFERENCE = "origReference";
-	private static final String ORIG_REFERENCE_ADDRESS_NATURE = "origReferenceAddressNature";
-	private static final String ORIG_REFERENCE_NUMBERING_PLAN = "origReferenceNumberingPlan";
-	private static final String DEST_REFERENCE = "destReference";
-	private static final String DEST_REFERENCE_ADDRESS_NATURE = "destReferenceAddressNature";
-	private static final String DEST_REFERENCE_NUMBERING_PLAN = "destReferenceNumberingPlan";
-
 	private final String name;
 	private TesterHost testerHost;
 
 	private SccpStack sccpStack;
-
-	private int localSsn;
-	private int remoteSsn;
-	private String remoteAddressDigits;
-	
-	private String origReference;
-	private AddressNature origReferenceAddressNature = AddressNature.international_number;
-	private NumberingPlan origReferenceNumberingPlan = NumberingPlan.ISDN;
-	private String destReference;
-	private AddressNature destReferenceAddressNature = AddressNature.international_number;
-	private NumberingPlan destReferenceNumberingPlan = NumberingPlan.ISDN;
 
 	private MAPStackImpl mapStack;
 	private MAPProvider mapProvider;
@@ -96,122 +71,122 @@ public class MapMan implements MapManMBean, Stoppable {
 	}	
 
 
-	@Override
-	public int getRemoteSsn() {
-		return remoteSsn;
-	}
-
-	@Override
-	public void setRemoteSsn(int val) {
-		remoteSsn = val;
-		this.testerHost.markStore();
-	}
-
-	@Override
-	public int getLocalSsn() {
-		return localSsn;
-	}
-
-	@Override
-	public void setLocalSsn(int val) {
-		localSsn = val;
-		this.testerHost.markStore();
-	}
+//	@Override
+//	public int getRemoteSsn() {
+//		return this.testerHost.getConfigurationData().getMapConfigurationData().getRemoteSsn();
+//	}
+//
+//	@Override
+//	public void setRemoteSsn(int val) {
+//		this.testerHost.getConfigurationData().getMapConfigurationData().setRemoteSsn(val);
+//		this.testerHost.markStore();
+//	}
+//
+//	@Override
+//	public int getLocalSsn() {
+//		return this.testerHost.getConfigurationData().getMapConfigurationData().getLocalSsn();
+//	}
+//
+//	@Override
+//	public void setLocalSsn(int val) {
+//		this.testerHost.getConfigurationData().getMapConfigurationData().setLocalSsn(val);
+//		this.testerHost.markStore();
+//	}
 
 	@Override
 	public String getRemoteAddressDigits() {
-		return remoteAddressDigits;
+		return this.testerHost.getConfigurationData().getMapConfigurationData().getRemoteAddressDigits();
 	}
 
 	@Override
 	public void setRemoteAddressDigits(String val) {
-		remoteAddressDigits = val;
+		this.testerHost.getConfigurationData().getMapConfigurationData().setRemoteAddressDigits(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public String getOrigReference() {
-		return origReference;
+		return this.testerHost.getConfigurationData().getMapConfigurationData().getOrigReference();
 	}
 
 	@Override
 	public void setOrigReference(String val) {
-		origReference = val;
+		this.testerHost.getConfigurationData().getMapConfigurationData().setOrigReference(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public AddressNatureType getOrigReferenceAddressNature() {
-		return new AddressNatureType(origReferenceAddressNature.getIndicator());
+		return new AddressNatureType(this.testerHost.getConfigurationData().getMapConfigurationData().getOrigReferenceAddressNature().getIndicator());
 	}
 
 	@Override
 	public String getOrigReferenceAddressNature_Value() {
-		return origReferenceAddressNature.toString();
+		return new AddressNatureType(this.testerHost.getConfigurationData().getMapConfigurationData().getOrigReferenceAddressNature().getIndicator()).toString();
 	}
 
 	@Override
 	public void setOrigReferenceAddressNature(AddressNatureType val) {
-		origReferenceAddressNature = AddressNature.getInstance(val.intValue());
+		this.testerHost.getConfigurationData().getMapConfigurationData().setOrigReferenceAddressNature(AddressNature.getInstance(val.intValue()));
 		this.testerHost.markStore();
 	}
 
 	@Override
-	public NumberingPlanType getOrigReferenceNumberingPlan() {
-		return new NumberingPlanType(origReferenceNumberingPlan.getIndicator());
+	public NumberingPlanMapType getOrigReferenceNumberingPlan() {
+		return new NumberingPlanMapType(this.testerHost.getConfigurationData().getMapConfigurationData().getOrigReferenceNumberingPlan().getIndicator());
 	}
 
 	@Override
 	public String getOrigReferenceNumberingPlan_Value() {
-		return origReferenceNumberingPlan.toString();
+		return new NumberingPlanMapType(this.testerHost.getConfigurationData().getMapConfigurationData().getOrigReferenceNumberingPlan().getIndicator()).toString();
 	}
 
 	@Override
-	public void setOrigReferenceNumberingPlan(NumberingPlanType val) {
-		origReferenceNumberingPlan = NumberingPlan.getInstance(val.intValue());
+	public void setOrigReferenceNumberingPlan(NumberingPlanMapType val) {
+		this.testerHost.getConfigurationData().getMapConfigurationData().setOrigReferenceNumberingPlan(NumberingPlan.getInstance(val.intValue()));
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public String getDestReference() {
-		return destReference;
+		return this.testerHost.getConfigurationData().getMapConfigurationData().getDestReference();
 	}
 
 	@Override
 	public void setDestReference(String val) {
-		destReference = val;
+		this.testerHost.getConfigurationData().getMapConfigurationData().setDestReference(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public AddressNatureType getDestReferenceAddressNature() {
-		return new AddressNatureType(destReferenceAddressNature.getIndicator());
+		return new AddressNatureType(this.testerHost.getConfigurationData().getMapConfigurationData().getDestReferenceAddressNature().getIndicator());
 	}
 
 	@Override
 	public String getDestReferenceAddressNature_Value() {
-		return destReferenceAddressNature.toString();
+		return new AddressNatureType(this.testerHost.getConfigurationData().getMapConfigurationData().getDestReferenceAddressNature().getIndicator()).toString();
 	}
 
 	@Override
 	public void setDestReferenceAddressNature(AddressNatureType val) {
-		destReferenceAddressNature = AddressNature.getInstance(val.intValue());
+		this.testerHost.getConfigurationData().getMapConfigurationData().setDestReferenceAddressNature(AddressNature.getInstance(val.intValue()));
 		this.testerHost.markStore();
 	}
 
 	@Override
-	public NumberingPlanType getDestReferenceNumberingPlan() {
-		return new NumberingPlanType(destReferenceNumberingPlan.getIndicator());
+	public NumberingPlanMapType getDestReferenceNumberingPlan() {
+		return new NumberingPlanMapType(this.testerHost.getConfigurationData().getMapConfigurationData().getDestReferenceNumberingPlan().getIndicator());
 	}
 
 	@Override
 	public String getDestReferenceNumberingPlan_Value() {
-		return destReferenceNumberingPlan.toString();
+		return new NumberingPlanMapType(this.testerHost.getConfigurationData().getMapConfigurationData().getDestReferenceNumberingPlan().getIndicator()).toString();
 	}
 
 	@Override
-	public void setDestReferenceNumberingPlan(NumberingPlanType val) {
-		destReferenceNumberingPlan = NumberingPlan.getInstance(val.intValue());
+	public void setDestReferenceNumberingPlan(NumberingPlanMapType val) {
+		this.testerHost.getConfigurationData().getMapConfigurationData().setDestReferenceNumberingPlan(NumberingPlan.getInstance(val.intValue()));
 		this.testerHost.markStore();
 	}
 
@@ -224,7 +199,7 @@ public class MapMan implements MapManMBean, Stoppable {
 
 	@Override
 	public void putOrigReferenceNumberingPlan(String val) {
-		NumberingPlanType x = NumberingPlanType.createInstance(val);
+		NumberingPlanMapType x = NumberingPlanMapType.createInstance(val);
 		if (x != null)
 			this.setOrigReferenceNumberingPlan(x);
 	}
@@ -238,7 +213,7 @@ public class MapMan implements MapManMBean, Stoppable {
 
 	@Override
 	public void putDestReferenceNumberingPlan(String val) {
-		NumberingPlanType x = NumberingPlanType.createInstance(val);
+		NumberingPlanMapType x = NumberingPlanMapType.createInstance(val);
 		if (x != null)
 			this.setDestReferenceNumberingPlan(x);
 	}
@@ -254,7 +229,7 @@ public class MapMan implements MapManMBean, Stoppable {
 
 	public boolean start() {
 		try {
-			this.initMap(this.sccpStack, this.localSsn);
+			this.initMap(this.sccpStack, this.testerHost.getSccpMan().getLocalSsn());
 			this.testerHost.sendNotif(SOURCE_NAME, "TCAP+MAP has been started", "", Level.INFO);
 			return true;
 		} catch (Throwable e) {
@@ -297,10 +272,13 @@ public class MapMan implements MapManMBean, Stoppable {
 	}
 
 	public SccpAddress createDestAddress() {
-		if (this.remoteAddressDigits == null || this.remoteAddressDigits.equals("")) {
+		if (this.testerHost.getConfigurationData().getMapConfigurationData().getRemoteAddressDigits() == null
+				|| this.testerHost.getConfigurationData().getMapConfigurationData().getRemoteAddressDigits().equals("")) {
 			return this.testerHost.getSccpMan().createCalledPartyAddress();
 		} else {
-			return this.testerHost.getSccpMan().createCalledPartyAddress(this.remoteAddressDigits, this.remoteSsn);
+			return this.testerHost.getSccpMan().createCalledPartyAddress(
+					this.testerHost.getConfigurationData().getMapConfigurationData().getRemoteAddressDigits(),
+					this.testerHost.getSccpMan().getRemoteSsn());
 		}
 	}
 
@@ -309,53 +287,24 @@ public class MapMan implements MapManMBean, Stoppable {
 	}
 
 	public AddressString createOrigReference() {
-		if (this.origReference == null || this.origReference.equals(""))
+		if (this.testerHost.getConfigurationData().getMapConfigurationData().getOrigReference() == null
+				|| this.testerHost.getConfigurationData().getMapConfigurationData().getOrigReference().equals(""))
 			return null;
 		else
-			return new AddressStringImpl(this.origReferenceAddressNature, this.origReferenceNumberingPlan, this.origReference);
+			return new AddressStringImpl(this.testerHost.getConfigurationData().getMapConfigurationData().getOrigReferenceAddressNature(), this.testerHost
+					.getConfigurationData().getMapConfigurationData().getOrigReferenceNumberingPlan(), this.testerHost.getConfigurationData()
+					.getMapConfigurationData().getOrigReference());
 	}
 
 	public AddressString createDestReference() {
-		if (this.destReference == null || this.destReference.equals(""))
+		if (this.testerHost.getConfigurationData().getMapConfigurationData().getDestReference() == null
+				|| this.testerHost.getConfigurationData().getMapConfigurationData().getDestReference().equals(""))
 			return null;
 		else
-			return new AddressStringImpl(this.destReferenceAddressNature, this.destReferenceNumberingPlan, this.destReference);
+			return new AddressStringImpl(this.testerHost.getConfigurationData().getMapConfigurationData().getDestReferenceAddressNature(), this.testerHost
+					.getConfigurationData().getMapConfigurationData().getDestReferenceNumberingPlan(), this.testerHost.getConfigurationData()
+					.getMapConfigurationData().getDestReference());
 	}
-
-	protected static final XMLFormat<MapMan> XML = new XMLFormat<MapMan>(MapMan.class) {
-
-		public void write(MapMan map, OutputElement xml) throws XMLStreamException {
-			xml.setAttribute(LOCAL_SSN, map.localSsn);
-			xml.setAttribute(REMOTE_SSN, map.remoteSsn);
-
-			xml.add(map.remoteAddressDigits, REMOTE_ADDRESS_DIGITS);
-			xml.add(map.origReference, ORIG_REFERENCE);
-			xml.add(map.destReference, DEST_REFERENCE);
-
-			xml.add(map.origReferenceAddressNature.toString(), ORIG_REFERENCE_ADDRESS_NATURE);
-			xml.add(map.origReferenceNumberingPlan.toString(), ORIG_REFERENCE_NUMBERING_PLAN);
-			xml.add(map.destReferenceAddressNature.toString(), DEST_REFERENCE_ADDRESS_NATURE);
-			xml.add(map.destReferenceNumberingPlan.toString(), DEST_REFERENCE_NUMBERING_PLAN);
-		}
-
-		public void read(InputElement xml, MapMan map) throws XMLStreamException {
-			map.localSsn = xml.getAttribute(LOCAL_SSN).toInt();
-			map.remoteSsn = xml.getAttribute(REMOTE_SSN).toInt();
-
-			map.remoteAddressDigits = (String) xml.get(REMOTE_ADDRESS_DIGITS, String.class);
-			map.origReference = (String) xml.get(ORIG_REFERENCE, String.class);
-			map.destReference = (String) xml.get(DEST_REFERENCE, String.class);
-
-			String an = (String) xml.get(ORIG_REFERENCE_ADDRESS_NATURE, String.class);
-			map.origReferenceAddressNature = AddressNature.valueOf(an);
-			String np = (String) xml.get(ORIG_REFERENCE_NUMBERING_PLAN, String.class);
-			map.origReferenceNumberingPlan = NumberingPlan.valueOf(np);
-			an = (String) xml.get(DEST_REFERENCE_ADDRESS_NATURE, String.class);
-			map.destReferenceAddressNature = AddressNature.valueOf(an);
-			np = (String) xml.get(DEST_REFERENCE_NUMBERING_PLAN, String.class);
-			map.destReferenceNumberingPlan = NumberingPlan.valueOf(np);
-		}
-	};
 
 }
 

@@ -63,9 +63,9 @@ public class TestSmsClientForm extends TestingForm {
 		panel_c.add(panel, BorderLayout.CENTER);
 		GridBagLayout gbl_panel = new GridBagLayout();
 		gbl_panel.columnWidths = new int[]{0, 0, 0};
-		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
+		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
 		gbl_panel.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panel.setLayout(gbl_panel);
 		
 		JLabel label = new JLabel("Message text");
@@ -119,17 +119,32 @@ public class TestSmsClientForm extends TestingForm {
 		gbc_tbOrigIsdnNumber.gridy = 2;
 		panel.add(tbOrigIsdnNumber, gbc_tbOrigIsdnNumber);
 		
-		JButton btnSendMoforwardsm = new JButton("Send MoForwardSM");
-		btnSendMoforwardsm.addActionListener(new ActionListener() {
+		JPanel panel_1 = new JPanel();
+		panel_1.setLayout(null);
+		GridBagConstraints gbc_panel_1 = new GridBagConstraints();
+		gbc_panel_1.insets = new Insets(0, 0, 5, 0);
+		gbc_panel_1.fill = GridBagConstraints.BOTH;
+		gbc_panel_1.gridx = 1;
+		gbc_panel_1.gridy = 3;
+		panel.add(panel_1, gbc_panel_1);
+		
+		JButton btnSendMoForwardSm = new JButton("Send MoForwardSM");
+		btnSendMoForwardSm.setBounds(12, 0, 149, 25);
+		panel_1.add(btnSendMoForwardSm);
+		
+		JButton btnSendAlertServiceCentre = new JButton("Send AlertServiceCentre");
+		btnSendAlertServiceCentre.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				sendAlertServiceCentre();
+			}
+		});
+		btnSendAlertServiceCentre.setBounds(173, 0, 187, 25);
+		panel_1.add(btnSendAlertServiceCentre);
+		btnSendMoForwardSm.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				sendMoforwardsm();
 			}
 		});
-		GridBagConstraints gbc_btnSendMoforwardsm = new GridBagConstraints();
-		gbc_btnSendMoforwardsm.insets = new Insets(0, 0, 5, 0);
-		gbc_btnSendMoforwardsm.gridx = 1;
-		gbc_btnSendMoforwardsm.gridy = 3;
-		panel.add(btnSendMoforwardsm, gbc_btnSendMoforwardsm);
 		
 		JLabel label_3 = new JLabel("Operation result");
 		GridBagConstraints gbc_label_3 = new GridBagConstraints();
@@ -161,6 +176,7 @@ public class TestSmsClientForm extends TestingForm {
 		
 		lbState = new JLabel("-");
 		GridBagConstraints gbc_lbState = new GridBagConstraints();
+		gbc_lbState.insets = new Insets(0, 0, 5, 0);
 		gbc_lbState.gridx = 1;
 		gbc_lbState.gridy = 6;
 		panel.add(lbState, gbc_lbState);
@@ -176,6 +192,14 @@ public class TestSmsClientForm extends TestingForm {
 		String destIsdnNumber = this.tbDestIsdnNumber.getText();
 		String origIsdnNumber = this.tbOrigIsdnNumber.getText();
 		String res = this.smsClient.performMoForwardSM(msg, destIsdnNumber, origIsdnNumber);
+		this.lbResult.setText(res);
+	}
+
+	private void sendAlertServiceCentre() {
+		this.lbMessage.setText("");
+		String msg = this.tbMessage.getText();
+		String destIsdnNumber = this.tbDestIsdnNumber.getText();
+		String res = this.smsClient.performAlertServiceCentre(destIsdnNumber);
 		this.lbResult.setText(res);
 	}
 

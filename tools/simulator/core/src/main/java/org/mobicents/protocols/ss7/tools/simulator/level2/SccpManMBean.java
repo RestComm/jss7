@@ -66,11 +66,11 @@ public interface SccpManMBean {
 
 	public void setNatureOfAddress(NatureOfAddressType val);
 
-	public NumberingPlanType getNumberingPlan();
+	public NumberingPlanSccpType getNumberingPlan();
 
 	public String getNumberingPlan_Value();
 
-	public void setNumberingPlan(NumberingPlanType val);
+	public void setNumberingPlan(NumberingPlanSccpType val);
 
 	public int getTranslationType();
 

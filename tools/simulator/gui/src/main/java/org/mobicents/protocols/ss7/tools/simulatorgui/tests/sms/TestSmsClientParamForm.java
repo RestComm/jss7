@@ -25,7 +25,6 @@ package org.mobicents.protocols.ss7.tools.simulatorgui.tests.sms;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import java.awt.BorderLayout;
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -38,9 +37,12 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.smstpdu.NumberingPlanIdentification;
 import org.mobicents.protocols.ss7.map.api.smstpdu.TypeOfNumber;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
-import org.mobicents.protocols.ss7.tools.simulator.common.MapProtocolVersion;
-import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
+import org.mobicents.protocols.ss7.tools.simulator.level3.MapProtocolVersion;
+import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
+import org.mobicents.protocols.ss7.tools.simulator.tests.sms.MtFSMReaction;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.NumberingPlanIdentificationType;
+import org.mobicents.protocols.ss7.tools.simulator.tests.sms.SRIInformServiceCenter;
+import org.mobicents.protocols.ss7.tools.simulator.tests.sms.SRIReaction;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.SmsCodingType;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsClientManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TypeOfNumberType;
@@ -49,6 +51,8 @@ import org.mobicents.protocols.ss7.tools.simulatorgui.M3uaForm;
 import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JTabbedPane;
+import javax.swing.JCheckBox;
 
 /**
  * 
@@ -61,8 +65,6 @@ public class TestSmsClientParamForm extends JDialog {
 	private TestSmsClientManMBean smsClient;
 
 	private JTextField tbServiceCenterAddress;
-	private JTextField tbSRIResponseImsi;
-	private JTextField tbSRIResponseVlr;
 	private JTextField tbSmscSsn;
 	private JComboBox cbAddressNature;
 	private JComboBox cbNumberingPlan;
@@ -70,6 +72,12 @@ public class TestSmsClientParamForm extends JDialog {
 	private JComboBox cbTypeOfNumber;
 	private JComboBox cbNumberingPlanIdentification;
 	private JComboBox cbSmsCodingType;
+	private JTextField tbSRIResponseImsi;
+	private JTextField tbSRIResponseVlr;
+	private JComboBox cbSRIReaction;
+	private JComboBox cbSRIInformServiceCenter;
+	private JCheckBox cbSRIScAddressNotIncluded;
+	private JComboBox cbMtFSMReaction;
 
 	public TestSmsClientParamForm(JFrame owner) {
 		super(owner, true);
@@ -77,25 +85,131 @@ public class TestSmsClientParamForm extends JDialog {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setTitle("SMS test client settings");
-		setBounds(100, 100, 539, 502);
+		setBounds(100, 100, 640, 584);
+		getContentPane().setLayout(null);
 		
-		JPanel panel = new JPanel();
-		getContentPane().add(panel, BorderLayout.CENTER);
-		panel.setLayout(null);
+		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane.setBounds(0, 0, 634, 465);
+		getContentPane().add(tabbedPane);
+		
+		JPanel panel_gen = new JPanel();
+		tabbedPane.addTab("General", null, panel_gen, null);
+		panel_gen.setLayout(null);
 		
 		JLabel label = new JLabel("MAP protocol version");
 		label.setBounds(10, 14, 204, 14);
-		panel.add(label);
+		panel_gen.add(label);
 		
 		cbMapProtocolVersion = new JComboBox();
 		cbMapProtocolVersion.setBounds(266, 11, 255, 20);
-		panel.add(cbMapProtocolVersion);
+		panel_gen.add(cbMapProtocolVersion);
+		
+		JLabel lblSmscSsnFor = new JLabel("SMSC SSN for outgoing SccpAddress (default value: 8)");
+		lblSmscSsnFor.setBounds(10, 44, 415, 14);
+		panel_gen.add(lblSmscSsnFor);
+		
+		tbSmscSsn = new JTextField();
+		tbSmscSsn.setColumns(10);
+		tbSmscSsn.setBounds(435, 41, 86, 20);
+		panel_gen.add(tbSmscSsn);
+		
+		JPanel panel_sri = new JPanel();
+		tabbedPane.addTab("SRI response", panel_sri);
+		panel_sri.setLayout(null);
+		
+		JLabel label_7 = new JLabel("IMSI for auto sendRoutingInfoForSM response");
+		label_7.setBounds(10, 8, 361, 14);
+		panel_sri.add(label_7);
+		
+		tbSRIResponseImsi = new JTextField();
+		tbSRIResponseImsi.setBounds(482, 5, 137, 20);
+		tbSRIResponseImsi.setColumns(10);
+		panel_sri.add(tbSRIResponseImsi);
+		
+		tbSRIResponseVlr = new JTextField();
+		tbSRIResponseVlr.setBounds(482, 36, 137, 20);
+		tbSRIResponseVlr.setColumns(10);
+		panel_sri.add(tbSRIResponseVlr);
+		
+		JLabel label_8 = new JLabel("VLR address for auto sendRoutingInfoForSM response");
+		label_8.setBounds(10, 39, 361, 14);
+		panel_sri.add(label_8);
+		
+		JLabel lblReactionForSri = new JLabel("Reaction for SRI request");
+		lblReactionForSri.setBounds(10, 70, 290, 14);
+		panel_sri.add(lblReactionForSri);
+		
+		JLabel lblSriinformservicecenter = new JLabel("Sending InformServiceCenter for SRI request");
+		lblSriinformservicecenter.setBounds(10, 101, 290, 14);
+		panel_sri.add(lblSriinformservicecenter);
+		
+		cbSRIReaction = new JComboBox();
+		cbSRIReaction.setBounds(310, 67, 309, 20);
+		panel_sri.add(cbSRIReaction);
+		
+		cbSRIInformServiceCenter = new JComboBox();
+		cbSRIInformServiceCenter.setBounds(310, 98, 309, 20);
+		panel_sri.add(cbSRIInformServiceCenter);
+		
+		cbSRIScAddressNotIncluded = new JCheckBox("InformServiceCentre: ServiceCenter Address is not included in MWD");
+		cbSRIScAddressNotIncluded.setBounds(10, 128, 457, 23);
+		panel_sri.add(cbSRIScAddressNotIncluded);
+		
+		JPanel panel_mtfsm = new JPanel();
+		tabbedPane.addTab("MtFSM response", null, panel_mtfsm, null);
+		panel_mtfsm.setLayout(null);
+		
+		JLabel lblReactionForMtfsm = new JLabel("Reaction for MtFSM request");
+		lblReactionForMtfsm.setBounds(12, 16, 290, 14);
+		panel_mtfsm.add(lblReactionForMtfsm);
+		
+		cbMtFSMReaction = new JComboBox();
+		cbMtFSMReaction.setBounds(312, 13, 309, 20);
+		panel_mtfsm.add(cbMtFSMReaction);
+		
+		JPanel panel_mofsm = new JPanel();
+		tabbedPane.addTab("MoFSM request", null, panel_mofsm, null);
+		panel_mofsm.setLayout(null);
+		
+		JPanel panel_2 = new JPanel();
+		panel_2.setBounds(12, 13, 511, 94);
+		panel_mofsm.add(panel_2);
+		panel_2.setBorder(new LineBorder(new Color(0, 0, 0)));
+		panel_2.setLayout(null);
+		
+		JLabel lblParametersForSms = new JLabel("Parameters for SMS tpdu destAddress");
+		lblParametersForSms.setBounds(10, 0, 266, 14);
+		panel_2.add(lblParametersForSms);
+		
+		JLabel label_5 = new JLabel("TypeOfNumber");
+		label_5.setBounds(10, 28, 174, 14);
+		panel_2.add(label_5);
+		
+		JLabel label_6 = new JLabel("NumberingPlanIdentification");
+		label_6.setBounds(10, 59, 174, 14);
+		panel_2.add(label_6);
+		
+		cbTypeOfNumber = new JComboBox();
+		cbTypeOfNumber.setBounds(194, 25, 307, 20);
+		panel_2.add(cbTypeOfNumber);
+		
+		cbNumberingPlanIdentification = new JComboBox();
+		cbNumberingPlanIdentification.setBounds(194, 56, 307, 20);
+		panel_2.add(cbNumberingPlanIdentification);
+		
+		JLabel label_4 = new JLabel("Character set for SMS encoding");
+		label_4.setBounds(12, 121, 194, 14);
+		panel_mofsm.add(label_4);
+		
+		cbSmsCodingType = new JComboBox();
+		cbSmsCodingType.setBounds(216, 118, 307, 20);
+		panel_mofsm.add(cbSmsCodingType);
 		
 		JPanel panel_1 = new JPanel();
+		panel_1.setBounds(12, 151, 511, 94);
+		panel_mofsm.add(panel_1);
 		panel_1.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panel_1.setLayout(null);
-		panel_1.setBounds(10, 42, 511, 94);
-		panel.add(panel_1);
 		
 		JLabel label_1 = new JLabel("Parameters for AddressString creation");
 		label_1.setBounds(10, 0, 266, 14);
@@ -118,86 +232,38 @@ public class TestSmsClientParamForm extends JDialog {
 		panel_1.add(cbNumberingPlan);
 		
 		JLabel lblDestinationServiceCenter = new JLabel("Destination Service center address string");
-		lblDestinationServiceCenter.setBounds(10, 150, 339, 14);
-		panel.add(lblDestinationServiceCenter);
+		lblDestinationServiceCenter.setBounds(12, 259, 339, 14);
+		panel_mofsm.add(lblDestinationServiceCenter);
 		
 		tbServiceCenterAddress = new JTextField();
+		tbServiceCenterAddress.setBounds(369, 256, 154, 20);
+		panel_mofsm.add(tbServiceCenterAddress);
 		tbServiceCenterAddress.setColumns(10);
-		tbServiceCenterAddress.setBounds(367, 147, 154, 20);
-		panel.add(tbServiceCenterAddress);
-		
-		JLabel lblImsiForAuto = new JLabel("IMSI for auto sendRoutingInfoForSM response");
-		lblImsiForAuto.setBounds(10, 178, 339, 14);
-		panel.add(lblImsiForAuto);
-		
-		tbSRIResponseImsi = new JTextField();
-		tbSRIResponseImsi.setColumns(10);
-		tbSRIResponseImsi.setBounds(367, 175, 154, 20);
-		panel.add(tbSRIResponseImsi);
-		
-		JLabel lblVlrAddressFor = new JLabel("VLR address for auto sendRoutingInfoForSM response");
-		lblVlrAddressFor.setBounds(10, 206, 339, 14);
-		panel.add(lblVlrAddressFor);
-		
-		tbSRIResponseVlr = new JTextField();
-		tbSRIResponseVlr.setColumns(10);
-		tbSRIResponseVlr.setBounds(367, 203, 154, 20);
-		panel.add(tbSRIResponseVlr);
-		
-		JLabel lblSmscSsnFor = new JLabel("SMSC SSN for outgoing SccpAddress (default value: 8)");
-		lblSmscSsnFor.setBounds(10, 234, 415, 14);
-		panel.add(lblSmscSsnFor);
-		
-		tbSmscSsn = new JTextField();
-		tbSmscSsn.setColumns(10);
-		tbSmscSsn.setBounds(435, 231, 86, 20);
-		panel.add(tbSmscSsn);
-		
-		JPanel panel_2 = new JPanel();
-		panel_2.setBorder(new LineBorder(new Color(0, 0, 0)));
-		panel_2.setLayout(null);
-		panel_2.setBounds(10, 259, 511, 94);
-		panel.add(panel_2);
-		
-		JLabel lblParametersForSms = new JLabel("Parameters for SMS tpdu destAddress");
-		lblParametersForSms.setBounds(10, 0, 266, 14);
-		panel_2.add(lblParametersForSms);
-		
-		JLabel label_5 = new JLabel("TypeOfNumber");
-		label_5.setBounds(10, 28, 174, 14);
-		panel_2.add(label_5);
-		
-		JLabel label_6 = new JLabel("NumberingPlanIdentification");
-		label_6.setBounds(10, 59, 174, 14);
-		panel_2.add(label_6);
-		
-		cbTypeOfNumber = new JComboBox();
-		cbTypeOfNumber.setBounds(194, 25, 307, 20);
-		panel_2.add(cbTypeOfNumber);
-		
-		cbNumberingPlanIdentification = new JComboBox();
-		cbNumberingPlanIdentification.setBounds(194, 56, 307, 20);
-		panel_2.add(cbNumberingPlanIdentification);
 		
 		JButton button = new JButton("Load default values for side A");
-		button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				loadDataA();
-			}
-		});
-		button.setBounds(10, 406, 246, 23);
-		panel.add(button);
+		button.setBounds(10, 476, 246, 23);
+		getContentPane().add(button);
+		
+		JButton button_3 = new JButton("Load default values for side B");
+		button_3.setBounds(266, 476, 255, 23);
+		getContentPane().add(button_3);
+		
+		JButton button_4 = new JButton("Cancel");
+		button_4.setBounds(404, 510, 117, 23);
+		getContentPane().add(button_4);
+		
+		JButton button_2 = new JButton("Save");
+		button_2.setBounds(180, 510, 117, 23);
+		getContentPane().add(button_2);
 		
 		JButton button_1 = new JButton("Reload");
+		button_1.setBounds(10, 510, 144, 23);
+		getContentPane().add(button_1);
 		button_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				reloadData();
 			}
 		});
-		button_1.setBounds(10, 440, 144, 23);
-		panel.add(button_1);
-		
-		JButton button_2 = new JButton("Save");
 		button_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (saveData()) {
@@ -205,34 +271,21 @@ public class TestSmsClientParamForm extends JDialog {
 				}
 			}
 		});
-		button_2.setBounds(180, 440, 117, 23);
-		panel.add(button_2);
-		
-		JButton button_3 = new JButton("Load default values for side B");
-		button_3.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				loadDataB();
-			}
-		});
-		button_3.setBounds(266, 406, 255, 23);
-		panel.add(button_3);
-		
-		JButton button_4 = new JButton("Cancel");
 		button_4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				getJFrame().dispose();
 			}
 		});
-		button_4.setBounds(404, 440, 117, 23);
-		panel.add(button_4);
-		
-		JLabel label_4 = new JLabel("Character set for SMS encoding");
-		label_4.setBounds(10, 367, 194, 14);
-		panel.add(label_4);
-		
-		cbSmsCodingType = new JComboBox();
-		cbSmsCodingType.setBounds(214, 364, 307, 20);
-		panel.add(cbSmsCodingType);
+		button_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				loadDataB();
+			}
+		});
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				loadDataA();
+			}
+		});
 	}
 
 	public void setData(TestSmsClientManMBean smsClient) {
@@ -253,27 +306,39 @@ public class TestSmsClientParamForm extends JDialog {
 		M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlanIdentification, this.smsClient.getNumberingPlanIdentification());
 		M3uaForm.setEnumeratedBaseComboBox(cbSmsCodingType, this.smsClient.getSmsCodingType());
 
+		M3uaForm.setEnumeratedBaseComboBox(cbSRIReaction, this.smsClient.getSRIReaction());
+		M3uaForm.setEnumeratedBaseComboBox(cbSRIInformServiceCenter, this.smsClient.getSRIInformServiceCenter());
+		M3uaForm.setEnumeratedBaseComboBox(cbMtFSMReaction, this.smsClient.getMtFSMReaction());
+
 		tbServiceCenterAddress.setText(this.smsClient.getServiceCenterAddress());
 		tbSRIResponseImsi.setText(this.smsClient.getSRIResponseImsi());
 		tbSRIResponseVlr.setText(this.smsClient.getSRIResponseVlr());
 
 		tbSmscSsn.setText(((Integer)this.smsClient.getSmscSsn()).toString());
+		
+		cbSRIScAddressNotIncluded.setSelected(this.smsClient.isSRIScAddressNotIncluded());
 	}
 
 	private void loadDataA() {
 		M3uaForm.setEnumeratedBaseComboBox(cbAddressNature, new AddressNatureType(AddressNature.international_number.getIndicator()));
-		M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, new NumberingPlanType(NumberingPlan.ISDN.getIndicator()));
+		M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, new NumberingPlanMapType(NumberingPlan.ISDN.getIndicator()));
 		M3uaForm.setEnumeratedBaseComboBox(cbMapProtocolVersion, new MapProtocolVersion(MapProtocolVersion.VAL_MAP_V3));
 		M3uaForm.setEnumeratedBaseComboBox(cbTypeOfNumber, new TypeOfNumberType(TypeOfNumber.InternationalNumber.getCode()));
 		M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlanIdentification, new NumberingPlanIdentificationType(
 				NumberingPlanIdentification.ISDNTelephoneNumberingPlan.getCode()));
 		M3uaForm.setEnumeratedBaseComboBox(cbSmsCodingType, new SmsCodingType(SmsCodingType.VAL_GSM7));
 
+		M3uaForm.setEnumeratedBaseComboBox(cbSRIReaction, new SRIReaction(SRIReaction.VAL_RETURN_SUCCESS));
+		M3uaForm.setEnumeratedBaseComboBox(cbSRIInformServiceCenter, new SRIInformServiceCenter(SRIInformServiceCenter.MWD_NO));
+		M3uaForm.setEnumeratedBaseComboBox(cbMtFSMReaction, new MtFSMReaction(MtFSMReaction.VAL_RETURN_SUCCESS));
+
 		tbServiceCenterAddress.setText("");
 		tbSRIResponseImsi.setText("");
 		tbSRIResponseVlr.setText("");
 
 		tbSmscSsn.setText("8");
+		
+		cbSRIScAddressNotIncluded.setSelected(false);
 	}
 
 	private void loadDataB() {
@@ -290,11 +355,15 @@ public class TestSmsClientParamForm extends JDialog {
 		}
 
 		this.smsClient.setAddressNature((AddressNatureType) cbAddressNature.getSelectedItem());
-		this.smsClient.setNumberingPlan((NumberingPlanType) cbNumberingPlan.getSelectedItem());
+		this.smsClient.setNumberingPlan((NumberingPlanMapType) cbNumberingPlan.getSelectedItem());
 		this.smsClient.setMapProtocolVersion((MapProtocolVersion) cbMapProtocolVersion.getSelectedItem());
 		this.smsClient.setTypeOfNumber((TypeOfNumberType) cbTypeOfNumber.getSelectedItem());
 		this.smsClient.setNumberingPlanIdentification((NumberingPlanIdentificationType) cbNumberingPlanIdentification.getSelectedItem());
 		this.smsClient.setSmsCodingType((SmsCodingType) cbSmsCodingType.getSelectedItem());
+
+		this.smsClient.setSRIReaction((SRIReaction) cbSRIReaction.getSelectedItem());
+		this.smsClient.setSRIInformServiceCenter((SRIInformServiceCenter) cbSRIInformServiceCenter.getSelectedItem());
+		this.smsClient.setMtFSMReaction((MtFSMReaction) cbMtFSMReaction.getSelectedItem());
 
 		this.smsClient.setServiceCenterAddress(tbServiceCenterAddress.getText());
 		this.smsClient.setSRIResponseImsi(tbSRIResponseImsi.getText());
@@ -302,7 +371,8 @@ public class TestSmsClientParamForm extends JDialog {
 
 		this.smsClient.setSmscSsn(smscSsn);
 
+		this.smsClient.setSRIScAddressNotIncluded(cbSRIScAddressNotIncluded.isSelected());
+
 		return true;
 	}
-
 }

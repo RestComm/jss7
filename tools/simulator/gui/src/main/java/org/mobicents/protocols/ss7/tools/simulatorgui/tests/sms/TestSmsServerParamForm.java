@@ -38,8 +38,8 @@ import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.smstpdu.NumberingPlanIdentification;
 import org.mobicents.protocols.ss7.map.api.smstpdu.TypeOfNumber;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
-import org.mobicents.protocols.ss7.tools.simulator.common.MapProtocolVersion;
-import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
+import org.mobicents.protocols.ss7.tools.simulator.level3.MapProtocolVersion;
+import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.NumberingPlanIdentificationType;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.SmsCodingType;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsServerManMBean;
@@ -47,6 +47,7 @@ import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TypeOfNumberType;
 import org.mobicents.protocols.ss7.tools.simulatorgui.M3uaForm;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JCheckBox;
 
 /**
  * 
@@ -67,6 +68,7 @@ public class TestSmsServerParamForm extends JDialog {
 	private JComboBox cbNumberingPlanIdentification;
 	private JTextField tbServiceCenterAddress;
 	private JComboBox cbSmsCodingType;
+	private JCheckBox cbSendSrsmdsIfError;
 
 	public TestSmsServerParamForm(JFrame owner) {
 		super(owner, true);
@@ -74,7 +76,7 @@ public class TestSmsServerParamForm extends JDialog {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setTitle("SMS test server settings");
-		setBounds(100, 100, 539, 470);
+		setBounds(100, 100, 539, 504);
 		
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.CENTER);
@@ -164,7 +166,7 @@ public class TestSmsServerParamForm extends JDialog {
 				loadDataA();
 			}
 		});
-		button.setBounds(10, 374, 246, 23);
+		button.setBounds(10, 401, 246, 23);
 		panel.add(button);
 		
 		JButton button_1 = new JButton("Load default values for side B");
@@ -173,7 +175,7 @@ public class TestSmsServerParamForm extends JDialog {
 				loadDataB();
 			}
 		});
-		button_1.setBounds(266, 374, 255, 23);
+		button_1.setBounds(266, 401, 255, 23);
 		panel.add(button_1);
 		
 		JButton button_2 = new JButton("Cancel");
@@ -182,7 +184,7 @@ public class TestSmsServerParamForm extends JDialog {
 				getJFrame().dispose();
 			}
 		});
-		button_2.setBounds(404, 408, 117, 23);
+		button_2.setBounds(404, 435, 117, 23);
 		panel.add(button_2);
 		
 		JButton button_3 = new JButton("Save");
@@ -193,7 +195,7 @@ public class TestSmsServerParamForm extends JDialog {
 				}
 			}
 		});
-		button_3.setBounds(180, 408, 117, 23);
+		button_3.setBounds(180, 435, 117, 23);
 		panel.add(button_3);
 		
 		JButton button_4 = new JButton("Reload");
@@ -202,7 +204,7 @@ public class TestSmsServerParamForm extends JDialog {
 				reloadData();
 			}
 		});
-		button_4.setBounds(10, 408, 144, 23);
+		button_4.setBounds(10, 435, 144, 23);
 		panel.add(button_4);
 		
 		JLabel lblOriginationServiceCenter = new JLabel("Origination Service center address string");
@@ -221,6 +223,10 @@ public class TestSmsServerParamForm extends JDialog {
 		cbSmsCodingType = new JComboBox();
 		cbSmsCodingType.setBounds(214, 339, 307, 20);
 		panel.add(cbSmsCodingType);
+		
+		cbSendSrsmdsIfError = new JCheckBox("Send reportSM-DeliveryStatus if error");
+		cbSendSrsmdsIfError.setBounds(8, 367, 513, 25);
+		panel.add(cbSendSrsmdsIfError);
 	}
 
 	public void setData(TestSmsServerManMBean smsServer) {
@@ -244,11 +250,12 @@ public class TestSmsServerParamForm extends JDialog {
 		tbServiceCenterAddress.setText(this.smsServer.getServiceCenterAddress());
 		tbHlrSsn.setText(((Integer)this.smsServer.getHlrSsn()).toString());
 		tbVlrSsn.setText(((Integer)this.smsServer.getVlrSsn()).toString());
+		cbSendSrsmdsIfError.setSelected(this.smsServer.isSendSrsmdsIfError());
 	}
 
 	private void loadDataA() {
 		M3uaForm.setEnumeratedBaseComboBox(cbAddressNature, new AddressNatureType(AddressNature.international_number.getIndicator()));
-		M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, new NumberingPlanType(NumberingPlan.ISDN.getIndicator()));
+		M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, new NumberingPlanMapType(NumberingPlan.ISDN.getIndicator()));
 		M3uaForm.setEnumeratedBaseComboBox(cbMapProtocolVersion, new MapProtocolVersion(MapProtocolVersion.VAL_MAP_V3));
 		M3uaForm.setEnumeratedBaseComboBox(cbTypeOfNumber, new TypeOfNumberType(TypeOfNumber.InternationalNumber.getCode()));
 		M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlanIdentification, new NumberingPlanIdentificationType(
@@ -258,6 +265,7 @@ public class TestSmsServerParamForm extends JDialog {
 		tbServiceCenterAddress.setText("");
 		tbHlrSsn.setText("6");
 		tbVlrSsn.setText("8");
+		cbSendSrsmdsIfError.setSelected(false);
 	}
 
 	private void loadDataB() {
@@ -281,7 +289,7 @@ public class TestSmsServerParamForm extends JDialog {
 		}
 
 		this.smsServer.setAddressNature((AddressNatureType) cbAddressNature.getSelectedItem());
-		this.smsServer.setNumberingPlan((NumberingPlanType) cbNumberingPlan.getSelectedItem());
+		this.smsServer.setNumberingPlan((NumberingPlanMapType) cbNumberingPlan.getSelectedItem());
 		this.smsServer.setMapProtocolVersion((MapProtocolVersion) cbMapProtocolVersion.getSelectedItem());
 		this.smsServer.setTypeOfNumber((TypeOfNumberType) cbTypeOfNumber.getSelectedItem());
 		this.smsServer.setNumberingPlanIdentification((NumberingPlanIdentificationType) cbNumberingPlanIdentification.getSelectedItem());
@@ -290,6 +298,7 @@ public class TestSmsServerParamForm extends JDialog {
 		this.smsServer.setServiceCenterAddress(tbServiceCenterAddress.getText());
 		this.smsServer.setHlrSsn(hlrSsn);
 		this.smsServer.setVlrSsn(vlrSsn);
+		this.smsServer.setSendSrsmdsIfError(cbSendSrsmdsIfError.isSelected());
 
 		return true;
 	}

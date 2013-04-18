@@ -29,8 +29,8 @@ import javax.management.MBeanParameterInfo;
 import javax.management.NotCompliantMBeanException;
 import javax.management.StandardMBean;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
-import org.mobicents.protocols.ss7.tools.simulator.common.MapProtocolVersion;
-import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
+import org.mobicents.protocols.ss7.tools.simulator.level3.MapProtocolVersion;
+import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
 
 /**
  * 
@@ -49,11 +49,18 @@ public class TestSmsClientStandardManMBean extends StandardMBean {
 		MBeanAttributeInfo[] attributes = new MBeanAttributeInfo[] { 
 				new MBeanAttributeInfo("AddressNature", AddressNatureType.class.getName(), "AddressNature parameter for AddressString creating", true, true, false),
 				new MBeanAttributeInfo("AddressNature_Value", String.class.getName(), "AddressNature parameter for AddressString creating", true, false, false),
-				new MBeanAttributeInfo("NumberingPlan", NumberingPlanType.class.getName(), "NumberingPlan parameter for AddressString creating", true, true, false),
+				new MBeanAttributeInfo("NumberingPlan", NumberingPlanMapType.class.getName(), "NumberingPlan parameter for AddressString creating", true, true, false),
 				new MBeanAttributeInfo("NumberingPlan_Value", String.class.getName(), "NumberingPlan parameter for AddressString creating", true, false, false),
 				new MBeanAttributeInfo("ServiceCenterAddress", String.class.getName(), "Destination Service center address string", true, true, false),
 				new MBeanAttributeInfo("MapProtocolVersion", MapProtocolVersion.class.getName(), "MAP protocol version", true, true, false),
 				new MBeanAttributeInfo("MapProtocolVersion_Value", String.class.getName(), "MAP protocol version", true, false, false),
+				new MBeanAttributeInfo("SRIReaction", SRIReaction.class.getName(), "SRI response type", true, true, false),
+				new MBeanAttributeInfo("SRIReaction_Value", String.class.getName(), "SRI response type", true, false, false),
+				new MBeanAttributeInfo("SRIInformServiceCenter", SRIInformServiceCenter.class.getName(), "SRI response - InformServiceCenter", true, true, false),
+				new MBeanAttributeInfo("SRIInformServiceCenter_Value", String.class.getName(), "SRI response - InformServiceCenter", true, false, false),
+				new MBeanAttributeInfo("SRIScAddressNotIncluded", Boolean.class.getName(), "SRI response ServiceCenter Address is not included in MWD", true, true, true),
+				new MBeanAttributeInfo("MtFSMReaction", MtFSMReaction.class.getName(), "MtFSM response type", true, true, false),
+				new MBeanAttributeInfo("MtFSMReaction_Value", String.class.getName(), "MtFSM response type", true, false, false),
 				new MBeanAttributeInfo("SRIResponseImsi", String.class.getName(), "IMSI for auto sendRoutingInfoForSM response", true, true, false),
 				new MBeanAttributeInfo("SRIResponseVlr", String.class.getName(), "VLR address for auto sendRoutingInfoForSM response", true, true, false),
 				new MBeanAttributeInfo("SmscSsn", int.class.getName(), "SMSC SSN for outgoing SccpAddress (default value: 8)", true, true, false),
@@ -86,6 +93,16 @@ public class TestSmsClientStandardManMBean extends StandardMBean {
 				new MBeanOperationInfo("putMapProtocolVersion", "MAP protocol version: " +
 						"1, 2 or 3", 
 						signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
+				new MBeanOperationInfo("putSRIReaction", "SRI response type: " +
+						"1:ReturnSuccess,2:ReturnSuccessWithLmsi,3:ReturnSystemFailureError,4:ReturnCallBarredError,5:ReturnAbsentSubscriberError", 
+						signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
+				new MBeanOperationInfo("putSRIInformServiceCenter", "SRI response - InformServiceCenter: " +
+						"1:MwdNo,2:MwdMcef,3:MwdMnrf,4:MwdMcefMnrf,5:MwdMnrg", 
+						signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
+				new MBeanOperationInfo("putMtFSMReaction", "MtFSM response type: " +
+						"1:ReturnSuccess,2:SMDeliveryFailure_ReturnMemoryCapacityExceeded,3:SMDeliveryFailure_UnknownServiceCentre,"+
+						"4:ReturnErrorSystemFailure,5:ReturnAbsentSubscriberError,6:ReturnErrorSubscriberBusyForMtSms", 
+						signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
 				new MBeanOperationInfo("putTypeOfNumber", "TypeOfNumber parameter for SMS tpdu destAddress: " +
 						"0:Unknown,1:InternationalNumber,2:NationalNumber,3:NetworkSpecificNumber,4:SubscriberNumber,5:Alphanumeric,6:AbbreviatedNumber,7:Reserved",
 						signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
@@ -97,7 +114,7 @@ public class TestSmsClientStandardManMBean extends StandardMBean {
 						signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
 		};
 
-		return new MBeanInfo(TestSmsServerMan.class.getName(), "SmsClient test parameters management", attributes, null, operations, null);
+		return new MBeanInfo(TestSmsClientMan.class.getName(), "SmsClient test parameters management", attributes, null, operations, null);
 	}
 
 }

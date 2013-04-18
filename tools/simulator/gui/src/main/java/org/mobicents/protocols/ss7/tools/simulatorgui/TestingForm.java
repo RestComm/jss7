@@ -36,11 +36,14 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.LineBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.JOptionPane;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Date;
 import java.util.Vector;
 import javax.swing.JButton;
 import java.awt.event.WindowAdapter;
@@ -51,9 +54,7 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.Dimension;
 import javax.swing.JScrollPane;
-import java.awt.Dialog.ModalExclusionType;
-import java.awt.Window.Type;
-import java.awt.Dialog.ModalityType;
+import javax.swing.BoxLayout;
 
 /**
  * 
@@ -65,6 +66,8 @@ public class TestingForm extends JDialog {
 	private static final long serialVersionUID = -3725574796168603069L;
 
 	private DefaultTableModel model = new DefaultTableModel();
+	private EventForm eventForm;
+	private SimulatorGuiForm mainForm;
 	private javax.swing.Timer tm;
 
 	private JPanel panel;
@@ -87,14 +90,21 @@ public class TestingForm extends JDialog {
 	private JTextField tbL3State;
 	private JLabel lblTestingState;
 	private JLabel lbTestState;
-	
+	private JButton btnOpenEventWindow;
+	private JPanel panel_1;
+	private JPanel panel_2;
+	private JPanel panel_3;
+
 	public TestingForm(JFrame owner) {
 		super(owner, true);
+		setModal(false);
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				if (getDefaultCloseOperation() == JDialog.DO_NOTHING_ON_CLOSE) {
 					JOptionPane.showMessageDialog(getJFrame(), "Before exiting you must Stop the testing process");
+				} else {
+					closingWindow();
 				}
 			}
 		});
@@ -110,29 +120,31 @@ public class TestingForm extends JDialog {
 		
 		panel_a_1 = new JPanel();
 		panel_a.add(panel_a_1);
-		GridBagLayout gbl_panel_a_1 = new GridBagLayout();
-		gbl_panel_a_1.columnWidths = new int[]{0, 0, 0, 0, 0};
-		gbl_panel_a_1.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
-		gbl_panel_a_1.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
-		gbl_panel_a_1.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-		panel_a_1.setLayout(gbl_panel_a_1);
+		panel_a_1.setLayout(new BoxLayout(panel_a_1, BoxLayout.Y_AXIS));
+		
+		panel_2 = new JPanel();
+		panel_a_1.add(panel_2);
+		GridBagLayout gbl_panel_2 = new GridBagLayout();
+		gbl_panel_2.columnWidths = new int[]{0, 0, 0};
+		gbl_panel_2.rowHeights = new int[]{0, 0, 0, 0};
+		gbl_panel_2.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+		gbl_panel_2.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+		panel_2.setLayout(gbl_panel_2);
 		
 		lblLState_1 = new JLabel("L1 state");
 		GridBagConstraints gbc_lblLState_1 = new GridBagConstraints();
-		gbc_lblLState_1.weightx = 1.0;
 		gbc_lblLState_1.insets = new Insets(0, 0, 5, 5);
 		gbc_lblLState_1.gridx = 0;
 		gbc_lblLState_1.gridy = 0;
-		panel_a_1.add(lblLState_1, gbc_lblLState_1);
+		panel_2.add(lblLState_1, gbc_lblLState_1);
 		
 		tbL1State = new JTextField();
 		GridBagConstraints gbc_tbL1State = new GridBagConstraints();
-		gbc_tbL1State.insets = new Insets(0, 0, 5, 5);
 		gbc_tbL1State.fill = GridBagConstraints.HORIZONTAL;
-		gbc_tbL1State.weightx = 4.0;
+		gbc_tbL1State.insets = new Insets(0, 0, 5, 0);
 		gbc_tbL1State.gridx = 1;
 		gbc_tbL1State.gridy = 0;
-		panel_a_1.add(tbL1State, gbc_tbL1State);
+		panel_2.add(tbL1State, gbc_tbL1State);
 		tbL1State.setMinimumSize(new Dimension(100, 20));
 		tbL1State.setPreferredSize(new Dimension(400, 20));
 		tbL1State.setEditable(false);
@@ -143,54 +155,59 @@ public class TestingForm extends JDialog {
 		gbc_lblLState.insets = new Insets(0, 0, 5, 5);
 		gbc_lblLState.gridx = 0;
 		gbc_lblLState.gridy = 1;
-		panel_a_1.add(lblLState, gbc_lblLState);
+		panel_2.add(lblLState, gbc_lblLState);
 		
 		tbL2State = new JTextField();
+		GridBagConstraints gbc_tbL2State = new GridBagConstraints();
+		gbc_tbL2State.fill = GridBagConstraints.HORIZONTAL;
+		gbc_tbL2State.insets = new Insets(0, 0, 5, 0);
+		gbc_tbL2State.gridx = 1;
+		gbc_tbL2State.gridy = 1;
+		panel_2.add(tbL2State, gbc_tbL2State);
 		tbL2State.setPreferredSize(new Dimension(400, 20));
 		tbL2State.setMinimumSize(new Dimension(100, 20));
 		tbL2State.setEditable(false);
 		tbL2State.setColumns(10);
-		GridBagConstraints gbc_tbL2State = new GridBagConstraints();
-		gbc_tbL2State.insets = new Insets(0, 0, 5, 5);
-		gbc_tbL2State.fill = GridBagConstraints.HORIZONTAL;
-		gbc_tbL2State.gridx = 1;
-		gbc_tbL2State.gridy = 1;
-		panel_a_1.add(tbL2State, gbc_tbL2State);
 		
 		lblLState_2 = new JLabel("L3 state");
 		GridBagConstraints gbc_lblLState_2 = new GridBagConstraints();
-		gbc_lblLState_2.insets = new Insets(0, 0, 5, 5);
+		gbc_lblLState_2.insets = new Insets(0, 0, 0, 5);
 		gbc_lblLState_2.gridx = 0;
 		gbc_lblLState_2.gridy = 2;
-		panel_a_1.add(lblLState_2, gbc_lblLState_2);
+		panel_2.add(lblLState_2, gbc_lblLState_2);
 		
 		tbL3State = new JTextField();
+		GridBagConstraints gbc_tbL3State = new GridBagConstraints();
+		gbc_tbL3State.fill = GridBagConstraints.HORIZONTAL;
+		gbc_tbL3State.gridx = 1;
+		gbc_tbL3State.gridy = 2;
+		panel_2.add(tbL3State, gbc_tbL3State);
 		tbL3State.setPreferredSize(new Dimension(400, 20));
 		tbL3State.setMinimumSize(new Dimension(100, 20));
 		tbL3State.setEditable(false);
 		tbL3State.setColumns(10);
-		GridBagConstraints gbc_tbL3State = new GridBagConstraints();
-		gbc_tbL3State.insets = new Insets(0, 0, 5, 5);
-		gbc_tbL3State.fill = GridBagConstraints.HORIZONTAL;
-		gbc_tbL3State.gridx = 1;
-		gbc_tbL3State.gridy = 2;
-		panel_a_1.add(tbL3State, gbc_tbL3State);
+		
+		panel_3 = new JPanel();
+		panel_a_1.add(panel_3);
+		GridBagLayout gbl_panel_3 = new GridBagLayout();
+		gbl_panel_3.columnWidths = new int[]{0, 0, 0};
+		gbl_panel_3.rowHeights = new int[]{0, 0};
+		gbl_panel_3.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+		gbl_panel_3.rowWeights = new double[]{1.0, Double.MIN_VALUE};
+		panel_3.setLayout(gbl_panel_3);
 		
 		lblTestingState = new JLabel("Testing state");
 		GridBagConstraints gbc_lblTestingState = new GridBagConstraints();
-		gbc_lblTestingState.gridheight = 3;
-		gbc_lblTestingState.insets = new Insets(0, 0, 5, 5);
+		gbc_lblTestingState.insets = new Insets(0, 0, 0, 5);
 		gbc_lblTestingState.gridx = 0;
-		gbc_lblTestingState.gridy = 3;
-		panel_a_1.add(lblTestingState, gbc_lblTestingState);
+		gbc_lblTestingState.gridy = 0;
+		panel_3.add(lblTestingState, gbc_lblTestingState);
 		
 		lbTestState = new JLabel("-");
 		GridBagConstraints gbc_lbTestState = new GridBagConstraints();
-		gbc_lbTestState.gridheight = 3;
-		gbc_lbTestState.insets = new Insets(0, 0, 0, 5);
 		gbc_lbTestState.gridx = 1;
-		gbc_lbTestState.gridy = 3;
-		panel_a_1.add(lbTestState, gbc_lbTestState);
+		gbc_lbTestState.gridy = 0;
+		panel_3.add(lbTestState, gbc_lbTestState);
 		
 		panel_a_but = new JPanel();
 		panel_a.add(panel_a_but, BorderLayout.SOUTH);
@@ -204,6 +221,14 @@ public class TestingForm extends JDialog {
 		
 		btRefresh = new JButton("Refresh state");
 		panel_a_but.add(btRefresh);
+		
+		btnOpenEventWindow = new JButton("Open event window");
+		btnOpenEventWindow.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				openEventWindow();
+			}
+		});
+		panel_a_but.add(btnOpenEventWindow);
 		btRefresh.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				refreshState();
@@ -271,14 +296,43 @@ public class TestingForm extends JDialog {
 		panel_b.add(scrollPane);
 
 		model = (DefaultTableModel) tNotif.getModel();
+
+		tNotif.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+
+				if (e.getValueIsAdjusting())
+					return;
+				if (eventForm == null)
+					return;
+
+				// Номер текущей строки таблицы
+				setEventMsg();
+			}
+		});
 		
 		panel_c = new JPanel();
 		panel.add(panel_c);
 		panel_c.setLayout(new BorderLayout(0, 0));
+		
+		panel_1 = new JPanel();
+		panel_c.add(panel_1, BorderLayout.CENTER);
+	}
+	
+	private void setEventMsg() {
+		ListSelectionModel l = tNotif.getSelectionModel();
+		if (!l.isSelectionEmpty()) {
+			int index = l.getMinSelectionIndex();
+			String s1 = (String) model.getValueAt(index, 0);
+			String s2 = (String) model.getValueAt(index, 1);
+			String s3 = (String) model.getValueAt(index, 2);
+			String s4 = (String) model.getValueAt(index, 3);
+			eventForm.setData(s1, s2, s3, s4);
+		}
 	}
 
-	public void setData(final TesterHostMBean host) {
+	public void setData(SimulatorGuiForm mainForm, final TesterHostMBean host) {
 		this.host = host;
+		this.mainForm = mainForm;
 
 		this.tm = new javax.swing.Timer(5000, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -301,13 +355,34 @@ public class TestingForm extends JDialog {
 	}
 
 	public void sendNotif(Notification notif) {
+		
+		Date d1 = new Date(notif.getTimeStamp());
+		String s1 = d1.toLocaleString();
+		
 		Vector newRow = new Vector();
-		newRow.add(notif.getTimeStamp());
+		newRow.add(s1);
 		newRow.add(notif.getType());
 		newRow.add(notif.getMessage());
 		newRow.add(notif.getUserData());
 		model.getDataVector().add(0,newRow);
 
 		model.newRowsAdded(new TableModelEvent(model));
+	}
+
+	public void eventFormClose() {
+		this.eventForm = null;
+	}
+	
+	private void openEventWindow() {
+		if (this.eventForm != null)
+			return;
+
+		this.eventForm = new EventForm(this);
+		this.eventForm.setVisible(true);
+		setEventMsg();
+	}
+
+	private void closingWindow() {
+		this.mainForm.testingFormClose();
 	}
 }

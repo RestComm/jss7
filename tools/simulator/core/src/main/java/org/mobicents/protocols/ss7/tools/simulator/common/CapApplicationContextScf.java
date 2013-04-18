@@ -24,53 +24,49 @@ package org.mobicents.protocols.ss7.tools.simulator.common;
 
 import java.util.Hashtable;
 
+import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
+
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class MapProtocolVersion extends EnumeratedBase {
+public class CapApplicationContextScf extends EnumeratedBase {
 
-	private static final long serialVersionUID = -521918125232920704L;
+	private static final long serialVersionUID = 363803261830663211L;
 
-	public static final int VAL_MAP_V1 = 1;
-	public static final int VAL_MAP_V2 = 2;
-	public static final int VAL_MAP_V3 = 3;
+	public static final int VAL_CAP_V4_capscf_ssfGeneric = 34;
 
 	private static Hashtable<String, Integer> stringMap = new Hashtable<String, Integer>();
 	private static Hashtable<Integer,String> intMap = new Hashtable<Integer,String>();
 
 	static {
-		intMap.put(VAL_MAP_V1, "MAP protocol version 1");
-		intMap.put(VAL_MAP_V2, "MAP protocol version 2");
-		intMap.put(VAL_MAP_V3, "MAP protocol version 3");
+		intMap.put(VAL_CAP_V4_capscf_ssfGeneric, "CAP_V4_capscf_ssfGeneric 23.3.8");
 
-		stringMap.put("MAP protocol version 1", VAL_MAP_V1);
-		stringMap.put("MAP protocol version 2", VAL_MAP_V2);
-		stringMap.put("MAP protocol version 3", VAL_MAP_V3);
+		stringMap.put("CAP_V4_capscf_ssfGeneric 23.3.8", VAL_CAP_V4_capscf_ssfGeneric);
 	}
 
-	public MapProtocolVersion() {
+	public CapApplicationContextScf() {
 	}
 
-	public MapProtocolVersion(int val) throws java.lang.IllegalArgumentException {
+	public CapApplicationContextScf(int val) throws java.lang.IllegalArgumentException {
 		super(val);
 	}
 
-	public MapProtocolVersion(Integer val) throws java.lang.IllegalArgumentException {
+	public CapApplicationContextScf(Integer val) throws java.lang.IllegalArgumentException {
 		super(val);
 	}
 
-	public MapProtocolVersion(String val) throws java.lang.IllegalArgumentException {
+	public CapApplicationContextScf(String val) throws java.lang.IllegalArgumentException {
 		super(val);
 	}
 
-	public static MapProtocolVersion createInstance(String s) {
+	public static CapApplicationContextScf createInstance(String s) {
 		Integer i1 = doCreateInstance(s, stringMap, intMap);
 		if (i1 == null)
-			return new MapProtocolVersion(VAL_MAP_V3);
+			return new CapApplicationContextScf(VAL_CAP_V4_capscf_ssfGeneric);
 		else
-			return new MapProtocolVersion(i1);
+			return new CapApplicationContextScf(i1);
 	}
 
 	@Override
@@ -81,6 +77,14 @@ public class MapProtocolVersion extends EnumeratedBase {
 	@Override
 	protected Hashtable<String, Integer> getStringTable() {
 		return stringMap;
+	}
+
+	public CAPApplicationContext getCAPApplicationContext() {
+		switch (this.intValue()) {
+		case VAL_CAP_V4_capscf_ssfGeneric:
+			return CAPApplicationContext.CapV4_scf_gsmSSFGeneric;
+		}
+		return CAPApplicationContext.CapV4_scf_gsmSSFGeneric;
 	}
 
 }

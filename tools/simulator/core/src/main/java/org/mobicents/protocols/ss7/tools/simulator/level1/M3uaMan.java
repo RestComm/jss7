@@ -24,10 +24,6 @@ package org.mobicents.protocols.ss7.tools.simulator.level1;
 
 import java.util.List;
 
-import javolution.util.FastList;
-import javolution.xml.XMLFormat;
-import javolution.xml.stream.XMLStreamException;
-
 import org.apache.log4j.Level;
 import org.mobicents.protocols.api.Association;
 import org.mobicents.protocols.api.IpChannelType;
@@ -60,48 +56,14 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 
 	public static String SOURCE_NAME = "M3UA";
 
-	private static final String IS_SCTP_SERVER = "isSctpServer";
-	private static final String LOCAL_HOST = "localHost";
-	private static final String LOCAL_PORT = "localPort";
-	private static final String REMOTE_HOST = "remoteHost";
-	private static final String REMOTE_PORT = "remotePort";
-	private static final String IP_CHANNEL_TYPE = "ipChannelType";
-	private static final String EXTRA_HOST_ADDRESSES = "extraHostAddresses";
-
-	private static final String M3UA_FUNCTIONALITY = "m3uaFunctionality";
-	private static final String M3UA_EXCHANGE_TYPE = "m3uaExchangeType";
-	private static final String M3UA_IPSPType = "m3uaIPSPType";
-	private static final String DPC = "dpc";
-	private static final String OPC = "opc";
-	private static final String SI = "si";
-	private static final String ROUTING_CONTEXT = "routingConext";
-	private static final String NETWORK_APPEARANCE = "networkAppearance";
-
-	private boolean isSctpServer = false;
-	private String localHost;
-	private int localPort;
-	private String remoteHost;
-	private int remotePort;
-	private IpChannelType ipChannelType = IpChannelType.TCP;
-	private String[] extraHostAddresses = new String[0];
-	private int dpc = 0;
-	private int opc = -1;
-	private int si = -1;
-	private long routingConext = 101;
-	private long networkAppearance = 102;
-
 	private final String name;
 	private TesterHost testerHost;
 	private ManagementImpl sctpManagement;
 	private ParameterFactoryImpl factory = new ParameterFactoryImpl();
-	private M3UAManagementImpl m3uaMgmt; 
+	private M3UAManagementProxyImpl m3uaMgmt; 
 	private boolean isSctpConnectionUp = false;
 	private boolean isM3uaConnectionActive = false;
 	private Association assoc;
-	
-	private Functionality m3uaFunctionality = Functionality.IPSP;
-	private ExchangeType m3uaExchangeType = ExchangeType.SE;
-	private IPSPType m3uaIPSPType = IPSPType.CLIENT;
 
 	private As localAs;
 	private AspFactory localAspFactory;
@@ -121,62 +83,51 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 
 	@Override
 	public String getSctpLocalHost() {
-		return localHost;
+		return this.testerHost.getConfigurationData().getM3uaConfigurationData().getLocalHost();
 	}
 
 	@Override
 	public void setSctpLocalHost(String val) {
-		localHost = val;
+		this.testerHost.getConfigurationData().getM3uaConfigurationData().setLocalHost(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public int getSctpLocalPort() {
-		return localPort;
+		return this.testerHost.getConfigurationData().getM3uaConfigurationData().getLocalPort();
 	}
 
 	@Override
 	public void setSctpLocalPort(int val) {
-		localPort = val;
+		this.testerHost.getConfigurationData().getM3uaConfigurationData().setLocalPort(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public String getSctpRemoteHost() {
-		return remoteHost;
+		return this.testerHost.getConfigurationData().getM3uaConfigurationData().getRemoteHost();
 	}
 
 	@Override
 	public void setSctpRemoteHost(String val) {
-		remoteHost = val;
+		this.testerHost.getConfigurationData().getM3uaConfigurationData().setRemoteHost(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public int getSctpRemotePort() {
-		return remotePort;
+		return this.testerHost.getConfigurationData().getM3uaConfigurationData().getRemotePort();
 	}
 
 	@Override
 	public void setSctpRemotePort(int val) {
-		remotePort = val;
+		this.testerHost.getConfigurationData().getM3uaConfigurationData().setRemotePort(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public String getSctpExtraHostAddresses() {
-		if (extraHostAddresses == null) {
-			return null;
-		} else {
-			StringBuilder sb = new StringBuilder();
-			for (String s : extraHostAddresses) {
-				if (sb.length() != 0) {
-					sb.append(" ");
-				}
-				sb.append(s);
-			}
-			return sb.toString();
-		}
+		return this.testerHost.getConfigurationData().getM3uaConfigurationData().getSctpExtraHostAddresses();
 	}
 
 	@Override
@@ -186,34 +137,34 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 	}
 
 	public void doSetExtraHostAddresses(String val) {
-		if (val == null)
-			return;
-
-		String[] ss = val.split(" ");
-		FastList<String> fl = new FastList<String>();
-		for (String s : ss) {
-			if (s.length() != 0) {
-				fl.add(s);
-			}
-		}
-		extraHostAddresses = new String[fl.size()];
-		fl.toArray(extraHostAddresses);
+		this.testerHost.getConfigurationData().getM3uaConfigurationData().setSctpExtraHostAddresses(val);
 	}
 
 	@Override
 	public boolean isSctpIsServer() {
-		return isSctpServer;
+		return this.testerHost.getConfigurationData().getM3uaConfigurationData().getIsSctpServer();
 	}
 
 	@Override
 	public void setSctpIsServer(boolean val) {
-		isSctpServer = val;
+		this.testerHost.getConfigurationData().getM3uaConfigurationData().setIsSctpServer(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
+	public boolean getStorePcapTrace() {
+		return this.testerHost.getConfigurationData().getM3uaConfigurationData().getStorePcapTrace();
+	}
+
+	@Override
+	public void setStorePcapTrace(boolean val) {
+		this.testerHost.getConfigurationData().getM3uaConfigurationData().setStorePcapTrace(val);
+		this.testerHost.markStore();
+	}	
+
+	@Override
 	public BIpChannelType getSctpIPChannelType() {
-		if (ipChannelType == IpChannelType.TCP)
+		if (this.testerHost.getConfigurationData().getM3uaConfigurationData().getIpChannelType() == IpChannelType.TCP)
 			return new BIpChannelType(BIpChannelType.VAL_TCP);
 		else
 			return new BIpChannelType(BIpChannelType.VAL_SCTP);
@@ -222,23 +173,23 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 	@Override
 	public void setSctpIPChannelType(BIpChannelType val) {
 		if (val.intValue() == BIpChannelType.VAL_TCP)
-			ipChannelType = IpChannelType.TCP;
+			this.testerHost.getConfigurationData().getM3uaConfigurationData().setIpChannelType(IpChannelType.TCP);
 		else
-			ipChannelType = IpChannelType.SCTP;
+			this.testerHost.getConfigurationData().getM3uaConfigurationData().setIpChannelType(IpChannelType.SCTP);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public String getSctpIPChannelType_Value() {
-		return this.ipChannelType.toString();
+		return this.testerHost.getConfigurationData().getM3uaConfigurationData().getIpChannelType().toString();
 	}
 
 
 	@Override
 	public M3uaFunctionality getM3uaFunctionality() {
-		if (m3uaFunctionality == Functionality.IPSP) {
+		if (this.testerHost.getConfigurationData().getM3uaConfigurationData().getM3uaFunctionality() == Functionality.IPSP) {
 			return new M3uaFunctionality(M3uaFunctionality.VAL_IPSP);
-		} else if (m3uaFunctionality == Functionality.AS) {
+		} else if (this.testerHost.getConfigurationData().getM3uaConfigurationData().getM3uaFunctionality() == Functionality.AS) {
 			return new M3uaFunctionality(M3uaFunctionality.VAL_AS);
 		} else {
 			return new M3uaFunctionality(M3uaFunctionality.VAL_SGW);
@@ -248,22 +199,22 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 	@Override
 	public void setM3uaFunctionality(M3uaFunctionality val) {
 		if (val.intValue() == M3uaFunctionality.VAL_IPSP)
-			m3uaFunctionality = Functionality.IPSP;
+			this.testerHost.getConfigurationData().getM3uaConfigurationData().setM3uaFunctionality(Functionality.IPSP);
 		else if (val.intValue() == M3uaFunctionality.VAL_AS)
-			m3uaFunctionality = Functionality.AS;
+			this.testerHost.getConfigurationData().getM3uaConfigurationData().setM3uaFunctionality(Functionality.AS);
 		else
-			m3uaFunctionality = Functionality.SGW;
+			this.testerHost.getConfigurationData().getM3uaConfigurationData().setM3uaFunctionality(Functionality.SGW);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public String getM3uaFunctionality_Value() {
-		return this.m3uaFunctionality.toString();
+		return this.testerHost.getConfigurationData().getM3uaConfigurationData().getM3uaFunctionality().toString();
 	}
 
 	@Override
 	public M3uaIPSPType getM3uaIPSPType() {
-		if (m3uaIPSPType == IPSPType.CLIENT) {
+		if (this.testerHost.getConfigurationData().getM3uaConfigurationData().getM3uaIPSPType() == IPSPType.CLIENT) {
 			return new M3uaIPSPType(M3uaIPSPType.VAL_CLIENT);
 		} else {
 			return new M3uaIPSPType(M3uaIPSPType.VAL_SERVER);
@@ -273,20 +224,20 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 	@Override
 	public void setM3uaIPSPType(M3uaIPSPType val) {
 		if (val.intValue() == M3uaIPSPType.VAL_CLIENT)
-			m3uaIPSPType = IPSPType.CLIENT;
+			this.testerHost.getConfigurationData().getM3uaConfigurationData().setM3uaIPSPType(IPSPType.CLIENT);
 		else
-			m3uaIPSPType = IPSPType.SERVER;
+			this.testerHost.getConfigurationData().getM3uaConfigurationData().setM3uaIPSPType(IPSPType.SERVER);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public String getM3uaIPSPType_Value() {
-		return this.m3uaIPSPType.toString();
+		return this.testerHost.getConfigurationData().getM3uaConfigurationData().getM3uaIPSPType().toString();
 	}
 
 	@Override
 	public M3uaExchangeType getM3uaExchangeType() {
-		if (m3uaExchangeType == ExchangeType.SE) {
+		if (this.testerHost.getConfigurationData().getM3uaConfigurationData().getM3uaExchangeType() == ExchangeType.SE) {
 			return new M3uaExchangeType(M3uaExchangeType.VAL_SE);
 		} else {
 			return new M3uaExchangeType(M3uaExchangeType.VAL_DE);
@@ -296,54 +247,70 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 	@Override
 	public void setM3uaExchangeType(M3uaExchangeType val) {
 		if (val.intValue() == M3uaExchangeType.VAL_SE)
-			m3uaExchangeType = ExchangeType.SE;
+			this.testerHost.getConfigurationData().getM3uaConfigurationData().setM3uaExchangeType(ExchangeType.SE);
 		else
-			m3uaExchangeType = ExchangeType.DE;
+			this.testerHost.getConfigurationData().getM3uaConfigurationData().setM3uaExchangeType(ExchangeType.DE);
 		this.testerHost.markStore();
-		
 	}
 
 	@Override
 	public String getM3uaExchangeType_Value() {
-		return this.m3uaExchangeType.toString();
+		return this.testerHost.getConfigurationData().getM3uaConfigurationData().getM3uaExchangeType().toString();
 	}
 
 	@Override
 	public int getM3uaDpc() {
-		return dpc;
+		return this.testerHost.getConfigurationData().getM3uaConfigurationData().getDpc();
 	}
 
 	@Override
 	public void setM3uaDpc(int val) {
-		dpc = val;
+		this.testerHost.getConfigurationData().getM3uaConfigurationData().setDpc(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public int getM3uaOpc() {
-		return opc;
+		return this.testerHost.getConfigurationData().getM3uaConfigurationData().getOpc();
 	}
 
 	@Override
 	public void setM3uaOpc(int val) {
-		opc = val;
+		this.testerHost.getConfigurationData().getM3uaConfigurationData().setOpc(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public int getM3uaSi() {
-		return si;
+		return this.testerHost.getConfigurationData().getM3uaConfigurationData().getSi();
 	}
 
 	@Override
 	public void setM3uaSi(int val) {
-		si = val;
+		this.testerHost.getConfigurationData().getM3uaConfigurationData().setSi(val);
 		this.testerHost.markStore();
 	}
 
 	@Override
 	public long getM3uaRoutingContext() {
-		return this.routingConext;
+		return this.testerHost.getConfigurationData().getM3uaConfigurationData().getRoutingContext();
+	}
+
+	@Override
+	public void setM3uaRoutingContext(long val) {
+		this.testerHost.getConfigurationData().getM3uaConfigurationData().setRoutingContext(val);
+		this.testerHost.markStore();
+	}
+
+	@Override
+	public long getM3uaNetworkAppearance() {
+		return this.testerHost.getConfigurationData().getM3uaConfigurationData().getNetworkAppearance();
+	}
+
+	@Override
+	public void setM3uaNetworkAppearance(long val) {
+		this.testerHost.getConfigurationData().getM3uaConfigurationData().setNetworkAppearance(val);
+		this.testerHost.markStore();
 	}
 
 	@Override
@@ -396,23 +363,6 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 		return sb.toString();
 	}
 
-	@Override
-	public void setM3uaRoutingContext(long val) {
-		this.routingConext = val;
-		this.testerHost.markStore();
-	}
-
-	@Override
-	public long getM3uaNetworkAppearance() {
-		return this.networkAppearance;
-	}
-
-	@Override
-	public void setM3uaNetworkAppearance(long val) {
-		this.networkAppearance = val;
-		this.testerHost.markStore();
-	}
-
 
 	@Override
 	public void putSctpIPChannelType(String val) {
@@ -447,7 +397,12 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 		try {
 			this.isSctpConnectionUp = false;
 			this.isM3uaConnectionActive = false;
-			this.initM3ua(this.isSctpServer, this.localHost, this.localPort, this.remoteHost, this.remotePort, this.ipChannelType, this.extraHostAddresses);
+			this.initM3ua(this.testerHost.getConfigurationData().getM3uaConfigurationData().getStorePcapTrace(), this.testerHost.getConfigurationData()
+					.getM3uaConfigurationData().getIsSctpServer(), this.testerHost.getConfigurationData().getM3uaConfigurationData().getLocalHost(),
+					this.testerHost.getConfigurationData().getM3uaConfigurationData().getLocalPort(), this.testerHost.getConfigurationData()
+							.getM3uaConfigurationData().getRemoteHost(), this.testerHost.getConfigurationData().getM3uaConfigurationData().getRemotePort(),
+					this.testerHost.getConfigurationData().getM3uaConfigurationData().getIpChannelType(), this.testerHost.getConfigurationData()
+							.getM3uaConfigurationData().getSctpExtraHostAddressesArray());
 			this.testerHost.sendNotif(SOURCE_NAME, "M3UA has been started", "", Level.INFO);
 			return true;
 		} catch (Throwable e) {
@@ -496,7 +451,7 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 		}
 	}
 
-	private void initM3ua(boolean isSctpServer, String localHost, int localPort, String remoteHost, int remotePort, IpChannelType ipChannelType,
+	private void initM3ua(boolean storePcapTrace, boolean isSctpServer, String localHost, int localPort, String remoteHost, int remotePort, IpChannelType ipChannelType,
 			String[] extraHostAddresses) throws Exception {
 
 		this.stopM3ua();
@@ -510,12 +465,18 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 
 		this.sctpManagement.start();
 		this.sctpManagement.removeAllResourses();
+		Thread.sleep(500); // waiting for freeing ip ports
 
 		// init M3UA stack
-		this.m3uaMgmt = new M3UAManagementImpl("SimM3uaServer_" + name);
+		this.m3uaMgmt = new M3UAManagementProxyImpl("SimM3uaServer_" + name);
 		this.m3uaMgmt.setTransportManagement(this.sctpManagement);
 		this.m3uaMgmt.start();
 		this.m3uaMgmt.removeAllResourses();
+
+		// starting pcap trace storing if it is configured
+		if (storePcapTrace) {
+			this.m3uaMgmt.startPcapTrace("MsgLog_" + name + ".pcap");
+		}
 
 		// configure SCTP stack
 		String SERVER_NAME = "Server_" + name;
@@ -545,10 +506,12 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 
 		// configure M3UA stack
 		// 1. Create AS
-		RoutingContext rc = factory.createRoutingContext(new long[] { this.routingConext });
+		RoutingContext rc = factory.createRoutingContext(new long[] { this.testerHost.getConfigurationData().getM3uaConfigurationData().getRoutingContext() });
 		TrafficModeType trafficModeType = factory.createTrafficModeType(TrafficModeType.Loadshare);
-		NetworkAppearance na = factory.createNetworkAppearance(this.networkAppearance);
-		localAs = m3uaMgmt.createAs("testas", this.m3uaFunctionality, this.m3uaExchangeType, this.m3uaIPSPType, rc, trafficModeType, 1, na);
+		NetworkAppearance na = factory.createNetworkAppearance(this.testerHost.getConfigurationData().getM3uaConfigurationData().getNetworkAppearance());
+		localAs = m3uaMgmt.createAs("testas", this.testerHost.getConfigurationData().getM3uaConfigurationData().getM3uaFunctionality(), this.testerHost
+				.getConfigurationData().getM3uaConfigurationData().getM3uaExchangeType(), this.testerHost.getConfigurationData().getM3uaConfigurationData()
+				.getM3uaIPSPType(), rc, trafficModeType, 1, na);
 
 		// 2. Create ASP
 		localAspFactory = m3uaMgmt.createAspFactory("testasp", assName);
@@ -558,7 +521,8 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 
 		// 4. Define Route
 		// Define Route
-		m3uaMgmt.addRoute(this.dpc, this.opc, this.si, "testas");
+		m3uaMgmt.addRoute(this.testerHost.getConfigurationData().getM3uaConfigurationData().getDpc(), this.testerHost.getConfigurationData()
+				.getM3uaConfigurationData().getOpc(), this.testerHost.getConfigurationData().getM3uaConfigurationData().getSi(), "testas");
 
 		// starting resources
 		// 1. Start Association
@@ -582,51 +546,6 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 
 	public Mtp3UserPart getMtp3UserPart() {
 		return this.m3uaMgmt;
-	}	
-
-	protected static final XMLFormat<M3uaMan> XML = new XMLFormat<M3uaMan>(M3uaMan.class) {
-
-		public void write(M3uaMan m3ua, OutputElement xml) throws XMLStreamException {
-			xml.setAttribute(IS_SCTP_SERVER, m3ua.isSctpServer);
-			xml.setAttribute(LOCAL_PORT, m3ua.localPort);
-			xml.setAttribute(REMOTE_PORT, m3ua.remotePort);
-			xml.setAttribute(IP_CHANNEL_TYPE, m3ua.ipChannelType.toString());
-			xml.setAttribute(DPC, m3ua.dpc);
-			xml.setAttribute(OPC, m3ua.opc);
-			xml.setAttribute(SI, m3ua.si);
-			xml.setAttribute(ROUTING_CONTEXT, m3ua.routingConext);
-			xml.setAttribute(NETWORK_APPEARANCE, m3ua.networkAppearance);
-			xml.setAttribute(M3UA_FUNCTIONALITY, m3ua.m3uaFunctionality.toString());
-			xml.setAttribute(M3UA_EXCHANGE_TYPE, m3ua.m3uaExchangeType.toString());
-			xml.setAttribute(M3UA_IPSPType, m3ua.m3uaIPSPType.toString());
-
-			xml.add(m3ua.localHost, LOCAL_HOST);
-			xml.add(m3ua.remoteHost, REMOTE_HOST);
-			xml.add(m3ua.getSctpExtraHostAddresses(), EXTRA_HOST_ADDRESSES);
-		}
-
-		public void read(InputElement xml, M3uaMan m3ua) throws XMLStreamException {
-			m3ua.isSctpServer = xml.getAttribute(IS_SCTP_SERVER).toBoolean();
-			m3ua.localPort = xml.getAttribute(LOCAL_PORT).toInt();
-			m3ua.remotePort = xml.getAttribute(REMOTE_PORT).toInt();
-			String str = xml.getAttribute(IP_CHANNEL_TYPE).toString();
-			m3ua.ipChannelType = IpChannelType.valueOf(str);
-			m3ua.dpc = xml.getAttribute(DPC).toInt();
-			m3ua.opc = xml.getAttribute(OPC).toInt();
-			m3ua.si = xml.getAttribute(SI).toInt();
-			m3ua.routingConext = xml.getAttribute(ROUTING_CONTEXT).toInt();
-			m3ua.networkAppearance = xml.getAttribute(NETWORK_APPEARANCE).toInt();
-			str = xml.getAttribute(M3UA_FUNCTIONALITY).toString();
-			m3ua.m3uaFunctionality = Functionality.valueOf(str);
-			str = xml.getAttribute(M3UA_EXCHANGE_TYPE).toString();
-			m3ua.m3uaExchangeType = ExchangeType.valueOf(str);
-			str = xml.getAttribute(M3UA_IPSPType).toString();
-			m3ua.m3uaIPSPType = IPSPType.valueOf(str);
-
-			m3ua.localHost = (String) xml.get(LOCAL_HOST, String.class);
-			m3ua.remoteHost = (String) xml.get(REMOTE_HOST, String.class);
-			m3ua.doSetExtraHostAddresses((String) xml.get(EXTRA_HOST_ADDRESSES, String.class));
-		}
-	};
+	}
 }
 
