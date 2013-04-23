@@ -82,6 +82,41 @@ public class RuleTest {
 	@AfterMethod
 	public void tearDown() {
 	}
+	
+	@Test(groups = { "router", "functional.translate" })
+	public void testTranslate0() throws Exception {
+
+		// Match digits starting with 447797706077 and add PC and SSN. 
+		SccpAddress pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.INTERNATIONAL, "917797706077/*"), 8);
+		SccpAddress primaryAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 792, GlobalTitle.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.INTERNATIONAL, "917797706077/-"), 8);
+
+		RuleImpl rule = new RuleImpl(RuleType.Solitary, LoadSharingAlgorithm.Undefined, OriginationType.All, pattern, "K/R");
+		rule.setPrimaryAddressId(1);
+
+		SccpAddress address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.INTERNATIONAL, "917797706077"), 8);
+
+		assertTrue(rule.matches(address, false));
+
+		SccpAddress translatedAddress = rule.translate(address, primaryAddress);
+
+		assertEquals(translatedAddress.getAddressIndicator().getRoutingIndicator(), RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN);
+		assertEquals(translatedAddress.getAddressIndicator().getGlobalTitleIndicator(), GlobalTitleIndicator.GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_ENCODING_SCHEME_AND_NATURE_OF_ADDRESS);
+		assertEquals(translatedAddress.getSignalingPointCode(), 792);
+		assertEquals(translatedAddress.getSubsystemNumber(), 8);
+		assertEquals(translatedAddress.getGlobalTitle().getDigits(), "917797706077");
+		
+		address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.INTERNATIONAL, "91779770607720"), 8);
+
+		assertTrue(rule.matches(address, false));
+
+		translatedAddress = rule.translate(address, primaryAddress);
+
+		assertEquals(translatedAddress.getAddressIndicator().getRoutingIndicator(), RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN);
+		assertEquals(translatedAddress.getAddressIndicator().getGlobalTitleIndicator(), GlobalTitleIndicator.GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_ENCODING_SCHEME_AND_NATURE_OF_ADDRESS);
+		assertEquals(translatedAddress.getSignalingPointCode(), 792);
+		assertEquals(translatedAddress.getSubsystemNumber(), 8);
+		assertEquals(translatedAddress.getGlobalTitle().getDigits(), "917797706077");
+	}	
 
 	@Test(groups = { "router", "functional.translate" })
 	public void testTranslate1() throws Exception {
