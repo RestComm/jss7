@@ -28,6 +28,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -305,7 +306,9 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 	}
 
 	public Map<String, As[]> getRoute() {
-		return this.routeManagement.route.unmodifiable();
+		Map<String, As[]> routeTmp = new HashMap<String, As[]>();
+		routeTmp.putAll(this.routeManagement.route);
+		return routeTmp;
 	}
 
 	protected As getAs(String asName) {
