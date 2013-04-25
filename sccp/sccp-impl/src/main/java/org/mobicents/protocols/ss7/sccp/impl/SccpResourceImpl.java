@@ -303,6 +303,7 @@ public class SccpResourceImpl implements SccpResource {
 
 		synchronized (this) {
 			concernedSignalingPointCode.setRemoteSpc(remoteSpc);
+			this.store();
 		}
 
 	}

@@ -30,6 +30,10 @@ package org.mobicents.protocols.ss7.tools.simulator.level1;
  */
 public interface M3uaManMBean {
 
+	public boolean getStorePcapTrace();
+
+	public void setStorePcapTrace(boolean val);
+
 	public String getSctpLocalHost();
 
 	public void setSctpLocalHost(String val);

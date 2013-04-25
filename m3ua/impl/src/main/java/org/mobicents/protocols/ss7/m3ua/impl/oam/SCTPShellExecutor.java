@@ -72,7 +72,7 @@ public class SCTPShellExecutor implements ShellExecutor {
 			sb.append("ASSOCIATION ").append(asso.getIpChannelType().getType()).append(" name=").append(asso.getName()).append(" started=")
 					.append(asso.isStarted()).append(" peerIp=").append(asso.getPeerAddress()).append(" peerPort=").append(asso.getPeerPort());
 			if (asso.getAssociationType() == AssociationType.CLIENT) {
-				sb.append(" hostIp=").append(asso.getHostAddress()).append(" hostPort").append(asso.getHostPort());
+				sb.append(" hostIp=").append(asso.getHostAddress()).append(" hostPort=").append(asso.getHostPort());
 			} else {
 				sb.append(" server=").append(asso.getServerName());
 			}

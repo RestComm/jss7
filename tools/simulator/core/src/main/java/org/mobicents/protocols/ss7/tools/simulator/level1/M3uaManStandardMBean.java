@@ -45,6 +45,7 @@ public class M3uaManStandardMBean extends StandardMBean {
 	public MBeanInfo getMBeanInfo() {
 
 		MBeanAttributeInfo[] attributes = new MBeanAttributeInfo[] { 
+				new MBeanAttributeInfo("StorePcapTrace", boolean.class.getName(), "Storing all transmitted/received data into MsgLog_*.pcap file", true, true, true),
 				new MBeanAttributeInfo("SctpLocalHost", String.class.getName(), "Local host IP address", true, true, false),
 				new MBeanAttributeInfo("SctpLocalPort", int.class.getName(), "Local port number", true, true, false),
 				new MBeanAttributeInfo("SctpRemoteHost", String.class.getName(), "Remote host IP address", true, true, false),

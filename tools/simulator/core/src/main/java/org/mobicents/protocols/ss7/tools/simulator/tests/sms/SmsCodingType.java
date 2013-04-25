@@ -82,9 +82,9 @@ public class SmsCodingType extends EnumeratedBase {
 	}
 
 	public int getSupportesMaxMessageLength() {
-		int maxMsgLen = 110;
+		int maxMsgLen = 160;
 		if (intValue() == SmsCodingType.VAL_UCS2)
-			maxMsgLen = 55;
+			maxMsgLen = 70;
 		return maxMsgLen;
 	}
 }

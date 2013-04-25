@@ -31,12 +31,15 @@ import org.mobicents.protocols.ss7.map.api.primitives.GSNAddress;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.LAIFixedLength;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NAEAPreferredCI;
 import org.mobicents.protocols.ss7.map.api.primitives.PlmnId;
 import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
+import org.mobicents.protocols.ss7.map.api.primitives.TMSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationSetList;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.CurrentSecurityContext;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.EpsAuthenticationSetList;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.ReSynchronisationInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.RequestingNodeType;
@@ -46,10 +49,14 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIu;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.AgeIndicator;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancellationType;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.EPSInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.IMSIWithLMSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PagingArea;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SGSNCapability;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedFeatures;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.TypeOfUpdate;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UESRVCCCapability;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UsedRATType;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VLRCapability;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberInfo;
@@ -111,6 +118,36 @@ public interface MAPDialogMobility extends MAPDialog {
 
 	public void addCancelLocationResponse(long invokeId, MAPExtensionContainer extensionContainer) throws MAPException;
 
+	
+	public Long addSendIdentificationRequest(int customInvokeTimeout, TMSI tmsi, Integer numberOfRequestedVectors, boolean segmentationProhibited,
+			MAPExtensionContainer extensionContainer,	ISDNAddressString mscNumber, LAIFixedLength previousLAI, Integer hopCounter, boolean mtRoamingForwardingSupported,
+			ISDNAddressString newVLRNumber, LMSI lmsi) throws MAPException;
+	
+	public Long addSendIdentificationRequest(TMSI tmsi, Integer numberOfRequestedVectors, boolean segmentationProhibited,
+			MAPExtensionContainer extensionContainer,	ISDNAddressString mscNumber, LAIFixedLength previousLAI, Integer hopCounter, boolean mtRoamingForwardingSupported,
+			ISDNAddressString newVLRNumber, LMSI lmsi) throws MAPException;
+
+	public void addSendIdentificationResponse(long invokeId, IMSI imsi, AuthenticationSetList authenticationSetList, CurrentSecurityContext currentSecurityContext,
+			MAPExtensionContainer extensionContainer) throws MAPException;
+	
+	public Long addUpdateGprsLocationRequest(int customInvokeTimeout, IMSI imsi, ISDNAddressString sgsnNumber, GSNAddress sgsnAddress,
+			MAPExtensionContainer extensionContainer, SGSNCapability sgsnCapability, boolean informPreviousNetworkEntity,
+			boolean psLCSNotSupportedByUE, GSNAddress vGmlcAddress, ADDInfo addInfo, EPSInfo epsInfo, boolean servingNodeTypeIndicator,
+			boolean skipSubscriberDataUpdate, UsedRATType usedRATType, boolean gprsSubscriptionDataNotNeeded, boolean nodeTypeIndicator,
+			boolean areaRestricted, boolean ueReachableIndicator, boolean epsSubscriptionDataNotNeeded,
+			UESRVCCCapability uesrvccCapability) throws MAPException;
+
+	public Long addUpdateGprsLocationRequest(IMSI imsi, ISDNAddressString sgsnNumber, GSNAddress sgsnAddress,
+			MAPExtensionContainer extensionContainer, SGSNCapability sgsnCapability, boolean informPreviousNetworkEntity,
+			boolean psLCSNotSupportedByUE, GSNAddress vGmlcAddress, ADDInfo addInfo, EPSInfo epsInfo, boolean servingNodeTypeIndicator,
+			boolean skipSubscriberDataUpdate, UsedRATType usedRATType, boolean gprsSubscriptionDataNotNeeded, boolean nodeTypeIndicator,
+			boolean areaRestricted, boolean ueReachableIndicator, boolean epsSubscriptionDataNotNeeded,
+			UESRVCCCapability uesrvccCapability) throws MAPException;
+
+	public void addUpdateGprsLocationResponse(long invokeId, ISDNAddressString hlrNumber,MAPExtensionContainer extensionContainer, boolean addCapability,
+			boolean sgsnMmeSeparationSupported) throws MAPException;
+
+	
 	// -- Authentication management services
 	public Long addSendAuthenticationInfoRequest(IMSI imsi, int numberOfRequestedVectors, boolean segmentationProhibited, boolean immediateResponsePreferred,
 			ReSynchronisationInfo reSynchronisationInfo, MAPExtensionContainer extensionContainer, RequestingNodeType requestingNodeType,

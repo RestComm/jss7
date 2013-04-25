@@ -28,8 +28,8 @@ import javax.swing.JFrame;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
-import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
 import org.mobicents.protocols.ss7.tools.simulator.level3.MapManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
 
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -54,8 +54,6 @@ public class MapForm extends JDialog {
 	private MapManMBean map;
 	
 	private static final long serialVersionUID = -2799708291291364182L;
-	private JTextField tbLocalSsn;
-	private JTextField tbRemoteSsn;
 	private JTextField tbOrigReference;
 	private JTextField tbDestReference;
 	private JTextField tbRemoteAddressDigits;
@@ -75,15 +73,6 @@ public class MapForm extends JDialog {
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.CENTER);
 		panel.setLayout(null);
-		
-		JLabel lblLocalSsn = new JLabel("Local SSN");
-		lblLocalSsn.setBounds(10, 14, 183, 14);
-		panel.add(lblLocalSsn);
-		
-		tbLocalSsn = new JTextField();
-		tbLocalSsn.setColumns(10);
-		tbLocalSsn.setBounds(203, 11, 129, 20);
-		panel.add(tbLocalSsn);
 		
 		JButton button = new JButton("Load default values for side A");
 		button.addActionListener(new ActionListener() {
@@ -132,33 +121,24 @@ public class MapForm extends JDialog {
 		button_4.setBounds(401, 436, 117, 23);
 		panel.add(button_4);
 		
-		tbRemoteSsn = new JTextField();
-		tbRemoteSsn.setColumns(10);
-		tbRemoteSsn.setBounds(203, 42, 129, 20);
-		panel.add(tbRemoteSsn);
-		
-		JLabel lblRemoteSsn = new JLabel("Remote SSN");
-		lblRemoteSsn.setBounds(10, 45, 183, 14);
-		panel.add(lblRemoteSsn);
-		
 		JLabel lblRemoteAddressDigits = new JLabel("Remote address digits");
-		lblRemoteAddressDigits.setBounds(10, 76, 183, 14);
+		lblRemoteAddressDigits.setBounds(13, 14, 183, 14);
 		panel.add(lblRemoteAddressDigits);
 
 		tbRemoteAddressDigits = new JTextField();
 		tbRemoteAddressDigits.setColumns(10);
-		tbRemoteAddressDigits.setBounds(203, 73, 270, 20);
+		tbRemoteAddressDigits.setBounds(206, 11, 270, 20);
 		panel.add(tbRemoteAddressDigits);
 
 		JLabel lblIfEmptyRoutingbasedondpcandssn = new JLabel("<html>\r\nIf empty RoutingOnDpcAndSsn is used for CalledPartyAddress (remoteSpc from SCCP)<br>\r\nIf not empty RoutingOnGT is used (address and Ssn a defined in MAP layer)<br>\r\nThis option may be ignored by some test tasks that supply there own digits\r\n</html>");
 		lblIfEmptyRoutingbasedondpcandssn.setVerticalAlignment(SwingConstants.TOP);
-		lblIfEmptyRoutingbasedondpcandssn.setBounds(10, 101, 588, 56);
+		lblIfEmptyRoutingbasedondpcandssn.setBounds(13, 39, 588, 56);
 		panel.add(lblIfEmptyRoutingbasedondpcandssn);
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panel_1.setLayout(null);
-		panel_1.setBounds(7, 168, 511, 108);
+		panel_1.setBounds(10, 106, 511, 108);
 		panel.add(panel_1);
 		
 		JLabel lblOriginationReference = new JLabel("Origination reference");
@@ -193,7 +173,7 @@ public class MapForm extends JDialog {
 		JPanel panel_2 = new JPanel();
 		panel_2.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panel_2.setLayout(null);
-		panel_2.setBounds(7, 283, 511, 108);
+		panel_2.setBounds(10, 221, 511, 108);
 		panel.add(panel_2);
 		
 		JLabel lblDestinationReference = new JLabel("Destination reference");
@@ -242,8 +222,8 @@ public class MapForm extends JDialog {
 		M3uaForm.setEnumeratedBaseComboBox(cbDestReferenceAddressNature, this.map.getDestReferenceAddressNature());
 		M3uaForm.setEnumeratedBaseComboBox(cbDestReferenceNumberingPlan, this.map.getDestReferenceNumberingPlan());
 
-		tbLocalSsn.setText(((Integer) this.map.getLocalSsn()).toString());
-		tbRemoteSsn.setText(((Integer) this.map.getRemoteSsn()).toString());
+//		tbLocalSsn.setText(((Integer) this.map.getLocalSsn()).toString());
+//		tbRemoteSsn.setText(((Integer) this.map.getRemoteSsn()).toString());
 
 		tbOrigReference.setText(this.map.getOrigReference());
 		tbDestReference.setText(this.map.getDestReference());
@@ -252,12 +232,12 @@ public class MapForm extends JDialog {
 
 	private void loadDataA() {
 		M3uaForm.setEnumeratedBaseComboBox(cbOrigReferenceAddressNature, new AddressNatureType(AddressNature.international_number.getIndicator()));
-		M3uaForm.setEnumeratedBaseComboBox(cbOrigReferenceNumberingPlan, new NumberingPlanType(NumberingPlan.ISDN.getIndicator()));
+		M3uaForm.setEnumeratedBaseComboBox(cbOrigReferenceNumberingPlan, new NumberingPlanMapType(NumberingPlan.ISDN.getIndicator()));
 		M3uaForm.setEnumeratedBaseComboBox(cbDestReferenceAddressNature, new AddressNatureType(AddressNature.international_number.getIndicator()));
-		M3uaForm.setEnumeratedBaseComboBox(cbDestReferenceNumberingPlan, new NumberingPlanType(NumberingPlan.ISDN.getIndicator()));
+		M3uaForm.setEnumeratedBaseComboBox(cbDestReferenceNumberingPlan, new NumberingPlanMapType(NumberingPlan.ISDN.getIndicator()));
 
-		tbLocalSsn.setText("8");
-		tbRemoteSsn.setText("8");
+//		tbLocalSsn.setText("8");
+//		tbRemoteSsn.setText("8");
 
 		tbOrigReference.setText("");
 		tbDestReference.setText("");
@@ -266,12 +246,12 @@ public class MapForm extends JDialog {
 
 	private void loadDataB() {
 		M3uaForm.setEnumeratedBaseComboBox(cbOrigReferenceAddressNature, new AddressNatureType(AddressNature.international_number.getIndicator()));
-		M3uaForm.setEnumeratedBaseComboBox(cbOrigReferenceNumberingPlan, new NumberingPlanType(NumberingPlan.ISDN.getIndicator()));
+		M3uaForm.setEnumeratedBaseComboBox(cbOrigReferenceNumberingPlan, new NumberingPlanMapType(NumberingPlan.ISDN.getIndicator()));
 		M3uaForm.setEnumeratedBaseComboBox(cbDestReferenceAddressNature, new AddressNatureType(AddressNature.international_number.getIndicator()));
-		M3uaForm.setEnumeratedBaseComboBox(cbDestReferenceNumberingPlan, new NumberingPlanType(NumberingPlan.ISDN.getIndicator()));
+		M3uaForm.setEnumeratedBaseComboBox(cbDestReferenceNumberingPlan, new NumberingPlanMapType(NumberingPlan.ISDN.getIndicator()));
 
-		tbLocalSsn.setText("8");
-		tbRemoteSsn.setText("8");
+//		tbLocalSsn.setText("8");
+//		tbRemoteSsn.setText("8");
 
 		tbOrigReference.setText("");
 		tbDestReference.setText("");
@@ -279,28 +259,28 @@ public class MapForm extends JDialog {
 	}
 
 	private boolean saveData() {
-		int localSsn = 0;
-		int remoteSsn = 0;
-		try {
-			localSsn = Integer.parseInt(tbLocalSsn.getText());
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(this, "Exception when parsing Local Ssn value: " + e.toString());
-			return false;
-		}
-		try {
-			remoteSsn = Integer.parseInt(tbRemoteSsn.getText());
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(this, "Exception when parsing Remote Ssn value: " + e.toString());
-			return false;
-		}
+//		int localSsn = 0;
+//		int remoteSsn = 0;
+//		try {
+//			localSsn = Integer.parseInt(tbLocalSsn.getText());
+//		} catch (Exception e) {
+//			JOptionPane.showMessageDialog(this, "Exception when parsing Local Ssn value: " + e.toString());
+//			return false;
+//		}
+//		try {
+//			remoteSsn = Integer.parseInt(tbRemoteSsn.getText());
+//		} catch (Exception e) {
+//			JOptionPane.showMessageDialog(this, "Exception when parsing Remote Ssn value: " + e.toString());
+//			return false;
+//		}
 
 		this.map.setOrigReferenceAddressNature((AddressNatureType) cbOrigReferenceAddressNature.getSelectedItem());
-		this.map.setOrigReferenceNumberingPlan((NumberingPlanType) cbOrigReferenceNumberingPlan.getSelectedItem());
+		this.map.setOrigReferenceNumberingPlan((NumberingPlanMapType) cbOrigReferenceNumberingPlan.getSelectedItem());
 		this.map.setDestReferenceAddressNature((AddressNatureType) cbDestReferenceAddressNature.getSelectedItem());
-		this.map.setDestReferenceNumberingPlan((NumberingPlanType) cbDestReferenceNumberingPlan.getSelectedItem());
+		this.map.setDestReferenceNumberingPlan((NumberingPlanMapType) cbDestReferenceNumberingPlan.getSelectedItem());
 
-		this.map.setLocalSsn(localSsn);
-		this.map.setRemoteSsn(remoteSsn);
+//		this.map.setLocalSsn(localSsn);
+//		this.map.setRemoteSsn(remoteSsn);
 
 		this.map.setOrigReference(tbOrigReference.getText());
 		this.map.setDestReference(tbDestReference.getText());

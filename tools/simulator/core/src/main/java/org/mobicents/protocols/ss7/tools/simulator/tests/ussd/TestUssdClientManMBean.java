@@ -23,7 +23,7 @@
 package org.mobicents.protocols.ss7.tools.simulator.tests.ussd;
 
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
-import org.mobicents.protocols.ss7.tools.simulator.common.NumberingPlanType;
+import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
 
 /**
  * 
@@ -42,11 +42,11 @@ public interface TestUssdClientManMBean {
 
 	public void setMsisdnAddressNature(AddressNatureType val);
 
-	public NumberingPlanType getMsisdnNumberingPlan();
+	public NumberingPlanMapType getMsisdnNumberingPlan();
 
 	public String getMsisdnNumberingPlan_Value();
 
-	public void setMsisdnNumberingPlan(NumberingPlanType val);
+	public void setMsisdnNumberingPlan(NumberingPlanMapType val);
 
 	public int getDataCodingScheme();
 

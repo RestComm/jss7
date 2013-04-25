@@ -44,10 +44,13 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
  * @author amit bhayani
- * @author kulikov
  * @author sergey vetyutnev
  */
 public class RuleImpl implements Rule, Serializable {
+	
+	private static final char CHAR_WILD_CARD_ALL = '*';
+	private static final char CHAR_WILD_CARD_SINGLE = '?';
+	private static final char CHAR_MASK_SEPARATOR = '/';
 
 	private static final String WILD_CARD_ALL = "*";
 	private static final String WILD_CARD_SINGLE = "?";
@@ -462,16 +465,23 @@ public class RuleImpl implements Rule, Serializable {
 		for (int i = 0; i < pattern.length; i++) {
 
 			if (j >= digits.length) {
-				// Pattern has more digits to match than digits; return false
+				// Pattern has more digits to match than digits; 
+				
+				//special case where pattern can be xxxxx/* and digits are xxxxx so this should match. 
+				if(pattern[j] == CHAR_MASK_SEPARATOR && pattern[j+1] == CHAR_WILD_CARD_ALL){
+					return true;
+				}
+				
+				//return false
 				return false;
 			}
 
-			if (pattern[i] == '*') {
+			if (pattern[i] == CHAR_WILD_CARD_ALL) {
 				return true;
-			} else if (pattern[i] == '?') {
+			} else if (pattern[i] == CHAR_WILD_CARD_SINGLE) {
 				j++;
 				continue;
-			} else if (pattern[i] == '/') {
+			} else if (pattern[i] == CHAR_MASK_SEPARATOR) {
 				continue;
 			} else if (pattern[i] != digits[j]) {
 				return false;

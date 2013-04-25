@@ -37,10 +37,10 @@ UMTS-SecurityContextData ::= SEQUENCE {
  */
 public interface UMTSSecurityContextData {
 
-	public byte[] getCK();
+	public CK getCK();
 
-	public byte[] getIK();
+	public IK getIK();
 
-	public byte[] getKSI();
+	public KSI getKSI();
 
 }

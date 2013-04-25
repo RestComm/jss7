@@ -703,6 +703,7 @@ public class RouterImpl implements Router {
 		}
 
 		sap.removeMtp3Destination(destId);
+		this.store();
 	}
 
 	public void addMtp3ServiceAccessPoint(int id, int mtp3Id, int opc, int ni) throws Exception {

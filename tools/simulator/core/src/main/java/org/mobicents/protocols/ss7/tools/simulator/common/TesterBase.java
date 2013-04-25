@@ -62,7 +62,7 @@ public abstract class TesterBase implements MAPDialogListener, MAPServiceListene
 
 	@Override
 	public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem problem, boolean isLocalOriginated) {
-		String uData = problem.toString() + ", dlgId=" + mapDialog.getLocalDialogId() + ", InvokeId=" + invokeId;
+		String uData = problem.toString() + ", dlgId=" + mapDialog.getLocalDialogId() + ", InvokeId=" + invokeId + ", isLocalOriginated=" + isLocalOriginated;
 		this.testerHost.sendNotif(this.className, "Rcvd: RejectComponent", uData, Level.DEBUG);
 	}
 
