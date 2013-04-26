@@ -55,6 +55,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.NetworkIdentificationTypeV
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.primitives.PlmnId;
 import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
+import org.mobicents.protocols.ss7.map.api.primitives.TMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.Time;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.CUGCheckInfo;
@@ -110,22 +111,34 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.VelocityType;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationQuintuplet;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationSetList;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationTriplet;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.CK;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.Cksn;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.CurrentSecurityContext;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.EpcAv;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.EpsAuthenticationSetList;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.GSMSecurityContextData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.IK;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.KSI;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.Kc;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.QuintupletList;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.ReSynchronisationInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.TripletList;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.UMTSSecurityContextData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.RequestedEquipmentInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIu;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIuA;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIuB;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.AgeIndicator;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.EPSInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.IMSIWithLMSI;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ISRInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ISTSupportIndicator;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LAC;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.LocationArea;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PDNGWUpdate;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PagingArea;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SGSNCapability;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SuperChargerInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedFeatures;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedLCSCapabilitySets;
@@ -206,6 +219,7 @@ import org.mobicents.protocols.ss7.map.primitives.NAEACICImpl;
 import org.mobicents.protocols.ss7.map.primitives.NAEAPreferredCIImpl;
 import org.mobicents.protocols.ss7.map.primitives.PlmnIdImpl;
 import org.mobicents.protocols.ss7.map.primitives.SubscriberIdentityImpl;
+import org.mobicents.protocols.ss7.map.primitives.TMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.TimeImpl;
 import org.mobicents.protocols.ss7.map.primitives.USSDStringImpl;
 import org.mobicents.protocols.ss7.map.service.callhandling.CUGCheckInfoImpl;
@@ -249,20 +263,32 @@ import org.mobicents.protocols.ss7.map.service.lsm.VelocityEstimateImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.AuthenticationQuintupletImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.AuthenticationSetListImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.AuthenticationTripletImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.authentication.CKImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.authentication.CksnImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.authentication.CurrentSecurityContextImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.EpcAvImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.EpsAuthenticationSetListImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.authentication.GSMSecurityContextDataImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.authentication.IKImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.authentication.KSIImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.authentication.KcImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.QuintupletListImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.ReSynchronisationInfoImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.TripletListImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.authentication.UMTSSecurityContextDataImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.imei.RequestedEquipmentInfoImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.imei.UESBIIuAImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.imei.UESBIIuBImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.imei.UESBIIuImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.ADDInfoImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.EPSInfoImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.IMSIWithLMSIImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.ISRInformationImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.LACImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.LocationAreaImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.PDNGWUpdateImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.PagingAreaImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.SGSNCapabilityImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.SuperChargerInfoImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.SupportedFeaturesImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.SupportedLCSCapabilitySetsImpl;
@@ -1984,6 +2010,87 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
 	@Override
 	public ExtendedRoutingInfo createExtendedRoutingInfo(CamelRoutingInfo camelRoutingInfo){
 		return new ExtendedRoutingInfoImpl(camelRoutingInfo);
+	}
+
+	@Override
+	public TMSI createTMSI(byte[] data) {
+		return new TMSIImpl(data);
+	}
+
+	@Override
+	public CK createCK(byte[] data) {
+		return new CKImpl(data);
+	}
+
+	@Override
+	public Cksn createCksn(int data) {
+		return new CksnImpl(data);
+	}
+
+	@Override
+	public CurrentSecurityContext createCurrentSecurityContext(GSMSecurityContextData gsmSecurityContextData) {
+		return new CurrentSecurityContextImpl(gsmSecurityContextData);
+	}
+
+	@Override
+	public CurrentSecurityContext createCurrentSecurityContext(UMTSSecurityContextData umtsSecurityContextData) {
+		return new CurrentSecurityContextImpl(umtsSecurityContextData);
+	}
+
+	@Override
+	public GSMSecurityContextData createGSMSecurityContextData(Kc kc, Cksn cksn) {
+		return new GSMSecurityContextDataImpl(kc, cksn);
+	}
+
+	@Override
+	public IK createIK(byte[] data) {
+		return new IKImpl(data);
+	}
+
+	@Override
+	public Kc createKc(byte[] data) {
+		return new KcImpl(data);
+	}
+
+	@Override
+	public KSI createKSI(int data) {
+		return new KSIImpl(data);
+	}
+
+	@Override
+	public UMTSSecurityContextData createUMTSSecurityContextData(CK ck, IK ik, KSI ksi) {
+		return new UMTSSecurityContextDataImpl(ck, ik, ksi);
+	}
+
+	@Override
+	public EPSInfo createEPSInfo(PDNGWUpdate pndGwUpdate) {
+		return new EPSInfoImpl(pndGwUpdate);
+	}
+
+	@Override
+	public EPSInfo createEPSInfo(ISRInformation isrInformation) {
+		return new EPSInfoImpl(isrInformation);
+	}
+
+	@Override
+	public ISRInformation createISRInformation(boolean updateMME, boolean cancelSGSN, boolean initialAttachIndicator) {
+		return new ISRInformationImpl(updateMME, cancelSGSN, initialAttachIndicator);
+	}
+
+	@Override
+	public PDNGWUpdate createPDNGWUpdate(APN apn, PDNGWIdentity pdnGwIdentity, Integer contextId, MAPExtensionContainer extensionContainer) {
+		return new PDNGWUpdateImpl(apn, pdnGwIdentity, contextId, extensionContainer);
+	}
+
+	@Override
+	public SGSNCapability createSGSNCapability(boolean solsaSupportIndicator, MAPExtensionContainer extensionContainer,
+			SuperChargerInfo superChargerSupportedInServingNetworkEntity, boolean gprsEnhancementsSupportIndicator, SupportedCamelPhases supportedCamelPhases,
+			SupportedLCSCapabilitySets supportedLCSCapabilitySets, OfferedCamel4CSIs offeredCamel4CSIs, boolean smsCallBarringSupportIndicator,
+			SupportedRATTypes supportedRATTypesIndicator, SupportedFeatures supportedFeatures, boolean tAdsDataRetrieval,
+			Boolean homogeneousSupportOfIMSVoiceOverPSSessions) {
+		return new SGSNCapabilityImpl(solsaSupportIndicator, extensionContainer, superChargerSupportedInServingNetworkEntity, gprsEnhancementsSupportIndicator,
+				supportedCamelPhases, supportedLCSCapabilitySets, offeredCamel4CSIs, smsCallBarringSupportIndicator, supportedRATTypesIndicator,
+				supportedFeatures, tAdsDataRetrieval, homogeneousSupportOfIMSVoiceOverPSSessions);
 	}
 }
 

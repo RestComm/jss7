@@ -19,28 +19,17 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
 
 /**
  * 
 
-UMTS-SecurityContextData ::= SEQUENCE {
-	ck			CK,
-	ik			IK,
-	ksi			KSI,
-	... }
+Kc ::= OCTET STRING (SIZE (8))
 
  * 
- * @author sergey vetyutnev
+ * @author Lasith Waruna Perera
  * 
  */
-public interface UMTSSecurityContextData {
-
-	public CK getCK();
-
-	public IK getIK();
-
-	public KSI getKSI();
-
+public interface Kc {
+	public byte[] getData();	
 }

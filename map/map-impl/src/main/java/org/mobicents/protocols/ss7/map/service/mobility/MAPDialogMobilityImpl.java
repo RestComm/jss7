@@ -38,14 +38,17 @@ import org.mobicents.protocols.ss7.map.api.primitives.GSNAddress;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.LAIFixedLength;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NAEAPreferredCI;
 import org.mobicents.protocols.ss7.map.api.primitives.PlmnId;
 import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
+import org.mobicents.protocols.ss7.map.api.primitives.TMSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPDialogMobility;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobility;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.AuthenticationSetList;
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.CurrentSecurityContext;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.EpsAuthenticationSetList;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.ReSynchronisationInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.RequestingNodeType;
@@ -55,10 +58,14 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIu;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.ADDInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.AgeIndicator;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancellationType;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.EPSInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.IMSIWithLMSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PagingArea;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SGSNCapability;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedFeatures;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.TypeOfUpdate;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UESRVCCCapability;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UsedRATType;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VLRCapability;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberInfo;
@@ -94,6 +101,10 @@ import org.mobicents.protocols.ss7.map.service.mobility.imei.CheckImeiRequestImp
 import org.mobicents.protocols.ss7.map.service.mobility.imei.CheckImeiResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.CancelLocationRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.CancelLocationResponseImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.SendIdentificationRequestImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.SendIdentificationResponseImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateGprsLocationRequestImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateGprsLocationResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateLocationRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateLocationResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.AnyTimeInterrogationRequestImpl;
@@ -792,7 +803,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 						&& this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.appCntx
 						.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
 			throw new MAPException(
-					"Bad application context name for CancelLocationRequest: must be networkLocUpContext_V1, V2 or V3");
+					"Bad application context name for CancelLocationRequest: must be locationCancellationContext_V1, V2 or V3");
 
 		Invoke invoke = this.mapProviderImpl.getTCAPProvider()
 				.getComponentPrimitiveFactory().createTCInvokeRequest();
@@ -846,7 +857,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 				|| (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version1
 						&& this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2 && 
 						this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
-			throw new MAPException("Bad application context name for CancelLocationResponse: must be networkLocUpContext_V1, V2 or V3");
+			throw new MAPException("Bad application context name for CancelLocationResponse: must be locationCancellationContext_V1, V2 or V3");
 
 		ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
 
@@ -874,6 +885,220 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 		this.sendReturnResultLastComponent(resultLast);
 		
 	}
+	
+	@Override
+	public Long addSendIdentificationRequest(TMSI tmsi, Integer numberOfRequestedVectors, boolean segmentationProhibited, MAPExtensionContainer extensionContainer,
+			ISDNAddressString mscNumber, LAIFixedLength previousLAI, Integer hopCounter, boolean mtRoamingForwardingSupported,
+			ISDNAddressString newVLRNumber, LMSI lmsi) throws MAPException {
+		return this.addSendIdentificationRequest(_Timer_Default, tmsi, numberOfRequestedVectors, segmentationProhibited,
+				extensionContainer, mscNumber, previousLAI, hopCounter, mtRoamingForwardingSupported, newVLRNumber, lmsi);
+	}
+	
+	@Override
+	public Long addSendIdentificationRequest(int customInvokeTimeout,
+			TMSI tmsi, Integer numberOfRequestedVectors,
+			boolean segmentationProhibited,
+			MAPExtensionContainer extensionContainer,
+			ISDNAddressString mscNumber, LAIFixedLength previousLAI,
+			Integer hopCounter, boolean mtRoamingForwardingSupported,
+			ISDNAddressString newVLRNumber, LMSI lmsi) throws MAPException {
+
+
+		if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.interVlrInfoRetrievalContext)
+				|| (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.appCntx
+						.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
+			throw new MAPException(
+					"Bad application context name for SendIdentificationRequest: must be interVlrInfoRetrievalContext_V2 or V3");
+
+		Invoke invoke = this.mapProviderImpl.getTCAPProvider()
+				.getComponentPrimitiveFactory().createTCInvokeRequest();
+		if (customInvokeTimeout == _Timer_Default)
+			invoke.setTimeout(_Timer_s);
+		else
+			invoke.setTimeout(customInvokeTimeout);
+
+		OperationCode oc = this.mapProviderImpl.getTCAPProvider()
+				.getComponentPrimitiveFactory().createOperationCode();
+		oc.setLocalOperationCode((long) MAPOperationCode.sendIdentification);
+		invoke.setOperationCode(oc);
+		
+		SendIdentificationRequestImpl req = new SendIdentificationRequestImpl(tmsi, numberOfRequestedVectors, segmentationProhibited,
+				extensionContainer, mscNumber, previousLAI, hopCounter, mtRoamingForwardingSupported, newVLRNumber, lmsi,
+				this.appCntx.getApplicationContextVersion()
+				.getVersion());
+
+		AsnOutputStream aos = new AsnOutputStream();
+		req.encodeData(aos);
+
+		Parameter p = this.mapProviderImpl.getTCAPProvider()
+				.getComponentPrimitiveFactory().createParameter();
+		p.setTagClass(req.getTagClass());
+		p.setPrimitive(req.getIsPrimitive());
+		p.setTag(req.getTag());
+		p.setData(aos.toByteArray());
+		invoke.setParameter(p);
+
+		Long invokeId;
+		try {
+			invokeId = this.tcapDialog.getNewInvokeId();
+			invoke.setInvokeId(invokeId);
+		} catch (TCAPException e) {
+			throw new MAPException(e.getMessage(), e);
+		}
+
+		this.sendInvokeComponent(invoke);
+
+		return invokeId;
+	}
+
+	@Override
+	public void addSendIdentificationResponse(long invokeId, IMSI imsi,
+			AuthenticationSetList authenticationSetList,
+			CurrentSecurityContext currentSecurityContext,
+			MAPExtensionContainer extensionContainer) throws MAPException {
+		if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.interVlrInfoRetrievalContext)
+				|| (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2 && 
+						this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
+			throw new MAPException("Bad application context name for CancelLocationResponse: must be interVlrInfoRetrievalContext_V2 or V3");
+
+		ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
+
+		resultLast.setInvokeId(invokeId);
+
+		// Operation Code
+		OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+		oc.setLocalOperationCode((long) MAPOperationCode.sendIdentification);
+		resultLast.setOperationCode(oc);
+
+		SendIdentificationResponseImpl req = new SendIdentificationResponseImpl(imsi, authenticationSetList, currentSecurityContext, extensionContainer, 
+				this.appCntx.getApplicationContextVersion().getVersion());
+		
+		AsnOutputStream aos = new AsnOutputStream();
+		req.encodeData(aos);
+
+		Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+		p.setTagClass(req.getTagClass());
+		p.setPrimitive(req.getIsPrimitive());
+		p.setTag(req.getTag());
+		p.setData(aos.toByteArray());
+		resultLast.setParameter(p);
+		
+		this.sendReturnResultLastComponent(resultLast);
+	}
+
+
+	@Override
+	public Long addUpdateGprsLocationRequest(int customInvokeTimeout,
+			IMSI imsi, ISDNAddressString sgsnNumber, GSNAddress sgsnAddress,
+			MAPExtensionContainer extensionContainer,
+			SGSNCapability sgsnCapability, boolean informPreviousNetworkEntity,
+			boolean psLCSNotSupportedByUE, GSNAddress vGmlcAddress,
+			ADDInfo addInfo, EPSInfo epsInfo, boolean servingNodeTypeIndicator,
+			boolean skipSubscriberDataUpdate, UsedRATType usedRATType,
+			boolean gprsSubscriptionDataNotNeeded, boolean nodeTypeIndicator,
+			boolean areaRestricted, boolean ueReachableIndicator,
+			boolean epsSubscriptionDataNotNeeded,
+			UESRVCCCapability uesrvccCapability) throws MAPException {
+
+		if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.gprsLocationUpdateContext)
+				|| (this.appCntx
+						.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
+			throw new MAPException(
+					"Bad application context name for UpdateGprsLocationRequest: must be gprsLocationUpdateContext_V3");
+
+		Invoke invoke = this.mapProviderImpl.getTCAPProvider()
+				.getComponentPrimitiveFactory().createTCInvokeRequest();
+		if (customInvokeTimeout == _Timer_Default)
+			invoke.setTimeout(_Timer_m);
+		else
+			invoke.setTimeout(customInvokeTimeout);
+
+		OperationCode oc = this.mapProviderImpl.getTCAPProvider()
+				.getComponentPrimitiveFactory().createOperationCode();
+		oc.setLocalOperationCode((long) MAPOperationCode.updateGprsLocation);
+		invoke.setOperationCode(oc);
+
+		UpdateGprsLocationRequestImpl req = new UpdateGprsLocationRequestImpl(imsi, sgsnNumber, sgsnAddress, extensionContainer, sgsnCapability, 
+				informPreviousNetworkEntity, psLCSNotSupportedByUE, vGmlcAddress, addInfo, epsInfo, servingNodeTypeIndicator, 
+				skipSubscriberDataUpdate, usedRATType, gprsSubscriptionDataNotNeeded, nodeTypeIndicator, areaRestricted, ueReachableIndicator, 
+				epsSubscriptionDataNotNeeded, uesrvccCapability, this.appCntx.getApplicationContextVersion()
+				.getVersion());
+
+		AsnOutputStream aos = new AsnOutputStream();
+		req.encodeData(aos);
+
+		Parameter p = this.mapProviderImpl.getTCAPProvider()
+				.getComponentPrimitiveFactory().createParameter();
+		p.setTagClass(req.getTagClass());
+		p.setPrimitive(req.getIsPrimitive());
+		p.setTag(req.getTag());
+		p.setData(aos.toByteArray());
+		invoke.setParameter(p);
+
+		Long invokeId;
+		try {
+			invokeId = this.tcapDialog.getNewInvokeId();
+			invoke.setInvokeId(invokeId);
+		} catch (TCAPException e) {
+			throw new MAPException(e.getMessage(), e);
+		}
+
+		this.sendInvokeComponent(invoke);
+
+		return invokeId;
+
+	}
+
+
+	@Override
+	public Long addUpdateGprsLocationRequest(IMSI imsi, ISDNAddressString sgsnNumber, GSNAddress sgsnAddress,
+			MAPExtensionContainer extensionContainer, SGSNCapability sgsnCapability, boolean informPreviousNetworkEntity,
+			boolean psLCSNotSupportedByUE, GSNAddress vGmlcAddress, ADDInfo addInfo, EPSInfo epsInfo, boolean servingNodeTypeIndicator,
+			boolean skipSubscriberDataUpdate, UsedRATType usedRATType, boolean gprsSubscriptionDataNotNeeded, boolean nodeTypeIndicator,
+			boolean areaRestricted, boolean ueReachableIndicator, boolean epsSubscriptionDataNotNeeded,
+			UESRVCCCapability uesrvccCapability) throws MAPException {
+		return addUpdateGprsLocationRequest(_Timer_Default, imsi, sgsnNumber, sgsnAddress, extensionContainer, sgsnCapability, 
+				informPreviousNetworkEntity, psLCSNotSupportedByUE, vGmlcAddress, addInfo, epsInfo, servingNodeTypeIndicator, 
+				skipSubscriberDataUpdate, usedRATType, gprsSubscriptionDataNotNeeded, nodeTypeIndicator, areaRestricted, 
+				ueReachableIndicator, epsSubscriptionDataNotNeeded, uesrvccCapability);
+	}
+
+
+	@Override
+	public void addUpdateGprsLocationResponse(long invokeId,
+			ISDNAddressString hlrNumber,
+			MAPExtensionContainer extensionContainer, boolean addCapability,
+			boolean sgsnMmeSeparationSupported) throws MAPException {
+
+		if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.gprsLocationUpdateContext)
+				|| (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
+			throw new MAPException("Bad application context name for UpdateGprsLocationResponse: must be gprsLocationUpdateContext_V3");
+
+		ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
+
+		resultLast.setInvokeId(invokeId);
+
+		// Operation Code
+		OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+		oc.setLocalOperationCode((long) MAPOperationCode.updateGprsLocation);
+		resultLast.setOperationCode(oc);
+
+		UpdateGprsLocationResponseImpl req = new UpdateGprsLocationResponseImpl(hlrNumber, extensionContainer, addCapability, sgsnMmeSeparationSupported);
+
+		AsnOutputStream aos = new AsnOutputStream();
+		req.encodeData(aos);
+
+		Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+		p.setTagClass(req.getTagClass());
+		p.setPrimitive(req.getIsPrimitive());
+		p.setTag(req.getTag());
+		p.setData(aos.toByteArray());
+		resultLast.setParameter(p);
+
+		this.sendReturnResultLastComponent(resultLast);
+		
+	}
+
 
 }
 

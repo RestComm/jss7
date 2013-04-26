@@ -20,27 +20,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
+package org.mobicents.protocols.ss7.map.service.mobility.authentication;
+
+import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.Kc;
+import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
  * 
-
-UMTS-SecurityContextData ::= SEQUENCE {
-	ck			CK,
-	ik			IK,
-	ksi			KSI,
-	... }
-
- * 
- * @author sergey vetyutnev
+ * @author Lasith Waruna Perera
  * 
  */
-public interface UMTSSecurityContextData {
+public class KcImpl  extends OctetStringBase implements Kc{
 
-	public CK getCK();
+	public KcImpl(byte[] data) {
+		super(8, 8, "Kc", data);
+	}
+	
+	public KcImpl() {
+		super(8, 8, "Kc");
+	}
 
-	public IK getIK();
-
-	public KSI getKSI();
+	@Override
+	public byte[] getData() {
+		return this.data;
+	}
 
 }
