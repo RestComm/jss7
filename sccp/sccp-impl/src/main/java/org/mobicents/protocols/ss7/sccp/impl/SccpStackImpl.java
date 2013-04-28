@@ -24,6 +24,10 @@ package org.mobicents.protocols.ss7.sccp.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -31,7 +35,12 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import javolution.text.TextBuilder;
 import javolution.util.FastMap;
+import javolution.xml.XMLBinding;
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
+import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -74,31 +83,49 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  */
 public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 	private final Logger logger;
-	
-	// If the XUDT message data length greater this value, segmentation is needed
+
+	private static final String SCCP_MANAGEMENT_PERSIST_DIR_KEY = "sccpmanagement.persist.dir";
+	private static final String USER_DIR_KEY = "user.dir";
+	private static final String PERSIST_FILE_NAME = "management2.xml";
+	private static final String TAB_INDENT = "\t";
+	private static final String CLASS_ATTRIBUTE = "type";
+
+	private static final String Z_MARGIN_UDT_MSG = "zmarginxudtmessage";
+	private static final String REASSEMBLY_TIMER_DELAY = "reassemblytimerdelay";
+	private static final String MAX_DATA_MSG = "maxdatamessage";
+	private static final String REMOVE_SPC = "removespc";
+	private static final String SST_TIMER_DURATION_MIN = "ssttimerduration_min";
+	private static final String SST_TIMER_DURATION_MAX = "ssttimerduration_max";
+	private static final String SST_TIMER_DURATION_INCREASE_FACTOR = "ssttimerduration_increasefactor";
+
+	private static final XMLBinding binding = new XMLBinding();
+
+	// If the XUDT message data length greater this value, segmentation is
+	// needed
 	// TODO: make it configurable
 	protected int zMarginXudtMessage = 240;
 	// sccp segmented message reassembling timeout
 	// TODO: make it configurable
-	protected int reassemblyTimerDelay = 15000;	
+	protected int reassemblyTimerDelay = 15000;
 	// Max available Sccp message data for all messages
 	// TODO: make it configurable
 	protected int maxDataMessage = 2560;
-	// remove PC from calledPartyAddress when sending to MTP3 
+	// remove PC from calledPartyAddress when sending to MTP3
 	// TODO: make it configurable
 	private boolean removeSpc = true;
-	// min (starting) SST sending interval (millisec) 
+	// min (starting) SST sending interval (millisec)
 	// TODO: make it configurable
 	protected int sstTimerDuration_Min = 10000;
-	// max (after increasing) SST sending interval (millisec) 
+	// max (after increasing) SST sending interval (millisec)
 	// TODO: make it configurable
 	protected int sstTimerDuration_Max = 600000;
-	// multiplicator of SST sending interval (next interval will be greater the current by sstTimerDuration_IncreaseFactor)
+	// multiplicator of SST sending interval (next interval will be greater the
+	// current by sstTimerDuration_IncreaseFactor)
 	// TODO: make it configurable
 	protected double sstTimerDuration_IncreaseFactor = 1.5;
 
 	protected volatile State state = State.IDLE;
-	
+
 	// provider ref, this can be real provider or pipe, for tests.
 	protected SccpProviderImpl sccpProvider;
 
@@ -114,28 +141,33 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 	protected ScheduledExecutorService timerExecutors;
 	protected FastMap<MessageReassemblyProcess, SccpSegmentableMessageImpl> reassemplyCache = new FastMap<MessageReassemblyProcess, SccpSegmentableMessageImpl>();
 
-//	protected int localSpc;
-//	protected int ni = 2;
-	
+	// protected int localSpc;
+	// protected int ni = 2;
+
 	private final String name;
-	
+
+	private final TextBuilder persistFile = TextBuilder.newInstance();
+
 	private String persistDir = null;
-	
+
 	private volatile int segmentationLocalRef = 0;
 	private volatile int slsCounter = 0;
 	private volatile int selectorCounter = 0;
 
 	public SccpStackImpl(String name) {
+
+		binding.setClassAttribute(CLASS_ATTRIBUTE);
+
 		this.name = name;
-		this.logger = Logger.getLogger(SccpStackImpl.class.getCanonicalName()+"-"+this.name);
+		this.logger = Logger.getLogger(SccpStackImpl.class.getCanonicalName() + "-" + this.name);
 
 		this.state = State.CONFIGURED;
 	}
-	
-	public String getName(){
+
+	public String getName() {
 		return this.name;
 	}
-	
+
 	public String getPersistDir() {
 		return persistDir;
 	}
@@ -156,9 +188,9 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 	public Map<Integer, Mtp3UserPart> getMtp3UserParts() {
 		return mtp3UserParts;
 	}
-	
-	public void setMtp3UserParts(Map<Integer, Mtp3UserPart> mtp3UserPartsTemp){
-		if(mtp3UserPartsTemp!= null){
+
+	public void setMtp3UserParts(Map<Integer, Mtp3UserPart> mtp3UserPartsTemp) {
+		if (mtp3UserPartsTemp != null) {
 			synchronized (this) {
 				FastMap<Integer, Mtp3UserPart> newMtp3UserPart = new FastMap<Integer, Mtp3UserPart>();
 				newMtp3UserPart.putAll(mtp3UserPartsTemp);
@@ -193,8 +225,10 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		}
 	}
 
-	public void setRemoveSpc(boolean removeSpc){
+	public void setRemoveSpc(boolean removeSpc) {
 		this.removeSpc = removeSpc;
+		
+		this.store();
 	}
 
 	public void setSstTimerDuration_Min(int sstTimerDuration_Min) {
@@ -204,6 +238,8 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		if (sstTimerDuration_Min > 10000)
 			sstTimerDuration_Min = 10000;
 		this.sstTimerDuration_Min = sstTimerDuration_Min;
+		
+		this.store();
 	}
 
 	public void setSstTimerDuration_Max(int sstTimerDuration_Max) {
@@ -213,15 +249,19 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		if (sstTimerDuration_Max > 1200000)
 			sstTimerDuration_Max = 1200000;
 		this.sstTimerDuration_Max = sstTimerDuration_Max;
+		
+		this.store();
 	}
 
 	public void setSstTimerDuration_IncreaseFactor(double sstTimerDuration_IncreaseFactor) {
-		// acceptable factor from 1 to 4 
+		// acceptable factor from 1 to 4
 		if (sstTimerDuration_IncreaseFactor < 1)
 			sstTimerDuration_IncreaseFactor = 1;
 		if (sstTimerDuration_IncreaseFactor > 4)
 			sstTimerDuration_IncreaseFactor = 4;
 		this.sstTimerDuration_IncreaseFactor = sstTimerDuration_IncreaseFactor;
+		
+		this.store();
 	}
 
 	public boolean isRemoveSpc() {
@@ -251,6 +291,8 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		if (zMarginXudtMessage > 255)
 			zMarginXudtMessage = 255;
 		this.zMarginXudtMessage = zMarginXudtMessage;
+		
+		this.store();
 	}
 
 	public int getMaxDataMessage() {
@@ -264,6 +306,8 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		if (maxDataMessage > 3952)
 			maxDataMessage = 3952;
 		this.maxDataMessage = maxDataMessage;
+		
+		this.store();
 	}
 
 	public int getReassemblyTimerDelay() {
@@ -277,6 +321,8 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		if (reassemblyTimerDelay > 20000)
 			reassemblyTimerDelay = 20000;
 		this.reassemblyTimerDelay = reassemblyTimerDelay;
+		
+		this.store();
 	}
 
 	public synchronized int newSegmentationLocalRef() {
@@ -303,6 +349,24 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 	public void start() throws IllegalStateException {
 		logger.info("Starting ...");
 
+		this.persistFile.clear();
+
+		if (persistDir != null) {
+			this.persistFile.append(persistDir).append(File.separator).append(this.name).append("_")
+					.append(PERSIST_FILE_NAME);
+		} else {
+			persistFile.append(System.getProperty(SCCP_MANAGEMENT_PERSIST_DIR_KEY, System.getProperty(USER_DIR_KEY)))
+					.append(File.separator).append(this.name).append("_").append(PERSIST_FILE_NAME);
+		}
+
+		logger.info(String.format("SCCP Management configuration file path %s", persistFile.toString()));
+
+		try {
+			this.load();
+		} catch (FileNotFoundException e) {
+			logger.warn(String.format("Failed to load the Sccp Management configuration file. \n%s", e.getMessage()));
+		}
+
 		this.messageFactory = new MessageFactoryImpl(this);
 
 		this.sccpProvider = new SccpProviderImpl(this);
@@ -312,11 +376,11 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
 		this.sccpManagement.setSccpRoutingControl(sccpRoutingControl);
 		this.sccpRoutingControl.setSccpManagement(sccpManagement);
-		
+
 		this.router = new RouterImpl(this.name, this);
 		this.router.setPersistDir(this.persistDir);
 		this.router.start();
-		
+
 		this.sccpResource = new SccpResourceImpl(this.name);
 		this.sccpResource.setPersistDir(this.persistDir);
 		this.sccpResource.start();
@@ -329,7 +393,8 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
 		this.timerExecutors = Executors.newScheduledThreadPool(1);
 
-		for (FastMap.Entry<Integer, Mtp3UserPart> e = this.mtp3UserParts.head(), end = this.mtp3UserParts.tail(); (e = e.getNext()) != end;) {
+		for (FastMap.Entry<Integer, Mtp3UserPart> e = this.mtp3UserParts.head(), end = this.mtp3UserParts.tail(); (e = e
+				.getNext()) != end;) {
 			Mtp3UserPart mup = e.getValue();
 			mup.addMtp3UserPartListener(this);
 		}
@@ -368,7 +433,8 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 			}
 		}
 
-		for (FastMap.Entry<Integer, Mtp3UserPart> e = this.mtp3UserParts.head(), end = this.mtp3UserParts.tail(); (e = e.getNext()) != end;) {
+		for (FastMap.Entry<Integer, Mtp3UserPart> e = this.mtp3UserParts.head(), end = this.mtp3UserParts.tail(); (e = e
+				.getNext()) != end;) {
 			Mtp3UserPart mup = e.getValue();
 			mup.removeMtp3UserPartListener(this);
 		}
@@ -378,21 +444,23 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		logger.info("Stopping routing engine...");
 		this.sccpRoutingControl.stop();
 		logger.info("Stopping MSU handler...");
-		
+
 		this.sccpResource.stop();
-		
+
 		this.router.stop();
 
 		synchronized (reassemplyCache) {
 			this.timerExecutors.shutdownNow();
 			reassemplyCache.clear();
 		}
+		
+		this.store();
 
 		// }finally
 		// {
 		// stateLock.unlock();
 		// }
-		
+
 	}
 
 	public Router getRouter() {
@@ -408,12 +476,15 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 	}
 
 	public int calculateUdtFieldsLengthWithoutData(int calledPartyLen, int callingPartyLen) {
-		// 8 = 2 (fixed fields length) + 3 (variable fields pointers) + 3 (variable fields lengths)
+		// 8 = 2 (fixed fields length) + 3 (variable fields pointers) + 3
+		// (variable fields lengths)
 		return 8 + calledPartyLen + callingPartyLen;
 	}
 
-	public int calculateXudtFieldsLengthWithoutData(int calledPartyLen, int callingPartyLen, boolean segmented, boolean importancePresense) {
-		// 10 = 3 (fixed fields length) + 4 (variable fields pointers) + 3 (variable fields lengths)
+	public int calculateXudtFieldsLengthWithoutData(int calledPartyLen, int callingPartyLen, boolean segmented,
+			boolean importancePresense) {
+		// 10 = 3 (fixed fields length) + 4 (variable fields pointers) + 3
+		// (variable fields lengths)
 		int res = 10 + calledPartyLen + callingPartyLen;
 		if (segmented || importancePresense)
 			res++; // optional part present - adding End of optional parameters
@@ -425,8 +496,10 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		return res;
 	}
 
-	public int calculateLudtFieldsLengthWithoutData(int calledPartyLen, int callingPartyLen, boolean segmented, boolean importancePresense) {
-		// 15 = 3 (fixed fields length) + 8 (variable fields pointers) + 4 (variable fields lengths)
+	public int calculateLudtFieldsLengthWithoutData(int calledPartyLen, int callingPartyLen, boolean segmented,
+			boolean importancePresense) {
+		// 15 = 3 (fixed fields length) + 8 (variable fields pointers) + 4
+		// (variable fields lengths)
 		int res = 15 + calledPartyLen + callingPartyLen;
 		if (segmented || importancePresense)
 			res++; // optional part present - adding End of optional parameters
@@ -440,15 +513,17 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
 	protected void send(SccpDataMessageImpl message) throws IOException {
 
-		if (this.state != State.RUNNING){
+		if (this.state != State.RUNNING) {
 			logger.error("Trying to send SCCP message from SCCP user but SCCP stack is not RUNNING");
 			return;
 		}
 
-		if (message.getCalledPartyAddress() == null || message.getCallingPartyAddress() == null || message.getData() == null || message.getData().length == 0) {
-			throw new IOException("Message to send must has filled CalledPartyAddress, CallingPartyAddress and data fields");
+		if (message.getCalledPartyAddress() == null || message.getCallingPartyAddress() == null
+				|| message.getData() == null || message.getData().length == 0) {
+			throw new IOException(
+					"Message to send must has filled CalledPartyAddress, CallingPartyAddress and data fields");
 		}
-		
+
 		try {
 			this.sccpRoutingControl.routeMssgFromSccpUser(message);
 		} catch (IOException e) {
@@ -488,7 +563,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 	}
 
 	private int getMaxUserDataLengthForDpc(int dpc, SccpAddress calledPartyAddress, SccpAddress callingPartyAddress) {
-		
+
 		LongMessageRule lmr = this.router.findLongMessageRule(dpc);
 		LongMessageRuleType lmrt = LongMessageRuleType.LongMessagesForbidden;
 		if (lmr != null)
@@ -520,14 +595,15 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 			}
 
 			int availLen = mup.getMaxUserDataLength(dpc) - fieldsLen;
-			if ((lmrt == LongMessageRuleType.LongMessagesForbidden || lmrt == LongMessageRuleType.XudtEnabled) && availLen > 255)
+			if ((lmrt == LongMessageRuleType.LongMessagesForbidden || lmrt == LongMessageRuleType.XudtEnabled)
+					&& availLen > 255)
 				availLen = 255;
 			if (lmrt == LongMessageRuleType.XudtEnabled)
 				availLen *= 16;
 			if (availLen > this.getMaxDataMessage())
 				availLen = this.getMaxDataMessage();
 			return availLen;
-		
+
 		} catch (IOException e) {
 			// this can not occur
 			e.printStackTrace();
@@ -546,7 +622,8 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 			return 0;
 		}
 
-		return getMaxUserDataLengthForDpc(translationAddressPri.getSignalingPointCode(), calledPartyAddress, callingPartyAddress);
+		return getMaxUserDataLengthForDpc(translationAddressPri.getSignalingPointCode(), calledPartyAddress,
+				callingPartyAddress);
 	}
 
 	protected void broadcastChangedSsnState(int affectedSsn, boolean inService) {
@@ -555,10 +632,10 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
 	public void removeAllResourses() {
 
-		if (this.state != State.RUNNING){
+		if (this.state != State.RUNNING) {
 			return;
 		}
-		
+
 		this.router.removeAllResourses();
 		this.sccpResource.removeAllResourses();
 
@@ -570,43 +647,43 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 			}
 		}
 	}
-	
+
 	public void onMtp3PauseMessage(Mtp3PausePrimitive msg) {
-		
+
 		logger.warn(String.format("Rx : %s", msg));
 
-		if (this.state != State.RUNNING){
+		if (this.state != State.RUNNING) {
 			logger.error("Cannot consume MTP3 PASUE message as SCCP stack is not RUNNING");
 			return;
 		}
-		
+
 		sccpManagement.handleMtp3Pause(msg.getAffectedDpc());
 	}
 
 	public void onMtp3ResumeMessage(Mtp3ResumePrimitive msg) {
 		logger.warn(String.format("Rx : %s", msg));
 
-		if (this.state != State.RUNNING){
+		if (this.state != State.RUNNING) {
 			logger.error("Cannot consume MTP3 RESUME message as SCCP stack is not RUNNING");
 			return;
 		}
-		
+
 		sccpManagement.handleMtp3Resume(msg.getAffectedDpc());
 	}
 
 	public void onMtp3StatusMessage(Mtp3StatusPrimitive msg) {
 		logger.warn(String.format("Rx : %s", msg));
-		if (this.state != State.RUNNING){
+		if (this.state != State.RUNNING) {
 			logger.error("Cannot consume MTP3 STATUS message as SCCP stack is not RUNNING");
 			return;
 		}
-		
+
 		sccpManagement.handleMtp3Status(msg.getCause(), msg.getAffectedDpc(), msg.getCongestionLevel());
 	}
 
 	public void onMtp3TransferMessage(Mtp3TransferPrimitive mtp3Msg) {
 
-		if (this.state != State.RUNNING){
+		if (this.state != State.RUNNING) {
 			logger.error("Received MTP3TransferPrimitive from lower layer but SCCP stack is not RUNNING");
 			return;
 		}
@@ -616,34 +693,40 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 			// checking if incoming dpc is local
 			if (!this.router.spcIsLocal(mtp3Msg.getDpc())) {
 
-				// incoming dpc is not local - trying to find the target SAP and send a message to MTP3 (MTP transit function) 
+				// incoming dpc is not local - trying to find the target SAP and
+				// send a message to MTP3 (MTP transit function)
 				int dpc = mtp3Msg.getDpc();
 				int sls = mtp3Msg.getSls();
 
 				RemoteSignalingPointCode remoteSpc = this.getSccpResource().getRemoteSpcByPC(dpc);
 				if (remoteSpc == null) {
 					if (logger.isEnabledFor(Level.WARN)) {
-						logger.warn(String.format("Incoming Mtp3 Message for nonlocal dpc=%d. But RemoteSpc is not found", dpc));
+						logger.warn(String.format(
+								"Incoming Mtp3 Message for nonlocal dpc=%d. But RemoteSpc is not found", dpc));
 					}
 					return;
 				}
 				if (remoteSpc.isRemoteSpcProhibited()) {
 					if (logger.isEnabledFor(Level.WARN)) {
-						logger.warn(String.format("Incoming Mtp3 Message for nonlocal dpc=%d. But RemoteSpc is Prohibited", dpc));
+						logger.warn(String.format(
+								"Incoming Mtp3 Message for nonlocal dpc=%d. But RemoteSpc is Prohibited", dpc));
 					}
 					return;
-				}			
+				}
 				Mtp3ServiceAccessPoint sap = this.router.findMtp3ServiceAccessPoint(dpc, sls);
 				if (sap == null) {
 					if (logger.isEnabledFor(Level.WARN)) {
-						logger.warn(String.format("Incoming Mtp3 Message for nonlocal dpc=%d / sls=%d. But SAP is not found", dpc, sls));
+						logger.warn(String.format(
+								"Incoming Mtp3 Message for nonlocal dpc=%d / sls=%d. But SAP is not found", dpc, sls));
 					}
 					return;
 				}
 				Mtp3UserPart mup = this.getMtp3UserPart(sap.getMtp3Id());
 				if (mup == null) {
 					if (logger.isEnabledFor(Level.WARN)) {
-						logger.warn(String.format("Incoming Mtp3 Message for nonlocal dpc=%d / sls=%d. no matching Mtp3UserPart found", dpc, sls));
+						logger.warn(String.format(
+								"Incoming Mtp3 Message for nonlocal dpc=%d / sls=%d. no matching Mtp3UserPart found",
+								dpc, sls));
 					}
 					return;
 				}
@@ -653,21 +736,24 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 			}
 
 			// process only SCCP messages
-			if (mtp3Msg.getSi() != Mtp3._SI_SERVICE_SCCP){
-				logger.warn(String.format("Received Mtp3TransferPrimitive from lower layer with Service Indicator=%d which is not SCCP. Dropping this message", mtp3Msg.getSi()));
+			if (mtp3Msg.getSi() != Mtp3._SI_SERVICE_SCCP) {
+				logger.warn(String
+						.format("Received Mtp3TransferPrimitive from lower layer with Service Indicator=%d which is not SCCP. Dropping this message",
+								mtp3Msg.getSi()));
 				return;
 			}
 
 			ByteArrayInputStream bais = new ByteArrayInputStream(mtp3Msg.getData());
 			DataInputStream in = new DataInputStream(bais);
 			int mt = in.readUnsignedByte();
-			msg = ((MessageFactoryImpl) sccpProvider.getMessageFactory()).createMessage(mt, mtp3Msg.getOpc(), mtp3Msg.getDpc(), mtp3Msg.getSls(), in);
+			msg = ((MessageFactoryImpl) sccpProvider.getMessageFactory()).createMessage(mt, mtp3Msg.getOpc(),
+					mtp3Msg.getDpc(), mtp3Msg.getSls(), in);
 
-			if(logger.isDebugEnabled()){
+			if (logger.isDebugEnabled()) {
 				logger.debug(String.format("Rx : SCCP message from MTP %s", msg));
 			}
-			
-			// when segmented messages - make a reassembly operation 
+
+			// when segmented messages - make a reassembly operation
 			if (msg instanceof SccpSegmentableMessageImpl) {
 				SccpSegmentableMessageImpl sgmMsg = (SccpSegmentableMessageImpl) msg;
 				SegmentationImpl segm = (SegmentationImpl) sgmMsg.getSegmentation();
@@ -684,7 +770,8 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
 							// first segment
 							sgmMsg.setReceivedFirstSegment();
-							MessageReassemblyProcess msp = new MessageReassemblyProcess(segm.getSegmentationLocalRef(), sgmMsg.getCallingPartyAddress());
+							MessageReassemblyProcess msp = new MessageReassemblyProcess(segm.getSegmentationLocalRef(),
+									sgmMsg.getCallingPartyAddress());
 							synchronized (this.reassemplyCache) {
 								this.reassemplyCache.put(msp, sgmMsg);
 							}
@@ -694,13 +781,15 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 						} else {
 
 							// nonfirst segment
-							MessageReassemblyProcess msp = new MessageReassemblyProcess(segm.getSegmentationLocalRef(), sgmMsg.getCallingPartyAddress());
+							MessageReassemblyProcess msp = new MessageReassemblyProcess(segm.getSegmentationLocalRef(),
+									sgmMsg.getCallingPartyAddress());
 							SccpSegmentableMessageImpl sgmMsgFst = null;
 							synchronized (this.reassemplyCache) {
 								sgmMsgFst = this.reassemplyCache.get(msp);
 							}
 							if (sgmMsgFst == null) {
-								// previous segments cache is not found - discard a segment
+								// previous segments cache is not found -
+								// discard a segment
 								if (logger.isEnabledFor(Level.WARN)) {
 									logger.warn(String
 											.format("Reassembly function failure: received a non first segment without the first segement having recieved. SccpMessageSegment=%s",
@@ -717,8 +806,9 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 										mspMain.stopTimer();
 								}
 								if (logger.isEnabledFor(Level.WARN)) {
-									logger.warn(String.format(
-											"Reassembly function failure: when receiving a next segment message order is missing. SccpMessageSegment=%s", msg));
+									logger.warn(String
+											.format("Reassembly function failure: when receiving a next segment message order is missing. SccpMessageSegment=%s",
+													msg));
 								}
 								this.sccpRoutingControl.sendSccpError(sgmMsgFst, ReturnCauseValue.CANNOT_REASEMBLE);
 								return;
@@ -734,7 +824,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 								}
 								if (sgmMsgFst.getRemainingSegments() != 1)
 									return;
-								
+
 								sgmMsgFst.setReceivedNextSegment(sgmMsg);
 								msg = sgmMsgFst;
 							} else {
@@ -746,30 +836,35 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 					}
 				}
 			}
-			
+
 			if (msg instanceof SccpAddressedMessageImpl) {
 				// CR or connectionless messages
 				SccpAddressedMessageImpl msgAddr = (SccpAddressedMessageImpl) msg;
-				
-				// adding OPC into CallingPartyAddress if it is absent there and "RouteOnSsn"
+
+				// adding OPC into CallingPartyAddress if it is absent there and
+				// "RouteOnSsn"
 				SccpAddress addr = msgAddr.getCallingPartyAddress();
-				if (addr != null && addr.getAddressIndicator().getRoutingIndicator() == RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN) {
+				if (addr != null
+						&& addr.getAddressIndicator().getRoutingIndicator() == RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN) {
 					if (!addr.getAddressIndicator().pcPresent()) {
-						msgAddr.setCallingPartyAddress(new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, msgAddr.getIncomingOpc(), null, 
-								addr.getSubsystemNumber()));
+						msgAddr.setCallingPartyAddress(new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN,
+								msgAddr.getIncomingOpc(), null, addr.getSubsystemNumber()));
 					}
 				}
 
 				sccpRoutingControl.routeMssgFromMtp(msgAddr);
 			} else {
-				// TODO: implement non-addresses message processing (these are connected-oriented messages in the connected phase)
-				logger.warn(String.format("Rx SCCP message which is not instance of SccpAddressedMessage or SccpSegmentableMessage. Will be dropped. Message=", msg));
+				// TODO: implement non-addresses message processing (these are
+				// connected-oriented messages in the connected phase)
+				logger.warn(String
+						.format("Rx SCCP message which is not instance of SccpAddressedMessage or SccpSegmentableMessage. Will be dropped. Message=",
+								msg));
 			}
 		} catch (IOException e) {
 			logger.error("IOException while decoding SCCP message: " + e.getMessage(), e);
 		}
 	}
-	
+
 	public class MessageReassemblyProcess implements Runnable {
 		private int segmentationLocalRef;
 		private SccpAddress callingPartyAddress;
@@ -830,5 +925,59 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 			}
 		}
 	}
-}
 
+	/**
+	 * Persist
+	 */
+	public void store() {
+
+		// TODO : Should we keep reference to Objects rather than recreating
+		// everytime?
+		try {
+			XMLObjectWriter writer = XMLObjectWriter.newInstance(new FileOutputStream(persistFile.toString()));
+			writer.setBinding(binding);
+			// Enables cross-references.
+			// writer.setReferenceResolver(new XMLReferenceResolver());
+			writer.setIndentation(TAB_INDENT);
+
+			writer.write(this.zMarginXudtMessage, Z_MARGIN_UDT_MSG, Integer.class);
+			writer.write(this.reassemblyTimerDelay, REASSEMBLY_TIMER_DELAY, Integer.class);
+			writer.write(this.maxDataMessage, MAX_DATA_MSG, Integer.class);
+			writer.write(this.removeSpc, REMOVE_SPC, Boolean.class);
+			writer.write(this.sstTimerDuration_Min, SST_TIMER_DURATION_MIN, Integer.class);
+			writer.write(this.sstTimerDuration_Max, SST_TIMER_DURATION_MAX, Integer.class);
+			writer.write(this.sstTimerDuration_IncreaseFactor, SST_TIMER_DURATION_INCREASE_FACTOR, Double.class);
+
+			writer.close();
+		} catch (Exception e) {
+			this.logger.error("Error while persisting the Sccp Resource state in file", e);
+		}
+	}
+
+	/**
+	 * Load and create LinkSets and Link from persisted file
+	 * 
+	 * @throws Exception
+	 */
+	private void load() throws FileNotFoundException {
+
+		XMLObjectReader reader = null;
+		try {
+			reader = XMLObjectReader.newInstance(new FileInputStream(persistFile.toString()));
+
+			reader.setBinding(binding);
+			this.zMarginXudtMessage = reader.read(Z_MARGIN_UDT_MSG, Integer.class);
+			this.reassemblyTimerDelay = reader.read(REASSEMBLY_TIMER_DELAY, Integer.class);
+			this.maxDataMessage = reader.read(MAX_DATA_MSG, Integer.class);
+			this.removeSpc = reader.read(REMOVE_SPC, Boolean.class);
+			this.sstTimerDuration_Min = reader.read(SST_TIMER_DURATION_MIN, Integer.class);
+			this.sstTimerDuration_Max = reader.read(SST_TIMER_DURATION_MAX, Integer.class);
+			this.sstTimerDuration_IncreaseFactor = reader.read(SST_TIMER_DURATION_INCREASE_FACTOR, Double.class);
+
+			reader.close();
+		} catch (XMLStreamException ex) {
+			// this.logger.info(
+			// "Error while re-creating Linksets from persisted file", ex);
+		}
+	}
+}
