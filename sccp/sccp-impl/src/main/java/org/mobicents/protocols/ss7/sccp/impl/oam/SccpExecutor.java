@@ -422,6 +422,8 @@ public class SccpExecutor implements ShellExecutor {
 			ruleType = RuleType.Dominant;
 		} else if (s1.equalsIgnoreCase(RuleType.Loadshared.getType())) {
 			ruleType = RuleType.Loadshared;
+		} else if (s1.equals("broadcast")) {
+			ruleType = RuleType.Broadcast;
 		} else {
 			return SccpOAMMessage.INVALID_COMMAND;
 		}
@@ -481,6 +483,8 @@ public class SccpExecutor implements ShellExecutor {
 			ruleType = RuleType.Dominant;
 		} else if (s1.equals("loadshared")) {
 			ruleType = RuleType.Loadshared;
+		} else if (s1.equals("broadcast")) {
+			ruleType = RuleType.Broadcast;
 		} else {
 			return SccpOAMMessage.INVALID_COMMAND;
 		}

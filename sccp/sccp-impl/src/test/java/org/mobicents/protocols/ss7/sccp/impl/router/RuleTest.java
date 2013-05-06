@@ -349,6 +349,59 @@ public class RuleTest {
 		assertTrue(rule.matches(address, msgLocalOrig.getIsMtpOriginated()));
 		assertTrue(rule.matches(address, msgRemoteOrig.getIsMtpOriginated()));
 	}
+	
+	@Test(groups = { "router", "functional.translate" })
+	public void testTranslate10() throws Exception {
+		// Test Broadcast RuleType
+
+		SccpAddress pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0,
+				GlobalTitle.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.INTERNATIONAL, "92300010020"),
+				146);
+
+		SccpAddress primaryAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 7574,
+				GlobalTitle.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.INTERNATIONAL, "92300010020"),
+				146);
+
+		SccpAddress secondaryAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 2186,
+				GlobalTitle.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.INTERNATIONAL, "92300001009"),
+				146);
+
+		SccpAddress newClgPartyAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0,
+				GlobalTitle.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.INTERNATIONAL, "92300010321"),
+				146);
+
+		RuleImpl rule = new RuleImpl(RuleType.Broadcast, LoadSharingAlgorithm.Undefined, OriginationType.All, pattern,
+				"R");
+		rule.setPrimaryAddressId(1);
+		rule.setSecondaryAddressId(2);
+		rule.setNewCallingPartyAddressId(3);
+
+		SccpAddress address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0,
+				GlobalTitle.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.INTERNATIONAL, "92300010020"),
+				146);
+
+		assertTrue(rule.matches(address, true));
+
+		SccpAddress translatedAddress = rule.translate(address, primaryAddress);
+
+		assertEquals(translatedAddress.getAddressIndicator().getRoutingIndicator(),
+				RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE);
+		assertEquals(translatedAddress.getAddressIndicator().getGlobalTitleIndicator(),
+				GlobalTitleIndicator.GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_ENCODING_SCHEME_AND_NATURE_OF_ADDRESS);
+		assertEquals(translatedAddress.getSignalingPointCode(), 7574);
+		assertEquals(translatedAddress.getSubsystemNumber(), 146);
+		assertEquals(translatedAddress.getGlobalTitle().getDigits(), "92300010020");
+		
+		SccpAddress translatedAddress2 = rule.translate(address, secondaryAddress);
+
+		assertEquals(translatedAddress2.getAddressIndicator().getRoutingIndicator(),
+				RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE);
+		assertEquals(translatedAddress2.getAddressIndicator().getGlobalTitleIndicator(),
+				GlobalTitleIndicator.GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_ENCODING_SCHEME_AND_NATURE_OF_ADDRESS);
+		assertEquals(translatedAddress2.getSignalingPointCode(), 2186);
+		assertEquals(translatedAddress2.getSubsystemNumber(), 146);
+		assertEquals(translatedAddress2.getGlobalTitle().getDigits(), "92300001009");
+	}
 
 	@Test(groups = { "router", "functional.encode" })
 	public void testSerialization() throws Exception {
