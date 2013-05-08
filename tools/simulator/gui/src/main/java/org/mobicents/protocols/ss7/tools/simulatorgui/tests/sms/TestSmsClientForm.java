@@ -55,6 +55,9 @@ public class TestSmsClientForm extends TestingForm {
 	private JLabel lbState;
 	private JLabel lbMessage;
 	private JLabel lbResult;
+	private JTextField tbRefNum;
+	private JTextField tbSegmCnt;
+	private JTextField tbSegmNum;
 
 	public TestSmsClientForm(JFrame owner) {
 		super(owner);
@@ -146,44 +149,77 @@ public class TestSmsClientForm extends TestingForm {
 			}
 		});
 		
+		JPanel panel_2 = new JPanel();
+		GridBagConstraints gbc_panel_2 = new GridBagConstraints();
+		gbc_panel_2.anchor = GridBagConstraints.NORTH;
+		gbc_panel_2.insets = new Insets(0, 0, 5, 0);
+		gbc_panel_2.fill = GridBagConstraints.HORIZONTAL;
+		gbc_panel_2.gridx = 1;
+		gbc_panel_2.gridy = 4;
+		panel.add(panel_2, gbc_panel_2);
+		
+		JLabel lblRefnum = new JLabel("refNum");
+		panel_2.add(lblRefnum);
+		
+		tbRefNum = new JTextField();
+		panel_2.add(tbRefNum);
+		tbRefNum.setColumns(10);
+		
+		JLabel lblSegmcnt = new JLabel("segmCnt");
+		panel_2.add(lblSegmcnt);
+		
+		tbSegmCnt = new JTextField();
+		panel_2.add(tbSegmCnt);
+		tbSegmCnt.setColumns(10);
+		
+		JLabel lblSegmnum = new JLabel("segmNum");
+		panel_2.add(lblSegmnum);
+		
+		tbSegmNum = new JTextField();
+		panel_2.add(tbSegmNum);
+		tbSegmNum.setColumns(10);
+		
 		JLabel label_3 = new JLabel("Operation result");
 		GridBagConstraints gbc_label_3 = new GridBagConstraints();
 		gbc_label_3.insets = new Insets(0, 0, 5, 5);
 		gbc_label_3.gridx = 0;
-		gbc_label_3.gridy = 4;
+		gbc_label_3.gridy = 5;
 		panel.add(label_3, gbc_label_3);
 		
 		lbResult = new JLabel("-");
 		GridBagConstraints gbc_lbResult = new GridBagConstraints();
 		gbc_lbResult.insets = new Insets(0, 0, 5, 0);
 		gbc_lbResult.gridx = 1;
-		gbc_lbResult.gridy = 4;
+		gbc_lbResult.gridy = 5;
 		panel.add(lbResult, gbc_lbResult);
 		
 		JLabel label_4 = new JLabel("Message received");
 		GridBagConstraints gbc_label_4 = new GridBagConstraints();
 		gbc_label_4.insets = new Insets(0, 0, 5, 5);
 		gbc_label_4.gridx = 0;
-		gbc_label_4.gridy = 5;
+		gbc_label_4.gridy = 6;
 		panel.add(label_4, gbc_label_4);
 		
 		lbMessage = new JLabel("-");
 		GridBagConstraints gbc_lbMessage = new GridBagConstraints();
 		gbc_lbMessage.insets = new Insets(0, 0, 5, 0);
 		gbc_lbMessage.gridx = 1;
-		gbc_lbMessage.gridy = 5;
+		gbc_lbMessage.gridy = 6;
 		panel.add(lbMessage, gbc_lbMessage);
 		
 		lbState = new JLabel("-");
 		GridBagConstraints gbc_lbState = new GridBagConstraints();
-		gbc_lbState.insets = new Insets(0, 0, 5, 0);
 		gbc_lbState.gridx = 1;
-		gbc_lbState.gridy = 6;
+		gbc_lbState.gridy = 7;
 		panel.add(lbState, gbc_lbState);
 	}
 
 	public void setData(TestSmsClientManMBean smsClient) {
 		this.smsClient = smsClient;
+		
+		this.tbRefNum.setText("1");
+		this.tbSegmCnt.setText("0");
+		this.tbSegmNum.setText("0");
 	}
 
 	private void sendMoforwardsm() {
@@ -191,7 +227,25 @@ public class TestSmsClientForm extends TestingForm {
 		String msg = this.tbMessage.getText();
 		String destIsdnNumber = this.tbDestIsdnNumber.getText();
 		String origIsdnNumber = this.tbOrigIsdnNumber.getText();
-		String res = this.smsClient.performMoForwardSM(msg, destIsdnNumber, origIsdnNumber);
+
+		int refNum = 0;
+		int segmCnt = 0;
+		int segmNum = 0;
+		try {
+			refNum = Integer.parseInt(this.tbRefNum.getText());
+			segmCnt = Integer.parseInt(this.tbSegmCnt.getText());
+			segmNum = Integer.parseInt(this.tbSegmNum.getText());
+		} catch (Exception e) {
+			this.lbResult.setText("Error when parsing RefNum, SegmCnt or SegmNum: " + e.getMessage());
+			return;
+		}
+
+		String res;
+		if (segmCnt <= 1)
+			res = this.smsClient.performMoForwardSM(msg, destIsdnNumber, origIsdnNumber);
+		else
+			res = this.smsClient.performMoForwardSMPartial(msg, destIsdnNumber, origIsdnNumber, refNum, segmCnt, segmNum);
+
 		this.lbResult.setText(res);
 	}
 
