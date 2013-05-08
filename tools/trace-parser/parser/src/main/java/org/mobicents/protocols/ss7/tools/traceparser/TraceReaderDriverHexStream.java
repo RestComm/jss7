@@ -22,17 +22,22 @@
 
 package org.mobicents.protocols.ss7.tools.traceparser;
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+
+import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 /**
  * 
  * @author sergey vetyutnev
  * 
  */
-public class TraceReaderDriverSimpleSeq extends TraceReaderDriverBase implements TraceReaderDriver {
+public class TraceReaderDriverHexStream extends TraceReaderDriverBase implements TraceReaderDriver {
 
-	public TraceReaderDriverSimpleSeq(ProcessControl processControl, String fileName) {
+	public TraceReaderDriverHexStream(ProcessControl processControl, String fileName) {
 		super(processControl, fileName);
 	}
 
@@ -43,39 +48,42 @@ public class TraceReaderDriverSimpleSeq extends TraceReaderDriverBase implements
 			throw new TraceReaderException("TraceReaderListener list is empty");
 		
 		this.isStarted = true;
-		
+
 		FileInputStream fis = null;
+		DataInputStream in = null;
 
 		try {
 			if( this.processControl.checkNeedInterrupt() )
 				return;
-			
-			fis = new FileInputStream(fileName);
-			
-			while( fis.available() > 0 ) {
-				if( this.processControl.checkNeedInterrupt() )
-					return;
-				
-				int b1 = fis.read();
-				int b2 = fis.read();
-				int length = b1 + (b2 << 8);
-				
-				byte[] bb = new byte[length];
-				int rb = fis.read(bb);
-				if (rb < length)
-					throw new TraceReaderException("Not enouph data in the file for reading a message");
 
-				byte[] bufMsg = new byte[length + 3];
-				System.arraycopy(bb, 0, bufMsg, 3, length);
-				bufMsg[0] = 0;
-				bufMsg[1] = 0;
-				bufMsg[2] = 63;
-				
-				for( TraceReaderListener ls : this.listeners ) {
-					ls.ss7Message(bufMsg);
+			fis = new FileInputStream(fileName);
+			in = new DataInputStream(fis);
+			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+
+			String strLine;
+			while ((strLine = br.readLine()) != null) {
+				if (strLine.length() > 0) {
+					if ((strLine.length() % 2) != 0)
+						throw new TraceReaderException("Odd characters count in a string");
+					byte[] buf = this.hexToBytes(strLine);
+
+					byte[] bufMsg = new byte[buf.length + 8];
+					System.arraycopy(buf, 0, bufMsg, 8, buf.length);
+					bufMsg[0] = 0;
+					bufMsg[1] = 0;
+					bufMsg[2] = 63;
+					bufMsg[3] = 3;
+					bufMsg[4] = 0;
+					bufMsg[5] = 0;
+					bufMsg[6] = 0;
+					bufMsg[7] = 0;
+
+					for( TraceReaderListener ls : this.listeners ) {
+						ls.ss7Message(bufMsg);
+					}
 				}
 			}
-			
+
 		} catch (Throwable e) {
 			this.loger.error("General exception: " + e.getMessage());
 			e.printStackTrace();
@@ -83,10 +91,17 @@ public class TraceReaderDriverSimpleSeq extends TraceReaderDriverBase implements
 		} finally {
 			try {
 				fis.close();
+				in.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public byte[] hexToBytes(String hexString) {
+		HexBinaryAdapter adapter = new HexBinaryAdapter();
+		byte[] bytes = adapter.unmarshal(hexString);
+		return bytes;
 	}
 }
 

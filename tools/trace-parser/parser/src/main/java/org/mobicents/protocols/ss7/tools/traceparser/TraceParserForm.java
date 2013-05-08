@@ -80,6 +80,7 @@ public class TraceParserForm {
 	private JRadioButton rdbtnTpActerna;
 	private JRadioButton rdbtnTpSimpleSeq;
 	private JRadioButton rdbtnTpPcap;
+	private JRadioButton rdbtnHexStream;
 	private JButton btnStart;
 	private JButton btnStop;
 	private JPanel pnMsgLog;
@@ -178,6 +179,8 @@ public class TraceParserForm {
 					newPar.setFileTypeN(ParseDriverType.SimpleSeq);
 				if (rdbtnTpPcap.isSelected())
 					newPar.setFileTypeN(ParseDriverType.Pcap);
+				if (rdbtnHexStream.isSelected())
+					newPar.setFileTypeN(ParseDriverType.HexStream);
 
 				if (rdbtnMap.isSelected())
 					newPar.setParseProtocol(ParseProtocol.Map);
@@ -283,6 +286,11 @@ public class TraceParserForm {
 		rdbtnTpPcap.setBounds(275, 28, 101, 23);
 		panel_2.add(rdbtnTpPcap);
 		
+		rdbtnHexStream = new JRadioButton("Hex stream");
+		buttonGroup.add(rdbtnHexStream);
+		rdbtnHexStream.setBounds(380, 27, 127, 25);
+		panel_2.add(rdbtnHexStream);
+		
 		tfFilePath = new JTextField();
 		tfFilePath.setBounds(20, 157, 481, 20);
 		panel_1.add(tfFilePath);
@@ -299,6 +307,8 @@ public class TraceParserForm {
 					filterName = "Simple";
 				if (rdbtnTpPcap.isSelected())
 					filterName = "Pcap";
+				if (rdbtnHexStream.isSelected())
+					filterName = "HexStream";
 				TraceFileFilter filter = new TraceFileFilter(filterName);
 				chooser.setFileFilter(filter);
 				chooser.addChoosableFileFilter(filter);
@@ -494,8 +504,11 @@ public class TraceParserForm {
 			case Pcap:
 				rdbtnTpPcap.setSelected(true);
 				break;
+			case HexStream:
+				rdbtnHexStream.setSelected(true);
+				break;
 			}
-			
+
 			switch (par.getParseProtocol()) {
 			case Map:
 				rdbtnMap.setSelected(true);
@@ -567,6 +580,9 @@ public class TraceParserForm {
 						return true;
 				} else if (this.name.equals("Simple")) {
 					if (s1.equals("msg"))
+						return true;
+				} else if (this.name.equals("HexStream")) {
+					if (s1.equals("txt"))
 						return true;
 				} else if (this.name.equals("Pcap")) {
 					if (s1.equals("pcap"))

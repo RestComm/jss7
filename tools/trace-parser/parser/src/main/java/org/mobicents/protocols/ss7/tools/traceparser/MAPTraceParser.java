@@ -262,6 +262,9 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 		case Pcap:
 			this.driver = new TraceReaderDriverPcap(this, filePath);
 			break;
+		case HexStream:
+			this.driver = new TraceReaderDriverHexStream(this, filePath);
+			break;
 		default:
 			this.setFinishedState("Unknown TraceReaderDriver: " + this.par.getFileTypeN());
 			return;
