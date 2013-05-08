@@ -425,6 +425,11 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		return res;
 	}
 
+	public int calculateXudtFieldsLengthWithoutData2(int calledPartyLen, int callingPartyLen) {
+		int res = 254 - (3 + calledPartyLen + callingPartyLen);
+		return res;
+	}
+
 	public int calculateLudtFieldsLengthWithoutData(int calledPartyLen, int callingPartyLen, boolean segmented, boolean importancePresense) {
 		// 15 = 3 (fixed fields length) + 8 (variable fields pointers) + 4 (variable fields lengths)
 		int res = 15 + calledPartyLen + callingPartyLen;
@@ -516,6 +521,9 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 				break;
 			case XudtEnabled:
 				fieldsLen = this.calculateXudtFieldsLengthWithoutData(cdp.length, cnp.length, true, true);
+				int fieldsLen2 = this.calculateXudtFieldsLengthWithoutData2(cdp.length, cnp.length);
+				if (fieldsLen > fieldsLen2)
+					fieldsLen = fieldsLen2;
 				break;
 			}
 

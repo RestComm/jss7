@@ -308,11 +308,11 @@ public abstract class SccpDataNoticeTemplateMessageImpl extends SccpSegmentableM
 			// use UDT / UDTS
 			int fieldsLen = this.sccpStackImpl.calculateUdtFieldsLengthWithoutData(cdp.length, cnp.length);
 			int availLen = maxMtp3UserDataLength - fieldsLen;
-			if (availLen > 255)
-				availLen = 255;
+			if (availLen > 254)
+				availLen = 254;
 			if (bf.length > availLen) { // message is too long to encode UDT
 				if (logger.isEnabledFor(Level.WARN)) {
-					logger.warn(String.format("Failer when sending a UDT message: message is too long. SccpMessageSegment=%s", this));
+					logger.warn(String.format("Failure when sending a UDT message: message is too long. SccpMessageSegment=%s", this));
 				}
 				return new EncodingResultData(EncodingResult.ReturnFailure, null, null, ReturnCauseValue.SEG_NOT_SUPPORTED);
 			}
@@ -356,13 +356,14 @@ public abstract class SccpDataNoticeTemplateMessageImpl extends SccpSegmentableM
 				this.hopCounter = new HopCounterImpl(15);
 
 			int fieldsLenX = this.sccpStackImpl.calculateXudtFieldsLengthWithoutData(cdp.length, cnp.length, false, this.importance != null);
+			int fieldsLen2 = this.sccpStackImpl.calculateXudtFieldsLengthWithoutData2(cdp.length, cnp.length);
 			int availLenX = maxMtp3UserDataLength - fieldsLenX;
-			if (availLenX > 255)
-				availLenX = 255;
+			if (availLenX > fieldsLen2)
+				availLenX = fieldsLen2;
 			int fieldsLenXSegm = this.sccpStackImpl.calculateXudtFieldsLengthWithoutData(cdp.length, cnp.length, true, this.importance != null);
 			int availLenXSegm = maxMtp3UserDataLength - fieldsLenXSegm;
-			if (availLenXSegm > 255)
-				availLenXSegm = 255;
+			if (availLenXSegm > fieldsLen2)
+				availLenXSegm = fieldsLen2;
 
 			if (bf.length <= availLenX && bf.length <= this.sccpStackImpl.getZMarginXudtMessage()) {
 				// one segment
@@ -416,7 +417,7 @@ public abstract class SccpDataNoticeTemplateMessageImpl extends SccpSegmentableM
 				// several segments
 				if (bf.length > availLenXSegm * 16) {
 					if (logger.isEnabledFor(Level.WARN)) {
-						logger.warn(String.format("Failer when segmenting a message XUDT: message is too long. SccpMessageSegment=%s", this));
+						logger.warn(String.format("Failure when segmenting a message XUDT: message is too long. SccpMessageSegment=%s", this));
 					}
 					return new EncodingResultData(EncodingResult.ReturnFailure, null, null, ReturnCauseValue.SEG_FAILURE);
 				}
@@ -424,6 +425,8 @@ public abstract class SccpDataNoticeTemplateMessageImpl extends SccpSegmentableM
 				if (bf.length <= this.sccpStackImpl.getZMarginXudtMessage() * 16)
 					segmLen = this.sccpStackImpl.getZMarginXudtMessage();
 				else
+					segmLen = availLenXSegm;
+				if (segmLen > availLenXSegm)
 					segmLen = availLenXSegm;
 				int segmCount = (bf.length - 1) / segmLen + 1;
 
@@ -433,7 +436,7 @@ public abstract class SccpDataNoticeTemplateMessageImpl extends SccpSegmentableM
 						// only if incoming message has a "Segmentation" field
 						if (logger.isEnabledFor(Level.WARN)) {
 							logger.warn(String
-									.format("Failer when segmenting a message: message is not locally originated but \"segmentation\" field is absent. SccpMessageSegment=%s",
+									.format("Failure when segmenting a message: message is not locally originated but \"segmentation\" field is absent. SccpMessageSegment=%s",
 											this));
 						}
 						return new EncodingResultData(EncodingResult.ReturnFailure, null, null, ReturnCauseValue.SEG_FAILURE);
@@ -526,7 +529,7 @@ public abstract class SccpDataNoticeTemplateMessageImpl extends SccpSegmentableM
 			int availLen = maxMtp3UserDataLength - fieldsLenL;
 			if (bf.length > availLen) { // message is too long to encode LUDT
 				if (logger.isEnabledFor(Level.WARN)) {
-					logger.warn(String.format("Failer when sending a UDT message: message is too long. SccpMessageSegment=%s", this));
+					logger.warn(String.format("Failure when sending a LUDT message: message is too long. SccpMessageSegment=%s", this));
 				}
 				return new EncodingResultData(EncodingResult.ReturnFailure, null, null, ReturnCauseValue.SEG_FAILURE);
 			}

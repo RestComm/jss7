@@ -54,7 +54,7 @@ public class ForwardShortMessageRequestImpl extends SmsMessageImpl implements Fo
 	public ForwardShortMessageRequestImpl() {
 	}	
 	
-	public ForwardShortMessageRequestImpl(SM_RP_DA sM_RP_DA, SM_RP_OA sM_RP_OA, SmsSignalInfo sM_RP_UI, Boolean moreMessagesToSend) {
+	public ForwardShortMessageRequestImpl(SM_RP_DA sM_RP_DA, SM_RP_OA sM_RP_OA, SmsSignalInfo sM_RP_UI, boolean moreMessagesToSend) {
 		this.sM_RP_DA = sM_RP_DA;
 		this.sM_RP_OA = sM_RP_OA;
 		this.sM_RP_UI = (SmsSignalInfoImpl)sM_RP_UI;

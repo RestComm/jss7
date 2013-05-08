@@ -26,6 +26,8 @@ import static org.testng.Assert.*;
 import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
+import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.LongMessageRuleType;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
@@ -33,6 +35,8 @@ import org.mobicents.protocols.ss7.sccp.impl.parameter.ImportanceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ReturnCauseImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SegmentationImpl;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
+import org.mobicents.protocols.ss7.sccp.parameter.GT0100;
+import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.Importance;
 import org.mobicents.protocols.ss7.sccp.parameter.ReturnCause;
 import org.mobicents.protocols.ss7.sccp.parameter.ReturnCauseValue;
@@ -187,6 +191,8 @@ public class MessageSegmentationTest {
 		// -- XUDT message: a splitted to the 3 segments message
 		Importance imp = new ImportanceImpl((byte) 7);
 		SccpAddress callingAdd2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2, null, 8);
+
+
 		msg = (SccpDataMessageImpl)messageFactory.createDataMessageClass1(calledAdd, callingAdd2, getDataA(), 0, 8, true, null, imp);
 
 		res = msg.encode(LongMessageRuleType.XudtEnabled, 272, logger);
@@ -230,6 +236,22 @@ public class MessageSegmentationTest {
 		assertEquals(res.getEncodingResult(), EncodingResult.Success);
 		assertEquals(res.getSegementedData().size(), 3);
 
+		// -- XUDT message: big callingPartyAddress and calledPartyAddress fields when there length + data length > 254 and Importance field present 
+		byte[] bufx = new byte[225];
+		GlobalTitle gttt = new GT0100(3, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.INTERNATIONAL, "1111114444444444");
+		SccpAddress bigAdr = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, gttt, 8);
+		msg = (SccpDataMessageImpl)messageFactory.createDataMessageClass1(bigAdr, bigAdr, bufx, 0, 8, true, null, imp);
+
+		res = msg.encode(LongMessageRuleType.XudtEnabled, 272, logger);
+		assertEquals(res.getEncodingResult(), EncodingResult.Success);
+		assertNotNull(res.getSolidData());
+
+		bufx = new byte[226];
+		msg = (SccpDataMessageImpl)messageFactory.createDataMessageClass1(bigAdr, bigAdr, bufx, 0, 8, true, null, imp);
+
+		res = msg.encode(LongMessageRuleType.XudtEnabled, 272, logger);
+		assertEquals(res.getEncodingResult(), EncodingResult.Success);
+		assertEquals(res.getSegementedData().size(), 2);
 		
 		
 //		StringBuilder sb = new StringBuilder();
