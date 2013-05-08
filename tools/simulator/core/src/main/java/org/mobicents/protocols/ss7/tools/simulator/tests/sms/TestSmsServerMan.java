@@ -485,7 +485,7 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 			return "DestIsdnNumber is empty";
 		if (msg == null || msg.equals(""))
 			return "Msg is empty";
-		int maxMsgLen = this.testerHost.getConfigurationData().getTestSmsServerConfigurationData().getSmsCodingType().getSupportesMaxMessageLength();
+		int maxMsgLen = this.testerHost.getConfigurationData().getTestSmsServerConfigurationData().getSmsCodingType().getSupportesMaxMessageLength(0);
 		if (msg.length() > maxMsgLen)
 			return "Simulator does not support message length for current encoding type more than " + maxMsgLen;
 
@@ -510,7 +510,7 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 			return "VlrNumber is empty";
 		if (origIsdnNumber == null || origIsdnNumber.equals(""))
 			return "OrigIsdnNumber is empty";
-		int maxMsgLen = this.testerHost.getConfigurationData().getTestSmsServerConfigurationData().getSmsCodingType().getSupportesMaxMessageLength();
+		int maxMsgLen = this.testerHost.getConfigurationData().getTestSmsServerConfigurationData().getSmsCodingType().getSupportesMaxMessageLength(0);
 		if (msg.length() > maxMsgLen)
 			return "Simulator does not support message length for current encoding type more than " + maxMsgLen;
 

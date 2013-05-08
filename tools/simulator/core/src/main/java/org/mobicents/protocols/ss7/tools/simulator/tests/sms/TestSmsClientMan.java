@@ -71,11 +71,14 @@ import org.mobicents.protocols.ss7.map.api.smstpdu.SmsSubmitTpdu;
 import org.mobicents.protocols.ss7.map.api.smstpdu.SmsTpdu;
 import org.mobicents.protocols.ss7.map.api.smstpdu.TypeOfNumber;
 import org.mobicents.protocols.ss7.map.api.smstpdu.UserData;
+import org.mobicents.protocols.ss7.map.api.smstpdu.UserDataHeader;
 import org.mobicents.protocols.ss7.map.api.smstpdu.ValidityPeriod;
 import org.mobicents.protocols.ss7.map.smstpdu.AddressFieldImpl;
+import org.mobicents.protocols.ss7.map.smstpdu.ConcatenatedShortMessagesIdentifierImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.DataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.ProtocolIdentifierImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.SmsSubmitTpduImpl;
+import org.mobicents.protocols.ss7.map.smstpdu.UserDataHeaderImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.UserDataImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.ValidityPeriodImpl;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
@@ -485,16 +488,46 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 			return "DestIsdnNumber is empty";
 		if (origIsdnNumber == null || origIsdnNumber.equals(""))
 			return "OrigIsdnNumber is empty";
-		int maxMsgLen = this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getSmsCodingType().getSupportesMaxMessageLength();
+		int maxMsgLen = this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getSmsCodingType().getSupportesMaxMessageLength(0);
 		if (msg.length() > maxMsgLen)
 			return "Simulator does not support message length for current encoding type more than " + maxMsgLen;
 
 		currentRequestDef = "";
 
-		return doMoForwardSM(msg, destIsdnNumber, origIsdnNumber, this.getServiceCenterAddress());
+		return doMoForwardSM(msg, destIsdnNumber, origIsdnNumber, this.getServiceCenterAddress(), 0, 0, 0);
 	}
 
-	private String doMoForwardSM(String msg, String destIsdnNumber, String origIsdnNumber, String serviceCentreAddr) {
+	@Override
+	public String performMoForwardSMPartial(String msg, String destIsdnNumber, String origIsdnNumber, int msgRef, int segmCnt, int segmNum) {
+		if (!isStarted)
+			return "The tester is not started";
+		if (msg == null || msg.equals(""))
+			return "Msg is empty";
+		if (destIsdnNumber == null || destIsdnNumber.equals(""))
+			return "DestIsdnNumber is empty";
+		if (origIsdnNumber == null || origIsdnNumber.equals(""))
+			return "OrigIsdnNumber is empty";
+
+		if (msgRef < 0 || msgRef > 255)
+			return "msgRef must has value 0-255";
+		if (segmCnt < 1 || segmCnt > 255)
+			return "segmCnt must has value 1-255";
+		if (segmNum < 1 || segmNum > 255)
+			return "segmNum must has value 1-255";
+		if (segmCnt == 1)
+			segmCnt = 0;
+
+		int maxMsgLen = this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getSmsCodingType()
+				.getSupportesMaxMessageLength(segmCnt > 1 ? 6 : 0);
+		if (msg.length() > maxMsgLen)
+			return "Simulator does not support message length for current encoding type and segmentation state more than " + maxMsgLen;
+
+		currentRequestDef = "";
+
+		return doMoForwardSM(msg, destIsdnNumber, origIsdnNumber, this.getServiceCenterAddress(), msgRef, segmCnt, segmNum);
+	}
+
+	private String doMoForwardSM(String msg, String destIsdnNumber, String origIsdnNumber, String serviceCentreAddr, int msgRef, int segmCnt, int segmNum) {
 
 		MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
 
@@ -527,10 +560,14 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 					this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getNumberingPlanIdentification(), destIsdnNumber);
 			DataCodingScheme dcs = new DataCodingSchemeImpl(this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getSmsCodingType()
 					.intValue() == SmsCodingType.VAL_GSM7 ? 0 : 8);
-			UserData userData = new UserDataImpl(msg, dcs, null, null);
+			UserDataHeader udh = null;
+			if (segmCnt > 1) {
+				udh = new UserDataHeaderImpl();
+				udh.addInformationElement(new ConcatenatedShortMessagesIdentifierImpl(false, msgRef, segmCnt, segmNum));
+			}
+			UserData userData = new UserDataImpl(msg, dcs, udh, null);
 			ProtocolIdentifier pi = new ProtocolIdentifierImpl(0);
-			ValidityPeriod validityPeriod = new ValidityPeriodImpl(169); // 3
-																			// days
+			ValidityPeriod validityPeriod = new ValidityPeriodImpl(169); // 3 days
 			SmsSubmitTpdu tpdu = new SmsSubmitTpduImpl(false, false, false, ++mesRef, destAddress, pi, validityPeriod, userData);
 			SmsSignalInfo si = mapProvider.getMAPParameterFactory().createSmsSignalInfo(tpdu, null);
 

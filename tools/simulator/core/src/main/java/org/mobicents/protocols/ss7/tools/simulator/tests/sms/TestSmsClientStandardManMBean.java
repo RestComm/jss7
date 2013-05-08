@@ -80,8 +80,19 @@ public class TestSmsClientStandardManMBean extends StandardMBean {
 				new MBeanParameterInfo("origIsdnNumber", String.class.getName(), "Origination ISDN number"), 
 		};
 
+		MBeanParameterInfo[] performMoForwardSMPartial = new MBeanParameterInfo[] { 
+				new MBeanParameterInfo("msg", String.class.getName(), "Message text"), 
+				new MBeanParameterInfo("destIsdnNumber", String.class.getName(), "Destination ISDN number"), 
+				new MBeanParameterInfo("origIsdnNumber", String.class.getName(), "Origination ISDN number"), 
+				new MBeanParameterInfo("msgRef", Integer.class.getName(), "Concatenated short message reference number"), 
+				new MBeanParameterInfo("segmCnt", Integer.class.getName(), "Maximum number of short messages in the concatenated short message"), 
+				new MBeanParameterInfo("segmNum", Integer.class.getName(), "Sequence number of the current short message"), 
+		};
+
 		MBeanOperationInfo[] operations = new MBeanOperationInfo[] {
 				new MBeanOperationInfo("performMoForwardSM", "Send mo-forwardSM request", performMoForwardSMParam, String.class.getName(), MBeanOperationInfo.ACTION),
+				new MBeanOperationInfo("performMoForwardSMPartial", "Send mo-forwardSM request that contain a part of contatenated message",
+						performMoForwardSMPartial, String.class.getName(), MBeanOperationInfo.ACTION),
 				new MBeanOperationInfo("closeCurrentDialog", "Closing the current dialog", null, String.class.getName(), MBeanOperationInfo.ACTION),
 
 				new MBeanOperationInfo("putAddressNature", "AddressNature parameter for AddressString creating: "
