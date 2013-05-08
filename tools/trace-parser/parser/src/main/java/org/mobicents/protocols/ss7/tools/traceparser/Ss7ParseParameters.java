@@ -29,7 +29,7 @@ package org.mobicents.protocols.ss7.tools.traceparser;
  */
 public class Ss7ParseParameters {
 	
-	private ParseDriverType fileTypeN = ParseDriverType.Acterna;	
+	private ParseDriverType fileTypeN = ParseDriverType.Pcap;	
 	private ParseProtocol protocol = ParseProtocol.Map;	
 	private String sourceFilePath = "";	
 	private String msgLogFilePath = "";	
