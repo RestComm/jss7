@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 		<artifactId>mobicents-hardware</artifactId>
-		<version>2.0.0-SNAPSHOT</version>
+		<version>6.1.4-TelScale-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>mobicents-dialogic-parent</artifactId>
