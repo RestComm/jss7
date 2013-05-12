@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -32,7 +32,7 @@ import org.mobicents.protocols.ss7.map.api.smstpdu.ConcatenatedShortMessagesIden
 import org.mobicents.protocols.ss7.map.api.smstpdu.NationalLanguageLockingShiftIdentifier;
 import org.mobicents.protocols.ss7.map.api.smstpdu.NationalLanguageSingleShiftIdentifier;
 import org.mobicents.protocols.ss7.map.api.smstpdu.UserDataHeaderElement;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.*;
 
 /**
  * 
@@ -43,6 +43,10 @@ public class UserDataHeaderTest {
 
 	public byte[] getData1() {
 		return new byte[] { 6, 8, 4, 0, -47, 3, 2 };
+	}
+
+	public byte[] getData11() {
+		return new byte[] { 6, 8, 4, 10, 1, 3, 2 };
 	}
 
 	public byte[] getData2() {
@@ -92,6 +96,17 @@ public class UserDataHeaderTest {
 		assertEquals(conc.getMesageSegmentCount(), 3);
 		assertEquals(conc.getMesageSegmentNumber(), 2);
 
+		impl = new UserDataHeaderImpl(this.getData11());
+		mp = impl.getAllData();
+		assertEquals(impl.getAllData().size(), 1);
+		assertTrue(Arrays.equals(mp.get(8), new byte[] { 10, 1, 3, 2 }));
+		conc = impl.getConcatenatedShortMessagesIdentifier();
+		assertNotNull(conc);
+		assertEquals(conc.getReferenceIs16bit(), true);
+		assertEquals(conc.getReference(), 266);
+		assertEquals(conc.getMesageSegmentCount(), 3);
+		assertEquals(conc.getMesageSegmentNumber(), 2);
+
 		impl = new UserDataHeaderImpl(this.getData2());
 		mp = impl.getAllData();
 		assertEquals(impl.getAllData().size(), 1);
@@ -130,6 +145,11 @@ public class UserDataHeaderTest {
 		UserDataHeaderElement ie = new ConcatenatedShortMessagesIdentifierImpl(true, 53504, 3, 2);
 		impl.addInformationElement(ie);
 		assertTrue(Arrays.equals(impl.getEncodedData(), this.getData1()));
+
+		impl = new UserDataHeaderImpl();
+		ie = new ConcatenatedShortMessagesIdentifierImpl(true, 266, 3, 2);
+		impl.addInformationElement(ie);
+		assertTrue(Arrays.equals(impl.getEncodedData(), this.getData11()));
 
 		impl = new UserDataHeaderImpl();
 		ie = new ConcatenatedShortMessagesIdentifierImpl(false, 140, 2, 1);

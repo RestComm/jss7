@@ -83,7 +83,7 @@ public class ConcatenatedShortMessagesIdentifierImpl implements ConcatenatedShor
 			this.mesageSegmentNumber = encodedInformationElementData[2] & 0xFF;
 		} else {
 			this.referenceIs16bit = true;
-			this.reference = (encodedInformationElementData[0] & 0xFF) + (encodedInformationElementData[1] & 0xFF) << 8;
+			this.reference = (encodedInformationElementData[0] & 0xFF) + ((encodedInformationElementData[1] & 0xFF) << 8);
 			this.mesageSegmentCount = encodedInformationElementData[2] & 0xFF;
 			this.mesageSegmentNumber = encodedInformationElementData[3] & 0xFF;
 		}
