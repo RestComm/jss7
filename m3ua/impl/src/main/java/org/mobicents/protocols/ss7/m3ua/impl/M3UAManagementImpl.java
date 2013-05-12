@@ -298,11 +298,15 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 	}
 
 	public List<As> getAppServers() {
-		return appServers.unmodifiable();
+		FastList<As> appServersTmp = new FastList<As>();
+		appServersTmp.addAll(this.appServers);
+		return appServersTmp;
 	}
 
 	public List<AspFactory> getAspfactories() {
-		return aspfactories.unmodifiable();
+		FastList<AspFactory> aspfactoriesTmpe = new FastList<AspFactory>();
+		aspfactoriesTmpe.addAll(this.aspfactories);
+		return aspfactoriesTmpe;
 	}
 
 	public Map<String, As[]> getRoute() {
