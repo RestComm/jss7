@@ -3820,14 +3820,14 @@ public class MAPFunctionalTest extends SccpHarness {
 				Assert.assertEquals(additionalNumber.getAddressNature(), AddressNature.subscriber_number);
 				Assert.assertEquals(additionalNumber.getNumberingPlan(), NumberingPlan.private_plan);
 				Assert.assertEquals(additionalNumber.getAddress(), "000111000");
-				Assert.assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+				Assert.assertNull(extensionContainer);
 
 			}
 
 			public void onInformServiceCentreRequest(InformServiceCentreRequest ind) {
 				super.onInformServiceCentreRequest(ind);
 
-				assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(ind.getExtensionContainer()));
+				assertNull(ind.getExtensionContainer());
 				assertTrue(ind.getStoredMSISDN().getAddress().equals("111222333"));
 				assertFalse(ind.getMwStatus().getScAddressNotIncluded());
 				assertTrue(ind.getMwStatus().getMnrfSet());
@@ -3887,10 +3887,8 @@ public class MAPFunctionalTest extends SccpHarness {
 				Integer additionalAbsentSubscriberDiagnosticSM = 444;
 
 				try {
-					d.addSendRoutingInfoForSMResponse(sendRoutingInfoForSMInd.getInvokeId(), imsi, locationInfoWithLMSI,
-							MAPExtensionContainerTest.GetTestExtensionContainer(), null);
-					d.addInformServiceCentreRequest(storedMSISDN, mwStatus, MAPExtensionContainerTest.GetTestExtensionContainer(),
-							absentSubscriberDiagnosticSM, additionalAbsentSubscriberDiagnosticSM);
+					d.addSendRoutingInfoForSMResponse(sendRoutingInfoForSMInd.getInvokeId(), imsi, locationInfoWithLMSI, null, null);
+					d.addInformServiceCentreRequest(storedMSISDN, mwStatus, null, absentSubscriberDiagnosticSM, additionalAbsentSubscriberDiagnosticSM);
 				} catch (MAPException e) {
 					this.error("Error while adding SendRoutingInfoForSMResponse", e);
 					fail("Error while adding SendRoutingInfoForSMResponse");
