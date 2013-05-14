@@ -54,12 +54,14 @@ public class SccpRemoveSpcTest {
 	@BeforeMethod
 	public void setUp() {
 		this.stack.setPersistDir(Util.getTmpTestDir());
+		this.stack.start();
 		this.messageFactory = new MessageFactoryImpl(stack);
 		this.logger = Logger.getLogger(SccpStackImpl.class.getCanonicalName());
 	}
 
 	@AfterMethod
 	public void tearDown() {
+		this.stack.stop();
 	}
 
 	public byte[] getDataUdt_GT_WithDpc() {

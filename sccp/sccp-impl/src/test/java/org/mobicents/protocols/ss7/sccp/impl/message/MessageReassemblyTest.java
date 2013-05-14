@@ -56,22 +56,24 @@ public class MessageReassemblyTest extends SccpHarness {
 
 	@BeforeClass
 	public void setUpClass() throws Exception {
-		this.sccpStack1Name = "sspTestSccpStack1";
-		this.sccpStack2Name = "sspTestSccpStack2";
+		this.sccpStack1Name = "MessageReassemblyTestStack1";
+		this.sccpStack2Name = "MessageReassemblyTestStack2";
 	}
 
 	@AfterClass
 	public void tearDownClass() throws Exception {
 	}
 
+	@Override
 	protected void createStack1() {
-        sccpStack1 = createStack(sccpStack1Name);
-        sccpProvider1 = sccpStack1.getSccpProvider();
+        this.sccpStack1 = createStack(sccpStack1Name);
+        this.sccpProvider1 = sccpStack1.getSccpProvider();
     }
 
+	@Override
     protected void createStack2() {
-        sccpStack2 = createStack(sccpStack2Name);
-        sccpProvider2 = sccpStack2.getSccpProvider();
+		this.sccpStack2 = createStack(sccpStack2Name);
+		this.sccpProvider2 = sccpStack2.getSccpProvider();
     }
     
     @Override
