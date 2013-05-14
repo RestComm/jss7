@@ -57,8 +57,8 @@ public class CallingPartyAddressTest extends SccpHarness {
 
 	@BeforeClass
 	public void setUpClass() throws Exception {
-		this.sccpStack1Name = "sspTestSccpStack1";
-		this.sccpStack2Name = "sspTestSccpStack2";
+		this.sccpStack1Name = "CallingPartyAddressTestStack1";
+		this.sccpStack2Name = "CallingPartyAddressTestStack2";
 	}
 
 	@AfterClass

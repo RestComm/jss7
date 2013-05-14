@@ -59,8 +59,8 @@ public class LoadSharingTest extends SccpHarness {
 
 	@BeforeClass
 	public void setUpClass() throws Exception {
-		this.sccpStack1Name = "sspTestSccpStack1";
-		this.sccpStack2Name = "sspTestSccpStack2";
+		this.sccpStack1Name = "LoadSharingTestStack1";
+		this.sccpStack2Name = "LoadSharingTestStack2";
 	}
 
 	@AfterClass

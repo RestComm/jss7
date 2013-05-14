@@ -30,6 +30,7 @@ import org.testng.annotations.*;
 import static org.testng.Assert.*;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.Util;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
@@ -60,17 +61,20 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 public class SccpNoticeMessageTest {
 
 	private Logger logger;
-	private SccpStackImpl stack = new SccpStackImpl("TestStack");
+	private SccpStackImpl stack = new SccpStackImpl("SccpNoticeMessageTestStack");
 	private MessageFactoryImpl messageFactory;
 
 	@BeforeMethod
 	public void setUp() {
+		this.stack.setPersistDir(Util.getTmpTestDir());
+		this.stack.start();
 		this.messageFactory = new MessageFactoryImpl(stack);
 		this.logger = Logger.getLogger(SccpStackImpl.class.getCanonicalName());
 	}
 
 	@AfterMethod
 	public void tearDown() {
+		this.stack.stop();
 	}
 
 	public byte[] getDataUdtS() {
