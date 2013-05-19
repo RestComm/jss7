@@ -22,7 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api;
 
-import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
+import java.io.Serializable;
 
 
 /**
@@ -31,7 +31,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
  * @author amit bhayani
  * 
  */
-public interface MAPMessage {
+public interface MAPMessage extends Serializable {
 
 	public long getInvokeId();
 
