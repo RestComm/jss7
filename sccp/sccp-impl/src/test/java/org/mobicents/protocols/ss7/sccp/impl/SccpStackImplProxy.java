@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.sccp.impl;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.concurrent.Executors;
 
 import javolution.util.FastMap;
@@ -52,6 +54,24 @@ public class SccpStackImplProxy extends SccpStackImpl {
 
 	@Override
 	public void start() {
+		this.persistFile.clear();
+
+		if (persistDir != null) {
+			this.persistFile.append(persistDir).append(File.separator).append(this.name).append("_")
+					.append(PERSIST_FILE_NAME);
+		} else {
+			persistFile.append(System.getProperty(SCCP_MANAGEMENT_PERSIST_DIR_KEY, System.getProperty(USER_DIR_KEY)))
+					.append(File.separator).append(this.name).append("_").append(PERSIST_FILE_NAME);
+		}
+
+		logger.info(String.format("SCCP Management configuration file path %s", persistFile.toString()));
+
+		try {
+			this.load();
+		} catch (FileNotFoundException e) {
+			logger.warn(String.format("Failed to load the Sccp Management configuration file. \n%s", e.getMessage()));
+		}
+		
 		this.messageFactory = new MessageFactoryImpl(this);
 
 		this.sccpProvider = new SccpProviderImpl(this);

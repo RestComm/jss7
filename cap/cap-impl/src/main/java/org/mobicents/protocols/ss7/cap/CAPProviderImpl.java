@@ -703,7 +703,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 	@Override
 	public void onDialogReleased(Dialog tcapDialog) {
 
-		CAPDialogImpl capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getLocalDialogId());
+		CAPDialogImpl capDialogImpl = (CAPDialogImpl) this.removeDialog(tcapDialog.getLocalDialogId());
 
 		if (capDialogImpl != null) {
 			try {

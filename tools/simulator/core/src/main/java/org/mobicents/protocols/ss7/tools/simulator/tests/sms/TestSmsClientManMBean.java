@@ -133,6 +133,8 @@ public interface TestSmsClientManMBean {
 
 	public String performMoForwardSM(String msg, String destIsdnNumber, String origIsdnNumber);
 
+	public String performMoForwardSMPartial(String msg, String destIsdnNumber, String origIsdnNumber, int msgRef, int segmCnt, int segmNum);
+
 	public String performAlertServiceCentre(String destIsdnNumber);
 
 	public String closeCurrentDialog();

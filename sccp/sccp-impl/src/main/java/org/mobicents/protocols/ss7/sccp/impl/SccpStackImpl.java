@@ -82,11 +82,11 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * 
  */
 public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
-	private final Logger logger;
+	protected final Logger logger;
 
-	private static final String SCCP_MANAGEMENT_PERSIST_DIR_KEY = "sccpmanagement.persist.dir";
-	private static final String USER_DIR_KEY = "user.dir";
-	private static final String PERSIST_FILE_NAME = "management2.xml";
+	protected static final String SCCP_MANAGEMENT_PERSIST_DIR_KEY = "sccpmanagement.persist.dir";
+	protected static final String USER_DIR_KEY = "user.dir";
+	protected static final String PERSIST_FILE_NAME = "management2.xml";
 	private static final String TAB_INDENT = "\t";
 	private static final String CLASS_ATTRIBUTE = "type";
 
@@ -144,11 +144,11 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 	// protected int localSpc;
 	// protected int ni = 2;
 
-	private final String name;
+	protected final String name;
 
-	private final TextBuilder persistFile = TextBuilder.newInstance();
+	protected final TextBuilder persistFile = TextBuilder.newInstance();
 
-	private String persistDir = null;
+	protected String persistDir = null;
 
 	private volatile int segmentationLocalRef = 0;
 	private volatile int slsCounter = 0;
@@ -496,10 +496,13 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 		return res;
 	}
 
-	public int calculateLudtFieldsLengthWithoutData(int calledPartyLen, int callingPartyLen, boolean segmented,
-			boolean importancePresense) {
-		// 15 = 3 (fixed fields length) + 8 (variable fields pointers) + 4
-		// (variable fields lengths)
+	public int calculateXudtFieldsLengthWithoutData2(int calledPartyLen, int callingPartyLen) {
+		int res = 254 - (3 + calledPartyLen + callingPartyLen);
+		return res;
+	}
+
+	public int calculateLudtFieldsLengthWithoutData(int calledPartyLen, int callingPartyLen, boolean segmented, boolean importancePresense) {
+		// 15 = 3 (fixed fields length) + 8 (variable fields pointers) + 4 (variable fields lengths)
 		int res = 15 + calledPartyLen + callingPartyLen;
 		if (segmented || importancePresense)
 			res++; // optional part present - adding End of optional parameters
@@ -591,6 +594,9 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 				break;
 			case XudtEnabled:
 				fieldsLen = this.calculateXudtFieldsLengthWithoutData(cdp.length, cnp.length, true, true);
+				int fieldsLen2 = this.calculateXudtFieldsLengthWithoutData2(cdp.length, cnp.length);
+				if (fieldsLen > fieldsLen2)
+					fieldsLen = fieldsLen2;
 				break;
 			}
 
@@ -950,7 +956,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
 			writer.close();
 		} catch (Exception e) {
-			this.logger.error("Error while persisting the Sccp Resource state in file", e);
+			this.logger.error(String.format("Error while persisting the Sccp Resource state in file=%s", persistFile.toString()), e);
 		}
 	}
 
@@ -959,8 +965,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 	 * 
 	 * @throws Exception
 	 */
-	private void load() throws FileNotFoundException {
-
+	protected void load() throws FileNotFoundException {
 		XMLObjectReader reader = null;
 		try {
 			reader = XMLObjectReader.newInstance(new FileInputStream(persistFile.toString()));

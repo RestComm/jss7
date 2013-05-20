@@ -63,8 +63,8 @@ public class MessageTransferTest extends SccpHarness {
 
 	@BeforeClass
 	public void setUpClass() throws Exception {
-		this.sccpStack1Name = "sspTestSccpStack1";
-		this.sccpStack2Name = "sspTestSccpStack2";
+		this.sccpStack1Name = "MessageTransferTestStack1";
+		this.sccpStack2Name = "MessageTransferTestStack2";
 	}
 
 	@AfterClass
