@@ -100,4 +100,8 @@ public class LinksetFactoryFactory {
         }
         return linksetFactory.createLinkset(options);
     }
+    
+    public FastMap<String, LinksetFactory> getLinksetFactories(){
+    	return linksetFactories;
+    }
 }
