@@ -37,191 +37,189 @@ import org.mobicents.protocols.ss7.cap.api.service.gprs.ResetTimerGPRSRequest;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class ResetTimerGPRSRequestImpl   extends GprsMessageImpl  implements ResetTimerGPRSRequest {
-	
-	public static final String _PrimitiveName = "ResetTimerGPRSRequest";
-	
-	public static final int _ID_timerID = 0;
-	public static final int _ID_timerValue = 1;
-	
-	private TimerID timerID;
-	private int timerValue;
-	
-	public ResetTimerGPRSRequestImpl() {
-		this.timerValue = -1 ;
-	}
+public class ResetTimerGPRSRequestImpl extends GprsMessageImpl implements ResetTimerGPRSRequest {
 
-	public ResetTimerGPRSRequestImpl(TimerID timerID, int timerValue) {
-		super();
-		this.timerID = timerID;
-		this.timerValue = timerValue;
-	}
-	
-	@Override
-	public TimerID getTimerID(){
-		return this.timerID;
-	}
+    public static final String _PrimitiveName = "ResetTimerGPRSRequest";
 
-	@Override
-	public int getTimerValue(){
-		return this.timerValue;
-	}
+    public static final int _ID_timerID = 0;
+    public static final int _ID_timerValue = 1;
 
-	@Override
-	public CAPMessageType getMessageType() {
-		return CAPMessageType.resetTimerGPRS_Request;
-	}
+    private TimerID timerID;
+    private int timerValue;
 
-	@Override
-	public int getOperationCode() {
-		return CAPOperationCode.resetTimerGPRS;
-	}
+    public ResetTimerGPRSRequestImpl() {
+        this.timerValue = -1;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
+    public ResetTimerGPRSRequestImpl(TimerID timerID, int timerValue) {
+        super();
+        this.timerID = timerID;
+        this.timerValue = timerValue;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public TimerID getTimerID() {
+        return this.timerID;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    @Override
+    public int getTimerValue() {
+        return this.timerValue;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS)
-			throws CAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public CAPMessageType getMessageType() {
+        return CAPMessageType.resetTimerGPRS_Request;
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length)
-			throws CAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public int getOperationCode() {
+        return CAPOperationCode.resetTimerGPRS;
+    }
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException, MAPParsingComponentException {
-		
-		this.timerID = TimerID.tssf;
-		this.timerValue = -1;
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.SEQUENCE;
+    }
 
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-			int tag = ais.readTag();
+    @Override
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {	
-				case _ID_timerID:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException(
-								"Error while decoding " + _PrimitiveName + ".timerID: Parameter is not primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					int i1= (int)ais.readInteger();
-					this.timerID =TimerID.getInstance(i1);
-					break;
-				case _ID_timerValue:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException(
-								"Error while decoding " + _PrimitiveName + ".timerValue: Parameter is not primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.timerValue = (int)ais.readInteger();
-					break;
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	}
-	
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag)
-			throws CAPException {
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException,
+            MAPParsingComponentException {
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		
-		try {
-			if (this.timerID != null){
-				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_timerID, this.timerID.getCode());
-			}
+        this.timerID = TimerID.tssf;
+        this.timerValue = -1;
 
-			asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_timerValue, this.timerValue);
-			
-		} catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
-	
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName + " [");
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-		if (this.timerID != null) {
-			sb.append("timerID=");
-			sb.append(this.timerID.toString());
-			sb.append(", ");
-		}
-		
-		sb.append("timerValue=");
-		sb.append(this.timerValue);
+            int tag = ais.readTag();
 
-		sb.append("]");
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_timerID:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".timerID: Parameter is not primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        int i1 = (int) ais.readInteger();
+                        this.timerID = TimerID.getInstance(i1);
+                        break;
+                    case _ID_timerValue:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".timerValue: Parameter is not primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.timerValue = (int) ais.readInteger();
+                        break;
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
 
-		return sb.toString();
-	}
+    }
+
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
+
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
+
+        try {
+            if (this.timerID != null) {
+                asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_timerID, this.timerID.getCode());
+            }
+
+            asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_timerValue, this.timerValue);
+
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
+
+        if (this.timerID != null) {
+            sb.append("timerID=");
+            sb.append(this.timerID.toString());
+            sb.append(", ");
+        }
+
+        sb.append("timerValue=");
+        sb.append(this.timerValue);
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }

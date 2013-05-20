@@ -78,168 +78,197 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CAPDialogCircuitSwitchedCall extends CAPDialog {
 
-	public Long addInitialDPRequest(int serviceKey, CalledPartyNumberCap calledPartyNumber, CallingPartyNumberCap callingPartyNumber,
-			CallingPartysCategoryInap callingPartysCategory, CGEncountered CGEncountered, IPSSPCapabilities IPSSPCapabilities,
-			LocationNumberCap locationNumber, OriginalCalledNumberCap originalCalledPartyID, CAPExtensions extensions,
-			HighLayerCompatibilityInap highLayerCompatibility, Digits additionalCallingPartyNumber, BearerCapability bearerCapability,
-			EventTypeBCSM eventTypeBCSM, RedirectingPartyIDCap redirectingPartyID, RedirectionInformationInap redirectionInformation, CauseCap cause,
-			ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, Carrier carrier, CUGIndex cugIndex, CUGInterlock cugInterlock,
-			boolean cugOutgoingAccess, IMSI imsi, SubscriberState subscriberState, LocationInformation locationInformation,
-			ExtBasicServiceCode extBasicServiceCode, CallReferenceNumber callReferenceNumber, ISDNAddressString mscAddress,
-			CalledPartyBCDNumber calledPartyBCDNumber, TimeAndTimezone timeAndTimezone, boolean callForwardingSSPending,
-			InitialDPArgExtension initialDPArgExtension) throws CAPException;
+    Long addInitialDPRequest(int serviceKey, CalledPartyNumberCap calledPartyNumber,
+            CallingPartyNumberCap callingPartyNumber, CallingPartysCategoryInap callingPartysCategory,
+            CGEncountered CGEncountered, IPSSPCapabilities IPSSPCapabilities, LocationNumberCap locationNumber,
+            OriginalCalledNumberCap originalCalledPartyID, CAPExtensions extensions,
+            HighLayerCompatibilityInap highLayerCompatibility, Digits additionalCallingPartyNumber,
+            BearerCapability bearerCapability, EventTypeBCSM eventTypeBCSM, RedirectingPartyIDCap redirectingPartyID,
+            RedirectionInformationInap redirectionInformation, CauseCap cause,
+            ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, Carrier carrier, CUGIndex cugIndex,
+            CUGInterlock cugInterlock, boolean cugOutgoingAccess, IMSI imsi, SubscriberState subscriberState,
+            LocationInformation locationInformation, ExtBasicServiceCode extBasicServiceCode,
+            CallReferenceNumber callReferenceNumber, ISDNAddressString mscAddress, CalledPartyBCDNumber calledPartyBCDNumber,
+            TimeAndTimezone timeAndTimezone, boolean callForwardingSSPending, InitialDPArgExtension initialDPArgExtension)
+            throws CAPException;
 
-	public Long addInitialDPRequest(int customInvokeTimeout, int serviceKey, CalledPartyNumberCap calledPartyNumber, CallingPartyNumberCap callingPartyNumber,
-			CallingPartysCategoryInap callingPartysCategory, CGEncountered CGEncountered, IPSSPCapabilities IPSSPCapabilities,
-			LocationNumberCap locationNumber, OriginalCalledNumberCap originalCalledPartyID, CAPExtensions extensions,
-			HighLayerCompatibilityInap highLayerCompatibility, Digits additionalCallingPartyNumber, BearerCapability bearerCapability,
-			EventTypeBCSM eventTypeBCSM, RedirectingPartyIDCap redirectingPartyID, RedirectionInformationInap redirectionInformation, CauseCap cause,
-			ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, Carrier carrier, CUGIndex cugIndex, CUGInterlock cugInterlock,
-			boolean cugOutgoingAccess, IMSI imsi, SubscriberState subscriberState, LocationInformation locationInformation,
-			ExtBasicServiceCode extBasicServiceCode, CallReferenceNumber callReferenceNumber, ISDNAddressString mscAddress,
-			CalledPartyBCDNumber calledPartyBCDNumber, TimeAndTimezone timeAndTimezone, boolean callForwardingSSPending,
-			InitialDPArgExtension initialDPArgExtension) throws CAPException;
+    Long addInitialDPRequest(int customInvokeTimeout, int serviceKey, CalledPartyNumberCap calledPartyNumber,
+            CallingPartyNumberCap callingPartyNumber, CallingPartysCategoryInap callingPartysCategory,
+            CGEncountered CGEncountered, IPSSPCapabilities IPSSPCapabilities, LocationNumberCap locationNumber,
+            OriginalCalledNumberCap originalCalledPartyID, CAPExtensions extensions,
+            HighLayerCompatibilityInap highLayerCompatibility, Digits additionalCallingPartyNumber,
+            BearerCapability bearerCapability, EventTypeBCSM eventTypeBCSM, RedirectingPartyIDCap redirectingPartyID,
+            RedirectionInformationInap redirectionInformation, CauseCap cause,
+            ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, Carrier carrier, CUGIndex cugIndex,
+            CUGInterlock cugInterlock, boolean cugOutgoingAccess, IMSI imsi, SubscriberState subscriberState,
+            LocationInformation locationInformation, ExtBasicServiceCode extBasicServiceCode,
+            CallReferenceNumber callReferenceNumber, ISDNAddressString mscAddress, CalledPartyBCDNumber calledPartyBCDNumber,
+            TimeAndTimezone timeAndTimezone, boolean callForwardingSSPending, InitialDPArgExtension initialDPArgExtension)
+            throws CAPException;
 
-	public Long addApplyChargingReportRequest(TimeDurationChargingResult timeDurationChargingResult) throws CAPException;
+    Long addApplyChargingReportRequest(TimeDurationChargingResult timeDurationChargingResult) throws CAPException;
 
-	public Long addApplyChargingReportRequest(int customInvokeTimeout, TimeDurationChargingResult timeDurationChargingResult) throws CAPException;
+    Long addApplyChargingReportRequest(int customInvokeTimeout, TimeDurationChargingResult timeDurationChargingResult)
+            throws CAPException;
 
-	public Long addApplyChargingRequest(CAMELAChBillingChargingCharacteristics aChBillingChargingCharacteristics, SendingSideID partyToCharge,
-			CAPExtensions extensions, AChChargingAddress aChChargingAddress) throws CAPException;
+    Long addApplyChargingRequest(CAMELAChBillingChargingCharacteristics aChBillingChargingCharacteristics,
+            SendingSideID partyToCharge, CAPExtensions extensions, AChChargingAddress aChChargingAddress) throws CAPException;
 
-	public Long addApplyChargingRequest(int customInvokeTimeout, CAMELAChBillingChargingCharacteristics aChBillingChargingCharacteristics,
-			SendingSideID partyToCharge, CAPExtensions extensions, AChChargingAddress aChChargingAddress) throws CAPException;
+    Long addApplyChargingRequest(int customInvokeTimeout,
+            CAMELAChBillingChargingCharacteristics aChBillingChargingCharacteristics, SendingSideID partyToCharge,
+            CAPExtensions extensions, AChChargingAddress aChChargingAddress) throws CAPException;
 
-	public Long addCallInformationReportRequest(ArrayList<RequestedInformation> requestedInformationList, CAPExtensions extensions, ReceivingSideID legID)
-			throws CAPException;
+    Long addCallInformationReportRequest(ArrayList<RequestedInformation> requestedInformationList,
+            CAPExtensions extensions, ReceivingSideID legID) throws CAPException;
 
-	public Long addCallInformationReportRequest(int customInvokeTimeout, ArrayList<RequestedInformation> requestedInformationList, CAPExtensions extensions,
-			ReceivingSideID legID) throws CAPException;
+    Long addCallInformationReportRequest(int customInvokeTimeout,
+            ArrayList<RequestedInformation> requestedInformationList, CAPExtensions extensions, ReceivingSideID legID)
+            throws CAPException;
 
-	public Long addCallInformationRequestRequest(ArrayList<RequestedInformationType> requestedInformationTypeList, CAPExtensions extensions, SendingSideID legID)
-			throws CAPException;
+    Long addCallInformationRequestRequest(ArrayList<RequestedInformationType> requestedInformationTypeList,
+            CAPExtensions extensions, SendingSideID legID) throws CAPException;
 
-	public Long addCallInformationRequestRequest(int customInvokeTimeout, ArrayList<RequestedInformationType> requestedInformationTypeList,
-			CAPExtensions extensions, SendingSideID legID) throws CAPException;
+    Long addCallInformationRequestRequest(int customInvokeTimeout,
+            ArrayList<RequestedInformationType> requestedInformationTypeList, CAPExtensions extensions, SendingSideID legID)
+            throws CAPException;
 
-	public Long addConnectRequest(DestinationRoutingAddress destinationRoutingAddress, AlertingPatternCap alertingPattern,
-			OriginalCalledNumberCap originalCalledPartyID, CAPExtensions extensions, Carrier carrier, CallingPartysCategoryInap callingPartysCategory,
-			RedirectingPartyIDCap redirectingPartyID, RedirectionInformationInap redirectionInformation, ArrayList<GenericNumberCap> genericNumbers,
-			ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, LocationNumberCap chargeNumber, LegID legToBeConnected, CUGInterlock cugInterlock,
-			boolean cugOutgoingAccess, boolean suppressionOfAnnouncement, boolean ocsIApplicable, NAOliInfo naoliInfo, boolean borInterrogationRequested)
-			throws CAPException;
+    Long addConnectRequest(DestinationRoutingAddress destinationRoutingAddress, AlertingPatternCap alertingPattern,
+            OriginalCalledNumberCap originalCalledPartyID, CAPExtensions extensions, Carrier carrier,
+            CallingPartysCategoryInap callingPartysCategory, RedirectingPartyIDCap redirectingPartyID,
+            RedirectionInformationInap redirectionInformation, ArrayList<GenericNumberCap> genericNumbers,
+            ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, LocationNumberCap chargeNumber,
+            LegID legToBeConnected, CUGInterlock cugInterlock, boolean cugOutgoingAccess, boolean suppressionOfAnnouncement,
+            boolean ocsIApplicable, NAOliInfo naoliInfo, boolean borInterrogationRequested) throws CAPException;
 
-	public Long addConnectRequest(int customInvokeTimeout, DestinationRoutingAddress destinationRoutingAddress, AlertingPatternCap alertingPattern,
-			OriginalCalledNumberCap originalCalledPartyID, CAPExtensions extensions, Carrier carrier, CallingPartysCategoryInap callingPartysCategory,
-			RedirectingPartyIDCap redirectingPartyID, RedirectionInformationInap redirectionInformation, ArrayList<GenericNumberCap> genericNumbers,
-			ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, LocationNumberCap chargeNumber, LegID legToBeConnected, CUGInterlock cugInterlock,
-			boolean cugOutgoingAccess, boolean suppressionOfAnnouncement, boolean ocsIApplicable, NAOliInfo naoliInfo, boolean borInterrogationRequested)
-			throws CAPException;
+    Long addConnectRequest(int customInvokeTimeout, DestinationRoutingAddress destinationRoutingAddress,
+            AlertingPatternCap alertingPattern, OriginalCalledNumberCap originalCalledPartyID, CAPExtensions extensions,
+            Carrier carrier, CallingPartysCategoryInap callingPartysCategory, RedirectingPartyIDCap redirectingPartyID,
+            RedirectionInformationInap redirectionInformation, ArrayList<GenericNumberCap> genericNumbers,
+            ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, LocationNumberCap chargeNumber,
+            LegID legToBeConnected, CUGInterlock cugInterlock, boolean cugOutgoingAccess, boolean suppressionOfAnnouncement,
+            boolean ocsIApplicable, NAOliInfo naoliInfo, boolean borInterrogationRequested) throws CAPException;
 
-	public Long addContinueRequest() throws CAPException;
+    Long addContinueRequest() throws CAPException;
 
-	public Long addContinueRequest(int customInvokeTimeout) throws CAPException;
+    Long addContinueRequest(int customInvokeTimeout) throws CAPException;
 
-	public Long addEventReportBCSMRequest(EventTypeBCSM eventTypeBCSM, EventSpecificInformationBCSM eventSpecificInformationBCSM, ReceivingSideID legID,
-			MiscCallInfo miscCallInfo, CAPExtensions extensions) throws CAPException;
+    Long addEventReportBCSMRequest(EventTypeBCSM eventTypeBCSM,
+            EventSpecificInformationBCSM eventSpecificInformationBCSM, ReceivingSideID legID, MiscCallInfo miscCallInfo,
+            CAPExtensions extensions) throws CAPException;
 
-	public Long addEventReportBCSMRequest(int customInvokeTimeout, EventTypeBCSM eventTypeBCSM, EventSpecificInformationBCSM eventSpecificInformationBCSM,
-			ReceivingSideID legID, MiscCallInfo miscCallInfo, CAPExtensions extensions) throws CAPException;
+    Long addEventReportBCSMRequest(int customInvokeTimeout, EventTypeBCSM eventTypeBCSM,
+            EventSpecificInformationBCSM eventSpecificInformationBCSM, ReceivingSideID legID, MiscCallInfo miscCallInfo,
+            CAPExtensions extensions) throws CAPException;
 
-	public Long addRequestReportBCSMEventRequest(ArrayList<BCSMEvent> bcsmEventList, CAPExtensions extensions) throws CAPException;
+    Long addRequestReportBCSMEventRequest(ArrayList<BCSMEvent> bcsmEventList, CAPExtensions extensions)
+            throws CAPException;
 
-	public Long addRequestReportBCSMEventRequest(int customInvokeTimeout, ArrayList<BCSMEvent> bcsmEventList, CAPExtensions extensions) throws CAPException;
+    Long addRequestReportBCSMEventRequest(int customInvokeTimeout, ArrayList<BCSMEvent> bcsmEventList,
+            CAPExtensions extensions) throws CAPException;
 
-	public Long addReleaseCallRequest(CauseCap cause) throws CAPException;
+    Long addReleaseCallRequest(CauseCap cause) throws CAPException;
 
-	public Long addReleaseCallRequest(int customInvokeTimeout, CauseCap cause) throws CAPException;
+    Long addReleaseCallRequest(int customInvokeTimeout, CauseCap cause) throws CAPException;
 
-	public Long addActivityTestRequest() throws CAPException;
+    Long addActivityTestRequest() throws CAPException;
 
-	public Long addActivityTestRequest(int customInvokeTimeout) throws CAPException;
+    Long addActivityTestRequest(int customInvokeTimeout) throws CAPException;
 
-	public void addActivityTestResponse(long invokeId) throws CAPException;
+    void addActivityTestResponse(long invokeId) throws CAPException;
 
-	public Long addAssistRequestInstructionsRequest(Digits correlationID, IPSSPCapabilities ipSSPCapabilities, CAPExtensions extensions) throws CAPException;
+    Long addAssistRequestInstructionsRequest(Digits correlationID, IPSSPCapabilities ipSSPCapabilities,
+            CAPExtensions extensions) throws CAPException;
 
-	public Long addAssistRequestInstructionsRequest(int customInvokeTimeout, Digits correlationID, IPSSPCapabilities ipSSPCapabilities, CAPExtensions extensions) throws CAPException;
+    Long addAssistRequestInstructionsRequest(int customInvokeTimeout, Digits correlationID,
+            IPSSPCapabilities ipSSPCapabilities, CAPExtensions extensions) throws CAPException;
 
-	public Long addEstablishTemporaryConnectionRequest(Digits assistingSSPIPRoutingAddress, Digits correlationID, ScfID scfID, CAPExtensions extensions,
-			Carrier carrier, ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, Integer callSegmentID, NAOliInfo naOliInfo,
-			LocationNumberCap chargeNumber, OriginalCalledNumberCap originalCalledPartyID, CallingPartyNumberCap callingPartyNumber) throws CAPException;
+    Long addEstablishTemporaryConnectionRequest(Digits assistingSSPIPRoutingAddress, Digits correlationID, ScfID scfID,
+            CAPExtensions extensions, Carrier carrier, ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo,
+            Integer callSegmentID, NAOliInfo naOliInfo, LocationNumberCap chargeNumber,
+            OriginalCalledNumberCap originalCalledPartyID, CallingPartyNumberCap callingPartyNumber) throws CAPException;
 
-	public Long addEstablishTemporaryConnectionRequest(int customInvokeTimeout, Digits assistingSSPIPRoutingAddress, Digits correlationID, ScfID scfID,
-			CAPExtensions extensions, Carrier carrier, ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, Integer callSegmentID,
-			NAOliInfo naOliInfo, LocationNumberCap chargeNumber, OriginalCalledNumberCap originalCalledPartyID, CallingPartyNumberCap callingPartyNumber)
-			throws CAPException;
+    Long addEstablishTemporaryConnectionRequest(int customInvokeTimeout, Digits assistingSSPIPRoutingAddress,
+            Digits correlationID, ScfID scfID, CAPExtensions extensions, Carrier carrier,
+            ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, Integer callSegmentID, NAOliInfo naOliInfo,
+            LocationNumberCap chargeNumber, OriginalCalledNumberCap originalCalledPartyID,
+            CallingPartyNumberCap callingPartyNumber) throws CAPException;
 
-	public Long addDisconnectForwardConnectionRequest() throws CAPException;
+    Long addDisconnectForwardConnectionRequest() throws CAPException;
 
-	public Long addDisconnectForwardConnectionRequest(int customInvokeTimeout) throws CAPException;
+    Long addDisconnectForwardConnectionRequest(int customInvokeTimeout) throws CAPException;
 
-	public Long addConnectToResourceRequest(CalledPartyNumberCap resourceAddress_IPRoutingAddress, boolean resourceAddress_Null, CAPExtensions extensions,
-			ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, Integer callSegmentID) throws CAPException;
+    Long addConnectToResourceRequest(CalledPartyNumberCap resourceAddress_IPRoutingAddress,
+            boolean resourceAddress_Null, CAPExtensions extensions,
+            ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, Integer callSegmentID) throws CAPException;
 
-	public Long addConnectToResourceRequest(int customInvokeTimeout, CalledPartyNumberCap resourceAddress_IPRoutingAddress, boolean resourceAddress_Null,
-			CAPExtensions extensions, ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, Integer callSegmentID) throws CAPException;
+    Long addConnectToResourceRequest(int customInvokeTimeout, CalledPartyNumberCap resourceAddress_IPRoutingAddress,
+            boolean resourceAddress_Null, CAPExtensions extensions,
+            ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, Integer callSegmentID) throws CAPException;
 
-	public Long addResetTimerRequest(TimerID timerID, int timerValue, CAPExtensions extensions, Integer callSegmentID) throws CAPException;
+    Long addResetTimerRequest(TimerID timerID, int timerValue, CAPExtensions extensions, Integer callSegmentID)
+            throws CAPException;
 
-	public Long addResetTimerRequest(int customInvokeTimeout, TimerID timerID, int timerValue, CAPExtensions extensions, Integer callSegmentID)
-			throws CAPException;
+    Long addResetTimerRequest(int customInvokeTimeout, TimerID timerID, int timerValue, CAPExtensions extensions,
+            Integer callSegmentID) throws CAPException;
 
-	public Long addFurnishChargingInformationRequest(FCIBCCCAMELsequence1 FCIBCCCAMELsequence1) throws CAPException;
+    Long addFurnishChargingInformationRequest(FCIBCCCAMELsequence1 FCIBCCCAMELsequence1) throws CAPException;
 
-	public Long addFurnishChargingInformationRequest(int customInvokeTimeout, FCIBCCCAMELsequence1 FCIBCCCAMELsequence1) throws CAPException;
+    Long addFurnishChargingInformationRequest(int customInvokeTimeout, FCIBCCCAMELsequence1 FCIBCCCAMELsequence1)
+            throws CAPException;
 
-	public Long addSendChargingInformationRequest(SCIBillingChargingCharacteristics sciBillingChargingCharacteristics, SendingSideID partyToCharge,
-			CAPExtensions extensions) throws CAPException;
+    Long addSendChargingInformationRequest(SCIBillingChargingCharacteristics sciBillingChargingCharacteristics,
+            SendingSideID partyToCharge, CAPExtensions extensions) throws CAPException;
 
-	public Long addSendChargingInformationRequest(int customInvokeTimeout, SCIBillingChargingCharacteristics sciBillingChargingCharacteristics,
-			SendingSideID partyToCharge, CAPExtensions extensions) throws CAPException;
+    Long addSendChargingInformationRequest(int customInvokeTimeout,
+            SCIBillingChargingCharacteristics sciBillingChargingCharacteristics, SendingSideID partyToCharge,
+            CAPExtensions extensions) throws CAPException;
 
-	public Long addSpecializedResourceReportRequest_CapV23(Long linkedId) throws CAPException;
+    Long addSpecializedResourceReportRequest_CapV23(Long linkedId) throws CAPException;
 
-	public Long addSpecializedResourceReportRequest_CapV4(Long linkedId, boolean isAllAnnouncementsComplete, boolean isFirstAnnouncementStarted) throws CAPException;
+    Long addSpecializedResourceReportRequest_CapV4(Long linkedId, boolean isAllAnnouncementsComplete,
+            boolean isFirstAnnouncementStarted) throws CAPException;
 
-	public Long addSpecializedResourceReportRequest_CapV23(Long linkedId, int customInvokeTimeout) throws CAPException;
+    Long addSpecializedResourceReportRequest_CapV23(Long linkedId, int customInvokeTimeout) throws CAPException;
 
-	public Long addSpecializedResourceReportRequest_CapV4(Long linkedId, int customInvokeTimeout, boolean isAllAnnouncementsComplete, boolean isFirstAnnouncementStarted) throws CAPException;
+    Long addSpecializedResourceReportRequest_CapV4(Long linkedId, int customInvokeTimeout,
+            boolean isAllAnnouncementsComplete, boolean isFirstAnnouncementStarted) throws CAPException;
 
-	public Long addPlayAnnouncementRequest(InformationToSend informationToSend, Boolean disconnectFromIPForbidden,
-			Boolean requestAnnouncementCompleteNotification, CAPExtensions extensions, Integer callSegmentID, Boolean requestAnnouncementStartedNotification)
-			throws CAPException;
+    Long addPlayAnnouncementRequest(InformationToSend informationToSend, Boolean disconnectFromIPForbidden,
+            Boolean requestAnnouncementCompleteNotification, CAPExtensions extensions, Integer callSegmentID,
+            Boolean requestAnnouncementStartedNotification) throws CAPException;
 
-	public Long addPlayAnnouncementRequest(int customInvokeTimeout, InformationToSend informationToSend, Boolean disconnectFromIPForbidden,
-			Boolean requestAnnouncementCompleteNotification, CAPExtensions extensions, Integer callSegmentID, Boolean requestAnnouncementStartedNotification)
-			throws CAPException;
+    Long addPlayAnnouncementRequest(int customInvokeTimeout, InformationToSend informationToSend,
+            Boolean disconnectFromIPForbidden, Boolean requestAnnouncementCompleteNotification, CAPExtensions extensions,
+            Integer callSegmentID, Boolean requestAnnouncementStartedNotification) throws CAPException;
 
-	public Long addPromptAndCollectUserInformationRequest(CollectedInfo collectedInfo, Boolean disconnectFromIPForbidden, InformationToSend informationToSend,
-			CAPExtensions extensions, Integer callSegmentID, Boolean requestAnnouncementStartedNotification) throws CAPException;
+    Long addPromptAndCollectUserInformationRequest(CollectedInfo collectedInfo, Boolean disconnectFromIPForbidden,
+            InformationToSend informationToSend, CAPExtensions extensions, Integer callSegmentID,
+            Boolean requestAnnouncementStartedNotification) throws CAPException;
 
-	public Long addPromptAndCollectUserInformationRequest(int customInvokeTimeout, CollectedInfo collectedInfo, Boolean disconnectFromIPForbidden,
-			InformationToSend informationToSend, CAPExtensions extensions, Integer callSegmentID, Boolean requestAnnouncementStartedNotification)
-			throws CAPException;
+    Long addPromptAndCollectUserInformationRequest(int customInvokeTimeout, CollectedInfo collectedInfo,
+            Boolean disconnectFromIPForbidden, InformationToSend informationToSend, CAPExtensions extensions,
+            Integer callSegmentID, Boolean requestAnnouncementStartedNotification) throws CAPException;
 
-	public void addPromptAndCollectUserInformationResponse_DigitsResponse(long invokeId, Digits digitsResponse) throws CAPException;
+    void addPromptAndCollectUserInformationResponse_DigitsResponse(long invokeId, Digits digitsResponse)
+            throws CAPException;
 
-	public Long addCancelRequest_InvokeId(Integer invokeID) throws CAPException;
+    Long addCancelRequest_InvokeId(Integer invokeID) throws CAPException;
 
-	public Long addCancelRequest_AllRequests() throws CAPException;
+    Long addCancelRequest_AllRequests() throws CAPException;
 
-	public Long addCancelRequest_CallSegmentToCancel(CallSegmentToCancel callSegmentToCancel) throws CAPException;
+    Long addCancelRequest_CallSegmentToCancel(CallSegmentToCancel callSegmentToCancel) throws CAPException;
 
-	public Long addCancelRequest_InvokeId(int customInvokeTimeout, Integer invokeID) throws CAPException;
+    Long addCancelRequest_InvokeId(int customInvokeTimeout, Integer invokeID) throws CAPException;
 
-	public Long addCancelRequest_AllRequests(int customInvokeTimeout) throws CAPException;
+    Long addCancelRequest_AllRequests(int customInvokeTimeout) throws CAPException;
 
-	public Long addCancelRequest_CallSegmentToCancel(int customInvokeTimeout, CallSegmentToCancel callSegmentToCancel) throws CAPException;
+    Long addCancelRequest_CallSegmentToCancel(int customInvokeTimeout, CallSegmentToCancel callSegmentToCancel)
+            throws CAPException;
 
 }
-

@@ -42,275 +42,277 @@ import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.Col
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.InformationToSendImpl;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
-public class PromptAndCollectUserInformationRequestImpl extends CircuitSwitchedCallMessageImpl implements PromptAndCollectUserInformationRequest {
+public class PromptAndCollectUserInformationRequestImpl extends CircuitSwitchedCallMessageImpl implements
+        PromptAndCollectUserInformationRequest {
 
-	public static final int _ID_collectedInfo = 0;
-	public static final int _ID_disconnectFromIPForbidden = 1;
-	public static final int _ID_informationToSend = 2;
-	public static final int _ID_extensions = 3;
-	public static final int _ID_callSegmentID = 4;
-	public static final int _ID_requestAnnouncementStartedNotification = 51;
+    public static final int _ID_collectedInfo = 0;
+    public static final int _ID_disconnectFromIPForbidden = 1;
+    public static final int _ID_informationToSend = 2;
+    public static final int _ID_extensions = 3;
+    public static final int _ID_callSegmentID = 4;
+    public static final int _ID_requestAnnouncementStartedNotification = 51;
 
-	public static final String _PrimitiveName = "PromptAndCollectUserInformationRequestIndication";
-	
-	private CollectedInfo collectedInfo;
-	private Boolean disconnectFromIPForbidden;
-	private InformationToSend informationToSend;
-	private CAPExtensions extensions;
-	private Integer callSegmentID;
-	private Boolean requestAnnouncementStartedNotification;
+    public static final String _PrimitiveName = "PromptAndCollectUserInformationRequestIndication";
 
+    private CollectedInfo collectedInfo;
+    private Boolean disconnectFromIPForbidden;
+    private InformationToSend informationToSend;
+    private CAPExtensions extensions;
+    private Integer callSegmentID;
+    private Boolean requestAnnouncementStartedNotification;
 
-	public PromptAndCollectUserInformationRequestImpl() {
-	}
+    public PromptAndCollectUserInformationRequestImpl() {
+    }
 
-	public PromptAndCollectUserInformationRequestImpl(CollectedInfo collectedInfo, Boolean disconnectFromIPForbidden,
-			InformationToSend informationToSend, CAPExtensions extensions, Integer callSegmentID, Boolean requestAnnouncementStartedNotification) {
-		this.collectedInfo = collectedInfo;
-		this.disconnectFromIPForbidden = disconnectFromIPForbidden;
-		this.informationToSend = informationToSend;
-		this.extensions = extensions;
-		this.callSegmentID = callSegmentID;
-		this.requestAnnouncementStartedNotification = requestAnnouncementStartedNotification;
-	}
+    public PromptAndCollectUserInformationRequestImpl(CollectedInfo collectedInfo, Boolean disconnectFromIPForbidden,
+            InformationToSend informationToSend, CAPExtensions extensions, Integer callSegmentID,
+            Boolean requestAnnouncementStartedNotification) {
+        this.collectedInfo = collectedInfo;
+        this.disconnectFromIPForbidden = disconnectFromIPForbidden;
+        this.informationToSend = informationToSend;
+        this.extensions = extensions;
+        this.callSegmentID = callSegmentID;
+        this.requestAnnouncementStartedNotification = requestAnnouncementStartedNotification;
+    }
 
-	@Override
-	public CAPMessageType getMessageType() {
-		return CAPMessageType.promptAndCollectUserInformation_Request;
-	}
+    @Override
+    public CAPMessageType getMessageType() {
+        return CAPMessageType.promptAndCollectUserInformation_Request;
+    }
 
-	@Override
-	public int getOperationCode() {
-		return CAPOperationCode.promptAndCollectUserInformation;
-	}
+    @Override
+    public int getOperationCode() {
+        return CAPOperationCode.promptAndCollectUserInformation;
+    }
 
-	@Override
-	public CollectedInfo getCollectedInfo() {
-		return collectedInfo;
-	}
+    @Override
+    public CollectedInfo getCollectedInfo() {
+        return collectedInfo;
+    }
 
-	@Override
-	public Boolean getDisconnectFromIPForbidden() {
-		return disconnectFromIPForbidden;
-	}
+    @Override
+    public Boolean getDisconnectFromIPForbidden() {
+        return disconnectFromIPForbidden;
+    }
 
-	@Override
-	public InformationToSend getInformationToSend() {
-		return informationToSend;
-	}
+    @Override
+    public InformationToSend getInformationToSend() {
+        return informationToSend;
+    }
 
-	@Override
-	public CAPExtensions getExtensions() {
-		return extensions;
-	}
+    @Override
+    public CAPExtensions getExtensions() {
+        return extensions;
+    }
 
-	@Override
-	public Integer getCallSegmentID() {
-		return callSegmentID;
-	}
+    @Override
+    public Integer getCallSegmentID() {
+        return callSegmentID;
+    }
 
-	@Override
-	public Boolean getRequestAnnouncementStartedNotification() {
-		return requestAnnouncementStartedNotification;
-	}
+    @Override
+    public Boolean getRequestAnnouncementStartedNotification() {
+        return requestAnnouncementStartedNotification;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.SEQUENCE;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		this.collectedInfo = null;
-		this.disconnectFromIPForbidden = null;
-		this.informationToSend = null;
-		this.extensions = null;
-		this.callSegmentID = null;
-		this.requestAnnouncementStartedNotification = null;
+        this.collectedInfo = null;
+        this.disconnectFromIPForbidden = null;
+        this.informationToSend = null;
+        this.extensions = null;
+        this.callSegmentID = null;
+        this.requestAnnouncementStartedNotification = null;
 
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-			int tag = ais.readTag();
+            int tag = ais.readTag();
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_collectedInfo:
-					AsnInputStream ais2 = ais.readSequenceStream();
-					ais2.readTag();
-					this.collectedInfo = new CollectedInfoImpl();
-					((CollectedInfoImpl) this.collectedInfo).decodeAll(ais2);
-					break;
-				case _ID_disconnectFromIPForbidden:
-					this.disconnectFromIPForbidden = ais.readBoolean();
-					break;
-				case _ID_informationToSend:
-					ais2 = ais.readSequenceStream();
-					ais2.readTag();
-					this.informationToSend = new InformationToSendImpl();
-					((InformationToSendImpl) this.informationToSend).decodeAll(ais2);
-					break;
-				case _ID_extensions:
-					this.extensions = new CAPExtensionsImpl();
-					((CAPExtensionsImpl) this.extensions).decodeAll(ais);
-					break;
-				case _ID_callSegmentID:
-					this.callSegmentID = (int) ais.readInteger();
-					break;
-				case _ID_requestAnnouncementStartedNotification:
-					this.requestAnnouncementStartedNotification = ais.readBoolean();
-					break;
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_collectedInfo:
+                        AsnInputStream ais2 = ais.readSequenceStream();
+                        ais2.readTag();
+                        this.collectedInfo = new CollectedInfoImpl();
+                        ((CollectedInfoImpl) this.collectedInfo).decodeAll(ais2);
+                        break;
+                    case _ID_disconnectFromIPForbidden:
+                        this.disconnectFromIPForbidden = ais.readBoolean();
+                        break;
+                    case _ID_informationToSend:
+                        ais2 = ais.readSequenceStream();
+                        ais2.readTag();
+                        this.informationToSend = new InformationToSendImpl();
+                        ((InformationToSendImpl) this.informationToSend).decodeAll(ais2);
+                        break;
+                    case _ID_extensions:
+                        this.extensions = new CAPExtensionsImpl();
+                        ((CAPExtensionsImpl) this.extensions).decodeAll(ais);
+                        break;
+                    case _ID_callSegmentID:
+                        this.callSegmentID = (int) ais.readInteger();
+                        break;
+                    case _ID_requestAnnouncementStartedNotification:
+                        this.requestAnnouncementStartedNotification = ais.readBoolean();
+                        break;
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
 
-		if (this.collectedInfo == null)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": parameter collectedInfo is mandatory but not found",
-					CAPParsingComponentExceptionReason.MistypedParameter);
-	}
+        if (this.collectedInfo == null)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": parameter collectedInfo is mandatory but not found",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream aos) throws CAPException {
+    @Override
+    public void encodeData(AsnOutputStream aos) throws CAPException {
 
-		if (this.collectedInfo == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": collectedInfo must not be null");
+        if (this.collectedInfo == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": collectedInfo must not be null");
 
-		try {
+        try {
 
-			aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_collectedInfo);
-			int pos = aos.StartContentDefiniteLength();
-			((CollectedInfoImpl) this.collectedInfo).encodeAll(aos);
-			aos.FinalizeContent(pos);
+            aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_collectedInfo);
+            int pos = aos.StartContentDefiniteLength();
+            ((CollectedInfoImpl) this.collectedInfo).encodeAll(aos);
+            aos.FinalizeContent(pos);
 
-			if (this.disconnectFromIPForbidden != null)
-				aos.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC, _ID_disconnectFromIPForbidden, this.disconnectFromIPForbidden);
+            if (this.disconnectFromIPForbidden != null)
+                aos.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC, _ID_disconnectFromIPForbidden, this.disconnectFromIPForbidden);
 
-			if (this.informationToSend != null) {
-				aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_informationToSend);
-				pos = aos.StartContentDefiniteLength();
-				((InformationToSendImpl) this.informationToSend).encodeAll(aos);
-				aos.FinalizeContent(pos);
-			}
+            if (this.informationToSend != null) {
+                aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_informationToSend);
+                pos = aos.StartContentDefiniteLength();
+                ((InformationToSendImpl) this.informationToSend).encodeAll(aos);
+                aos.FinalizeContent(pos);
+            }
 
-			if (this.extensions != null)
-				((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
+            if (this.extensions != null)
+                ((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
 
-			if (this.callSegmentID != null)
-				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_callSegmentID, this.callSegmentID);
-			if (this.requestAnnouncementStartedNotification != null)
-				aos.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC, _ID_requestAnnouncementStartedNotification, this.requestAnnouncementStartedNotification);
+            if (this.callSegmentID != null)
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_callSegmentID, this.callSegmentID);
+            if (this.requestAnnouncementStartedNotification != null)
+                aos.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC, _ID_requestAnnouncementStartedNotification,
+                        this.requestAnnouncementStartedNotification);
 
-		} catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public String toString() {
+    @Override
+    public String toString() {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		if (this.collectedInfo != null) {
-			sb.append("collectedInfo=");
-			sb.append(collectedInfo.toString());
-		}
-		if (this.disconnectFromIPForbidden != null) {
-			sb.append(", disconnectFromIPForbidden=");
-			sb.append(disconnectFromIPForbidden);
-		}
-		if (this.informationToSend != null) {
-			sb.append(", informationToSend=");
-			sb.append(informationToSend.toString());
-		}
-		if (this.extensions != null) {
-			sb.append(", extensions=");
-			sb.append(extensions.toString());
-		}
-		if (this.callSegmentID != null) {
-			sb.append(", callSegmentID=");
-			sb.append(callSegmentID);
-		}
-		if (this.requestAnnouncementStartedNotification != null) {
-			sb.append(", requestAnnouncementStartedNotification=");
-			sb.append(requestAnnouncementStartedNotification);
-		}
+        if (this.collectedInfo != null) {
+            sb.append("collectedInfo=");
+            sb.append(collectedInfo.toString());
+        }
+        if (this.disconnectFromIPForbidden != null) {
+            sb.append(", disconnectFromIPForbidden=");
+            sb.append(disconnectFromIPForbidden);
+        }
+        if (this.informationToSend != null) {
+            sb.append(", informationToSend=");
+            sb.append(informationToSend.toString());
+        }
+        if (this.extensions != null) {
+            sb.append(", extensions=");
+            sb.append(extensions.toString());
+        }
+        if (this.callSegmentID != null) {
+            sb.append(", callSegmentID=");
+            sb.append(callSegmentID);
+        }
+        if (this.requestAnnouncementStartedNotification != null) {
+            sb.append(", requestAnnouncementStartedNotification=");
+            sb.append(requestAnnouncementStartedNotification);
+        }
 
-		sb.append("]");
+        sb.append("]");
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 }
-

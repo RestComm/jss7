@@ -26,24 +26,20 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ODBData;
 
 /**
- * 
-
-ModificationRequestFor-ODB-data ::= SEQUENCE {
-	odb-data		[0]	ODB-Data	OPTIONAL,
-	modifyNotificationToCSE	[1]	ModificationInstruction	OPTIONAL,
-	extensionContainer	[2]	ExtensionContainer	OPTIONAL,
-	...}
-
- * 
+ *
+ ModificationRequestFor-ODB-data ::= SEQUENCE { odb-data [0] ODB-Data OPTIONAL, modifyNotificationToCSE [1]
+ * ModificationInstruction OPTIONAL, extensionContainer [2] ExtensionContainer OPTIONAL, ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ModificationRequestForODBdata {
 
-	public ODBData getOdbData();
+    ODBData getOdbData();
 
-	public ModificationInstruction getModifyNotificationToCSE();
+    ModificationInstruction getModifyNotificationToCSE();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

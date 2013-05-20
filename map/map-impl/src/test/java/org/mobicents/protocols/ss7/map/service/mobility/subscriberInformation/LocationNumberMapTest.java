@@ -22,7 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -36,99 +37,105 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.LocationNumberImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
-import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.LocationNumberMapImpl;
-import org.testng.annotations.*;
+import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
  *
  */
 public class LocationNumberMapTest {
-	
-	private byte[] getData() {
-		return new byte[] { -126, 8, -125, -63, 8, 2, -105, 1, 32, 0 };
-	}
-	
-	private byte[] getIntData() {
-		return new byte[] { -125, -63, 8, 2, -105, 1, 32, 0 };
-	}
 
-	@Test(groups = { "functional.decode","primitives"})
-	public void testDecode() throws Exception {
-		
-		byte[] rawData = getData();
-		
-		AsnInputStream asn = new AsnInputStream(rawData);
+    private byte[] getData() {
+        return new byte[] { -126, 8, -125, -63, 8, 2, -105, 1, 32, 0 };
+    }
 
-		int tag = asn.readTag();
-		LocationNumberMapImpl impl = new LocationNumberMapImpl();
-		impl.decodeAll(asn);
-		LocationNumber ln = impl.getLocationNumber();
+    private byte[] getIntData() {
+        return new byte[] { -125, -63, 8, 2, -105, 1, 32, 0 };
+    }
 
-		assertTrue(Arrays.equals(impl.getData(), this.getIntData()));
-		assertEquals(ln.getNatureOfAddressIndicator(), LocationNumber._NAI_NATIONAL_SN);
-		assertTrue(ln.getAddress().equals("80207910020"));
-		assertEquals(ln.getNumberingPlanIndicator(), LocationNumber._NPI_TELEX);
-		assertEquals(ln.getInternalNetworkNumberIndicator(), LocationNumber._INN_ROUTING_NOT_ALLOWED);
-		assertEquals(ln.getAddressRepresentationRestrictedIndicator(), LocationNumber._APRI_ALLOWED);
-		assertEquals(ln.getScreeningIndicator(), LocationNumber._SI_USER_PROVIDED_VERIFIED_PASSED);
-}
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testDecode() throws Exception {
 
-	@Test(groups = { "functional.encode","primitives"})
-	public void testEncode() throws Exception {
-		
-		LocationNumberMapImpl impl = new LocationNumberMapImpl(this.getIntData());
-		AsnOutputStream asnOS = new AsnOutputStream();
-		impl.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, 2);
-		byte[] encodedData = asnOS.toByteArray();
-		byte[] rawData = getData();		
-		assertTrue( Arrays.equals(rawData,encodedData));
+        byte[] rawData = getData();
 
-		LocationNumberImpl ln = new LocationNumberImpl(LocationNumber._NAI_NATIONAL_SN, "80207910020", LocationNumber._NPI_TELEX,
-				LocationNumber._INN_ROUTING_NOT_ALLOWED, LocationNumber._APRI_ALLOWED, LocationNumber._SI_USER_PROVIDED_VERIFIED_PASSED);
-		impl = new LocationNumberMapImpl(ln);
-		asnOS = new AsnOutputStream();
-		impl.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, 2);
-		encodedData = asnOS.toByteArray();
-		rawData = getData();		
-		assertTrue( Arrays.equals(rawData,encodedData));
+        AsnInputStream asn = new AsnInputStream(rawData);
 
-		// int natureOfAddresIndicator, String address, int numberingPlanIndicator, int internalNetworkNumberIndicator, int addressRepresentationREstrictedIndicator,
-		// int screeningIndicator
-	}
+        int tag = asn.readTag();
+        LocationNumberMapImpl impl = new LocationNumberMapImpl();
+        impl.decodeAll(asn);
+        LocationNumber ln = impl.getLocationNumber();
 
-	@Test(groups = { "functional.xml.serialize", "primitives" })
-	public void testXMLSerialize() throws Exception {
+        assertTrue(Arrays.equals(impl.getData(), this.getIntData()));
+        assertEquals(ln.getNatureOfAddressIndicator(), LocationNumber._NAI_NATIONAL_SN);
+        assertTrue(ln.getAddress().equals("80207910020"));
+        assertEquals(ln.getNumberingPlanIndicator(), LocationNumber._NPI_TELEX);
+        assertEquals(ln.getInternalNetworkNumberIndicator(), LocationNumber._INN_ROUTING_NOT_ALLOWED);
+        assertEquals(ln.getAddressRepresentationRestrictedIndicator(), LocationNumber._APRI_ALLOWED);
+        assertEquals(ln.getScreeningIndicator(), LocationNumber._SI_USER_PROVIDED_VERIFIED_PASSED);
+    }
 
-		LocationNumberImpl ln = new LocationNumberImpl(LocationNumber._NAI_NATIONAL_SN, "80207910020", LocationNumber._NPI_TELEX,
-				LocationNumber._INN_ROUTING_NOT_ALLOWED, LocationNumber._APRI_ALLOWED, LocationNumber._SI_USER_PROVIDED_VERIFIED_PASSED);
-		LocationNumberMapImpl original = new LocationNumberMapImpl(ln);
+    @Test(groups = { "functional.encode", "primitives" })
+    public void testEncode() throws Exception {
 
-		// Writes the area to a file.
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
-		// writer.setBinding(binding); // Optional.
-		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
-		writer.write(original, "locationNumberMap", LocationNumberMapImpl.class);
-		writer.close();
+        LocationNumberMapImpl impl = new LocationNumberMapImpl(this.getIntData());
+        AsnOutputStream asnOS = new AsnOutputStream();
+        impl.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, 2);
+        byte[] encodedData = asnOS.toByteArray();
+        byte[] rawData = getData();
+        assertTrue(Arrays.equals(rawData, encodedData));
 
-		byte[] rawData = baos.toByteArray();
-		String serializedEvent = new String(rawData);
+        LocationNumberImpl ln = new LocationNumberImpl(LocationNumber._NAI_NATIONAL_SN, "80207910020",
+                LocationNumber._NPI_TELEX, LocationNumber._INN_ROUTING_NOT_ALLOWED, LocationNumber._APRI_ALLOWED,
+                LocationNumber._SI_USER_PROVIDED_VERIFIED_PASSED);
+        impl = new LocationNumberMapImpl(ln);
+        asnOS = new AsnOutputStream();
+        impl.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, 2);
+        encodedData = asnOS.toByteArray();
+        rawData = getData();
+        assertTrue(Arrays.equals(rawData, encodedData));
 
-		System.out.println(serializedEvent);
+        // int natureOfAddresIndicator, String address, int numberingPlanIndicator, int internalNetworkNumberIndicator, int
+        // addressRepresentationREstrictedIndicator,
+        // int screeningIndicator
+    }
 
-		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
-		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
-		LocationNumberMapImpl copy = reader.read("locationNumberMap", LocationNumberMapImpl.class);
+    @Test(groups = { "functional.xml.serialize", "primitives" })
+    public void testXMLSerialize() throws Exception {
 
-		assertEquals(copy.getLocationNumber().getAddress(), original.getLocationNumber().getAddress());
-		assertEquals(copy.getLocationNumber().getAddressRepresentationRestrictedIndicator(), original.getLocationNumber().getAddressRepresentationRestrictedIndicator());
-		assertEquals(copy.getLocationNumber().getInternalNetworkNumberIndicator(), original.getLocationNumber().getInternalNetworkNumberIndicator());
-		assertEquals(copy.getLocationNumber().getNatureOfAddressIndicator(), original.getLocationNumber().getNatureOfAddressIndicator());
-		assertEquals(copy.getLocationNumber().getNumberingPlanIndicator(), original.getLocationNumber().getNumberingPlanIndicator());
-		assertEquals(copy.getLocationNumber().getScreeningIndicator(), original.getLocationNumber().getScreeningIndicator());
+        LocationNumberImpl ln = new LocationNumberImpl(LocationNumber._NAI_NATIONAL_SN, "80207910020",
+                LocationNumber._NPI_TELEX, LocationNumber._INN_ROUTING_NOT_ALLOWED, LocationNumber._APRI_ALLOWED,
+                LocationNumber._SI_USER_PROVIDED_VERIFIED_PASSED);
+        LocationNumberMapImpl original = new LocationNumberMapImpl(ln);
 
-	}
+        // Writes the area to a file.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+        writer.write(original, "locationNumberMap", LocationNumberMapImpl.class);
+        writer.close();
+
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        LocationNumberMapImpl copy = reader.read("locationNumberMap", LocationNumberMapImpl.class);
+
+        assertEquals(copy.getLocationNumber().getAddress(), original.getLocationNumber().getAddress());
+        assertEquals(copy.getLocationNumber().getAddressRepresentationRestrictedIndicator(), original.getLocationNumber()
+                .getAddressRepresentationRestrictedIndicator());
+        assertEquals(copy.getLocationNumber().getInternalNetworkNumberIndicator(), original.getLocationNumber()
+                .getInternalNetworkNumberIndicator());
+        assertEquals(copy.getLocationNumber().getNatureOfAddressIndicator(), original.getLocationNumber()
+                .getNatureOfAddressIndicator());
+        assertEquals(copy.getLocationNumber().getNumberingPlanIndicator(), original.getLocationNumber()
+                .getNumberingPlanIndicator());
+        assertEquals(copy.getLocationNumber().getScreeningIndicator(), original.getLocationNumber().getScreeningIndicator());
+
+    }
 
 }

@@ -33,29 +33,29 @@ import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingKey;
 
 /**
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public class RegistrationRequestImpl extends M3UAMessageImpl implements RegistrationRequest {
 
-	public RegistrationRequestImpl() {
-		super(MessageClass.ROUTING_KEY_MANAGEMENT, MessageType.REG_REQUEST, MessageType.S_REG_REQUEST);
-	}
+    public RegistrationRequestImpl() {
+        super(MessageClass.ROUTING_KEY_MANAGEMENT, MessageType.REG_REQUEST, MessageType.S_REG_REQUEST);
+    }
 
-	@Override
-	protected void encodeParams(ByteBuffer buffer) {
-		if (parameters.containsKey(Parameter.Routing_Key)) {
-			((ParameterImpl) parameters.get(Parameter.Routing_Key)).write(buffer);
-		}
-	}
+    @Override
+    protected void encodeParams(ByteBuffer buffer) {
+        if (parameters.containsKey(Parameter.Routing_Key)) {
+            ((ParameterImpl) parameters.get(Parameter.Routing_Key)).write(buffer);
+        }
+    }
 
-	public RoutingKey getRoutingKey() {
-		return (RoutingKey) parameters.get(Parameter.Routing_Key);
-	}
+    public RoutingKey getRoutingKey() {
+        return (RoutingKey) parameters.get(Parameter.Routing_Key);
+    }
 
-	public void setRoutingKey(RoutingKey key) {
-		parameters.put(Parameter.Routing_Key, key);
-	}
+    public void setRoutingKey(RoutingKey key) {
+        parameters.put(Parameter.Routing_Key, key);
+    }
 
 }

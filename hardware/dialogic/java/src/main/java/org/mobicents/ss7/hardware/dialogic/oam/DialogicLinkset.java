@@ -22,33 +22,24 @@
 
 package org.mobicents.ss7.hardware.dialogic.oam;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.stream.api.SelectorKey;
-import org.mobicents.protocols.stream.api.SelectorProvider;
-import org.mobicents.protocols.stream.api.StreamSelector;
 import org.mobicents.ss7.hardware.dialogic.InterProcessCommunicator;
 import org.mobicents.ss7.linkset.oam.FormatterHelp;
 import org.mobicents.ss7.linkset.oam.LinkOAMMessages;
 import org.mobicents.ss7.linkset.oam.Linkset;
 import org.mobicents.ss7.linkset.oam.LinksetMode;
-import org.mobicents.ss7.linkset.oam.LinksetSelector;
 import org.mobicents.ss7.linkset.oam.LinksetState;
-import org.mobicents.ss7.linkset.oam.LinksetStream;
 
 /**
  * <p>
- * Linkset for <tt>dialogic</tt> based hardware. <tt>dialogic</tt> boards
- * have MTP2 and MTP3 support on board.
+ * Linkset for <tt>dialogic</tt> based hardware. <tt>dialogic</tt> boards have MTP2 and MTP3 support on board.
  * </p>
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public class DialogicLinkset extends Linkset {
 
@@ -90,7 +81,7 @@ public class DialogicLinkset extends Linkset {
 
     @Override
     protected void initialize() {
-       // this.linksetStream = new LinksetStreamImpl();
+        // this.linksetStream = new LinksetStreamImpl();
     }
 
     @Override
@@ -136,8 +127,7 @@ public class DialogicLinkset extends Linkset {
         throw new Exception(LinkOAMMessages.NOT_IMPLEMENTED);
     }
 
-    protected static final XMLFormat<DialogicLinkset> DAHDI_LINK_XML = new XMLFormat<DialogicLinkset>(
-            DialogicLinkset.class) {
+    protected static final XMLFormat<DialogicLinkset> DAHDI_LINK_XML = new XMLFormat<DialogicLinkset>(DialogicLinkset.class) {
 
         @Override
         public void read(javolution.xml.XMLFormat.InputElement xml, DialogicLinkset linkset) throws XMLStreamException {
@@ -155,8 +145,7 @@ public class DialogicLinkset extends Linkset {
         }
 
         @Override
-        public void write(DialogicLinkset linkset, javolution.xml.XMLFormat.OutputElement xml)
-                throws XMLStreamException {
+        public void write(DialogicLinkset linkset, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
 
             LINKSET_XML.write(linkset, xml);
 
@@ -165,67 +154,67 @@ public class DialogicLinkset extends Linkset {
         }
     };
 
-//    private class LinksetStreamImpl extends LinksetStream {
-//       ByteBuffer rxData = null;
-//
-//        @Override
-//        public boolean poll(int arg0, int arg1) {
-//        	rxData = null;
-//            try {
-//                if (ipc != null) {
-//                    rxData = ipc.read(null);
-//                    return true;
-//                }
-//            } catch (IOException ex) {
-//                logger.error("IO error while receiving data from InterProcessCommunicator", ex);
-//            }
-//            return false;
-//        }
-//
-//        @Override
-//        public String getName() {
-//            return linksetName;
-//        }
-//
-//        public void close() {
-//            // TODO Auto-generated method stub
-//
-//        }
-//
-//        public SelectorProvider provider() {
-//            throw new UnsupportedOperationException("Not supported yet.");
-//        }
-//
-//        public int read(byte[] paramArrayOfByte) throws IOException {
-//            if (rxData != null) {
-//                System.arraycopy(rxData, 0, paramArrayOfByte, 0, rxData.length);
-//                return rxData.length;
-//            }
-//
-//            return 0;
-//        }
-//
-//        public SelectorKey register(StreamSelector selector) throws IOException {
-//            return ((LinksetSelector) selector).register(this);
-//        }
-//
-//        public int write(byte[] paramArrayOfByte) throws IOException {
-//            ipc.send(paramArrayOfByte);
-//            return paramArrayOfByte.length;
-//        }
-//
-//		@Override
-//		public int read(ByteBuffer arg0) throws IOException {
-//			// TODO Auto-generated method stub
-//			return 0;
-//		}
-//
-//		@Override
-//		public int write(ByteBuffer arg0) throws IOException {
-//			// TODO Auto-generated method stub
-//			return 0;
-//		}
-//    }
+    // private class LinksetStreamImpl extends LinksetStream {
+    // ByteBuffer rxData = null;
+    //
+    // @Override
+    // public boolean poll(int arg0, int arg1) {
+    // rxData = null;
+    // try {
+    // if (ipc != null) {
+    // rxData = ipc.read(null);
+    // return true;
+    // }
+    // } catch (IOException ex) {
+    // logger.error("IO error while receiving data from InterProcessCommunicator", ex);
+    // }
+    // return false;
+    // }
+    //
+    // @Override
+    // public String getName() {
+    // return linksetName;
+    // }
+    //
+    // public void close() {
+    // // TODO Auto-generated method stub
+    //
+    // }
+    //
+    // public SelectorProvider provider() {
+    // throw new UnsupportedOperationException("Not supported yet.");
+    // }
+    //
+    // public int read(byte[] paramArrayOfByte) throws IOException {
+    // if (rxData != null) {
+    // System.arraycopy(rxData, 0, paramArrayOfByte, 0, rxData.length);
+    // return rxData.length;
+    // }
+    //
+    // return 0;
+    // }
+    //
+    // public SelectorKey register(StreamSelector selector) throws IOException {
+    // return ((LinksetSelector) selector).register(this);
+    // }
+    //
+    // public int write(byte[] paramArrayOfByte) throws IOException {
+    // ipc.send(paramArrayOfByte);
+    // return paramArrayOfByte.length;
+    // }
+    //
+    // @Override
+    // public int read(ByteBuffer arg0) throws IOException {
+    // // TODO Auto-generated method stub
+    // return 0;
+    // }
+    //
+    // @Override
+    // public int write(ByteBuffer arg0) throws IOException {
+    // // TODO Auto-generated method stub
+    // return 0;
+    // }
+    // }
 
     @Override
     public void print(StringBuffer sb, int leftPad, int descPad) {

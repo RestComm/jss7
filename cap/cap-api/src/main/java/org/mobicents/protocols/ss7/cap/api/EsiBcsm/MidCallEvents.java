@@ -25,20 +25,17 @@ package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 import org.mobicents.protocols.ss7.cap.api.isup.Digits;
 
 /**
-*
-midCallEvents [1] CHOICE {
-dTMFDigitsCompleted [3] Digits {bound},
-dTMFDigitsTimeOut [4] Digits {bound}
-} OPTIONAL,
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ midCallEvents [1] CHOICE { dTMFDigitsCompleted [3] Digits {bound}, dTMFDigitsTimeOut [4] Digits {bound} } OPTIONAL,
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface MidCallEvents {
 
-	public Digits getDTMFDigitsCompleted();
+    Digits getDTMFDigitsCompleted();
 
-	public Digits getDTMFDigitsTimeOut();
+    Digits getDTMFDigitsTimeOut();
 
 }

@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -25,18 +25,15 @@ package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
 
 /**
-*
-oCalledPartyBusySpecificInfo [3] SEQUENCE {
-busyCause [0] Cause {bound} OPTIONAL,
-...
-},
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ oCalledPartyBusySpecificInfo [3] SEQUENCE { busyCause [0] Cause {bound} OPTIONAL, ... },
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface OCalledPartyBusySpecificInfo {
 
-	public CauseCap getBusyCause();
+    CauseCap getBusyCause();
 
 }

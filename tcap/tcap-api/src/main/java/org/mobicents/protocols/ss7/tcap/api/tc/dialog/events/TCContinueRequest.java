@@ -28,37 +28,36 @@ import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 
 public interface TCContinueRequest extends DialogRequest {
 
-	public void setReturnMessageOnError(boolean val);
+    void setReturnMessageOnError(boolean val);
 
-	public boolean getReturnMessageOnError();
+    boolean getReturnMessageOnError();
 
-	/**
-	 * Sets origin address. This parameter is used only in first TCContinue,
-	 * sent as response to TCBegin. This parameter, if set, changes local peer
-	 * address(remote end will send request to value set by this method).
-	 * 
-	 * @return
-	 */
-	public SccpAddress getOriginatingAddress();
+    /**
+     * Sets origin address. This parameter is used only in first TCContinue, sent as response to TCBegin. This parameter, if
+     * set, changes local peer address(remote end will send request to value set by this method).
+     *
+     * @return
+     */
+    SccpAddress getOriginatingAddress();
 
-	public void setOriginatingAddress(SccpAddress dest);
+    void setOriginatingAddress(SccpAddress dest);
 
-	/**
-	 * Application context name for this dialog.
-	 * 
-	 * @return
-	 */
-	public ApplicationContextName getApplicationContextName();
+    /**
+     * Application context name for this dialog.
+     *
+     * @return
+     */
+    ApplicationContextName getApplicationContextName();
 
-	public void setApplicationContextName(ApplicationContextName acn);
+    void setApplicationContextName(ApplicationContextName acn);
 
-	/**
-	 * User information for this dialog.
-	 * 
-	 * @return
-	 */
-	public UserInformation getUserInformation();
+    /**
+     * User information for this dialog.
+     *
+     * @return
+     */
+    UserInformation getUserInformation();
 
-	public void setUserInformation(UserInformation acn);
+    void setUserInformation(UserInformation acn);
 
 }

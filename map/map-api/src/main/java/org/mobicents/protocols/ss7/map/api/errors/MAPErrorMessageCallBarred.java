@@ -25,36 +25,31 @@ package org.mobicents.protocols.ss7.map.api.errors;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
-*
-* CallBarredParam ::= CHOICE {
-* 	callBarringCause	CallBarringCause,
-* 	-- call BarringCause must not be used in version 3 and higher
-* 	extensibleCallBarredParam	ExtensibleCallBarredParam
-* 	-- extensibleCallBarredParam must not be used in version <3
-* 	}
-* 
-*
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ * CallBarredParam ::= CHOICE { callBarringCause CallBarringCause, -- call BarringCause must not be used in version 3 and higher
+ * extensibleCallBarredParam ExtensibleCallBarredParam -- extensibleCallBarredParam must not be used in version <3 }
+ *
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface MAPErrorMessageCallBarred extends MAPErrorMessage {
-	
-	public CallBarringCause getCallBarringCause();
-	
-	public MAPExtensionContainer getExtensionContainer();
 
-	public Boolean getUnauthorisedMessageOriginator();
-	
-	public long getMapProtocolVersion();
+    CallBarringCause getCallBarringCause();
 
-	public void setCallBarringCause(CallBarringCause callBarringCause);
+    MAPExtensionContainer getExtensionContainer();
 
-	public void setExtensionContainer(MAPExtensionContainer extensionContainer);
+    Boolean getUnauthorisedMessageOriginator();
 
-	public void setUnauthorisedMessageOriginator(Boolean unauthorisedMessageOriginator);
+    long getMapProtocolVersion();
 
-	public void setMapProtocolVersion(long mapProtocolVersion);
+    void setCallBarringCause(CallBarringCause callBarringCause);
+
+    void setExtensionContainer(MAPExtensionContainer extensionContainer);
+
+    void setUnauthorisedMessageOriginator(Boolean unauthorisedMessageOriginator);
+
+    void setMapProtocolVersion(long mapProtocolVersion);
 
 }
-

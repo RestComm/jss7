@@ -25,19 +25,16 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformati
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
-/**	
- * 
-
-NoteSubscriberDataModifiedRes ::= SEQUENCE {
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...}
-
- * 
+/**
+ *
+ NoteSubscriberDataModifiedRes ::= SEQUENCE { extensionContainer ExtensionContainer OPTIONAL, ...}
+ *
+ *
  * @author sergey vetyutnev
  *
  */
 public interface NoteSubscriberDataModifiedResponse extends MobilityMessage {
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

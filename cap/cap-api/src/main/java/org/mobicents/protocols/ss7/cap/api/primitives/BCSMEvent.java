@@ -26,30 +26,24 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
 
 /**
-*
-BCSMEvent{PARAMETERS-BOUND : bound} ::= SEQUENCE { 
- eventTypeBCSM      [0] EventTypeBCSM, 
- monitorMode       [1] MonitorMode, 
- legID        [2] LegID         OPTIONAL, 
- dpSpecificCriteria     [30] DpSpecificCriteria {bound}    OPTIONAL, 
- automaticRearm      [50] NULL         OPTIONAL, 
- ... 
- } 
--- Indicates the BCSM Event information for monitoring.
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ BCSMEvent{PARAMETERS-BOUND : bound} ::= SEQUENCE { eventTypeBCSM [0] EventTypeBCSM, monitorMode [1] MonitorMode, legID [2]
+ * LegID OPTIONAL, dpSpecificCriteria [30] DpSpecificCriteria {bound} OPTIONAL, automaticRearm [50] NULL OPTIONAL, ... } --
+ * Indicates the BCSM Event information for monitoring.
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface BCSMEvent {
 
-	public EventTypeBCSM getEventTypeBCSM();
+    EventTypeBCSM getEventTypeBCSM();
 
-	public MonitorMode getMonitorMode();
+    MonitorMode getMonitorMode();
 
-	public LegID getLegID();
+    LegID getLegID();
 
-	public DpSpecificCriteria getDpSpecificCriteria();
+    DpSpecificCriteria getDpSpecificCriteria();
 
-	public boolean getAutomaticRearm();
+    boolean getAutomaticRearm();
 
 }

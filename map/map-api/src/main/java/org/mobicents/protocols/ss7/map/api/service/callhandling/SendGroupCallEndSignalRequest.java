@@ -27,36 +27,27 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.AdditionalInfo;
 
 /**
- * 
-
-MAP V3:
-
-sendGroupCallEndSignal  OPERATION ::= {				--Timer l
-	ARGUMENT
-		SendGroupCallEndSignalArg
-	RESULT
-		SendGroupCallEndSignalRes
-	CODE	local:40 }
-
-SendGroupCallEndSignalArg ::= SEQUENCE {
-	imsi			IMSI			OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...,
-	talkerPriority	[0]TalkerPriority	OPTIONAL,
-	additionalInfo	[1]AdditionalInfo	OPTIONAL }
-
- * 
+ *
+ MAP V3:
+ *
+ * sendGroupCallEndSignal OPERATION ::= { --Timer l ARGUMENT SendGroupCallEndSignalArg RESULT SendGroupCallEndSignalRes CODE
+ * local:40 }
+ *
+ * SendGroupCallEndSignalArg ::= SEQUENCE { imsi IMSI OPTIONAL, extensionContainer ExtensionContainer OPTIONAL, ...,
+ * talkerPriority [0]TalkerPriority OPTIONAL, additionalInfo [1]AdditionalInfo OPTIONAL }
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SendGroupCallEndSignalRequest extends CallHandlingMessage {
 
-	public IMSI getImsi();
+     IMSI getImsi();
 
-	public MAPExtensionContainer getExtensionContainer();
+     MAPExtensionContainer getExtensionContainer();
 
-	public TalkerPriority getTalkerPriority();
+     TalkerPriority getTalkerPriority();
 
-	public AdditionalInfo getAdditionalInfo();
+     AdditionalInfo getAdditionalInfo();
 
 }

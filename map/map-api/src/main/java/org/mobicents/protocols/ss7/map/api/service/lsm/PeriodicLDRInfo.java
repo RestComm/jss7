@@ -23,28 +23,23 @@
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
 /**
- * 
-
-PeriodicLDRInfo ::= SEQUENCE {
-	reportingAmount		ReportingAmount,
-	reportingInterval	ReportingInterval,
-	...}
--- reportingInterval x reportingAmount shall not exceed 8639999 (99 days, 23 hours,
--- 59 minutes and 59 seconds) for compatibility with OMA MLP and RLP
-
-ReportingAmount ::= INTEGER (1..8639999)
-
-ReportingInterval ::= INTEGER (1..8639999)
--- ReportingInterval is in seconds
-
- * 
+ *
+ PeriodicLDRInfo ::= SEQUENCE { reportingAmount ReportingAmount, reportingInterval ReportingInterval, ...} --
+ * reportingInterval x reportingAmount shall not exceed 8639999 (99 days, 23 hours, -- 59 minutes and 59 seconds) for
+ * compatibility with OMA MLP and RLP
+ *
+ * ReportingAmount ::= INTEGER (1..8639999)
+ *
+ * ReportingInterval ::= INTEGER (1..8639999) -- ReportingInterval is in seconds
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface PeriodicLDRInfo {
 
-	public int getReportingAmount();
+    int getReportingAmount();
 
-	public int getReportingInterval();
+    int getReportingInterval();
 
 }

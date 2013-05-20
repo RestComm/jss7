@@ -42,162 +42,162 @@ import org.mobicents.protocols.ss7.cap.isup.CauseCapImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class ReleaseCallRequestImpl extends CircuitSwitchedCallMessageImpl implements ReleaseCallRequest {
 
-	public static final String _PrimitiveName = "ReleaseCalltRequestIndication";
+    public static final String _PrimitiveName = "ReleaseCalltRequestIndication";
 
-	private static final String CAUSE = "cause";
+    private static final String CAUSE = "cause";
 
-	private CauseCap cause;
+    private CauseCap cause;
 
-	
-	public ReleaseCallRequestImpl() {
-	}
-	
-	public ReleaseCallRequestImpl(CauseCap cause) {
-		this.cause = cause;
-	}
+    public ReleaseCallRequestImpl() {
+    }
 
-	@Override
-	public CAPMessageType getMessageType() {
-		return CAPMessageType.releaseCall_Request;
-	}
+    public ReleaseCallRequestImpl(CauseCap cause) {
+        this.cause = cause;
+    }
 
-	@Override
-	public int getOperationCode() {
-		return CAPOperationCode.releaseCall;
-	}
+    @Override
+    public CAPMessageType getMessageType() {
+        return CAPMessageType.releaseCall_Request;
+    }
 
-	@Override
-	public CauseCap getCause() {
-		return cause;
-	}
-	
-	
-	
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.STRING_OCTET;
-	}
+    @Override
+    public int getOperationCode() {
+        return CAPOperationCode.releaseCall;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public CauseCap getCause() {
+        return cause;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return true;
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.STRING_OCTET;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return true;
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-		this.cause = new CauseCapImpl();
-		((CauseCapImpl) this.cause).decodeData(ansIS, length);
-	}
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException,
+            IOException, AsnException {
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+        this.cause = new CauseCapImpl();
+        ((CauseCapImpl) this.cause).decodeData(ansIS, length);
+    }
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-		if (this.cause == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": cause must not be null");
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		((CauseCapImpl) this.cause).encodeData(asnOs);
-	}
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-	@Override
-	public String toString() {
+        if (this.cause == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": cause must not be null");
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+        ((CauseCapImpl) this.cause).encodeData(asnOs);
+    }
 
-		if (this.cause != null) {
-			sb.append("cause=");
-			sb.append(cause.toString());
-		}
+    @Override
+    public String toString() {
 
-		sb.append("]");
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		return sb.toString();
-	}
+        if (this.cause != null) {
+            sb.append("cause=");
+            sb.append(cause.toString());
+        }
 
-	/**
-	 * XML Serialization/Deserialization
-	 */
-	protected static final XMLFormat<ReleaseCallRequestImpl> RELEASE_CALL_REQUEST_XML = new XMLFormat<ReleaseCallRequestImpl>(ReleaseCallRequestImpl.class) {
+        sb.append("]");
 
-		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml, ReleaseCallRequestImpl releaseCallRequest) throws XMLStreamException {
-			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, releaseCallRequest);
+        return sb.toString();
+    }
 
-			releaseCallRequest.cause = xml.get(CAUSE, CauseCapImpl.class);
-		}
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<ReleaseCallRequestImpl> RELEASE_CALL_REQUEST_XML = new XMLFormat<ReleaseCallRequestImpl>(
+            ReleaseCallRequestImpl.class) {
 
-		@Override
-		public void write(ReleaseCallRequestImpl releaseCallRequest, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
-			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(releaseCallRequest, xml);
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, ReleaseCallRequestImpl releaseCallRequest)
+                throws XMLStreamException {
+            CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, releaseCallRequest);
 
-			if (releaseCallRequest.getCause() != null)
-				xml.add((CauseCapImpl) releaseCallRequest.getCause(), CAUSE, CauseCapImpl.class);
-		}
-	};
+            releaseCallRequest.cause = xml.get(CAUSE, CauseCapImpl.class);
+        }
+
+        @Override
+        public void write(ReleaseCallRequestImpl releaseCallRequest, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(releaseCallRequest, xml);
+
+            if (releaseCallRequest.getCause() != null)
+                xml.add((CauseCapImpl) releaseCallRequest.getCause(), CAUSE, CauseCapImpl.class);
+        }
+    };
 }
-

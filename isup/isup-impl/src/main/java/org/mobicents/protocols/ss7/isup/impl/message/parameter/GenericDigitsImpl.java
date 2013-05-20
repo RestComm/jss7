@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -33,143 +33,145 @@ import org.mobicents.protocols.ss7.isup.message.parameter.GenericDigits;
 /**
  * Start time:12:24:47 2009-03-31<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
 public class GenericDigitsImpl extends AbstractISUPParameter implements GenericDigits {
 
-	private static final String ENCODING_SCHEME = "encodingScheme";
-	private static final String TYPE_OF_DIGITS = "typeOfDigits";
-	private static final String DIGITS = "digits";
+    private static final String ENCODING_SCHEME = "encodingScheme";
+    private static final String TYPE_OF_DIGITS = "typeOfDigits";
+    private static final String DIGITS = "digits";
 
-	private static final int DEFAULT_VALUE = 0;
-	
-	private int encodingScheme;
-	private int typeOfDigits;
-	private byte[] digits;
+    private static final int DEFAULT_VALUE = 0;
 
-	public GenericDigitsImpl(byte[] b) throws ParameterException {
-		super();
-		decode(b);
-	}
+    private int encodingScheme;
+    private int typeOfDigits;
+    private byte[] digits;
 
-	public GenericDigitsImpl(int encodingScheme, int typeOfDigits, byte[] digits) {
-		super();
-		this.encodingScheme = encodingScheme;
-		this.typeOfDigits = typeOfDigits;
-		this.setEncodedDigits(digits);
-	}
+    public GenericDigitsImpl(byte[] b) throws ParameterException {
+        super();
+        decode(b);
+    }
 
-	public GenericDigitsImpl() {
-		super();
-		
-	}
+    public GenericDigitsImpl(int encodingScheme, int typeOfDigits, byte[] digits) {
+        super();
+        this.encodingScheme = encodingScheme;
+        this.typeOfDigits = typeOfDigits;
+        this.setEncodedDigits(digits);
+    }
 
-	// TODO: add method: public String getDecodedDigits() ;
-	// TODO: add method: public void setDecodedDigits(int encodingScheme, String digits) ;
-	// TODO: add constructor: public GenericDigitsImpl(int encodingScheme, int typeOfDigits, String digits)
+    public GenericDigitsImpl() {
+        super();
 
-	public int decode(byte[] b) throws ParameterException {
-		if (b == null || b.length < 2) {
-			throw new ParameterException("byte[] must not be null or has size less than 2");
-		}
-		this.typeOfDigits = b[0] & 0x1F;
-		this.encodingScheme = (b[0] >> 5) & 0x07;
-		this.digits = new byte[b.length - 1];
+    }
 
-		for (int index = 1; index < b.length; index++) {
-			this.digits[index - 1] = b[index];
-		}
-		return 1 + this.digits.length;
-	}
+    // TODO: add method: public String getDecodedDigits() ;
+    // TODO: add method: public void setDecodedDigits(int encodingScheme, String digits) ;
+    // TODO: add constructor: public GenericDigitsImpl(int encodingScheme, int typeOfDigits, String digits)
 
-	public byte[] encode() throws ParameterException {
+    public int decode(byte[] b) throws ParameterException {
+        if (b == null || b.length < 2) {
+            throw new ParameterException("byte[] must not be null or has size less than 2");
+        }
+        this.typeOfDigits = b[0] & 0x1F;
+        this.encodingScheme = (b[0] >> 5) & 0x07;
+        this.digits = new byte[b.length - 1];
 
-		byte[] b = new byte[this.digits.length + 1];
+        for (int index = 1; index < b.length; index++) {
+            this.digits[index - 1] = b[index];
+        }
+        return 1 + this.digits.length;
+    }
 
-		b[0] |= this.typeOfDigits & 0x1F;
-		b[0] |= ((this.encodingScheme & 0x07) << 5);
+    public byte[] encode() throws ParameterException {
 
-		for (int index = 1; index < b.length; index++) {
-			b[index] = (byte) this.digits[index - 1];
-		}
-		return b;
+        byte[] b = new byte[this.digits.length + 1];
 
-	}
+        b[0] |= this.typeOfDigits & 0x1F;
+        b[0] |= ((this.encodingScheme & 0x07) << 5);
 
-	public int getEncodingScheme() {
-		return encodingScheme;
-	}
+        for (int index = 1; index < b.length; index++) {
+            b[index] = (byte) this.digits[index - 1];
+        }
+        return b;
 
-	public void setEncodingScheme(int encodingScheme) {
-		this.encodingScheme = encodingScheme;
-	}
+    }
 
-	public int getTypeOfDigits() {
-		return typeOfDigits;
-	}
+    public int getEncodingScheme() {
+        return encodingScheme;
+    }
 
-	public void setTypeOfDigits(int typeOfDigits) {
-		this.typeOfDigits = typeOfDigits;
-	}
+    public void setEncodingScheme(int encodingScheme) {
+        this.encodingScheme = encodingScheme;
+    }
 
-	public byte[] getEncodedDigits() {
-		return digits;
-	}
+    public int getTypeOfDigits() {
+        return typeOfDigits;
+    }
 
-	public void setEncodedDigits(byte[] digits) {
-		if (digits == null)
-			throw new IllegalArgumentException("Digits must not be null");
-		this.digits = digits;
-	}
+    public void setTypeOfDigits(int typeOfDigits) {
+        this.typeOfDigits = typeOfDigits;
+    }
 
-	public int getCode() {
+    public byte[] getEncodedDigits() {
+        return digits;
+    }
 
-		return _PARAMETER_CODE;
-	}
+    public void setEncodedDigits(byte[] digits) {
+        if (digits == null)
+            throw new IllegalArgumentException("Digits must not be null");
+        this.digits = digits;
+    }
 
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
+    public int getCode() {
 
-		sb.append("GenericDigits [encodingScheme=");
-		sb.append(encodingScheme);
-		sb.append(", typeOfDigits=");
-		sb.append(typeOfDigits);
-		if (digits != null) {
-			sb.append(", encodedDigits=[");
-			sb.append(DatatypeConverter.printHexBinary(digits));
-			sb.append("]");
-		}
-		sb.append("]");
-		
-		return sb.toString();
-	}
+        return _PARAMETER_CODE;
+    }
 
-	/**
-	 * XML Serialization/Deserialization
-	 */
-	protected static final XMLFormat<GenericDigitsImpl> ISUP_GENERIC_DIGITS_XML = new XMLFormat<GenericDigitsImpl>(GenericDigitsImpl.class) {
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
 
-		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml, GenericDigitsImpl genericDigits) throws XMLStreamException {
-			genericDigits.encodingScheme = xml.getAttribute(ENCODING_SCHEME, DEFAULT_VALUE);
-			genericDigits.typeOfDigits = xml.getAttribute(TYPE_OF_DIGITS, DEFAULT_VALUE);
+        sb.append("GenericDigits [encodingScheme=");
+        sb.append(encodingScheme);
+        sb.append(", typeOfDigits=");
+        sb.append(typeOfDigits);
+        if (digits != null) {
+            sb.append(", encodedDigits=[");
+            sb.append(DatatypeConverter.printHexBinary(digits));
+            sb.append("]");
+        }
+        sb.append("]");
 
-			ByteArrayContainer bc = xml.get(DIGITS, ByteArrayContainer.class);
-			if (bc != null) {
-				genericDigits.digits = bc.getData();
-			}
-		}
+        return sb.toString();
+    }
 
-		@Override
-		public void write(GenericDigitsImpl genericDigits, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
-			xml.setAttribute(ENCODING_SCHEME, genericDigits.encodingScheme);
-			xml.setAttribute(TYPE_OF_DIGITS, genericDigits.typeOfDigits);
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<GenericDigitsImpl> ISUP_GENERIC_DIGITS_XML = new XMLFormat<GenericDigitsImpl>(
+            GenericDigitsImpl.class) {
 
-			if (genericDigits.digits != null) {
-				ByteArrayContainer bac = new ByteArrayContainer(genericDigits.digits);
-				xml.add(bac, DIGITS, ByteArrayContainer.class);
-			}
-		}
-	};
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, GenericDigitsImpl genericDigits) throws XMLStreamException {
+            genericDigits.encodingScheme = xml.getAttribute(ENCODING_SCHEME, DEFAULT_VALUE);
+            genericDigits.typeOfDigits = xml.getAttribute(TYPE_OF_DIGITS, DEFAULT_VALUE);
+
+            ByteArrayContainer bc = xml.get(DIGITS, ByteArrayContainer.class);
+            if (bc != null) {
+                genericDigits.digits = bc.getData();
+            }
+        }
+
+        @Override
+        public void write(GenericDigitsImpl genericDigits, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            xml.setAttribute(ENCODING_SCHEME, genericDigits.encodingScheme);
+            xml.setAttribute(TYPE_OF_DIGITS, genericDigits.typeOfDigits);
+
+            if (genericDigits.digits != null) {
+                ByteArrayContainer bac = new ByteArrayContainer(genericDigits.digits);
+                xml.add(bac, DIGITS, ByteArrayContainer.class);
+            }
+        }
+    };
 }

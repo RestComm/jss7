@@ -31,82 +31,84 @@ import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
 import org.mobicents.protocols.ss7.map.primitives.AlertingPatternImpl;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class AlertingPatternCapImpl extends OctetStringBase implements AlertingPatternCap {
 
-	private static final String ALERTING_PATTERN = "alertingPattern";
+    private static final String ALERTING_PATTERN = "alertingPattern";
 
-	public AlertingPatternCapImpl() {
-		super(3, 3, "AlertingPatternCap");
-	}
-	
-	public AlertingPatternCapImpl(byte[] data) {
-		super(3, 3, "AlertingPatternCap",data);
-	}
+    public AlertingPatternCapImpl() {
+        super(3, 3, "AlertingPatternCap");
+    }
 
-	public AlertingPatternCapImpl(AlertingPattern alertingPattern) {
-		super(3, 3, "AlertingPatternCap");
-		setAlertingPattern(alertingPattern);
-	}
+    public AlertingPatternCapImpl(byte[] data) {
+        super(3, 3, "AlertingPatternCap", data);
+    }
 
-	public void setAlertingPattern(AlertingPattern alertingPattern) {
+    public AlertingPatternCapImpl(AlertingPattern alertingPattern) {
+        super(3, 3, "AlertingPatternCap");
+        setAlertingPattern(alertingPattern);
+    }
 
-		if (alertingPattern == null)
-			return;
+    public void setAlertingPattern(AlertingPattern alertingPattern) {
 
-		this.data = new byte[3];
-		this.data[2] = (byte) alertingPattern.getData();
-	}
+        if (alertingPattern == null)
+            return;
 
-	@Override
-	public byte[] getData() {
-		return data;
-	}
+        this.data = new byte[3];
+        this.data[2] = (byte) alertingPattern.getData();
+    }
 
-	@Override
-	public AlertingPattern getAlertingPattern() {
+    @Override
+    public byte[] getData() {
+        return data;
+    }
 
-		if (this.data != null && this.data.length == 3)
-			return new AlertingPatternImpl(this.data[2]);
-		else
-			return null;
-	}
+    @Override
+    public AlertingPattern getAlertingPattern() {
 
-	@Override
-	public String toString() {
+        if (this.data != null && this.data.length == 3)
+            return new AlertingPatternImpl(this.data[2]);
+        else
+            return null;
+    }
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
-		AlertingPattern ap = this.getAlertingPattern();
-		if (ap != null) {
-			sb.append("AlertingPattern=");
-			sb.append(ap.toString());
-		}
-		sb.append("]");
+    @Override
+    public String toString() {
 
-		return sb.toString();
-	}
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+        AlertingPattern ap = this.getAlertingPattern();
+        if (ap != null) {
+            sb.append("AlertingPattern=");
+            sb.append(ap.toString());
+        }
+        sb.append("]");
 
-	/**
-	 * XML Serialization/Deserialization
-	 */
-	protected static final XMLFormat<AlertingPatternCapImpl> ALERTING_PATTERN_CAP_XML = new XMLFormat<AlertingPatternCapImpl>(AlertingPatternCapImpl.class) {
+        return sb.toString();
+    }
 
-		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml, AlertingPatternCapImpl alertingPattern) throws XMLStreamException {
-			alertingPattern.setAlertingPattern(xml.get(ALERTING_PATTERN, AlertingPatternImpl.class));
-		}
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<AlertingPatternCapImpl> ALERTING_PATTERN_CAP_XML = new XMLFormat<AlertingPatternCapImpl>(
+            AlertingPatternCapImpl.class) {
 
-		@Override
-		public void write(AlertingPatternCapImpl alertingPattern, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
-			AlertingPattern ap = alertingPattern.getAlertingPattern();
-			if (ap != null)
-				xml.add((AlertingPatternImpl) ap, ALERTING_PATTERN, AlertingPatternImpl.class);
-		}
-	};
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, AlertingPatternCapImpl alertingPattern)
+                throws XMLStreamException {
+            alertingPattern.setAlertingPattern(xml.get(ALERTING_PATTERN, AlertingPatternImpl.class));
+        }
+
+        @Override
+        public void write(AlertingPatternCapImpl alertingPattern, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            AlertingPattern ap = alertingPattern.getAlertingPattern();
+            if (ap != null)
+                xml.add((AlertingPatternImpl) ap, ALERTING_PATTERN, AlertingPatternImpl.class);
+        }
+    };
 }
-

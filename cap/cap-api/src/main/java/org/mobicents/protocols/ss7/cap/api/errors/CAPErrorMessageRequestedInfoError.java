@@ -23,23 +23,16 @@
 package org.mobicents.protocols.ss7.cap.api.errors;
 
 /**
- * 
-
-requestedInfoError ERROR ::= { 
- PARAMETER ENUMERATED { 
-   unknownRequestedInfo  (1), 
-   requestedInfoNotAvailable (2) 
-   } 
- CODE errcode-requestedInfoError 
- } 
--- The requested information cannot be found.
-  
- * 
+ *
+ requestedInfoError ERROR ::= { PARAMETER ENUMERATED { unknownRequestedInfo (1), requestedInfoNotAvailable (2) } CODE
+ * errcode-requestedInfoError } -- The requested information cannot be found.
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CAPErrorMessageRequestedInfoError extends CAPErrorMessage {
 
-	public RequestedInfoErrorParameter getRequestedInfoErrorParameter();
+    RequestedInfoErrorParameter getRequestedInfoErrorParameter();
 
 }

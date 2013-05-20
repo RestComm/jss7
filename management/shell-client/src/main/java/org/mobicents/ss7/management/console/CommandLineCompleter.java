@@ -25,8 +25,8 @@ import java.util.List;
 
 /**
  * @author amit bhayani
- * 
+ *
  */
 public interface CommandLineCompleter {
-	int complete(CommandContext ctx, String buffer, int cursor, List<String> candidates);
+    int complete(CommandContext ctx, String buffer, int cursor, List<String> candidates);
 }

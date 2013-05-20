@@ -23,26 +23,21 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
 
 /**
-* V 3:
-AuthenticationSetList ::= CHOICE {
-	tripletList	[0] TripletList,
-	quintupletList	[1] QuintupletList }
-* 
-* V 2:
-* AuthenticationSetList ::= SEQUENCE SIZE (1..5) OF AuthenticationSet
-* 
-* AuthenticationSet ::= AuthenticationTriplet (from V 3) 
-*
-* @author sergey vetyutnev
-* 
-*/
+ * V 3: AuthenticationSetList ::= CHOICE { tripletList [0] TripletList, quintupletList [1] QuintupletList }
+ *
+ * V 2: AuthenticationSetList ::= SEQUENCE SIZE (1..5) OF AuthenticationSet
+ *
+ * AuthenticationSet ::= AuthenticationTriplet (from V 3)
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface AuthenticationSetList {
 
-	public TripletList getTripletList();
+    TripletList getTripletList();
 
-	public QuintupletList getQuintupletList();
+    QuintupletList getQuintupletList();
 
-	public long getMapProtocolVersion();
+    long getMapProtocolVersion();
 
 }
-

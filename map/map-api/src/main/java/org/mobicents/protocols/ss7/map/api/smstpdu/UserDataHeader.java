@@ -25,31 +25,31 @@ package org.mobicents.protocols.ss7.map.api.smstpdu;
 import java.util.Map;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface UserDataHeader {
 
-	public static int _InformationElementIdentifier_ConcatenatedShortMessages8bit = 0x00;
-	public static int _InformationElementIdentifier_ConcatenatedShortMessages16bit = 0x08;
-	public static int _InformationElementIdentifier_NationalLanguageSingleShift = 0x24;
-	public static int _InformationElementIdentifier_NationalLanguageLockingShift = 0x25;
+    int _InformationElementIdentifier_ConcatenatedShortMessages8bit = 0x00;
+    int _InformationElementIdentifier_ConcatenatedShortMessages16bit = 0x08;
+    int _InformationElementIdentifier_NationalLanguageSingleShift = 0x24;
+    int _InformationElementIdentifier_NationalLanguageLockingShift = 0x25;
 
-	public byte[] getEncodedData();
+    byte[] getEncodedData();
 
-	public Map<Integer, byte[]> getAllData();
+    Map<Integer, byte[]> getAllData();
 
-	public void addInformationElement(int informationElementIdentifier, byte[] encodedData);
+    void addInformationElement(int informationElementIdentifier, byte[] encodedData);
 
-	public void addInformationElement(UserDataHeaderElement informationElement);
+    void addInformationElement(UserDataHeaderElement informationElement);
 
-	public byte[] getInformationElementData(int informationElementIdentifier);
+    byte[] getInformationElementData(int informationElementIdentifier);
 
-	public NationalLanguageLockingShiftIdentifier getNationalLanguageLockingShift();
+    NationalLanguageLockingShiftIdentifier getNationalLanguageLockingShift();
 
-	public NationalLanguageSingleShiftIdentifier getNationalLanguageSingleShift();
+    NationalLanguageSingleShiftIdentifier getNationalLanguageSingleShift();
 
-	public ConcatenatedShortMessagesIdentifier getConcatenatedShortMessagesIdentifier();
+    ConcatenatedShortMessagesIdentifier getConcatenatedShortMessagesIdentifier();
 
 }

@@ -38,172 +38,175 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.FCIBCCCAMELsequence1Impl;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
-public class FurnishChargingInformationRequestImpl extends CircuitSwitchedCallMessageImpl implements FurnishChargingInformationRequest {
+public class FurnishChargingInformationRequestImpl extends CircuitSwitchedCallMessageImpl implements
+        FurnishChargingInformationRequest {
 
-	public static final int _ID_fCIBCCCAMELsequence1 = 0;
+    public static final int _ID_fCIBCCCAMELsequence1 = 0;
 
-	public static final String _PrimitiveName = "FurnishChargingInformationIndication";
+    public static final String _PrimitiveName = "FurnishChargingInformationIndication";
 
-	private FCIBCCCAMELsequence1 FCIBCCCAMELsequence1;
-	
-	
-	public FurnishChargingInformationRequestImpl() {
-	}
-	
-	public FurnishChargingInformationRequestImpl(FCIBCCCAMELsequence1 FCIBCCCAMELsequence1) {
-		this.FCIBCCCAMELsequence1 = FCIBCCCAMELsequence1;
-	}
+    private FCIBCCCAMELsequence1 FCIBCCCAMELsequence1;
 
-	@Override
-	public CAPMessageType getMessageType() {
-		return CAPMessageType.furnishChargingInformation_Request;
-	}
+    public FurnishChargingInformationRequestImpl() {
+    }
 
-	@Override
-	public int getOperationCode() {
-		return CAPOperationCode.furnishChargingInformation;
-	}
+    public FurnishChargingInformationRequestImpl(FCIBCCCAMELsequence1 FCIBCCCAMELsequence1) {
+        this.FCIBCCCAMELsequence1 = FCIBCCCAMELsequence1;
+    }
 
-	@Override
-	public FCIBCCCAMELsequence1 getFCIBCCCAMELsequence1() {
-		return this.FCIBCCCAMELsequence1;
-	}
+    @Override
+    public CAPMessageType getMessageType() {
+        return CAPMessageType.furnishChargingInformation_Request;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.STRING_OCTET;
-	}
+    @Override
+    public int getOperationCode() {
+        return CAPOperationCode.furnishChargingInformation;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public FCIBCCCAMELsequence1 getFCIBCCCAMELsequence1() {
+        return this.FCIBCCCAMELsequence1;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return true;
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.STRING_OCTET;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return true;
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-		this.FCIBCCCAMELsequence1 = null;
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		byte[] buf = ansIS.readOctetStringData(length);
-		if (buf.length < 5 || buf.length > 255)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": data length must be from 5 to 255, found: " + buf.length,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		AsnInputStream ais = new AsnInputStream(buf);
+        this.FCIBCCCAMELsequence1 = null;
 
-		while (true) {
-			if (ais.available() == 0)
-				break;
+        byte[] buf = ansIS.readOctetStringData(length);
+        if (buf.length < 5 || buf.length > 255)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": data length must be from 5 to 255, found: " + buf.length,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
 
-			int tag = ais.readTag();
+        AsnInputStream ais = new AsnInputStream(buf);
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_fCIBCCCAMELsequence1:
-					this.FCIBCCCAMELsequence1 = new FCIBCCCAMELsequence1Impl();
-					((FCIBCCCAMELsequence1Impl) this.FCIBCCCAMELsequence1).decodeAll(ais);
-					break;
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
+            int tag = ais.readTag();
 
-		if (this.FCIBCCCAMELsequence1 == null)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": the single choice FCIBCCCAMELsequence1 is not found",
-					CAPParsingComponentExceptionReason.MistypedParameter);
-	}
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_fCIBCCCAMELsequence1:
+                        this.FCIBCCCAMELsequence1 = new FCIBCCCAMELsequence1Impl();
+                        ((FCIBCCCAMELsequence1Impl) this.FCIBCCCAMELsequence1).decodeAll(ais);
+                        break;
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+        if (this.FCIBCCCAMELsequence1 == null)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": the single choice FCIBCCCAMELsequence1 is not found",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-		if (this.FCIBCCCAMELsequence1 == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": FCIBCCCAMELsequence1 must not be null");
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		AsnOutputStream aos = new AsnOutputStream();
-		((FCIBCCCAMELsequence1Impl) this.FCIBCCCAMELsequence1).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_fCIBCCCAMELsequence1);
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-		byte[] buf = aos.toByteArray();
-		if (buf.length < 5 || buf.length > 255)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": data length must be from 5 to 255, encoded: " + buf.length);
+        if (this.FCIBCCCAMELsequence1 == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": FCIBCCCAMELsequence1 must not be null");
 
-		asnOs.writeOctetStringData(buf);
-	}
+        AsnOutputStream aos = new AsnOutputStream();
+        ((FCIBCCCAMELsequence1Impl) this.FCIBCCCAMELsequence1).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,
+                _ID_fCIBCCCAMELsequence1);
 
-	@Override
-	public String toString() {
+        byte[] buf = aos.toByteArray();
+        if (buf.length < 5 || buf.length > 255)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": data length must be from 5 to 255, encoded: "
+                    + buf.length);
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+        asnOs.writeOctetStringData(buf);
+    }
 
-		if (this.FCIBCCCAMELsequence1 != null) {
-			sb.append("FCIBCCCAMELsequence1=");
-			sb.append(FCIBCCCAMELsequence1.toString());
-		}
+    @Override
+    public String toString() {
 
-		sb.append("]");
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		return sb.toString();
-	}
+        if (this.FCIBCCCAMELsequence1 != null) {
+            sb.append("FCIBCCCAMELsequence1=");
+            sb.append(FCIBCCCAMELsequence1.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
-

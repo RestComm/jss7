@@ -34,128 +34,129 @@ import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.VolumeIfTariff
 import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class VolumeIfTariffSwitchImpl  extends SequenceBase implements VolumeIfTariffSwitch{
-	
-	public static final int _ID_volumeSinceLastTariffSwitch = 0;
-	public static final int _ID_volumeTariffSwitchInterval = 1;
+public class VolumeIfTariffSwitchImpl extends SequenceBase implements VolumeIfTariffSwitch {
 
-	public static final int _ID_VolumeIfTariffSwitch = 1;
-	
-	private long volumeSinceLastTariffSwitch;
-	private Long volumeTariffSwitchInterval;
-	
-	public VolumeIfTariffSwitchImpl() {
-		super("VolumeIfTariffSwitch");
-	}
-	
-	public VolumeIfTariffSwitchImpl(
-			long volumeSinceLastTariffSwitch, Long volumeTariffSwitchInterval) {
-		super("VolumeIfTariffSwitch");
-		this.volumeSinceLastTariffSwitch = volumeSinceLastTariffSwitch;
-		this.volumeTariffSwitchInterval = volumeTariffSwitchInterval;
-	}
+    public static final int _ID_volumeSinceLastTariffSwitch = 0;
+    public static final int _ID_volumeTariffSwitchInterval = 1;
 
-	public long getVolumeSinceLastTariffSwitch(){
-		return this.volumeSinceLastTariffSwitch;
-	}
+    public static final int _ID_VolumeIfTariffSwitch = 1;
 
-	public Long getVolumeTariffSwitchInterval(){
-		return this.volumeTariffSwitchInterval;
-	}
-	
-	@Override
-	public int getTag() throws CAPException {
-		return _ID_VolumeIfTariffSwitch;
-	}
+    private long volumeSinceLastTariffSwitch;
+    private Long volumeTariffSwitchInterval;
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_CONTEXT_SPECIFIC;
-	}
-	
-	@Override
-	protected void _decode(AsnInputStream asnIS, int length)
-			throws CAPParsingComponentException, IOException, AsnException {
-	
-		boolean isVolumeSinceLastTariffSwitchIncluded = false;
-		
-		this.volumeSinceLastTariffSwitch = -1L;
-		this.volumeTariffSwitchInterval = null;
+    public VolumeIfTariffSwitchImpl() {
+        super("VolumeIfTariffSwitch");
+    }
 
-		AsnInputStream ais = asnIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+    public VolumeIfTariffSwitchImpl(long volumeSinceLastTariffSwitch, Long volumeTariffSwitchInterval) {
+        super("VolumeIfTariffSwitch");
+        this.volumeSinceLastTariffSwitch = volumeSinceLastTariffSwitch;
+        this.volumeTariffSwitchInterval = volumeTariffSwitchInterval;
+    }
 
-			int tag = ais.readTag();
+    public long getVolumeSinceLastTariffSwitch() {
+        return this.volumeSinceLastTariffSwitch;
+    }
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_volumeSinceLastTariffSwitch:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ".volumeSinceLastTariffSwitch: Parameter is primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.volumeSinceLastTariffSwitch = ais.readInteger();
-					isVolumeSinceLastTariffSwitchIncluded = true;
-					break;
-				case _ID_volumeTariffSwitchInterval:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ".volumeTariffSwitchInterval: Parameter is primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.volumeTariffSwitchInterval = ais.readInteger();
-					break;
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
+    public Long getVolumeTariffSwitchInterval() {
+        return this.volumeTariffSwitchInterval;
+    }
 
-		if (!isVolumeSinceLastTariffSwitchIncluded)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": volumeSinceLastTariffSwitch is mandatory but not found",
-					CAPParsingComponentExceptionReason.MistypedParameter);
-	
-	}
-	
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		try {
-			asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_volumeSinceLastTariffSwitch, this.volumeSinceLastTariffSwitch);
-			
-			if (this.volumeTariffSwitchInterval != null)
-				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_volumeTariffSwitchInterval, this.volumeTariffSwitchInterval.longValue());
-				
-		}catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
-	
+    @Override
+    public int getTag() throws CAPException {
+        return _ID_VolumeIfTariffSwitch;
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName + " [");
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_CONTEXT_SPECIFIC;
+    }
 
-		sb.append("volumeSinceLastTariffSwitch=");
-		sb.append(this.volumeSinceLastTariffSwitch);
-		sb.append(", ");
-		
-		if (this.volumeTariffSwitchInterval != null) {
-			sb.append("volumeTariffSwitchInterval=");
-			sb.append(this.volumeTariffSwitchInterval);
-		}
+    @Override
+    protected void _decode(AsnInputStream asnIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		sb.append("]");
+        boolean isVolumeSinceLastTariffSwitchIncluded = false;
 
-		return sb.toString();
-	}
+        this.volumeSinceLastTariffSwitch = -1L;
+        this.volumeTariffSwitchInterval = null;
+
+        AsnInputStream ais = asnIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
+
+            int tag = ais.readTag();
+
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_volumeSinceLastTariffSwitch:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".volumeSinceLastTariffSwitch: Parameter is primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.volumeSinceLastTariffSwitch = ais.readInteger();
+                        isVolumeSinceLastTariffSwitchIncluded = true;
+                        break;
+                    case _ID_volumeTariffSwitchInterval:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".volumeTariffSwitchInterval: Parameter is primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.volumeTariffSwitchInterval = ais.readInteger();
+                        break;
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
+
+        if (!isVolumeSinceLastTariffSwitchIncluded)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": volumeSinceLastTariffSwitch is mandatory but not found",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+
+    }
+
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
+        try {
+            asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_volumeSinceLastTariffSwitch, this.volumeSinceLastTariffSwitch);
+
+            if (this.volumeTariffSwitchInterval != null)
+                asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_volumeTariffSwitchInterval,
+                        this.volumeTariffSwitchInterval.longValue());
+
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
+
+        sb.append("volumeSinceLastTariffSwitch=");
+        sb.append(this.volumeSinceLastTariffSwitch);
+        sb.append(", ");
+
+        if (this.volumeTariffSwitchInterval != null) {
+            sb.append("volumeTariffSwitchInterval=");
+            sb.append(this.volumeTariffSwitchInterval);
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 
 }

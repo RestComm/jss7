@@ -47,260 +47,265 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.LocationInformationGPRSImpl;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class PDPContextEstablishmentSpecificInformationImpl  extends SequenceBase  implements PDPContextEstablishmentSpecificInformation{
+public class PDPContextEstablishmentSpecificInformationImpl extends SequenceBase implements
+        PDPContextEstablishmentSpecificInformation {
 
-	public static final int _ID_accessPointName = 0;
-	public static final int _ID_endUserAddress = 1;
-	public static final int _ID_qualityOfService = 2;
-	public static final int _ID_locationInformationGPRS = 3;
-	public static final int _ID_timeAndTimezone = 4;
-	public static final int _ID_pdpInitiationType = 5;
-	public static final int _ID_secondaryPDPContext = 6;
-	
-	public static final int _ID_PDPContextEstablishmentSpecificInformation = 4;
-	
-	private AccessPointName accessPointName;
-	private EndUserAddress endUserAddress;
-	private QualityOfService qualityOfService;
-	private LocationInformationGPRS locationInformationGPRS;
-	private TimeAndTimezone timeAndTimezone;
-	private PDPInitiationType pdpInitiationType;
-	private boolean secondaryPDPContext;
+    public static final int _ID_accessPointName = 0;
+    public static final int _ID_endUserAddress = 1;
+    public static final int _ID_qualityOfService = 2;
+    public static final int _ID_locationInformationGPRS = 3;
+    public static final int _ID_timeAndTimezone = 4;
+    public static final int _ID_pdpInitiationType = 5;
+    public static final int _ID_secondaryPDPContext = 6;
 
-	public PDPContextEstablishmentSpecificInformationImpl() {
-		super("PdpContextchangeOfPositionSpecificInformation");
-	}
+    public static final int _ID_PDPContextEstablishmentSpecificInformation = 4;
 
-	public PDPContextEstablishmentSpecificInformationImpl(AccessPointName accessPointName,
-			EndUserAddress endUserAddress, QualityOfService qualityOfService,
-			LocationInformationGPRS locationInformationGPRS,
-			TimeAndTimezone timeAndTimezone,
-			PDPInitiationType pdpInitiationType, boolean secondaryPDPContext) {
-		super("PdpContextchangeOfPositionSpecificInformation");
-		this.accessPointName = accessPointName;
-		this.endUserAddress = endUserAddress;
-		this.qualityOfService = qualityOfService;
-		this.locationInformationGPRS = locationInformationGPRS;
-		this.timeAndTimezone = timeAndTimezone;
-		this.pdpInitiationType = pdpInitiationType;
-		this.secondaryPDPContext = secondaryPDPContext;
-	}
+    private AccessPointName accessPointName;
+    private EndUserAddress endUserAddress;
+    private QualityOfService qualityOfService;
+    private LocationInformationGPRS locationInformationGPRS;
+    private TimeAndTimezone timeAndTimezone;
+    private PDPInitiationType pdpInitiationType;
+    private boolean secondaryPDPContext;
 
-	@Override
-	public AccessPointName getAccessPointName() {
-		return this.accessPointName;
-	}
+    public PDPContextEstablishmentSpecificInformationImpl() {
+        super("PdpContextchangeOfPositionSpecificInformation");
+    }
 
-	@Override
-	public PDPInitiationType getPDPInitiationType() {
-		return this.pdpInitiationType;
-	}
-	
-	@Override
-	public boolean getSecondaryPDPContext() {
-		return this.secondaryPDPContext;
-	}
+    public PDPContextEstablishmentSpecificInformationImpl(AccessPointName accessPointName, EndUserAddress endUserAddress,
+            QualityOfService qualityOfService, LocationInformationGPRS locationInformationGPRS,
+            TimeAndTimezone timeAndTimezone, PDPInitiationType pdpInitiationType, boolean secondaryPDPContext) {
+        super("PdpContextchangeOfPositionSpecificInformation");
+        this.accessPointName = accessPointName;
+        this.endUserAddress = endUserAddress;
+        this.qualityOfService = qualityOfService;
+        this.locationInformationGPRS = locationInformationGPRS;
+        this.timeAndTimezone = timeAndTimezone;
+        this.pdpInitiationType = pdpInitiationType;
+        this.secondaryPDPContext = secondaryPDPContext;
+    }
 
-	@Override
-	public LocationInformationGPRS getLocationInformationGPRS() {
-		return this.locationInformationGPRS;
-	}
+    @Override
+    public AccessPointName getAccessPointName() {
+        return this.accessPointName;
+    }
 
-	@Override
-	public EndUserAddress getEndUserAddress() {
-		return this.endUserAddress;
-	}
+    @Override
+    public PDPInitiationType getPDPInitiationType() {
+        return this.pdpInitiationType;
+    }
 
-	@Override
-	public QualityOfService getQualityOfService() {
-		return this.qualityOfService;
-	}
+    @Override
+    public boolean getSecondaryPDPContext() {
+        return this.secondaryPDPContext;
+    }
 
-	@Override
-	public TimeAndTimezone getTimeAndTimezone() {
-		return this.timeAndTimezone;
-	}
+    @Override
+    public LocationInformationGPRS getLocationInformationGPRS() {
+        return this.locationInformationGPRS;
+    }
 
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
+    @Override
+    public EndUserAddress getEndUserAddress() {
+        return this.endUserAddress;
+    }
 
-	public int getTagClass() {
-		return Tag.CLASS_CONTEXT_SPECIFIC;
-	}
+    @Override
+    public QualityOfService getQualityOfService() {
+        return this.qualityOfService;
+    }
 
-	@Override
-	protected void _decode(AsnInputStream asnIS, int length)
-			throws CAPParsingComponentException, IOException, AsnException,
-			MAPParsingComponentException {
+    @Override
+    public TimeAndTimezone getTimeAndTimezone() {
+        return this.timeAndTimezone;
+    }
 
-		this.accessPointName = null;
-		this.endUserAddress = null;
-		this.qualityOfService = null;
-		this.locationInformationGPRS = null;
-		this.timeAndTimezone = null;
-		this.pdpInitiationType = null;
-		this.secondaryPDPContext = false;
-		
-		AsnInputStream ais = asnIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+    public int getTag() throws CAPException {
+        return Tag.SEQUENCE;
+    }
 
-			int tag = ais.readTag();
+    public int getTagClass() {
+        return Tag.CLASS_CONTEXT_SPECIFIC;
+    }
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				
-				case _ID_accessPointName:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ".accessPointName: Parameter is not primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.accessPointName = new AccessPointNameImpl();
-					((AccessPointNameImpl) this.accessPointName).decodeAll(ais);
-					break;
-				case _ID_endUserAddress:
-					if (ais.isTagPrimitive())
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ".endUserAddress: Parameter is  primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.endUserAddress = new EndUserAddressImpl();
-					((EndUserAddressImpl) this.endUserAddress).decodeAll(ais);
-					break;
-				case _ID_qualityOfService:
-					if (ais.isTagPrimitive())
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ".qualityOfService: Parameter is primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.qualityOfService = new QualityOfServiceImpl();
-					((QualityOfServiceImpl) this.qualityOfService).decodeAll(ais);
-					break;
-				case _ID_locationInformationGPRS:
-					if (ais.isTagPrimitive())
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ".locationInformationGPRS: Parameter is  primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.locationInformationGPRS = new LocationInformationGPRSImpl();
-					((LocationInformationGPRSImpl) this.locationInformationGPRS).decodeAll(ais);
-					break;
-				case _ID_timeAndTimezone:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ".timeAndTimezone: Parameter is not primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.timeAndTimezone = new TimeAndTimezoneImpl();
-					((TimeAndTimezoneImpl) this.timeAndTimezone).decodeAll(ais);
-					break;
-				case _ID_pdpInitiationType:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ".pdpInitiationType: Parameter is not primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					int i1 =(int) ais.readInteger();
-					this.pdpInitiationType = PDPInitiationType.getInstance(i1);
-					break;
-				case _ID_secondaryPDPContext:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ".secondaryPDPContext: Parameter is not primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					ais.readNull();
-					this.secondaryPDPContext = true;
-					break;
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
-	}
-	
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		
-		try {
-			if (this.accessPointName != null)
-				((AccessPointNameImpl) this.accessPointName).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_accessPointName);
-			
-			if (this.endUserAddress != null)
-				((EndUserAddressImpl) this.endUserAddress).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_endUserAddress);
-			
-			if (this.qualityOfService != null)
-				((QualityOfServiceImpl) this.qualityOfService).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_qualityOfService);
-			
-			if (this.locationInformationGPRS != null)
-				((LocationInformationGPRSImpl) this.locationInformationGPRS).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_locationInformationGPRS);
-			
-			if (this.timeAndTimezone != null)
-				((TimeAndTimezoneImpl) this.timeAndTimezone).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_timeAndTimezone);
-			
-			if (this.pdpInitiationType != null)
-				asnOs.writeInteger( Tag.CLASS_CONTEXT_SPECIFIC, _ID_pdpInitiationType, this.pdpInitiationType.getCode());
-			
-			if (this.secondaryPDPContext)
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_secondaryPDPContext);
+    @Override
+    protected void _decode(AsnInputStream asnIS, int length) throws CAPParsingComponentException, IOException, AsnException,
+            MAPParsingComponentException {
 
-		
-		} catch (MAPException e) {
-			throw new CAPException("MAPException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
+        this.accessPointName = null;
+        this.endUserAddress = null;
+        this.qualityOfService = null;
+        this.locationInformationGPRS = null;
+        this.timeAndTimezone = null;
+        this.pdpInitiationType = null;
+        this.secondaryPDPContext = false;
 
-	}
-	
-	
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName + " [");
+        AsnInputStream ais = asnIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-		if (this.accessPointName != null) {
-			sb.append("accessPointName=");
-			sb.append(this.accessPointName.toString());
-			sb.append(", ");
-		}
+            int tag = ais.readTag();
 
-		if (this.locationInformationGPRS != null) {
-			sb.append("locationInformationGPRS=");
-			sb.append(this.locationInformationGPRS.toString());
-			sb.append(", ");
-		}
-		
-		if (this.endUserAddress != null) {
-			sb.append("endUserAddress=");
-			sb.append(this.endUserAddress.toString());
-			sb.append(", ");
-		}
-		
-		if (this.qualityOfService != null) {
-			sb.append("qualityOfService=");
-			sb.append(this.qualityOfService.toString());
-			sb.append(", ");
-		}
-		
-		if (this.timeAndTimezone != null) {
-			sb.append("timeAndTimezone=");
-			sb.append(this.timeAndTimezone.toString());
-			sb.append(", ");
-		}
-		
-		if (this.pdpInitiationType != null) {
-			sb.append("pdpInitiationType=");
-			sb.append(this.pdpInitiationType.toString());
-			sb.append(", ");
-		}
-		
-		if (this.secondaryPDPContext) {
-			sb.append("secondaryPDPContext=");
-			sb.append(" ");
-		}
-		
-		sb.append("]");
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
 
-		return sb.toString();
-	}
+                    case _ID_accessPointName:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".accessPointName: Parameter is not primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.accessPointName = new AccessPointNameImpl();
+                        ((AccessPointNameImpl) this.accessPointName).decodeAll(ais);
+                        break;
+                    case _ID_endUserAddress:
+                        if (ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".endUserAddress: Parameter is  primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.endUserAddress = new EndUserAddressImpl();
+                        ((EndUserAddressImpl) this.endUserAddress).decodeAll(ais);
+                        break;
+                    case _ID_qualityOfService:
+                        if (ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".qualityOfService: Parameter is primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.qualityOfService = new QualityOfServiceImpl();
+                        ((QualityOfServiceImpl) this.qualityOfService).decodeAll(ais);
+                        break;
+                    case _ID_locationInformationGPRS:
+                        if (ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".locationInformationGPRS: Parameter is  primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.locationInformationGPRS = new LocationInformationGPRSImpl();
+                        ((LocationInformationGPRSImpl) this.locationInformationGPRS).decodeAll(ais);
+                        break;
+                    case _ID_timeAndTimezone:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".timeAndTimezone: Parameter is not primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.timeAndTimezone = new TimeAndTimezoneImpl();
+                        ((TimeAndTimezoneImpl) this.timeAndTimezone).decodeAll(ais);
+                        break;
+                    case _ID_pdpInitiationType:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".pdpInitiationType: Parameter is not primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        int i1 = (int) ais.readInteger();
+                        this.pdpInitiationType = PDPInitiationType.getInstance(i1);
+                        break;
+                    case _ID_secondaryPDPContext:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".secondaryPDPContext: Parameter is not primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        ais.readNull();
+                        this.secondaryPDPContext = true;
+                        break;
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
+    }
+
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
+
+        try {
+            if (this.accessPointName != null)
+                ((AccessPointNameImpl) this.accessPointName).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_accessPointName);
+
+            if (this.endUserAddress != null)
+                ((EndUserAddressImpl) this.endUserAddress).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_endUserAddress);
+
+            if (this.qualityOfService != null)
+                ((QualityOfServiceImpl) this.qualityOfService).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_qualityOfService);
+
+            if (this.locationInformationGPRS != null)
+                ((LocationInformationGPRSImpl) this.locationInformationGPRS).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_locationInformationGPRS);
+
+            if (this.timeAndTimezone != null)
+                ((TimeAndTimezoneImpl) this.timeAndTimezone).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_timeAndTimezone);
+
+            if (this.pdpInitiationType != null)
+                asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_pdpInitiationType, this.pdpInitiationType.getCode());
+
+            if (this.secondaryPDPContext)
+                asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_secondaryPDPContext);
+
+        } catch (MAPException e) {
+            throw new CAPException("MAPException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
+
+        if (this.accessPointName != null) {
+            sb.append("accessPointName=");
+            sb.append(this.accessPointName.toString());
+            sb.append(", ");
+        }
+
+        if (this.locationInformationGPRS != null) {
+            sb.append("locationInformationGPRS=");
+            sb.append(this.locationInformationGPRS.toString());
+            sb.append(", ");
+        }
+
+        if (this.endUserAddress != null) {
+            sb.append("endUserAddress=");
+            sb.append(this.endUserAddress.toString());
+            sb.append(", ");
+        }
+
+        if (this.qualityOfService != null) {
+            sb.append("qualityOfService=");
+            sb.append(this.qualityOfService.toString());
+            sb.append(", ");
+        }
+
+        if (this.timeAndTimezone != null) {
+            sb.append("timeAndTimezone=");
+            sb.append(this.timeAndTimezone.toString());
+            sb.append(", ");
+        }
+
+        if (this.pdpInitiationType != null) {
+            sb.append("pdpInitiationType=");
+            sb.append(this.pdpInitiationType.toString());
+            sb.append(", ");
+        }
+
+        if (this.secondaryPDPContext) {
+            sb.append("secondaryPDPContext=");
+            sb.append(" ");
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 
 }

@@ -23,23 +23,18 @@
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
 /**
-*
-
-ChargingCharacteristics ::= CHOICE {
-maxTransferredVolume [0] INTEGER (1..4294967295),
-maxElapsedTime [1] INTEGER (1..86400)
-}
--- maxTransferredVolume is measured in number of bytes
--- maxElapsedTime is measured in seconds
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ ChargingCharacteristics ::= CHOICE { maxTransferredVolume [0] INTEGER (1..4294967295), maxElapsedTime [1] INTEGER (1..86400)
+ * } -- maxTransferredVolume is measured in number of bytes -- maxElapsedTime is measured in seconds
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface ChargingCharacteristics {
 
-	public long getMaxTransferredVolume();
+    long getMaxTransferredVolume();
 
-	public int getMaxElapsedTime();
+    int getMaxElapsedTime();
 
 }

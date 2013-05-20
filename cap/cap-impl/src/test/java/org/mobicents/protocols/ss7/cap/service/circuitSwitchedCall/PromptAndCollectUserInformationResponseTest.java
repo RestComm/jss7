@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -34,45 +34,44 @@ import org.mobicents.protocols.ss7.isup.impl.message.parameter.GenericDigitsImpl
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class PromptAndCollectUserInformationResponseTest {
 
-	public byte[] getData1() {
-		return new byte[] { (byte) 128, 4, 65, 44, 55, 66 };
-	}
+    public byte[] getData1() {
+        return new byte[] { (byte) 128, 4, 65, 44, 55, 66 };
+    }
 
-	public byte[] getDigits() {
-		return new byte[] { 44, 55, 66 };
-	}
+    public byte[] getDigits() {
+        return new byte[] { 44, 55, 66 };
+    }
 
-	@Test(groups = { "functional.decode","circuitSwitchedCall"})
-	public void testDecode() throws Exception {
+    @Test(groups = { "functional.decode", "circuitSwitchedCall" })
+    public void testDecode() throws Exception {
 
-		byte[] data = this.getData1();
-		AsnInputStream ais = new AsnInputStream(data);
-		PromptAndCollectUserInformationResponseImpl elem = new PromptAndCollectUserInformationResponseImpl();
-		int tag = ais.readTag();
-		assertEquals(tag, 0);
-		elem.decodeAll(ais);
-		assertEquals(elem.getDigitsResponse().getGenericDigits().getEncodingScheme(), 2);
-		assertEquals(elem.getDigitsResponse().getGenericDigits().getTypeOfDigits(), 1);
-		assertTrue(Arrays.equals(elem.getDigitsResponse().getGenericDigits().getEncodedDigits(), this.getDigits()));
-	}
+        byte[] data = this.getData1();
+        AsnInputStream ais = new AsnInputStream(data);
+        PromptAndCollectUserInformationResponseImpl elem = new PromptAndCollectUserInformationResponseImpl();
+        int tag = ais.readTag();
+        assertEquals(tag, 0);
+        elem.decodeAll(ais);
+        assertEquals(elem.getDigitsResponse().getGenericDigits().getEncodingScheme(), 2);
+        assertEquals(elem.getDigitsResponse().getGenericDigits().getTypeOfDigits(), 1);
+        assertTrue(Arrays.equals(elem.getDigitsResponse().getGenericDigits().getEncodedDigits(), this.getDigits()));
+    }
 
-	@Test(groups = { "functional.encode","circuitSwitchedCall"})
-	public void testEncode() throws Exception {
-		
-		GenericDigitsImpl genericDigits = new GenericDigitsImpl(2, 1, getDigits());
-		// int encodingScheme, int typeOfDigits, int[] digits
-		DigitsImpl digitsResponse = new DigitsImpl(genericDigits);
-		
-		PromptAndCollectUserInformationResponseImpl elem = new PromptAndCollectUserInformationResponseImpl(digitsResponse);
-		AsnOutputStream aos = new AsnOutputStream();
-		elem.encodeAll(aos);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
-	}
+    @Test(groups = { "functional.encode", "circuitSwitchedCall" })
+    public void testEncode() throws Exception {
+
+        GenericDigitsImpl genericDigits = new GenericDigitsImpl(2, 1, getDigits());
+        // int encodingScheme, int typeOfDigits, int[] digits
+        DigitsImpl digitsResponse = new DigitsImpl(genericDigits);
+
+        PromptAndCollectUserInformationResponseImpl elem = new PromptAndCollectUserInformationResponseImpl(digitsResponse);
+        AsnOutputStream aos = new AsnOutputStream();
+        elem.encodeAll(aos);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
+    }
 }
-

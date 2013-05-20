@@ -33,36 +33,36 @@ import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.PDPTypeNumberV
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
 public class PDPTypeNumberTest {
-	
-	public byte[] getData() {
-		return new byte[] { 4, 1, 1 };
-	};
-	
-	@Test(groups = { "functional.decode", "primitives" })
-	public void testDecode() throws Exception {
-		byte[] data = this.getData();
-		AsnInputStream asn = new AsnInputStream(data);
-		int tag = asn.readTag();
-		PDPTypeNumberImpl prim = new PDPTypeNumberImpl();
-		prim.decodeAll(asn);
-		
-		assertEquals(tag, Tag.STRING_OCTET);
-		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
-		
-		assertEquals(prim.getPDPTypeNumberValue(), PDPTypeNumberValue.PPP);
-	}
-	
-	@Test(groups = { "functional.encode", "primitives" })
-	public void testEncode() throws Exception {
-		PDPTypeNumberImpl prim = new PDPTypeNumberImpl(PDPTypeNumberValue.PPP);
-		AsnOutputStream asn = new AsnOutputStream();
-		prim.encodeAll(asn);
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
-	}
-	
+
+    public byte[] getData() {
+        return new byte[] { 4, 1, 1 };
+    };
+
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testDecode() throws Exception {
+        byte[] data = this.getData();
+        AsnInputStream asn = new AsnInputStream(data);
+        int tag = asn.readTag();
+        PDPTypeNumberImpl prim = new PDPTypeNumberImpl();
+        prim.decodeAll(asn);
+
+        assertEquals(tag, Tag.STRING_OCTET);
+        assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
+
+        assertEquals(prim.getPDPTypeNumberValue(), PDPTypeNumberValue.PPP);
+    }
+
+    @Test(groups = { "functional.encode", "primitives" })
+    public void testEncode() throws Exception {
+        PDPTypeNumberImpl prim = new PDPTypeNumberImpl(PDPTypeNumberValue.PPP);
+        AsnOutputStream asn = new AsnOutputStream();
+        prim.encodeAll(asn);
+        assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+    }
+
 }

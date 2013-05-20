@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -38,63 +38,63 @@ import org.mobicents.protocols.asn.Tag;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
  * @author Amit Bhayani
- * 
+ *
  */
 public class CallSegmentToCancelTest {
 
-	public byte[] getData1() {
-		return new byte[] { 48, 6, (byte) 128, 1, 3, (byte) 129, 1, 5 };
-	}
+    public byte[] getData1() {
+        return new byte[] { 48, 6, (byte) 128, 1, 3, (byte) 129, 1, 5 };
+    }
 
-	@Test(groups = { "functional.decode", "circuitSwitchedCall.primitive" })
-	public void testDecode() throws Exception {
+    @Test(groups = { "functional.decode", "circuitSwitchedCall.primitive" })
+    public void testDecode() throws Exception {
 
-		byte[] data = this.getData1();
-		AsnInputStream ais = new AsnInputStream(data);
-		CallSegmentToCancelImpl elem = new CallSegmentToCancelImpl();
-		int tag = ais.readTag();
-		assertEquals(tag, Tag.SEQUENCE);
-		elem.decodeAll(ais);
-		assertEquals((int) elem.getInvokeID(), 3);
-		assertEquals((int) elem.getCallSegmentID(), 5);
-	}
+        byte[] data = this.getData1();
+        AsnInputStream ais = new AsnInputStream(data);
+        CallSegmentToCancelImpl elem = new CallSegmentToCancelImpl();
+        int tag = ais.readTag();
+        assertEquals(tag, Tag.SEQUENCE);
+        elem.decodeAll(ais);
+        assertEquals((int) elem.getInvokeID(), 3);
+        assertEquals((int) elem.getCallSegmentID(), 5);
+    }
 
-	@Test(groups = { "functional.encode", "circuitSwitchedCall.primitive" })
-	public void testEncode() throws Exception {
+    @Test(groups = { "functional.encode", "circuitSwitchedCall.primitive" })
+    public void testEncode() throws Exception {
 
-		CallSegmentToCancelImpl elem = new CallSegmentToCancelImpl(3, 5);
-		AsnOutputStream aos = new AsnOutputStream();
-		elem.encodeAll(aos);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
-	}
+        CallSegmentToCancelImpl elem = new CallSegmentToCancelImpl(3, 5);
+        AsnOutputStream aos = new AsnOutputStream();
+        elem.encodeAll(aos);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
+    }
 
-	@Test(groups = { "functional.xml.serialize", "circuitSwitchedCall" })
-	public void testXMLSerializaion() throws Exception {
-		CallSegmentToCancelImpl original = new CallSegmentToCancelImpl(3, 5);
+    @Test(groups = { "functional.xml.serialize", "circuitSwitchedCall" })
+    public void testXMLSerializaion() throws Exception {
+        CallSegmentToCancelImpl original = new CallSegmentToCancelImpl(3, 5);
 
-		// Writes the area to a file.
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
-		// writer.setBinding(binding); // Optional.
-		writer.setIndentation("\t"); // Optional (use tabulation for
-										// indentation).
-		writer.write(original, "callSegmentToCancel", CallSegmentToCancelImpl.class);
-		writer.close();
+        // Writes the area to a file.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for
+                                     // indentation).
+        writer.write(original, "callSegmentToCancel", CallSegmentToCancelImpl.class);
+        writer.close();
 
-		byte[] rawData = baos.toByteArray();
-		String serializedEvent = new String(rawData);
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
 
-		System.out.println(serializedEvent);
+        System.out.println(serializedEvent);
 
-		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
-		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
-		CallSegmentToCancelImpl copy = reader.read("callSegmentToCancel", CallSegmentToCancelImpl.class);
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        CallSegmentToCancelImpl copy = reader.read("callSegmentToCancel", CallSegmentToCancelImpl.class);
 
-		assertEquals(copy.getInvokeID(), original.getInvokeID());
-		assertEquals(copy.getCallSegmentID(), original.getCallSegmentID());
+        assertEquals(copy.getInvokeID(), original.getInvokeID());
+        assertEquals(copy.getCallSegmentID(), original.getCallSegmentID());
 
-	}
+    }
 }

@@ -40,17 +40,17 @@ public class SelectorKeyImpl implements SelectorKey {
     private boolean isValid;
     private boolean isReadable;
     private boolean isWritable;
-    
+
     private Channel channel;
     private Selector selector;
-    
+
     private Object attachment;
-    
+
     protected SelectorKeyImpl(Channel channel, Selector selector) {
         this.channel = channel;
         this.selector = selector;
     }
-    
+
     public boolean isValid() {
         throw new UnsupportedOperationException("Not supported yet.");
     }

@@ -31,9 +31,9 @@ import org.mobicents.ss7.linkset.oam.LinksetFactory;
  * <p>
  * Factory for creating <tt>dahdi</tt> based {@link Linkset}
  * </p>
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public class DahdiLinksetFactory extends LinksetFactory {
 
@@ -41,8 +41,8 @@ public class DahdiLinksetFactory extends LinksetFactory {
     private static final String LINKSET_NAME = "dahdilinkset";
     private static final String LINK_NAME = "dahdilink";
     private Scheduler scheduler;
-    
-    public DahdiLinksetFactory() {    	
+
+    public DahdiLinksetFactory() {
     }
 
     public Scheduler getScheduler() {
@@ -50,9 +50,9 @@ public class DahdiLinksetFactory extends LinksetFactory {
     }
 
     public void setScheduler(Scheduler scheduler) {
-        this.scheduler = scheduler;        
+        this.scheduler = scheduler;
     }
-    
+
     @Override
     public String getName() {
         return NAME;
@@ -94,48 +94,44 @@ public class DahdiLinksetFactory extends LinksetFactory {
             throw new Exception(LinkOAMMessages.INVALID_COMMAND);
         }
 
-        DahdiLinkset currLinkSet=new DahdiLinkset(name, opc, dpc, ni);
+        DahdiLinkset currLinkSet = new DahdiLinkset(name, opc, dpc, ni);
         currLinkSet.setScheduler(scheduler);
         return currLinkSet;
     }
-    
+
     /**
      * Get linkset name
-     * 
+     *
      * @return
      */
-    public String getLinksetName()
-    {
-    	return LINKSET_NAME;
+    public String getLinksetName() {
+        return LINKSET_NAME;
     }
-    
+
     /**
      * Get linkset class
-     * 
+     *
      * @return
      */
-    public Class getLinksetClass()
-    {
-    	return DahdiLinkset.class;
+    public Class getLinksetClass() {
+        return DahdiLinkset.class;
     }
-    
+
     /**
      * Get link name
-     * 
+     *
      * @return
      */
-    public String getLinkName()
-    {
-    	return LINK_NAME;
+    public String getLinkName() {
+        return LINK_NAME;
     }
-    
+
     /**
      * Get link class
-     * 
+     *
      * @return
      */
-    public Class getLinkClass()
-    {
-    	return DahdiLink.class;
+    public Class getLinkClass() {
+        return DahdiLink.class;
     }
 }

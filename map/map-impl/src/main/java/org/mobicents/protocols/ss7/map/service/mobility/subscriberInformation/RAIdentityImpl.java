@@ -31,15 +31,15 @@ import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
  */
 public class RAIdentityImpl extends OctetStringBase implements RAIdentity {
 
-	public RAIdentityImpl() {
-		super(6, 6, "RAIdentity");
-	}
+    public RAIdentityImpl() {
+        super(6, 6, "RAIdentity");
+    }
 
-	public RAIdentityImpl(byte[] data) {
-		super(6, 6, "RAIdentity", data);
-	}
+    public RAIdentityImpl(byte[] data) {
+        super(6, 6, "RAIdentity", data);
+    }
 
-	public byte[] getData() {
-		return data;
-	}	
+    public byte[] getData() {
+        return data;
+    }
 }

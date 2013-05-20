@@ -22,76 +22,76 @@
 
 package org.mobicents.protocols.ss7.map.dialog;
 
-import java.util.Arrays;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
-import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
+import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
+import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
-public class MAPSimpleDialogTest   {
+public class MAPSimpleDialogTest {
 
-	private byte[] getDataAcceptInfo() {
-		return new byte[] { -95, 41, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23,
-				24, 25, 26, -95, 3, 31, 32, 33 };
-	}
+    private byte[] getDataAcceptInfo() {
+        return new byte[] { -95, 41, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48,
+                11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
+    }
 
-	private byte[] getDataCloseInfo() {
-		return new byte[] { -94, 41, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23,
-				24, 25, 26, -95, 3, 31, 32, 33 };
-	}
-	
-	@Test(groups = { "functional.decode","dialog"})
-	public void testDecode() throws Exception {
+    private byte[] getDataCloseInfo() {
+        return new byte[] { -94, 41, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48,
+                11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
+    }
 
-		AsnInputStream asnIs = new AsnInputStream(this.getDataAcceptInfo());
+    @Test(groups = { "functional.decode", "dialog" })
+    public void testDecode() throws Exception {
 
-		int tag = asnIs.readTag();
-		assertEquals( tag,1);
+        AsnInputStream asnIs = new AsnInputStream(this.getDataAcceptInfo());
 
-		MAPAcceptInfoImpl accInfo = new MAPAcceptInfoImpl();
-		accInfo.decodeAll(asnIs);
-		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(accInfo.getExtensionContainer()));
+        int tag = asnIs.readTag();
+        assertEquals(tag, 1);
 
-		
-		asnIs = new AsnInputStream(this.getDataCloseInfo());
+        MAPAcceptInfoImpl accInfo = new MAPAcceptInfoImpl();
+        accInfo.decodeAll(asnIs);
+        assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(accInfo.getExtensionContainer()));
 
-		tag = asnIs.readTag();
-		assertEquals( tag,2);
+        asnIs = new AsnInputStream(this.getDataCloseInfo());
 
-		MAPCloseInfoImpl closeInfo = new MAPCloseInfoImpl();
-		closeInfo.decodeAll(asnIs);
-		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(closeInfo.getExtensionContainer()));
-		
-	}
+        tag = asnIs.readTag();
+        assertEquals(tag, 2);
 
-	@Test(groups = { "functional.encode","dialog"})
-	public void testEncode() throws Exception {
+        MAPCloseInfoImpl closeInfo = new MAPCloseInfoImpl();
+        closeInfo.decodeAll(asnIs);
+        assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(closeInfo.getExtensionContainer()));
 
-		byte[] b = this.getDataAcceptInfo();
-		MAPAcceptInfoImpl accInfo = new MAPAcceptInfoImpl();
-		accInfo.setExtensionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
+    }
 
-		AsnOutputStream asnOS = new AsnOutputStream();
-		accInfo.encodeAll(asnOS);
-		byte[] data = asnOS.toByteArray();
-		assertTrue( Arrays.equals(b,data));
+    @Test(groups = { "functional.encode", "dialog" })
+    public void testEncode() throws Exception {
 
-		
-		b = this.getDataCloseInfo();
-		MAPCloseInfoImpl closeInfo = new MAPCloseInfoImpl();
-		closeInfo.setExtensionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
+        byte[] b = this.getDataAcceptInfo();
+        MAPAcceptInfoImpl accInfo = new MAPAcceptInfoImpl();
+        accInfo.setExtensionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
 
-		asnOS = new AsnOutputStream();
-		closeInfo.encodeAll(asnOS);
-		data = asnOS.toByteArray();
-		assertTrue( Arrays.equals(b,data));
-	}
-	
+        AsnOutputStream asnOS = new AsnOutputStream();
+        accInfo.encodeAll(asnOS);
+        byte[] data = asnOS.toByteArray();
+        assertTrue(Arrays.equals(b, data));
+
+        b = this.getDataCloseInfo();
+        MAPCloseInfoImpl closeInfo = new MAPCloseInfoImpl();
+        closeInfo.setExtensionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
+
+        asnOS = new AsnOutputStream();
+        closeInfo.encodeAll(asnOS);
+        data = asnOS.toByteArray();
+        assertTrue(Arrays.equals(b, data));
+    }
+
 }

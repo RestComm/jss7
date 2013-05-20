@@ -29,5 +29,5 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformati
  *
  */
 public interface RouteingNumber {
-	public String getRouteingNumber();
+    String getRouteingNumber();
 }

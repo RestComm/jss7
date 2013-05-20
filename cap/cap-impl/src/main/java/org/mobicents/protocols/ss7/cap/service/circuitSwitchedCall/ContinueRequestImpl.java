@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -35,95 +35,95 @@ import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ContinueRequest;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
  * @author Amit Bhayani
- * 
+ *
  */
 public class ContinueRequestImpl extends CircuitSwitchedCallMessageImpl implements ContinueRequest {
 
-	public static final String _PrimitiveName = "ContinueRequest";
+    public static final String _PrimitiveName = "ContinueRequest";
 
-	@Override
-	public CAPMessageType getMessageType() {
-		return CAPMessageType.continue_Request;
-	}
+    @Override
+    public CAPMessageType getMessageType() {
+        return CAPMessageType.continue_Request;
+    }
 
-	@Override
-	public int getOperationCode() {
-		return CAPOperationCode.continueCode;
-	}
+    @Override
+    public int getOperationCode() {
+        return CAPOperationCode.continueCode;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
-		throw new CAPException("Parameter " + _PrimitiveName + ": does not support encoding");
-	}
+    @Override
+    public int getTag() throws CAPException {
+        throw new CAPException("Parameter " + _PrimitiveName + ": does not support encoding");
+    }
 
-	@Override
-	public int getTagClass() {
-		return 0;
-	}
+    @Override
+    public int getTagClass() {
+        return 0;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
-		throw new CAPParsingComponentException("Parameter " + _PrimitiveName + ": does not support encoding",
-				CAPParsingComponentExceptionReason.MistypedParameter);
-	}
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+        throw new CAPParsingComponentException("Parameter " + _PrimitiveName + ": does not support encoding",
+                CAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
-		throw new CAPParsingComponentException("Parameter " + _PrimitiveName + ": does not support encoding",
-				CAPParsingComponentExceptionReason.MistypedParameter);
-	}
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+        throw new CAPParsingComponentException("Parameter " + _PrimitiveName + ": does not support encoding",
+                CAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		throw new CAPException("Parameter " + _PrimitiveName + ": does not support encoding");
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        throw new CAPException("Parameter " + _PrimitiveName + ": does not support encoding");
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-		throw new CAPException("Parameter " + _PrimitiveName + ": does not support encoding");
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+        throw new CAPException("Parameter " + _PrimitiveName + ": does not support encoding");
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		throw new CAPException("Parameter " + _PrimitiveName + ": does not support encoding");
-	}
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
+        throw new CAPException("Parameter " + _PrimitiveName + ": does not support encoding");
+    }
 
-	@Override
-	public String toString() {
+    @Override
+    public String toString() {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		sb.append("]");
+        sb.append("]");
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 
-	/**
-	 * XML Serialization/Deserialization
-	 */
-	protected static final XMLFormat<ContinueRequestImpl> CONTINUE_REQUEST_XML = new XMLFormat<ContinueRequestImpl>(
-			ContinueRequestImpl.class) {
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<ContinueRequestImpl> CONTINUE_REQUEST_XML = new XMLFormat<ContinueRequestImpl>(
+            ContinueRequestImpl.class) {
 
-		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml, ContinueRequestImpl continueRequest)
-				throws XMLStreamException {
-			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, continueRequest);
-		}
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, ContinueRequestImpl continueRequest)
+                throws XMLStreamException {
+            CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, continueRequest);
+        }
 
-		@Override
-		public void write(ContinueRequestImpl continueRequest, javolution.xml.XMLFormat.OutputElement xml)
-				throws XMLStreamException {
-			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(continueRequest, xml);
-		}
-	};
+        @Override
+        public void write(ContinueRequestImpl continueRequest, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(continueRequest, xml);
+        }
+    };
 }

@@ -23,12 +23,16 @@
 /**
  * Start time:09:16:42 2009-04-22<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski
  *         </a>
- * 
+ *
  */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -36,231 +40,229 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.testng.Assert.*;
-import org.testng.*;
-import org.testng.annotations.*;
-
 import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.testng.annotations.Test;
 
 /**
  * Start time:09:16:42 2009-04-22<br>
  * Project: mobicents-isup-stack<br>
- * 
- * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski
- *         </a>
+ *
+ * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
-public abstract class ParameterHarness  {
+public abstract class ParameterHarness {
 
-	// 21 10000011 Address....................... 83
-	// 22 01100000 Address....................... 60
-	// 23 00111000 Address....................... 38
-	// NOTE: now see how nice digits swap can come out with conversion, lol
-	private final static byte[] sixDigits = new byte[] { (byte) 0x83, 0x60, 0x38 };
-	private final static byte[] fiveDigits = new byte[] { (byte) 0x83, 0x60, 0x08 };
-	private final static byte[] sevenDigits  = new byte[] { (byte) 0x83, 0x60,0x33, 0x08 };
-	private final static byte[] eightDigits  = new byte[] { (byte) 0x83, 0x60,0x33, 0x48 };
-	private final static byte[] threeDigits = new byte[] { (byte) 0x83, 0x0 };;
-	private final static String sixDigitsString = "380683";
-	private final static String fiveDigitsString = "38068";
-	private final static String sevenDigitsString = "3806338";
-	private final static String eightDigitsString = "38063384";
-	private final static String threeDigitsString = "380";
+    // 21 10000011 Address....................... 83
+    // 22 01100000 Address....................... 60
+    // 23 00111000 Address....................... 38
+    // NOTE: now see how nice digits swap can come out with conversion, lol
+    private static final byte[] sixDigits = new byte[] { (byte) 0x83, 0x60, 0x38 };
+    private static final byte[] fiveDigits = new byte[] { (byte) 0x83, 0x60, 0x08 };
+    private static final byte[] sevenDigits = new byte[] { (byte) 0x83, 0x60, 0x33, 0x08 };
+    private static final byte[] eightDigits = new byte[] { (byte) 0x83, 0x60, 0x33, 0x48 };
+    private static final byte[] threeDigits = new byte[] { (byte) 0x83, 0x0 };;
+    private static final String sixDigitsString = "380683";
+    private static final String fiveDigitsString = "38068";
+    private static final String sevenDigitsString = "3806338";
+    private static final String eightDigitsString = "38063384";
+    private static final String threeDigitsString = "380";
 
-	// FIXME: add code to check values :)
+    // FIXME: add code to check values :)
 
-	protected List<byte[]> goodBodies = new ArrayList<byte[]>();
+    protected List<byte[]> goodBodies = new ArrayList<byte[]>();
 
-	protected List<byte[]> badBodies = new ArrayList<byte[]>();
+    protected List<byte[]> badBodies = new ArrayList<byte[]>();
 
-	protected String makeCompare(byte[] hardcodedBody, byte[] elementEncoded) {
-		int totalLength = 0;
-		if (hardcodedBody == null || elementEncoded == null) {
-			return "One arg is null";
-		}
-		if (hardcodedBody.length >= elementEncoded.length) {
-			totalLength = hardcodedBody.length;
-		} else {
-			totalLength = elementEncoded.length;
-		}
+    protected String makeCompare(byte[] hardcodedBody, byte[] elementEncoded) {
+        int totalLength = 0;
+        if (hardcodedBody == null || elementEncoded == null) {
+            return "One arg is null";
+        }
+        if (hardcodedBody.length >= elementEncoded.length) {
+            totalLength = hardcodedBody.length;
+        } else {
+            totalLength = elementEncoded.length;
+        }
 
-		String out = "";
+        String out = "";
 
-		for (int index = 0; index < totalLength; index++) {
-			if (hardcodedBody.length > index) {
-				out += "hardcodedBody[" + Integer.toHexString(hardcodedBody[index]) + "]";
-			} else {
-				out += "hardcodedBody[NOP]";
-			}
+        for (int index = 0; index < totalLength; index++) {
+            if (hardcodedBody.length > index) {
+                out += "hardcodedBody[" + Integer.toHexString(hardcodedBody[index]) + "]";
+            } else {
+                out += "hardcodedBody[NOP]";
+            }
 
-			if (elementEncoded.length > index) {
-				out += "elementEncoded[" + Integer.toHexString(elementEncoded[index]) + "]";
-			} else {
-				out += "elementEncoded[NOP]";
-			}
-			out += "\n";
-		}
+            if (elementEncoded.length > index) {
+                out += "elementEncoded[" + Integer.toHexString(elementEncoded[index]) + "]";
+            } else {
+                out += "elementEncoded[NOP]";
+            }
+            out += "\n";
+        }
 
-		return out;
-	}
-	public String makeCompare(int[] hardcodedBody, int[] elementEncoded) {
+        return out;
+    }
 
-		int totalLength = 0;
-		if (hardcodedBody == null || elementEncoded == null) {
-			return "One arg is null";
-		}
-		if (hardcodedBody.length >= elementEncoded.length) {
-			totalLength = hardcodedBody.length;
-		} else {
-			totalLength = elementEncoded.length;
-		}
+    public String makeCompare(int[] hardcodedBody, int[] elementEncoded) {
 
-		String out = "";
+        int totalLength = 0;
+        if (hardcodedBody == null || elementEncoded == null) {
+            return "One arg is null";
+        }
+        if (hardcodedBody.length >= elementEncoded.length) {
+            totalLength = hardcodedBody.length;
+        } else {
+            totalLength = elementEncoded.length;
+        }
 
-		for (int index = 0; index < totalLength; index++) {
-			if (hardcodedBody.length > index) {
-				out += "hardcodedBody[" + Integer.toHexString(hardcodedBody[index]) + "]";
-			} else {
-				out += "hardcodedBody[NOP]";
-			}
+        String out = "";
 
-			if (elementEncoded.length > index) {
-				out += "elementEncoded[" + Integer.toHexString(elementEncoded[index]) + "]";
-			} else {
-				out += "elementEncoded[NOP]";
-			}
-			out += "\n";
-		}
+        for (int index = 0; index < totalLength; index++) {
+            if (hardcodedBody.length > index) {
+                out += "hardcodedBody[" + Integer.toHexString(hardcodedBody[index]) + "]";
+            } else {
+                out += "hardcodedBody[NOP]";
+            }
 
-		return out;
-	}
-	
-	@Test(groups = { "functional.encode","functional.decode","parameter"})
-	public void testDecodeEncode() throws IOException, ParameterException {
+            if (elementEncoded.length > index) {
+                out += "elementEncoded[" + Integer.toHexString(elementEncoded[index]) + "]";
+            } else {
+                out += "elementEncoded[NOP]";
+            }
+            out += "\n";
+        }
 
-		for (int index = 0; index < this.goodBodies.size(); index++) {
-			byte[] goodBody = this.goodBodies.get(index);
-			AbstractISUPParameter component = this.getTestedComponent();
-			doTestDecode(goodBody, true, component, index);
-			byte[] encodedBody = component.encode();
-			boolean equal = Arrays.equals(goodBody, encodedBody);
-			assertTrue(equal,"Body index: " + index + "\n" + makeCompare(goodBody, encodedBody));
+        return out;
+    }
 
-		}
-		for (int index = 0; index < this.badBodies.size(); index++) {
+    @Test(groups = { "functional.encode", "functional.decode", "parameter" })
+    public void testDecodeEncode() throws IOException, ParameterException {
 
-			byte[] badBody = this.badBodies.get(index);
-			AbstractISUPParameter component = this.getTestedComponent();
-			doTestDecode(badBody, false, component, index);
-			byte[] encodedBody = component.encode();
-			//TODO: make some tests here?
-		}
+        for (int index = 0; index < this.goodBodies.size(); index++) {
+            byte[] goodBody = this.goodBodies.get(index);
+            AbstractISUPParameter component = this.getTestedComponent();
+            doTestDecode(goodBody, true, component, index);
+            byte[] encodedBody = component.encode();
+            boolean equal = Arrays.equals(goodBody, encodedBody);
+            assertTrue(equal, "Body index: " + index + "\n" + makeCompare(goodBody, encodedBody));
 
-	}
+        }
+        for (int index = 0; index < this.badBodies.size(); index++) {
 
-	public abstract AbstractISUPParameter getTestedComponent() throws ParameterException;
+            byte[] badBody = this.badBodies.get(index);
+            AbstractISUPParameter component = this.getTestedComponent();
+            doTestDecode(badBody, false, component, index);
+            byte[] encodedBody = component.encode();
+            // TODO: make some tests here?
+        }
 
-	protected void doTestDecode(byte[] presumableBody, boolean shouldPass, AbstractISUPParameter component, int index) throws ParameterException {
-		try {
-			component.decode(presumableBody);
-			if (!shouldPass) {
-				fail("Decoded[" + index + "] parameter[" + component.getClass() + "], should not pass. Passed data: " + dumpData(presumableBody));
-			}
+    }
 
-		} catch (IllegalArgumentException iae) {
-			if (shouldPass) {
-				fail("Failed to decode[" + index + "] parameter[" + component.getClass() + "], should not happen. " + iae + ".Passed data: " + dumpData(presumableBody));
-				iae.printStackTrace();
-			}
-		} catch (ParameterException iae) {
-			if (shouldPass) {
-				fail("Failed to decode[" + index + "] parameter[" + component.getClass() + "], should not happen. " + iae + ".Passed data: " + dumpData(presumableBody));
-				throw iae;
-			}
-		}
-		catch (Exception e) {
-			fail("Failed to decode[" + index + "] parameter[" + component.getClass() + "]." + e + ". Passed data: " + dumpData(presumableBody));
-			e.printStackTrace();
-		}
-	}
+    public abstract AbstractISUPParameter getTestedComponent() throws ParameterException;
 
-	protected String dumpData(byte[] b) {
-		String s = "\n";
-		for (byte bb : b) {
-			s += Integer.toHexString(bb);
-		}
+    protected void doTestDecode(byte[] presumableBody, boolean shouldPass, AbstractISUPParameter component, int index)
+            throws ParameterException {
+        try {
+            component.decode(presumableBody);
+            if (!shouldPass) {
+                fail("Decoded[" + index + "] parameter[" + component.getClass() + "], should not pass. Passed data: "
+                        + dumpData(presumableBody));
+            }
 
-		return s;
-	}
+        } catch (IllegalArgumentException iae) {
+            if (shouldPass) {
+                fail("Failed to decode[" + index + "] parameter[" + component.getClass() + "], should not happen. " + iae
+                        + ".Passed data: " + dumpData(presumableBody));
+                iae.printStackTrace();
+            }
+        } catch (ParameterException iae) {
+            if (shouldPass) {
+                fail("Failed to decode[" + index + "] parameter[" + component.getClass() + "], should not happen. " + iae
+                        + ".Passed data: " + dumpData(presumableBody));
+                throw iae;
+            }
+        } catch (Exception e) {
+            fail("Failed to decode[" + index + "] parameter[" + component.getClass() + "]." + e + ". Passed data: "
+                    + dumpData(presumableBody));
+            e.printStackTrace();
+        }
+    }
 
-	public void testValues(AbstractISUPParameter component, String[] getterMethodNames, Object[] expectedValues) {
-		try {
-			Class cClass = component.getClass();
-			for (int index = 0; index < getterMethodNames.length; index++) {
-				Method m = cClass.getMethod(getterMethodNames[index], null);
-				// Should not be null by now
-				Object v = m.invoke(component, null);
-				if (v == null && expectedValues != null) {
-					fail("Failed to validate values in component: " + component.getClass().getName() + ". Value of: " + getterMethodNames[index] + " is null, but test values is not.");
-				}
-				if(expectedValues[index].getClass().isArray() )
-				{
-					assertTrue(Arrays.deepEquals(new Object[]{expectedValues[index]},new Object[]{ v}),"Failed to validate values in component: " + component.getClass().getName() + ". Value of: " + getterMethodNames[index]);
-				}else
-				{
-					assertEquals(  v,expectedValues[index],"Failed to validate values in component: " + component.getClass().getName() + ". Value of: " + getterMethodNames[index]);
-				}
+    protected String dumpData(byte[] b) {
+        String s = "\n";
+        for (byte bb : b) {
+            s += Integer.toHexString(bb);
+        }
 
-			}
+        return s;
+    }
 
-		} catch (Exception e) {
-			fail("Failed to check values on component: " + component.getClass().getName() + ", due to: " + e);
-			e.printStackTrace();
-		}
-	}
+    public void testValues(AbstractISUPParameter component, String[] getterMethodNames, Object[] expectedValues) {
+        try {
+            Class cClass = component.getClass();
+            for (int index = 0; index < getterMethodNames.length; index++) {
+                Method m = cClass.getMethod(getterMethodNames[index], null);
+                // Should not be null by now
+                Object v = m.invoke(component, null);
+                if (v == null && expectedValues != null) {
+                    fail("Failed to validate values in component: " + component.getClass().getName() + ". Value of: "
+                            + getterMethodNames[index] + " is null, but test values is not.");
+                }
+                if (expectedValues[index].getClass().isArray()) {
+                    assertTrue(Arrays.deepEquals(new Object[] { expectedValues[index] }, new Object[] { v }),
+                            "Failed to validate values in component: " + component.getClass().getName() + ". Value of: "
+                                    + getterMethodNames[index]);
+                } else {
+                    assertEquals(v, expectedValues[index], "Failed to validate values in component: "
+                            + component.getClass().getName() + ". Value of: " + getterMethodNames[index]);
+                }
 
-	public static byte[] getSixDigits() {
-		return sixDigits;
-	}
+            }
 
-	public static byte[] getFiveDigits() {
-		return fiveDigits;
-	}
+        } catch (Exception e) {
+            fail("Failed to check values on component: " + component.getClass().getName() + ", due to: " + e);
+            e.printStackTrace();
+        }
+    }
 
-	public static byte[] getThreeDigits() {
-		return threeDigits;
-	}
-	public static byte[] getSevenDigits()
-	{
-		return sevenDigits;
-	}
-	public static byte[] getEightDigits()
-	{
-		return eightDigits;
-	}
-	
-	public static String getSixDigitsString() {
-		return sixDigitsString;
-	}
+    public static byte[] getSixDigits() {
+        return sixDigits;
+    }
 
-	public static String getFiveDigitsString() {
-		return fiveDigitsString;
-	}
+    public static byte[] getFiveDigits() {
+        return fiveDigits;
+    }
 
-	public static String getThreeDigitsString() {
-		return threeDigitsString;
-	}
-	
+    public static byte[] getThreeDigits() {
+        return threeDigits;
+    }
 
-	public static String getSevenDigitsString() {
-		return sevenDigitsString;
-	}
-	
+    public static byte[] getSevenDigits() {
+        return sevenDigits;
+    }
 
-	public static String getEightDigitsString() {
-		return eightDigitsString;
-	}
+    public static byte[] getEightDigits() {
+        return eightDigits;
+    }
 
-	
-	
+    public static String getSixDigitsString() {
+        return sixDigitsString;
+    }
+
+    public static String getFiveDigitsString() {
+        return fiveDigitsString;
+    }
+
+    public static String getThreeDigitsString() {
+        return threeDigitsString;
+    }
+
+    public static String getSevenDigitsString() {
+        return sevenDigitsString;
+    }
+
+    public static String getEightDigitsString() {
+        return eightDigitsString;
+    }
 
 }

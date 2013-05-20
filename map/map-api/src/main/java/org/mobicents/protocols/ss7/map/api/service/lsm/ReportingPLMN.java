@@ -25,24 +25,20 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
 import org.mobicents.protocols.ss7.map.api.primitives.PlmnId;
 
 /**
- * 
-
-ReportingPLMN::= SEQUENCE {
-	plmn-Id 						[0] PLMN-Id,
-	ran-Technology 					[1] RAN-Technology			OPTIONAL,
-	ran-PeriodicLocationSupport		[2] NULL					OPTIONAL,
-	...}
-
- * 
+ *
+ ReportingPLMN::= SEQUENCE { plmn-Id [0] PLMN-Id, ran-Technology [1] RAN-Technology OPTIONAL, ran-PeriodicLocationSupport [2]
+ * NULL OPTIONAL, ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ReportingPLMN {
 
-	public PlmnId getPlmnId();
+    PlmnId getPlmnId();
 
-	public RANTechnology getRanTechnology();
+    RANTechnology getRanTechnology();
 
-	public boolean getRanPeriodicLocationSupport();
+    boolean getRanPeriodicLocationSupport();
 
 }

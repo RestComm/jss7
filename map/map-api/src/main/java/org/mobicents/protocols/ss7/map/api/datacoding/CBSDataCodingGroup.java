@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -24,26 +24,25 @@ package org.mobicents.protocols.ss7.map.api.datacoding;
 
 /**
  * 3GPP TS 23.038 - 5. CBS Data Coding Scheme
- * 
- * 
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public enum CBSDataCodingGroup {
-	// Coding Group	Bits == 0000 or 0010
-	GeneralGsm7,
-	// Coding Group	Bits == 0001
-	GeneralWithLanguageIndication,
+    // Coding Group Bits == 0000 or 0010
+    GeneralGsm7,
+    // Coding Group Bits == 0001
+    GeneralWithLanguageIndication,
 
-	// Coding Group	Bits == 01xx
-	GeneralDataCodingIndication,
-	// Coding Group	Bits == 1001
-	MessageWithUserDataHeader,
-	// Coding Group	Bits == 1101
-	I1ProtocolMessage,
-	// Coding Group	Bits == 1110
-	DefinedByTheWAPForum,
-	// Coding Group	Bits == 1111
-	DataCodingMessageClass,
-	Reserved;
+    // Coding Group Bits == 01xx
+    GeneralDataCodingIndication,
+    // Coding Group Bits == 1001
+    MessageWithUserDataHeader,
+    // Coding Group Bits == 1101
+    I1ProtocolMessage,
+    // Coding Group Bits == 1110
+    DefinedByTheWAPForum,
+    // Coding Group Bits == 1111
+    DataCodingMessageClass, Reserved;
 }

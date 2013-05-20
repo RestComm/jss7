@@ -24,20 +24,16 @@ package org.mobicents.protocols.ss7.map.api.primitives;
 
 import java.io.Serializable;
 
-
 /**
- * SubscriberIdentity ::= CHOICE { 
- * 		imsi [0] IMSI,
- * 		msisdn [1] ISDN-AddressString
- *	} 
- * 
+ * SubscriberIdentity ::= CHOICE { imsi [0] IMSI, msisdn [1] ISDN-AddressString }
+ *
  * @author amit bhayani
  *
  */
 public interface SubscriberIdentity extends Serializable {
-	
-	public IMSI getIMSI();
-	
-	public ISDNAddressString getMSISDN();
+
+    IMSI getIMSI();
+
+    ISDNAddressString getMSISDN();
 
 }

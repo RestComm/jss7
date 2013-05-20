@@ -26,18 +26,17 @@ import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 
 /**
-*
-LocationNumber ::= OCTET STRING (SIZE (2..10))
-	-- the internal structure is defined in ITU-T Rec Q.763
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ LocationNumber ::= OCTET STRING (SIZE (2..10)) -- the internal structure is defined in ITU-T Rec Q.763
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface LocationNumberMap {
 
-	public byte[] getData();
+    byte[] getData();
 
-	public LocationNumber getLocationNumber() throws MAPException ;
+    LocationNumber getLocationNumber() throws MAPException;
 
 }

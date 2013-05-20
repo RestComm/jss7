@@ -26,34 +26,28 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-SMS-CAMEL-TDP-Data ::= SEQUENCE {
-	sms-TriggerDetectionPoint	[0] SMS-TriggerDetectionPoint,
-	serviceKey	[1] ServiceKey,
-	gsmSCF-Address	[2] ISDN-AddressString,
-	defaultSMS-Handling	[3] DefaultSMS-Handling,
-	extensionContainer	[4] ExtensionContainer	OPTIONAL,
-	...
-	}
-
-ServiceKey ::= INTEGER (0..2147483647)
-
- * 
- * 
+ *
+ SMS-CAMEL-TDP-Data ::= SEQUENCE { sms-TriggerDetectionPoint [0] SMS-TriggerDetectionPoint, serviceKey [1] ServiceKey,
+ * gsmSCF-Address [2] ISDN-AddressString, defaultSMS-Handling [3] DefaultSMS-Handling, extensionContainer [4] ExtensionContainer
+ * OPTIONAL, ... }
+ *
+ * ServiceKey ::= INTEGER (0..2147483647)
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SMSCAMELTDPData {
 
-	public SMSTriggerDetectionPoint getSMSTriggerDetectionPoint();
+    SMSTriggerDetectionPoint getSMSTriggerDetectionPoint();
 
-	public long getServiceKey();
+    long getServiceKey();
 
-	public ISDNAddressString getGsmSCFAddress();
+    ISDNAddressString getGsmSCFAddress();
 
-	public DefaultSMSHandling getDefaultSMSHandling();
+    DefaultSMSHandling getDefaultSMSHandling();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

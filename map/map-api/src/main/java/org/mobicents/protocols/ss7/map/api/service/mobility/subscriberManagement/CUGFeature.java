@@ -25,31 +25,25 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-CUG-Feature ::= SEQUENCE {
-	basicService	Ext-BasicServiceCode	OPTIONAL,
-	preferentialCUG-Indicator	CUG-Index	OPTIONAL,
-	interCUG-Restrictions	InterCUG-Restrictions,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...}
-
-CUG-Index ::= INTEGER (0..32767)
-	-- The internal structure is defined in ETS 300 138.
-
- * 
- * 
+ *
+ CUG-Feature ::= SEQUENCE { basicService Ext-BasicServiceCode OPTIONAL, preferentialCUG-Indicator CUG-Index OPTIONAL,
+ * interCUG-Restrictions InterCUG-Restrictions, extensionContainer ExtensionContainer OPTIONAL, ...}
+ *
+ * CUG-Index ::= INTEGER (0..32767) -- The internal structure is defined in ETS 300 138.
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CUGFeature {
 
-	public ExtBasicServiceCode getBasicService();
+    ExtBasicServiceCode getBasicService();
 
-	public Integer getPreferentialCugIndicator();
+    Integer getPreferentialCugIndicator();
 
-	public InterCUGRestrictions getInterCugRestrictions();
+    InterCUGRestrictions getInterCugRestrictions();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

@@ -25,36 +25,36 @@ package org.mobicents.protocols.ss7.map.api.service.sms;
 import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MAPServiceSmsListener extends MAPServiceListener {
 
-	public void onForwardShortMessageRequest(ForwardShortMessageRequest forwSmInd);
+    void onForwardShortMessageRequest(ForwardShortMessageRequest forwSmInd);
 
-	public void onForwardShortMessageResponse(ForwardShortMessageResponse forwSmRespInd);
+    void onForwardShortMessageResponse(ForwardShortMessageResponse forwSmRespInd);
 
-	public void onMoForwardShortMessageRequest(MoForwardShortMessageRequest moForwSmInd);
+    void onMoForwardShortMessageRequest(MoForwardShortMessageRequest moForwSmInd);
 
-	public void onMoForwardShortMessageResponse(MoForwardShortMessageResponse moForwSmRespInd);
+    void onMoForwardShortMessageResponse(MoForwardShortMessageResponse moForwSmRespInd);
 
-	public void onMtForwardShortMessageRequest(MtForwardShortMessageRequest mtForwSmInd);
+    void onMtForwardShortMessageRequest(MtForwardShortMessageRequest mtForwSmInd);
 
-	public void onMtForwardShortMessageResponse(MtForwardShortMessageResponse mtForwSmRespInd);
+    void onMtForwardShortMessageResponse(MtForwardShortMessageResponse mtForwSmRespInd);
 
-	public void onSendRoutingInfoForSMRequest(SendRoutingInfoForSMRequest sendRoutingInfoForSMInd);
+    void onSendRoutingInfoForSMRequest(SendRoutingInfoForSMRequest sendRoutingInfoForSMInd);
 
-	public void onSendRoutingInfoForSMResponse(SendRoutingInfoForSMResponse sendRoutingInfoForSMRespInd);
-	
-	public void onReportSMDeliveryStatusRequest(ReportSMDeliveryStatusRequest reportSMDeliveryStatusInd);
+    void onSendRoutingInfoForSMResponse(SendRoutingInfoForSMResponse sendRoutingInfoForSMRespInd);
 
-	public void onReportSMDeliveryStatusResponse(ReportSMDeliveryStatusResponse reportSMDeliveryStatusRespInd);
+    void onReportSMDeliveryStatusRequest(ReportSMDeliveryStatusRequest reportSMDeliveryStatusInd);
 
-	public void onInformServiceCentreRequest(InformServiceCentreRequest informServiceCentreInd);
-	
-	public void onAlertServiceCentreRequest(AlertServiceCentreRequest alertServiceCentreInd);
+    void onReportSMDeliveryStatusResponse(ReportSMDeliveryStatusResponse reportSMDeliveryStatusRespInd);
 
-	public void onAlertServiceCentreResponse(AlertServiceCentreResponse alertServiceCentreInd);
+    void onInformServiceCentreRequest(InformServiceCentreRequest informServiceCentreInd);
+
+    void onAlertServiceCentreRequest(AlertServiceCentreRequest alertServiceCentreInd);
+
+    void onAlertServiceCentreResponse(AlertServiceCentreResponse alertServiceCentreInd);
 
 }

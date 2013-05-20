@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -40,191 +40,195 @@ import org.mobicents.protocols.ss7.cap.api.primitives.ExtensionField;
 import org.mobicents.protocols.ss7.map.primitives.ArrayListSerializingBase;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class CAPExtensionsImpl implements CAPExtensions, CAPAsnPrimitive {
 
-	public static final String _PrimitiveName = "CAPExtensions";
+    public static final String _PrimitiveName = "CAPExtensions";
 
-	private static final String EXTENSION_FIELD = "extensionField";
-	private static final String EXTENSION_FIELD_LIST = "extensionFieldList";
+    private static final String EXTENSION_FIELD = "extensionField";
+    private static final String EXTENSION_FIELD_LIST = "extensionFieldList";
 
-	private ArrayList<ExtensionField> extensionFields;
+    private ArrayList<ExtensionField> extensionFields;
 
-	public CAPExtensionsImpl() {
-	}
+    public CAPExtensionsImpl() {
+    }
 
-	public CAPExtensionsImpl(ArrayList<ExtensionField> fieldsList) {
-		this.extensionFields = fieldsList;
-	}
-	
-	@Override
-	public ArrayList<ExtensionField> getExtensionFields() {
-		return extensionFields;
-	}
+    public CAPExtensionsImpl(ArrayList<ExtensionField> fieldsList) {
+        this.extensionFields = fieldsList;
+    }
 
-	@Override
-	public void setExtensionFields(ArrayList<ExtensionField> fieldsList) {
-		this.extensionFields = fieldsList;
-	}
-	
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
+    @Override
+    public ArrayList<ExtensionField> getExtensionFields() {
+        return extensionFields;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public void setExtensionFields(ArrayList<ExtensionField> fieldsList) {
+        this.extensionFields = fieldsList;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.SEQUENCE;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-		this.extensionFields = null;
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		ArrayList<ExtensionField> res = new ArrayList<ExtensionField>();
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-			int tag = ais.readTag();
-			if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || tag != Tag.SEQUENCE || ais.isTagPrimitive())
-				throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Bad ExtensionField tag or tag class or is primitive",
-						CAPParsingComponentExceptionReason.MistypedParameter);
+        this.extensionFields = null;
 
-			ExtensionFieldImpl elem = new ExtensionFieldImpl();
-			elem.decodeAll(ais);
-			res.add(elem);
-		}
+        ArrayList<ExtensionField> res = new ArrayList<ExtensionField>();
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-		this.extensionFields = res;
-	}
+            int tag = ais.readTag();
+            if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || tag != Tag.SEQUENCE || ais.isTagPrimitive())
+                throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                        + ": Bad ExtensionField tag or tag class or is primitive",
+                        CAPParsingComponentExceptionReason.MistypedParameter);
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+            ExtensionFieldImpl elem = new ExtensionFieldImpl();
+            elem.decodeAll(ais);
+            res.add(elem);
+        }
 
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+        this.extensionFields = res;
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-		
-		try {
-			asnOs.writeTag(tagClass, false, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-		if (this.extensionFields == null)
-			throw new CAPException("Error while decoding " + _PrimitiveName + ": extensionFields field must not be null");
-		if (this.extensionFields.size() < 1 || this.extensionFields.size() > 10)
-			throw new CAPException("Error while decoding " + _PrimitiveName + ": extensionFields field length must be from 1 to 10");
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-		for (ExtensionField fld : this.extensionFields) {
-			((ExtensionFieldImpl) fld).encodeAll(asnOs);
-		}
-	}
-	
-	@Override
-	public String toString() {
+        try {
+            asnOs.writeTag(tagClass, false, tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-		if (this.extensionFields != null) {
-			boolean isFirst = true;
-			for (ExtensionField fld : this.extensionFields) {
-				if (isFirst)
-					isFirst = false;
-				else
-					sb.append("\n");
-				sb.append(fld.toString());
-			}
-		}
-		sb.append("]");
+        if (this.extensionFields == null)
+            throw new CAPException("Error while decoding " + _PrimitiveName + ": extensionFields field must not be null");
+        if (this.extensionFields.size() < 1 || this.extensionFields.size() > 10)
+            throw new CAPException("Error while decoding " + _PrimitiveName
+                    + ": extensionFields field length must be from 1 to 10");
 
-		return sb.toString();
-	}
+        for (ExtensionField fld : this.extensionFields) {
+            ((ExtensionFieldImpl) fld).encodeAll(asnOs);
+        }
+    }
 
-	/**
-	 * XML Serialization/Deserialization
-	 */
-	protected static final XMLFormat<CAPExtensionsImpl> CAP_Extensions_XML = new XMLFormat<CAPExtensionsImpl>(CAPExtensionsImpl.class) {
+    @Override
+    public String toString() {
 
-		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml, CAPExtensionsImpl capExtensions) throws XMLStreamException {
-			CAPExtensions_ExtensionFields al = xml.get(EXTENSION_FIELD_LIST, CAPExtensions_ExtensionFields.class);
-			if (al != null) {
-				capExtensions.extensionFields = al.getData();
-			}
-		}
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		@Override
-		public void write(CAPExtensionsImpl capExtensions, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
-			if (capExtensions.extensionFields == null || capExtensions.extensionFields.size() == 0)
-				return;
+        if (this.extensionFields != null) {
+            boolean isFirst = true;
+            for (ExtensionField fld : this.extensionFields) {
+                if (isFirst)
+                    isFirst = false;
+                else
+                    sb.append("\n");
+                sb.append(fld.toString());
+            }
+        }
+        sb.append("]");
 
-			if (capExtensions.extensionFields != null) {
-				CAPExtensions_ExtensionFields al = new CAPExtensions_ExtensionFields(capExtensions.extensionFields);
-				xml.add(al, EXTENSION_FIELD_LIST, CAPExtensions_ExtensionFields.class);
-			}
-		}
-	};
+        return sb.toString();
+    }
 
-	public static class CAPExtensions_ExtensionFields extends ArrayListSerializingBase<ExtensionField> {
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<CAPExtensionsImpl> CAP_Extensions_XML = new XMLFormat<CAPExtensionsImpl>(
+            CAPExtensionsImpl.class) {
 
-		public CAPExtensions_ExtensionFields() {
-			super(EXTENSION_FIELD, ExtensionFieldImpl.class);
-		}
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, CAPExtensionsImpl capExtensions) throws XMLStreamException {
+            CAPExtensions_ExtensionFields al = xml.get(EXTENSION_FIELD_LIST, CAPExtensions_ExtensionFields.class);
+            if (al != null) {
+                capExtensions.extensionFields = al.getData();
+            }
+        }
 
-		public CAPExtensions_ExtensionFields(ArrayList<ExtensionField> data) {
-			super(EXTENSION_FIELD, ExtensionFieldImpl.class, data);
-		}
-		
-	}
+        @Override
+        public void write(CAPExtensionsImpl capExtensions, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            if (capExtensions.extensionFields == null || capExtensions.extensionFields.size() == 0)
+                return;
+
+            if (capExtensions.extensionFields != null) {
+                CAPExtensions_ExtensionFields al = new CAPExtensions_ExtensionFields(capExtensions.extensionFields);
+                xml.add(al, EXTENSION_FIELD_LIST, CAPExtensions_ExtensionFields.class);
+            }
+        }
+    };
+
+    public static class CAPExtensions_ExtensionFields extends ArrayListSerializingBase<ExtensionField> {
+
+        public CAPExtensions_ExtensionFields() {
+            super(EXTENSION_FIELD, ExtensionFieldImpl.class);
+        }
+
+        public CAPExtensions_ExtensionFields(ArrayList<ExtensionField> data) {
+            super(EXTENSION_FIELD, ExtensionFieldImpl.class, data);
+        }
+
+    }
 }

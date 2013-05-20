@@ -29,25 +29,20 @@ import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 
 /**
- * SM-RP-DA ::= CHOICE {
-	imsi			[0] IMSI,
-	lmsi			[1] LMSI,
-	serviceCentreAddressDA	[4] AddressString,
-	noSM-RP-DA	[5] NULL}
-
- * Only one method getIMSI(), getLMSI() or getServiceCentreAddressDA() 
- * will return the non null value
- * If all these methods return null - this means noSM-RP-DA value 
- * 
+ * SM-RP-DA ::= CHOICE { imsi [0] IMSI, lmsi [1] LMSI, serviceCentreAddressDA [4] AddressString, noSM-RP-DA [5] NULL}
+ *
+ * Only one method getIMSI(), getLMSI() or getServiceCentreAddressDA() will return the non null value If all these methods
+ * return null - this means noSM-RP-DA value
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SM_RP_DA extends Serializable {
 
-	public IMSI getIMSI();
+    IMSI getIMSI();
 
-	public LMSI getLMSI();
+    LMSI getLMSI();
 
-	public AddressString getServiceCentreAddressDA();
+    AddressString getServiceCentreAddressDA();
 
 }

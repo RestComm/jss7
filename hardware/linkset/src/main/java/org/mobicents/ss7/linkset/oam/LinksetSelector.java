@@ -33,14 +33,13 @@ import org.mobicents.protocols.stream.api.StreamSelector;
 
 /**
  * the stream of Linkset
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public class LinksetSelector implements StreamSelector {
 
-    private static final Logger logger = Logger
-            .getLogger(LinksetSelector.class);
+    private static final Logger logger = Logger.getLogger(LinksetSelector.class);
 
     private FastList<Stream> registered = new FastList<Stream>();
 
@@ -80,8 +79,7 @@ public class LinksetSelector implements StreamSelector {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public FastList<SelectorKey> selectNow(int operation, int timeout)
-            throws IOException {
+    public FastList<SelectorKey> selectNow(int operation, int timeout) throws IOException {
 
         selected.clear();
         for (Stream s : registered) {

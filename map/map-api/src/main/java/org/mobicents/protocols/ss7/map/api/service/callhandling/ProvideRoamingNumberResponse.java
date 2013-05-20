@@ -26,34 +26,26 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-MAP V3:
-ProvideRoamingNumberRes ::= SEQUENCE {
-	roamingNumber	ISDN-AddressString,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...,
-	releaseResourcesSupported	NULL			OPTIONAL,
-	vmsc-Address	ISDN-AddressString	OPTIONAL }
-
-MAP V2:
-RESULT
-	roamingNumberISDN-AddressString
-
- * 
+ *
+ MAP V3: ProvideRoamingNumberRes ::= SEQUENCE { roamingNumber ISDN-AddressString, extensionContainer ExtensionContainer
+ * OPTIONAL, ..., releaseResourcesSupported NULL OPTIONAL, vmsc-Address ISDN-AddressString OPTIONAL }
+ *
+ * MAP V2: RESULT roamingNumberISDN-AddressString
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ProvideRoamingNumberResponse extends CallHandlingMessage {
 
-	public ISDNAddressString getRoamingNumber();
+     ISDNAddressString getRoamingNumber();
 
-	public MAPExtensionContainer getExtensionContainer();
+     MAPExtensionContainer getExtensionContainer();
 
-	public boolean getReleaseResourcesSupported();
+     boolean getReleaseResourcesSupported();
 
-	public ISDNAddressString getVmscAddress();
-	
-	public long getMapProtocolVersion();
+     ISDNAddressString getVmscAddress();
+
+     long getMapProtocolVersion();
 
 }

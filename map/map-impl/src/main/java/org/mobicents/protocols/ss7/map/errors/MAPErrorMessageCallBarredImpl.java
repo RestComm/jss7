@@ -38,274 +38,274 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class MAPErrorMessageCallBarredImpl extends MAPErrorMessageImpl implements MAPErrorMessageCallBarred {
 
-	public static final int unauthorisedMessageOriginator_TAG = 1;
-	
-	private long mapProtocolVersion;
-	private CallBarringCause callBarringCause;
-	private MAPExtensionContainer extensionContainer;
-	private Boolean unauthorisedMessageOriginator;
-	
-	
-	public MAPErrorMessageCallBarredImpl(long mapProtocolVersion, CallBarringCause callBarringCause, MAPExtensionContainer extensionContainer,
-			Boolean unauthorisedMessageOriginator) {
-		super((long) MAPErrorCode.callBarred);
-		
-		this.mapProtocolVersion = mapProtocolVersion;
-		this.callBarringCause = callBarringCause;
-		this.extensionContainer = extensionContainer;
-		this.unauthorisedMessageOriginator = unauthorisedMessageOriginator;
-	}
-	
-	protected MAPErrorMessageCallBarredImpl() {
-		super((long) MAPErrorCode.callBarred);
-	}
-	
-	public boolean isEmCallBarred() {
-		return true;
-	}
+    public static final int unauthorisedMessageOriginator_TAG = 1;
 
-	public MAPErrorMessageCallBarred getEmCallBarred() {
-		return this;
-	}
+    private long mapProtocolVersion;
+    private CallBarringCause callBarringCause;
+    private MAPExtensionContainer extensionContainer;
+    private Boolean unauthorisedMessageOriginator;
 
-	
-	public CallBarringCause getCallBarringCause() {
-		return this.callBarringCause;
-	}
+    public MAPErrorMessageCallBarredImpl(long mapProtocolVersion, CallBarringCause callBarringCause,
+            MAPExtensionContainer extensionContainer, Boolean unauthorisedMessageOriginator) {
+        super((long) MAPErrorCode.callBarred);
 
-	public MAPExtensionContainer getExtensionContainer() {
-		return this.extensionContainer;
-	}
+        this.mapProtocolVersion = mapProtocolVersion;
+        this.callBarringCause = callBarringCause;
+        this.extensionContainer = extensionContainer;
+        this.unauthorisedMessageOriginator = unauthorisedMessageOriginator;
+    }
 
-	public Boolean getUnauthorisedMessageOriginator() {
-		return this.unauthorisedMessageOriginator;
-	}
+    protected MAPErrorMessageCallBarredImpl() {
+        super((long) MAPErrorCode.callBarred);
+    }
 
-	public long getMapProtocolVersion() {
-		return this.mapProtocolVersion;
-	}
-	
-	public void setCallBarringCause(CallBarringCause callBarringCause) {
-		this.callBarringCause = callBarringCause;
-	}
+    public boolean isEmCallBarred() {
+        return true;
+    }
 
-	public void setExtensionContainer(MAPExtensionContainer extensionContainer) {
-		this.extensionContainer = extensionContainer;
-	}
+    public MAPErrorMessageCallBarred getEmCallBarred() {
+        return this;
+    }
 
-	public void setUnauthorisedMessageOriginator(Boolean unauthorisedMessageOriginator) {
-		this.unauthorisedMessageOriginator = unauthorisedMessageOriginator;
-	}
+    public CallBarringCause getCallBarringCause() {
+        return this.callBarringCause;
+    }
 
-	public void setMapProtocolVersion(long mapProtocolVersion) {
-		this.mapProtocolVersion = mapProtocolVersion;
-	}	
-	
-	
-	public int getTag() throws MAPException {
-		if (this.mapProtocolVersion < 3)
-			return Tag.ENUMERATED;
-		else
-			return Tag.SEQUENCE;
-	}
+    public MAPExtensionContainer getExtensionContainer() {
+        return this.extensionContainer;
+    }
 
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    public Boolean getUnauthorisedMessageOriginator() {
+        return this.unauthorisedMessageOriginator;
+    }
 
-	public boolean getIsPrimitive() {
-		if (this.mapProtocolVersion < 3)
-			return true;
-		else
-			return false;
-	}
+    public long getMapProtocolVersion() {
+        return this.mapProtocolVersion;
+    }
 
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+    public void setCallBarringCause(CallBarringCause callBarringCause) {
+        this.callBarringCause = callBarringCause;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding MAPErrorMessageCallBarred: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding MAPErrorMessageCallBarred: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public void setExtensionContainer(MAPExtensionContainer extensionContainer) {
+        this.extensionContainer = extensionContainer;
+    }
 
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+    public void setUnauthorisedMessageOriginator(Boolean unauthorisedMessageOriginator) {
+        this.unauthorisedMessageOriginator = unauthorisedMessageOriginator;
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding MAPErrorMessageCallBarred: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding MAPErrorMessageCallBarred: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public void setMapProtocolVersion(long mapProtocolVersion) {
+        this.mapProtocolVersion = mapProtocolVersion;
+    }
 
-	private void _decode(AsnInputStream localAis, int length) throws MAPParsingComponentException, IOException, AsnException {
+    public int getTag() throws MAPException {
+        if (this.mapProtocolVersion < 3)
+            return Tag.ENUMERATED;
+        else
+            return Tag.SEQUENCE;
+    }
 
-		this.callBarringCause = null;
-		this.unauthorisedMessageOriginator = null;
-		this.extensionContainer = null;
-		
-		if (localAis.getTagClass() != Tag.CLASS_UNIVERSAL)
-			throw new MAPParsingComponentException("Error decoding MAPErrorMessageCallBarred: bad tag class",
-					MAPParsingComponentExceptionReason.MistypedParameter);
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-		switch (localAis.getTag()) {
-		case Tag.ENUMERATED:
-			if (!localAis.isTagPrimitive())
-				throw new MAPParsingComponentException("Error decoding MAPErrorMessageCallBarred: ENUMERATED tag but data is not primitive",
-						MAPParsingComponentExceptionReason.MistypedParameter);
-			int code = (int) localAis.readIntegerData(length);
-			this.callBarringCause = CallBarringCause.getInstance(code);
-			if (this.callBarringCause == null)
-				throw new MAPParsingComponentException("Error decoding MAPErrorMessageCallBarred.callBarringCause: bad code value",
-						MAPParsingComponentExceptionReason.MistypedParameter);
-			this.mapProtocolVersion = 2;
-			break;
-			
-		case Tag.SEQUENCE:
-			if (localAis.isTagPrimitive())
-				throw new MAPParsingComponentException("Error decoding MAPErrorMessageCallBarred: SEQUENCE tag but data is primitive",
-						MAPParsingComponentExceptionReason.MistypedParameter);
-			AsnInputStream ais = localAis.readSequenceStreamData(length);
+    public boolean getIsPrimitive() {
+        if (this.mapProtocolVersion < 3)
+            return true;
+        else
+            return false;
+    }
 
-			while (true) {
-				if (ais.available() == 0)
-					break;
+    public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
-				int tag = ais.readTag();
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding MAPErrorMessageCallBarred: " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding MAPErrorMessageCallBarred: " + e.getMessage(),
+                    e, MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-				switch (ais.getTagClass()) {
-				case Tag.CLASS_UNIVERSAL:
-					switch (tag) {
-					case Tag.ENUMERATED:
-						code = (int) ais.readInteger();
-						this.callBarringCause = CallBarringCause.getInstance(code);
-						if (this.callBarringCause == null)
-							throw new MAPParsingComponentException("Error decoding MAPErrorMessageCallBarred.callBarringCause: bad code value",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						break;
+    public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
-					case Tag.SEQUENCE:
-						this.extensionContainer = new MAPExtensionContainerImpl();
-						((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
-						break;
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding MAPErrorMessageCallBarred: " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding MAPErrorMessageCallBarred: " + e.getMessage(),
+                    e, MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-					default:
-						ais.advanceElement();
-						break;
-					}
-					break;
-					
-				case Tag.CLASS_CONTEXT_SPECIFIC:
-					switch (tag) {
-					case unauthorisedMessageOriginator_TAG:
-						ais.readNull();
-						this.unauthorisedMessageOriginator = true;
-						break;
+    private void _decode(AsnInputStream localAis, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-					default:
-						ais.advanceElement();
-						break;
-					}
-					break;
+        this.callBarringCause = null;
+        this.unauthorisedMessageOriginator = null;
+        this.extensionContainer = null;
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-			}
-			
-			this.mapProtocolVersion = 3;
-			break;
-			
-		default:
-			throw new MAPParsingComponentException("Error decoding MAPErrorMessageCallBarred: bad tag",
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}		
-		
-		if (this.unauthorisedMessageOriginator == null)
-			this.unauthorisedMessageOriginator = false;
-	}
+        if (localAis.getTagClass() != Tag.CLASS_UNIVERSAL)
+            throw new MAPParsingComponentException("Error decoding MAPErrorMessageCallBarred: bad tag class",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
 
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+        switch (localAis.getTag()) {
+            case Tag.ENUMERATED:
+                if (!localAis.isTagPrimitive())
+                    throw new MAPParsingComponentException(
+                            "Error decoding MAPErrorMessageCallBarred: ENUMERATED tag but data is not primitive",
+                            MAPParsingComponentExceptionReason.MistypedParameter);
+                int code = (int) localAis.readIntegerData(length);
+                this.callBarringCause = CallBarringCause.getInstance(code);
+                if (this.callBarringCause == null)
+                    throw new MAPParsingComponentException(
+                            "Error decoding MAPErrorMessageCallBarred.callBarringCause: bad code value",
+                            MAPParsingComponentExceptionReason.MistypedParameter);
+                this.mapProtocolVersion = 2;
+                break;
 
-		if (this.mapProtocolVersion < 3)
-			this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.ENUMERATED);
-		else
-			this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
-	}
+            case Tag.SEQUENCE:
+                if (localAis.isTagPrimitive())
+                    throw new MAPParsingComponentException(
+                            "Error decoding MAPErrorMessageCallBarred: SEQUENCE tag but data is primitive",
+                            MAPParsingComponentExceptionReason.MistypedParameter);
+                AsnInputStream ais = localAis.readSequenceStreamData(length);
 
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		
-		try {
-			if (this.mapProtocolVersion < 3)
-				asnOs.writeTag(tagClass, true, tag);
-			else
-				asnOs.writeTag(tagClass, false, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding MAPErrorMessageCallBarred: " + e.getMessage(), e);
-		}
-	}
+                while (true) {
+                    if (ais.available() == 0)
+                        break;
 
-	public void encodeData(AsnOutputStream aos) throws MAPException {
+                    int tag = ais.readTag();
 
-		if (this.callBarringCause == null && (this.unauthorisedMessageOriginator == null || this.unauthorisedMessageOriginator == false)
-				&& this.extensionContainer == null)
-			return;
-		if (this.callBarringCause == null && this.mapProtocolVersion < 3)
-			return;
+                    switch (ais.getTagClass()) {
+                        case Tag.CLASS_UNIVERSAL:
+                            switch (tag) {
+                                case Tag.ENUMERATED:
+                                    code = (int) ais.readInteger();
+                                    this.callBarringCause = CallBarringCause.getInstance(code);
+                                    if (this.callBarringCause == null)
+                                        throw new MAPParsingComponentException(
+                                                "Error decoding MAPErrorMessageCallBarred.callBarringCause: bad code value",
+                                                MAPParsingComponentExceptionReason.MistypedParameter);
+                                    break;
 
-		try {
-			if (this.mapProtocolVersion < 3) {
-				aos.writeIntegerData(this.callBarringCause.getCode());
-			} else {
-				if (this.callBarringCause != null)
-					aos.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, this.callBarringCause.getCode());
-				if (this.extensionContainer != null)
-					((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(aos);
-				if (this.unauthorisedMessageOriginator != null && this.unauthorisedMessageOriginator == true)
-					aos.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, unauthorisedMessageOriginator_TAG);
-			}			
+                                case Tag.SEQUENCE:
+                                    this.extensionContainer = new MAPExtensionContainerImpl();
+                                    ((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+                                    break;
 
-		} catch (IOException e) {
-			throw new MAPException("IOException when encoding MAPErrorMessageCallBarred: " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding MAPErrorMessageCallBarred: " + e.getMessage(), e);
-		}
-	}
+                                default:
+                                    ais.advanceElement();
+                                    break;
+                            }
+                            break;
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		
-		sb.append("MAPErrorMessageCallBarred [");
-		if (this.callBarringCause != null)
-			sb.append("callBarringCause=" + this.callBarringCause.toString());
-		if (this.extensionContainer != null)
-			sb.append(", extensionContainer=" + this.extensionContainer.toString());
-		if (this.unauthorisedMessageOriginator != null && this.unauthorisedMessageOriginator == true)
-			sb.append(", unauthorisedMessageOriginator=true");
-		sb.append("]");
-		
-		return sb.toString();
-	}
+                        case Tag.CLASS_CONTEXT_SPECIFIC:
+                            switch (tag) {
+                                case unauthorisedMessageOriginator_TAG:
+                                    ais.readNull();
+                                    this.unauthorisedMessageOriginator = true;
+                                    break;
+
+                                default:
+                                    ais.advanceElement();
+                                    break;
+                            }
+                            break;
+
+                        default:
+                            ais.advanceElement();
+                            break;
+                    }
+                }
+
+                this.mapProtocolVersion = 3;
+                break;
+
+            default:
+                throw new MAPParsingComponentException("Error decoding MAPErrorMessageCallBarred: bad tag",
+                        MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+
+        if (this.unauthorisedMessageOriginator == null)
+            this.unauthorisedMessageOriginator = false;
+    }
+
+    public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+
+        if (this.mapProtocolVersion < 3)
+            this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.ENUMERATED);
+        else
+            this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+    }
+
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+
+        try {
+            if (this.mapProtocolVersion < 3)
+                asnOs.writeTag(tagClass, true, tag);
+            else
+                asnOs.writeTag(tagClass, false, tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding MAPErrorMessageCallBarred: " + e.getMessage(), e);
+        }
+    }
+
+    public void encodeData(AsnOutputStream aos) throws MAPException {
+
+        if (this.callBarringCause == null
+                && (this.unauthorisedMessageOriginator == null || this.unauthorisedMessageOriginator == false)
+                && this.extensionContainer == null)
+            return;
+        if (this.callBarringCause == null && this.mapProtocolVersion < 3)
+            return;
+
+        try {
+            if (this.mapProtocolVersion < 3) {
+                aos.writeIntegerData(this.callBarringCause.getCode());
+            } else {
+                if (this.callBarringCause != null)
+                    aos.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, this.callBarringCause.getCode());
+                if (this.extensionContainer != null)
+                    ((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(aos);
+                if (this.unauthorisedMessageOriginator != null && this.unauthorisedMessageOriginator == true)
+                    aos.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, unauthorisedMessageOriginator_TAG);
+            }
+
+        } catch (IOException e) {
+            throw new MAPException("IOException when encoding MAPErrorMessageCallBarred: " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding MAPErrorMessageCallBarred: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("MAPErrorMessageCallBarred [");
+        if (this.callBarringCause != null)
+            sb.append("callBarringCause=" + this.callBarringCause.toString());
+        if (this.extensionContainer != null)
+            sb.append(", extensionContainer=" + this.extensionContainer.toString());
+        if (this.unauthorisedMessageOriginator != null && this.unauthorisedMessageOriginator == true)
+            sb.append(", unauthorisedMessageOriginator=true");
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
-
-

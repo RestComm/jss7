@@ -22,64 +22,59 @@
 
 package org.mobicents.protocols.ss7.tools.simulator.management;
 
-
-
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface TesterHostMBean {
 
-	public boolean isStarted();
+    boolean isStarted();
 
-	public Instance_L1 getInstance_L1();
+    Instance_L1 getInstance_L1();
 
-	public String getInstance_L1_Value();
+    String getInstance_L1_Value();
 
-	public void setInstance_L1(Instance_L1 val);
+    void setInstance_L1(Instance_L1 val);
 
-	public Instance_L2 getInstance_L2();
+    Instance_L2 getInstance_L2();
 
-	public String getInstance_L2_Value();
+    String getInstance_L2_Value();
 
-	public void setInstance_L2(Instance_L2 val);
+    void setInstance_L2(Instance_L2 val);
 
-	public Instance_L3 getInstance_L3();
+    Instance_L3 getInstance_L3();
 
-	public String getInstance_L3_Value();
+    String getInstance_L3_Value();
 
-	public void setInstance_L3(Instance_L3 val);
+    void setInstance_L3(Instance_L3 val);
 
-	public Instance_TestTask getInstance_TestTask();
+    Instance_TestTask getInstance_TestTask();
 
-	public String getInstance_TestTask_Value();
+    String getInstance_TestTask_Value();
 
-	public void setInstance_TestTask(Instance_TestTask val);
+    void setInstance_TestTask(Instance_TestTask val);
 
-	public String getL1State();
+    String getL1State();
 
-	public String getL2State();
+    String getL2State();
 
-	public String getL3State();
+    String getL3State();
 
-	public String getTestTaskState();
+    String getTestTaskState();
 
+    void start();
 
-	public void start();
+    void stop();
 
-	public void stop();
+    void quit();
 
-	public void quit();
+    void putInstance_L1Value(String val);
 
+    void putInstance_L2Value(String val);
 
-	public void putInstance_L1Value(String val);
+    void putInstance_L3Value(String val);
 
-	public void putInstance_L2Value(String val);
-
-	public void putInstance_L3Value(String val);
-
-	public void putInstance_TestTaskValue(String val);
+    void putInstance_TestTaskValue(String val);
 
 }
-

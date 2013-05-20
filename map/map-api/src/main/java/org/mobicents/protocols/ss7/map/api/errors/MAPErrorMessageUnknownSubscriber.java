@@ -25,25 +25,23 @@ package org.mobicents.protocols.ss7.map.api.errors;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
- * UnknownSubscriberParam ::= SEQUENCE {
- *	extensionContainer	ExtensionContainer	OPTIONAL,
- *	...,
- *	unknownSubscriberDiagnostic	UnknownSubscriberDiagnostic	OPTIONAL}
  *
- * 
- * 
+ * UnknownSubscriberParam ::= SEQUENCE { extensionContainer ExtensionContainer OPTIONAL, ..., unknownSubscriberDiagnostic
+ * UnknownSubscriberDiagnostic OPTIONAL}
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MAPErrorMessageUnknownSubscriber extends MAPErrorMessage {
-	
-	public MAPExtensionContainer getExtensionContainer();
 
-	public UnknownSubscriberDiagnostic getUnknownSubscriberDiagnostic();
+    MAPExtensionContainer getExtensionContainer();
 
-	public void setExtensionContainer(MAPExtensionContainer extensionContainer);
+    UnknownSubscriberDiagnostic getUnknownSubscriberDiagnostic();
 
-	public void setUnknownSubscriberDiagnostic(UnknownSubscriberDiagnostic unknownSubscriberDiagnostic);
+    void setExtensionContainer(MAPExtensionContainer extensionContainer);
+
+    void setUnknownSubscriberDiagnostic(UnknownSubscriberDiagnostic unknownSubscriberDiagnostic);
 
 }

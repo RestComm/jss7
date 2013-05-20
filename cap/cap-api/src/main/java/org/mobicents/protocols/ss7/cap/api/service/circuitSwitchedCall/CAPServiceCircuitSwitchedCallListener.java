@@ -25,58 +25,58 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall;
 import org.mobicents.protocols.ss7.cap.api.CAPServiceListener;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CAPServiceCircuitSwitchedCallListener extends CAPServiceListener {
 
-	public void onInitialDPRequest(InitialDPRequest ind);
+    void onInitialDPRequest(InitialDPRequest ind);
 
-	public void onRequestReportBCSMEventRequest(RequestReportBCSMEventRequest ind);
+    void onRequestReportBCSMEventRequest(RequestReportBCSMEventRequest ind);
 
-	public void onApplyChargingRequest(ApplyChargingRequest ind);
+    void onApplyChargingRequest(ApplyChargingRequest ind);
 
-	public void onEventReportBCSMRequest(EventReportBCSMRequest ind);
+    void onEventReportBCSMRequest(EventReportBCSMRequest ind);
 
-	public void onContinueRequest(ContinueRequest ind);
+    void onContinueRequest(ContinueRequest ind);
 
-	public void onApplyChargingReportRequest(ApplyChargingReportRequest ind);
+    void onApplyChargingReportRequest(ApplyChargingReportRequest ind);
 
-	public void onReleaseCallRequest(ReleaseCallRequest ind);
+    void onReleaseCallRequest(ReleaseCallRequest ind);
 
-	public void onConnectRequest(ConnectRequest ind);
+    void onConnectRequest(ConnectRequest ind);
 
-	public void onCallInformationRequestRequest(CallInformationRequestRequest ind);
+    void onCallInformationRequestRequest(CallInformationRequestRequest ind);
 
-	public void onCallInformationReportRequest(CallInformationReportRequest ind);
+    void onCallInformationReportRequest(CallInformationReportRequest ind);
 
-	public void onActivityTestRequest(ActivityTestRequest ind);
+    void onActivityTestRequest(ActivityTestRequest ind);
 
-	public void onActivityTestResponse(ActivityTestResponse ind);
+    void onActivityTestResponse(ActivityTestResponse ind);
 
-	public void onAssistRequestInstructionsRequest(AssistRequestInstructionsRequest ind);
+    void onAssistRequestInstructionsRequest(AssistRequestInstructionsRequest ind);
 
-	public void onEstablishTemporaryConnectionRequest(EstablishTemporaryConnectionRequest ind);
+    void onEstablishTemporaryConnectionRequest(EstablishTemporaryConnectionRequest ind);
 
-	public void onDisconnectForwardConnectionRequest(DisconnectForwardConnectionRequest ind);
+    void onDisconnectForwardConnectionRequest(DisconnectForwardConnectionRequest ind);
 
-	public void onConnectToResourceRequest(ConnectToResourceRequest ind);
+    void onConnectToResourceRequest(ConnectToResourceRequest ind);
 
-	public void onResetTimerRequest(ResetTimerRequest ind);
+    void onResetTimerRequest(ResetTimerRequest ind);
 
-	public void onFurnishChargingInformationRequest(FurnishChargingInformationRequest ind);
+    void onFurnishChargingInformationRequest(FurnishChargingInformationRequest ind);
 
-	public void onSendChargingInformationRequest(SendChargingInformationRequest ind);
+    void onSendChargingInformationRequest(SendChargingInformationRequest ind);
 
-	public void onSpecializedResourceReportRequest(SpecializedResourceReportRequest ind);
+    void onSpecializedResourceReportRequest(SpecializedResourceReportRequest ind);
 
-	public void onPlayAnnouncementRequest(PlayAnnouncementRequest ind);
+    void onPlayAnnouncementRequest(PlayAnnouncementRequest ind);
 
-	public void onPromptAndCollectUserInformationRequest(PromptAndCollectUserInformationRequest ind);
+    void onPromptAndCollectUserInformationRequest(PromptAndCollectUserInformationRequest ind);
 
-	public void onPromptAndCollectUserInformationResponse(PromptAndCollectUserInformationResponse ind);
+    void onPromptAndCollectUserInformationResponse(PromptAndCollectUserInformationResponse ind);
 
-	public void onCancelRequest(CancelRequest ind);
+    void onCancelRequest(CancelRequest ind);
 
 }

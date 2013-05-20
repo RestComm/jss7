@@ -24,34 +24,32 @@ package org.mobicents.protocols.ss7.cap.api.errors;
 
 /**
  * Base class of MAP ReturnError messages
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CAPErrorMessage {
 
-	public Long getErrorCode();
+    Long getErrorCode();
 
-	
-	public boolean isEmParameterless();
+    boolean isEmParameterless();
 
-	public boolean isEmCancelFailed();
+    boolean isEmCancelFailed();
 
-	public boolean isEmRequestedInfoError();
+    boolean isEmRequestedInfoError();
 
-	public boolean isEmSystemFailure();
+    boolean isEmSystemFailure();
 
-	public boolean isEmTaskRefused();
+    boolean isEmTaskRefused();
 
-	
-	public CAPErrorMessageParameterless getEmParameterless();
-	
-	public CAPErrorMessageCancelFailed getEmCancelFailed();
-	
-	public CAPErrorMessageRequestedInfoError getEmRequestedInfoError();
-	
-	public CAPErrorMessageSystemFailure getEmSystemFailure();
-	
-	public CAPErrorMessageTaskRefused getEmTaskRefused();
+    CAPErrorMessageParameterless getEmParameterless();
+
+    CAPErrorMessageCancelFailed getEmCancelFailed();
+
+    CAPErrorMessageRequestedInfoError getEmRequestedInfoError();
+
+    CAPErrorMessageSystemFailure getEmSystemFailure();
+
+    CAPErrorMessageTaskRefused getEmTaskRefused();
 
 }

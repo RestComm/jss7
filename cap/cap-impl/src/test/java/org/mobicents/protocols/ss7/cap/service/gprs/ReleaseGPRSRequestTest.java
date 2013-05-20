@@ -36,70 +36,70 @@ import org.mobicents.protocols.ss7.cap.service.gprs.primitive.PDPIDImpl;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
 public class ReleaseGPRSRequestTest {
-	
-	public byte[] getData() {
-		return new byte[] {48, 6, -128, 1, 5, -127, 1, 2};
-	};
-	
-	public byte[] getDataLiveTrace() {
-		return new byte[] {0x30,0x03,(byte)0x80,0x01,0x00};
-	};
 
-	@Test(groups = { "functional.decode", "primitives" })
-	public void testDecode() throws Exception {
-		byte[] data = this.getData();
-		AsnInputStream asn = new AsnInputStream(data);
-		int tag = asn.readTag();
-		ReleaseGPRSRequestImpl prim = new ReleaseGPRSRequestImpl();
-		prim.decodeAll(asn);
-		
-		assertEquals(tag, Tag.SEQUENCE);
-		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
+    public byte[] getData() {
+        return new byte[] { 48, 6, -128, 1, 5, -127, 1, 2 };
+    };
 
-		assertEquals(prim.getGPRSCause().getData(),5);
-		assertEquals(prim.getPDPID().getId(),2);
-	}
-	
-	@Test(groups = { "functional.decode", "primitives" })
-	public void testDecodeLiveTrace() throws Exception {
-		byte[] data = this.getDataLiveTrace();
-		AsnInputStream asn = new AsnInputStream(data);
-		int tag = asn.readTag();
-		ReleaseGPRSRequestImpl prim = new ReleaseGPRSRequestImpl();
-		prim.decodeAll(asn);
-		
-		assertEquals(tag, Tag.SEQUENCE);
-		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
+    public byte[] getDataLiveTrace() {
+        return new byte[] { 0x30, 0x03, (byte) 0x80, 0x01, 0x00 };
+    };
 
-		assertEquals(prim.getGPRSCause().getData(),0);
-	}
-	
-	@Test(groups = { "functional.encode", "primitives" })
-	public void testEncode() throws Exception {
-		
-		GPRSCause gprsCause = new GPRSCauseImpl(5);
-		PDPID pdpID = new PDPIDImpl(2);
-		ReleaseGPRSRequestImpl prim = new ReleaseGPRSRequestImpl(gprsCause, pdpID);
-		AsnOutputStream asn = new AsnOutputStream();
-		prim.encodeAll(asn);
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testDecode() throws Exception {
+        byte[] data = this.getData();
+        AsnInputStream asn = new AsnInputStream(data);
+        int tag = asn.readTag();
+        ReleaseGPRSRequestImpl prim = new ReleaseGPRSRequestImpl();
+        prim.decodeAll(asn);
 
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
-	}
-	
-	@Test(groups = { "functional.encode", "primitives" })
-	public void testEncodeLiveTrace() throws Exception {
-		
-		GPRSCause gprsCause = new GPRSCauseImpl(0);
-		ReleaseGPRSRequestImpl prim = new ReleaseGPRSRequestImpl(gprsCause, null);
-		AsnOutputStream asn = new AsnOutputStream();
-		prim.encodeAll(asn);
+        assertEquals(tag, Tag.SEQUENCE);
+        assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
 
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getDataLiveTrace()));
-	}
-	
+        assertEquals(prim.getGPRSCause().getData(), 5);
+        assertEquals(prim.getPDPID().getId(), 2);
+    }
+
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testDecodeLiveTrace() throws Exception {
+        byte[] data = this.getDataLiveTrace();
+        AsnInputStream asn = new AsnInputStream(data);
+        int tag = asn.readTag();
+        ReleaseGPRSRequestImpl prim = new ReleaseGPRSRequestImpl();
+        prim.decodeAll(asn);
+
+        assertEquals(tag, Tag.SEQUENCE);
+        assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
+
+        assertEquals(prim.getGPRSCause().getData(), 0);
+    }
+
+    @Test(groups = { "functional.encode", "primitives" })
+    public void testEncode() throws Exception {
+
+        GPRSCause gprsCause = new GPRSCauseImpl(5);
+        PDPID pdpID = new PDPIDImpl(2);
+        ReleaseGPRSRequestImpl prim = new ReleaseGPRSRequestImpl(gprsCause, pdpID);
+        AsnOutputStream asn = new AsnOutputStream();
+        prim.encodeAll(asn);
+
+        assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+    }
+
+    @Test(groups = { "functional.encode", "primitives" })
+    public void testEncodeLiveTrace() throws Exception {
+
+        GPRSCause gprsCause = new GPRSCauseImpl(0);
+        ReleaseGPRSRequestImpl prim = new ReleaseGPRSRequestImpl(gprsCause, null);
+        AsnOutputStream asn = new AsnOutputStream();
+        prim.encodeAll(asn);
+
+        assertTrue(Arrays.equals(asn.toByteArray(), this.getDataLiveTrace()));
+    }
+
 }

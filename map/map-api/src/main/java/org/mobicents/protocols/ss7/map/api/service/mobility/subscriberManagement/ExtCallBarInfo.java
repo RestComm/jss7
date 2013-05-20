@@ -28,27 +28,23 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
 
 /**
- * 
-
-Ext-CallBarInfo ::= SEQUENCE {
-	ss-Code		SS-Code,
-	callBarringFeatureList	Ext-CallBarFeatureList,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...}
-
-Ext-CallBarFeatureList ::= SEQUENCE SIZE (1..32) OF Ext-CallBarringFeature
-
- * 
- * 
+ *
+ Ext-CallBarInfo ::= SEQUENCE { ss-Code SS-Code, callBarringFeatureList Ext-CallBarFeatureList, extensionContainer
+ * ExtensionContainer OPTIONAL, ...}
+ *
+ * Ext-CallBarFeatureList ::= SEQUENCE SIZE (1..32) OF Ext-CallBarringFeature
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ExtCallBarInfo {
 
-	public SSCode getSsCode();
+    SSCode getSsCode();
 
-	public ArrayList<ExtCallBarringFeature> getCallBarringFeatureList();
+    ArrayList<ExtCallBarringFeature> getCallBarringFeatureList();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

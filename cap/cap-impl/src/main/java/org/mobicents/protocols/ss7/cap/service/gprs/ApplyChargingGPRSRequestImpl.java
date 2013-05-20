@@ -40,233 +40,230 @@ import org.mobicents.protocols.ss7.cap.service.gprs.primitive.PDPIDImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class ApplyChargingGPRSRequestImpl  extends GprsMessageImpl  implements ApplyChargingGPRSRequest {
-	
-	public static final String _PrimitiveName = "ApplyChargingGPRSRequest";
-	
-	public static final int _ID_chargingCharacteristics = 0;
-	public static final int _ID_tariffSwitchInterval = 1;
-	public static final int _ID_pdpID = 2;
-	
-	private ChargingCharacteristics chargingCharacteristics;
-	private Integer tariffSwitchInterval;
-	private PDPID pdpID;
-	
-	public ApplyChargingGPRSRequestImpl() {
-	}
-	
-	public ApplyChargingGPRSRequestImpl(
-			ChargingCharacteristics chargingCharacteristics,
-			Integer tariffSwitchInterval, PDPID pdpID) {
-		super();
-		this.chargingCharacteristics = chargingCharacteristics;
-		this.tariffSwitchInterval = tariffSwitchInterval;
-		this.pdpID = pdpID;
-	}
+public class ApplyChargingGPRSRequestImpl extends GprsMessageImpl implements ApplyChargingGPRSRequest {
 
-	@Override
-	public ChargingCharacteristics getChargingCharacteristics() {
-		return this.chargingCharacteristics;
-	}
+    public static final String _PrimitiveName = "ApplyChargingGPRSRequest";
 
-	@Override
-	public Integer getTariffSwitchInterval() {
-		return this.tariffSwitchInterval;
-	}
+    public static final int _ID_chargingCharacteristics = 0;
+    public static final int _ID_tariffSwitchInterval = 1;
+    public static final int _ID_pdpID = 2;
 
-	@Override
-	public PDPID getPDPID() {
-		return this.pdpID;
-	}
-	
-	@Override
-	public CAPMessageType getMessageType() {
-		return CAPMessageType.applyChargingGPRS_Request;
-	}
+    private ChargingCharacteristics chargingCharacteristics;
+    private Integer tariffSwitchInterval;
+    private PDPID pdpID;
 
-	@Override
-	public int getOperationCode() {
-		return CAPOperationCode.applyChargingGPRS;
-	}
+    public ApplyChargingGPRSRequestImpl() {
+    }
 
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
+    public ApplyChargingGPRSRequestImpl(ChargingCharacteristics chargingCharacteristics, Integer tariffSwitchInterval,
+            PDPID pdpID) {
+        super();
+        this.chargingCharacteristics = chargingCharacteristics;
+        this.tariffSwitchInterval = tariffSwitchInterval;
+        this.pdpID = pdpID;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public ChargingCharacteristics getChargingCharacteristics() {
+        return this.chargingCharacteristics;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    @Override
+    public Integer getTariffSwitchInterval() {
+        return this.tariffSwitchInterval;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS)
-			throws CAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public PDPID getPDPID() {
+        return this.pdpID;
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length)
-			throws CAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public CAPMessageType getMessageType() {
+        return CAPMessageType.applyChargingGPRS_Request;
+    }
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException, MAPParsingComponentException {
+    @Override
+    public int getOperationCode() {
+        return CAPOperationCode.applyChargingGPRS;
+    }
 
-		this.chargingCharacteristics = null;
-		this.tariffSwitchInterval = null;
-		this.pdpID = null;
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.SEQUENCE;
+    }
 
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-			int tag = ais.readTag();
+    @Override
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_chargingCharacteristics:
-					if (ais.isTagPrimitive())
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ".chargingCharacteristics: Parameter is primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.chargingCharacteristics = new ChargingCharacteristicsImpl();
-					AsnInputStream ais2 = ais.readSequenceStream();
-					ais2.readTag();
-					((ChargingCharacteristicsImpl) this.chargingCharacteristics).decodeAll(ais2);
-					break;		
-				case _ID_tariffSwitchInterval:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException(
-								"Error while decoding " + _PrimitiveName + ".tariffSwitchInterval: Parameter is not primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.tariffSwitchInterval = (int) ais.readInteger();
-					break;
-				case _ID_pdpID:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException(
-								"Error while decoding " + _PrimitiveName + ".pdpID: Parameter is not primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.pdpID = new PDPIDImpl();
-					((PDPIDImpl) this.pdpID).decodeAll(ais);
-					break;
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
-		
-		
-		if (this.chargingCharacteristics == null)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": parameter chargingCharacteristics is mandatory but not found",
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		
-	
-	}
-	
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag)
-			throws CAPException {
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-	
-		if (this.chargingCharacteristics == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": chargingCharacteristics must not be null");
-		
-		try {
-			
-			asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_chargingCharacteristics);
-			int pos = asnOs.StartContentDefiniteLength();
-			((ChargingCharacteristicsImpl) this.chargingCharacteristics).encodeAll(asnOs);
-			asnOs.FinalizeContent(pos);
-			
-			if (this.tariffSwitchInterval != null)
-				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_tariffSwitchInterval, tariffSwitchInterval.intValue());
-			
-			if (this.pdpID != null)
-				((PDPIDImpl) this.pdpID).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_pdpID);
-			
-		} catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} 
-	}
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException,
+            MAPParsingComponentException {
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName + " [");
+        this.chargingCharacteristics = null;
+        this.tariffSwitchInterval = null;
+        this.pdpID = null;
 
-		if (this.chargingCharacteristics != null) {
-			sb.append("chargingCharacteristics=");
-			sb.append(this.chargingCharacteristics.toString());
-			sb.append(", ");
-		}
-		
-		if (this.tariffSwitchInterval != null) {
-			sb.append("tariffSwitchInterval=");
-			sb.append(this.tariffSwitchInterval.toString());
-			sb.append(", ");
-		}
-		
-		if (this.pdpID != null) {
-			sb.append("pdpID=");
-			sb.append(this.pdpID.toString());
-		}
-		sb.append("]");
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-		return sb.toString();
-	}
+            int tag = ais.readTag();
+
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_chargingCharacteristics:
+                        if (ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".chargingCharacteristics: Parameter is primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.chargingCharacteristics = new ChargingCharacteristicsImpl();
+                        AsnInputStream ais2 = ais.readSequenceStream();
+                        ais2.readTag();
+                        ((ChargingCharacteristicsImpl) this.chargingCharacteristics).decodeAll(ais2);
+                        break;
+                    case _ID_tariffSwitchInterval:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".tariffSwitchInterval: Parameter is not primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.tariffSwitchInterval = (int) ais.readInteger();
+                        break;
+                    case _ID_pdpID:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".pdpID: Parameter is not primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.pdpID = new PDPIDImpl();
+                        ((PDPIDImpl) this.pdpID).decodeAll(ais);
+                        break;
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
+
+        if (this.chargingCharacteristics == null)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": parameter chargingCharacteristics is mandatory but not found",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+
+    }
+
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
+
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
+
+        if (this.chargingCharacteristics == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": chargingCharacteristics must not be null");
+
+        try {
+
+            asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_chargingCharacteristics);
+            int pos = asnOs.StartContentDefiniteLength();
+            ((ChargingCharacteristicsImpl) this.chargingCharacteristics).encodeAll(asnOs);
+            asnOs.FinalizeContent(pos);
+
+            if (this.tariffSwitchInterval != null)
+                asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_tariffSwitchInterval, tariffSwitchInterval.intValue());
+
+            if (this.pdpID != null)
+                ((PDPIDImpl) this.pdpID).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_pdpID);
+
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
+
+        if (this.chargingCharacteristics != null) {
+            sb.append("chargingCharacteristics=");
+            sb.append(this.chargingCharacteristics.toString());
+            sb.append(", ");
+        }
+
+        if (this.tariffSwitchInterval != null) {
+            sb.append("tariffSwitchInterval=");
+            sb.append(this.tariffSwitchInterval.toString());
+            sb.append(", ");
+        }
+
+        if (this.pdpID != null) {
+            sb.append("pdpID=");
+            sb.append(this.pdpID.toString());
+        }
+        sb.append("]");
+
+        return sb.toString();
+    }
 
 }

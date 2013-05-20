@@ -36,215 +36,214 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class InbandInfoImpl implements InbandInfo, CAPAsnPrimitive {
 
-	public static final int _ID_messageID = 0;
-	public static final int _ID_numberOfRepetitions = 1;
-	public static final int _ID_duration = 2;
-	public static final int _ID_interval = 3;
+    public static final int _ID_messageID = 0;
+    public static final int _ID_numberOfRepetitions = 1;
+    public static final int _ID_duration = 2;
+    public static final int _ID_interval = 3;
 
-	public static final String _PrimitiveName = "InbandInfo";
+    public static final String _PrimitiveName = "InbandInfo";
 
-	private MessageID messageID;
-	private Integer numberOfRepetitions;
-	private Integer duration;
-	private Integer interval;
+    private MessageID messageID;
+    private Integer numberOfRepetitions;
+    private Integer duration;
+    private Integer interval;
 
-	public InbandInfoImpl() {
-	}
+    public InbandInfoImpl() {
+    }
 
-	public InbandInfoImpl(MessageID messageID, Integer numberOfRepetitions, Integer duration, Integer interval) {
-		this.messageID = messageID;
-		this.numberOfRepetitions = numberOfRepetitions;
-		this.duration = duration;
-		this.interval = interval;
-	}
-	
-	@Override
-	public MessageID getMessageID() {
-		return messageID;
-	}
+    public InbandInfoImpl(MessageID messageID, Integer numberOfRepetitions, Integer duration, Integer interval) {
+        this.messageID = messageID;
+        this.numberOfRepetitions = numberOfRepetitions;
+        this.duration = duration;
+        this.interval = interval;
+    }
 
-	@Override
-	public Integer getNumberOfRepetitions() {
-		return numberOfRepetitions;
-	}
+    @Override
+    public MessageID getMessageID() {
+        return messageID;
+    }
 
-	@Override
-	public Integer getDuration() {
-		return duration;
-	}
+    @Override
+    public Integer getNumberOfRepetitions() {
+        return numberOfRepetitions;
+    }
 
-	@Override
-	public Integer getInterval() {
-		return interval;
-	}
+    @Override
+    public Integer getDuration() {
+        return duration;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
+    @Override
+    public Integer getInterval() {
+        return interval;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.SEQUENCE;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		this.messageID = null;
-		this.numberOfRepetitions = null;
-		this.duration = null;
-		this.interval = null;
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+        this.messageID = null;
+        this.numberOfRepetitions = null;
+        this.duration = null;
+        this.interval = null;
 
-			int tag = ais.readTag();
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_messageID:
-					AsnInputStream ais2 = ais.readSequenceStream();
-					ais2.readTag();
-					this.messageID = new MessageIDImpl();
-					((MessageIDImpl) this.messageID).decodeAll(ais2);
-					break;
-				case _ID_numberOfRepetitions:
-					this.numberOfRepetitions = (int) ais.readInteger();
-					break;
-				case _ID_duration:
-					this.duration = (int) ais.readInteger();
-					break;
-				case _ID_interval:
-					this.interval = (int) ais.readInteger();
-					break;
+            int tag = ais.readTag();
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_messageID:
+                        AsnInputStream ais2 = ais.readSequenceStream();
+                        ais2.readTag();
+                        this.messageID = new MessageIDImpl();
+                        ((MessageIDImpl) this.messageID).decodeAll(ais2);
+                        break;
+                    case _ID_numberOfRepetitions:
+                        this.numberOfRepetitions = (int) ais.readInteger();
+                        break;
+                    case _ID_duration:
+                        this.duration = (int) ais.readInteger();
+                        break;
+                    case _ID_interval:
+                        this.interval = (int) ais.readInteger();
+                        break;
 
-		if (this.messageID == null)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": messageID is mandatory but not found",
-					CAPParsingComponentExceptionReason.MistypedParameter);
-	}
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+        if (this.messageID == null)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": messageID is mandatory but not found", CAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-	@Override
-	public void encodeData(AsnOutputStream aos) throws CAPException {
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		if (this.messageID == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": messageID must not be null");
+    @Override
+    public void encodeData(AsnOutputStream aos) throws CAPException {
 
-		try {
-			aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_messageID);
-			int pos = aos.StartContentDefiniteLength();
-			((MessageIDImpl) this.messageID).encodeAll(aos);
-			aos.FinalizeContent(pos);
+        if (this.messageID == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": messageID must not be null");
 
-			if (this.numberOfRepetitions != null)
-				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_numberOfRepetitions, this.numberOfRepetitions);
-			if (this.duration != null)
-				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_duration, this.duration);
-			if (this.interval != null)
-				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_interval, this.interval);
+        try {
+            aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_messageID);
+            int pos = aos.StartContentDefiniteLength();
+            ((MessageIDImpl) this.messageID).encodeAll(aos);
+            aos.FinalizeContent(pos);
 
-		} catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+            if (this.numberOfRepetitions != null)
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_numberOfRepetitions, this.numberOfRepetitions);
+            if (this.duration != null)
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_duration, this.duration);
+            if (this.interval != null)
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_interval, this.interval);
 
-	@Override
-	public String toString() {
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+    @Override
+    public String toString() {
 
-		if (this.messageID != null) {
-			sb.append("messageID=");
-			sb.append(messageID.toString());
-		}
-		if (this.numberOfRepetitions != null) {
-			sb.append(", numberOfRepetitions=");
-			sb.append(numberOfRepetitions);
-		}
-		if (this.duration != null) {
-			sb.append(", duration=");
-			sb.append(duration);
-		}
-		if (this.interval != null) {
-			sb.append(", interval=");
-			sb.append(interval);
-		}
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		sb.append("]");
+        if (this.messageID != null) {
+            sb.append("messageID=");
+            sb.append(messageID.toString());
+        }
+        if (this.numberOfRepetitions != null) {
+            sb.append(", numberOfRepetitions=");
+            sb.append(numberOfRepetitions);
+        }
+        if (this.duration != null) {
+            sb.append(", duration=");
+            sb.append(duration);
+        }
+        if (this.interval != null) {
+            sb.append(", interval=");
+            sb.append(interval);
+        }
 
-		return sb.toString();
-	}
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
-

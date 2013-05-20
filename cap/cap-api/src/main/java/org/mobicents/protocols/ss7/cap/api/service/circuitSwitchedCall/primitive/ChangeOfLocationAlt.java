@@ -23,15 +23,13 @@
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
-*
-ChangeOfLocationAlt {PARAMETERS-BOUND : bound} ::= SEQUENCE {
-...
-}
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ ChangeOfLocationAlt {PARAMETERS-BOUND : bound} ::= SEQUENCE { ... }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface ChangeOfLocationAlt {
 
 }

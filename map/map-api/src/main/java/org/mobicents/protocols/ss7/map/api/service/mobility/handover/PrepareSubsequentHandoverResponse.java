@@ -28,29 +28,23 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
- * 
-
-MAP V3:
-PrepareSubsequentHO-Res ::= [3] SEQUENCE {
-	an-APDU		AccessNetworkSignalInfo,
-	extensionContainer	[0]	ExtensionContainer	OPTIONAL,
-	...}
-
-MAP V2:
-RESULT
-bss-APDU		ExternalSignalInfo
-
- * 
+ *
+ MAP V3: PrepareSubsequentHO-Res ::= [3] SEQUENCE { an-APDU AccessNetworkSignalInfo, extensionContainer [0] ExtensionContainer
+ * OPTIONAL, ...}
+ *
+ * MAP V2: RESULT bss-APDU ExternalSignalInfo
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface PrepareSubsequentHandoverResponse extends MobilityMessage {
 
-	public AccessNetworkSignalInfo getAnAPDU();
+    AccessNetworkSignalInfo getAnAPDU();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	// MAP V2
-	public ExternalSignalInfo getBssAPDU();
+    // MAP V2
+    ExternalSignalInfo getBssAPDU();
 
 }

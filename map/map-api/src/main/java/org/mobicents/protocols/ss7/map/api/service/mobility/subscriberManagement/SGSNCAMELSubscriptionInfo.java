@@ -27,37 +27,30 @@ import java.util.ArrayList;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-SGSN-CAMEL-SubscriptionInfo ::= SEQUENCE {
-	gprs-CSI		[0]	GPRS-CSI	OPTIONAL,
-	mo-sms-CSI	[1]	SMS-CSI	OPTIONAL,
-	extensionContainer	[2]	ExtensionContainer	OPTIONAL,
-	...,
-	mt-sms-CSI	[3]	SMS-CSI	OPTIONAL,
-	mt-smsCAMELTDP-CriteriaList	[4]	MT-smsCAMELTDP-CriteriaList	OPTIONAL,
-	mg-csi		[5]	MG-CSI	OPTIONAL
-	}
-
-MT-smsCAMELTDP-CriteriaList ::= SEQUENCE SIZE (1.. 10) OF MT-smsCAMELTDP-Criteria
-
- * 
- * 
+ *
+ SGSN-CAMEL-SubscriptionInfo ::= SEQUENCE { gprs-CSI [0] GPRS-CSI OPTIONAL, mo-sms-CSI [1] SMS-CSI OPTIONAL,
+ * extensionContainer [2] ExtensionContainer OPTIONAL, ..., mt-sms-CSI [3] SMS-CSI OPTIONAL, mt-smsCAMELTDP-CriteriaList [4]
+ * MT-smsCAMELTDP-CriteriaList OPTIONAL, mg-csi [5] MG-CSI OPTIONAL }
+ *
+ * MT-smsCAMELTDP-CriteriaList ::= SEQUENCE SIZE (1.. 10) OF MT-smsCAMELTDP-Criteria
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SGSNCAMELSubscriptionInfo {
 
-	public GPRSCSI getGprsCsi();
+    GPRSCSI getGprsCsi();
 
-	public SMSCSI getMoSmsCsi();
+    SMSCSI getMoSmsCsi();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public SMSCSI getMtSmsCsi();
+    SMSCSI getMtSmsCsi();
 
-	public ArrayList<MTsmsCAMELTDPCriteria> getMtSmsCamelTdpCriteriaList();
+    ArrayList<MTsmsCAMELTDPCriteria> getMtSmsCamelTdpCriteriaList();
 
-	public MGCSI getMgCsi();
+    MGCSI getMgCsi();
 
 }

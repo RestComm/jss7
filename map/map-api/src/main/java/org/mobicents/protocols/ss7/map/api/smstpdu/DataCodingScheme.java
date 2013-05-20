@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -27,24 +27,24 @@ import java.io.Serializable;
 /**
  * See 3GPP TS 23.038 Chapter 4 SMS Data Coding Scheme
  *
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface DataCodingScheme extends Serializable {
 
-	public int getCode();
+    int getCode();
 
-	public DataCodingGroup getDataCodingGroup();
+    DataCodingGroup getDataCodingGroup();
 
-	public DataCodingSchemaMessageClass getMessageClass();
+    DataCodingSchemaMessageClass getMessageClass();
 
-	public DataCodingSchemaIndicationType getDataCodingSchemaIndicationType();
+    DataCodingSchemaIndicationType getDataCodingSchemaIndicationType();
 
-	public Boolean getSetIndicationActive();
+    Boolean getSetIndicationActive();
 
-	public CharacterSet getCharacterSet();
+    CharacterSet getCharacterSet();
 
-	public boolean getIsCompressed();
+    boolean getIsCompressed();
 
 }

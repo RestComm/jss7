@@ -25,21 +25,17 @@ package org.mobicents.protocols.ss7.cap.api.service.sms.primitive;
 import org.mobicents.protocols.ss7.cap.api.primitives.MonitorMode;
 
 /**
-*
-
-SMSEvent ::= SEQUENCE {
-eventTypeSMS [0] EventTypeSMS,
-monitorMode [1] MonitorMode
-}
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ SMSEvent ::= SEQUENCE { eventTypeSMS [0] EventTypeSMS, monitorMode [1] MonitorMode }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface SMSEvent {
 
-	public EventTypeSMS getEventTypeSMS();
+    EventTypeSMS getEventTypeSMS();
 
-	public MonitorMode getMonitorMode();
+    MonitorMode getMonitorMode();
 
 }

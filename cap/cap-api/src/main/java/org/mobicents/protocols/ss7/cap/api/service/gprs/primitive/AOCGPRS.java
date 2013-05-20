@@ -26,24 +26,19 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAI_GSM0224;
 
 /**
-*
-
-
-AOCGPRS ::= SEQUENCE {
-aOCInitial [0] CAI-GSM0224,
-aOCSubsequent [1] AOCSubsequent OPTIONAL
-}
-
-
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ AOCGPRS ::= SEQUENCE { aOCInitial [0] CAI-GSM0224, aOCSubsequent [1] AOCSubsequent OPTIONAL }
+ *
+ *
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface AOCGPRS {
 
-	public CAI_GSM0224 getAOCInitial();
+    CAI_GSM0224 getAOCInitial();
 
-	public AOCSubsequent getAOCSubsequent();
+    AOCSubsequent getAOCSubsequent();
 
 }

@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -25,12 +25,12 @@ package org.mobicents.protocols.ss7.map.api.service.supplementary;
 import org.mobicents.protocols.ss7.map.api.MAPMessage;
 
 /**
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public interface SupplementaryMessage extends MAPMessage {
 
-	public MAPDialogSupplementary getMAPDialog();
+    MAPDialogSupplementary getMAPDialog();
 
 }

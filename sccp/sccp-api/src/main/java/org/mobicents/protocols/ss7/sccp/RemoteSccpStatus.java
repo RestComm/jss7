@@ -23,9 +23,9 @@
 package org.mobicents.protocols.ss7.sccp;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
  */
 public enum RemoteSccpStatus {
-	available, unavailableReasonUnknown, unequipped, inaccessible, congested;
+    available, unavailableReasonUnknown, unequipped, inaccessible, congested;
 }

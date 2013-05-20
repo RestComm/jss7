@@ -23,24 +23,21 @@
 package org.mobicents.protocols.ss7.cap.api.dialog;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
  *
- * CAP-GPRS-ReferenceNumber ::= SEQUENCE { 
- * destinationReference    [0] Integer4        OPTIONAL, 
- * originationReference    [1] Integer4        OPTIONAL 
- * } 
- * --  This parameter is used to identify the relationship between SGSN and the gsmSCF. 
- * 
- * Integer4::= INTEGER (0..2147483647)
+ *         CAP-GPRS-ReferenceNumber ::= SEQUENCE { destinationReference [0] Integer4 OPTIONAL, originationReference [1] Integer4
+ *         OPTIONAL } -- This parameter is used to identify the relationship between SGSN and the gsmSCF.
+ *
+ *         Integer4::= INTEGER (0..2147483647)
  */
 public interface CAPGprsReferenceNumber {
 
-	public Integer getDestinationReference();
+    Integer getDestinationReference();
 
-	public Integer getOriginationReference();
+    Integer getOriginationReference();
 
-	public void setDestinationReference(Integer destinationReference);
+    void setDestinationReference(Integer destinationReference);
 
-	public void setOriginationReference(Integer originationReference);
+    void setOriginationReference(Integer originationReference);
 }

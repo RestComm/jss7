@@ -24,30 +24,19 @@ package org.mobicents.protocols.ss7.map.api.service.oam;
 
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 
-/**	
- * 
- 
-MAP V2:
-sendIMSI  OPERATION ::= {				--Timer m
-	ARGUMENT
-		ISDN-AddressString
-	RESULT
-		IMSI
-	ERRORS {
-		dataMissing |
-		unexpectedDataValue |
-		unknownSubscriber}
-	CODE	local:58 }
-
-	ARGUMENT
-		ISDN-AddressString
-
- * 
+/**
+ *
+ MAP V2: sendIMSI OPERATION ::= { --Timer m ARGUMENT ISDN-AddressString RESULT IMSI ERRORS { dataMissing | unexpectedDataValue
+ * | unknownSubscriber} CODE local:58 }
+ *
+ * ARGUMENT ISDN-AddressString
+ *
+ *
  * @author sergey vetyutnev
  *
  */
 public interface SendImsiRequest extends OamMessage {
 
-	public ISDNAddressString getMsisdn();
+    ISDNAddressString getMsisdn();
 
 }

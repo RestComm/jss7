@@ -26,21 +26,17 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.smstpdu.AddressField;
 
 /**
- * 
- * SM-RP-SMEA ::= OCTET STRING (SIZE (1..12))
-	-- this parameter contains an address field which is encoded 
-	-- as defined in 3GPP TS 23.040. An address field contains 3 elements :
-	-- 		address-length
-	-- 		type-of-address
-	-- 		address-value
- * 
+ *
+ * SM-RP-SMEA ::= OCTET STRING (SIZE (1..12)) -- this parameter contains an address field which is encoded -- as defined in 3GPP
+ * TS 23.040. An address field contains 3 elements : -- address-length -- type-of-address -- address-value
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SM_RP_SMEA {
 
-	public byte[] getData();
+    byte[] getData();
 
-	public AddressField getAddressField() throws MAPException;
+    AddressField getAddressField() throws MAPException;
 
 }

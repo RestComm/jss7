@@ -37,132 +37,130 @@ import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class GPRSEventImpl extends SequenceBase implements GPRSEvent{
-	
-	public static final int _ID_gprsEventType = 0;
-	public static final int _ID_monitorMode = 1;
-	
-	private GPRSEventType gprsEventType;
-	private MonitorMode monitorMode;
+public class GPRSEventImpl extends SequenceBase implements GPRSEvent {
 
-	public GPRSEventImpl() {
-		super("GPRSEvent");
-	}
+    public static final int _ID_gprsEventType = 0;
+    public static final int _ID_monitorMode = 1;
 
-	public GPRSEventImpl(GPRSEventType gprsEventType,
-			MonitorMode monitorMode) {
-		super("GPRSEvent");
-		this.gprsEventType = gprsEventType;
-		this.monitorMode = monitorMode;
-	}
+    private GPRSEventType gprsEventType;
+    private MonitorMode monitorMode;
 
-	@Override
-	public GPRSEventType getGPRSEventType() {
-		return this.gprsEventType;
-	}
+    public GPRSEventImpl() {
+        super("GPRSEvent");
+    }
 
-	@Override
-	public MonitorMode getMonitorMode() {
-		return this.monitorMode;
-	}
+    public GPRSEventImpl(GPRSEventType gprsEventType, MonitorMode monitorMode) {
+        super("GPRSEvent");
+        this.gprsEventType = gprsEventType;
+        this.monitorMode = monitorMode;
+    }
 
-	@Override
-	protected void _decode(AsnInputStream asnIS, int length)
-			throws CAPParsingComponentException, IOException, AsnException,
-			MAPParsingComponentException {
+    @Override
+    public GPRSEventType getGPRSEventType() {
+        return this.gprsEventType;
+    }
 
-		this.gprsEventType = null;
+    @Override
+    public MonitorMode getMonitorMode() {
+        return this.monitorMode;
+    }
 
-		AsnInputStream ais = asnIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+    @Override
+    protected void _decode(AsnInputStream asnIS, int length) throws CAPParsingComponentException, IOException, AsnException,
+            MAPParsingComponentException {
 
-			int tag = ais.readTag();
+        this.gprsEventType = null;
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_gprsEventType:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException(
-								"Error while decoding " + _PrimitiveName + ".gprsEventType: Parameter is not primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					int i1 = (int) ais.readInteger();
-					this.gprsEventType = GPRSEventType.getInstance(i1);
-					break;		
-				case _ID_monitorMode:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException(
-								"Error while decoding " + _PrimitiveName + ".monitorMode: Parameter is not primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					int i2 = (int) ais.readInteger();
-					this.monitorMode = MonitorMode.getInstance(i2);
-					break;	
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
-		
-		
-		if (this.gprsEventType == null)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": parameter gprsEventType is mandatory but not found",
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		
-		if (this.monitorMode == null)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": parameter monitorMode is mandatory but not found",
-					CAPParsingComponentExceptionReason.MistypedParameter);
-	
-	}
-	
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		
-		try {
-			if (this.gprsEventType == null)
-				throw new CAPException("Error while encoding " + _PrimitiveName + ": gprsEventType must not be null");
-			
-			if (this.monitorMode == null)
-				throw new CAPException("Error while encoding " + _PrimitiveName + ": monitorMode must not be null");
-			
-			asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_gprsEventType, this.gprsEventType.getCode());
-			
-			asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_monitorMode, this.monitorMode.getCode());
-			
-		} catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
-	
+        AsnInputStream ais = asnIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName + " [");
+            int tag = ais.readTag();
 
-		if (this.gprsEventType != null) {
-			sb.append("gprsEventType=");
-			sb.append(this.gprsEventType.toString());
-			sb.append(", ");
-		}
-		
-		if (this.monitorMode != null) {
-			sb.append("monitorMode=");
-			sb.append(this.monitorMode.toString());
-		}
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_gprsEventType:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".gprsEventType: Parameter is not primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        int i1 = (int) ais.readInteger();
+                        this.gprsEventType = GPRSEventType.getInstance(i1);
+                        break;
+                    case _ID_monitorMode:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".monitorMode: Parameter is not primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        int i2 = (int) ais.readInteger();
+                        this.monitorMode = MonitorMode.getInstance(i2);
+                        break;
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
 
-		sb.append("]");
+        if (this.gprsEventType == null)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": parameter gprsEventType is mandatory but not found",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
 
-		return sb.toString();
-	}
+        if (this.monitorMode == null)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": parameter monitorMode is mandatory but not found",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+
+    }
+
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
+
+        try {
+            if (this.gprsEventType == null)
+                throw new CAPException("Error while encoding " + _PrimitiveName + ": gprsEventType must not be null");
+
+            if (this.monitorMode == null)
+                throw new CAPException("Error while encoding " + _PrimitiveName + ": monitorMode must not be null");
+
+            asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_gprsEventType, this.gprsEventType.getCode());
+
+            asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_monitorMode, this.monitorMode.getCode());
+
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
+
+        if (this.gprsEventType != null) {
+            sb.append("gprsEventType=");
+            sb.append(this.gprsEventType.toString());
+            sb.append(", ");
+        }
+
+        if (this.monitorMode != null) {
+            sb.append("monitorMode=");
+            sb.append(this.monitorMode.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 
 }

@@ -23,23 +23,23 @@
 package org.mobicents.protocols.ss7.map.api.smstpdu;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ValidityPeriod {
 
-	public ValidityPeriodFormat getValidityPeriodFormat();
+    ValidityPeriodFormat getValidityPeriodFormat();
 
-	public Integer getRelativeFormatValue();
+    Integer getRelativeFormatValue();
 
-	/**
-	 * @return Return the relative format period in hours
-	 */
-	public Double getRelativeFormatHours();
+    /**
+     * @return Return the relative format period in hours
+     */
+    Double getRelativeFormatHours();
 
-	public AbsoluteTimeStamp getAbsoluteFormatValue();
+    AbsoluteTimeStamp getAbsoluteFormatValue();
 
-	public ValidityEnhancedFormatData getEnhancedFormatValue();
+    ValidityEnhancedFormatData getEnhancedFormatValue();
 
 }

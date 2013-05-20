@@ -29,36 +29,25 @@ import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.RequestedInformation;
 
 /**
- * 
-
-callInformationReport {PARAMETERS-BOUND : bound} OPERATION ::= { 
- ARGUMENT  CallInformationReportArg {bound} 
- RETURN RESULT FALSE 
- ALWAYS RESPONDS FALSE 
- CODE   opcode-callInformationReport} 
--- Direction: gsmSSF -> gsmSCF, Timer: T  
-cirp
--- This operation is used to send specific call information for a single call party to the gsmSCF as 
--- requested by the gsmSCF in a previous CallInformationRequest. 
- 
-CallInformationReportArg {PARAMETERS-BOUND : bound} ::= SEQUENCE { 
- requestedInformationList   [0] RequestedInformationList {bound}, 
- extensions       [2] Extensions {bound}      OPTIONAL, 
- legID        [3] ReceivingSideID DEFAULT receivingSideID:leg2, 
- ... 
- } 
-
- * 
+ *
+ callInformationReport {PARAMETERS-BOUND : bound} OPERATION ::= { ARGUMENT CallInformationReportArg {bound} RETURN RESULT
+ * FALSE ALWAYS RESPONDS FALSE CODE opcode-callInformationReport} -- Direction: gsmSSF -> gsmSCF, Timer: T cirp -- This
+ * operation is used to send specific call information for a single call party to the gsmSCF as -- requested by the gsmSCF in a
+ * previous CallInformationRequest.
+ *
+ * CallInformationReportArg {PARAMETERS-BOUND : bound} ::= SEQUENCE { requestedInformationList [0] RequestedInformationList
+ * {bound}, extensions [2] Extensions {bound} OPTIONAL, legID [3] ReceivingSideID DEFAULT receivingSideID:leg2, ... }
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CallInformationReportRequest extends CircuitSwitchedCallMessage {
 
-	public ArrayList<RequestedInformation> getRequestedInformationList();
+    ArrayList<RequestedInformation> getRequestedInformationList();
 
-	public CAPExtensions getExtensions();
+    CAPExtensions getExtensions();
 
-	public ReceivingSideID getLegID();
+    ReceivingSideID getLegID();
 
 }
-

@@ -35,74 +35,72 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.P
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.testng.annotations.Test;
 
-
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
 public class EPSInfoTest {
 
-	public byte[] getData1() {
-		return new byte[] { -96, 44, -126, 1, 2, -93, 39, -96, 32, 48, 10, 6,
-				3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11,
-				6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
-	};
-	
-	public byte[] getData2() {
-		return new byte[] { -127, 2, 5, -32 };
-	};
+    public byte[] getData1() {
+        return new byte[] { -96, 44, -126, 1, 2, -93, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42,
+                3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
+    };
 
-	@Test(groups = { "functional.decode", "primitives" })
-	public void testDecode() throws Exception {
-		//option 1
-		byte[] data = this.getData1();
-		AsnInputStream asn = new AsnInputStream(data);
-		int tag = asn.readTag();
+    public byte[] getData2() {
+        return new byte[] { -127, 2, 5, -32 };
+    };
 
-		EPSInfoImpl prim = new EPSInfoImpl();
-		prim.decodeAll(asn);
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testDecode() throws Exception {
+        // option 1
+        byte[] data = this.getData1();
+        AsnInputStream asn = new AsnInputStream(data);
+        int tag = asn.readTag();
 
-		assertEquals(tag, EPSInfoImpl._TAG_pndGwUpdate);
-		assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
+        EPSInfoImpl prim = new EPSInfoImpl();
+        prim.decodeAll(asn);
 
-		assertEquals(prim.getPndGwUpdate().getContextId(),new Integer(2));
-		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(prim.getPndGwUpdate().getExtensionContainer()));
-		
-		//option 2
-		data = this.getData2();
-		asn = new AsnInputStream(data);
-		tag = asn.readTag();
+        assertEquals(tag, EPSInfoImpl._TAG_pndGwUpdate);
+        assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
 
-		prim = new EPSInfoImpl();
-		prim.decodeAll(asn);
+        assertEquals(prim.getPndGwUpdate().getContextId(), new Integer(2));
+        assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(prim.getPndGwUpdate().getExtensionContainer()));
 
-		assertEquals(tag, EPSInfoImpl._TAG_isrInformation);
-		assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
+        // option 2
+        data = this.getData2();
+        asn = new AsnInputStream(data);
+        tag = asn.readTag();
 
-		assertTrue(prim.getIsrInformation().getCancelSGSN());
-		assertTrue(prim.getIsrInformation().getInitialAttachIndicator());
-		assertTrue(prim.getIsrInformation().getUpdateMME());
-	}
+        prim = new EPSInfoImpl();
+        prim.decodeAll(asn);
 
-	@Test(groups = { "functional.decode", "primitives" })
-	public void testEncode() throws Exception {
-		//option 1
-		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();		
-		PDNGWUpdate pndGwUpdate = new PDNGWUpdateImpl(null, null, new Integer(2), extensionContainer);
-		EPSInfoImpl prim = new EPSInfoImpl(pndGwUpdate);
-		AsnOutputStream asn = new AsnOutputStream();
-		prim.encodeAll(asn);
+        assertEquals(tag, EPSInfoImpl._TAG_isrInformation);
+        assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
 
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData1()));
-		
-		//option 2
-		ISRInformation isrInformation = new ISRInformationImpl(true, true, true);
-		prim = new EPSInfoImpl(isrInformation);
-		asn = new AsnOutputStream();
-		prim.encodeAll(asn);
+        assertTrue(prim.getIsrInformation().getCancelSGSN());
+        assertTrue(prim.getIsrInformation().getInitialAttachIndicator());
+        assertTrue(prim.getIsrInformation().getUpdateMME());
+    }
 
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData2()));
-	}
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testEncode() throws Exception {
+        // option 1
+        MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
+        PDNGWUpdate pndGwUpdate = new PDNGWUpdateImpl(null, null, new Integer(2), extensionContainer);
+        EPSInfoImpl prim = new EPSInfoImpl(pndGwUpdate);
+        AsnOutputStream asn = new AsnOutputStream();
+        prim.encodeAll(asn);
+
+        assertTrue(Arrays.equals(asn.toByteArray(), this.getData1()));
+
+        // option 2
+        ISRInformation isrInformation = new ISRInformationImpl(true, true, true);
+        prim = new EPSInfoImpl(isrInformation);
+        asn = new AsnOutputStream();
+        prim.encodeAll(asn);
+
+        assertTrue(Arrays.equals(asn.toByteArray(), this.getData2()));
+    }
 
 }

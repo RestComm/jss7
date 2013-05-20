@@ -25,21 +25,18 @@ package org.mobicents.protocols.ss7.map.api.service.supplementary;
 import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
 
-
 /**
- * 
-	RESULT
-		USSD-Res
-		-- optional
-
- * 
+ *
+ RESULT USSD-Res -- optional
+ *
+ *
  * @author amit bhayani
  *
  */
-public interface UnstructuredSSResponse extends  SupplementaryMessage {
+public interface UnstructuredSSResponse extends SupplementaryMessage {
 
-	public CBSDataCodingScheme getDataCodingScheme();
+    CBSDataCodingScheme getDataCodingScheme();
 
-	public USSDString getUSSDString();
-	
+    USSDString getUSSDString();
+
 }

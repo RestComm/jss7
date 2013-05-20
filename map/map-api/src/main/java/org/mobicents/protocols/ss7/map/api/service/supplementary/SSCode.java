@@ -23,27 +23,21 @@
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
 /**
- * 
-
-SS-Code ::= OCTET STRING (SIZE (1))
-	-- This type is used to represent the code identifying a single
-	-- supplementary service, a group of supplementary services, or
-	-- all supplementary services. The services and abbreviations
-	-- used are defined in TS 3GPP TS 22.004 [5]. The internal structure is
-	-- defined as follows:
-	--
-	-- bits 87654321: group (bits 8765), and specific service
-	-- (bits 4321)
-
- * 
- * 
+ *
+ SS-Code ::= OCTET STRING (SIZE (1)) -- This type is used to represent the code identifying a single -- supplementary service,
+ * a group of supplementary services, or -- all supplementary services. The services and abbreviations -- used are defined in TS
+ * 3GPP TS 22.004 [5]. The internal structure is -- defined as follows: -- -- bits 87654321: group (bits 8765), and specific
+ * service -- (bits 4321)
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SSCode {
 
-	public int getData();
+    int getData();
 
-	public SupplementaryCodeValue getSupplementaryCodeValue();
+    SupplementaryCodeValue getSupplementaryCodeValue();
 
 }

@@ -25,36 +25,29 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-VoiceGroupCallData  ::= SEQUENCE {
-	groupId		GroupId, 
-	-- groupId shall be filled with six TBCD fillers (1111)if the longGroupId is present  
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...,
-	additionalSubscriptions	AdditionalSubscriptions	OPTIONAL,
-	additionalInfo	[0] AdditionalInfo	OPTIONAL,
-	longGroupId	[1] Long-GroupId	OPTIONAL }
-
-	-- VoiceGroupCallData containing a longGroupId shall not be sent to VLRs that did not
-	-- indicate support of long Group IDs within the Update Location or Restore Data 
-	-- request message
-
- * 
- * 
+ *
+ VoiceGroupCallData ::= SEQUENCE { groupId GroupId, -- groupId shall be filled with six TBCD fillers (1111)if the longGroupId
+ * is present extensionContainer ExtensionContainer OPTIONAL, ..., additionalSubscriptions AdditionalSubscriptions OPTIONAL,
+ * additionalInfo [0] AdditionalInfo OPTIONAL, longGroupId [1] Long-GroupId OPTIONAL }
+ *
+ * -- VoiceGroupCallData containing a longGroupId shall not be sent to VLRs that did not -- indicate support of long Group IDs
+ * within the Update Location or Restore Data -- request message
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface VoiceGroupCallData {
 
-	public GroupId getGroupId();
+    GroupId getGroupId();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public AdditionalSubscriptions getAdditionalSubscriptions();
+    AdditionalSubscriptions getAdditionalSubscriptions();
 
-	public AdditionalInfo getAdditionalInfo();
+    AdditionalInfo getAdditionalInfo();
 
-	public LongGroupId getLongGroupId();
+    LongGroupId getLongGroupId();
 
 }

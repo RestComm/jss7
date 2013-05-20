@@ -26,37 +26,22 @@ import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-MAP V3:
-
-ist-Command  OPERATION::= {				--Timer m
-	ARGUMENT
-		IST-CommandArg
-	RESULT
-		IST-CommandRes
-		-- optional
-	ERRORS {
-		unexpectedDataValue |
-		resourceLimitation |
-		unknownSubscriber |
-		systemFailure |
-		facilityNotSupported}
-	CODE	local:88 }
-
-IST-CommandArg ::= SEQUENCE{
-	imsi			[0]	IMSI,
-	extensionContainer	[1]	ExtensionContainer	OPTIONAL,
-	...}
-
- * 
+ *
+ MAP V3:
+ *
+ * ist-Command OPERATION::= { --Timer m ARGUMENT IST-CommandArg RESULT IST-CommandRes -- optional ERRORS { unexpectedDataValue |
+ * resourceLimitation | unknownSubscriber | systemFailure | facilityNotSupported} CODE local:88 }
+ *
+ * IST-CommandArg ::= SEQUENCE{ imsi [0] IMSI, extensionContainer [1] ExtensionContainer OPTIONAL, ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface IstCommandRequest {
 
-	public IMSI getImsi();
+     IMSI getImsi();
 
-	public MAPExtensionContainer getExtensionContainer();
+     MAPExtensionContainer getExtensionContainer();
 
 }

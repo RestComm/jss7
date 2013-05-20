@@ -35,193 +35,192 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class VariablePartPriceImpl implements VariablePartPrice, CAPAsnPrimitive {
 
-	public static final String _PrimitiveName = "VariablePartPrice";
+    public static final String _PrimitiveName = "VariablePartPrice";
 
-	private byte[] data;
+    private byte[] data;
 
-	
-	public VariablePartPriceImpl() {
-	}
+    public VariablePartPriceImpl() {
+    }
 
-	public VariablePartPriceImpl(byte[] data) {
-		this.data = data;
-	}
+    public VariablePartPriceImpl(byte[] data) {
+        this.data = data;
+    }
 
-	public VariablePartPriceImpl(double price) {
-		this.data = new byte[4];
+    public VariablePartPriceImpl(double price) {
+        this.data = new byte[4];
 
-		long val = (long) (price * 100);
-		if (val < 0)
-			val = -val;
-		this.data[0] = (byte) this.encodeByte((int) (val / 1000000 - (val / 100000000) * 100));
-		this.data[1] = (byte) this.encodeByte((int) (val / 10000 - (val / 1000000) * 100));
-		this.data[2] = (byte) this.encodeByte((int) (val / 100 - (val / 10000) * 100));
-		this.data[3] = (byte) this.encodeByte((int) (val - (val / 100) * 100));
-	}
+        long val = (long) (price * 100);
+        if (val < 0)
+            val = -val;
+        this.data[0] = (byte) this.encodeByte((int) (val / 1000000 - (val / 100000000) * 100));
+        this.data[1] = (byte) this.encodeByte((int) (val / 10000 - (val / 1000000) * 100));
+        this.data[2] = (byte) this.encodeByte((int) (val / 100 - (val / 10000) * 100));
+        this.data[3] = (byte) this.encodeByte((int) (val - (val / 100) * 100));
+    }
 
-	public VariablePartPriceImpl(int integerPart, int hundredthPart) {
-		this.data = new byte[4];
+    public VariablePartPriceImpl(int integerPart, int hundredthPart) {
+        this.data = new byte[4];
 
-		long val = ((long) integerPart * 100 + hundredthPart);
-		if (val < 0)
-			val = -val;
-		this.data[0] = (byte) this.encodeByte((int) (val / 1000000 - (val / 100000000) * 100));
-		this.data[1] = (byte) this.encodeByte((int) (val / 10000 - (val / 1000000) * 100));
-		this.data[2] = (byte) this.encodeByte((int) (val / 100 - (val / 10000) * 100));
-		this.data[3] = (byte) this.encodeByte((int) (val - (val / 100) * 100));
-	}
+        long val = ((long) integerPart * 100 + hundredthPart);
+        if (val < 0)
+            val = -val;
+        this.data[0] = (byte) this.encodeByte((int) (val / 1000000 - (val / 100000000) * 100));
+        this.data[1] = (byte) this.encodeByte((int) (val / 10000 - (val / 1000000) * 100));
+        this.data[2] = (byte) this.encodeByte((int) (val / 100 - (val / 10000) * 100));
+        this.data[3] = (byte) this.encodeByte((int) (val - (val / 100) * 100));
+    }
 
-	@Override
-	public byte[] getData() {
-		return this.data;
-	}
+    @Override
+    public byte[] getData() {
+        return this.data;
+    }
 
-	@Override
-	public double getPrice() {
-		
-		if (this.data == null || this.data.length != 4)
-			return Double.NaN;
-		
-		double res = this.decodeByte(data[0]) * 10000 + this.decodeByte(data[1]) * 100 + this.decodeByte(data[2]) + (double) this.decodeByte(data[3])
-				/ 100.0;
-		return res;
-	}
+    @Override
+    public double getPrice() {
 
-	@Override
-	public int getPriceIntegerPart() {
+        if (this.data == null || this.data.length != 4)
+            return Double.NaN;
 
-		if (this.data == null || this.data.length != 4)
-			return 0;
+        double res = this.decodeByte(data[0]) * 10000 + this.decodeByte(data[1]) * 100 + this.decodeByte(data[2])
+                + (double) this.decodeByte(data[3]) / 100.0;
+        return res;
+    }
 
-		int res = this.decodeByte(data[0]) * 10000 + this.decodeByte(data[1]) * 100 + this.decodeByte(data[2]);
-		return res;
-	}
+    @Override
+    public int getPriceIntegerPart() {
 
-	@Override
-	public int getPriceHundredthPart() {
+        if (this.data == null || this.data.length != 4)
+            return 0;
 
-		if (this.data == null || this.data.length != 4)
-			return 0;
+        int res = this.decodeByte(data[0]) * 10000 + this.decodeByte(data[1]) * 100 + this.decodeByte(data[2]);
+        return res;
+    }
 
-		int res = this.decodeByte(data[3]);
-		return res;
-	}
+    @Override
+    public int getPriceHundredthPart() {
 
-	private int decodeByte(int bt) {
-		return (bt & 0x0F) * 10 + ((bt & 0xF0) >> 4);
-	}
+        if (this.data == null || this.data.length != 4)
+            return 0;
 
-	private int encodeByte(int val) {
-		return (val / 10) | (val % 10) << 4;
-	}
+        int res = this.decodeByte(data[3]);
+        return res;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.STRING_OCTET;
-	}
+    private int decodeByte(int bt) {
+        return (bt & 0x0F) * 10 + ((bt & 0xF0) >> 4);
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    private int encodeByte(int val) {
+        return (val / 10) | (val % 10) << 4;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return true;
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.STRING_OCTET;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return true;
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-		this.data = ansIS.readOctetStringData(length);
-		if (this.data.length < 4 || this.data.length > 4)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": data must be from 4 to 4 bytes length, found: "
-					+ this.data.length, CAPParsingComponentExceptionReason.MistypedParameter);
-	}
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+        this.data = ansIS.readOctetStringData(length);
+        if (this.data.length < 4 || this.data.length > 4)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": data must be from 4 to 4 bytes length, found: " + this.data.length,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-		if (this.data == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": data field must not be null");
-		if (this.data.length != 4)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": data field length must be equal 4");
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		asnOs.writeOctetStringData(data);
-	}
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-	@Override
-	public String toString() {
+        if (this.data == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": data field must not be null");
+        if (this.data.length != 4)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": data field length must be equal 4");
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+        asnOs.writeOctetStringData(data);
+    }
 
-		double val = this.getPrice();
-		if (!Double.isNaN(val)) {
-			sb.append("price=");
-			sb.append(val);
-			sb.append(", integerPart=");
-			sb.append(this.getPriceIntegerPart());
-			sb.append(", hundredthPart=");
-			sb.append(this.getPriceHundredthPart());
-		}
+    @Override
+    public String toString() {
 
-		sb.append("]");
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		return sb.toString();
-	}
+        double val = this.getPrice();
+        if (!Double.isNaN(val)) {
+            sb.append("price=");
+            sb.append(val);
+            sb.append(", integerPart=");
+            sb.append(this.getPriceIntegerPart());
+            sb.append(", hundredthPart=");
+            sb.append(this.getPriceHundredthPart());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
-

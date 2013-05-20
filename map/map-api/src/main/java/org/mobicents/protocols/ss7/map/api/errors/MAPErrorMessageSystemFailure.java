@@ -27,41 +27,33 @@ import org.mobicents.protocols.ss7.map.api.primitives.NetworkResource;
 
 /**
  * The MAP ReturnError message: SystemFailure
- * 
- * systemFailure  ERROR ::= {
- *	PARAMETER
- *		SystemFailureParam
- *		-- optional
- *	CODE	local:34 }
+ *
+ * systemFailure ERROR ::= { PARAMETER SystemFailureParam -- optional CODE local:34 }
  *
  *
- * SystemFailureParam ::= CHOICE {
- *	networkResource	NetworkResource,
- *	-- networkResource must not be used in version 3
- *	extensibleSystemFailureParam	ExtensibleSystemFailureParam
- *	-- extensibleSystemFailureParam must not be used in version <3
- *	}
+ * SystemFailureParam ::= CHOICE { networkResource NetworkResource, -- networkResource must not be used in version 3
+ * extensibleSystemFailureParam ExtensibleSystemFailureParam -- extensibleSystemFailureParam must not be used in version <3 }
  *
- * 
- * 
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MAPErrorMessageSystemFailure extends MAPErrorMessage {
 
-	public NetworkResource getNetworkResource();
+    NetworkResource getNetworkResource();
 
-	public AdditionalNetworkResource getAdditionalNetworkResource();
+    AdditionalNetworkResource getAdditionalNetworkResource();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public long getMapProtocolVersion();
+    long getMapProtocolVersion();
 
-	public void setNetworkResource(NetworkResource networkResource);
+    void setNetworkResource(NetworkResource networkResource);
 
-	public void setAdditionalNetworkResource(AdditionalNetworkResource additionalNetworkResource);
+    void setAdditionalNetworkResource(AdditionalNetworkResource additionalNetworkResource);
 
-	public void setExtensionContainer(MAPExtensionContainer extensionContainer);
+    void setExtensionContainer(MAPExtensionContainer extensionContainer);
 
-	public void setMapProtocolVersion(long mapProtocolVersion);
+    void setMapProtocolVersion(long mapProtocolVersion);
 }

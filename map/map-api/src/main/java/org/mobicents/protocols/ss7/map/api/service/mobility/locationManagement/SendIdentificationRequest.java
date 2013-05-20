@@ -30,77 +30,49 @@ import org.mobicents.protocols.ss7.map.api.primitives.TMSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
- * 
-
-MAP V2-3:
-
-MAP V3:
-sendIdentification  OPERATION ::= {				--Timer s
-	ARGUMENT
-		SendIdentificationArg
-	RESULT
-		SendIdentificationRes
-	ERRORS {
-		dataMissing |
-		unidentifiedSubscriber}
-	CODE	local:55 }
-
-MAP V2:
-SendIdentification::= OPERATION --Timer s
-ARGUMENT
-	tmsi TMSI
-RESULT
-	sendIdentificationRes SendIdentificationRes
-ERRORS {
-	DataMissing,
-	UnidentifiedSubscriber}
-
-
-MAP V3:
-SendIdentificationArg ::= SEQUENCE {
-	tmsi			TMSI,
-	numberOfRequestedVectors	NumberOfRequestedVectors 	OPTIONAL,
-	-- within a dialogue numberOfRequestedVectors shall be present in 
-	-- the first service request and shall not be present in subsequent service requests. 
-	-- If received in a subsequent service request it shall be discarded. 
-	segmentationProhibited	NULL			OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...,
-	msc-Number	ISDN-AddressString 	OPTIONAL,
-	previous-LAI	[0] LAIFixedLength	OPTIONAL,
-	hopCounter	[1] HopCounter	OPTIONAL,
-	mtRoamingForwardingSupported	[2] NULL		OPTIONAL,
-	newVLR-Number	[3] ISDN-AddressString	OPTIONAL,
-	new-lmsi		[4] LMSI		OPTIONAL }
-
-NumberOfRequestedVectors ::= INTEGER (1..5)
-HopCounter ::= INTEGER (0..3)
-
- * 
+ *
+ MAP V2-3:
+ *
+ * MAP V3: sendIdentification OPERATION ::= { --Timer s ARGUMENT SendIdentificationArg RESULT SendIdentificationRes ERRORS {
+ * dataMissing | unidentifiedSubscriber} CODE local:55 }
+ *
+ * MAP V2: SendIdentification::= OPERATION --Timer s ARGUMENT tmsi TMSI RESULT sendIdentificationRes SendIdentificationRes
+ * ERRORS { DataMissing, UnidentifiedSubscriber}
+ *
+ *
+ * MAP V3: SendIdentificationArg ::= SEQUENCE { tmsi TMSI, numberOfRequestedVectors NumberOfRequestedVectors OPTIONAL, -- within
+ * a dialogue numberOfRequestedVectors shall be present in -- the first service request and shall not be present in subsequent
+ * service requests. -- If received in a subsequent service request it shall be discarded. segmentationProhibited NULL OPTIONAL,
+ * extensionContainer ExtensionContainer OPTIONAL, ..., msc-Number ISDN-AddressString OPTIONAL, previous-LAI [0] LAIFixedLength
+ * OPTIONAL, hopCounter [1] HopCounter OPTIONAL, mtRoamingForwardingSupported [2] NULL OPTIONAL, newVLR-Number [3]
+ * ISDN-AddressString OPTIONAL, new-lmsi [4] LMSI OPTIONAL }
+ *
+ * NumberOfRequestedVectors ::= INTEGER (1..5) HopCounter ::= INTEGER (0..3)
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SendIdentificationRequest extends MobilityMessage {
 
-	public TMSI getTmsi();
+    TMSI getTmsi();
 
-	public Integer getNumberOfRequestedVectors();
+    Integer getNumberOfRequestedVectors();
 
-	public boolean getSegmentationProhibited();
+    boolean getSegmentationProhibited();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public ISDNAddressString getMscNumber();
+    ISDNAddressString getMscNumber();
 
-	public LAIFixedLength getPreviousLAI();
+    LAIFixedLength getPreviousLAI();
 
-	public Integer getHopCounter();
+    Integer getHopCounter();
 
-	public boolean getMtRoamingForwardingSupported();
+    boolean getMtRoamingForwardingSupported();
 
-	public ISDNAddressString getNewVLRNumber();
+    ISDNAddressString getNewVLRNumber();
 
-	public LMSI getNewLmsi();
+    LMSI getNewLmsi();
 
 }
-

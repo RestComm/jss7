@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -23,52 +23,38 @@
 package org.mobicents.protocols.ss7.cap.api.primitives;
 
 /**
-*
-ExtensionField ::= SEQUENCE {
-	type EXTENSION.&id ({SupportedExtensions}),
-	-- shall identify the value of an EXTENSION type
-	criticality CriticalityType DEFAULT ignore,
-	value [1] EXTENSION.&ExtensionType ({SupportedExtensions}{@type}),
-	...
-}
--- This parameter indicates an extension of an argument data type.
--- Its content is network operator specific
- 
-CriticalityType  ::= ENUMERATED { 
-        ignore    (0), 
-        abort     (1) 
-        } 
-Code ::= CHOICE {local   INTEGER, 
-                 global  OBJECT IDENTIFIER} 
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ ExtensionField ::= SEQUENCE { type EXTENSION.&id ({SupportedExtensions}), -- shall identify the value of an EXTENSION type
+ * criticality CriticalityType DEFAULT ignore, value [1] EXTENSION.&ExtensionType ({SupportedExtensions}{@type}), ... } -- This
+ * parameter indicates an extension of an argument data type. -- Its content is network operator specific
+ *
+ * CriticalityType ::= ENUMERATED { ignore (0), abort (1) } Code ::= CHOICE {local INTEGER, global OBJECT IDENTIFIER}
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface ExtensionField {
 
-	public Integer getLocalCode();
+    Integer getLocalCode();
 
-	public long[] getGlobalCode();
+    long[] getGlobalCode();
 
-	public CriticalityType getCriticalityType();
+    CriticalityType getCriticalityType();
 
-	/**
-	 * 
-	 * @return Encoded field parameter without tag and length fields
-	 */
-	public byte[] getData();
+    /**
+     *
+     * @return Encoded field parameter without tag and length fields
+     */
+    byte[] getData();
 
+    void setLocalCode(Integer localCode);
 
-	public void setLocalCode(Integer localCode);
+    void setGlobalCode(long[] globalCode);
 
-	public void setGlobalCode(long[] globalCode);
+    void setCriticalityType(CriticalityType criticalityType);
 
-	public void setCriticalityType(CriticalityType criticalityType);
-
-	/**
-	 * @param data
-	 *            Encoded field parameter without tag and length fields
-	 */
-	public void setData(byte[] data);
+    /**
+     * @param data Encoded field parameter without tag and length fields
+     */
+    void setData(byte[] data);
 }
-

@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.map.api;
 
 import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageFactory;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.MAPServiceCallHandling;
 import org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsm;
@@ -33,69 +34,68 @@ import org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSms;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementary;
 
 /**
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public interface MAPProvider extends Serializable {
 
-//	public static final int NETWORK_UNSTRUCTURED_SS_CONTEXT_V2 = 1;
+    // int NETWORK_UNSTRUCTURED_SS_CONTEXT_V2 = 1;
 
-	/**
-	 * Add MAP Dialog listener to the Stack
-	 * 
-	 * @param mapDialogListener
-	 */
-	public void addMAPDialogListener(MAPDialogListener mapDialogListener);
+    /**
+     * Add MAP Dialog listener to the Stack
+     *
+     * @param mapDialogListener
+     */
+    void addMAPDialogListener(MAPDialogListener mapDialogListener);
 
-	/**
-	 * Remove MAP DIalog Listener from the stack
-	 * 
-	 * @param mapDialogListener
-	 */
-	public void removeMAPDialogListener(MAPDialogListener mapDialogListener);
+    /**
+     * Remove MAP DIalog Listener from the stack
+     *
+     * @param mapDialogListener
+     */
+    void removeMAPDialogListener(MAPDialogListener mapDialogListener);
 
-	/**
-	 * Get the {@link MAPParameterFactory}
-	 * 
-	 * @return
-	 */
-	public MAPParameterFactory getMAPParameterFactory();
+    /**
+     * Get the {@link MAPParameterFactory}
+     *
+     * @return
+     */
+    MAPParameterFactory getMAPParameterFactory();
 
-	/**
-	 * Get the {@link MAPErrorMessageFactory}
-	 * 
-	 * @return
-	 */
-	public MAPErrorMessageFactory getMAPErrorMessageFactory();
-	
-	/**
-	 * Get {@link MAPDialog} corresponding to passed dialogId
-	 * 
-	 * @param dialogId
-	 * @return
-	 */
-	public MAPDialog getMAPDialog(Long dialogId);
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public MAPSmsTpduParameterFactory getMAPSmsTpduParameterFactory();
+    /**
+     * Get the {@link MAPErrorMessageFactory}
+     *
+     * @return
+     */
+    MAPErrorMessageFactory getMAPErrorMessageFactory();
 
+    /**
+     * Get {@link MAPDialog} corresponding to passed dialogId
+     *
+     * @param dialogId
+     * @return
+     */
+    MAPDialog getMAPDialog(Long dialogId);
 
-	public MAPServiceMobility getMAPServiceMobility();
+    /**
+     *
+     * @return
+     */
+    MAPSmsTpduParameterFactory getMAPSmsTpduParameterFactory();
 
-	public MAPServiceCallHandling getMAPServiceCallHandling();
+    MAPServiceMobility getMAPServiceMobility();
 
-	public MAPServiceOam getMAPServiceOam();
+    MAPServiceCallHandling getMAPServiceCallHandling();
 
-	public MAPServicePdpContextActivation getMAPServicePdpContextActivation();
+    MAPServiceOam getMAPServiceOam();
 
-	public MAPServiceSupplementary getMAPServiceSupplementary();
-	
-	public MAPServiceSms getMAPServiceSms();
-	
-	public MAPServiceLsm getMAPServiceLsm();
+    MAPServicePdpContextActivation getMAPServicePdpContextActivation();
+
+    MAPServiceSupplementary getMAPServiceSupplementary();
+
+    MAPServiceSms getMAPServiceSms();
+
+    MAPServiceLsm getMAPServiceLsm();
 
 }

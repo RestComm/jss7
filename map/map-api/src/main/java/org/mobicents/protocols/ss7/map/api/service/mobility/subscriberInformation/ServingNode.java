@@ -23,21 +23,17 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
 /**
- * 
-
-ServingNode ::= BIT STRING {
-	mme (0),
-	sgsn (1)} (SIZE (2..8))
--- Other bits than listed above shall be discarded.
-
- * 
+ *
+ ServingNode ::= BIT STRING { mme (0), sgsn (1)} (SIZE (2..8)) -- Other bits than listed above shall be discarded.
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ServingNode {
 
-	public boolean getMme();
+    boolean getMme();
 
-	public boolean getSgsn();
+    boolean getSgsn();
 
 }

@@ -23,35 +23,22 @@
 package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 
 /**
-*
-
-DpSpecificInfoAlt {PARAMETERS-BOUND : bound} ::= SEQUENCE {
-...,
-oServiceChangeSpecificInfo [0] SEQUENCE {
-ext-basicServiceCode [0] Ext-BasicServiceCode OPTIONAL,
-...
-}
-collectedInfoSpecificInfo [2] SEQUENCE {
-calledPartyNumber [0] CalledPartyNumber OPTIONAL,
-...
-}
-tServiceChangeSpecificInfo [1] SEQUENCE {
-ext-basicServiceCode [0] Ext-BasicServiceCode OPTIONAL,
-...
-}
-}
--- This datatype is for extension in future releases.
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ DpSpecificInfoAlt {PARAMETERS-BOUND : bound} ::= SEQUENCE { ..., oServiceChangeSpecificInfo [0] SEQUENCE {
+ * ext-basicServiceCode [0] Ext-BasicServiceCode OPTIONAL, ... } collectedInfoSpecificInfo [2] SEQUENCE { calledPartyNumber [0]
+ * CalledPartyNumber OPTIONAL, ... } tServiceChangeSpecificInfo [1] SEQUENCE { ext-basicServiceCode [0] Ext-BasicServiceCode
+ * OPTIONAL, ... } } -- This datatype is for extension in future releases.
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface DpSpecificInfoAlt {
 
-	public OServiceChangeSpecificInfo getOServiceChangeSpecificInfo();
+    OServiceChangeSpecificInfo getOServiceChangeSpecificInfo();
 
-	public CollectedInfoSpecificInfo getCollectedInfoSpecificInfo();
+    CollectedInfoSpecificInfo getCollectedInfoSpecificInfo();
 
-	public TServiceChangeSpecificInfo getTServiceChangeSpecificInfo();
+    TServiceChangeSpecificInfo getTServiceChangeSpecificInfo();
 
 }

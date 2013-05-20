@@ -25,47 +25,46 @@ import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.SGSNCapabiliti
 import org.mobicents.protocols.ss7.cap.primitives.OctetStringLength1Base;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class SGSNCapabilitiesImpl extends OctetStringLength1Base implements SGSNCapabilities{
+public class SGSNCapabilitiesImpl extends OctetStringLength1Base implements SGSNCapabilities {
 
-	public SGSNCapabilitiesImpl() {
-		super("SGSNCapabilities");
-	}
-	
-	public SGSNCapabilitiesImpl(int data) {
-		super("SGSNCapabilities", data);
-	}
-	
-	public SGSNCapabilitiesImpl(boolean aoCSupportedBySGSN){
-		super("SGSNCapabilities", (aoCSupportedBySGSN?0x01:0x00));
-	}
+    public SGSNCapabilitiesImpl() {
+        super("SGSNCapabilities");
+    }
 
-	@Override
-	public int getData() {
-		return data;
-	}
+    public SGSNCapabilitiesImpl(int data) {
+        super("SGSNCapabilities", data);
+    }
 
-	@Override
-	public boolean getAoCSupportedBySGSN() {
-		return ((data & 0x01) == 0x01);
-	}
+    public SGSNCapabilitiesImpl(boolean aoCSupportedBySGSN) {
+        super("SGSNCapabilities", (aoCSupportedBySGSN ? 0x01 : 0x00));
+    }
 
+    @Override
+    public int getData() {
+        return data;
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName + " [");
-		
-		if (this.getAoCSupportedBySGSN()) {
-			sb.append("AoCSupportedBySGSN ");
-		}
+    @Override
+    public boolean getAoCSupportedBySGSN() {
+        return ((data & 0x01) == 0x01);
+    }
 
-		sb.append("]");
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
 
-		return sb.toString();
-	}
-	
+        if (this.getAoCSupportedBySGSN()) {
+            sb.append("AoCSupportedBySGSN ");
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
+
 }

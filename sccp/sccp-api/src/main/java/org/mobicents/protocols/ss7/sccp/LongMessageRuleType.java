@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -22,10 +22,10 @@
 package org.mobicents.protocols.ss7.sccp;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public enum LongMessageRuleType {
-	LudtEnabled, LudtEnabled_WithSegmentationField, XudtEnabled, LongMessagesForbidden;
+    LudtEnabled, LudtEnabled_WithSegmentationField, XudtEnabled, LongMessagesForbidden;
 }

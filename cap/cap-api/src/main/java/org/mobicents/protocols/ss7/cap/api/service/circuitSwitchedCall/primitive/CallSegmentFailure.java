@@ -25,24 +25,20 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
 
 /**
-*
-
-CallSegmentFailure {PARAMETERS-BOUND : bound} ::= SEQUENCE { 
- callSegmentID      [0] CallSegmentID {bound}     OPTIONAL, 
- cause        [2] Cause {bound}       OPTIONAL, 
- ... 
- } 
-
-CallSegmentID {PARAMETERS-BOUND : bound} ::= INTEGER (1..127)
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ CallSegmentFailure {PARAMETERS-BOUND : bound} ::= SEQUENCE { callSegmentID [0] CallSegmentID {bound} OPTIONAL, cause [2]
+ * Cause {bound} OPTIONAL, ... }
+ *
+ * CallSegmentID {PARAMETERS-BOUND : bound} ::= INTEGER (1..127)
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface CallSegmentFailure {
 
-	public Integer getCallSegmentID();
+    Integer getCallSegmentID();
 
-	public CauseCap getCause();
+    CauseCap getCause();
 
 }

@@ -28,47 +28,46 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCNoticeIndication;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class TCNoticeIndicationImpl implements TCNoticeIndication {
 
-	private SccpAddress localAddress;
-	private SccpAddress remoteAddress;
-	private ReturnCauseValue reportCause;
-	private Dialog dialog;
+    private SccpAddress localAddress;
+    private SccpAddress remoteAddress;
+    private ReturnCauseValue reportCause;
+    private Dialog dialog;
 
-	public SccpAddress getLocalAddress() {
-		return localAddress;
-	}
+    public SccpAddress getLocalAddress() {
+        return localAddress;
+    }
 
-	public void setLocalAddress(SccpAddress val) {
-		localAddress = val;
-	}
+    public void setLocalAddress(SccpAddress val) {
+        localAddress = val;
+    }
 
-	public SccpAddress getRemoteAddress() {
-		return remoteAddress;
-	}
+    public SccpAddress getRemoteAddress() {
+        return remoteAddress;
+    }
 
-	public void setRemoteAddress(SccpAddress val) {
-		remoteAddress = val;
-	}
+    public void setRemoteAddress(SccpAddress val) {
+        remoteAddress = val;
+    }
 
-	public ReturnCauseValue getReportCause() {
-		return reportCause;
-	}
+    public ReturnCauseValue getReportCause() {
+        return reportCause;
+    }
 
-	public void setReportCause(ReturnCauseValue val) {
-		reportCause = val;
-	}
+    public void setReportCause(ReturnCauseValue val) {
+        reportCause = val;
+    }
 
-	public Dialog getDialog() {
-		return dialog;
-	}
+    public Dialog getDialog() {
+        return dialog;
+    }
 
-	public void setDialog(Dialog val) {
-		dialog = val;
-	}
+    public void setDialog(Dialog val) {
+        dialog = val;
+    }
 }
-

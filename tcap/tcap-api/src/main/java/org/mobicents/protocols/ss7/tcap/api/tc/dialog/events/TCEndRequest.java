@@ -21,7 +21,7 @@
  */
 
 /**
- * 
+ *
  */
 package org.mobicents.protocols.ss7.tcap.api.tc.dialog.events;
 
@@ -30,40 +30,39 @@ import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 
 /**
  * @author baranowb
- * 
+ *
  */
 public interface TCEndRequest extends DialogRequest {
 
-	public void setReturnMessageOnError(boolean val);
+    void setReturnMessageOnError(boolean val);
 
-	public boolean getReturnMessageOnError();
+    boolean getReturnMessageOnError();
 
-	/**
-	 * Application context name for this dialog.
-	 * 
-	 * @return
-	 */
-	public ApplicationContextName getApplicationContextName();
+    /**
+     * Application context name for this dialog.
+     *
+     * @return
+     */
+    ApplicationContextName getApplicationContextName();
 
-	public void setApplicationContextName(ApplicationContextName acn);
+    void setApplicationContextName(ApplicationContextName acn);
 
-	/**
-	 * User information for this dialog.
-	 * 
-	 * @return
-	 */
-	public UserInformation getUserInformation();
+    /**
+     * User information for this dialog.
+     *
+     * @return
+     */
+    UserInformation getUserInformation();
 
-	public void setUserInformation(UserInformation acn);
+    void setUserInformation(UserInformation acn);
 
-	/**
-	 * Type of termination. See values of
-	 * {@link org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TerminationType
-	 * TerminationType} enum.
-	 * 
-	 * @param t
-	 */
-	public void setTermination(TerminationType t);
+    /**
+     * Type of termination. See values of {@link org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TerminationType
+     * TerminationType} enum.
+     *
+     * @param t
+     */
+    void setTermination(TerminationType t);
 
-	public TerminationType getTerminationType();
+    TerminationType getTerminationType();
 }

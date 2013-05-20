@@ -2,7 +2,6 @@ package org.mobicents.protocols.ss7;
 
 import java.io.File;
 
-
 public class Util {
 
     public static String getTmpTestDir() {
@@ -18,5 +17,5 @@ public class Util {
 
         return null;
     }
-    
+
 }

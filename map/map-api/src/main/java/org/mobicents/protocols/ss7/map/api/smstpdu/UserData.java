@@ -25,26 +25,26 @@ package org.mobicents.protocols.ss7.map.api.smstpdu;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface UserData {
 
-	public DataCodingScheme getDataCodingScheme();
+    DataCodingScheme getDataCodingScheme();
 
-	public byte[] getEncodedData();
+    byte[] getEncodedData();
 
-	public boolean getEncodedUserDataHeaderIndicator();
-	
-	public int getEncodedUserDataLength();
-	
-	public String getDecodedMessage();
+    boolean getEncodedUserDataHeaderIndicator();
 
-	public UserDataHeader getDecodedUserDataHeader();
+    int getEncodedUserDataLength();
 
-	public void encode() throws MAPException;
+    String getDecodedMessage();
 
-	public void decode() throws MAPException;
+    UserDataHeader getDecodedUserDataHeader();
+
+    void encode() throws MAPException;
+
+    void decode() throws MAPException;
 
 }

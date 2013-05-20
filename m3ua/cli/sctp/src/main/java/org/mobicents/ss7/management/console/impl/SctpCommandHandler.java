@@ -28,64 +28,61 @@ import org.mobicents.ss7.management.console.Tree.Node;
 
 /**
  * @author amit bhayani
- * 
+ *
  */
 public class SctpCommandHandler extends CommandHandlerWithHelp {
 
-	static final Tree commandTree = new Tree("sctp");
-	static {
-		Node parent = commandTree.getTopNode();
-		Node server = parent.addChild("server");
-		server.addChild("create");
-		server.addChild("destroy");
-		server.addChild("start");
-		server.addChild("stop");
-		server.addChild("show");
+    static final Tree commandTree = new Tree("sctp");
+    static {
+        Node parent = commandTree.getTopNode();
+        Node server = parent.addChild("server");
+        server.addChild("create");
+        server.addChild("destroy");
+        server.addChild("start");
+        server.addChild("stop");
+        server.addChild("show");
 
-		Node association = parent.addChild("association");
-		association.addChild("create");
-		association.addChild("destroy");
-		association.addChild("show");
+        Node association = parent.addChild("association");
+        association.addChild("create");
+        association.addChild("destroy");
+        association.addChild("show");
 
-	};
+    };
 
-	public SctpCommandHandler() {
-		super(commandTree, CONNECT_MANDATORY_FLAG);
-	}
+    public SctpCommandHandler() {
+        super(commandTree, CONNECT_MANDATORY_FLAG);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.ss7.management.console.CommandHandler#isValid(java.lang
-	 * .String)
-	 */
-	@Override
-	public void handle(CommandContext ctx, String commandLine) {
-		// TODO Validate command
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.ss7.management.console.CommandHandler#isValid(java.lang .String)
+     */
+    @Override
+    public void handle(CommandContext ctx, String commandLine) {
+        // TODO Validate command
 
-		if (commandLine.contains("--help")) {
-			this.printHelp(commandLine, ctx);
-			return;
-		}
+        if (commandLine.contains("--help")) {
+            this.printHelp(commandLine, ctx);
+            return;
+        }
 
-		ctx.sendMessage(commandLine);
-	}
+        ctx.sendMessage(commandLine);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.ss7.management.console.CommandHandler#isAvailable(org.mobicents
-	 * .ss7.management.console.CommandContext)
-	 */
-	@Override
-	public boolean isAvailable(CommandContext ctx) {
-		if (!ctx.isControllerConnected()) {
-			ctx.printLine("The command is not available in the current context. Please connnect first");
-			return false;
-		}
-		return true;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.ss7.management.console.CommandHandler#isAvailable(org.mobicents
+     * .ss7.management.console.CommandContext)
+     */
+    @Override
+    public boolean isAvailable(CommandContext ctx) {
+        if (!ctx.isControllerConnected()) {
+            ctx.printLine("The command is not available in the current context. Please connnect first");
+            return false;
+        }
+        return true;
+    }
 
 }

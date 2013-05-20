@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -43,250 +43,249 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtBasicServiceCodeImpl;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class OAnswerSpecificInfoImpl extends SequenceBase implements OAnswerSpecificInfo {
 
-	private static final String DESTINATION_ADDRESS = "destinationAddress";
-	private static final String OR_CALL = "orCall";
-	private static final String FORWARDED_CALL = "forwardedCall";
-	private static final String CHARGE_INDICATOR = "chargeIndicator";
-	private static final String EXT_BASIC_SERVICE_CODE = "extBasicServiceCode";
-	private static final String EXT_BASIC_SERVICE_CODE2 = "extBasicServiceCode2";
+    private static final String DESTINATION_ADDRESS = "destinationAddress";
+    private static final String OR_CALL = "orCall";
+    private static final String FORWARDED_CALL = "forwardedCall";
+    private static final String CHARGE_INDICATOR = "chargeIndicator";
+    private static final String EXT_BASIC_SERVICE_CODE = "extBasicServiceCode";
+    private static final String EXT_BASIC_SERVICE_CODE2 = "extBasicServiceCode2";
 
-	public static final int _ID_destinationAddress = 50;
-	public static final int _ID_orCall = 51;
-	public static final int _ID_forwardedCall = 52;
-	public static final int _ID_chargeIndicator = 53;
-	public static final int _ID_extbasicServiceCode = 54;
-	public static final int _ID_extbasicServiceCode2 = 55;
+    public static final int _ID_destinationAddress = 50;
+    public static final int _ID_orCall = 51;
+    public static final int _ID_forwardedCall = 52;
+    public static final int _ID_chargeIndicator = 53;
+    public static final int _ID_extbasicServiceCode = 54;
+    public static final int _ID_extbasicServiceCode2 = 55;
 
-	private CalledPartyNumberCap destinationAddress;
-	private boolean orCall;
-	private boolean forwardedCall;
-	private ChargeIndicator chargeIndicator;
-	private ExtBasicServiceCode extBasicServiceCode;
-	private ExtBasicServiceCode extBasicServiceCode2;
+    private CalledPartyNumberCap destinationAddress;
+    private boolean orCall;
+    private boolean forwardedCall;
+    private ChargeIndicator chargeIndicator;
+    private ExtBasicServiceCode extBasicServiceCode;
+    private ExtBasicServiceCode extBasicServiceCode2;
 
-	public OAnswerSpecificInfoImpl() {
-		super("OAnswerSpecificInfo");
-	}
+    public OAnswerSpecificInfoImpl() {
+        super("OAnswerSpecificInfo");
+    }
 
-	public OAnswerSpecificInfoImpl(CalledPartyNumberCap destinationAddress, boolean orCall, boolean forwardedCall,
-			ChargeIndicator chargeIndicator, ExtBasicServiceCode extBasicServiceCode,
-			ExtBasicServiceCode extBasicServiceCode2) {
-		super("OAnswerSpecificInfo");
-		this.destinationAddress = destinationAddress;
-		this.orCall = orCall;
-		this.forwardedCall = forwardedCall;
-		this.chargeIndicator = chargeIndicator;
-		this.extBasicServiceCode = extBasicServiceCode;
-		this.extBasicServiceCode2 = extBasicServiceCode2;
-	}
+    public OAnswerSpecificInfoImpl(CalledPartyNumberCap destinationAddress, boolean orCall, boolean forwardedCall,
+            ChargeIndicator chargeIndicator, ExtBasicServiceCode extBasicServiceCode, ExtBasicServiceCode extBasicServiceCode2) {
+        super("OAnswerSpecificInfo");
+        this.destinationAddress = destinationAddress;
+        this.orCall = orCall;
+        this.forwardedCall = forwardedCall;
+        this.chargeIndicator = chargeIndicator;
+        this.extBasicServiceCode = extBasicServiceCode;
+        this.extBasicServiceCode2 = extBasicServiceCode2;
+    }
 
-	@Override
-	public CalledPartyNumberCap getDestinationAddress() {
-		return destinationAddress;
-	}
+    @Override
+    public CalledPartyNumberCap getDestinationAddress() {
+        return destinationAddress;
+    }
 
-	@Override
-	public boolean getOrCall() {
-		return orCall;
-	}
+    @Override
+    public boolean getOrCall() {
+        return orCall;
+    }
 
-	@Override
-	public boolean getForwardedCall() {
-		return forwardedCall;
-	}
+    @Override
+    public boolean getForwardedCall() {
+        return forwardedCall;
+    }
 
-	@Override
-	public ChargeIndicator getChargeIndicator() {
-		return chargeIndicator;
-	}
+    @Override
+    public ChargeIndicator getChargeIndicator() {
+        return chargeIndicator;
+    }
 
-	@Override
-	public ExtBasicServiceCode getExtBasicServiceCode() {
-		return extBasicServiceCode;
-	}
+    @Override
+    public ExtBasicServiceCode getExtBasicServiceCode() {
+        return extBasicServiceCode;
+    }
 
-	@Override
-	public ExtBasicServiceCode getExtBasicServiceCode2() {
-		return extBasicServiceCode2;
-	}
+    @Override
+    public ExtBasicServiceCode getExtBasicServiceCode2() {
+        return extBasicServiceCode2;
+    }
 
-	protected void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException,
-			MAPParsingComponentException, IOException, AsnException {
+    protected void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException,
+            IOException, AsnException {
 
-		this.destinationAddress = null;
-		this.orCall = false;
-		this.forwardedCall = false;
-		this.chargeIndicator = null;
-		this.extBasicServiceCode = null;
-		this.extBasicServiceCode2 = null;
+        this.destinationAddress = null;
+        this.orCall = false;
+        this.forwardedCall = false;
+        this.chargeIndicator = null;
+        this.extBasicServiceCode = null;
+        this.extBasicServiceCode2 = null;
 
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-			int tag = ais.readTag();
+            int tag = ais.readTag();
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_destinationAddress:
-					ais.advanceElement();
-					// TODO: implement it
-					break;
-				case _ID_orCall:
-					ais.advanceElement();
-					// TODO: implement it
-					break;
-				case _ID_forwardedCall:
-					ais.advanceElement();
-					// TODO: implement it
-					break;
-				case _ID_chargeIndicator:
-					ais.advanceElement();
-					// TODO: implement it
-					break;
-				case _ID_extbasicServiceCode:
-					ais.advanceElement();
-					// TODO: implement it
-					break;
-				case _ID_extbasicServiceCode2:
-					ais.advanceElement();
-					// TODO: implement it
-					break;
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_destinationAddress:
+                        ais.advanceElement();
+                        // TODO: implement it
+                        break;
+                    case _ID_orCall:
+                        ais.advanceElement();
+                        // TODO: implement it
+                        break;
+                    case _ID_forwardedCall:
+                        ais.advanceElement();
+                        // TODO: implement it
+                        break;
+                    case _ID_chargeIndicator:
+                        ais.advanceElement();
+                        // TODO: implement it
+                        break;
+                    case _ID_extbasicServiceCode:
+                        ais.advanceElement();
+                        // TODO: implement it
+                        break;
+                    case _ID_extbasicServiceCode2:
+                        ais.advanceElement();
+                        // TODO: implement it
+                        break;
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
-	}
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-		if (this.destinationAddress != null) {
-			// TODO: implement it
-		}
-		if (this.orCall) {
-			// TODO: implement it
-		}
-		if (this.forwardedCall) {
-			// TODO: implement it
-		}
-		if (this.chargeIndicator != null) {
-			// TODO: implement it
-		}
-		if (this.extBasicServiceCode != null) {
-			// TODO: implement it
-		}
-		if (this.extBasicServiceCode2 != null) {
-			// TODO: implement it
-		}
-	}
+        if (this.destinationAddress != null) {
+            // TODO: implement it
+        }
+        if (this.orCall) {
+            // TODO: implement it
+        }
+        if (this.forwardedCall) {
+            // TODO: implement it
+        }
+        if (this.chargeIndicator != null) {
+            // TODO: implement it
+        }
+        if (this.extBasicServiceCode != null) {
+            // TODO: implement it
+        }
+        if (this.extBasicServiceCode2 != null) {
+            // TODO: implement it
+        }
+    }
 
-	@Override
-	public String toString() {
+    @Override
+    public String toString() {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		if (this.destinationAddress != null) {
-			sb.append("destinationAddress= [");
-			sb.append(destinationAddress.toString());
-			sb.append("]");
-		}
-		if (this.orCall) {
-			sb.append(", orCall");
-		}
-		if (this.forwardedCall) {
-			sb.append(", forwardedCall");
-		}
-		if (this.chargeIndicator != null) {
-			sb.append(", chargeIndicator= [");
-			sb.append(chargeIndicator.toString());
-			sb.append("]");
-		}
-		if (this.extBasicServiceCode != null) {
-			sb.append(", extBasicServiceCode= [");
-			sb.append(extBasicServiceCode.toString());
-			sb.append("]");
-		}
-		if (this.extBasicServiceCode2 != null) {
-			sb.append(", extBasicServiceCode2= [");
-			sb.append(extBasicServiceCode2.toString());
-			sb.append("]");
-		}
+        if (this.destinationAddress != null) {
+            sb.append("destinationAddress= [");
+            sb.append(destinationAddress.toString());
+            sb.append("]");
+        }
+        if (this.orCall) {
+            sb.append(", orCall");
+        }
+        if (this.forwardedCall) {
+            sb.append(", forwardedCall");
+        }
+        if (this.chargeIndicator != null) {
+            sb.append(", chargeIndicator= [");
+            sb.append(chargeIndicator.toString());
+            sb.append("]");
+        }
+        if (this.extBasicServiceCode != null) {
+            sb.append(", extBasicServiceCode= [");
+            sb.append(extBasicServiceCode.toString());
+            sb.append("]");
+        }
+        if (this.extBasicServiceCode2 != null) {
+            sb.append(", extBasicServiceCode2= [");
+            sb.append(extBasicServiceCode2.toString());
+            sb.append("]");
+        }
 
-		sb.append("]");
+        sb.append("]");
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 
-	/**
-	 * XML Serialization/Deserialization
-	 */
-	protected static final XMLFormat<OAnswerSpecificInfoImpl> O_ANSWER_SPECIFIC_INFO_XML = new XMLFormat<OAnswerSpecificInfoImpl>(
-			OAnswerSpecificInfoImpl.class) {
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<OAnswerSpecificInfoImpl> O_ANSWER_SPECIFIC_INFO_XML = new XMLFormat<OAnswerSpecificInfoImpl>(
+            OAnswerSpecificInfoImpl.class) {
 
-		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml, OAnswerSpecificInfoImpl oAnswerSpecificInfo)
-				throws XMLStreamException {
-			oAnswerSpecificInfo.destinationAddress = xml.get(DESTINATION_ADDRESS, CalledPartyNumberCapImpl.class);
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, OAnswerSpecificInfoImpl oAnswerSpecificInfo)
+                throws XMLStreamException {
+            oAnswerSpecificInfo.destinationAddress = xml.get(DESTINATION_ADDRESS, CalledPartyNumberCapImpl.class);
 
-			Boolean bval = xml.get(OR_CALL, Boolean.class);
-			if (bval != null)
-				oAnswerSpecificInfo.orCall = bval;
-			bval = xml.get(FORWARDED_CALL, Boolean.class);
-			if (bval != null)
-				oAnswerSpecificInfo.forwardedCall = bval;
+            Boolean bval = xml.get(OR_CALL, Boolean.class);
+            if (bval != null)
+                oAnswerSpecificInfo.orCall = bval;
+            bval = xml.get(FORWARDED_CALL, Boolean.class);
+            if (bval != null)
+                oAnswerSpecificInfo.forwardedCall = bval;
 
-			// oAnswerSpecificInfo.chargeIndicator = xml.get(CHARGE_INDICATOR,
-			// ChargeIndicatorImpl.class);
+            // oAnswerSpecificInfo.chargeIndicator = xml.get(CHARGE_INDICATOR,
+            // ChargeIndicatorImpl.class);
 
-			oAnswerSpecificInfo.extBasicServiceCode = xml.get(EXT_BASIC_SERVICE_CODE, ExtBasicServiceCodeImpl.class);
-			oAnswerSpecificInfo.extBasicServiceCode2 = xml.get(EXT_BASIC_SERVICE_CODE2, ExtBasicServiceCodeImpl.class);
-		}
+            oAnswerSpecificInfo.extBasicServiceCode = xml.get(EXT_BASIC_SERVICE_CODE, ExtBasicServiceCodeImpl.class);
+            oAnswerSpecificInfo.extBasicServiceCode2 = xml.get(EXT_BASIC_SERVICE_CODE2, ExtBasicServiceCodeImpl.class);
+        }
 
-		@Override
-		public void write(OAnswerSpecificInfoImpl oAnswerSpecificInfo, javolution.xml.XMLFormat.OutputElement xml)
-				throws XMLStreamException {
+        @Override
+        public void write(OAnswerSpecificInfoImpl oAnswerSpecificInfo, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
 
-			if (oAnswerSpecificInfo.destinationAddress != null) {
-				xml.add(((CalledPartyNumberCapImpl) oAnswerSpecificInfo.destinationAddress), DESTINATION_ADDRESS,
-						CalledPartyNumberCapImpl.class);
-			}
+            if (oAnswerSpecificInfo.destinationAddress != null) {
+                xml.add(((CalledPartyNumberCapImpl) oAnswerSpecificInfo.destinationAddress), DESTINATION_ADDRESS,
+                        CalledPartyNumberCapImpl.class);
+            }
 
-			if (oAnswerSpecificInfo.orCall)
-				xml.add(oAnswerSpecificInfo.orCall, OR_CALL, Boolean.class);
-			if (oAnswerSpecificInfo.forwardedCall)
-				xml.add(oAnswerSpecificInfo.forwardedCall, FORWARDED_CALL, Boolean.class);
+            if (oAnswerSpecificInfo.orCall)
+                xml.add(oAnswerSpecificInfo.orCall, OR_CALL, Boolean.class);
+            if (oAnswerSpecificInfo.forwardedCall)
+                xml.add(oAnswerSpecificInfo.forwardedCall, FORWARDED_CALL, Boolean.class);
 
-			if (oAnswerSpecificInfo.chargeIndicator != null) {
-				// TODO ChargeIndicatorImpl not yet implemented
-				// xml.add(((ChargeIndicatorImpl)
-				// oAnswerSpecificInfo.chargeIndicator), CHARGE_INDICATOR,
-				// ChargeIndicatorImpl.class);
-			}
+            if (oAnswerSpecificInfo.chargeIndicator != null) {
+                // TODO ChargeIndicatorImpl not yet implemented
+                // xml.add(((ChargeIndicatorImpl)
+                // oAnswerSpecificInfo.chargeIndicator), CHARGE_INDICATOR,
+                // ChargeIndicatorImpl.class);
+            }
 
-			if (oAnswerSpecificInfo.extBasicServiceCode != null) {
-				xml.add(((ExtBasicServiceCodeImpl) oAnswerSpecificInfo.extBasicServiceCode), EXT_BASIC_SERVICE_CODE,
-						ExtBasicServiceCodeImpl.class);
-			}
+            if (oAnswerSpecificInfo.extBasicServiceCode != null) {
+                xml.add(((ExtBasicServiceCodeImpl) oAnswerSpecificInfo.extBasicServiceCode), EXT_BASIC_SERVICE_CODE,
+                        ExtBasicServiceCodeImpl.class);
+            }
 
-			if (oAnswerSpecificInfo.extBasicServiceCode2 != null) {
-				xml.add(((ExtBasicServiceCodeImpl) oAnswerSpecificInfo.extBasicServiceCode2), EXT_BASIC_SERVICE_CODE2,
-						ExtBasicServiceCodeImpl.class);
-			}
-		}
-	};
+            if (oAnswerSpecificInfo.extBasicServiceCode2 != null) {
+                xml.add(((ExtBasicServiceCodeImpl) oAnswerSpecificInfo.extBasicServiceCode2), EXT_BASIC_SERVICE_CODE2,
+                        ExtBasicServiceCodeImpl.class);
+            }
+        }
+    };
 }

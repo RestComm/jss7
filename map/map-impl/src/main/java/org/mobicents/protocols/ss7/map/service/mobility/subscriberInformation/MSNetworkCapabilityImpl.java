@@ -32,15 +32,15 @@ import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
  */
 public class MSNetworkCapabilityImpl extends OctetStringBase implements MSNetworkCapability {
 
-	public MSNetworkCapabilityImpl() {
-		super(1, 8, "MSNetworkCapability");
-	}
+    public MSNetworkCapabilityImpl() {
+        super(1, 8, "MSNetworkCapability");
+    }
 
-	public MSNetworkCapabilityImpl(byte[] data) {
-		super(1, 8, "MSNetworkCapability", data);
-	}
+    public MSNetworkCapabilityImpl(byte[] data) {
+        super(1, 8, "MSNetworkCapability", data);
+    }
 
-	public byte[] getData() {
-		return data;
-	}	
+    public byte[] getData() {
+        return data;
+    }
 }

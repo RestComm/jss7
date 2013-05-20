@@ -26,29 +26,23 @@ import org.mobicents.protocols.ss7.cap.api.primitives.AppendFreeFormatData;
 import org.mobicents.protocols.ss7.cap.api.primitives.SendingSideID;
 
 /**
-*
-
-fCIBCCCAMELsequence1    [0] SEQUENCE { 
-  freeFormatData      [0] OCTET STRING (SIZE( 
-   bound.&minFCIBillingChargingDataLength .. bound.&maxFCIBillingChargingDataLength)), 
-  partyToCharge      [1] SendingSideID DEFAULT sendingSideID: leg1, 
-  appendFreeFormatData    [2] AppendFreeFormatData DEFAULT overwrite, 
-  ... 
-  } 
-
-minFCIBillingChargingDataLength ::= 1
-maxFCIBillingChargingDataLength ::= 160
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ fCIBCCCAMELsequence1 [0] SEQUENCE { freeFormatData [0] OCTET STRING (SIZE( bound.&minFCIBillingChargingDataLength ..
+ * bound.&maxFCIBillingChargingDataLength)), partyToCharge [1] SendingSideID DEFAULT sendingSideID: leg1, appendFreeFormatData
+ * [2] AppendFreeFormatData DEFAULT overwrite, ... }
+ *
+ * minFCIBillingChargingDataLength ::= 1 maxFCIBillingChargingDataLength ::= 160
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface FCIBCCCAMELsequence1 {
 
-	public byte[] getFreeFormatData();
+    byte[] getFreeFormatData();
 
-	public SendingSideID getPartyToCharge();
+    SendingSideID getPartyToCharge();
 
-	public AppendFreeFormatData getAppendFreeFormatData();
+    AppendFreeFormatData getAppendFreeFormatData();
 
 }

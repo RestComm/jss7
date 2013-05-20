@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -25,10 +25,9 @@ package org.mobicents.protocols.ss7.isup.message.parameter;
 /**
  * Start time:14:20:44 2009-07-23<br>
  * Project: mobicents-isup-stack<br>
- * 
- * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski
- *         </a>
+ *
+ * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface UserServiceInformationPrime extends UserServiceInformationBase {
-	public static final int _PARAMETER_CODE = 0x30;
+    int _PARAMETER_CODE = 0x30;
 }

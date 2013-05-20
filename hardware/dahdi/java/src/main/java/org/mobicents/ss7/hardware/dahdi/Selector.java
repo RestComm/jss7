@@ -33,19 +33,19 @@ import org.mobicents.protocols.stream.api.Stream;
 import org.mobicents.protocols.stream.api.StreamSelector;
 
 /**
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public class Selector implements StreamSelector {
 
-    private final static String LIB_NAME = "mobicents-dahdi-linux";
+    private static final String LIB_NAME = "mobicents-dahdi-linux";
 
-    public final static int READ = 0x01;
-    public final static int WRITE = 0x02;
+    public static final int READ = 0x01;
+    public static final int WRITE = 0x02;
 
     /** array of selected file descriptors */
-    private int fds[] = new int[16];
+    private int[] fds = new int[16];
 
     /** array of registered channels */
     private FastList<Mtp1> registered = new FastList<Mtp1>();
@@ -71,9 +71,8 @@ public class Selector implements StreamSelector {
 
     /**
      * Register channel with this selector.
-     * 
-     * @param channel
-     *            the channel to register.
+     *
+     * @param channel the channel to register.
      */
     public SelectorKey register(Channel channel) {
         // add channel instance to the collection
@@ -89,9 +88,8 @@ public class Selector implements StreamSelector {
 
     /**
      * Unregister channel.
-     * 
-     * @param channel
-     *            the channel to unregister.
+     *
+     * @param channel the channel to unregister.
      */
     public void unregister(Channel channel) {
         registered.remove(channel);
@@ -101,44 +99,38 @@ public class Selector implements StreamSelector {
 
     /**
      * Registers pipe for polling.
-     * 
-     * @param fd
-     *            the file descriptor.
+     *
+     * @param fd the file descriptor.
      */
     public native void doRegister(int fd);
 
     /**
      * Unregisters pipe from polling.
-     * 
-     * @param fd
-     *            the file descriptor.
+     *
+     * @param fd the file descriptor.
      */
     public native void doUnregister(int fd);
 
     /**
      * Delegates select call to unix poll function.
-     * 
-     * @param fds
-     *            the list of file descriptors.
-     * @param key
-     *            selection key.
+     *
+     * @param fds the list of file descriptors.
+     * @param key selection key.
      * @return the number of selected channels.
      */
     public native int doPoll(int[] fds, int key, int timeout);
 
-    public FastList<SelectorKey> selectNow(int ops, int timeout)
-            throws IOException {
-    	int count = doPoll(fds, ops, 1);
+    public FastList<SelectorKey> selectNow(int ops, int timeout) throws IOException {
+        int count = doPoll(fds, ops, 1);
         selected.clear();
         for (int i = 0; i < count; i++) {
-            for (FastList.Node<Mtp1> n = registered.head(), end = registered
-                    .tail(); (n = n.getNext()) != end;) {
+            for (FastList.Node<Mtp1> n = registered.head(), end = registered.tail(); (n = n.getNext()) != end;) {
                 Channel channel = (Channel) n.getValue();
                 if (channel.fd == fds[i]) {
                     selected.add(channel.selectorKey);
                 }
             }
-        }        
+        }
         return selected;
     }
 

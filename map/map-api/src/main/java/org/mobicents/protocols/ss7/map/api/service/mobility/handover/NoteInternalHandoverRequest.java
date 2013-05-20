@@ -26,29 +26,22 @@ import org.mobicents.protocols.ss7.map.api.primitives.ExternalSignalInfo;
 import org.mobicents.protocols.ss7.map.api.primitives.GlobalCellId;
 
 /**
- * 
-
-MAP V1:
-NoteInternalHandover ::= OPERATION --Timer s 
-ARGUMENT 
-	noteInternalHO-Arg NoteInternalHO-Arg
-
-MAP V1:
-NoteInternalHO-Arg ::= SEQUENCE { 
-	handoverType 		HandoverType, 
-	targetCellId 		[1] GlobalCellId OPTIONAL, 
-	channelId 			[2] ExternalSignalInfo OPTIONAL}
-
- * 
+ *
+ MAP V1: NoteInternalHandover ::= OPERATION --Timer s ARGUMENT noteInternalHO-Arg NoteInternalHO-Arg
+ *
+ * MAP V1: NoteInternalHO-Arg ::= SEQUENCE { handoverType HandoverType, targetCellId [1] GlobalCellId OPTIONAL, channelId [2]
+ * ExternalSignalInfo OPTIONAL}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface NoteInternalHandoverRequest {
 
-	public HandoverType getHandoverType();
+    HandoverType getHandoverType();
 
-	public GlobalCellId getServingCellId();
+    GlobalCellId getServingCellId();
 
-	public ExternalSignalInfo getChannelId();
+    ExternalSignalInfo getChannelId();
 
 }

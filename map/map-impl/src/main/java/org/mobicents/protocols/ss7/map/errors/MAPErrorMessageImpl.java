@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -45,167 +45,164 @@ import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
  * Base class of MAP ReturnError messages
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public abstract class MAPErrorMessageImpl implements MAPErrorMessage, MAPAsnPrimitive {
-	
-	protected Long errorCode;
-	
-	
-	protected MAPErrorMessageImpl(Long errorCode) {
-		this.errorCode = errorCode;
-	}
-	
-	public Long getErrorCode() {
-		return errorCode;
-	}
 
-	
-	public boolean isEmParameterless() {
-		return false;
-	}
+    protected Long errorCode;
 
-	public boolean isEmExtensionContainer() {
-		return false;
-	}
+    protected MAPErrorMessageImpl(Long errorCode) {
+        this.errorCode = errorCode;
+    }
 
-	public boolean isEmFacilityNotSup() {
-		return false;
-	}
+    public Long getErrorCode() {
+        return errorCode;
+    }
 
-	public boolean isEmSMDeliveryFailure() {
-		return false;
-	}
+    public boolean isEmParameterless() {
+        return false;
+    }
 
-	public boolean isEmSystemFailure() {
-		return false;
-	}
+    public boolean isEmExtensionContainer() {
+        return false;
+    }
 
-	public boolean isEmUnknownSubscriber() {
-		return false;
-	}
+    public boolean isEmFacilityNotSup() {
+        return false;
+    }
 
-	public boolean isEmAbsentSubscriberSM() {
-		return false;
-	}
+    public boolean isEmSMDeliveryFailure() {
+        return false;
+    }
 
-	public boolean isEmAbsentSubscriber() {
-		return false;
-	}
+    public boolean isEmSystemFailure() {
+        return false;
+    }
 
-	public boolean isEmSubscriberBusyForMtSms() {
-		return false;
-	}
+    public boolean isEmUnknownSubscriber() {
+        return false;
+    }
 
-	public boolean isEmCallBarred() {
-		return false;
-	}
+    public boolean isEmAbsentSubscriberSM() {
+        return false;
+    }
 
-	public boolean isEmUnauthorizedLCSClient() {
-		return false;
-	}
+    public boolean isEmAbsentSubscriber() {
+        return false;
+    }
 
-	public boolean isEmPositionMethodFailure() {
-		return false;
-	}
+    public boolean isEmSubscriberBusyForMtSms() {
+        return false;
+    }
 
-	public boolean isEmBusySubscriber() {
-		return false;
-	}
+    public boolean isEmCallBarred() {
+        return false;
+    }
 
-	public boolean isEmCUGReject() {
-		return false;
-	}
+    public boolean isEmUnauthorizedLCSClient() {
+        return false;
+    }
 
-	public boolean isEmRoamingNotAllowed() {
-		return false;
-	}
+    public boolean isEmPositionMethodFailure() {
+        return false;
+    }
 
-	public boolean isEmSsErrorStatus() {
-		return false;
-	}
+    public boolean isEmBusySubscriber() {
+        return false;
+    }
 
-	public boolean isEmSsIncompatibility() {
-		return false;
-	}
+    public boolean isEmCUGReject() {
+        return false;
+    }
 
-	public boolean isEmPwRegistrationFailure() {
-		return false;
-	}
+    public boolean isEmRoamingNotAllowed() {
+        return false;
+    }
 
-	
-	public MAPErrorMessageParameterless getEmParameterless() {
-		return null;
-	}
+    public boolean isEmSsErrorStatus() {
+        return false;
+    }
 
-	public MAPErrorMessageExtensionContainer getEmExtensionContainer() {
-		return null;
-	}
+    public boolean isEmSsIncompatibility() {
+        return false;
+    }
 
-	public MAPErrorMessageFacilityNotSup getEmFacilityNotSup() {
-		return null;
-	}
+    public boolean isEmPwRegistrationFailure() {
+        return false;
+    }
 
-	public MAPErrorMessageSMDeliveryFailure getEmSMDeliveryFailure() {
-		return null;
-	}
+    public MAPErrorMessageParameterless getEmParameterless() {
+        return null;
+    }
 
-	public MAPErrorMessageSystemFailure getEmSystemFailure() {
-		return null;
-	}
+    public MAPErrorMessageExtensionContainer getEmExtensionContainer() {
+        return null;
+    }
 
-	public MAPErrorMessageUnknownSubscriber getEmUnknownSubscriber() {
-		return null;
-	}
+    public MAPErrorMessageFacilityNotSup getEmFacilityNotSup() {
+        return null;
+    }
 
-	public MAPErrorMessageAbsentSubscriberSM getEmAbsentSubscriberSM() {
-		return null;
-	}
+    public MAPErrorMessageSMDeliveryFailure getEmSMDeliveryFailure() {
+        return null;
+    }
 
-	public MAPErrorMessageAbsentSubscriber getEmAbsentSubscriber() {
-		return null;
-	}
+    public MAPErrorMessageSystemFailure getEmSystemFailure() {
+        return null;
+    }
 
-	public MAPErrorMessageSubscriberBusyForMtSms getEmSubscriberBusyForMtSms() {
-		return null;
-	}
+    public MAPErrorMessageUnknownSubscriber getEmUnknownSubscriber() {
+        return null;
+    }
 
-	public MAPErrorMessageCallBarred getEmCallBarred() {
-		return null;
-	}
+    public MAPErrorMessageAbsentSubscriberSM getEmAbsentSubscriberSM() {
+        return null;
+    }
 
-	public MAPErrorMessageUnauthorizedLCSClient getEmUnauthorizedLCSClient() {
-		return null;
-	}
+    public MAPErrorMessageAbsentSubscriber getEmAbsentSubscriber() {
+        return null;
+    }
 
-	public MAPErrorMessagePositionMethodFailure getEmPositionMethodFailure() {
-		return null;
-	}
+    public MAPErrorMessageSubscriberBusyForMtSms getEmSubscriberBusyForMtSms() {
+        return null;
+    }
 
-	public MAPErrorMessageBusySubscriber getEmBusySubscriber() {
-		return null;
-	}
+    public MAPErrorMessageCallBarred getEmCallBarred() {
+        return null;
+    }
 
-	public MAPErrorMessageCUGReject getEmCUGReject() {
-		return null;
-	}
+    public MAPErrorMessageUnauthorizedLCSClient getEmUnauthorizedLCSClient() {
+        return null;
+    }
 
-	public MAPErrorMessageRoamingNotAllowed getEmRoamingNotAllowed() {
-		return null;
-	}
+    public MAPErrorMessagePositionMethodFailure getEmPositionMethodFailure() {
+        return null;
+    }
 
-	public MAPErrorMessageSsErrorStatus getEmSsErrorStatus() {
-		return null;
-	}
+    public MAPErrorMessageBusySubscriber getEmBusySubscriber() {
+        return null;
+    }
 
-	public MAPErrorMessageSsIncompatibility getEmSsIncompatibility() {
-		return null;
-	}
+    public MAPErrorMessageCUGReject getEmCUGReject() {
+        return null;
+    }
 
-	public MAPErrorMessagePwRegistrationFailure getEmPwRegistrationFailure() {
-		return null;
-	}
+    public MAPErrorMessageRoamingNotAllowed getEmRoamingNotAllowed() {
+        return null;
+    }
+
+    public MAPErrorMessageSsErrorStatus getEmSsErrorStatus() {
+        return null;
+    }
+
+    public MAPErrorMessageSsIncompatibility getEmSsIncompatibility() {
+        return null;
+    }
+
+    public MAPErrorMessagePwRegistrationFailure getEmPwRegistrationFailure() {
+        return null;
+    }
 
 }

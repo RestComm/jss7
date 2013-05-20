@@ -30,60 +30,40 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.CallReferenceNumber;
 
 /**
-*
-
-initiateCallAttempt {PARAMETERS-BOUND : bound} OPERATION ::= { 
- ARGUMENT  InitiateCallAttemptArg {bound} 
- RESULT   InitiateCallAttemptRes {bound} 
- ERRORS   {missingParameter | 
-     parameterOutOfRange | 
-     systemFailure | 
-     taskRefused | 
-     unexpectedComponentSequence | 
-     unexpectedDataValue | 
-     unexpectedParameter 
-     } 
- CODE   opcode-initiateCallAttempt} 
--- Direction: gsmSCF -> gsmSSF, Timer T  
-ica
--- This operation is used to instruct the gsmSSF to create a new call to a call party using the 
--- address information provided by the gsmSCF. 
- 
-InitiateCallAttemptArg {PARAMETERS-BOUND : bound} ::= SEQUENCE { 
- destinationRoutingAddress   [0] DestinationRoutingAddress {bound}, 
- extensions       [4] Extensions {bound}      OPTIONAL, 
- legToBeCreated      [5] LegID         OPTIONAL, 
- newCallSegment      [6] CallSegmentID {bound}     OPTIONAL, 
- callingPartyNumber     [30] CallingPartyNumber {bound}    OPTIONAL, 
- callReferenceNumber     [51] CallReferenceNumber     OPTIONAL, 
- gsmSCFAddress      [52] ISDN-AddressString      OPTIONAL, 
- suppress-T-CSI      [53] NULL         OPTIONAL, 
- ... 
- } 
-
-CallSegmentID {PARAMETERS-BOUND : bound} ::= INTEGER (1..127)
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ initiateCallAttempt {PARAMETERS-BOUND : bound} OPERATION ::= { ARGUMENT InitiateCallAttemptArg {bound} RESULT
+ * InitiateCallAttemptRes {bound} ERRORS {missingParameter | parameterOutOfRange | systemFailure | taskRefused |
+ * unexpectedComponentSequence | unexpectedDataValue | unexpectedParameter } CODE opcode-initiateCallAttempt} -- Direction:
+ * gsmSCF -> gsmSSF, Timer T ica -- This operation is used to instruct the gsmSSF to create a new call to a call party using the
+ * -- address information provided by the gsmSCF.
+ *
+ * InitiateCallAttemptArg {PARAMETERS-BOUND : bound} ::= SEQUENCE { destinationRoutingAddress [0] DestinationRoutingAddress
+ * {bound}, extensions [4] Extensions {bound} OPTIONAL, legToBeCreated [5] LegID OPTIONAL, newCallSegment [6] CallSegmentID
+ * {bound} OPTIONAL, callingPartyNumber [30] CallingPartyNumber {bound} OPTIONAL, callReferenceNumber [51] CallReferenceNumber
+ * OPTIONAL, gsmSCFAddress [52] ISDN-AddressString OPTIONAL, suppress-T-CSI [53] NULL OPTIONAL, ... }
+ *
+ * CallSegmentID {PARAMETERS-BOUND : bound} ::= INTEGER (1..127)
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface InitiateCallAttemptRequest extends CircuitSwitchedCallMessage {
 
-	public DestinationRoutingAddress getDestinationRoutingAddress();
+    DestinationRoutingAddress getDestinationRoutingAddress();
 
-	public CAPExtensions getExtensions();
+    CAPExtensions getExtensions();
 
-	public LegID getLegToBeCreated();
+    LegID getLegToBeCreated();
 
-	public Integer getNewCallSegment();
+    Integer getNewCallSegment();
 
-	public CallingPartyNumberCap getCallingPartyNumber();
+    CallingPartyNumberCap getCallingPartyNumber();
 
-	public CallReferenceNumber getCallReferenceNumber();
+    CallReferenceNumber getCallReferenceNumber();
 
-	public ISDNAddressString getGsmSCFAddress();
+    ISDNAddressString getGsmSCFAddress();
 
-	public boolean getSuppressTCsi();
+    boolean getSuppressTCsi();
 
 }
-

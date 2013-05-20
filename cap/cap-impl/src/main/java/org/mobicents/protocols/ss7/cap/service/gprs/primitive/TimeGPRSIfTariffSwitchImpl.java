@@ -34,118 +34,120 @@ import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.TimeGPRSIfTari
 import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class TimeGPRSIfTariffSwitchImpl  extends SequenceBase implements TimeGPRSIfTariffSwitch{
-	
-	public static final int _ID_timeGPRSSinceLastTariffSwitch = 0;
-	public static final int _ID_timeGPRSTariffSwitchInterval= 1;
+public class TimeGPRSIfTariffSwitchImpl extends SequenceBase implements TimeGPRSIfTariffSwitch {
 
-	public int timeGPRSSinceLastTariffSwitch;
-	public Integer timeGPRSTariffSwitchInterval;
-	
-	public TimeGPRSIfTariffSwitchImpl() {
-		super("TimeGPRSIfTariffSwitch");
-	}
+    public static final int _ID_timeGPRSSinceLastTariffSwitch = 0;
+    public static final int _ID_timeGPRSTariffSwitchInterval = 1;
 
-	public TimeGPRSIfTariffSwitchImpl(int timeGPRSSinceLastTariffSwitch,
-			Integer timeGPRSTariffSwitchInterval) {
-		super("TimeGPRSIfTariffSwitch");
-		this.timeGPRSSinceLastTariffSwitch = timeGPRSSinceLastTariffSwitch;
-		this.timeGPRSTariffSwitchInterval = timeGPRSTariffSwitchInterval;
-	}
-	
-	@Override
-	public int getTimeGPRSSinceLastTariffSwitch(){
-		return this.timeGPRSSinceLastTariffSwitch;
-	}
+    public int timeGPRSSinceLastTariffSwitch;
+    public Integer timeGPRSTariffSwitchInterval;
 
-	@Override
-	public Integer getTimeGPRSTariffSwitchInterval(){
-		return this.timeGPRSTariffSwitchInterval;
-	}
-	
-	@Override
-	protected void _decode(AsnInputStream asnIS, int length)
-			throws CAPParsingComponentException, IOException, AsnException {
-	
-		boolean istimeGPRSSinceLastTariffSwitchIncluded = false;
-		
-		this.timeGPRSSinceLastTariffSwitch = -1;
-		this.timeGPRSTariffSwitchInterval = null;
+    public TimeGPRSIfTariffSwitchImpl() {
+        super("TimeGPRSIfTariffSwitch");
+    }
 
-		AsnInputStream ais = asnIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+    public TimeGPRSIfTariffSwitchImpl(int timeGPRSSinceLastTariffSwitch, Integer timeGPRSTariffSwitchInterval) {
+        super("TimeGPRSIfTariffSwitch");
+        this.timeGPRSSinceLastTariffSwitch = timeGPRSSinceLastTariffSwitch;
+        this.timeGPRSTariffSwitchInterval = timeGPRSTariffSwitchInterval;
+    }
 
-			int tag = ais.readTag();
+    @Override
+    public int getTimeGPRSSinceLastTariffSwitch() {
+        return this.timeGPRSSinceLastTariffSwitch;
+    }
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_timeGPRSSinceLastTariffSwitch:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ".timeGPRSSinceLastTariffSwitch: Parameter is primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.timeGPRSSinceLastTariffSwitch = (int) ais.readInteger();
-					istimeGPRSSinceLastTariffSwitchIncluded = true;
-					break;
-				case _ID_timeGPRSTariffSwitchInterval:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ".timeGPRSTariffSwitchInterval: Parameter is primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.timeGPRSTariffSwitchInterval =(int)ais.readInteger();
-					break;
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
+    @Override
+    public Integer getTimeGPRSTariffSwitchInterval() {
+        return this.timeGPRSTariffSwitchInterval;
+    }
 
-		if (!istimeGPRSSinceLastTariffSwitchIncluded)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": timeGPRSSinceLastTariffSwitch is mandatory but not found",
-					CAPParsingComponentExceptionReason.MistypedParameter);
-	
-	}
-	
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		
-		try {
-			asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_timeGPRSSinceLastTariffSwitch, this.timeGPRSSinceLastTariffSwitch);
-			
-			if (this.timeGPRSTariffSwitchInterval != null)
-				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_timeGPRSTariffSwitchInterval, this.timeGPRSTariffSwitchInterval.intValue());
-				
-		}catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
-	
+    @Override
+    protected void _decode(AsnInputStream asnIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName + " [");
+        boolean istimeGPRSSinceLastTariffSwitchIncluded = false;
 
-		sb.append("timeGPRSSinceLastTariffSwitch=");
-		sb.append(this.timeGPRSSinceLastTariffSwitch);
-		sb.append(", ");		
-		
-		if (this.timeGPRSTariffSwitchInterval != null) {
-			sb.append("timeGPRSTariffSwitchInterval=");
-			sb.append(this.timeGPRSTariffSwitchInterval.toString());
-		}
+        this.timeGPRSSinceLastTariffSwitch = -1;
+        this.timeGPRSTariffSwitchInterval = null;
 
-		sb.append("]");
+        AsnInputStream ais = asnIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-		return sb.toString();
-	}
+            int tag = ais.readTag();
+
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_timeGPRSSinceLastTariffSwitch:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".timeGPRSSinceLastTariffSwitch: Parameter is primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.timeGPRSSinceLastTariffSwitch = (int) ais.readInteger();
+                        istimeGPRSSinceLastTariffSwitchIncluded = true;
+                        break;
+                    case _ID_timeGPRSTariffSwitchInterval:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".timeGPRSTariffSwitchInterval: Parameter is primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.timeGPRSTariffSwitchInterval = (int) ais.readInteger();
+                        break;
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
+
+        if (!istimeGPRSSinceLastTariffSwitchIncluded)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": timeGPRSSinceLastTariffSwitch is mandatory but not found",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+
+    }
+
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
+
+        try {
+            asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_timeGPRSSinceLastTariffSwitch,
+                    this.timeGPRSSinceLastTariffSwitch);
+
+            if (this.timeGPRSTariffSwitchInterval != null)
+                asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_timeGPRSTariffSwitchInterval,
+                        this.timeGPRSTariffSwitchInterval.intValue());
+
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
+
+        sb.append("timeGPRSSinceLastTariffSwitch=");
+        sb.append(this.timeGPRSSinceLastTariffSwitch);
+        sb.append(", ");
+
+        if (this.timeGPRSTariffSwitchInterval != null) {
+            sb.append("timeGPRSTariffSwitchInterval=");
+            sb.append(this.timeGPRSTariffSwitchInterval.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }

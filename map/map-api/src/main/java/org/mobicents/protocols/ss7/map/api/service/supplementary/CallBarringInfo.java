@@ -25,23 +25,19 @@ package org.mobicents.protocols.ss7.map.api.service.supplementary;
 import java.util.ArrayList;
 
 /**
- * 
-
-CallBarringInfo ::= SEQUENCE {
-	ss-Code		SS-Code		OPTIONAL,
-	callBarringFeatureList	CallBarringFeatureList,
-	...}
-
-CallBarringFeatureList ::= SEQUENCE SIZE (1..13) OF CallBarringFeature
-
- * 
+ *
+ CallBarringInfo ::= SEQUENCE { ss-Code SS-Code OPTIONAL, callBarringFeatureList CallBarringFeatureList, ...}
+ *
+ * CallBarringFeatureList ::= SEQUENCE SIZE (1..13) OF CallBarringFeature
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CallBarringInfo {
 
-	public SSCode getSsCode();
+    SSCode getSsCode();
 
-	public ArrayList<CallBarringFeature> getCallBarringFeatureList();
+    ArrayList<CallBarringFeature> getCallBarringFeatureList();
 
 }

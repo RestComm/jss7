@@ -42,7 +42,6 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
-import org.mobicents.protocols.ss7.map.primitives.SubscriberIdentityImpl;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
@@ -51,96 +50,97 @@ import org.testng.annotations.Test;
 
 /**
  * Trace are from Brazil Operator
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public class SubscriberIdentityTest {
-	MAPParameterFactory MAPParameterFactory = new MAPParameterFactoryImpl();
+    MAPParameterFactory MAPParameterFactory = new MAPParameterFactoryImpl();
 
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
 
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
 
-	@BeforeTest
-	public void setUp() {
-	}
+    @BeforeTest
+    public void setUp() {
+    }
 
-	@AfterTest
-	public void tearDown() {
-	}
+    @AfterTest
+    public void tearDown() {
+    }
 
-	byte[] data = new byte[] { (byte) 0x80, 0x08, 0x27, (byte) 0x94, (byte) 0x99, 0x09, 0x00, 0x00, 0x00, (byte) 0xf7 };
-	byte[] dataMsIsdn = new byte[] { -127, 7, -111, 34, 34, 34, 51, 51, -13 };
+    byte[] data = new byte[] { (byte) 0x80, 0x08, 0x27, (byte) 0x94, (byte) 0x99, 0x09, 0x00, 0x00, 0x00, (byte) 0xf7 };
+    byte[] dataMsIsdn = new byte[] { -127, 7, -111, 34, 34, 34, 51, 51, -13 };
 
-	@Test(groups = { "functional.decode","primitives"})
-	public void testDecode() throws Exception {
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testDecode() throws Exception {
 
-		AsnInputStream asn = new AsnInputStream(data);
-		int tag = asn.readTag();
-		SubscriberIdentityImpl subsIdent = new SubscriberIdentityImpl();
-		subsIdent.decodeAll(asn);
-		IMSI imsi = subsIdent.getIMSI();
-		ISDNAddressString msisdn  = subsIdent.getMSISDN();
-		assertNotNull(imsi);
-		assertNull(msisdn);
-		assertTrue(imsi.getData().equals("724999900000007"));
+        AsnInputStream asn = new AsnInputStream(data);
+        int tag = asn.readTag();
+        SubscriberIdentityImpl subsIdent = new SubscriberIdentityImpl();
+        subsIdent.decodeAll(asn);
+        IMSI imsi = subsIdent.getIMSI();
+        ISDNAddressString msisdn = subsIdent.getMSISDN();
+        assertNotNull(imsi);
+        assertNull(msisdn);
+        assertTrue(imsi.getData().equals("724999900000007"));
 
-		asn = new AsnInputStream(dataMsIsdn);
-		tag = asn.readTag();
-		subsIdent = new SubscriberIdentityImpl();
-		subsIdent.decodeAll(asn);
-		imsi = subsIdent.getIMSI();
-		msisdn  = subsIdent.getMSISDN();
-		assertNull(imsi);
-		assertNotNull(msisdn);
-		assertTrue(msisdn.getAddress().equals("22222233333"));
-		assertEquals(msisdn.getAddressNature(), AddressNature.international_number);
-		assertEquals(msisdn.getNumberingPlan(), NumberingPlan.ISDN);
+        asn = new AsnInputStream(dataMsIsdn);
+        tag = asn.readTag();
+        subsIdent = new SubscriberIdentityImpl();
+        subsIdent.decodeAll(asn);
+        imsi = subsIdent.getIMSI();
+        msisdn = subsIdent.getMSISDN();
+        assertNull(imsi);
+        assertNotNull(msisdn);
+        assertTrue(msisdn.getAddress().equals("22222233333"));
+        assertEquals(msisdn.getAddressNature(), AddressNature.international_number);
+        assertEquals(msisdn.getNumberingPlan(), NumberingPlan.ISDN);
 
-	}
+    }
 
-	@Test(groups = { "functional.encode","primitives"})
-	public void testEncode() throws Exception {
+    @Test(groups = { "functional.encode", "primitives" })
+    public void testEncode() throws Exception {
 
-		IMSI imsi = this.MAPParameterFactory.createIMSI("724999900000007");
-		SubscriberIdentityImpl subsIdent = new SubscriberIdentityImpl(imsi);
-		AsnOutputStream asnOS = new AsnOutputStream();
-		subsIdent.encodeAll(asnOS);
-		byte[] encodedData = asnOS.toByteArray();
-		assertTrue( Arrays.equals(data,encodedData));
+        IMSI imsi = this.MAPParameterFactory.createIMSI("724999900000007");
+        SubscriberIdentityImpl subsIdent = new SubscriberIdentityImpl(imsi);
+        AsnOutputStream asnOS = new AsnOutputStream();
+        subsIdent.encodeAll(asnOS);
+        byte[] encodedData = asnOS.toByteArray();
+        assertTrue(Arrays.equals(data, encodedData));
 
-		ISDNAddressString msisdn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "22222233333");
-		subsIdent = new SubscriberIdentityImpl(msisdn);
-		asnOS = new AsnOutputStream();
-		subsIdent.encodeAll(asnOS);
-		encodedData = asnOS.toByteArray();
-		assertTrue( Arrays.equals(dataMsIsdn,encodedData));
-	}
-	
-	@Test(groups = { "functional.serialize", "primitives" })
-	public void testSerialization() throws Exception {
-		IMSI imsi = this.MAPParameterFactory.createIMSI("724999900000007");
-		SubscriberIdentityImpl original = new SubscriberIdentityImpl(imsi);
+        ISDNAddressString msisdn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN,
+                "22222233333");
+        subsIdent = new SubscriberIdentityImpl(msisdn);
+        asnOS = new AsnOutputStream();
+        subsIdent.encodeAll(asnOS);
+        encodedData = asnOS.toByteArray();
+        assertTrue(Arrays.equals(dataMsIsdn, encodedData));
+    }
 
-		// serialize
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ObjectOutputStream oos = new ObjectOutputStream(out);
-		oos.writeObject(original);
-		oos.close();
+    @Test(groups = { "functional.serialize", "primitives" })
+    public void testSerialization() throws Exception {
+        IMSI imsi = this.MAPParameterFactory.createIMSI("724999900000007");
+        SubscriberIdentityImpl original = new SubscriberIdentityImpl(imsi);
 
-		// deserialize
-		byte[] pickled = out.toByteArray();
-		InputStream in = new ByteArrayInputStream(pickled);
-		ObjectInputStream ois = new ObjectInputStream(in);
-		Object o = ois.readObject();
-		SubscriberIdentityImpl copy = (SubscriberIdentityImpl) o;
-		
-		//test result
-		assertEquals(copy, original);
-	}
+        // serialize
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(out);
+        oos.writeObject(original);
+        oos.close();
+
+        // deserialize
+        byte[] pickled = out.toByteArray();
+        InputStream in = new ByteArrayInputStream(pickled);
+        ObjectInputStream ois = new ObjectInputStream(in);
+        Object o = ois.readObject();
+        SubscriberIdentityImpl copy = (SubscriberIdentityImpl) o;
+
+        // test result
+        assertEquals(copy, original);
+    }
 }

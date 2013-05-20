@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -22,10 +22,10 @@
 package org.mobicents.protocols.ss7.m3ua.impl;
 
 /**
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public enum TestEventType {
-	AsCreated, AsDestroyed, AspFactoryCreated, AspFactoryDestroyed, AspAssignedToAs, AspUnassignedFromAs, RemoveAllResources, AspFactoryStarted, AspFactoryStopped, AspActive, AspInactive, AspDown, AsActive, AsPending, AsInactive, AsDown;
+    AsCreated, AsDestroyed, AspFactoryCreated, AspFactoryDestroyed, AspAssignedToAs, AspUnassignedFromAs, RemoveAllResources, AspFactoryStarted, AspFactoryStopped, AspActive, AspInactive, AspDown, AsActive, AsPending, AsInactive, AsDown;
 }

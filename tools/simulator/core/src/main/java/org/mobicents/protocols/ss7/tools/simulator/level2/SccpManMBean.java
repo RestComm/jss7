@@ -22,74 +22,71 @@
 
 package org.mobicents.protocols.ss7.tools.simulator.level2;
 
-
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SccpManMBean {
 
-	public boolean isRouteOnGtMode();
+    boolean isRouteOnGtMode();
 
-	public void setRouteOnGtMode(boolean val);
+    void setRouteOnGtMode(boolean val);
 
-	public int getRemoteSpc();
+    int getRemoteSpc();
 
-	public void setRemoteSpc(int val);
+    void setRemoteSpc(int val);
 
-	public int getLocalSpc();
+    int getLocalSpc();
 
-	public void setLocalSpc(int val);
+    void setLocalSpc(int val);
 
-	public int getNi();
+    int getNi();
 
-	public void setNi(int val);
+    void setNi(int val);
 
-	public int getRemoteSsn();
+    int getRemoteSsn();
 
-	public void setRemoteSsn(int val);
+    void setRemoteSsn(int val);
 
-	public int getLocalSsn();
+    int getLocalSsn();
 
-	public void setLocalSsn(int val);
+    void setLocalSsn(int val);
 
-	public GlobalTitleType getGlobalTitleType();
+    GlobalTitleType getGlobalTitleType();
 
-	public String getGlobalTitleType_Value();
+    String getGlobalTitleType_Value();
 
-	public void setGlobalTitleType(GlobalTitleType val);
+    void setGlobalTitleType(GlobalTitleType val);
 
-	public NatureOfAddressType getNatureOfAddress();
+    NatureOfAddressType getNatureOfAddress();
 
-	public String getNatureOfAddress_Value();
+    String getNatureOfAddress_Value();
 
-	public void setNatureOfAddress(NatureOfAddressType val);
+    void setNatureOfAddress(NatureOfAddressType val);
 
-	public NumberingPlanSccpType getNumberingPlan();
+    NumberingPlanSccpType getNumberingPlan();
 
-	public String getNumberingPlan_Value();
+    String getNumberingPlan_Value();
 
-	public void setNumberingPlan(NumberingPlanSccpType val);
+    void setNumberingPlan(NumberingPlanSccpType val);
 
-	public int getTranslationType();
+    int getTranslationType();
 
-	public void setTranslationType(int val);
+    void setTranslationType(int val);
 
-	public String getCallingPartyAddressDigits();
+    String getCallingPartyAddressDigits();
 
-	public void setCallingPartyAddressDigits(String val);
+    void setCallingPartyAddressDigits(String val);
 
-//	public String getExtraLocalAddressDigits();
-//
-//	public void setExtraLocalAddressDigits(String val);
+    // String getExtraLocalAddressDigits();
+    //
+    // void setExtraLocalAddressDigits(String val);
 
+    void putGlobalTitleType(String val);
 
-	public void putGlobalTitleType(String val);
+    void putNatureOfAddress(String val);
 
-	public void putNatureOfAddress(String val);
-
-	public void putNumberingPlan(String val);
+    void putNumberingPlan(String val);
 
 }
-

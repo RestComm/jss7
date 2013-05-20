@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -41,230 +41,237 @@ import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class SendRoutingInfoForSMResponseImpl extends SmsMessageImpl implements SendRoutingInfoForSMResponse {
-	
-	protected static final int _TAG_LocationInfoWithLMSI = 0; 
-	protected static final int _TAG_mwdSet = 2; 
-	protected static final int _TAG_ExtensionContainer = 4; 
 
-	protected String _PrimitiveName = "SendRoutingInfoForSMResponse";
+    protected static final int _TAG_LocationInfoWithLMSI = 0;
+    protected static final int _TAG_mwdSet = 2;
+    protected static final int _TAG_ExtensionContainer = 4;
 
-	private IMSI imsi;
-	private LocationInfoWithLMSI locationInfoWithLMSI;
-	private MAPExtensionContainer extensionContainer;
-	private Boolean mwdSet;
+    protected String _PrimitiveName = "SendRoutingInfoForSMResponse";
 
+    private IMSI imsi;
+    private LocationInfoWithLMSI locationInfoWithLMSI;
+    private MAPExtensionContainer extensionContainer;
+    private Boolean mwdSet;
 
-	public SendRoutingInfoForSMResponseImpl() {
-	}	
-	
-	public SendRoutingInfoForSMResponseImpl(IMSI imsi, LocationInfoWithLMSI locationInfoWithLMSI, MAPExtensionContainer extensionContainer, Boolean mwdSet) {
-		this.imsi = imsi;
-		this.locationInfoWithLMSI = locationInfoWithLMSI;
-		this.extensionContainer = extensionContainer;
-		this.mwdSet = mwdSet;
-	}
+    public SendRoutingInfoForSMResponseImpl() {
+    }
 
-	public MAPMessageType getMessageType() {
-		return MAPMessageType.sendRoutingInfoForSM_Response;
-	}
+    public SendRoutingInfoForSMResponseImpl(IMSI imsi, LocationInfoWithLMSI locationInfoWithLMSI,
+            MAPExtensionContainer extensionContainer, Boolean mwdSet) {
+        this.imsi = imsi;
+        this.locationInfoWithLMSI = locationInfoWithLMSI;
+        this.extensionContainer = extensionContainer;
+        this.mwdSet = mwdSet;
+    }
 
-	public int getOperationCode() {
-		return MAPOperationCode.sendRoutingInfoForSM;
-	}
+    public MAPMessageType getMessageType() {
+        return MAPMessageType.sendRoutingInfoForSM_Response;
+    }
 
-	public IMSI getIMSI() {
-		return this.imsi;
-	}
+    public int getOperationCode() {
+        return MAPOperationCode.sendRoutingInfoForSM;
+    }
 
-	public LocationInfoWithLMSI getLocationInfoWithLMSI() {
-		return this.locationInfoWithLMSI;
-	}
+    public IMSI getIMSI() {
+        return this.imsi;
+    }
 
-	public MAPExtensionContainer getExtensionContainer() {
-		return this.extensionContainer;
-	}
+    public LocationInfoWithLMSI getLocationInfoWithLMSI() {
+        return this.locationInfoWithLMSI;
+    }
 
-	public Boolean getMwdSet() {
-		return mwdSet;
-	}
+    public MAPExtensionContainer getExtensionContainer() {
+        return this.extensionContainer;
+    }
 
+    public Boolean getMwdSet() {
+        return mwdSet;
+    }
 
-	public int getTag() throws MAPException {
-		return Tag.SEQUENCE;
-	}
+    public int getTag() throws MAPException {
+        return Tag.SEQUENCE;
+    }
 
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	public boolean getIsPrimitive() {
-		return false;
-	}
-	
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
-	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		this.imsi = null;
-		this.locationInfoWithLMSI = null;
-		this.extensionContainer = null;
-		this.mwdSet = null;
+    private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		int num = 0;
-		while (true) {
-			if (ais.available() == 0)
-				break;
+        this.imsi = null;
+        this.locationInfoWithLMSI = null;
+        this.extensionContainer = null;
+        this.mwdSet = null;
 
-			int tag = ais.readTag();
-			switch (num) {
-			case 0:
-				// imsi
-				if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive() || tag != Tag.STRING_OCTET)
-					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".imsi: Parameter 0 bad tag or tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				this.imsi = new IMSIImpl();
-				((IMSIImpl)this.imsi).decodeAll(ais);
-				break;
-				
-			case 1:
-				// locationInfoWithLMSI
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive() || tag != _TAG_LocationInfoWithLMSI)
-					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".locationInfoWithLMSI: Parameter 1 bad tag class or tag or primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				this.locationInfoWithLMSI = new LocationInfoWithLMSIImpl();
-				((LocationInfoWithLMSIImpl)this.locationInfoWithLMSI).decodeAll(ais);
-				break;
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        int num = 0;
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-			default:
-				if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-					switch (tag) {
-					case _TAG_ExtensionContainer:
-						if (ais.isTagPrimitive())
-								throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: Parameter extensionContainer is primitive",
-										MAPParsingComponentExceptionReason.MistypedParameter);
-						this.extensionContainer = new MAPExtensionContainerImpl();
-						((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
-					break;
-					case _TAG_mwdSet:
-						if (!ais.isTagPrimitive())
-								throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".mwdSet: Parameter mwdSet is not primitive",
-										MAPParsingComponentExceptionReason.MistypedParameter);
-						this.mwdSet = ais.readBoolean();
-					break;
+            int tag = ais.readTag();
+            switch (num) {
+                case 0:
+                    // imsi
+                    if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive() || tag != Tag.STRING_OCTET)
+                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                + ".imsi: Parameter 0 bad tag or tag class or not primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    this.imsi = new IMSIImpl();
+                    ((IMSIImpl) this.imsi).decodeAll(ais);
+                    break;
 
-					default:
-						ais.advanceElement();
-						break;
-					}
+                case 1:
+                    // locationInfoWithLMSI
+                    if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive()
+                            || tag != _TAG_LocationInfoWithLMSI)
+                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                + ".locationInfoWithLMSI: Parameter 1 bad tag class or tag or primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    this.locationInfoWithLMSI = new LocationInfoWithLMSIImpl();
+                    ((LocationInfoWithLMSIImpl) this.locationInfoWithLMSI).decodeAll(ais);
+                    break;
 
-				} else {
+                default:
+                    if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                        switch (tag) {
+                            case _TAG_ExtensionContainer:
+                                if (ais.isTagPrimitive())
+                                    throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                            + ".extensionContainer: Parameter extensionContainer is primitive",
+                                            MAPParsingComponentExceptionReason.MistypedParameter);
+                                this.extensionContainer = new MAPExtensionContainerImpl();
+                                ((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+                                break;
+                            case _TAG_mwdSet:
+                                if (!ais.isTagPrimitive())
+                                    throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                            + ".mwdSet: Parameter mwdSet is not primitive",
+                                            MAPParsingComponentExceptionReason.MistypedParameter);
+                                this.mwdSet = ais.readBoolean();
+                                break;
 
-					ais.advanceElement();
-				}
-				break;
-			}
-			
-			num++;
-		}
+                            default:
+                                ais.advanceElement();
+                                break;
+                        }
 
-		if (num < 2)
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Needs at least 2 mandatory parameters, found " + num,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-	}
+                    } else {
 
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
-	}
+                        ais.advanceElement();
+                    }
+                    break;
+            }
 
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		try {
-			asnOs.writeTag(tagClass, false, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+            num++;
+        }
 
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		
-		if (this.imsi == null || this.locationInfoWithLMSI == null)
-			throw new MAPException("imsi and locationInfoWithLMSI must not be null");
+        if (num < 2)
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": Needs at least 2 mandatory parameters, found " + num,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-		((IMSIImpl)this.imsi).encodeAll(asnOs);
-		((LocationInfoWithLMSIImpl)this.locationInfoWithLMSI).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LocationInfoWithLMSI);
-		if (this.extensionContainer != null)
-			((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_ExtensionContainer);
-		if (this.mwdSet != null)
-			try {
-				asnOs.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_mwdSet, this.mwdSet);
-			} catch (IOException e) {
-				throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-			} catch (AsnException e) {
-				throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-			}
-	}	
-	
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("SendRoutingInfoForSMResponse [");
-		
-		if(this.getMAPDialog() != null){
-			sb.append("DialogId=").append(this.getMAPDialog().getLocalDialogId());
-		}
+    public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+        this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+    }
 
-		if (this.imsi != null) {
-			sb.append(", imsi=");
-			sb.append(this.imsi.toString());
-		}
-		if (this.locationInfoWithLMSI != null) {
-			sb.append(", locationInfoWithLMSI=");
-			sb.append(this.locationInfoWithLMSI.toString());
-		}
-		if (this.extensionContainer != null) {
-			sb.append(", extensionContainer=");
-			sb.append(this.extensionContainer.toString());
-		}
-		if (this.mwdSet != null) {
-			sb.append(", mwdSet=");
-			sb.append(this.mwdSet.toString());
-		}
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+        try {
+            asnOs.writeTag(tagClass, false, tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		sb.append("]");
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-		return sb.toString();
-	}
+        if (this.imsi == null || this.locationInfoWithLMSI == null)
+            throw new MAPException("imsi and locationInfoWithLMSI must not be null");
+
+        ((IMSIImpl) this.imsi).encodeAll(asnOs);
+        ((LocationInfoWithLMSIImpl) this.locationInfoWithLMSI).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
+                _TAG_LocationInfoWithLMSI);
+        if (this.extensionContainer != null)
+            ((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
+                    _TAG_ExtensionContainer);
+        if (this.mwdSet != null)
+            try {
+                asnOs.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_mwdSet, this.mwdSet);
+            } catch (IOException e) {
+                throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            } catch (AsnException e) {
+                throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("SendRoutingInfoForSMResponse [");
+
+        if (this.getMAPDialog() != null) {
+            sb.append("DialogId=").append(this.getMAPDialog().getLocalDialogId());
+        }
+
+        if (this.imsi != null) {
+            sb.append(", imsi=");
+            sb.append(this.imsi.toString());
+        }
+        if (this.locationInfoWithLMSI != null) {
+            sb.append(", locationInfoWithLMSI=");
+            sb.append(this.locationInfoWithLMSI.toString());
+        }
+        if (this.extensionContainer != null) {
+            sb.append(", extensionContainer=");
+            sb.append(this.extensionContainer.toString());
+        }
+        if (this.mwdSet != null) {
+            sb.append(", mwdSet=");
+            sb.append(this.mwdSet.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }

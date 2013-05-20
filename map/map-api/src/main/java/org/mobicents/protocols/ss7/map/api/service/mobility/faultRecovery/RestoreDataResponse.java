@@ -27,31 +27,22 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
- * 
-
-MAP V3:
-RestoreDataRes ::= SEQUENCE {
-	hlr-Number			ISDN-AddressString,
-	msNotReachable		NULL			OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...}
-
-MAP V2:
-RestoreDataRes ::= SEQUENCE { 
-	hlr-Number 		ISDN-AddressString, 
-	msNotReachable 	NULL OPTIONAL, 
-	...}
-
- * 
+ *
+ MAP V3: RestoreDataRes ::= SEQUENCE { hlr-Number ISDN-AddressString, msNotReachable NULL OPTIONAL, extensionContainer
+ * ExtensionContainer OPTIONAL, ...}
+ *
+ * MAP V2: RestoreDataRes ::= SEQUENCE { hlr-Number ISDN-AddressString, msNotReachable NULL OPTIONAL, ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface RestoreDataResponse extends MobilityMessage {
 
-	public ISDNAddressString getHlrNumber();
+    ISDNAddressString getHlrNumber();
 
-	public boolean getMsNotReachable();
+    boolean getMsNotReachable();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

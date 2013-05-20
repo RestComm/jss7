@@ -25,26 +25,22 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformati
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtSSStatus;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.OverrideCategory;
 
-/**	
- * 
-
-ClipData ::= SEQUENCE {
-	ss-Status		[1] Ext-SS-Status,
-	overrideCategory	[2] OverrideCategory,
-	notificationToCSE	[3] NULL		OPTIONAL,
-	... }
-
-
- * 
+/**
+ *
+ ClipData ::= SEQUENCE { ss-Status [1] Ext-SS-Status, overrideCategory [2] OverrideCategory, notificationToCSE [3] NULL
+ * OPTIONAL, ... }
+ *
+ *
+ *
  * @author sergey vetyutnev
  *
  */
 public interface ClipData {
 
-	public ExtSSStatus getSsStatus();
+    ExtSSStatus getSsStatus();
 
-	public OverrideCategory getOverrideCategory();
+    OverrideCategory getOverrideCategory();
 
-	public boolean getNotificationToCSE();
+    boolean getNotificationToCSE();
 
 }

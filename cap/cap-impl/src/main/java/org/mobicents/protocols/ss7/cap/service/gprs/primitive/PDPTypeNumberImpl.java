@@ -26,48 +26,47 @@ import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.PDPTypeNumberV
 import org.mobicents.protocols.ss7.cap.primitives.OctetStringLength1Base;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class PDPTypeNumberImpl extends OctetStringLength1Base implements PDPTypeNumber{
+public class PDPTypeNumberImpl extends OctetStringLength1Base implements PDPTypeNumber {
 
-	public PDPTypeNumberImpl() {
-		super("PDPTypeNumber");
-	}
-	
-	public PDPTypeNumberImpl(int data) {
-		super("PDPTypeNumber", data);
-	}
-	
-	public PDPTypeNumberImpl(PDPTypeNumberValue value) {
-		super("PDPTypeNumber", value != null ?value.getCode() : 0);
-	}
-	
-	@Override
-	public PDPTypeNumberValue getPDPTypeNumberValue(){
-		return PDPTypeNumberValue.getInstance(data);
-	}
+    public PDPTypeNumberImpl() {
+        super("PDPTypeNumber");
+    }
 
-	@Override
-	public int getData() {
-		return data;
-	}
-	
+    public PDPTypeNumberImpl(int data) {
+        super("PDPTypeNumber", data);
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName + " [");
+    public PDPTypeNumberImpl(PDPTypeNumberValue value) {
+        super("PDPTypeNumber", value != null ? value.getCode() : 0);
+    }
 
-		if (this.getPDPTypeNumberValue() != null) {
-			sb.append("PDPTypeNumberValue=");
-			sb.append(this.getPDPTypeNumberValue());
-		}
+    @Override
+    public PDPTypeNumberValue getPDPTypeNumberValue() {
+        return PDPTypeNumberValue.getInstance(data);
+    }
 
-		sb.append("]");
+    @Override
+    public int getData() {
+        return data;
+    }
 
-		return sb.toString();
-	}
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
+
+        if (this.getPDPTypeNumberValue() != null) {
+            sb.append("PDPTypeNumberValue=");
+            sb.append(this.getPDPTypeNumberValue());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 
 }

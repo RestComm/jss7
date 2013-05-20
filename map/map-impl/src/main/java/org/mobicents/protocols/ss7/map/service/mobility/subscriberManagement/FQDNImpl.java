@@ -25,23 +25,23 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
 public class FQDNImpl extends OctetStringBase implements FQDN {
 
-	public FQDNImpl() {
-		super(9, 255, "FQDN");
-	}
+    public FQDNImpl() {
+        super(9, 255, "FQDN");
+    }
 
-	public FQDNImpl(byte[] data) {
-		super(9, 255, "FQDN", data);
-	}
-	
-	@Override
-	public byte[] getData() {
-		return data;
-	}
+    public FQDNImpl(byte[] data) {
+        super(9, 255, "FQDN", data);
+    }
+
+    @Override
+    public byte[] getData() {
+        return data;
+    }
 
 }

@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -22,18 +22,18 @@
 package org.mobicents.protocols.ss7.sccp;
 
 /**
- * Concerned signaling point codes define a DPC which will be noticed when local
- * SSN is registered (SSA messages) or unregistered (SSP messages)
- * 
+ * Concerned signaling point codes define a DPC which will be noticed when local SSN is registered (SSA messages) or
+ * unregistered (SSP messages)
+ *
  * @author amit bhayani
- * 
+ *
  */
 public interface ConcernedSignalingPointCode {
 
-	/**
-	 * Point code to which SSA or SSP message is to be sent
-	 * 
-	 * @return
-	 */
-	public int getRemoteSpc();
+    /**
+     * Point code to which SSA or SSP message is to be sent
+     *
+     * @return
+     */
+    int getRemoteSpc();
 }

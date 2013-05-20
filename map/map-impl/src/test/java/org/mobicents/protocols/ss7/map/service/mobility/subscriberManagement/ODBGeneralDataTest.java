@@ -32,124 +32,122 @@ import org.mobicents.protocols.asn.Tag;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
 public class ODBGeneralDataTest {
 
-	private byte[] getEncodedData() {
-		return new byte[] {3, 5, 3, 74, -43, 85, 80 };
-	}
+    private byte[] getEncodedData() {
+        return new byte[] { 3, 5, 3, 74, -43, 85, 80 };
+    }
 
-	private byte[] getEncodedData1() {
-		return new byte[] { 3, 5, 3, -75, 42, -86, -88 };
-	}
-	
-	@Test(groups = { "functional.decode","service.lsm"})
-	public void testDecode() throws Exception {
+    private byte[] getEncodedData1() {
+        return new byte[] { 3, 5, 3, -75, 42, -86, -88 };
+    }
 
-		byte[] rawData = getEncodedData();
-		AsnInputStream asn = new AsnInputStream(rawData);
+    @Test(groups = { "functional.decode", "service.lsm" })
+    public void testDecode() throws Exception {
 
-		int tag = asn.readTag();
-		ODBGeneralDataImpl imp = new ODBGeneralDataImpl();
-		imp.decodeAll(asn);
+        byte[] rawData = getEncodedData();
+        AsnInputStream asn = new AsnInputStream(rawData);
 
-		assertEquals(tag, Tag.STRING_BIT);
-		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
-		
-		assertTrue(!imp.getAllOGCallsBarred());
-		assertTrue(imp.getInternationalOGCallsBarred());
-		assertTrue(!imp.getInternationalOGCallsNotToHPLMNCountryBarred());
-		assertTrue(imp.getInterzonalOGCallsBarred());
-		assertTrue(!imp.getInterzonalOGCallsNotToHPLMNCountryBarred());
-		assertTrue(imp.getInterzonalOGCallsAndInternationalOGCallsNotToHPLMNCountryBarred());
-		assertTrue(!imp.getPremiumRateInformationOGCallsBarred());
-		assertTrue(imp.getPremiumRateEntertainementOGCallsBarred());
-		assertTrue(!imp.getSsAccessBarred());
-		assertTrue(imp.getAllECTBarred());
-		assertTrue(!imp.getChargeableECTBarred()); 
-		assertTrue(imp.getInternationalECTBarred());
-		assertTrue(!imp.getInterzonalECTBarred()); 
-		assertTrue(imp.getDoublyChargeableECTBarred());
-		assertTrue(!imp.getMultipleECTBarred());
-		assertTrue(imp.getAllPacketOrientedServicesBarred());
-		assertTrue(!imp.getRoamerAccessToHPLMNAPBarred());
-		assertTrue(imp.getRoamerAccessToVPLMNAPBarred());
-		assertTrue(!imp.getRoamingOutsidePLMNOGCallsBarred()); 
-		assertTrue(imp.getAllICCallsBarred());
-		assertTrue(!imp.getRoamingOutsidePLMNICCallsBarred());
-		assertTrue(imp.getRoamingOutsidePLMNICountryICCallsBarred());
-		assertTrue(!imp.getRoamingOutsidePLMNBarred());
-		assertTrue(imp.getRoamingOutsidePLMNCountryBarred());
-		assertTrue(!imp.getRegistrationAllCFBarred());
-		assertTrue(imp.getRegistrationCFNotToHPLMNBarred());
-		assertTrue(!imp.getRegistrationInterzonalCFBarred());
-		assertTrue(imp.getRegistrationInterzonalCFNotToHPLMNBarred());
-		assertTrue(!imp.getRegistrationInternationalCFBarred());
+        int tag = asn.readTag();
+        ODBGeneralDataImpl imp = new ODBGeneralDataImpl();
+        imp.decodeAll(asn);
 
-		rawData = getEncodedData1();
-		asn = new AsnInputStream(rawData);
+        assertEquals(tag, Tag.STRING_BIT);
+        assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
 
-		tag = asn.readTag();
-		imp = new ODBGeneralDataImpl();
-		imp.decodeAll(asn);
+        assertTrue(!imp.getAllOGCallsBarred());
+        assertTrue(imp.getInternationalOGCallsBarred());
+        assertTrue(!imp.getInternationalOGCallsNotToHPLMNCountryBarred());
+        assertTrue(imp.getInterzonalOGCallsBarred());
+        assertTrue(!imp.getInterzonalOGCallsNotToHPLMNCountryBarred());
+        assertTrue(imp.getInterzonalOGCallsAndInternationalOGCallsNotToHPLMNCountryBarred());
+        assertTrue(!imp.getPremiumRateInformationOGCallsBarred());
+        assertTrue(imp.getPremiumRateEntertainementOGCallsBarred());
+        assertTrue(!imp.getSsAccessBarred());
+        assertTrue(imp.getAllECTBarred());
+        assertTrue(!imp.getChargeableECTBarred());
+        assertTrue(imp.getInternationalECTBarred());
+        assertTrue(!imp.getInterzonalECTBarred());
+        assertTrue(imp.getDoublyChargeableECTBarred());
+        assertTrue(!imp.getMultipleECTBarred());
+        assertTrue(imp.getAllPacketOrientedServicesBarred());
+        assertTrue(!imp.getRoamerAccessToHPLMNAPBarred());
+        assertTrue(imp.getRoamerAccessToVPLMNAPBarred());
+        assertTrue(!imp.getRoamingOutsidePLMNOGCallsBarred());
+        assertTrue(imp.getAllICCallsBarred());
+        assertTrue(!imp.getRoamingOutsidePLMNICCallsBarred());
+        assertTrue(imp.getRoamingOutsidePLMNICountryICCallsBarred());
+        assertTrue(!imp.getRoamingOutsidePLMNBarred());
+        assertTrue(imp.getRoamingOutsidePLMNCountryBarred());
+        assertTrue(!imp.getRegistrationAllCFBarred());
+        assertTrue(imp.getRegistrationCFNotToHPLMNBarred());
+        assertTrue(!imp.getRegistrationInterzonalCFBarred());
+        assertTrue(imp.getRegistrationInterzonalCFNotToHPLMNBarred());
+        assertTrue(!imp.getRegistrationInternationalCFBarred());
 
-		assertEquals(tag, Tag.STRING_BIT);
-		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
-		
-		assertTrue(imp.getAllOGCallsBarred());
-		assertTrue(!imp.getInternationalOGCallsBarred());
-		assertTrue(imp.getInternationalOGCallsNotToHPLMNCountryBarred());
-		assertTrue(!imp.getInterzonalOGCallsBarred());
-		assertTrue(imp.getInterzonalOGCallsNotToHPLMNCountryBarred());
-		assertTrue(!imp.getInterzonalOGCallsAndInternationalOGCallsNotToHPLMNCountryBarred());
-		assertTrue(imp.getPremiumRateInformationOGCallsBarred());
-		assertTrue(!imp.getPremiumRateEntertainementOGCallsBarred());
-		assertTrue(imp.getSsAccessBarred());
-		assertTrue(!imp.getAllECTBarred());
-		assertTrue(imp.getChargeableECTBarred()); 
-		assertTrue(!imp.getInternationalECTBarred());
-		assertTrue(imp.getInterzonalECTBarred()); 
-		assertTrue(!imp.getDoublyChargeableECTBarred());
-		assertTrue(imp.getMultipleECTBarred());
-		assertTrue(!imp.getAllPacketOrientedServicesBarred());
-		assertTrue(imp.getRoamerAccessToHPLMNAPBarred());
-		assertTrue(!imp.getRoamerAccessToVPLMNAPBarred());
-		assertTrue(imp.getRoamingOutsidePLMNOGCallsBarred()); 
-		assertTrue(!imp.getAllICCallsBarred());
-		assertTrue(imp.getRoamingOutsidePLMNICCallsBarred());
-		assertTrue(!imp.getRoamingOutsidePLMNICountryICCallsBarred());
-		assertTrue(imp.getRoamingOutsidePLMNBarred());
-		assertTrue(!imp.getRoamingOutsidePLMNCountryBarred());
-		assertTrue(imp.getRegistrationAllCFBarred());
-		assertTrue(!imp.getRegistrationCFNotToHPLMNBarred());
-		assertTrue(imp.getRegistrationInterzonalCFBarred());
-		assertTrue(!imp.getRegistrationInterzonalCFNotToHPLMNBarred());
-		assertTrue(imp.getRegistrationInternationalCFBarred());
-	}
+        rawData = getEncodedData1();
+        asn = new AsnInputStream(rawData);
 
-	@Test(groups = { "functional.encode","service.lsm"})
-	public void testEncode() throws Exception {
+        tag = asn.readTag();
+        imp = new ODBGeneralDataImpl();
+        imp.decodeAll(asn);
 
-		ODBGeneralDataImpl imp = new ODBGeneralDataImpl(false, true, false, true,
-				false, true, false, true, false, true, false, true, false, true, false,
-				true, false, true, false, true, false, true, false, true, false, true, false, true, false);
+        assertEquals(tag, Tag.STRING_BIT);
+        assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
 
-		AsnOutputStream asnOS = new AsnOutputStream();
-		imp.encodeAll(asnOS);
-		
-		assertTrue( Arrays.equals(getEncodedData(),asnOS.toByteArray()));
-		
-		
-		imp = new ODBGeneralDataImpl(true,false, true, false, true,
-				false, true, false, true, false, true, false, true, false, true, false,
-				true, false, true, false, true, false, true, false, true, false, true, false, true);
+        assertTrue(imp.getAllOGCallsBarred());
+        assertTrue(!imp.getInternationalOGCallsBarred());
+        assertTrue(imp.getInternationalOGCallsNotToHPLMNCountryBarred());
+        assertTrue(!imp.getInterzonalOGCallsBarred());
+        assertTrue(imp.getInterzonalOGCallsNotToHPLMNCountryBarred());
+        assertTrue(!imp.getInterzonalOGCallsAndInternationalOGCallsNotToHPLMNCountryBarred());
+        assertTrue(imp.getPremiumRateInformationOGCallsBarred());
+        assertTrue(!imp.getPremiumRateEntertainementOGCallsBarred());
+        assertTrue(imp.getSsAccessBarred());
+        assertTrue(!imp.getAllECTBarred());
+        assertTrue(imp.getChargeableECTBarred());
+        assertTrue(!imp.getInternationalECTBarred());
+        assertTrue(imp.getInterzonalECTBarred());
+        assertTrue(!imp.getDoublyChargeableECTBarred());
+        assertTrue(imp.getMultipleECTBarred());
+        assertTrue(!imp.getAllPacketOrientedServicesBarred());
+        assertTrue(imp.getRoamerAccessToHPLMNAPBarred());
+        assertTrue(!imp.getRoamerAccessToVPLMNAPBarred());
+        assertTrue(imp.getRoamingOutsidePLMNOGCallsBarred());
+        assertTrue(!imp.getAllICCallsBarred());
+        assertTrue(imp.getRoamingOutsidePLMNICCallsBarred());
+        assertTrue(!imp.getRoamingOutsidePLMNICountryICCallsBarred());
+        assertTrue(imp.getRoamingOutsidePLMNBarred());
+        assertTrue(!imp.getRoamingOutsidePLMNCountryBarred());
+        assertTrue(imp.getRegistrationAllCFBarred());
+        assertTrue(!imp.getRegistrationCFNotToHPLMNBarred());
+        assertTrue(imp.getRegistrationInterzonalCFBarred());
+        assertTrue(!imp.getRegistrationInterzonalCFNotToHPLMNBarred());
+        assertTrue(imp.getRegistrationInternationalCFBarred());
+    }
 
-		asnOS = new AsnOutputStream();
-		imp.encodeAll(asnOS);
-		
-		assertTrue( Arrays.equals(getEncodedData1(),asnOS.toByteArray()));
-	}
+    @Test(groups = { "functional.encode", "service.lsm" })
+    public void testEncode() throws Exception {
+
+        ODBGeneralDataImpl imp = new ODBGeneralDataImpl(false, true, false, true, false, true, false, true, false, true, false,
+                true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true,
+                false);
+
+        AsnOutputStream asnOS = new AsnOutputStream();
+        imp.encodeAll(asnOS);
+
+        assertTrue(Arrays.equals(getEncodedData(), asnOS.toByteArray()));
+
+        imp = new ODBGeneralDataImpl(true, false, true, false, true, false, true, false, true, false, true, false, true, false,
+                true, false, true, false, true, false, true, false, true, false, true, false, true, false, true);
+
+        asnOS = new AsnOutputStream();
+        imp.encodeAll(asnOS);
+
+        assertTrue(Arrays.equals(getEncodedData1(), asnOS.toByteArray()));
+    }
 }

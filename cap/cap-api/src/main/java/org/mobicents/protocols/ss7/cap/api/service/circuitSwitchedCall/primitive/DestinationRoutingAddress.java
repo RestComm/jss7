@@ -27,18 +27,16 @@ import java.util.ArrayList;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 
 /**
-*
-
-DestinationRoutingAddress {PARAMETERS-BOUND : bound} ::= SEQUENCE SIZE(1) OF
-CalledPartyNumber {bound}
--- Indicates the Called Party Number.
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ DestinationRoutingAddress {PARAMETERS-BOUND : bound} ::= SEQUENCE SIZE(1) OF CalledPartyNumber {bound} -- Indicates the
+ * Called Party Number.
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface DestinationRoutingAddress {
 
-	public ArrayList<CalledPartyNumberCap> getCalledPartyNumber();
-	
+    ArrayList<CalledPartyNumberCap> getCalledPartyNumber();
+
 }

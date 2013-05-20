@@ -23,57 +23,49 @@
 package org.mobicents.protocols.ss7.cap.api.primitives;
 
 /**
-*
-
-DateAndTime ::= OCTET STRING (SIZE(7))
--- DateAndTime is BCD encoded. The year digit indicating millenium occupies bits
--- 0-3 of the first octet, and the year digit indicating century occupies bits
--- 4-7 of the first octet.
--- The year digit indicating decade occupies bits 0-3 of the second octet,
--- whilst the digit indicating the year within the decade occupies bits 4-7 of
--- the second octet.
--- The most significant month digit occupies bits 0-3 of the third octet,
--- and the least significant month digit occupies bits 4-7 of the third octet.
--- The most significant day digit occupies bits 0-3 of the fourth octet,
--- and the least significant day digit occupies bits 4-7 of the fourth octet.
--- The most significant hours digit occupies bits 0-3 of the fifth octet,
--- and the least significant digit occupies bits 4-7 of the fifth octet.
--- The most significant minutes digit occupies bits 0-3 of the sixth octet,
--- and the least significant digit occupies bits 4-7 of the sixth octet.
--- The most significant seconds digit occupies bits 0-3 of the seventh octet,
--- and the least seconds significant digit occupies bits 4-7 of the seventh octet.
--- For the encoding of digits in an octet, refer to the timeAndtimezone parameter.
- 
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ DateAndTime ::= OCTET STRING (SIZE(7)) -- DateAndTime is BCD encoded. The year digit indicating millenium occupies bits --
+ * 0-3 of the first octet, and the year digit indicating century occupies bits -- 4-7 of the first octet. -- The year digit
+ * indicating decade occupies bits 0-3 of the second octet, -- whilst the digit indicating the year within the decade occupies
+ * bits 4-7 of -- the second octet. -- The most significant month digit occupies bits 0-3 of the third octet, -- and the least
+ * significant month digit occupies bits 4-7 of the third octet. -- The most significant day digit occupies bits 0-3 of the
+ * fourth octet, -- and the least significant day digit occupies bits 4-7 of the fourth octet. -- The most significant hours
+ * digit occupies bits 0-3 of the fifth octet, -- and the least significant digit occupies bits 4-7 of the fifth octet. -- The
+ * most significant minutes digit occupies bits 0-3 of the sixth octet, -- and the least significant digit occupies bits 4-7 of
+ * the sixth octet. -- The most significant seconds digit occupies bits 0-3 of the seventh octet, -- and the least seconds
+ * significant digit occupies bits 4-7 of the seventh octet. -- For the encoding of digits in an octet, refer to the
+ * timeAndtimezone parameter.
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface DateAndTime {
 
-	public byte[] getData();
+    byte[] getData();
 
-	public int getYear();
+    int getYear();
 
-	public int getMonth();
+    int getMonth();
 
-	public int getDay();
+    int getDay();
 
-	public int getHour();
+    int getHour();
 
-	public int getMinute();
+    int getMinute();
 
-	public int getSecond();
+    int getSecond();
 
-	public void setYear(int year);
+    void setYear(int year);
 
-	public void setMonth(int month);
+    void setMonth(int month);
 
-	public void setDay(int day);
+    void setDay(int day);
 
-	public void setHour(int hour);
+    void setHour(int hour);
 
-	public void setMinute(int minute);
+    void setMinute(int minute);
 
-	public void setSecond(int second);
+    void setSecond(int second);
 
 }

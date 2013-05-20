@@ -26,7 +26,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.InfoString;
 import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
 
 /**
- * 
+ *
  * @author amit bhayani
  *
  */

@@ -28,14 +28,14 @@ import org.mobicents.protocols.ss7.map.api.service.oam.OamMessage;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public abstract class OamMessageImpl extends MessageImpl implements OamMessage, MAPAsnPrimitive {
 
-	public MAPDialogOam getMAPDialog() {
-		return (MAPDialogOam)super.getMAPDialog();
-	}
+    public MAPDialogOam getMAPDialog() {
+        return (MAPDialogOam) super.getMAPDialog();
+    }
 
 }

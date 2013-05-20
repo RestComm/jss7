@@ -23,33 +23,30 @@
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
 import java.util.ArrayList;
+
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
 
 /**
- * 
-
-InterrogateSS-Res ::= CHOICE {
-	ss-Status		[0] SS-Status,
-	basicServiceGroupList	[2] BasicServiceGroupList,
-	forwardingFeatureList	[3] ForwardingFeatureList,
-	genericServiceInfo	[4]	GenericServiceInfo }
-
-BasicServiceGroupList ::= SEQUENCE SIZE (1..13) OF BasicServiceCode
-
-ForwardingFeatureList ::= SEQUENCE SIZE (1..13) OF ForwardingFeature
-
- * 
+ *
+ InterrogateSS-Res ::= CHOICE { ss-Status [0] SS-Status, basicServiceGroupList [2] BasicServiceGroupList,
+ * forwardingFeatureList [3] ForwardingFeatureList, genericServiceInfo [4] GenericServiceInfo }
+ *
+ * BasicServiceGroupList ::= SEQUENCE SIZE (1..13) OF BasicServiceCode
+ *
+ * ForwardingFeatureList ::= SEQUENCE SIZE (1..13) OF ForwardingFeature
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface InterrogateSSResponse extends SupplementaryMessage {
 
-	public SSStatus getSsStatus();
+    SSStatus getSsStatus();
 
-	public ArrayList<BasicServiceCode> getBasicServiceGroupList();
+    ArrayList<BasicServiceCode> getBasicServiceGroupList();
 
-	public ArrayList<ForwardingFeature> getForwardingFeatureList();
+    ArrayList<ForwardingFeature> getForwardingFeatureList();
 
-	public GenericServiceInfo getGenericServiceInfo();
+    GenericServiceInfo getGenericServiceInfo();
 
 }

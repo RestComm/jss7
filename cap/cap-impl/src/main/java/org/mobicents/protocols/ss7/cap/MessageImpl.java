@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -29,47 +29,47 @@ import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPMessage;
 
 /**
- * 
+ *
  * @author amit bhayani
  * @author sergey vetyutnev
- * 
+ *
  */
 public abstract class MessageImpl implements CAPMessage {
-	
-	private static final String INVOKE_ID = "invokeId";
-	
-	private long invokeId;
-	private CAPDialog capDialog;
 
-	public long getInvokeId() {
-		return this.invokeId;
-	}
+    private static final String INVOKE_ID = "invokeId";
 
-	public CAPDialog getCAPDialog() {
-		return this.capDialog;
-	}
+    private long invokeId;
+    private CAPDialog capDialog;
 
-	public void setInvokeId(long invokeId) {
-		this.invokeId = invokeId;
-	}
+    public long getInvokeId() {
+        return this.invokeId;
+    }
 
-	public void setCAPDialog(CAPDialog capDialog) {
-		this.capDialog = capDialog;
-	}
-	
-	/**
-	 * XML Serialization/Deserialization
-	 */
-	protected static final XMLFormat<MessageImpl> CAP_MESSAGE_XML = new XMLFormat<MessageImpl>(MessageImpl.class) {
+    public CAPDialog getCAPDialog() {
+        return this.capDialog;
+    }
 
-		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml, MessageImpl message) throws XMLStreamException {
-			message.invokeId = xml.getAttribute(INVOKE_ID, -1l);
-		}
+    public void setInvokeId(long invokeId) {
+        this.invokeId = invokeId;
+    }
 
-		@Override
-		public void write(MessageImpl message, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
-			xml.setAttribute(INVOKE_ID, message.invokeId);
-		}
-	};
+    public void setCAPDialog(CAPDialog capDialog) {
+        this.capDialog = capDialog;
+    }
+
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<MessageImpl> CAP_MESSAGE_XML = new XMLFormat<MessageImpl>(MessageImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, MessageImpl message) throws XMLStreamException {
+            message.invokeId = xml.getAttribute(INVOKE_ID, -1L);
+        }
+
+        @Override
+        public void write(MessageImpl message, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+            xml.setAttribute(INVOKE_ID, message.invokeId);
+        }
+    };
 }

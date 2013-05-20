@@ -25,42 +25,39 @@ package org.mobicents.protocols.ss7.map.api.primitives;
 import java.util.ArrayList;
 
 /**
-
-ExtensionContainer ::= SEQUENCE {
-	privateExtensionList	[0]PrivateExtensionList	OPTIONAL, 
-	pcs-Extensions	[1]PCS-Extensions	OPTIONAL,
-	...}
-
- * 
+ * ExtensionContainer ::= SEQUENCE { privateExtensionList [0]PrivateExtensionList OPTIONAL, pcs-Extensions [1]PCS-Extensions
+ * OPTIONAL, ...}
+ *
+ *
  * @author sergey vetyutnev
  */
 public interface MAPExtensionContainer {
-	/**
-	 * Get the PrivateExtension list
-	 * 
-	 * @return
-	 */
-	public ArrayList<MAPPrivateExtension> getPrivateExtensionList();
+    /**
+     * Get the PrivateExtension list
+     *
+     * @return
+     */
+    ArrayList<MAPPrivateExtension> getPrivateExtensionList();
 
-	/**
-	 * Set the PrivateExtension list
-	 * 
-	 * @param privateExtensionList
-	 */
-	public void setPrivateExtensionList(ArrayList<MAPPrivateExtension> privateExtensionList);
+    /**
+     * Set the PrivateExtension list
+     *
+     * @param privateExtensionList
+     */
+    void setPrivateExtensionList(ArrayList<MAPPrivateExtension> privateExtensionList);
 
-	/**
-	 * Get the Pcs-Extensions - ASN.1 encoded byte array
-	 * 
-	 * @return
-	 */
-	public byte[] getPcsExtensions();
+    /**
+     * Get the Pcs-Extensions - ASN.1 encoded byte array
+     *
+     * @return
+     */
+    byte[] getPcsExtensions();
 
-	/**
-	 * Set the Pcs-Extensions - ASN.1 encoded byte array
-	 * 
-	 * @param pcsExtensions
-	 */
-	public void setPcsExtensions(byte[] pcsExtensions);
+    /**
+     * Set the Pcs-Extensions - ASN.1 encoded byte array
+     *
+     * @param pcsExtensions
+     */
+    void setPcsExtensions(byte[] pcsExtensions);
 
 }

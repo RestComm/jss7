@@ -41,242 +41,237 @@ import org.mobicents.protocols.ss7.cap.service.gprs.primitive.PDPIDImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class RequestReportGPRSEventRequestImpl  extends GprsMessageImpl implements RequestReportGPRSEventRequest{
+public class RequestReportGPRSEventRequestImpl extends GprsMessageImpl implements RequestReportGPRSEventRequest {
 
-	public static final String _PrimitiveName = "RequestReportGPRSEventRequest";
-	
-	public static final int _ID_gprsEvent = 0;
-	public static final int _ID_pdpID = 1;
-	
-	private ArrayList<GPRSEvent> gprsEvent;
-	private PDPID pdpID;
-	
-	public RequestReportGPRSEventRequestImpl() {
-		super();
-	}
-	
-	public RequestReportGPRSEventRequestImpl(ArrayList<GPRSEvent> gprsEvent,
-			PDPID pdpID) {
-		super();
-		this.gprsEvent = gprsEvent;
-		this.pdpID = pdpID;
-	}
+    public static final String _PrimitiveName = "RequestReportGPRSEventRequest";
 
-	@Override
-	public ArrayList<GPRSEvent> getGPRSEvent() {
-		return this.gprsEvent;
-	}
+    public static final int _ID_gprsEvent = 0;
+    public static final int _ID_pdpID = 1;
 
-	@Override
-	public PDPID getPDPID() {
-		return this.pdpID;
-	}
+    private ArrayList<GPRSEvent> gprsEvent;
+    private PDPID pdpID;
 
-	
-	@Override
-	public CAPMessageType getMessageType() {
-		return CAPMessageType.requestReportGPRSEvent_Request;
-	}
+    public RequestReportGPRSEventRequestImpl() {
+        super();
+    }
 
-	@Override
-	public int getOperationCode() {
-		return CAPOperationCode.requestReportGPRSEvent;
-	}
+    public RequestReportGPRSEventRequestImpl(ArrayList<GPRSEvent> gprsEvent, PDPID pdpID) {
+        super();
+        this.gprsEvent = gprsEvent;
+        this.pdpID = pdpID;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
+    @Override
+    public ArrayList<GPRSEvent> getGPRSEvent() {
+        return this.gprsEvent;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public PDPID getPDPID() {
+        return this.pdpID;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    @Override
+    public CAPMessageType getMessageType() {
+        return CAPMessageType.requestReportGPRSEvent_Request;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS)
-			throws CAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public int getOperationCode() {
+        return CAPOperationCode.requestReportGPRSEvent;
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length)
-			throws CAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-	
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException, MAPParsingComponentException {
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.SEQUENCE;
+    }
 
-		this.gprsEvent = null;
-		this.pdpID = null;
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+    @Override
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-			int tag = ais.readTag();
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_gprsEvent:
-					if (ais.isTagPrimitive())
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-								+ ".gprsEvent: Parameter gprsEvent is primitive", CAPParsingComponentExceptionReason.MistypedParameter);
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-					GPRSEvent event = null;
-					AsnInputStream ais2 = ais.readSequenceStream();
-					this.gprsEvent = new ArrayList<GPRSEvent>();
-					while (true) {
-						if (ais2.available() == 0)
-							break;
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException,
+            MAPParsingComponentException {
 
-						int tag2 = ais2.readTag();
-						if (tag2 != Tag.SEQUENCE || ais2.getTagClass() != Tag.CLASS_UNIVERSAL || ais2.isTagPrimitive())
-							throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-									+ "gprsEvent: bad tag or tagClass or is primitive ",CAPParsingComponentExceptionReason.MistypedParameter);
+        this.gprsEvent = null;
+        this.pdpID = null;
 
-						event = new GPRSEventImpl();
-						((GPRSEventImpl) event).decodeAll(ais2);
-						this.gprsEvent.add(event);
-					}
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-					if (this.gprsEvent.size() < 1 || this.gprsEvent.size() > 10) {
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-								+ ": Parameter gprsEvent size must be from 1 to 10, found: " + this.gprsEvent.size(),
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					}
-					break;				
-				case _ID_pdpID:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException(
-								"Error while decoding " + _PrimitiveName + ".pdpID: Parameter is not primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.pdpID = new PDPIDImpl();
-					((PDPIDImpl) this.pdpID).decodeAll(ais);
-					break;
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
-		
-		
-		if (this.gprsEvent == null)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": parameter gprsEvent is mandatory but not found",
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		
-	
-	}
+            int tag = ais.readTag();
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_gprsEvent:
+                        if (ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".gprsEvent: Parameter gprsEvent is primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag)
-			throws CAPException {
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+                        GPRSEvent event = null;
+                        AsnInputStream ais2 = ais.readSequenceStream();
+                        this.gprsEvent = new ArrayList<GPRSEvent>();
+                        while (true) {
+                            if (ais2.available() == 0)
+                                break;
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
+                            int tag2 = ais2.readTag();
+                            if (tag2 != Tag.SEQUENCE || ais2.getTagClass() != Tag.CLASS_UNIVERSAL || ais2.isTagPrimitive())
+                                throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                        + "gprsEvent: bad tag or tagClass or is primitive ",
+                                        CAPParsingComponentExceptionReason.MistypedParameter);
 
-		if (this.gprsEvent == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": gprsEvent must not be null");
-		
-		if (this.gprsEvent.size() < 1 || this.gprsEvent.size() > 10) {
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": Parameter gprsEvent size must be from 1 to 10, found: "
-					+ this.gprsEvent.size());
-		}
-		
-		try {
+                            event = new GPRSEventImpl();
+                            ((GPRSEventImpl) event).decodeAll(ais2);
+                            this.gprsEvent.add(event);
+                        }
 
-			asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_gprsEvent);
-			int pos = asnOs.StartContentDefiniteLength();
-			for (GPRSEvent event: this.gprsEvent) {
-				((GPRSEventImpl) event).encodeAll(asnOs);
-			}
-			asnOs.FinalizeContent(pos);
-			
-			if (this.pdpID != null)
-				((PDPIDImpl) this.pdpID).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_pdpID);
-			
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+                        if (this.gprsEvent.size() < 1 || this.gprsEvent.size() > 10) {
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ": Parameter gprsEvent size must be from 1 to 10, found: " + this.gprsEvent.size(),
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        }
+                        break;
+                    case _ID_pdpID:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".pdpID: Parameter is not primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.pdpID = new PDPIDImpl();
+                        ((PDPIDImpl) this.pdpID).decodeAll(ais);
+                        break;
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName + " [");
+        if (this.gprsEvent == null)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": parameter gprsEvent is mandatory but not found", CAPParsingComponentExceptionReason.MistypedParameter);
 
-		if (this.gprsEvent != null) {
-			sb.append("gprsEvent=[");
-			boolean firstItem = true;
-			for (GPRSEvent be : this.gprsEvent) {
-				if (firstItem)
-					firstItem = false;
-				else
-					sb.append(", ");
-				sb.append(be.toString());
-			}
-			sb.append("], ");
-		}
+    }
 
-		if (this.pdpID != null) {
-			sb.append("pdpID=");
-			sb.append(this.pdpID.toString());
-		}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		sb.append("]");
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-		return sb.toString();
-	}
-	
+        if (this.gprsEvent == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": gprsEvent must not be null");
+
+        if (this.gprsEvent.size() < 1 || this.gprsEvent.size() > 10) {
+            throw new CAPException("Error while encoding " + _PrimitiveName
+                    + ": Parameter gprsEvent size must be from 1 to 10, found: " + this.gprsEvent.size());
+        }
+
+        try {
+
+            asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_gprsEvent);
+            int pos = asnOs.StartContentDefiniteLength();
+            for (GPRSEvent event : this.gprsEvent) {
+                ((GPRSEventImpl) event).encodeAll(asnOs);
+            }
+            asnOs.FinalizeContent(pos);
+
+            if (this.pdpID != null)
+                ((PDPIDImpl) this.pdpID).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_pdpID);
+
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
+
+        if (this.gprsEvent != null) {
+            sb.append("gprsEvent=[");
+            boolean firstItem = true;
+            for (GPRSEvent be : this.gprsEvent) {
+                if (firstItem)
+                    firstItem = false;
+                else
+                    sb.append(", ");
+                sb.append(be.toString());
+            }
+            sb.append("], ");
+        }
+
+        if (this.pdpID != null) {
+            sb.append("pdpID=");
+            sb.append(this.pdpID.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
+
 }

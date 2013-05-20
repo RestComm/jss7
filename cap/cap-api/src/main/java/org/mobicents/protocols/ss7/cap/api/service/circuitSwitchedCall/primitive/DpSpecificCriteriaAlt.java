@@ -23,24 +23,20 @@
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
-*
-DpSpecificCriteriaAlt {PARAMETERS-BOUND : bound} ::= SEQUENCE {
-...,
-changeOfPositionControlInfo [0] ChangeOfPositionControlInfo {bound}
-numberOfDigits [1] NumberOfDigits OPTIONAL,
-}
-
-NumberOfDigits ::= INTEGER (1..255)
--- Indicates the number of digits to be collected.
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ DpSpecificCriteriaAlt {PARAMETERS-BOUND : bound} ::= SEQUENCE { ..., changeOfPositionControlInfo [0]
+ * ChangeOfPositionControlInfo {bound} numberOfDigits [1] NumberOfDigits OPTIONAL, }
+ *
+ * NumberOfDigits ::= INTEGER (1..255) -- Indicates the number of digits to be collected.
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface DpSpecificCriteriaAlt {
 
-	public ChangeOfLocation[] getChangeOfPositionControlInfo();
+    ChangeOfLocation[] getChangeOfPositionControlInfo();
 
-	public Integer getNumberOfDigits();
+    Integer getNumberOfDigits();
 
 }

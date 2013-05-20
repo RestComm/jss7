@@ -23,42 +23,36 @@
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
-*
-CGEncountered ::= ENUMERATED {
-noCGencountered (0),
-manualCGencountered (1),
-scpOverload (2)
-}
--- Indicates the type of automatic call gapping encountered, if any. 
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ CGEncountered ::= ENUMERATED { noCGencountered (0), manualCGencountered (1), scpOverload (2) } -- Indicates the type of
+ * automatic call gapping encountered, if any.
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public enum CGEncountered {
-	noCGencountered (0),
-	manualCGencountered (1),
-	scpOverload (2);
+    noCGencountered(0), manualCGencountered(1), scpOverload(2);
 
-	private int code;
+    private int code;
 
-	private CGEncountered(int code) {
-		this.code = code;
-	}
-	
-	public static CGEncountered getInstance(int code) {
-		switch (code) {
-		case 0:
-			return CGEncountered.noCGencountered;
-		case 1:
-			return CGEncountered.manualCGencountered;
-		case 2:
-			return CGEncountered.scpOverload;
-		default:
-			return null;
-		}
-	}
-	
-	public int getCode() {
-		return code;
-	}
+    private CGEncountered(int code) {
+        this.code = code;
+    }
+
+    public static CGEncountered getInstance(int code) {
+        switch (code) {
+            case 0:
+                return CGEncountered.noCGencountered;
+            case 1:
+                return CGEncountered.manualCGencountered;
+            case 2:
+                return CGEncountered.scpOverload;
+            default:
+                return null;
+        }
+    }
+
+    public int getCode() {
+        return code;
+    }
 }

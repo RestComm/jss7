@@ -25,34 +25,30 @@ package org.mobicents.protocols.ss7.tools.simulator.tests.cap;
 import org.mobicents.protocols.ss7.tools.simulator.common.CapApplicationContextSsf;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface TestCapSsfManMBean {
 
-	public CapApplicationContextSsf getCapApplicationContext();
+    CapApplicationContextSsf getCapApplicationContext();
 
-	public String getCapApplicationContext_Value();
+    String getCapApplicationContext_Value();
 
-	public void setCapApplicationContext(CapApplicationContextSsf val);	
+    void setCapApplicationContext(CapApplicationContextSsf val);
 
+    void putCapApplicationContext(String val);
 
-	public void putCapApplicationContext(String val);
+    String getCurrentRequestDef();
 
+    String closeCurrentDialog();
 
-	public String getCurrentRequestDef();
+    String performInitialDp(String msg);
 
+    String performAssistRequestInstructions(String msg);
 
-	public String closeCurrentDialog();
+    String performApplyChargingReport(String msg);
 
-	public String performInitialDp(String msg);
-
-	public String performAssistRequestInstructions(String msg);
-
-
-	public String performApplyChargingReport(String msg);
-
-	public String performEventReportBCSM(String msg);
+    String performEventReportBCSM(String msg);
 
 }

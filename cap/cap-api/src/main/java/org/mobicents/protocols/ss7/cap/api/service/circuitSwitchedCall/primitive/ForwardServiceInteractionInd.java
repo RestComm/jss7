@@ -23,35 +23,25 @@
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
-*
-ForwardServiceInteractionInd ::= SEQUENCE {
-conferenceTreatmentIndicator [1] OCTET STRING (SIZE(1)) OPTIONAL,
--- acceptConferenceRequest 'xxxx xx01'B
--- rejectConferenceRequest 'xxxx xx10'B
--- if absent from Connect or ContinueWithArgument,
--- then CAMEL service does not affect conference treatment
-callDiversionTreatmentIndicator [2] OCTET STRING (SIZE(1)) OPTIONAL,
--- callDiversionAllowed 'xxxx xx01'B
--- callDiversionNotAllowed 'xxxx xx10'B
--- if absent from Connect or ContinueWithArgument,
--- then CAMEL service does not affect call diversion treatment
-callingPartyRestrictionIndicator [4] OCTET STRING (SIZE(1)) OPTIONAL,
--- noINImpact 'xxxx xx01'B
--- presentationRestricted 'xxxx xx10'B
--- if absent from Connect or ContinueWithArgument,
--- then CAMEL service does not affect calling party restriction treatment
-...
-}
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ ForwardServiceInteractionInd ::= SEQUENCE { conferenceTreatmentIndicator [1] OCTET STRING (SIZE(1)) OPTIONAL, --
+ * acceptConferenceRequest 'xxxx xx01'B -- rejectConferenceRequest 'xxxx xx10'B -- if absent from Connect or
+ * ContinueWithArgument, -- then CAMEL service does not affect conference treatment callDiversionTreatmentIndicator [2] OCTET
+ * STRING (SIZE(1)) OPTIONAL, -- callDiversionAllowed 'xxxx xx01'B -- callDiversionNotAllowed 'xxxx xx10'B -- if absent from
+ * Connect or ContinueWithArgument, -- then CAMEL service does not affect call diversion treatment
+ * callingPartyRestrictionIndicator [4] OCTET STRING (SIZE(1)) OPTIONAL, -- noINImpact 'xxxx xx01'B -- presentationRestricted
+ * 'xxxx xx10'B -- if absent from Connect or ContinueWithArgument, -- then CAMEL service does not affect calling party
+ * restriction treatment ... }
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface ForwardServiceInteractionInd {
 
-	public ConferenceTreatmentIndicator getConferenceTreatmentIndicator();
+    ConferenceTreatmentIndicator getConferenceTreatmentIndicator();
 
-	public CallDiversionTreatmentIndicator getCallDiversionTreatmentIndicator();
+    CallDiversionTreatmentIndicator getCallDiversionTreatmentIndicator();
 
-	public CallingPartyRestrictionIndicator getCallingPartyRestrictionIndicator();
+    CallingPartyRestrictionIndicator getCallingPartyRestrictionIndicator();
 
 }

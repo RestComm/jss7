@@ -26,40 +26,27 @@ import org.mobicents.protocols.ss7.map.api.primitives.ASCICallReference;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-MAP V3:
-
-mt-ForwardSM-VGCS  OPERATION ::= {				--Timer ml
-	ARGUMENT
-		MT-ForwardSM-VGCS-Arg
-	RESULT
-		MT-ForwardSM-VGCS-Res
-		-- optional
-	ERRORS {
-		systemFailure |
-		unexpectedDataValue }
-	CODE	local:21 }
-
-MT-ForwardSM-VGCS-Arg ::= SEQUENCE {
-	asciCallReference	ASCI-CallReference,
-	sm-RP-OA		SM-RP-OA,
-	sm-RP-UI		SignalInfo,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...}
-
- * 
+ *
+ MAP V3:
+ *
+ * mt-ForwardSM-VGCS OPERATION ::= { --Timer ml ARGUMENT MT-ForwardSM-VGCS-Arg RESULT MT-ForwardSM-VGCS-Res -- optional ERRORS {
+ * systemFailure | unexpectedDataValue } CODE local:21 }
+ *
+ * MT-ForwardSM-VGCS-Arg ::= SEQUENCE { asciCallReference ASCI-CallReference, sm-RP-OA SM-RP-OA, sm-RP-UI SignalInfo,
+ * extensionContainer ExtensionContainer OPTIONAL, ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MtForwardSMVgscRequest extends SmsMessage {
 
-	public ASCICallReference getAsciCallReference();
+    ASCICallReference getAsciCallReference();
 
-	public SM_RP_OA getSM_RP_OA();
+    SM_RP_OA getSM_RP_OA();
 
-	public SmsSignalInfo getSM_RP_UI();
+    SmsSignalInfo getSM_RP_UI();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

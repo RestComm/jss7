@@ -23,24 +23,20 @@
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
 /**
- * 
-
-MGW-InterfaceList ::= BIT STRING {
-	mc (0),
-	nb-up (1),
-	iu-up (2)} (SIZE (3..8))
--- Other bits than listed above shall be discarded.
-
- * 
+ *
+ MGW-InterfaceList ::= BIT STRING { mc (0), nb-up (1), iu-up (2)} (SIZE (3..8)) -- Other bits than listed above shall be
+ * discarded.
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MGWInterfaceList {
 
-	public boolean getMc();
+    boolean getMc();
 
-	public boolean getNbUp();
+    boolean getNbUp();
 
-	public boolean getIuUp();
+    boolean getIuUp();
 
 }

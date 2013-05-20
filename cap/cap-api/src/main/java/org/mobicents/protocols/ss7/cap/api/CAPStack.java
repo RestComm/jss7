@@ -25,18 +25,18 @@ package org.mobicents.protocols.ss7.cap.api;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CAPStack {
 
-	public CAPProvider getCAPProvider();
+    CAPProvider getCAPProvider();
 
-	public void stop();
+    void stop();
 
-	public void start() throws IllegalStateException;
+    void start() throws IllegalStateException;
 
-	public TCAPStack getTCAPStack();
+    TCAPStack getTCAPStack();
 
 }

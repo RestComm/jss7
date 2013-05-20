@@ -27,9 +27,11 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.parameter;
 
-import org.testng.annotations.*;
-
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -45,189 +47,189 @@ import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author kulikov
  */
 public class SccpAddressTest {
 
-//	private SccpAddressCodec codec = new SccpAddressCodec(false);
-	private byte[] data = new byte[] { 0x12, (byte) 0x92, 0x00, 0x11, 0x04, (byte) 0x97, 0x20, (byte) 0x73, 0x00,
-			(byte) 0x92, 0x09 };
+    // private SccpAddressCodec codec = new SccpAddressCodec(false);
+    private byte[] data = new byte[] { 0x12, (byte) 0x92, 0x00, 0x11, 0x04, (byte) 0x97, 0x20, (byte) 0x73, 0x00, (byte) 0x92,
+            0x09 };
 
-	public SccpAddressTest() {
-	}
+    public SccpAddressTest() {
+    }
 
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
 
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
 
-	@BeforeMethod
-	public void setUp() {
-	}
+    @BeforeMethod
+    public void setUp() {
+    }
 
-	@AfterMethod
-	public void tearDown() {
-	}
+    @AfterMethod
+    public void tearDown() {
+    }
 
-	/**
-	 * Test of decode method, of class SccpAddressCodec.
-	 */
-	@Test(groups = { "parameter", "functional.decode" })
-	public void testDecode1() throws Exception {
-		SccpAddress address = SccpAddressCodec.decode(data);
+    /**
+     * Test of decode method, of class SccpAddressCodec.
+     */
+    @Test(groups = { "parameter", "functional.decode" })
+    public void testDecode1() throws Exception {
+        SccpAddress address = SccpAddressCodec.decode(data);
 
-		assertEquals(address.getSignalingPointCode(), 0);
-		assertEquals(address.getSubsystemNumber(), 146);
-		assertEquals(address.getGlobalTitle().getDigits(), "79023700299");
-	}
+        assertEquals(address.getSignalingPointCode(), 0);
+        assertEquals(address.getSubsystemNumber(), 146);
+        assertEquals(address.getGlobalTitle().getDigits(), "79023700299");
+    }
 
-	@Test(groups = { "parameter", "functional.decode" })
-	public void testDecode2() throws Exception {
-		SccpAddress address = SccpAddressCodec.decode(new byte[] { 0x42, 0x08 });
+    @Test(groups = { "parameter", "functional.decode" })
+    public void testDecode2() throws Exception {
+        SccpAddress address = SccpAddressCodec.decode(new byte[] { 0x42, 0x08 });
 
-		assertEquals(address.getSignalingPointCode(), 0);
-		assertEquals(address.getSubsystemNumber(), 8);
-		assertNull(address.getGlobalTitle());
-	}
+        assertEquals(address.getSignalingPointCode(), 0);
+        assertEquals(address.getSubsystemNumber(), 8);
+        assertNull(address.getGlobalTitle());
+    }
 
-	/**
-	 * Test of encode method, of class SccpAddressCodec.
-	 */
-	@Test(groups = { "parameter", "functional.encode" })
-	public void testEncode() throws Exception {
-		GlobalTitle gt = GlobalTitle.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.INTERNATIONAL,
-				"79023700299");
-		SccpAddress address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, gt, 146);
-		byte[] bin = SccpAddressCodec.encode(address, false);
-		assertTrue(Arrays.equals(data, bin), "Wrong encoding");
-	}
+    /**
+     * Test of encode method, of class SccpAddressCodec.
+     */
+    @Test(groups = { "parameter", "functional.encode" })
+    public void testEncode() throws Exception {
+        GlobalTitle gt = GlobalTitle.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.INTERNATIONAL, "79023700299");
+        SccpAddress address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, gt, 146);
+        byte[] bin = SccpAddressCodec.encode(address, false);
+        assertTrue(Arrays.equals(data, bin), "Wrong encoding");
+    }
 
-	@Test(groups = { "parameter", "functional.encode" })
-	public void testEncode2() throws Exception {
-		SccpAddress address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 0, null, 8);
-		byte[] bin = SccpAddressCodec.encode(address, false);
-		assertTrue(Arrays.equals(new byte[] { 0x42, 0x08 }, bin), "Wrong encoding");
-	}
+    @Test(groups = { "parameter", "functional.encode" })
+    public void testEncode2() throws Exception {
+        SccpAddress address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 0, null, 8);
+        byte[] bin = SccpAddressCodec.encode(address, false);
+        assertTrue(Arrays.equals(new byte[] { 0x42, 0x08 }, bin), "Wrong encoding");
+    }
 
-	/**
-	 * Test to see if the DPC is removed from the SCCP Address when instructed
-	 * 
-	 * @throws Exception
-	 */
-	@Test(groups = { "parameter", "functional.encode" })
-	public void testEncode3() throws Exception {
-		byte[] data1 = new byte[] { 0x12, 0x06, 0x00, 0x11, 0x04, 0x39, 0x07, (byte) 0x92, 0x49, 0x00, 0x06 };
-//		SccpAddressCodec codec = new SccpAddressCodec(true);
+    /**
+     * Test to see if the DPC is removed from the SCCP Address when instructed
+     *
+     * @throws Exception
+     */
+    @Test(groups = { "parameter", "functional.encode" })
+    public void testEncode3() throws Exception {
+        byte[] data1 = new byte[] { 0x12, 0x06, 0x00, 0x11, 0x04, 0x39, 0x07, (byte) 0x92, 0x49, 0x00, 0x06 };
+        // SccpAddressCodec codec = new SccpAddressCodec(true);
 
-		GlobalTitle gt = GlobalTitle.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.INTERNATIONAL,
-				"93702994006");
-		SccpAddress address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 5530, gt, 6);
-		byte[] bin = SccpAddressCodec.encode(address, true);
-		assertTrue(Arrays.equals(data1, bin), "Wrong encoding");
-		
-		//Now test decode
-		
-	}
-	
-	/**
-	 * Test of getAddressIndicator method, of class SccpAddress.
-	 */
-	@Test
-	public void testEquals() {
-		GlobalTitle gt = GlobalTitle.getInstance(NatureOfAddress.NATIONAL, "123");
-		SccpAddress a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, gt, 0);
-		SccpAddress a2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, gt, 0);
-		assertEquals(a1, a2);
-		assertEquals(a1.hashCode(), a2.hashCode());
-	}
+        GlobalTitle gt = GlobalTitle.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.INTERNATIONAL, "93702994006");
+        SccpAddress address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 5530, gt, 6);
+        byte[] bin = SccpAddressCodec.encode(address, true);
+        assertTrue(Arrays.equals(data1, bin), "Wrong encoding");
 
-	@Test
-	public void testEquals1() {
-		GlobalTitle gt = GlobalTitle.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.INTERNATIONAL,
-				"79023700271");
-		SccpAddress a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 146, gt, 0);
+        // Now test decode
 
-		HashMap<SccpAddress, Integer> map = new HashMap();
-		map.put(a1, 1);
+    }
 
-		SccpAddress a2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 146, gt, 0);
-		Integer i = map.get(a2);
+    /**
+     * Test of getAddressIndicator method, of class SccpAddress.
+     */
+    @Test
+    public void testEquals() {
+        GlobalTitle gt = GlobalTitle.getInstance(NatureOfAddress.NATIONAL, "123");
+        SccpAddress a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, gt, 0);
+        SccpAddress a2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, gt, 0);
+        assertEquals(a1, a2);
+        assertEquals(a1.hashCode(), a2.hashCode());
+    }
 
-		if (i == null) {
-			fail("Address did not match");
-		}
+    @Test
+    public void testEquals1() {
+        GlobalTitle gt = GlobalTitle.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.INTERNATIONAL, "79023700271");
+        SccpAddress a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 146, gt, 0);
 
-		assertEquals(new Integer(1), i);
-	}
+        HashMap<SccpAddress, Integer> map = new HashMap();
+        map.put(a1, 1);
 
-	@Test
-	public void testSerialization() throws Exception {
-		GlobalTitle gt = GlobalTitle.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.INTERNATIONAL,
-				"79023700271");
-		SccpAddress a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 146, gt, 0);
+        SccpAddress a2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 146, gt, 0);
+        Integer i = map.get(a2);
 
-		// Writes
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		XMLObjectWriter writer = XMLObjectWriter.newInstance(output);
-		writer.setIndentation("\t"); // Optional (use tabulation for
-		// indentation).
-		writer.write(a1, "SccpAddress", SccpAddress.class);
-		writer.close();
+        if (i == null) {
+            fail("Address did not match");
+        }
 
-		System.out.println(output.toString());
+        assertEquals(new Integer(1), i);
+    }
 
-		ByteArrayInputStream input = new ByteArrayInputStream(output.toByteArray());
-		XMLObjectReader reader = XMLObjectReader.newInstance(input);
-		SccpAddress aiOut = reader.read("SccpAddress", SccpAddress.class);
+    @Test
+    public void testSerialization() throws Exception {
+        GlobalTitle gt = GlobalTitle.getInstance(0, NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.INTERNATIONAL, "79023700271");
+        SccpAddress a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 146, gt, 0);
 
-		assertEquals(
-				GlobalTitleIndicator.GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_ENCODING_SCHEME_AND_NATURE_OF_ADDRESS,
-				aiOut.getAddressIndicator().getGlobalTitleIndicator());
-		assertEquals(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, aiOut.getAddressIndicator().getRoutingIndicator());
-		assertTrue(aiOut.getAddressIndicator().pcPresent());
-		assertFalse(aiOut.getAddressIndicator().ssnPresent());
+        // Writes
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(output);
+        writer.setIndentation("\t"); // Optional (use tabulation for
+        // indentation).
+        writer.write(a1, "SccpAddress", SccpAddress.class);
+        writer.close();
 
-		assertEquals(146, aiOut.getSignalingPointCode());
-		assertEquals(0, aiOut.getSubsystemNumber());
+        System.out.println(output.toString());
 
-		assertEquals("79023700271", aiOut.getGlobalTitle().getDigits());
-	}
+        ByteArrayInputStream input = new ByteArrayInputStream(output.toByteArray());
+        XMLObjectReader reader = XMLObjectReader.newInstance(input);
+        SccpAddress aiOut = reader.read("SccpAddress", SccpAddress.class);
 
-	@Test
-	public void testSerialization1() throws Exception {
+        assertEquals(
+                GlobalTitleIndicator.GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_ENCODING_SCHEME_AND_NATURE_OF_ADDRESS,
+                aiOut.getAddressIndicator().getGlobalTitleIndicator());
+        assertEquals(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, aiOut.getAddressIndicator().getRoutingIndicator());
+        assertTrue(aiOut.getAddressIndicator().pcPresent());
+        assertFalse(aiOut.getAddressIndicator().ssnPresent());
 
-		SccpAddress a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 146, null, 8);
+        assertEquals(146, aiOut.getSignalingPointCode());
+        assertEquals(0, aiOut.getSubsystemNumber());
 
-		// Writes
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		XMLObjectWriter writer = XMLObjectWriter.newInstance(output);
-		writer.setIndentation("\t"); // Optional (use tabulation for
-		// indentation).
-		writer.write(a1, "SccpAddress", SccpAddress.class);
-		writer.close();
+        assertEquals("79023700271", aiOut.getGlobalTitle().getDigits());
+    }
 
-		System.out.println(output.toString());
+    @Test
+    public void testSerialization1() throws Exception {
 
-		ByteArrayInputStream input = new ByteArrayInputStream(output.toByteArray());
-		XMLObjectReader reader = XMLObjectReader.newInstance(input);
-		SccpAddress aiOut = reader.read("SccpAddress", SccpAddress.class);
+        SccpAddress a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 146, null, 8);
 
-		assertEquals(GlobalTitleIndicator.NO_GLOBAL_TITLE_INCLUDED, aiOut.getAddressIndicator()
-				.getGlobalTitleIndicator());
-		assertEquals(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, aiOut.getAddressIndicator().getRoutingIndicator());
-		assertTrue(aiOut.getAddressIndicator().pcPresent());
-		assertTrue(aiOut.getAddressIndicator().ssnPresent());
+        // Writes
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(output);
+        writer.setIndentation("\t"); // Optional (use tabulation for
+        // indentation).
+        writer.write(a1, "SccpAddress", SccpAddress.class);
+        writer.close();
 
-		assertEquals(146, aiOut.getSignalingPointCode());
-		assertEquals(8, aiOut.getSubsystemNumber());
+        System.out.println(output.toString());
 
-		assertNull(aiOut.getGlobalTitle());
-	}
+        ByteArrayInputStream input = new ByteArrayInputStream(output.toByteArray());
+        XMLObjectReader reader = XMLObjectReader.newInstance(input);
+        SccpAddress aiOut = reader.read("SccpAddress", SccpAddress.class);
+
+        assertEquals(GlobalTitleIndicator.NO_GLOBAL_TITLE_INCLUDED, aiOut.getAddressIndicator().getGlobalTitleIndicator());
+        assertEquals(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, aiOut.getAddressIndicator().getRoutingIndicator());
+        assertTrue(aiOut.getAddressIndicator().pcPresent());
+        assertTrue(aiOut.getAddressIndicator().ssnPresent());
+
+        assertEquals(146, aiOut.getSignalingPointCode());
+        assertEquals(8, aiOut.getSubsystemNumber());
+
+        assertNull(aiOut.getGlobalTitle());
+    }
 
 }

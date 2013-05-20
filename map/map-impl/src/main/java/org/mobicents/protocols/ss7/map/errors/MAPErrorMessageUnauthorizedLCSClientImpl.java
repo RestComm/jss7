@@ -38,184 +38,185 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
-* 
-* @author sergey vetyutnev
-* 
-*/
-public class MAPErrorMessageUnauthorizedLCSClientImpl extends MAPErrorMessageImpl implements MAPErrorMessageUnauthorizedLCSClient {
+ *
+ * @author sergey vetyutnev
+ *
+ */
+public class MAPErrorMessageUnauthorizedLCSClientImpl extends MAPErrorMessageImpl implements
+        MAPErrorMessageUnauthorizedLCSClient {
 
-	public static final int UnauthorizedLCSClientDiagnostic_TAG = 0;
-	public static final int ExtensionContainer_TAG = 1;
+    public static final int UnauthorizedLCSClientDiagnostic_TAG = 0;
+    public static final int ExtensionContainer_TAG = 1;
 
-	private UnauthorizedLCSClientDiagnostic unauthorizedLCSClientDiagnostic;
-	private MAPExtensionContainer extensionContainer;	
-	
-	
-	public MAPErrorMessageUnauthorizedLCSClientImpl(UnauthorizedLCSClientDiagnostic unauthorizedLCSClientDiagnostic, MAPExtensionContainer extensionContainer) {
-		super((long) MAPErrorCode.unauthorizedLCSClient);
+    private UnauthorizedLCSClientDiagnostic unauthorizedLCSClientDiagnostic;
+    private MAPExtensionContainer extensionContainer;
 
-		this.unauthorizedLCSClientDiagnostic = unauthorizedLCSClientDiagnostic;
-		this.extensionContainer = extensionContainer;
-	}
-	
-	protected MAPErrorMessageUnauthorizedLCSClientImpl() {
-		super((long) MAPErrorCode.unauthorizedLCSClient);
-	}
+    public MAPErrorMessageUnauthorizedLCSClientImpl(UnauthorizedLCSClientDiagnostic unauthorizedLCSClientDiagnostic,
+            MAPExtensionContainer extensionContainer) {
+        super((long) MAPErrorCode.unauthorizedLCSClient);
 
-	public boolean isEmUnauthorizedLCSClient() {
-		return true;
-	}
+        this.unauthorizedLCSClientDiagnostic = unauthorizedLCSClientDiagnostic;
+        this.extensionContainer = extensionContainer;
+    }
 
-	public MAPErrorMessageUnauthorizedLCSClient getEmUnauthorizedLCSClient() {
-		return this;
-	}
-	
+    protected MAPErrorMessageUnauthorizedLCSClientImpl() {
+        super((long) MAPErrorCode.unauthorizedLCSClient);
+    }
 
-	public UnauthorizedLCSClientDiagnostic getUnauthorizedLCSClientDiagnostic() {
-		return this.unauthorizedLCSClientDiagnostic;
-	}
+    public boolean isEmUnauthorizedLCSClient() {
+        return true;
+    }
 
-	public MAPExtensionContainer getExtensionContainer() {
-		return this.extensionContainer;
-	}
+    public MAPErrorMessageUnauthorizedLCSClient getEmUnauthorizedLCSClient() {
+        return this;
+    }
 
-	public void setUnauthorizedLCSClientDiagnostic(UnauthorizedLCSClientDiagnostic unauthorizedLCSClientDiagnostic) {
-		this.unauthorizedLCSClientDiagnostic = unauthorizedLCSClientDiagnostic;
-	}
+    public UnauthorizedLCSClientDiagnostic getUnauthorizedLCSClientDiagnostic() {
+        return this.unauthorizedLCSClientDiagnostic;
+    }
 
-	public void setExtensionContainer(MAPExtensionContainer extensionContainer) {
-		this.extensionContainer = extensionContainer;
-	}
-	
-	
-	public int getTag() throws MAPException {
-		return Tag.SEQUENCE;
-	}
+    public MAPExtensionContainer getExtensionContainer() {
+        return this.extensionContainer;
+    }
 
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    public void setUnauthorizedLCSClientDiagnostic(UnauthorizedLCSClientDiagnostic unauthorizedLCSClientDiagnostic) {
+        this.unauthorizedLCSClientDiagnostic = unauthorizedLCSClientDiagnostic;
+    }
 
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    public void setExtensionContainer(MAPExtensionContainer extensionContainer) {
+        this.extensionContainer = extensionContainer;
+    }
 
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+    public int getTag() throws MAPException {
+        return Tag.SEQUENCE;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding MAPErrorMessageUnauthorizedLCSClient: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding MAPErrorMessageUnauthorizedLCSClient: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding MAPErrorMessageUnauthorizedLCSClient: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding MAPErrorMessageUnauthorizedLCSClient: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
-	private void _decode(AsnInputStream localAis, int length) throws MAPParsingComponentException, IOException, AsnException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding MAPErrorMessageUnauthorizedLCSClient: "
+                    + e.getMessage(), e, MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding MAPErrorMessageUnauthorizedLCSClient: "
+                    + e.getMessage(), e, MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		this.extensionContainer = null;
-		this.unauthorizedLCSClientDiagnostic = null;
-		
-		if (localAis.getTagClass() != Tag.CLASS_UNIVERSAL || localAis.getTag() != Tag.SEQUENCE || localAis.isTagPrimitive())
-			throw new MAPParsingComponentException(
-					"Error decoding MAPErrorMessageUnauthorizedLCSClient: bad tag class or tag or parameter is primitive",
-					MAPParsingComponentExceptionReason.MistypedParameter);
+    public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
-		AsnInputStream ais = localAis.readSequenceStreamData(length);
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding MAPErrorMessageUnauthorizedLCSClient: "
+                    + e.getMessage(), e, MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding MAPErrorMessageUnauthorizedLCSClient: "
+                    + e.getMessage(), e, MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		while (true) {
-			if (ais.available() == 0)
-				break;
+    private void _decode(AsnInputStream localAis, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-			int tag = ais.readTag();
+        this.extensionContainer = null;
+        this.unauthorizedLCSClientDiagnostic = null;
 
-			switch (ais.getTagClass()) {
-			case Tag.CLASS_CONTEXT_SPECIFIC:
-				switch (tag) {
-				case UnauthorizedLCSClientDiagnostic_TAG:
-					int code = (int) ais.readInteger();
-					this.unauthorizedLCSClientDiagnostic = UnauthorizedLCSClientDiagnostic.getInstance(code);
-					break;
-					
-				case ExtensionContainer_TAG:
-					this.extensionContainer = new MAPExtensionContainerImpl();
-					((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
-					break;
+        if (localAis.getTagClass() != Tag.CLASS_UNIVERSAL || localAis.getTag() != Tag.SEQUENCE || localAis.isTagPrimitive())
+            throw new MAPParsingComponentException(
+                    "Error decoding MAPErrorMessageUnauthorizedLCSClient: bad tag class or tag or parameter is primitive",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-				break;
+        AsnInputStream ais = localAis.readSequenceStreamData(length);
 
-			default:
-				ais.advanceElement();
-				break;
-			}
-		}
-	}
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
-	}
+            int tag = ais.readTag();
 
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		
-		try {
-			asnOs.writeTag(tagClass, false, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding MAPErrorMessageUnauthorizedLCSClient: " + e.getMessage(), e);
-		}
-	}
+            switch (ais.getTagClass()) {
+                case Tag.CLASS_CONTEXT_SPECIFIC:
+                    switch (tag) {
+                        case UnauthorizedLCSClientDiagnostic_TAG:
+                            int code = (int) ais.readInteger();
+                            this.unauthorizedLCSClientDiagnostic = UnauthorizedLCSClientDiagnostic.getInstance(code);
+                            break;
 
-	public void encodeData(AsnOutputStream aos) throws MAPException {
+                        case ExtensionContainer_TAG:
+                            this.extensionContainer = new MAPExtensionContainerImpl();
+                            ((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+                            break;
 
-		if (this.unauthorizedLCSClientDiagnostic == null && this.extensionContainer == null)
-			return;
+                        default:
+                            ais.advanceElement();
+                            break;
+                    }
+                    break;
 
-		try {
-			if (this.unauthorizedLCSClientDiagnostic != null)
-				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, UnauthorizedLCSClientDiagnostic_TAG, this.unauthorizedLCSClientDiagnostic.getCode());
-			if (this.extensionContainer != null)
-				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, ExtensionContainer_TAG);
+                default:
+                    ais.advanceElement();
+                    break;
+            }
+        }
+    }
 
-		} catch (IOException e) {
-			throw new MAPException("IOException when encoding MAPErrorMessageUnauthorizedLCSClient: " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding MAPErrorMessageUnauthorizedLCSClient: " + e.getMessage(), e);
-		}
-	}
+    public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+        this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		
-		sb.append("MAPErrorMessageUnauthorizedLCSClient [");
-		if (this.unauthorizedLCSClientDiagnostic != null)
-			sb.append("unauthorizedLCSClientDiagnostic=" + this.unauthorizedLCSClientDiagnostic.toString());
-		if (this.extensionContainer != null)
-			sb.append(", extensionContainer=" + this.extensionContainer.toString());
-		sb.append("]");
-		
-		return sb.toString();
-	}
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+
+        try {
+            asnOs.writeTag(tagClass, false, tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding MAPErrorMessageUnauthorizedLCSClient: " + e.getMessage(), e);
+        }
+    }
+
+    public void encodeData(AsnOutputStream aos) throws MAPException {
+
+        if (this.unauthorizedLCSClientDiagnostic == null && this.extensionContainer == null)
+            return;
+
+        try {
+            if (this.unauthorizedLCSClientDiagnostic != null)
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, UnauthorizedLCSClientDiagnostic_TAG,
+                        this.unauthorizedLCSClientDiagnostic.getCode());
+            if (this.extensionContainer != null)
+                ((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,
+                        ExtensionContainer_TAG);
+
+        } catch (IOException e) {
+            throw new MAPException("IOException when encoding MAPErrorMessageUnauthorizedLCSClient: " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding MAPErrorMessageUnauthorizedLCSClient: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("MAPErrorMessageUnauthorizedLCSClient [");
+        if (this.unauthorizedLCSClientDiagnostic != null)
+            sb.append("unauthorizedLCSClientDiagnostic=" + this.unauthorizedLCSClientDiagnostic.toString());
+        if (this.extensionContainer != null)
+            sb.append(", extensionContainer=" + this.extensionContainer.toString());
+        sb.append("]");
+
+        return sb.toString();
+    }
 }

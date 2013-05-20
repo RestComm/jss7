@@ -23,21 +23,17 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
 
 /**
- * 
-
-GSM-SecurityContextData ::= SEQUENCE {
-	kc			Kc,
-	cksn			Cksn,
-	... }
-
- * 
+ *
+ GSM-SecurityContextData ::= SEQUENCE { kc Kc, cksn Cksn, ... }
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface GSMSecurityContextData {
 
-	public Kc getKc();
+    Kc getKc();
 
-	public Cksn getCksn();
+    Cksn getCksn();
 
 }

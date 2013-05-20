@@ -34,20 +34,19 @@ import org.mobicents.protocols.ss7.isup.message.parameter.RangeAndStatus;
  * <TR>
  * <TD style="FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: teal; HEIGHT: 28px; TEXT-ALIGN: center" colSpan="3">
  * Circuit Group Reset Acknowledgement Message (GRA)</TD>
- * 
+ *
  * </TR>
  * <TR>
  * <TD style="FONT-SIZE: 9pt; COLOR: navy" colSpan="3">
  * <P>
- * GRA is sent in response to a Circuit/CIC Group Reset message indicating that
- * the requested group of circuits/CICs has been reset. The message also
- * indicates the maintenance blocking state of each circuit/CIC.
+ * GRA is sent in response to a Circuit/CIC Group Reset message indicating that the requested group of circuits/CICs has been
+ * reset. The message also indicates the maintenance blocking state of each circuit/CIC.
  * </P>
  * </TD>
  * </TR>
  * </TABLE>
  * </TD>
- * 
+ *
  * </TR>
  * <TR>
  * <TD style="FONT-WEIGHT: bold; WIDTH: 283px; HEIGHT: 30px; TEXT-ALIGN: center">
@@ -56,7 +55,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.RangeAndStatus;
  * <TD style="FONT-WEIGHT: bold; HEIGHT: 30px">Length (octet)</TD>
  * </TR>
  * <TR>
- * 
+ *
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Message type</TD>
  * <TD style="WIDTH: 145px">F</TD>
  * <TD>1</TD>
@@ -64,20 +63,21 @@ import org.mobicents.protocols.ss7.isup.message.parameter.RangeAndStatus;
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Range and Status</TD>
  * <TD style="WIDTH: 145px">V</TD>
- * 
+ *
  * <TD>3-34</TD>
  * </TR>
  * </TABLE>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface CircuitGroupResetAckMessage extends ISUPMessage {
-	/**
-	 * Circuit GroupReset Ack Message, Q.763 reference table 25 <br>
-	 * {@link CircuitGroupResetAckMessage}
-	 */
-	public static final int MESSAGE_CODE = 0x29;
-	
-	public void setRangeAndStatus(RangeAndStatus ras);
-	public RangeAndStatus getRangeAndStatus();
+    /**
+     * Circuit GroupReset Ack Message, Q.763 reference table 25 <br>
+     * {@link CircuitGroupResetAckMessage}
+     */
+    int MESSAGE_CODE = 0x29;
+
+    void setRangeAndStatus(RangeAndStatus ras);
+
+    RangeAndStatus getRangeAndStatus();
 }

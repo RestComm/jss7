@@ -24,23 +24,23 @@ package org.mobicents.protocols.ss7.sccp.impl.mgmt;
 
 /**
  * @author baranowb
- * 
+ *
  */
 public enum Mtp3CongestionType {
-	
-	NULL(-1);
-	
-	Mtp3CongestionType(int x) {
-		this.t = x;
-	}
 
-	private int t;
+    NULL(-1);
 
-	public int getType() {
-		return t;
-	}
+    Mtp3CongestionType(int x) {
+        this.t = x;
+    }
 
-	public static final Mtp3CongestionType fromInt(int v) {
-		return NULL;
-	}
+    private int t;
+
+    public int getType() {
+        return t;
+    }
+
+    public static final Mtp3CongestionType fromInt(int v) {
+        return NULL;
+    }
 }

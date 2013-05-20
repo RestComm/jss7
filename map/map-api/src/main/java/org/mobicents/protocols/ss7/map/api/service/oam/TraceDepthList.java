@@ -23,45 +23,36 @@
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
 /**
- * 
-
-TraceDepthList ::= SEQUENCE {
-	msc-s-TraceDepth	[0] TraceDepth	OPTIONAL,
-	mgw-TraceDepth	[1] TraceDepth	OPTIONAL,
-	sgsn-TraceDepth	[2] TraceDepth	OPTIONAL,
-	ggsn-TraceDepth	[3] TraceDepth	OPTIONAL,
-	rnc-TraceDepth	[4] TraceDepth	OPTIONAL,
-	bmsc-TraceDepth	[5] TraceDepth	OPTIONAL,
-	... ,
-	mme-TraceDepth	[6] TraceDepth	OPTIONAL,
-	sgw-TraceDepth	[7] TraceDepth	OPTIONAL,
-	pgw-TraceDepth	[8] TraceDepth	OPTIONAL,
-	eNB-TraceDepth	[9] TraceDepth	OPTIONAL }
-
- * 
+ *
+ TraceDepthList ::= SEQUENCE { msc-s-TraceDepth [0] TraceDepth OPTIONAL, mgw-TraceDepth [1] TraceDepth OPTIONAL,
+ * sgsn-TraceDepth [2] TraceDepth OPTIONAL, ggsn-TraceDepth [3] TraceDepth OPTIONAL, rnc-TraceDepth [4] TraceDepth OPTIONAL,
+ * bmsc-TraceDepth [5] TraceDepth OPTIONAL, ... , mme-TraceDepth [6] TraceDepth OPTIONAL, sgw-TraceDepth [7] TraceDepth
+ * OPTIONAL, pgw-TraceDepth [8] TraceDepth OPTIONAL, eNB-TraceDepth [9] TraceDepth OPTIONAL }
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface TraceDepthList {
 
-	public TraceDepth getMscSTraceDepth();
+    TraceDepth getMscSTraceDepth();
 
-	public TraceDepth getMgwTraceDepth();
+    TraceDepth getMgwTraceDepth();
 
-	public TraceDepth getSgsnTraceDepth();
+    TraceDepth getSgsnTraceDepth();
 
-	public TraceDepth getGgsnTraceDepth();
+    TraceDepth getGgsnTraceDepth();
 
-	public TraceDepth getRncTraceDepth();
+    TraceDepth getRncTraceDepth();
 
-	public TraceDepth getBmscTraceDepth();
+    TraceDepth getBmscTraceDepth();
 
-	public TraceDepth getMmeTraceDepth();
+    TraceDepth getMmeTraceDepth();
 
-	public TraceDepth getSgwTraceDepth();
+    TraceDepth getSgwTraceDepth();
 
-	public TraceDepth getPgwTraceDepth();
+    TraceDepth getPgwTraceDepth();
 
-	public TraceDepth getEnbTraceDepth();
+    TraceDepth getEnbTraceDepth();
 
 }

@@ -32,18 +32,19 @@ package org.mobicents.protocols.ss7.isup.message;
  * <TR>
  * <TD style="FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: teal; HEIGHT: 28px; TEXT-ALIGN: center" colSpan="3">
  * Facility&nbsp;(FAC) Message</TD>
- * 
+ *
  * </TR>
  * <TR>
  * <TD style="FONT-SIZE: 9pt; COLOR: navy" colSpan="3">
- * <FONT face="Times New Roman" size="3"> <P class="MsoNormal" style="MARGIN-LEFT: 0cm; TEXT-INDENT: 0cm; TEXT-ALIGN: justify; mso-list: l20 level1 lfo13"
- * > <SPAN lang="EN-GB">Facility (FAC)&nbsp;message sent in either direction at
- * any phase of the call to request an action at another node. The message is
- * also used to carry the results, error or rejection of a previously requested
- * action. </SPAN> </P> </FONT></TD>
+ * <FONT face="Times New Roman" size="3">
+ * <P class="MsoNormal" style="MARGIN-LEFT: 0cm; TEXT-INDENT: 0cm; TEXT-ALIGN: justify; mso-list: l20 level1 lfo13" * >
+ * <SPAN lang="EN-GB">Facility (FAC)&nbsp;message sent in either direction at any phase of the call to request an action at
+ * another node. The message is also used to carry the results, error or rejection of a previously requested action. </SPAN>
+ * </P>
+ * </FONT></TD>
  * </TR>
  * </TABLE>
- * 
+ *
  * </TD>
  * </TR>
  * <TR>
@@ -52,7 +53,7 @@ package org.mobicents.protocols.ss7.isup.message;
  * <TD style="FONT-WEIGHT: bold; WIDTH: 145px; HEIGHT: 30px">Type</TD>
  * <TD style="FONT-WEIGHT: bold; HEIGHT: 30px">Length (octet)</TD>
  * </TR>
- * 
+ *
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Message type</TD>
  * <TD style="WIDTH: 145px">F</TD>
@@ -60,7 +61,7 @@ package org.mobicents.protocols.ss7.isup.message;
  * </TR>
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Service Activation</TD>
- * 
+ *
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>3-?</TD>
  * </TR>
@@ -68,35 +69,33 @@ package org.mobicents.protocols.ss7.isup.message;
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Remote Operations</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>?</TD>
- * 
+ *
  * </TR>
  * <TR>
- * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Message&nbsp;Compatibility
- * Information</TD>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Message&nbsp;Compatibility Information</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>4</TD>
  * </TR>
  * <TR>
- * 
- * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Parameter Compatibility
- * Information</TD>
+ *
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Parameter Compatibility Information</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>4-?</TD>
  * </TR>
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">End of Optional Parameters</TD>
  * <TD style="WIDTH: 145px">O</TD>
- * 
+ *
  * <TD>1</TD>
  * </TR>
  * </TABLE>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface FacilityMessage extends ISUPMessage {
-	/**
-	 * Facility Message, Q.763 reference table 45 <br>
-	 * {@link FacilityMessage}
-	 */
-	public static final int MESSAGE_CODE = 0x33;
+    /**
+     * Facility Message, Q.763 reference table 45 <br>
+     * {@link FacilityMessage}
+     */
+    int MESSAGE_CODE = 0x33;
 }

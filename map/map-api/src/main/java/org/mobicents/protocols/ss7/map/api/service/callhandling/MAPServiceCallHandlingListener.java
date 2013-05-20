@@ -24,16 +24,17 @@ package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
 import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
 
-
 /*
- * 
+ *
  * @author cristian veliscu
- * 
+ *
  */
 public interface MAPServiceCallHandlingListener extends MAPServiceListener {
-	public void onSendRoutingInformationRequest(SendRoutingInformationRequest request); 
-    public void onSendRoutingInformationResponse(SendRoutingInformationResponse response);
-   
-    public void onProvideRoamingNumberRequest(ProvideRoamingNumberRequest request);
-    public void onProvideRoamingNumberResponse(ProvideRoamingNumberResponse response);
+     void onSendRoutingInformationRequest(SendRoutingInformationRequest request);
+
+     void onSendRoutingInformationResponse(SendRoutingInformationResponse response);
+
+     void onProvideRoamingNumberRequest(ProvideRoamingNumberRequest request);
+
+     void onProvideRoamingNumberResponse(ProvideRoamingNumberResponse response);
 }

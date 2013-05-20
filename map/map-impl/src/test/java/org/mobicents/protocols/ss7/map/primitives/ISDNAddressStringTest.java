@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -28,9 +28,6 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Arrays;
 
 import javolution.xml.XMLObjectReader;
@@ -44,76 +41,78 @@ import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
  *
  */
-public class ISDNAddressStringTest  {
-	
-	private byte[] getEncodedData() {
-		return new byte[] { -126, 7, -111, -105, 114, 99, 80, 24, -7 };
-	}
+public class ISDNAddressStringTest {
 
-	@Test(groups = { "functional.decode","primitives"})
-	public void testDecode() throws Exception {
-		
-		byte[] rawData = getEncodedData();
-		
-		AsnInputStream asn = new AsnInputStream(rawData);
+    private byte[] getEncodedData() {
+        return new byte[] { -126, 7, -111, -105, 114, 99, 80, 24, -7 };
+    }
 
-		int tag = asn.readTag();
-		ISDNAddressStringImpl addStr = new ISDNAddressStringImpl();
-		addStr.decodeAll(asn);
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testDecode() throws Exception {
 
-		assertEquals( tag,2);
-		assertEquals( asn.getTagClass(),Tag.CLASS_CONTEXT_SPECIFIC);
-		assertFalse(addStr.isExtension());
-		assertEquals( addStr.getAddressNature(),AddressNature.international_number);
-		assertEquals( addStr.getNumberingPlan(),NumberingPlan.ISDN);
-		assertEquals( addStr.getAddress(),"79273605819");
-	}
-	
-	@Test(groups = { "functional.encode","primitives"})
-	public void testEncode() throws Exception {
-		
-		ISDNAddressStringImpl addStr = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "79273605819");
-		AsnOutputStream asnOS = new AsnOutputStream();
-		
-		addStr.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, 2);
-		
-		byte[] encodedData = asnOS.toByteArray();
-		
-		byte[] rawData = getEncodedData();		
-		
-		assertTrue( Arrays.equals(rawData,encodedData));
-		
-	}
-	
-	@Test(groups = { "functional.serialize", "primitives" })
-	public void testSerialization() throws Exception {
-		ISDNAddressStringImpl original = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "79273605819");
+        byte[] rawData = getEncodedData();
 
-		// Writes the area to a file.
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
-		// writer.setBinding(binding); // Optional.
-		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
-		writer.write(original, "isdnAddressString", ISDNAddressStringImpl.class);
-		writer.close();
+        AsnInputStream asn = new AsnInputStream(rawData);
 
-		byte[] rawData = baos.toByteArray();
-		String serializedEvent = new String(rawData);
+        int tag = asn.readTag();
+        ISDNAddressStringImpl addStr = new ISDNAddressStringImpl();
+        addStr.decodeAll(asn);
 
-		System.out.println(serializedEvent);
+        assertEquals(tag, 2);
+        assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
+        assertFalse(addStr.isExtension());
+        assertEquals(addStr.getAddressNature(), AddressNature.international_number);
+        assertEquals(addStr.getNumberingPlan(), NumberingPlan.ISDN);
+        assertEquals(addStr.getAddress(), "79273605819");
+    }
 
-		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
-		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
-		ISDNAddressStringImpl copy = reader.read("isdnAddressString", ISDNAddressStringImpl.class);
-		
-		//test result
-		assertEquals(copy.getAddressNature(), original.getAddressNature());
-		assertEquals(copy.getNumberingPlan(), original.getNumberingPlan());
-		assertEquals(copy.getAddress(), original.getAddress());
-	}
+    @Test(groups = { "functional.encode", "primitives" })
+    public void testEncode() throws Exception {
+
+        ISDNAddressStringImpl addStr = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN,
+                "79273605819");
+        AsnOutputStream asnOS = new AsnOutputStream();
+
+        addStr.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, 2);
+
+        byte[] encodedData = asnOS.toByteArray();
+
+        byte[] rawData = getEncodedData();
+
+        assertTrue(Arrays.equals(rawData, encodedData));
+
+    }
+
+    @Test(groups = { "functional.serialize", "primitives" })
+    public void testSerialization() throws Exception {
+        ISDNAddressStringImpl original = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN,
+                "79273605819");
+
+        // Writes the area to a file.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+        writer.write(original, "isdnAddressString", ISDNAddressStringImpl.class);
+        writer.close();
+
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        ISDNAddressStringImpl copy = reader.read("isdnAddressString", ISDNAddressStringImpl.class);
+
+        // test result
+        assertEquals(copy.getAddressNature(), original.getAddressNature());
+        assertEquals(copy.getNumberingPlan(), original.getNumberingPlan());
+        assertEquals(copy.getAddress(), original.getAddress());
+    }
 
 }

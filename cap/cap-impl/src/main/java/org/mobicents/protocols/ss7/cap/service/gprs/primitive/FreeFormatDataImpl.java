@@ -25,24 +25,23 @@ import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FreeFormatData
 import org.mobicents.protocols.ss7.cap.primitives.OctetStringBase;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class FreeFormatDataImpl  extends OctetStringBase implements FreeFormatData {
+public class FreeFormatDataImpl extends OctetStringBase implements FreeFormatData {
 
-	public FreeFormatDataImpl() {
-		super(1, 160, "FreeFormatData");
-	}
-	
-	public FreeFormatDataImpl(byte[] data) {
-		super(1, 160, "FreeFormatData",data);
-	}
+    public FreeFormatDataImpl() {
+        super(1, 160, "FreeFormatData");
+    }
 
-	@Override
-	public byte[] getData() {
-		return data;
-	}
+    public FreeFormatDataImpl(byte[] data) {
+        super(1, 160, "FreeFormatData", data);
+    }
+
+    @Override
+    public byte[] getData() {
+        return data;
+    }
 
 }
-

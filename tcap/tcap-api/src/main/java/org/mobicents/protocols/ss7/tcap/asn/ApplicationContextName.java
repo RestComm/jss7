@@ -24,22 +24,21 @@ package org.mobicents.protocols.ss7.tcap.asn;
 
 import org.mobicents.protocols.asn.Tag;
 
-public interface ApplicationContextName extends Encodable{
+public interface ApplicationContextName extends Encodable {
 
-	//its type of OID
-	
-	public static final int _TAG = 0x01;
-	public static final int _TAG_CLASS = Tag.CLASS_CONTEXT_SPECIFIC;
-	public static final boolean _TAG_PC_PRIMITIVE = false;
-	
-	/**
-	 * @return the oid
-	 */
-	public long[] getOid();
+    // its type of OID
 
-	/**
-	 * @param oid
-	 *            the oid to set
-	 */
-	public void setOid(long[] oid);
+    int _TAG = 0x01;
+    int _TAG_CLASS = Tag.CLASS_CONTEXT_SPECIFIC;
+    boolean _TAG_PC_PRIMITIVE = false;
+
+    /**
+     * @return the oid
+     */
+    long[] getOid();
+
+    /**
+     * @param oid the oid to set
+     */
+    void setOid(long[] oid);
 }

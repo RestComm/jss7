@@ -30,14 +30,15 @@ import org.mobicents.protocols.ss7.cap.api.service.sms.CAPDialogSms;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class CAPDialogSmsImpl extends CAPDialogImpl implements CAPDialogSms {
 
-	protected CAPDialogSmsImpl(CAPApplicationContext appCntx, Dialog tcapDialog, CAPProviderImpl capProviderImpl, CAPServiceBase capService) {
-		super(appCntx, tcapDialog, capProviderImpl, capService);
-	}
+    protected CAPDialogSmsImpl(CAPApplicationContext appCntx, Dialog tcapDialog, CAPProviderImpl capProviderImpl,
+            CAPServiceBase capService) {
+        super(appCntx, tcapDialog, capProviderImpl, capService);
+    }
 
 }

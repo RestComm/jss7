@@ -23,30 +23,24 @@
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
 /**
- * 
-
-MSC-S-EventList ::= BIT STRING {
-	mo-mtCall (0),
-	mo-mt-sms (1),
-	lu-imsiAttach-imsiDetach (2),
-	handovers (3),
-	ss (4)} (SIZE (5..16))
--- Other bits than listed above shall be discarded.
-
- * 
+ *
+ MSC-S-EventList ::= BIT STRING { mo-mtCall (0), mo-mt-sms (1), lu-imsiAttach-imsiDetach (2), handovers (3), ss (4)} (SIZE
+ * (5..16)) -- Other bits than listed above shall be discarded.
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MSCSEventList {
 
-	public boolean getMoMtCall();
+    boolean getMoMtCall();
 
-	public boolean getMoMtSms();
+    boolean getMoMtSms();
 
-	public boolean getLuImsiAttachImsiDetach();
+    boolean getLuImsiAttachImsiDetach();
 
-	public boolean getHandovers();
+    boolean getHandovers();
 
-	public boolean getSs();
+    boolean getSs();
 
 }

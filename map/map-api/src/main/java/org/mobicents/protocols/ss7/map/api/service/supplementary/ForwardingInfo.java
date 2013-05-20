@@ -25,24 +25,20 @@ package org.mobicents.protocols.ss7.map.api.service.supplementary;
 import java.util.ArrayList;
 
 /**
- * 
-
-ForwardingInfo ::= SEQUENCE {
-	ss-Code		SS-Code		OPTIONAL,
-	forwardingFeatureList	ForwardingFeatureList,
-	...}
-	
-ForwardingFeatureList ::= SEQUENCE SIZE (1..13) OF ForwardingFeature
-
-
- * 
+ *
+ ForwardingInfo ::= SEQUENCE { ss-Code SS-Code OPTIONAL, forwardingFeatureList ForwardingFeatureList, ...}
+ *
+ * ForwardingFeatureList ::= SEQUENCE SIZE (1..13) OF ForwardingFeature
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ForwardingInfo {
 
-	public SSCode getSsCode();
+    SSCode getSsCode();
 
-	public ArrayList<ForwardingFeature> getForwardingFeatureList();
+    ArrayList<ForwardingFeature> getForwardingFeatureList();
 
 }

@@ -23,45 +23,34 @@
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
 /**
- * 
-
-TraceNE-TypeList ::= BIT STRING {
-	msc-s (0),
-	mgw (1),
-	sgsn (2),
-	ggsn (3),
-	rnc (4),
-	bm-sc (5) ,
-	mme (6),
-	sgw (7),
-	pgw (8),
-	eNB (9)} (SIZE (6..16))
--- Other bits than listed above shall be discarded.
-
- * 
+ *
+ TraceNE-TypeList ::= BIT STRING { msc-s (0), mgw (1), sgsn (2), ggsn (3), rnc (4), bm-sc (5) , mme (6), sgw (7), pgw (8), eNB
+ * (9)} (SIZE (6..16)) -- Other bits than listed above shall be discarded.
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface TraceNETypeList {
 
-	public boolean getMscS();
+    boolean getMscS();
 
-	public boolean getMgw();
+    boolean getMgw();
 
-	public boolean getSgsn();
+    boolean getSgsn();
 
-	public boolean getGgsn();
+    boolean getGgsn();
 
-	public boolean getRnc();
+    boolean getRnc();
 
-	public boolean getBmSc();
+    boolean getBmSc();
 
-	public boolean getMme();
+    boolean getMme();
 
-	public boolean getSgw();
+    boolean getSgw();
 
-	public boolean getPgw();
+    boolean getPgw();
 
-	public boolean getEnb();
+    boolean getEnb();
 
 }

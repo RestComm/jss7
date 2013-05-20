@@ -28,75 +28,72 @@ import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.BitSetStrictLength;
-import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 
 /**
  * @author baranowb
  * @author sergey vetyutnev
- * 
+ *
  */
 public class ProtocolVersionImpl implements ProtocolVersion {
 
-	private boolean supportedVersion = true;
+    private boolean supportedVersion = true;
 
-	public boolean isSupportedVersion() {
+    public boolean isSupportedVersion() {
 
-		return supportedVersion;
-	}
+        return supportedVersion;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#decode(org.mobicents.protocols
-	 * .asn.AsnInputStream)
-	 */
-	public void decode(AsnInputStream ais) throws ParseException {
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.tcap.asn.Encodable#decode(org.mobicents.protocols .asn.AsnInputStream)
+     */
+    public void decode(AsnInputStream ais) throws ParseException {
 
-		try {
-				
-			BitSetStrictLength readV = ais.readBitString();
-			if (readV.getStrictLength() >= 1 && readV.get(0)) {
-				// ok
-			} else {
-				this.supportedVersion = false;
-			}
-		} catch (IOException e) {
-			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "IOException while decoding ProtocolVersion: " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "AsnException while decoding ProtocolVersion: " + e.getMessage(), e);
-		}
+        try {
 
-	}
+            BitSetStrictLength readV = ais.readBitString();
+            if (readV.getStrictLength() >= 1 && readV.get(0)) {
+                // ok
+            } else {
+                this.supportedVersion = false;
+            }
+        } catch (IOException e) {
+            throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null,
+                    "IOException while decoding ProtocolVersion: " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null,
+                    "AsnException while decoding ProtocolVersion: " + e.getMessage(), e);
+        }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols
-	 * .asn.AsnOutputStream)
-	 */
-	public void encode(AsnOutputStream aos) throws EncodeException {
+    }
 
-		// commented code is the whole case encoding implementation
-		// now only one version is supported - we use for optimization purpose simple encoding
-		// aos.writeBitString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_PROTOCOL_VERSION, _VALUE);
-		aos.write(128);
-		aos.write(2);
-		aos.write(7);
-		aos.write(128);
-		
-//		BitSetStrictLength bs = new BitSetStrictLength(1);
-//		bs.set(0);
-//		try {
-//			aos.writeBitString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_PROTOCOL_VERSION, bs);
-//		} catch (AsnException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols .asn.AsnOutputStream)
+     */
+    public void encode(AsnOutputStream aos) throws EncodeException {
+
+        // commented code is the whole case encoding implementation
+        // now only one version is supported - we use for optimization purpose simple encoding
+        // aos.writeBitString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_PROTOCOL_VERSION, _VALUE);
+        aos.write(128);
+        aos.write(2);
+        aos.write(7);
+        aos.write(128);
+
+        // BitSetStrictLength bs = new BitSetStrictLength(1);
+        // bs.set(0);
+        // try {
+        // aos.writeBitString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_PROTOCOL_VERSION, bs);
+        // } catch (AsnException e) {
+        // // TODO Auto-generated catch block
+        // e.printStackTrace();
+        // } catch (IOException e) {
+        // // TODO Auto-generated catch block
+        // e.printStackTrace();
+        // }
+    }
 }

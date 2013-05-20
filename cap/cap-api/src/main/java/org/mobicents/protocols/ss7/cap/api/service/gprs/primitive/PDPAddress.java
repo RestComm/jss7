@@ -22,14 +22,12 @@
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
 /**
-*
-
-PDPAddress ::= OCTET STRING  (SIZE(1 .. 63))
--- refer to 3GPP TS 29.060 [12] for the encoding.
- * 
+ *
+ PDPAddress ::= OCTET STRING (SIZE(1 .. 63)) -- refer to 3GPP TS 29.060 [12] for the encoding.
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
 public interface PDPAddress {
-	public byte[] getData();
+    byte[] getData();
 }

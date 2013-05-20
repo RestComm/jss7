@@ -26,47 +26,38 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-EPS-SubscriptionData ::= SEQUENCE {
-	apn-oi-Replacement	[0]	APN-OI-Replacement	OPTIONAL,
-	-- this apn-oi-Replacement refers to the UE level apn-oi-Replacement.
-	rfsp-id		[2]	RFSP-ID	OPTIONAL,
-	ambr			[3]	AMBR		OPTIONAL,
-	apn-ConfigurationProfile	[4]	APN-ConfigurationProfile	OPTIONAL,
-	stn-sr		[6]	ISDN-AddressString	OPTIONAL,
-	extensionContainer	[5]	ExtensionContainer	OPTIONAL,
-	...,
-	mps-CSPriority	[7]	NULL		OPTIONAL,
-	mps-EPSPriority	[8]	NULL		OPTIONAL }
-	-- mps-CSPriority by its presence indicates that the UE is subscribed to the eMLPP in 
-	-- the CS domain, referring to the 3GPP TS 29.272 [144] for details.
-	-- mps-EPSPriority by its presence indicates that the UE is subscribed to the MPS in 
-	-- the EPS domain, referring to the 3GPP TS 29.272 [144] for details.
-
-RFSP-ID ::=  INTEGER (1..256)
-
- * 
- * 
+ *
+ EPS-SubscriptionData ::= SEQUENCE { apn-oi-Replacement [0] APN-OI-Replacement OPTIONAL, -- this apn-oi-Replacement refers to
+ * the UE level apn-oi-Replacement. rfsp-id [2] RFSP-ID OPTIONAL, ambr [3] AMBR OPTIONAL, apn-ConfigurationProfile [4]
+ * APN-ConfigurationProfile OPTIONAL, stn-sr [6] ISDN-AddressString OPTIONAL, extensionContainer [5] ExtensionContainer
+ * OPTIONAL, ..., mps-CSPriority [7] NULL OPTIONAL, mps-EPSPriority [8] NULL OPTIONAL } -- mps-CSPriority by its presence
+ * indicates that the UE is subscribed to the eMLPP in -- the CS domain, referring to the 3GPP TS 29.272 [144] for details. --
+ * mps-EPSPriority by its presence indicates that the UE is subscribed to the MPS in -- the EPS domain, referring to the 3GPP TS
+ * 29.272 [144] for details.
+ *
+ * RFSP-ID ::= INTEGER (1..256)
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface EPSSubscriptionData {
 
-	public APNOIReplacement getApnOiReplacement();
+    APNOIReplacement getApnOiReplacement();
 
-	public Integer getRfspId();
+    Integer getRfspId();
 
-	public AMBR getAmbr();
+    AMBR getAmbr();
 
-	public APNConfigurationProfile getAPNConfigurationProfile();
+    APNConfigurationProfile getAPNConfigurationProfile();
 
-	public ISDNAddressString getStnSr();
+    ISDNAddressString getStnSr();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public boolean getMpsCSPriority();
+    boolean getMpsCSPriority();
 
-	public boolean getMpsEPSPriority();
+    boolean getMpsEPSPriority();
 
 }

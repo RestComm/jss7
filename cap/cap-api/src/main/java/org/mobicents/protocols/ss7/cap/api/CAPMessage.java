@@ -22,27 +22,26 @@
 
 package org.mobicents.protocols.ss7.cap.api;
 
-import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 
 /**
  * This is super interface for all service message in CAP
- * 
+ *
  * @author amit bhayani
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CAPMessage {
 
-	public long getInvokeId();
+     long getInvokeId();
 
-	public void setInvokeId(long invokeId);
+     void setInvokeId(long invokeId);
 
-	public CAPDialog getCAPDialog();
+     CAPDialog getCAPDialog();
 
-	public void setCAPDialog(CAPDialog capDialog);
+     void setCAPDialog(CAPDialog capDialog);
 
-	public CAPMessageType getMessageType(); 
-	
-	public int getOperationCode(); 
+     CAPMessageType getMessageType();
+
+     int getOperationCode();
 
 }

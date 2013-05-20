@@ -22,10 +22,9 @@
 
 package org.mobicents.protocols.ss7.m3ua.impl;
 
-import java.io.IOException;
+import static org.testng.Assert.assertEquals;
 
-import org.testng.annotations.*;
-import static org.testng.Assert.*;
+import java.io.IOException;
 
 import org.mobicents.protocols.ss7.m3ua.impl.message.M3UAMessageImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.message.MessageFactoryImpl;
@@ -34,9 +33,14 @@ import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.message.MessageClass;
 import org.mobicents.protocols.ss7.m3ua.message.MessageType;
 import org.mobicents.protocols.ss7.m3ua.parameter.Status;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author amit bhayani
  *
  */
@@ -79,13 +83,11 @@ public class AspTransitionStateTest {
         String transition = TransitionState.getTransition(msg);
         assertEquals(TransitionState.DUNA, transition);
 
-        msg = messageFactory
-                .createMessage(MessageClass.SIGNALING_NETWORK_MANAGEMENT, MessageType.DESTINATION_AVAILABLE);
+        msg = messageFactory.createMessage(MessageClass.SIGNALING_NETWORK_MANAGEMENT, MessageType.DESTINATION_AVAILABLE);
         transition = TransitionState.getTransition(msg);
         assertEquals(TransitionState.DAVA, transition);
 
-        msg = messageFactory.createMessage(MessageClass.SIGNALING_NETWORK_MANAGEMENT,
-                MessageType.DESTINATION_STATE_AUDIT);
+        msg = messageFactory.createMessage(MessageClass.SIGNALING_NETWORK_MANAGEMENT, MessageType.DESTINATION_STATE_AUDIT);
         transition = TransitionState.getTransition(msg);
         assertEquals(TransitionState.DAUD, transition);
 
@@ -98,8 +100,7 @@ public class AspTransitionStateTest {
         transition = TransitionState.getTransition(msg);
         assertEquals(TransitionState.DUPU, transition);
 
-        msg = messageFactory.createMessage(MessageClass.SIGNALING_NETWORK_MANAGEMENT,
-                MessageType.DESTINATION_RESTRICTED);
+        msg = messageFactory.createMessage(MessageClass.SIGNALING_NETWORK_MANAGEMENT, MessageType.DESTINATION_RESTRICTED);
         transition = TransitionState.getTransition(msg);
         assertEquals(TransitionState.DRST, transition);
     }
@@ -133,8 +134,7 @@ public class AspTransitionStateTest {
 
     @Test
     public void testAstmMessages() throws IOException {
-        M3UAMessageImpl msg = messageFactory
-                .createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE);
+        M3UAMessageImpl msg = messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE);
         String transition = TransitionState.getTransition(msg);
         assertEquals(TransitionState.ASP_ACTIVE, transition);
 
@@ -196,8 +196,8 @@ public class AspTransitionStateTest {
         msg.setStatus(status);
         transition = TransitionState.getTransition(msg);
         assertEquals(TransitionState.OTHER_ALTERNATE_ASP_FAILURE, transition);
-        
-        //TODO Error
+
+        // TODO Error
 
     }
 

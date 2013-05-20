@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -29,52 +29,51 @@ import javolution.xml.stream.XMLStreamException;
 import org.mobicents.protocols.ss7.sccp.ConcernedSignalingPointCode;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
  * @author Amit Bhayani
- * 
+ *
  */
 public class ConcernedSignalingPointCodeImpl implements ConcernedSignalingPointCode, XMLSerializable {
-	private static final String REMOTE_SPC = "remoteSpc";
+    private static final String REMOTE_SPC = "remoteSpc";
 
-	private int remoteSpc;
+    private int remoteSpc;
 
-	public ConcernedSignalingPointCodeImpl() {
-	}
+    public ConcernedSignalingPointCodeImpl() {
+    }
 
-	public ConcernedSignalingPointCodeImpl(int remoteSpc) {
-		this.remoteSpc = remoteSpc;
-	}
+    public ConcernedSignalingPointCodeImpl(int remoteSpc) {
+        this.remoteSpc = remoteSpc;
+    }
 
-	public int getRemoteSpc() {
-		return remoteSpc;
-	}
+    public int getRemoteSpc() {
+        return remoteSpc;
+    }
 
-	/**
-	 * @param remoteSpc the remoteSpc to set
-	 */
-	protected void setRemoteSpc(int remoteSpc) {
-		this.remoteSpc = remoteSpc;
-	}
+    /**
+     * @param remoteSpc the remoteSpc to set
+     */
+    protected void setRemoteSpc(int remoteSpc) {
+        this.remoteSpc = remoteSpc;
+    }
 
-	@Override
-	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		sb.append("rsp=").append(this.remoteSpc);
-		return sb.toString();
-	}
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("rsp=").append(this.remoteSpc);
+        return sb.toString();
+    }
 
-	protected static final XMLFormat<ConcernedSignalingPointCodeImpl> XML = new XMLFormat<ConcernedSignalingPointCodeImpl>(
-			ConcernedSignalingPointCodeImpl.class) {
+    protected static final XMLFormat<ConcernedSignalingPointCodeImpl> XML = new XMLFormat<ConcernedSignalingPointCodeImpl>(
+            ConcernedSignalingPointCodeImpl.class) {
 
-		public void write(ConcernedSignalingPointCodeImpl ai, OutputElement xml) throws XMLStreamException {
-			xml.setAttribute(REMOTE_SPC, ai.remoteSpc);
+        public void write(ConcernedSignalingPointCodeImpl ai, OutputElement xml) throws XMLStreamException {
+            xml.setAttribute(REMOTE_SPC, ai.remoteSpc);
 
-		}
+        }
 
-		public void read(InputElement xml, ConcernedSignalingPointCodeImpl ai) throws XMLStreamException {
-			ai.remoteSpc = xml.getAttribute(REMOTE_SPC).toInt();
-		}
-	};
+        public void read(InputElement xml, ConcernedSignalingPointCodeImpl ai) throws XMLStreamException {
+            ai.remoteSpc = xml.getAttribute(REMOTE_SPC).toInt();
+        }
+    };
 }
-

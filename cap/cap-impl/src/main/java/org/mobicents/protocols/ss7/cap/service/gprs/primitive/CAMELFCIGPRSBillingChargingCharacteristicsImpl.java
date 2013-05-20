@@ -36,93 +36,93 @@ import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class CAMELFCIGPRSBillingChargingCharacteristicsImpl  extends SequenceBase implements CAMELFCIGPRSBillingChargingCharacteristics{
+public class CAMELFCIGPRSBillingChargingCharacteristicsImpl extends SequenceBase implements
+        CAMELFCIGPRSBillingChargingCharacteristics {
 
-	public static final int _ID_fcIBCCCAMELsequence1 = 0;
-	
-	private FCIBCCCAMELsequence1 fcIBCCCAMELsequence1;
-	
-	public CAMELFCIGPRSBillingChargingCharacteristicsImpl() {
-		super("CAMELFCIGPRSBillingChargingCharacteristics");
-	}
+    public static final int _ID_fcIBCCCAMELsequence1 = 0;
 
-	public CAMELFCIGPRSBillingChargingCharacteristicsImpl(
-			 FCIBCCCAMELsequence1 fcIBCCCAMELsequence1) {
-		super("CAMELFCIGPRSBillingChargingCharacteristics");
-		this.fcIBCCCAMELsequence1 = fcIBCCCAMELsequence1;
-	}
+    private FCIBCCCAMELsequence1 fcIBCCCAMELsequence1;
 
-	
-	@Override
-	public FCIBCCCAMELsequence1 getFCIBCCCAMELsequence1() {
-		return this.fcIBCCCAMELsequence1;
-	}
-	
-	@Override
-	protected void _decode(AsnInputStream asnIS, int length)
-			throws CAPParsingComponentException, IOException, AsnException,
-			MAPParsingComponentException {
-		
-		this.fcIBCCCAMELsequence1 = null;
+    public CAMELFCIGPRSBillingChargingCharacteristicsImpl() {
+        super("CAMELFCIGPRSBillingChargingCharacteristics");
+    }
 
-		AsnInputStream ais = asnIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+    public CAMELFCIGPRSBillingChargingCharacteristicsImpl(FCIBCCCAMELsequence1 fcIBCCCAMELsequence1) {
+        super("CAMELFCIGPRSBillingChargingCharacteristics");
+        this.fcIBCCCAMELsequence1 = fcIBCCCAMELsequence1;
+    }
 
-			int tag = ais.readTag();
+    @Override
+    public FCIBCCCAMELsequence1 getFCIBCCCAMELsequence1() {
+        return this.fcIBCCCAMELsequence1;
+    }
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_fcIBCCCAMELsequence1:
-					if (ais.isTagPrimitive())
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ".fcIBCCCAMELsequence1: Parameter is primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.fcIBCCCAMELsequence1 = new FCIBCCCAMELsequence1Impl();
-					((FCIBCCCAMELsequence1Impl) this.fcIBCCCAMELsequence1).decodeAll(ais);
-					break;
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
+    @Override
+    protected void _decode(AsnInputStream asnIS, int length) throws CAPParsingComponentException, IOException, AsnException,
+            MAPParsingComponentException {
 
-		if (this.fcIBCCCAMELsequence1 == null)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": fcIBCCCAMELsequence1 is mandatory but not found",
-					CAPParsingComponentExceptionReason.MistypedParameter);
+        this.fcIBCCCAMELsequence1 = null;
 
-	}
+        AsnInputStream ais = asnIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-	
-		if (this.fcIBCCCAMELsequence1 == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": fcIBCCCAMELsequence1 must not be null");
+            int tag = ais.readTag();
 
-		((FCIBCCCAMELsequence1Impl) this.fcIBCCCAMELsequence1).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_fcIBCCCAMELsequence1);
-		
-	}
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_fcIBCCCAMELsequence1:
+                        if (ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".fcIBCCCAMELsequence1: Parameter is primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.fcIBCCCAMELsequence1 = new FCIBCCCAMELsequence1Impl();
+                        ((FCIBCCCAMELsequence1Impl) this.fcIBCCCAMELsequence1).decodeAll(ais);
+                        break;
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName + " [");
+        if (this.fcIBCCCAMELsequence1 == null)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": fcIBCCCAMELsequence1 is mandatory but not found", CAPParsingComponentExceptionReason.MistypedParameter);
 
-		if (this.fcIBCCCAMELsequence1 != null) {
-			sb.append("fcIBCCCAMELsequence1=");
-			sb.append(this.fcIBCCCAMELsequence1.toString());
-		}
-		
-		sb.append("]");
+    }
 
-		return sb.toString();
-	}
-	
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
+
+        if (this.fcIBCCCAMELsequence1 == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": fcIBCCCAMELsequence1 must not be null");
+
+        ((FCIBCCCAMELsequence1Impl) this.fcIBCCCAMELsequence1).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
+                _ID_fcIBCCCAMELsequence1);
+
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
+
+        if (this.fcIBCCCAMELsequence1 != null) {
+            sb.append("fcIBCCCAMELsequence1=");
+            sb.append(this.fcIBCCCAMELsequence1.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
+
 }

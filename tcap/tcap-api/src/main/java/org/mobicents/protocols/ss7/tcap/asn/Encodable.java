@@ -27,13 +27,14 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 
 /**
  * Marker interface.
+ *
  * @author baranowb
  *
  */
 public interface Encodable {
 
+    void encode(AsnOutputStream aos) throws EncodeException;
 
-	public void encode(AsnOutputStream aos) throws EncodeException;
-	public void decode(AsnInputStream ais) throws ParseException;
+    void decode(AsnInputStream ais) throws ParseException;
 
 }

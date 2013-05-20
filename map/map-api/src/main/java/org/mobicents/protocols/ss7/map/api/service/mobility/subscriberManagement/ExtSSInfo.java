@@ -23,30 +23,25 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
 /**
- * 
-
-Ext-SS-Info ::= CHOICE {
-	forwardingInfo	[0] Ext-ForwInfo,
-	callBarringInfo	[1] Ext-CallBarInfo,
-	cug-Info		[2] CUG-Info,
-	ss-Data		[3] Ext-SS-Data,
-	emlpp-Info	[4] EMLPP-Info}
-
- * 
- * 
+ *
+ Ext-SS-Info ::= CHOICE { forwardingInfo [0] Ext-ForwInfo, callBarringInfo [1] Ext-CallBarInfo, cug-Info [2] CUG-Info, ss-Data
+ * [3] Ext-SS-Data, emlpp-Info [4] EMLPP-Info}
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ExtSSInfo {
 
-	public ExtForwInfo getForwardingInfo();
+    ExtForwInfo getForwardingInfo();
 
-	public ExtCallBarInfo getCallBarringInfo();
+    ExtCallBarInfo getCallBarringInfo();
 
-	public CUGInfo getCugInfo();
+    CUGInfo getCugInfo();
 
-	public ExtSSData getSsData();
+    ExtSSData getSsData();
 
-	public EMLPPInfo getEmlppInfo();
+    EMLPPInfo getEmlppInfo();
 
 }

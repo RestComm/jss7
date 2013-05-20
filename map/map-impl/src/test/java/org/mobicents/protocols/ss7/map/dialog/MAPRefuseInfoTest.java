@@ -22,11 +22,11 @@
 
 package org.mobicents.protocols.ss7.map.dialog;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
 import java.util.Arrays;
-
-import static org.testng.Assert.*;
-
-import org.testng.*;import org.testng.annotations.*;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -34,83 +34,82 @@ import org.mobicents.protocols.ss7.map.api.dialog.Reason;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextNameImpl;
+import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author amit bhayani
  * @author sergey vetyutnev
  *
  */
-public class MAPRefuseInfoTest  {
+public class MAPRefuseInfoTest {
 
-	private byte[] getData() {
-		return new byte[] { (byte) 0xA3, 0x03, (byte) 0x0A, 0x01, 0x00 };
-	}
+    private byte[] getData() {
+        return new byte[] { (byte) 0xA3, 0x03, (byte) 0x0A, 0x01, 0x00 };
+    }
 
-	private byte[] getDataFull() {
-		return new byte[] { -93, 51, 10, 1, 2, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21,
-				22, 23, 24, 25, 26, -95, 3, 31, 32, 33, 6, 5, 42, 3, 4, 5, 6 };
-	}
-	
-	@Test(groups = { "functional.decode","dialog"})  
-	public void testDecode() throws Exception {
-		// The raw data is from last packet of long ussd-abort from msc2.txt
-		byte[] data = this.getData();
+    private byte[] getDataFull() {
+        return new byte[] { -93, 51, 10, 1, 2, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3,
+                6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, 6, 5, 42, 3, 4, 5, 6 };
+    }
 
-		AsnInputStream asnIs = new AsnInputStream(data);
+    @Test(groups = { "functional.decode", "dialog" })
+    public void testDecode() throws Exception {
+        // The raw data is from last packet of long ussd-abort from msc2.txt
+        byte[] data = this.getData();
 
-		int tag = asnIs.readTag();
-		assertEquals( tag,3);
+        AsnInputStream asnIs = new AsnInputStream(data);
 
-		MAPRefuseInfoImpl mapRefuseInfoImpl = new MAPRefuseInfoImpl();
-		mapRefuseInfoImpl.decodeAll(asnIs);
+        int tag = asnIs.readTag();
+        assertEquals(tag, 3);
 
-		Reason reason = mapRefuseInfoImpl.getReason();
+        MAPRefuseInfoImpl mapRefuseInfoImpl = new MAPRefuseInfoImpl();
+        mapRefuseInfoImpl.decodeAll(asnIs);
 
-		assertNotNull(reason);
+        Reason reason = mapRefuseInfoImpl.getReason();
 
-		assertEquals( reason,Reason.noReasonGiven);
+        assertNotNull(reason);
 
-		
-		data = this.getDataFull();
-		asnIs = new AsnInputStream(data);
+        assertEquals(reason, Reason.noReasonGiven);
 
-		tag = asnIs.readTag();
-		assertEquals( tag,3);
+        data = this.getDataFull();
+        asnIs = new AsnInputStream(data);
 
-		mapRefuseInfoImpl = new MAPRefuseInfoImpl();
-		mapRefuseInfoImpl.decodeAll(asnIs);
+        tag = asnIs.readTag();
+        assertEquals(tag, 3);
 
-		reason = mapRefuseInfoImpl.getReason();
-		assertNotNull(reason);
-		assertEquals( reason,Reason.invalidOriginatingReference);
-		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(mapRefuseInfoImpl.getExtensionContainer()));
-		assertNotNull(mapRefuseInfoImpl.getAlternativeAcn());
-		assertTrue(Arrays.equals(new long[] { 1, 2, 3, 4, 5, 6 }, mapRefuseInfoImpl.getAlternativeAcn().getOid()));
-	}
+        mapRefuseInfoImpl = new MAPRefuseInfoImpl();
+        mapRefuseInfoImpl.decodeAll(asnIs);
 
-	@Test(groups = { "functional.encode","dialog"})
-	public void testEncode() throws Exception {
+        reason = mapRefuseInfoImpl.getReason();
+        assertNotNull(reason);
+        assertEquals(reason, Reason.invalidOriginatingReference);
+        assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(mapRefuseInfoImpl.getExtensionContainer()));
+        assertNotNull(mapRefuseInfoImpl.getAlternativeAcn());
+        assertTrue(Arrays.equals(new long[] { 1, 2, 3, 4, 5, 6 }, mapRefuseInfoImpl.getAlternativeAcn().getOid()));
+    }
 
-		MAPRefuseInfoImpl mapRefuseInfoImpl = new MAPRefuseInfoImpl();
-		mapRefuseInfoImpl.setReason(Reason.noReasonGiven);
-		AsnOutputStream asnOS = new AsnOutputStream();
-		mapRefuseInfoImpl.encodeAll(asnOS);
-		byte[] data = asnOS.toByteArray();
-		assertTrue(Arrays.equals(this.getData(), data));
+    @Test(groups = { "functional.encode", "dialog" })
+    public void testEncode() throws Exception {
 
-		
-		mapRefuseInfoImpl = new MAPRefuseInfoImpl();
-		mapRefuseInfoImpl.setReason(Reason.invalidOriginatingReference);
-		ApplicationContextName acn = new ApplicationContextNameImpl();
-		acn.setOid(new long[] { 1, 2, 3, 4, 5, 6 });
-		mapRefuseInfoImpl.setAlternativeAcn(acn);
-		mapRefuseInfoImpl.setExtensionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
-		asnOS = new AsnOutputStream();
-		mapRefuseInfoImpl.encodeAll(asnOS);
-		data = asnOS.toByteArray();
-		assertTrue(Arrays.equals(this.getDataFull(), data));
+        MAPRefuseInfoImpl mapRefuseInfoImpl = new MAPRefuseInfoImpl();
+        mapRefuseInfoImpl.setReason(Reason.noReasonGiven);
+        AsnOutputStream asnOS = new AsnOutputStream();
+        mapRefuseInfoImpl.encodeAll(asnOS);
+        byte[] data = asnOS.toByteArray();
+        assertTrue(Arrays.equals(this.getData(), data));
 
-	}
+        mapRefuseInfoImpl = new MAPRefuseInfoImpl();
+        mapRefuseInfoImpl.setReason(Reason.invalidOriginatingReference);
+        ApplicationContextName acn = new ApplicationContextNameImpl();
+        acn.setOid(new long[] { 1, 2, 3, 4, 5, 6 });
+        mapRefuseInfoImpl.setAlternativeAcn(acn);
+        mapRefuseInfoImpl.setExtensionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
+        asnOS = new AsnOutputStream();
+        mapRefuseInfoImpl.encodeAll(asnOS);
+        data = asnOS.toByteArray();
+        assertTrue(Arrays.equals(this.getDataFull(), data));
+
+    }
 
 }

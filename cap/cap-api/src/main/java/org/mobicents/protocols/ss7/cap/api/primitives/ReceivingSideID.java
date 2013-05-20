@@ -25,18 +25,15 @@ package org.mobicents.protocols.ss7.cap.api.primitives;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 
 /**
-*
-ReceivingSideID ::= CHOICE {
-receivingSideID [1] LegType
-}
--- used to identify LegID in operations sent from gsmSSF to gsmSCF
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ ReceivingSideID ::= CHOICE { receivingSideID [1] LegType } -- used to identify LegID in operations sent from gsmSSF to gsmSCF
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface ReceivingSideID {
 
-	public LegType getReceivingSideID();
-	
+    LegType getReceivingSideID();
+
 }

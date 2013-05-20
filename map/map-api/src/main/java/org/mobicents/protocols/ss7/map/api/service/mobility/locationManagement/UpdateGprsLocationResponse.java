@@ -27,28 +27,22 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
- * 
-
-MAP V3:
-UpdateGprsLocationRes ::= SEQUENCE {
-	hlr-Number	ISDN-AddressString,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...,
-	add-Capability	NULL			OPTIONAL,
-	sgsn-mmeSeparationSupported	[0] NULL		OPTIONAL }
-
- * 
+ *
+ MAP V3: UpdateGprsLocationRes ::= SEQUENCE { hlr-Number ISDN-AddressString, extensionContainer ExtensionContainer OPTIONAL,
+ * ..., add-Capability NULL OPTIONAL, sgsn-mmeSeparationSupported [0] NULL OPTIONAL }
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface UpdateGprsLocationResponse extends MobilityMessage {
 
-	public ISDNAddressString getHlrNumber();
+    ISDNAddressString getHlrNumber();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public boolean getAddCapability();
+    boolean getAddCapability();
 
-	public boolean getSgsnMmeSeparationSupported();
+    boolean getSgsnMmeSeparationSupported();
 
 }

@@ -21,7 +21,7 @@
  */
 
 /**
- * 
+ *
  */
 package org.mobicents.protocols.ss7.tcap.asn.comp;
 
@@ -31,5 +31,5 @@ package org.mobicents.protocols.ss7.tcap.asn.comp;
  */
 public enum ComponentType {
 
-	Invoke,ReturnResult,ReturnResultLast,Reject,ReturnError;
+    Invoke, ReturnResult, ReturnResultLast, Reject, ReturnError;
 }

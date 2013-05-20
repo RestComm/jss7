@@ -23,45 +23,34 @@
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
 /**
- * 
-
-MSC-S-InterfaceList ::= BIT STRING {
-	a (0),
-	iu (1),
-	mc (2),
-	map-g (3),
-	map-b (4),
-	map-e (5),
-	map-f (6),
-	cap (7),
-	map-d (8),
-	map-c (9)} (SIZE (10..16))
--- Other bits than listed above shall be discarded.
-
- * 
+ *
+ MSC-S-InterfaceList ::= BIT STRING { a (0), iu (1), mc (2), map-g (3), map-b (4), map-e (5), map-f (6), cap (7), map-d (8),
+ * map-c (9)} (SIZE (10..16)) -- Other bits than listed above shall be discarded.
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MSCSInterfaceList {
 
-	public boolean getA();
+    boolean getA();
 
-	public boolean getIu();
+    boolean getIu();
 
-	public boolean getMc();
+    boolean getMc();
 
-	public boolean getMapG();
+    boolean getMapG();
 
-	public boolean getMapB();
+    boolean getMapB();
 
-	public boolean getMapE();
+    boolean getMapE();
 
-	public boolean getMapF();
+    boolean getMapF();
 
-	public boolean getCap();
+    boolean getCap();
 
-	public boolean getMapD();
+    boolean getMapD();
 
-	public boolean getMapC();
+    boolean getMapC();
 
 }

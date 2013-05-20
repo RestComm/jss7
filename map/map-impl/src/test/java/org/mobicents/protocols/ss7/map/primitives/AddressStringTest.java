@@ -40,75 +40,73 @@ import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public class AddressStringTest {
 
-	@Test(groups = { "functional.decode", "primitives" })
-	public void testDecode() throws Exception {
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testDecode() throws Exception {
 
-		byte[] rawData = new byte[] { 4, 9, (byte) 0x96, 0x02, 0x24, (byte) 0x80, 0x03, 0x00, (byte) 0x80, 0x00,
-				(byte) 0xf2 };
+        byte[] rawData = new byte[] { 4, 9, (byte) 0x96, 0x02, 0x24, (byte) 0x80, 0x03, 0x00, (byte) 0x80, 0x00, (byte) 0xf2 };
 
-		AsnInputStream asn = new AsnInputStream(rawData);
+        AsnInputStream asn = new AsnInputStream(rawData);
 
-		int tag = asn.readTag();
-		AddressStringImpl addStr = new AddressStringImpl();
-		addStr.decodeAll(asn);
+        int tag = asn.readTag();
+        AddressStringImpl addStr = new AddressStringImpl();
+        addStr.decodeAll(asn);
 
-		assertEquals(tag, 4);
-		assertFalse(addStr.isExtension());
-		assertEquals(addStr.getAddressNature(), AddressNature.international_number);
-		assertEquals(addStr.getNumberingPlan(), NumberingPlan.land_mobile);
-		assertEquals(addStr.getAddress(), "204208300008002");
-	}
+        assertEquals(tag, 4);
+        assertFalse(addStr.isExtension());
+        assertEquals(addStr.getAddressNature(), AddressNature.international_number);
+        assertEquals(addStr.getNumberingPlan(), NumberingPlan.land_mobile);
+        assertEquals(addStr.getAddress(), "204208300008002");
+    }
 
-	@Test(groups = { "functional.encode", "primitives" })
-	public void testEncode() throws Exception {
+    @Test(groups = { "functional.encode", "primitives" })
+    public void testEncode() throws Exception {
 
-		AddressStringImpl addStr = new AddressStringImpl(AddressNature.international_number, NumberingPlan.land_mobile,
-				"204208300008002");
-		AsnOutputStream asnOS = new AsnOutputStream();
+        AddressStringImpl addStr = new AddressStringImpl(AddressNature.international_number, NumberingPlan.land_mobile,
+                "204208300008002");
+        AsnOutputStream asnOS = new AsnOutputStream();
 
-		addStr.encodeAll(asnOS);
+        addStr.encodeAll(asnOS);
 
-		byte[] encodedData = asnOS.toByteArray();
+        byte[] encodedData = asnOS.toByteArray();
 
-		// System.out.println(Utils.dump(rawData, rawData.length, false));
+        // System.out.println(Utils.dump(rawData, rawData.length, false));
 
-		byte[] rawData = new byte[] { 4, 9, (byte) 0x96, 0x02, 0x24, (byte) 0x80, 0x03, 0x00, (byte) 0x80, 0x00,
-				(byte) 0xf2 };
+        byte[] rawData = new byte[] { 4, 9, (byte) 0x96, 0x02, 0x24, (byte) 0x80, 0x03, 0x00, (byte) 0x80, 0x00, (byte) 0xf2 };
 
-		assertTrue(Arrays.equals(rawData, encodedData));
+        assertTrue(Arrays.equals(rawData, encodedData));
 
-	}
+    }
 
-	@Test(groups = { "functional.serialize", "primitives" })
-	public void testSerialization() throws Exception {
-		AddressStringImpl original = new AddressStringImpl(AddressNature.international_number,
-				NumberingPlan.land_mobile, "204208300008002");
-		// serialize
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ObjectOutputStream oos = new ObjectOutputStream(out);
-		oos.writeObject(original);
-		oos.close();
+    @Test(groups = { "functional.serialize", "primitives" })
+    public void testSerialization() throws Exception {
+        AddressStringImpl original = new AddressStringImpl(AddressNature.international_number, NumberingPlan.land_mobile,
+                "204208300008002");
+        // serialize
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(out);
+        oos.writeObject(original);
+        oos.close();
 
-		// deserialize
-		byte[] pickled = out.toByteArray();
-		String xml = new String(pickled);
-		System.out.println(xml);
-		
-		InputStream in = new ByteArrayInputStream(pickled);
-		ObjectInputStream ois = new ObjectInputStream(in);
-		Object o = ois.readObject();
-		AddressStringImpl copy = (AddressStringImpl) o;
-		
-		//test result
-		assertEquals(copy.getAddressNature(), original.getAddressNature());
-		assertEquals(copy.getNumberingPlan(), original.getNumberingPlan());
-		assertEquals(copy.getAddress(), original.getAddress());
-	}
+        // deserialize
+        byte[] pickled = out.toByteArray();
+        String xml = new String(pickled);
+        System.out.println(xml);
+
+        InputStream in = new ByteArrayInputStream(pickled);
+        ObjectInputStream ois = new ObjectInputStream(in);
+        Object o = ois.readObject();
+        AddressStringImpl copy = (AddressStringImpl) o;
+
+        // test result
+        assertEquals(copy.getAddressNature(), original.getAddressNature());
+        assertEquals(copy.getNumberingPlan(), original.getNumberingPlan());
+        assertEquals(copy.getAddress(), original.getAddress());
+    }
 
 }

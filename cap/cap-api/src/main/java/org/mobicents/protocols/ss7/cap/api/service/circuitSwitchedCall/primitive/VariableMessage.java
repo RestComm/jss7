@@ -25,22 +25,18 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
 import java.util.ArrayList;
 
 /**
-*
-
-variableMessage      [30] SEQUENCE { 
-  elementaryMessageID     [0] Integer4, 
-  variableParts      [1] SEQUENCE SIZE (1..5) OF VariablePart {bound} 
-  } 
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ variableMessage [30] SEQUENCE { elementaryMessageID [0] Integer4, variableParts [1] SEQUENCE SIZE (1..5) OF VariablePart
+ * {bound} }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface VariableMessage {
 
-	public int getElementaryMessageID();
+    int getElementaryMessageID();
 
-	public ArrayList<VariablePart> getVariableParts();
+    ArrayList<VariablePart> getVariableParts();
 
 }
-

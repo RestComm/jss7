@@ -41,250 +41,251 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsImpl;
 import org.mobicents.protocols.ss7.cap.primitives.SendingSideIDImpl;
 
-
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class CallInformationRequestRequestImpl extends CircuitSwitchedCallMessageImpl implements CallInformationRequestRequest {
 
-	public static final int _ID_requestedInformationTypeList = 0;
-	public static final int _ID_extensions = 2;
-	public static final int _ID_legID = 3;
+    public static final int _ID_requestedInformationTypeList = 0;
+    public static final int _ID_extensions = 2;
+    public static final int _ID_legID = 3;
 
-	public static final String _PrimitiveName = "CallInformationRequestRequestIndication";	
+    public static final String _PrimitiveName = "CallInformationRequestRequestIndication";
 
-	private ArrayList<RequestedInformationType> requestedInformationTypeList;
-	private CAPExtensions extensions;
-	private SendingSideID legID;	
+    private ArrayList<RequestedInformationType> requestedInformationTypeList;
+    private CAPExtensions extensions;
+    private SendingSideID legID;
 
-	
-	public CallInformationRequestRequestImpl() {
-	}
-	
-	public CallInformationRequestRequestImpl(ArrayList<RequestedInformationType> requestedInformationTypeList, CAPExtensions extensions,
-			SendingSideID legID) {
-		this.requestedInformationTypeList = requestedInformationTypeList;
-		this.extensions = extensions;
-		this.legID = legID;
-	}
+    public CallInformationRequestRequestImpl() {
+    }
 
-	@Override
-	public CAPMessageType getMessageType() {
-		return CAPMessageType.callInformationRequest_Request;
-	}
+    public CallInformationRequestRequestImpl(ArrayList<RequestedInformationType> requestedInformationTypeList,
+            CAPExtensions extensions, SendingSideID legID) {
+        this.requestedInformationTypeList = requestedInformationTypeList;
+        this.extensions = extensions;
+        this.legID = legID;
+    }
 
-	@Override
-	public int getOperationCode() {
-		return CAPOperationCode.callInformationRequest;
-	}
+    @Override
+    public CAPMessageType getMessageType() {
+        return CAPMessageType.callInformationRequest_Request;
+    }
 
-	@Override
-	public ArrayList<RequestedInformationType> getRequestedInformationTypeList() {
-		return requestedInformationTypeList;
-	}
+    @Override
+    public int getOperationCode() {
+        return CAPOperationCode.callInformationRequest;
+    }
 
-	@Override
-	public CAPExtensions getExtensions() {
-		return extensions;
-	}
+    @Override
+    public ArrayList<RequestedInformationType> getRequestedInformationTypeList() {
+        return requestedInformationTypeList;
+    }
 
-	@Override
-	public SendingSideID getLegID() {
-		return legID;
-	}
-	
-	
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
+    @Override
+    public CAPExtensions getExtensions() {
+        return extensions;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public SendingSideID getLegID() {
+        return legID;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.SEQUENCE;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-		this.requestedInformationTypeList = null;
-		this.extensions = null;
-		this.legID = null;
-//		this.legID = new SendingSideIDImpl(LegType.leg2);
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-			int tag = ais.readTag();
+        this.requestedInformationTypeList = null;
+        this.extensions = null;
+        this.legID = null;
+        // this.legID = new SendingSideIDImpl(LegType.leg2);
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_requestedInformationTypeList:
-					this.requestedInformationTypeList = new ArrayList<RequestedInformationType>();
-					AsnInputStream ais2 = ais.readSequenceStream();
-					while (true) {
-						if (ais2.available() == 0)
-							break;
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-						int tag2 = ais2.readTag();
+            int tag = ais.readTag();
 
-						if (tag2 != Tag.ENUMERATED || ais2.getTagClass() != Tag.CLASS_UNIVERSAL || !ais2.isTagPrimitive())
-							throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-									+ ": bad RequestedInformationType tag or tagClass or RequestedInformationType is not primitive",
-									CAPParsingComponentExceptionReason.MistypedParameter);
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_requestedInformationTypeList:
+                        this.requestedInformationTypeList = new ArrayList<RequestedInformationType>();
+                        AsnInputStream ais2 = ais.readSequenceStream();
+                        while (true) {
+                            if (ais2.available() == 0)
+                                break;
 
-						int i1 = (int) ais2.readInteger();
-						RequestedInformationType el = RequestedInformationType.getInstance(i1);
-						if (el == null)
-							throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-									+ ": bad RequestedInformationType value",
-									CAPParsingComponentExceptionReason.MistypedParameter);
-						this.requestedInformationTypeList.add(el);
-					}
-					break;
-				case _ID_extensions:
-					this.extensions = new CAPExtensionsImpl();
-					((CAPExtensionsImpl) this.extensions).decodeAll(ais);
-					break;
-				case _ID_legID:
-					ais2 = ais.readSequenceStream();
-					ais2.readTag();
-					this.legID = new SendingSideIDImpl();
-					((SendingSideIDImpl) this.legID).decodeAll(ais2);
-					break;
+                            int tag2 = ais2.readTag();
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
+                            if (tag2 != Tag.ENUMERATED || ais2.getTagClass() != Tag.CLASS_UNIVERSAL || !ais2.isTagPrimitive())
+                                throw new CAPParsingComponentException(
+                                        "Error while decoding "
+                                                + _PrimitiveName
+                                                + ": bad RequestedInformationType tag or tagClass or RequestedInformationType is not primitive",
+                                        CAPParsingComponentExceptionReason.MistypedParameter);
 
-		if (this.requestedInformationTypeList == null)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-					+ ": Parameter requestedInformationTypeList is mandatory parameters, but not found", CAPParsingComponentExceptionReason.MistypedParameter);
-	}
+                            int i1 = (int) ais2.readInteger();
+                            RequestedInformationType el = RequestedInformationType.getInstance(i1);
+                            if (el == null)
+                                throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                        + ": bad RequestedInformationType value",
+                                        CAPParsingComponentExceptionReason.MistypedParameter);
+                            this.requestedInformationTypeList.add(el);
+                        }
+                        break;
+                    case _ID_extensions:
+                        this.extensions = new CAPExtensionsImpl();
+                        ((CAPExtensionsImpl) this.extensions).decodeAll(ais);
+                        break;
+                    case _ID_legID:
+                        ais2 = ais.readSequenceStream();
+                        ais2.readTag();
+                        this.legID = new SendingSideIDImpl();
+                        ((SendingSideIDImpl) this.legID).decodeAll(ais2);
+                        break;
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+        if (this.requestedInformationTypeList == null)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": Parameter requestedInformationTypeList is mandatory parameters, but not found",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream aos) throws CAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-		if (this.requestedInformationTypeList == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": requestedInformationTypeList must not be null");
-		if (this.requestedInformationTypeList.size() < 1 || this.requestedInformationTypeList.size() > 4)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": requestedInformationTypeList size must be from 1 to 4");
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		try {
-			aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_requestedInformationTypeList);
-			int pos = aos.StartContentDefiniteLength();
-			for (RequestedInformationType ri : this.requestedInformationTypeList) {
-				aos.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, ri.getCode());
-			}
-			aos.FinalizeContent(pos);
+    @Override
+    public void encodeData(AsnOutputStream aos) throws CAPException {
 
-			if (this.extensions != null)
-				((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
+        if (this.requestedInformationTypeList == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": requestedInformationTypeList must not be null");
+        if (this.requestedInformationTypeList.size() < 1 || this.requestedInformationTypeList.size() > 4)
+            throw new CAPException("Error while encoding " + _PrimitiveName
+                    + ": requestedInformationTypeList size must be from 1 to 4");
 
-			if (this.legID != null) {
-				aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_legID);
-				pos = aos.StartContentDefiniteLength();
-				((SendingSideIDImpl) this.legID).encodeAll(aos);
-				aos.FinalizeContent(pos);
-			}
+        try {
+            aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_requestedInformationTypeList);
+            int pos = aos.StartContentDefiniteLength();
+            for (RequestedInformationType ri : this.requestedInformationTypeList) {
+                aos.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, ri.getCode());
+            }
+            aos.FinalizeContent(pos);
 
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+            if (this.extensions != null)
+                ((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
 
-	@Override
-	public String toString() {
+            if (this.legID != null) {
+                aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_legID);
+                pos = aos.StartContentDefiniteLength();
+                ((SendingSideIDImpl) this.legID).encodeAll(aos);
+                aos.FinalizeContent(pos);
+            }
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		if (this.requestedInformationTypeList != null) {
-			sb.append("requestedInformationTypeList=[");
-			boolean firstItem = true;
-			for (RequestedInformationType ri : this.requestedInformationTypeList) {
-				if (firstItem)
-					firstItem = false;
-				else
-					sb.append(", ");
-				sb.append(ri.toString());
-			}
-			sb.append("]");
-		}
-		if (this.extensions != null) {
-			sb.append(", extensions=");
-			sb.append(extensions.toString());
-		}
-		if (this.legID != null) {
-			sb.append(", legID=");
-			sb.append(legID.toString());
-		}
+    @Override
+    public String toString() {
 
-		sb.append("]");
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		return sb.toString();
-	}
+        if (this.requestedInformationTypeList != null) {
+            sb.append("requestedInformationTypeList=[");
+            boolean firstItem = true;
+            for (RequestedInformationType ri : this.requestedInformationTypeList) {
+                if (firstItem)
+                    firstItem = false;
+                else
+                    sb.append(", ");
+                sb.append(ri.toString());
+            }
+            sb.append("]");
+        }
+        if (this.extensions != null) {
+            sb.append(", extensions=");
+            sb.append(extensions.toString());
+        }
+        if (this.legID != null) {
+            sb.append(", legID=");
+            sb.append(legID.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }

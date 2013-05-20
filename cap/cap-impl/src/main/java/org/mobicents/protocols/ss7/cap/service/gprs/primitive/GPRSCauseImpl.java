@@ -25,23 +25,23 @@ import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSCause;
 import org.mobicents.protocols.ss7.cap.primitives.OctetStringLength1Base;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class GPRSCauseImpl extends OctetStringLength1Base  implements GPRSCause{
+public class GPRSCauseImpl extends OctetStringLength1Base implements GPRSCause {
 
-	public GPRSCauseImpl() {
-		super("GPRSCause");
-	}
-	
-	public GPRSCauseImpl(int data) {
-		super("GPRSCause", data);
-	}
+    public GPRSCauseImpl() {
+        super("GPRSCause");
+    }
 
-	@Override
-	public int getData() {
-		return data;
-	}
+    public GPRSCauseImpl(int data) {
+        super("GPRSCause", data);
+    }
+
+    @Override
+    public int getData() {
+        return data;
+    }
 
 }

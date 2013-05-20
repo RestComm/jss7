@@ -32,25 +32,26 @@ import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 
 /**
- * 
+ *
  * * @author baranowb
+ *
  * @author amit bhayani
  *
  */
 public interface DialogPrimitiveFactory {
 
-	public TCBeginRequest createBegin(Dialog d);
+    TCBeginRequest createBegin(Dialog d);
 
-	public TCContinueRequest createContinue(Dialog d);
+    TCContinueRequest createContinue(Dialog d);
 
-	public TCEndRequest createEnd(Dialog d);
+    TCEndRequest createEnd(Dialog d);
 
-	public TCUserAbortRequest createUAbort(Dialog d);
-	
-	public TCUniRequest createUni(Dialog d);
-	
-	public ApplicationContextName createApplicationContextName(long[] oid);
-	
-	public UserInformation createUserInformation();
-	
+    TCUserAbortRequest createUAbort(Dialog d);
+
+    TCUniRequest createUni(Dialog d);
+
+    ApplicationContextName createApplicationContextName(long[] oid);
+
+    UserInformation createUserInformation();
+
 }

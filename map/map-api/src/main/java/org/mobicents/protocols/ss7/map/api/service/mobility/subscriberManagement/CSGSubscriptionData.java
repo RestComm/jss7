@@ -28,31 +28,25 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.Time;
 
 /**
- * 
-
-CSG-SubscriptionData ::= SEQUENCE {
-	csg-Id	 		CSG-Id,
-	expirationDate		Time		OPTIONAL,
-	extensionContainer		ExtensionContainer 	OPTIONAL,
-	...,
-	lipa-AllowedAPNList		[0] LIPA-AllowedAPNList		OPTIONAL
-}
-
-LIPA-AllowedAPNList ::= SEQUENCE SIZE (1..50) OF APN
-
- * 
- * 
+ *
+ CSG-SubscriptionData ::= SEQUENCE { csg-Id CSG-Id, expirationDate Time OPTIONAL, extensionContainer ExtensionContainer
+ * OPTIONAL, ..., lipa-AllowedAPNList [0] LIPA-AllowedAPNList OPTIONAL }
+ *
+ * LIPA-AllowedAPNList ::= SEQUENCE SIZE (1..50) OF APN
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CSGSubscriptionData {
 
-	public CSGId getCsgId();
+    CSGId getCsgId();
 
-	public Time getExpirationDate();
+    Time getExpirationDate();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public ArrayList<APN> getLipaAllowedAPNList();
+    ArrayList<APN> getLipaAllowedAPNList();
 
 }

@@ -23,24 +23,20 @@
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
 /**
- * 
-
-GGSN-InterfaceList ::= BIT STRING {
-	gn (0),
-	gi (1),
-	gmb (2)} (SIZE (3..8))
--- Other bits than listed above shall be discarded.
-
- * 
+ *
+ GGSN-InterfaceList ::= BIT STRING { gn (0), gi (1), gmb (2)} (SIZE (3..8)) -- Other bits than listed above shall be
+ * discarded.
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface GGSNInterfaceList {
 
-	public boolean getGn();
+    boolean getGn();
 
-	public boolean getGi();
+    boolean getGi();
 
-	public boolean getGmb();
+    boolean getGmb();
 
 }

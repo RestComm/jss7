@@ -27,27 +27,23 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtSSStatus;
 
 /**
- * 
-
-ModificationRequestFor-CW-Info ::= SEQUENCE {
-	basicService	[0]	Ext-BasicServiceCode	OPTIONAL,
-	ss-Status		[1]	Ext-SS-Status	OPTIONAL,
-	modifyNotificationToCSE	[2]	ModificationInstruction	OPTIONAL,
-	extensionContainer	[3]	ExtensionContainer	OPTIONAL,
-	...}
-
- * 
+ *
+ ModificationRequestFor-CW-Info ::= SEQUENCE { basicService [0] Ext-BasicServiceCode OPTIONAL, ss-Status [1] Ext-SS-Status
+ * OPTIONAL, modifyNotificationToCSE [2] ModificationInstruction OPTIONAL, extensionContainer [3] ExtensionContainer OPTIONAL,
+ * ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ModificationRequestForCWInfo {
 
-	public ExtBasicServiceCode getBasicService();
+    ExtBasicServiceCode getBasicService();
 
-	public ExtSSStatus getSsStatus();
+    ExtSSStatus getSsStatus();
 
-	public ModificationInstruction getModifyNotificationToCSE();
+    ModificationInstruction getModifyNotificationToCSE();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

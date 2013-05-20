@@ -26,17 +26,15 @@ import org.mobicents.protocols.ss7.map.api.primitives.ExternalSignalInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
- * 
-
-RESULT 
-	accessSignalInfo ExternalSignalInfo
-
- * 
+ *
+ RESULT accessSignalInfo ExternalSignalInfo
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface PerformSubsequentHandoverResponse extends MobilityMessage {
 
-	public ExternalSignalInfo getAccessSignalInfo();
+    ExternalSignalInfo getAccessSignalInfo();
 
 }

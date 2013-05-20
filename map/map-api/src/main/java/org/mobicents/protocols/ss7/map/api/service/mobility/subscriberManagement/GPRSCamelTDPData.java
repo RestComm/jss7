@@ -26,34 +26,28 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-GPRS-CamelTDPData ::= SEQUENCE {
-	gprs-TriggerDetectionPoint	[0] GPRS-TriggerDetectionPoint,
-	serviceKey	[1] ServiceKey,
-	gsmSCF-Address	[2] ISDN-AddressString,
-	defaultSessionHandling	[3] DefaultGPRS-Handling,
-	extensionContainer	[4] ExtensionContainer	OPTIONAL,
-	...
-	}
-
-ServiceKey ::= INTEGER (0..2147483647)
-
- * 
- * 
+ *
+ GPRS-CamelTDPData ::= SEQUENCE { gprs-TriggerDetectionPoint [0] GPRS-TriggerDetectionPoint, serviceKey [1] ServiceKey,
+ * gsmSCF-Address [2] ISDN-AddressString, defaultSessionHandling [3] DefaultGPRS-Handling, extensionContainer [4]
+ * ExtensionContainer OPTIONAL, ... }
+ *
+ * ServiceKey ::= INTEGER (0..2147483647)
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface GPRSCamelTDPData {
 
-	public GPRSTriggerDetectionPoint getGPRSTriggerDetectionPoint();
+    GPRSTriggerDetectionPoint getGPRSTriggerDetectionPoint();
 
-	public long getServiceKey();
+    long getServiceKey();
 
-	public ISDNAddressString getGsmSCFAddress();
+    ISDNAddressString getGsmSCFAddress();
 
-	public DefaultGPRSHandling getDefaultSessionHandling();
+    DefaultGPRSHandling getDefaultSessionHandling();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

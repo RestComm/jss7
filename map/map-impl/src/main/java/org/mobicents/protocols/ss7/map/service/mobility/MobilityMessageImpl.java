@@ -28,14 +28,14 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public abstract class MobilityMessageImpl extends MessageImpl implements MobilityMessage, MAPAsnPrimitive {
 
-	public MAPDialogMobility getMAPDialog() {
-		return (MAPDialogMobility)super.getMAPDialog();
-	}
+    public MAPDialogMobility getMAPDialog() {
+        return (MAPDialogMobility) super.getMAPDialog();
+    }
 
 }

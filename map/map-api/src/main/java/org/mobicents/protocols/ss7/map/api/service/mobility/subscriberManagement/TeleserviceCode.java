@@ -22,27 +22,23 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
-/**	
- * 
-
-TeleserviceCode ::= OCTET STRING (SIZE (1))
-	-- This type is used to represent the code identifying a single
-	-- teleservice, a group of teleservices, or all teleservices. The
-	-- services are defined in TS GSM 22.003 [4].
-	-- The internal structure is defined as follows:
-
-	-- bits 87654321: group (bits 8765) and specific service
-	-- (bits 4321)
-
-
- * 
+/**
+ *
+ TeleserviceCode ::= OCTET STRING (SIZE (1)) -- This type is used to represent the code identifying a single -- teleservice, a
+ * group of teleservices, or all teleservices. The -- services are defined in TS GSM 22.003 [4]. -- The internal structure is
+ * defined as follows:
+ *
+ * -- bits 87654321: group (bits 8765) and specific service -- (bits 4321)
+ *
+ *
+ *
  * @author sergey vetyutnev
  *
  */
 public interface TeleserviceCode {
 
-	public int getData();
+    int getData();
 
-	public TeleserviceCodeValue getTeleserviceCodeValue();
+    TeleserviceCodeValue getTeleserviceCodeValue();
 
 }

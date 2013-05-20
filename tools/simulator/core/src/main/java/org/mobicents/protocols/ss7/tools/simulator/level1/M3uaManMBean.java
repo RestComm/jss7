@@ -22,95 +22,91 @@
 
 package org.mobicents.protocols.ss7.tools.simulator.level1;
 
-
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface M3uaManMBean {
 
-	public boolean getStorePcapTrace();
+    boolean getStorePcapTrace();
 
-	public void setStorePcapTrace(boolean val);
+    void setStorePcapTrace(boolean val);
 
-	public String getSctpLocalHost();
+    String getSctpLocalHost();
 
-	public void setSctpLocalHost(String val);
+    void setSctpLocalHost(String val);
 
-	public int getSctpLocalPort();
+    int getSctpLocalPort();
 
-	public void setSctpLocalPort(int val);
+    void setSctpLocalPort(int val);
 
-	public String getSctpRemoteHost();
+    String getSctpRemoteHost();
 
-	public void setSctpRemoteHost(String val);
+    void setSctpRemoteHost(String val);
 
-	public int getSctpRemotePort();
+    int getSctpRemotePort();
 
-	public void setSctpRemotePort(int val);
+    void setSctpRemotePort(int val);
 
-	public String getSctpExtraHostAddresses();
+    String getSctpExtraHostAddresses();
 
-	public void setSctpExtraHostAddresses(String val);
+    void setSctpExtraHostAddresses(String val);
 
-	public boolean isSctpIsServer();
+    boolean isSctpIsServer();
 
-	public void setSctpIsServer(boolean val);
+    void setSctpIsServer(boolean val);
 
-	public BIpChannelType getSctpIPChannelType();
+    BIpChannelType getSctpIPChannelType();
 
-	public void setSctpIPChannelType(BIpChannelType val);
+    void setSctpIPChannelType(BIpChannelType val);
 
-	public String getSctpIPChannelType_Value();
+    String getSctpIPChannelType_Value();
 
+    M3uaFunctionality getM3uaFunctionality();
 
-	public M3uaFunctionality getM3uaFunctionality();
+    void setM3uaFunctionality(M3uaFunctionality val);
 
-	public void setM3uaFunctionality(M3uaFunctionality val);
+    String getM3uaFunctionality_Value();
 
-	public String getM3uaFunctionality_Value();
+    M3uaIPSPType getM3uaIPSPType();
 
-	public M3uaIPSPType getM3uaIPSPType();
+    void setM3uaIPSPType(M3uaIPSPType val);
 
-	public void setM3uaIPSPType(M3uaIPSPType val);
+    String getM3uaIPSPType_Value();
 
-	public String getM3uaIPSPType_Value();
+    M3uaExchangeType getM3uaExchangeType();
 
-	public M3uaExchangeType getM3uaExchangeType();
+    void setM3uaExchangeType(M3uaExchangeType val);
 
-	public void setM3uaExchangeType(M3uaExchangeType val);
+    String getM3uaExchangeType_Value();
 
-	public String getM3uaExchangeType_Value();
+    int getM3uaDpc();
 
-	public int getM3uaDpc();
+    void setM3uaDpc(int val);
 
-	public void setM3uaDpc(int val);
+    int getM3uaOpc();
 
-	public int getM3uaOpc();
+    void setM3uaOpc(int val);
 
-	public void setM3uaOpc(int val);
+    int getM3uaSi();
 
-	public int getM3uaSi();
+    void setM3uaSi(int val);
 
-	public void setM3uaSi(int val);
+    long getM3uaRoutingContext();
 
-	public long getM3uaRoutingContext();
+    void setM3uaRoutingContext(long val);
 
-	public void setM3uaRoutingContext(long val);
+    long getM3uaNetworkAppearance();
 
-	public long getM3uaNetworkAppearance();
+    void setM3uaNetworkAppearance(long val);
 
-	public void setM3uaNetworkAppearance(long val);
+    void putSctpIPChannelType(String val);
 
+    void putM3uaFunctionality(String val);
 
-	public void putSctpIPChannelType(String val);
+    void putM3uaIPSPType(String val);
 
-	public void putM3uaFunctionality(String val);
-
-	public void putM3uaIPSPType(String val);
-
-	public void putM3uaExchangeType(String val);
+    void putM3uaExchangeType(String val);
 
 }
-

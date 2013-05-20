@@ -23,18 +23,16 @@
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
 /**
- * CallDiversionTreatmentIndicator ::= OCTET STRING (SIZE(1))
- * -- callDiversionAllowed (xxxx xx01)
- * -- callDiversionNotAllowed (xxxx xx10)
- * -- network default is call diversion allowed
- * 
+ * CallDiversionTreatmentIndicator ::= OCTET STRING (SIZE(1)) -- callDiversionAllowed (xxxx xx01) -- callDiversionNotAllowed
+ * (xxxx xx10) -- network default is call diversion allowed
+ *
  * @author cristian veliscu
- * 
+ *
  */
 public interface CallDiversionTreatmentIndicator {
 
-	public int getData();
+    int getData();
 
-	public CallDiversionTreatmentIndicatorValue getCallDiversionTreatmentIndicatorValue();
+    CallDiversionTreatmentIndicatorValue getCallDiversionTreatmentIndicatorValue();
 
 }

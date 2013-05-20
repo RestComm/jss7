@@ -25,9 +25,9 @@ package org.mobicents.protocols.ss7.cap.api.service.sms;
 import org.mobicents.protocols.ss7.cap.api.CAPServiceListener;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CAPServiceSmsListener extends CAPServiceListener {
 

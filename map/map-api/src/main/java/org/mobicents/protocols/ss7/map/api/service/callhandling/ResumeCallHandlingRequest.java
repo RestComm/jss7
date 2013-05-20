@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
 import java.util.ArrayList;
+
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
@@ -32,78 +33,55 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OCSI;
 
 /**
- * 
- 
-MAP V3-4:
-
-resumeCallHandling  OPERATION ::= {				--Timer m
-	ARGUMENT
-		ResumeCallHandlingArg
-	RESULT
-		ResumeCallHandlingRes
-		-- optional
-	ERRORS {
-		forwardingFailed |
-		or-NotAllowed |
-		unexpectedDataValue |
-		dataMissing }
-	CODE	local:6 }
-
-ResumeCallHandlingArg ::= SEQUENCE {
-	callReferenceNumber	[0] CallReferenceNumber	OPTIONAL,
-	basicServiceGroup	[1] Ext-BasicServiceCode	OPTIONAL,
-	forwardingData	[2] ForwardingData	OPTIONAL,
-	imsi			[3] IMSI		OPTIONAL,
-	cug-CheckInfo	[4] CUG-CheckInfo	OPTIONAL,
-	o-CSI		[5] O-CSI		OPTIONAL,
-	extensionContainer	[7] ExtensionContainer	OPTIONAL,
-	ccbs-Possible	[8]	NULL		OPTIONAL,
-	msisdn		[9]	ISDN-AddressString	OPTIONAL,
-	uu-Data		[10] UU-Data	OPTIONAL,
-	allInformationSent	[11] NULL		OPTIONAL,
-	...,
-	d-csi		[12]	D-CSI	OPTIONAL,
-	o-BcsmCamelTDPCriteriaList 	[13]	O-BcsmCamelTDPCriteriaList 	OPTIONAL,
-	basicServiceGroup2	[14] Ext-BasicServiceCode	OPTIONAL,
-	mtRoamingRetry	[15] NULL		OPTIONAL
-	 }
-
-O-BcsmCamelTDPCriteriaList ::= SEQUENCE SIZE (1..10) OF O-BcsmCamelTDP-Criteria 
-
- * 
+ *
+ MAP V3-4:
+ *
+ * resumeCallHandling OPERATION ::= { --Timer m ARGUMENT ResumeCallHandlingArg RESULT ResumeCallHandlingRes -- optional ERRORS {
+ * forwardingFailed | or-NotAllowed | unexpectedDataValue | dataMissing } CODE local:6 }
+ *
+ * ResumeCallHandlingArg ::= SEQUENCE { callReferenceNumber [0] CallReferenceNumber OPTIONAL, basicServiceGroup [1]
+ * Ext-BasicServiceCode OPTIONAL, forwardingData [2] ForwardingData OPTIONAL, imsi [3] IMSI OPTIONAL, cug-CheckInfo [4]
+ * CUG-CheckInfo OPTIONAL, o-CSI [5] O-CSI OPTIONAL, extensionContainer [7] ExtensionContainer OPTIONAL, ccbs-Possible [8] NULL
+ * OPTIONAL, msisdn [9] ISDN-AddressString OPTIONAL, uu-Data [10] UU-Data OPTIONAL, allInformationSent [11] NULL OPTIONAL, ...,
+ * d-csi [12] D-CSI OPTIONAL, o-BcsmCamelTDPCriteriaList [13] O-BcsmCamelTDPCriteriaList OPTIONAL, basicServiceGroup2 [14]
+ * Ext-BasicServiceCode OPTIONAL, mtRoamingRetry [15] NULL OPTIONAL }
+ *
+ * O-BcsmCamelTDPCriteriaList ::= SEQUENCE SIZE (1..10) OF O-BcsmCamelTDP-Criteria
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ResumeCallHandlingRequest extends CallHandlingMessage {
 
-	public CallReferenceNumber getCallReferenceNumber();
+     CallReferenceNumber getCallReferenceNumber();
 
-	public ExtBasicServiceCode getBasicServiceGroup();
+     ExtBasicServiceCode getBasicServiceGroup();
 
-	public ForwardingData getForwardingData();
+     ForwardingData getForwardingData();
 
-	public IMSI getImsi();
+     IMSI getImsi();
 
-	public CUGCheckInfo getCugCheckInfo();
+     CUGCheckInfo getCugCheckInfo();
 
-	public OCSI getOCsi();
+     OCSI getOCsi();
 
-	public MAPExtensionContainer getExtensionContainer();
+     MAPExtensionContainer getExtensionContainer();
 
-	public boolean getCcbsPossible();
+     boolean getCcbsPossible();
 
-	public ISDNAddressString getMsisdn();
+     ISDNAddressString getMsisdn();
 
-	public UUData getUuData();
+     UUData getUuData();
 
-	public boolean getAllInformationSent();
+     boolean getAllInformationSent();
 
-	public DCSI getDCsi();
+     DCSI getDCsi();
 
-	public ArrayList<OBcsmCamelTdpCriteria> getOBcsmCamelTDPCriteriaList();
+     ArrayList<OBcsmCamelTdpCriteria> getOBcsmCamelTDPCriteriaList();
 
-	public ExtBasicServiceCode getBasicServiceGroup2();
+     ExtBasicServiceCode getBasicServiceGroup2();
 
-	public boolean getMtRoamingRetry();
+     boolean getMtRoamingRetry();
 
 }

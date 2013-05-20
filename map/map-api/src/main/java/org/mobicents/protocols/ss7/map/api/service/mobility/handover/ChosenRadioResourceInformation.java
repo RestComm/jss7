@@ -23,21 +23,18 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
 /**
- * 
-
-ChosenRadioResourceInformation ::= SEQUENCE {
-	chosenChannelInfo	[0] ChosenChannelInfo	OPTIONAL,
-	chosenSpeechVersion	[1] ChosenSpeechVersion	OPTIONAL,
-	...}
-
- * 
+ *
+ ChosenRadioResourceInformation ::= SEQUENCE { chosenChannelInfo [0] ChosenChannelInfo OPTIONAL, chosenSpeechVersion [1]
+ * ChosenSpeechVersion OPTIONAL, ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ChosenRadioResourceInformation {
 
-	public ChosenChannelInfo getChosenChannelInfo();
+    ChosenChannelInfo getChosenChannelInfo();
 
-	public ChosenSpeechVersion getChosenSpeechVersion();
+    ChosenSpeechVersion getChosenSpeechVersion();
 
 }

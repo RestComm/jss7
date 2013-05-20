@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -25,48 +25,37 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 
 /**
-*
-AChBillingChargingCharacteristics {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE
-(bound.&minAChBillingChargingLength .. bound.&maxAChBillingChargingLength))
-(CONSTRAINED BY {-- shall be the result of the BER-encoded value of the type --
-CAMEL-AChBillingChargingCharacteristics {bound}})
--- The AChBillingChargingCharacteristics parameter specifies the charging related information
--- to be provided by the gsmSSF and the conditions on which this information has to be reported
--- back to the gsmSCF with the ApplyChargingReport operation. The value of the
--- AChBillingChargingCharacteristics of type OCTET STRING carries a value of the ASN.1 data type:
--- CAMEL-AChBillingChargingCharacteristics. The normal encoding rules are used to encode this
--- value.
--- The violation of the UserDefinedConstraint shall be handled as an ASN.1 syntax error.
-
-CAMEL-AChBillingChargingCharacteristics {PARAMETERS-BOUND : bound} ::= CHOICE {
-timeDurationCharging [0] SEQUENCE {
-maxCallPeriodDuration [0] INTEGER (1..864000),
-releaseIfdurationExceeded [1] BOOLEAN DEFAULT FALSE,
-tariffSwitchInterval [2] INTEGER (1..86400) OPTIONAL,
-audibleIndicator [3] AudibleIndicator DEFAULT tone: FALSE,
-extensions [4] Extensions {bound} OPTIONAL,
-...
-}
-}
--- tariffSwitchInterval is measured in 1 second units.
--- maxCallPeriodDuration is measured in 100 millisecond units
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ AChBillingChargingCharacteristics {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE (bound.&minAChBillingChargingLength ..
+ * bound.&maxAChBillingChargingLength)) (CONSTRAINED BY {-- shall be the result of the BER-encoded value of the type --
+ * CAMEL-AChBillingChargingCharacteristics {bound}}) -- The AChBillingChargingCharacteristics parameter specifies the charging
+ * related information -- to be provided by the gsmSSF and the conditions on which this information has to be reported -- back
+ * to the gsmSCF with the ApplyChargingReport operation. The value of the -- AChBillingChargingCharacteristics of type OCTET
+ * STRING carries a value of the ASN.1 data type: -- CAMEL-AChBillingChargingCharacteristics. The normal encoding rules are used
+ * to encode this -- value. -- The violation of the UserDefinedConstraint shall be handled as an ASN.1 syntax error.
+ *
+ * CAMEL-AChBillingChargingCharacteristics {PARAMETERS-BOUND : bound} ::= CHOICE { timeDurationCharging [0] SEQUENCE {
+ * maxCallPeriodDuration [0] INTEGER (1..864000), releaseIfdurationExceeded [1] BOOLEAN DEFAULT FALSE, tariffSwitchInterval [2]
+ * INTEGER (1..86400) OPTIONAL, audibleIndicator [3] AudibleIndicator DEFAULT tone: FALSE, extensions [4] Extensions {bound}
+ * OPTIONAL, ... } } -- tariffSwitchInterval is measured in 1 second units. -- maxCallPeriodDuration is measured in 100
+ * millisecond units
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface CAMELAChBillingChargingCharacteristics {
 
-	public byte[] getData();
+    byte[] getData();
 
-	public long getMaxCallPeriodDuration();
+    long getMaxCallPeriodDuration();
 
-	public boolean getReleaseIfdurationExceeded();
+    boolean getReleaseIfdurationExceeded();
 
-	public Long getTariffSwitchInterval();
+    Long getTariffSwitchInterval();
 
-	public AudibleIndicator getAudibleIndicator();
+    AudibleIndicator getAudibleIndicator();
 
-	public CAPExtensions getExtensions();
+    CAPExtensions getExtensions();
 
 }

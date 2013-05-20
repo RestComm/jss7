@@ -23,17 +23,15 @@
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
 /**
- * 
-
-ListOfMeasurements ::= OCTET STRING (SIZE (4))
-	-- Octets are coded as described in 3GPP TS 32.422.
-
- * 
+ *
+ ListOfMeasurements ::= OCTET STRING (SIZE (4)) -- Octets are coded as described in 3GPP TS 32.422.
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ListOfMeasurements {
 
-	public byte[] getData();
+    byte[] getData();
 
 }

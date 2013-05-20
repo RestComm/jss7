@@ -24,21 +24,21 @@ package org.mobicents.protocols.ss7.m3ua.message;
 
 /**
  * Represents M3UA protocol data unit.
- * 
+ *
  * @author kulikov
  */
 public interface M3UAMessage {
     /**
      * Gets the message class parameter.
-     * 
+     *
      * @return the identifier of message class.
      */
-    public int getMessageClass();
-    
+    int getMessageClass();
+
     /**
      * Gets the type of this message.
-     * 
+     *
      * @return the identifier of message type.
      */
-    public int getMessageType();
+    int getMessageType();
 }

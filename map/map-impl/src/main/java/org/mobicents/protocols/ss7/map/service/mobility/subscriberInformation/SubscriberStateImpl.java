@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -40,227 +40,230 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class SubscriberStateImpl implements SubscriberState, MAPAsnPrimitive {
 
-	public static final int _ID_assumedIdle = 0;
-	public static final int _ID_camelBusy = 1;
-	public static final int _ID_notProvidedFromVLR = 2;
+    public static final int _ID_assumedIdle = 0;
+    public static final int _ID_camelBusy = 1;
+    public static final int _ID_notProvidedFromVLR = 2;
 
-	private static final String SUBSCRIBER_STATE_CHOICE = "subscriberStateChoice";
-	private static final String NOT_REACHABLE_REASON = "notReachableReason";
+    private static final String SUBSCRIBER_STATE_CHOICE = "subscriberStateChoice";
+    private static final String NOT_REACHABLE_REASON = "notReachableReason";
 
-	private static final String DEFAULT_STRING_VALUE = null;
+    private static final String DEFAULT_STRING_VALUE = null;
 
-	public static final String _PrimitiveName = "SubscriberState";
+    public static final String _PrimitiveName = "SubscriberState";
 
-	private SubscriberStateChoice subscriberStateChoice;
-	private NotReachableReason notReachableReason;
+    private SubscriberStateChoice subscriberStateChoice;
+    private NotReachableReason notReachableReason;
 
-	
-	public SubscriberStateImpl() {
-	}
+    public SubscriberStateImpl() {
+    }
 
-	public SubscriberStateImpl(SubscriberStateChoice subscriberStateChoice, NotReachableReason notReachableReason) {
-		setData(subscriberStateChoice, notReachableReason);
-	}
+    public SubscriberStateImpl(SubscriberStateChoice subscriberStateChoice, NotReachableReason notReachableReason) {
+        setData(subscriberStateChoice, notReachableReason);
+    }
 
-	public void setData(SubscriberStateChoice subscriberStateChoice, NotReachableReason notReachableReason) {
-		this.subscriberStateChoice = subscriberStateChoice;
-		this.notReachableReason = notReachableReason;
-	}
+    public void setData(SubscriberStateChoice subscriberStateChoice, NotReachableReason notReachableReason) {
+        this.subscriberStateChoice = subscriberStateChoice;
+        this.notReachableReason = notReachableReason;
+    }
 
-	public SubscriberStateChoice getSubscriberStateChoice() {
-		return subscriberStateChoice;
-	}
+    public SubscriberStateChoice getSubscriberStateChoice() {
+        return subscriberStateChoice;
+    }
 
-	public NotReachableReason getNotReachableReason() {
-		return notReachableReason;
-	}
-	
-	
-	public int getTag() throws MAPException {
+    public NotReachableReason getNotReachableReason() {
+        return notReachableReason;
+    }
 
-		if (this.subscriberStateChoice == null)
-			throw new MAPException("Error encoding " + _PrimitiveName + ": No subscriberStateChoice value");
+    public int getTag() throws MAPException {
 
-		switch (this.subscriberStateChoice) {
-		case assumedIdle:
-			return _ID_assumedIdle;
-		case camelBusy:
-			return _ID_camelBusy;
-		case netDetNotReachable:
-			return Tag.ENUMERATED;
-		case notProvidedFromVLR:
-			return _ID_notProvidedFromVLR;
-		}
+        if (this.subscriberStateChoice == null)
+            throw new MAPException("Error encoding " + _PrimitiveName + ": No subscriberStateChoice value");
 
-		throw new MAPException("Error encoding " + _PrimitiveName + ": Bad subscriberStateChoice value");
-	}
+        switch (this.subscriberStateChoice) {
+            case assumedIdle:
+                return _ID_assumedIdle;
+            case camelBusy:
+                return _ID_camelBusy;
+            case netDetNotReachable:
+                return Tag.ENUMERATED;
+            case notProvidedFromVLR:
+                return _ID_notProvidedFromVLR;
+        }
 
-	public int getTagClass() {
-		if (this.subscriberStateChoice != null && this.subscriberStateChoice == SubscriberStateChoice.netDetNotReachable)
-			return Tag.CLASS_UNIVERSAL;
-		else
-			return Tag.CLASS_CONTEXT_SPECIFIC;
-	}
+        throw new MAPException("Error encoding " + _PrimitiveName + ": Bad subscriberStateChoice value");
+    }
 
-	public boolean getIsPrimitive() {
-		return true;
-	}
+    public int getTagClass() {
+        if (this.subscriberStateChoice != null && this.subscriberStateChoice == SubscriberStateChoice.netDetNotReachable)
+            return Tag.CLASS_UNIVERSAL;
+        else
+            return Tag.CLASS_CONTEXT_SPECIFIC;
+    }
 
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+    public boolean getIsPrimitive() {
+        return true;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
-	private void _decode(AsnInputStream ais, int length) throws MAPParsingComponentException, IOException, AsnException {
-		
-		this.subscriberStateChoice = null;
-		this.notReachableReason = null;
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		int tag = ais.getTag();
+    private void _decode(AsnInputStream ais, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-		switch (ais.getTagClass()) {
-		case Tag.CLASS_UNIVERSAL:
-			if (tag == Tag.ENUMERATED) {
-				this.subscriberStateChoice = SubscriberStateChoice.netDetNotReachable;
-				int i1 = (int) ais.readIntegerData(length);
-				this.notReachableReason = NotReachableReason.getInstance(i1);
-			} else {
-				throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tag for universal tag class: " + tag,
-						MAPParsingComponentExceptionReason.MistypedParameter);
-			}
-			break;
-		case Tag.CLASS_CONTEXT_SPECIFIC:
-			switch (tag) {
-			case _ID_assumedIdle:
-				this.subscriberStateChoice = SubscriberStateChoice.assumedIdle;
-				break;
-			case _ID_camelBusy:
-				this.subscriberStateChoice = SubscriberStateChoice.camelBusy;
-				break;
-			case _ID_notProvidedFromVLR:
-				this.subscriberStateChoice = SubscriberStateChoice.notProvidedFromVLR;
-				break;
-			default:
-				throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tag for contextSpecific tag class: " + tag,
-						MAPParsingComponentExceptionReason.MistypedParameter);
-			}
-			ais.readNullData(length);
-			break;
-		default:
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tagClass: " + ais.getTagClass(),
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        this.subscriberStateChoice = null;
+        this.notReachableReason = null;
 
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+        int tag = ais.getTag();
 
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+        switch (ais.getTagClass()) {
+            case Tag.CLASS_UNIVERSAL:
+                if (tag == Tag.ENUMERATED) {
+                    this.subscriberStateChoice = SubscriberStateChoice.netDetNotReachable;
+                    int i1 = (int) ais.readIntegerData(length);
+                    this.notReachableReason = NotReachableReason.getInstance(i1);
+                } else {
+                    throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                            + ": bad choice tag for universal tag class: " + tag,
+                            MAPParsingComponentExceptionReason.MistypedParameter);
+                }
+                break;
+            case Tag.CLASS_CONTEXT_SPECIFIC:
+                switch (tag) {
+                    case _ID_assumedIdle:
+                        this.subscriberStateChoice = SubscriberStateChoice.assumedIdle;
+                        break;
+                    case _ID_camelBusy:
+                        this.subscriberStateChoice = SubscriberStateChoice.camelBusy;
+                        break;
+                    case _ID_notProvidedFromVLR:
+                        this.subscriberStateChoice = SubscriberStateChoice.notProvidedFromVLR;
+                        break;
+                    default:
+                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                + ": bad choice tag for contextSpecific tag class: " + tag,
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                }
+                ais.readNullData(length);
+                break;
+            default:
+                throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tagClass: "
+                        + ais.getTagClass(), MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		
-		try {
-			asnOs.writeTag(tagClass, true, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-		if (this.subscriberStateChoice == null)
-			throw new MAPException("subscriberStateChoice must not be null");
-		if (this.subscriberStateChoice == SubscriberStateChoice.netDetNotReachable) {
-			if (this.notReachableReason == null)
-				throw new MAPException("notReachableReason must not be null when subscriberStateChoice is netDetNotReachable");
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 
-			try {
-				asnOs.writeIntegerData(this.notReachableReason.getCode());
-			} catch (IOException e) {
-				throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-			}
-		} else {
-			asnOs.writeNullData();
-		}
-	}
+        try {
+            asnOs.writeTag(tagClass, true, tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("SubscriberState [");
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-		if (this.subscriberStateChoice != null) {
-			sb.append("subscriberStateChoice=");
-			sb.append(this.subscriberStateChoice);
-		}
-		if (this.notReachableReason != null) {
-			sb.append(", notReachableReason=");
-			sb.append(this.notReachableReason);
-		}
+        if (this.subscriberStateChoice == null)
+            throw new MAPException("subscriberStateChoice must not be null");
+        if (this.subscriberStateChoice == SubscriberStateChoice.netDetNotReachable) {
+            if (this.notReachableReason == null)
+                throw new MAPException("notReachableReason must not be null when subscriberStateChoice is netDetNotReachable");
 
-		sb.append("]");
+            try {
+                asnOs.writeIntegerData(this.notReachableReason.getCode());
+            } catch (IOException e) {
+                throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            }
+        } else {
+            asnOs.writeNullData();
+        }
+    }
 
-		return sb.toString();
-	}
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("SubscriberState [");
 
-	/**
-	 * XML Serialization/Deserialization
-	 */
-	protected static final XMLFormat<SubscriberStateImpl> SUBSCRIBER_STATE_XML = new XMLFormat<SubscriberStateImpl>(SubscriberStateImpl.class) {
+        if (this.subscriberStateChoice != null) {
+            sb.append("subscriberStateChoice=");
+            sb.append(this.subscriberStateChoice);
+        }
+        if (this.notReachableReason != null) {
+            sb.append(", notReachableReason=");
+            sb.append(this.notReachableReason);
+        }
 
-		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml, SubscriberStateImpl subscriberState) throws XMLStreamException {
-			String choice = xml.getAttribute(SUBSCRIBER_STATE_CHOICE, DEFAULT_STRING_VALUE);
-			SubscriberStateChoice subscriberStateChoice = null;
-			if (choice != null) {
-				subscriberStateChoice = Enum.valueOf(SubscriberStateChoice.class, choice);
-			}
-			String nrr = xml.get(NOT_REACHABLE_REASON, String.class);
-			NotReachableReason notReachableReason = null;
-			if (nrr != null) {
-				notReachableReason = Enum.valueOf(NotReachableReason.class, nrr);
-			}
-			
-			subscriberState.setData(subscriberStateChoice, notReachableReason);
-		}
+        sb.append("]");
 
-		@Override
-		public void write(SubscriberStateImpl subscriberState, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
-			if (subscriberState.subscriberStateChoice != null)
-				xml.setAttribute(SUBSCRIBER_STATE_CHOICE, subscriberState.subscriberStateChoice.toString());
-			if (subscriberState.notReachableReason != null)
-				xml.add(subscriberState.notReachableReason.toString(), NOT_REACHABLE_REASON, String.class);
-		}
-	};
+        return sb.toString();
+    }
+
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<SubscriberStateImpl> SUBSCRIBER_STATE_XML = new XMLFormat<SubscriberStateImpl>(
+            SubscriberStateImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, SubscriberStateImpl subscriberState)
+                throws XMLStreamException {
+            String choice = xml.getAttribute(SUBSCRIBER_STATE_CHOICE, DEFAULT_STRING_VALUE);
+            SubscriberStateChoice subscriberStateChoice = null;
+            if (choice != null) {
+                subscriberStateChoice = Enum.valueOf(SubscriberStateChoice.class, choice);
+            }
+            String nrr = xml.get(NOT_REACHABLE_REASON, String.class);
+            NotReachableReason notReachableReason = null;
+            if (nrr != null) {
+                notReachableReason = Enum.valueOf(NotReachableReason.class, nrr);
+            }
+
+            subscriberState.setData(subscriberStateChoice, notReachableReason);
+        }
+
+        @Override
+        public void write(SubscriberStateImpl subscriberState, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            if (subscriberState.subscriberStateChoice != null)
+                xml.setAttribute(SUBSCRIBER_STATE_CHOICE, subscriberState.subscriberStateChoice.toString());
+            if (subscriberState.notReachableReason != null)
+                xml.add(subscriberState.notReachableReason.toString(), NOT_REACHABLE_REASON, String.class);
+        }
+    };
 }

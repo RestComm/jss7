@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -31,46 +31,46 @@ import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.UnknownTransitionException;
 
 /**
- * NTFY is received stating that there are insufficient ASP in ACTIVE state.
- * Hence check if AS has more ASP's in INACTIVE state. If found make them ACTIVE
- * 
+ * NTFY is received stating that there are insufficient ASP in ACTIVE state. Hence check if AS has more ASP's in INACTIVE state.
+ * If found make them ACTIVE
+ *
  * @author amit bhayani
- * 
+ *
  */
 public class THPeerAsActToActNtfyInsAsp implements TransitionHandler {
 
-	private static final Logger logger = Logger.getLogger(THPeerAsActToActNtfyInsAsp.class);
+    private static final Logger logger = Logger.getLogger(THPeerAsActToActNtfyInsAsp.class);
 
-	private AsImpl asImpl = null;
-	private FSM fsm;
+    private AsImpl asImpl = null;
+    private FSM fsm;
 
-	public THPeerAsActToActNtfyInsAsp(AsImpl asImpl, FSM fsm) {
-		this.asImpl = asImpl;
-		this.fsm = fsm;
-	}
+    public THPeerAsActToActNtfyInsAsp(AsImpl asImpl, FSM fsm) {
+        this.asImpl = asImpl;
+        this.fsm = fsm;
+    }
 
-	public boolean process(FSMState state) {
+    public boolean process(FSMState state) {
 
-		// Iterate through all the ASP for this AS and activate if they are
-		// inactive
-		for (FastList.Node<Asp> n = this.asImpl.appServerProcs.head(), end = this.asImpl.appServerProcs.tail(); (n = n
-				.getNext()) != end;) {
-			AspImpl aspTemp = (AspImpl)n.getValue();
-			AspFactoryImpl factory = aspTemp.getAspFactory();
+        // Iterate through all the ASP for this AS and activate if they are
+        // inactive
+        for (FastList.Node<Asp> n = this.asImpl.appServerProcs.head(), end = this.asImpl.appServerProcs.tail(); (n = n
+                .getNext()) != end;) {
+            AspImpl aspTemp = (AspImpl) n.getValue();
+            AspFactoryImpl factory = aspTemp.getAspFactory();
 
-			FSM aspLocalFSM = aspTemp.getLocalFSM();
-			AspState aspState = AspState.getState(aspLocalFSM.getState().getName());
+            FSM aspLocalFSM = aspTemp.getLocalFSM();
+            AspState aspState = AspState.getState(aspLocalFSM.getState().getName());
 
-			if (aspState == AspState.INACTIVE && factory.getStatus()) {
-				factory.sendAspActive(this.asImpl);
-				try {
-					aspLocalFSM.signal(TransitionState.ASP_ACTIVE_SENT);
-				} catch (UnknownTransitionException e) {
-					logger.error(e.getMessage(), e);
-				}
-			}
-		}
+            if (aspState == AspState.INACTIVE && factory.getStatus()) {
+                factory.sendAspActive(this.asImpl);
+                try {
+                    aspLocalFSM.signal(TransitionState.ASP_ACTIVE_SENT);
+                } catch (UnknownTransitionException e) {
+                    logger.error(e.getMessage(), e);
+                }
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

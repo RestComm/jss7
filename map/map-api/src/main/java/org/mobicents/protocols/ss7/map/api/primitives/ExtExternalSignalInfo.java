@@ -22,28 +22,26 @@
 
 package org.mobicents.protocols.ss7.map.api.primitives;
 
-
-
-
-/*
+/**
+ * <pre>
  *  Ext-ExternalSignalInfo ::= SEQUENCE {
  *  protocolId Ext-ProtocolId,
  *  signalInfo SignalInfo,
  *  extensionContainer ExtensionContainer OPTIONAL,
- *	...}
- 
- SignalInfo ::= OCTET STRING (SIZE (1..200))
- 
+ * ...}
  *
- * 
+ * SignalInfo ::= OCTET STRING (SIZE (1..200))
+ * </pre>
+ *
+ *
  * @author cristian veliscu
- * 
+ *
  */
 public interface ExtExternalSignalInfo {
 
-	public ExtProtocolId getExtProtocolId();
+    ExtProtocolId getExtProtocolId();
 
-	public SignalInfo getSignalInfo();
+    SignalInfo getSignalInfo();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 }

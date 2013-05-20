@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -29,7 +29,6 @@ import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
 import org.mobicents.protocols.ss7.sccp.OriginationType;
 import org.mobicents.protocols.ss7.sccp.RuleType;
-import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.sccp.impl.Mtp3UserPartImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
@@ -45,27 +44,27 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class LoadSharingTest extends SccpHarness {
 
-	private SccpAddress a1, a2;
-	protected Mtp3UserPartImpl mtp3UserPart11 = new Mtp3UserPartImpl();
+    private SccpAddress a1, a2;
+    protected Mtp3UserPartImpl mtp3UserPart11 = new Mtp3UserPartImpl();
 
-	public LoadSharingTest() {
-	}
+    public LoadSharingTest() {
+    }
 
-	@BeforeClass
-	public void setUpClass() throws Exception {
-		this.sccpStack1Name = "LoadSharingTestStack1";
-		this.sccpStack2Name = "LoadSharingTestStack2";
-	}
+    @BeforeClass
+    public void setUpClass() throws Exception {
+        this.sccpStack1Name = "LoadSharingTestStack1";
+        this.sccpStack2Name = "LoadSharingTestStack2";
+    }
 
-	@AfterClass
-	public void tearDownClass() throws Exception {
-	}
+    @AfterClass
+    public void tearDownClass() throws Exception {
+    }
 
     protected void createStack1() {
         sccpStack1 = createStack(sccpStack1Name);
@@ -77,305 +76,321 @@ public class LoadSharingTest extends SccpHarness {
         sccpStack2 = createStack(sccpStack2Name);
         sccpProvider2 = sccpStack2.getSccpProvider();
     }
-    
+
     @Override
     protected SccpStackImpl createStack(String name) {
         SccpStackImpl stack = new SccpStackImplProxy(name);
         final String dir = Util.getTmpTestDir();
-        if(dir!=null){
+        if (dir != null) {
             stack.setPersistDir(dir);
         }
         return stack;
     }
 
-	@BeforeMethod
-	public void setUp() throws Exception {
-		super.setUp();
-		
-		sccpStack1.getRouter().addMtp3ServiceAccessPoint(2, 2, 11, 2);
-		sccpStack1.getRouter().addMtp3Destination(2, 1, 12, 12, 0, 255, 255);
+    @BeforeMethod
+    public void setUp() throws Exception {
+        super.setUp();
 
-		resource1.addRemoteSpc(2, 12, 0, 0);
-		resource1.addRemoteSsn(2, 12, getSSN(), 0, false);
-	}
+        sccpStack1.getRouter().addMtp3ServiceAccessPoint(2, 2, 11, 2);
+        sccpStack1.getRouter().addMtp3Destination(2, 1, 12, 12, 0, 255, 255);
 
-	@AfterMethod
-	public void tearDown() {
-		super.tearDown();
-	}
+        resource1.addRemoteSpc(2, 12, 0, 0);
+        resource1.addRemoteSsn(2, 12, getSSN(), 0, false);
+    }
 
-	public byte[] getDataSrc() {
-		return new byte[] { 11, 12, 13, 14, 15 };
-	}
+    @AfterMethod
+    public void tearDown() {
+        super.tearDown();
+    }
 
-	@Test(groups = { "SccpMessage", "functional.transfer"})
-	public void testTransfer() throws Exception {
+    public byte[] getDataSrc() {
+        return new byte[] { 11, 12, 13, 14, 15 };
+    }
 
-		a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack1PC(), null, 8);
-		a2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(), null, 8);
+    @Test(groups = { "SccpMessage", "functional.transfer" })
+    public void testTransfer() throws Exception {
 
-		User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
-		User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+        a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack1PC(), null, 8);
+        a2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(), null, 8);
 
-		u1.register();
-		u2.register();
+        User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
 
-		Thread.sleep(100);
+        u1.register();
+        u2.register();
 
-		SccpAddress primaryAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(), GlobalTitle.getInstance(1, "111111"), 8);
-		sccpStack1.getRouter().addRoutingAddress(1, primaryAddress);
-		// primaryAddress2 - with ssn==0, so we will get ssn from the message CalledPartyAddress
-		SccpAddress primaryAddress2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(), GlobalTitle.getInstance(1, "111111"), 0);
-		sccpStack1.getRouter().addRoutingAddress(2, primaryAddress2);
-		SccpAddress backupAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 12, GlobalTitle.getInstance(1, "111111"), 8);
-		sccpStack1.getRouter().addRoutingAddress(3, backupAddress);
-//		sccpStack1.getRouter().addBackupAddress(1, backupAddress);
+        Thread.sleep(100);
 
-		// ---- Solitary case
-		SccpAddress pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
-		// pattern2 - with default ssn value
-		SccpAddress pattern2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "222222"), 0);
-		sccpStack1.getRouter().addRule(1, RuleType.Solitary, LoadSharingAlgorithm.Undefined, OriginationType.All, pattern, "K", 1, -1, null);
+        SccpAddress primaryAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(),
+                GlobalTitle.getInstance(1, "111111"), 8);
+        sccpStack1.getRouter().addRoutingAddress(1, primaryAddress);
+        // primaryAddress2 - with ssn==0, so we will get ssn from the message CalledPartyAddress
+        SccpAddress primaryAddress2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(),
+                GlobalTitle.getInstance(1, "111111"), 0);
+        sccpStack1.getRouter().addRoutingAddress(2, primaryAddress2);
+        SccpAddress backupAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 12, GlobalTitle.getInstance(
+                1, "111111"), 8);
+        sccpStack1.getRouter().addRoutingAddress(3, backupAddress);
+        // sccpStack1.getRouter().addBackupAddress(1, backupAddress);
 
-		// Primary and backup are available
-		SccpAddress a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
-		SccpDataMessage message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
-		sccpProvider1.send(message);
-		Thread.sleep(100);
-		assertEquals(u1.getMessages().size(), 0);
-		assertEquals(u2.getMessages().size(), 1);
-		assertEquals(mtp3UserPart11.getMessages().size(), 0);
+        // ---- Solitary case
+        SccpAddress pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1,
+                "111111"), 0);
+        // pattern2 - with default ssn value
+        SccpAddress pattern2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1,
+                "222222"), 0);
+        sccpStack1.getRouter().addRule(1, RuleType.Solitary, LoadSharingAlgorithm.Undefined, OriginationType.All, pattern, "K",
+                1, -1, null);
 
-		// Primary is available backup is disabled
-		this.mtp3UserPart1.sendPauseMessageToLocalUser(12);
-		Thread.sleep(100);
-		a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
-		message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
-		sccpProvider1.send(message);
-		Thread.sleep(100);
-		assertEquals(u1.getMessages().size(), 0);
-		assertEquals(u2.getMessages().size(), 2);
-		assertEquals(mtp3UserPart11.getMessages().size(), 0);
+        // Primary and backup are available
+        SccpAddress a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0,
+                GlobalTitle.getInstance(1, "111111"), 0);
+        SccpDataMessage message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8,
+                true, null, null);
+        sccpProvider1.send(message);
+        Thread.sleep(100);
+        assertEquals(u1.getMessages().size(), 0);
+        assertEquals(u2.getMessages().size(), 1);
+        assertEquals(mtp3UserPart11.getMessages().size(), 0);
 
-		// Primary is disabled backup is available 
-		this.mtp3UserPart1.sendResumeMessageToLocalUser(12);
-		this.mtp3UserPart1.sendPauseMessageToLocalUser(getStack2PC());
-		Thread.sleep(100);
-		a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
-		message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
-		sccpProvider1.send(message);
-		Thread.sleep(100);
-		assertEquals(u1.getMessages().size(), 1);
-		assertEquals(u2.getMessages().size(), 2);
-		assertEquals(mtp3UserPart11.getMessages().size(), 0);
+        // Primary is available backup is disabled
+        this.mtp3UserPart1.sendPauseMessageToLocalUser(12);
+        Thread.sleep(100);
+        a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
+        message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
+        sccpProvider1.send(message);
+        Thread.sleep(100);
+        assertEquals(u1.getMessages().size(), 0);
+        assertEquals(u2.getMessages().size(), 2);
+        assertEquals(mtp3UserPart11.getMessages().size(), 0);
 
-		// Primary and backup are disabled
-		this.mtp3UserPart1.sendPauseMessageToLocalUser(12);
-		Thread.sleep(100);
-		a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
-		message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
-		sccpProvider1.send(message);
-		Thread.sleep(100);
-		assertEquals(u1.getMessages().size(), 2);
-		assertEquals(u2.getMessages().size(), 2);
-		assertEquals(mtp3UserPart11.getMessages().size(), 0);
+        // Primary is disabled backup is available
+        this.mtp3UserPart1.sendResumeMessageToLocalUser(12);
+        this.mtp3UserPart1.sendPauseMessageToLocalUser(getStack2PC());
+        Thread.sleep(100);
+        a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
+        message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
+        sccpProvider1.send(message);
+        Thread.sleep(100);
+        assertEquals(u1.getMessages().size(), 1);
+        assertEquals(u2.getMessages().size(), 2);
+        assertEquals(mtp3UserPart11.getMessages().size(), 0);
 
-		this.mtp3UserPart1.sendResumeMessageToLocalUser(12);
-		this.mtp3UserPart1.sendResumeMessageToLocalUser(getStack2PC());
-		Thread.sleep(100);
+        // Primary and backup are disabled
+        this.mtp3UserPart1.sendPauseMessageToLocalUser(12);
+        Thread.sleep(100);
+        a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
+        message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
+        sccpProvider1.send(message);
+        Thread.sleep(100);
+        assertEquals(u1.getMessages().size(), 2);
+        assertEquals(u2.getMessages().size(), 2);
+        assertEquals(mtp3UserPart11.getMessages().size(), 0);
 
-		// ---- Dominant case
-		sccpStack1.getRouter().removeRule(1);
-		sccpStack1.getRouter().addRule(1, RuleType.Dominant, LoadSharingAlgorithm.Undefined, OriginationType.All, pattern, "K", 1, 3, null);
+        this.mtp3UserPart1.sendResumeMessageToLocalUser(12);
+        this.mtp3UserPart1.sendResumeMessageToLocalUser(getStack2PC());
+        Thread.sleep(100);
 
-		// Primary and backup are available
-		a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
-		message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
-		sccpProvider1.send(message);
-		Thread.sleep(100);
-		assertEquals(u1.getMessages().size(), 2);
-		assertEquals(u2.getMessages().size(), 3);
-		assertEquals(mtp3UserPart11.getMessages().size(), 0);
+        // ---- Dominant case
+        sccpStack1.getRouter().removeRule(1);
+        sccpStack1.getRouter().addRule(1, RuleType.Dominant, LoadSharingAlgorithm.Undefined, OriginationType.All, pattern, "K",
+                1, 3, null);
 
-		// Primary is available backup is disabled
-		this.mtp3UserPart1.sendPauseMessageToLocalUser(12);
-		Thread.sleep(100);
-		a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
-		message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
-		sccpProvider1.send(message);
-		Thread.sleep(100);
-		assertEquals(u1.getMessages().size(), 2);
-		assertEquals(u2.getMessages().size(), 4);
-		assertEquals(mtp3UserPart11.getMessages().size(), 0);
+        // Primary and backup are available
+        a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
+        message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
+        sccpProvider1.send(message);
+        Thread.sleep(100);
+        assertEquals(u1.getMessages().size(), 2);
+        assertEquals(u2.getMessages().size(), 3);
+        assertEquals(mtp3UserPart11.getMessages().size(), 0);
 
-		// Primary is disabled backup is available 
-		this.mtp3UserPart1.sendResumeMessageToLocalUser(12);
-		this.mtp3UserPart1.sendPauseMessageToLocalUser(getStack2PC());
-		Thread.sleep(100);
-		a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
-		message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
-		sccpProvider1.send(message);
-		Thread.sleep(100);
-		assertEquals(u1.getMessages().size(), 2);
-		assertEquals(u2.getMessages().size(), 4);
-		assertEquals(mtp3UserPart11.getMessages().size(), 1);
+        // Primary is available backup is disabled
+        this.mtp3UserPart1.sendPauseMessageToLocalUser(12);
+        Thread.sleep(100);
+        a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
+        message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
+        sccpProvider1.send(message);
+        Thread.sleep(100);
+        assertEquals(u1.getMessages().size(), 2);
+        assertEquals(u2.getMessages().size(), 4);
+        assertEquals(mtp3UserPart11.getMessages().size(), 0);
 
-		// Primary and backup are disabled
-		this.mtp3UserPart1.sendPauseMessageToLocalUser(12);
-		Thread.sleep(100);
-		a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
-		message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
-		sccpProvider1.send(message);
-		Thread.sleep(100);
-		assertEquals(u1.getMessages().size(), 3);
-		assertEquals(u2.getMessages().size(), 4);
-		assertEquals(mtp3UserPart11.getMessages().size(), 1);
+        // Primary is disabled backup is available
+        this.mtp3UserPart1.sendResumeMessageToLocalUser(12);
+        this.mtp3UserPart1.sendPauseMessageToLocalUser(getStack2PC());
+        Thread.sleep(100);
+        a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
+        message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
+        sccpProvider1.send(message);
+        Thread.sleep(100);
+        assertEquals(u1.getMessages().size(), 2);
+        assertEquals(u2.getMessages().size(), 4);
+        assertEquals(mtp3UserPart11.getMessages().size(), 1);
 
-		this.mtp3UserPart1.sendResumeMessageToLocalUser(12);
-		this.mtp3UserPart1.sendResumeMessageToLocalUser(getStack2PC());
-		Thread.sleep(100);
+        // Primary and backup are disabled
+        this.mtp3UserPart1.sendPauseMessageToLocalUser(12);
+        Thread.sleep(100);
+        a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
+        message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
+        sccpProvider1.send(message);
+        Thread.sleep(100);
+        assertEquals(u1.getMessages().size(), 3);
+        assertEquals(u2.getMessages().size(), 4);
+        assertEquals(mtp3UserPart11.getMessages().size(), 1);
 
-		// ---- Loadshared case
-		sccpStack1.getRouter().removeRule(1);
-		sccpStack1.getRouter().addRule(1, RuleType.Loadshared, LoadSharingAlgorithm.Bit4, OriginationType.All, pattern, "K", 1, 3, null);
-		// rule which primaryAddress ssn==0 (getting ssn from origin CalledPartyAddress)
-		sccpStack1.getRouter().addRule(2, RuleType.Loadshared, LoadSharingAlgorithm.Bit4, OriginationType.All, pattern2, "K", 2, 3, null);
+        this.mtp3UserPart1.sendResumeMessageToLocalUser(12);
+        this.mtp3UserPart1.sendResumeMessageToLocalUser(getStack2PC());
+        Thread.sleep(100);
 
-		// Primary and backup are available
-		//   - class 1 (route by sls): sls = 0xEF: primary route (sls & 0x10 rule)
-		a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
-		message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0xEF, 8, true, null, null);
-		sccpProvider1.send(message);
-		Thread.sleep(100);
-		assertEquals(u1.getMessages().size(), 3);
-		assertEquals(u2.getMessages().size(), 5);
-		assertEquals(mtp3UserPart11.getMessages().size(), 1);
+        // ---- Loadshared case
+        sccpStack1.getRouter().removeRule(1);
+        sccpStack1.getRouter().addRule(1, RuleType.Loadshared, LoadSharingAlgorithm.Bit4, OriginationType.All, pattern, "K", 1,
+                3, null);
+        // rule which primaryAddress ssn==0 (getting ssn from origin CalledPartyAddress)
+        sccpStack1.getRouter().addRule(2, RuleType.Loadshared, LoadSharingAlgorithm.Bit4, OriginationType.All, pattern2, "K",
+                2, 3, null);
 
-		//   - class 1 (route by sls): sls = 0xFF: backup route (sls & 0x10 rule)
-		a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
-		message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0xFF, 8, true, null, null);
-		sccpProvider1.send(message);
-		Thread.sleep(100);
-		assertEquals(u1.getMessages().size(), 3);
-		assertEquals(u2.getMessages().size(), 5);
-		assertEquals(mtp3UserPart11.getMessages().size(), 2);
+        // Primary and backup are available
+        // - class 1 (route by sls): sls = 0xEF: primary route (sls & 0x10 rule)
+        a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
+        message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0xEF, 8, true, null,
+                null);
+        sccpProvider1.send(message);
+        Thread.sleep(100);
+        assertEquals(u1.getMessages().size(), 3);
+        assertEquals(u2.getMessages().size(), 5);
+        assertEquals(mtp3UserPart11.getMessages().size(), 1);
 
-		//   - class 0: first message is for primary route
-		a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
-		message = this.sccpProvider1.getMessageFactory().createDataMessageClass0(a3, a1, getDataSrc(), 8, true, null, null);
-		sccpProvider1.send(message);
-		Thread.sleep(100);
-		assertEquals(u1.getMessages().size(), 3);
-		assertEquals(u2.getMessages().size(), 6);
-		assertEquals(mtp3UserPart11.getMessages().size(), 2);
+        // - class 1 (route by sls): sls = 0xFF: backup route (sls & 0x10 rule)
+        a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
+        message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0xFF, 8, true, null,
+                null);
+        sccpProvider1.send(message);
+        Thread.sleep(100);
+        assertEquals(u1.getMessages().size(), 3);
+        assertEquals(u2.getMessages().size(), 5);
+        assertEquals(mtp3UserPart11.getMessages().size(), 2);
 
-		//   - class 0: second message is for backup route
-		a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
-		message = this.sccpProvider1.getMessageFactory().createDataMessageClass0(a3, a1, getDataSrc(), 8, true, null, null);
-		sccpProvider1.send(message);
-		Thread.sleep(100);
-		assertEquals(u1.getMessages().size(), 3);
-		assertEquals(u2.getMessages().size(), 6);
-		assertEquals(mtp3UserPart11.getMessages().size(), 3);
+        // - class 0: first message is for primary route
+        a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
+        message = this.sccpProvider1.getMessageFactory().createDataMessageClass0(a3, a1, getDataSrc(), 8, true, null, null);
+        sccpProvider1.send(message);
+        Thread.sleep(100);
+        assertEquals(u1.getMessages().size(), 3);
+        assertEquals(u2.getMessages().size(), 6);
+        assertEquals(mtp3UserPart11.getMessages().size(), 2);
 
-		// Primary is available backup is disabled
-		this.mtp3UserPart1.sendPauseMessageToLocalUser(12);
-		Thread.sleep(100);
-		a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
-		message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
-		sccpProvider1.send(message);
-		Thread.sleep(100);
-		assertEquals(u1.getMessages().size(), 3);
-		assertEquals(u2.getMessages().size(), 7);
-		assertEquals(mtp3UserPart11.getMessages().size(), 3);
+        // - class 0: second message is for backup route
+        a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
+        message = this.sccpProvider1.getMessageFactory().createDataMessageClass0(a3, a1, getDataSrc(), 8, true, null, null);
+        sccpProvider1.send(message);
+        Thread.sleep(100);
+        assertEquals(u1.getMessages().size(), 3);
+        assertEquals(u2.getMessages().size(), 6);
+        assertEquals(mtp3UserPart11.getMessages().size(), 3);
 
-		// Primary is available backup is disabled + CalledPartyAddress has SSN + primaryAddress has not SSN (SSN is taken from CalledPartyAddress) 
-		SccpAddress a3_2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "222222"), 8);
-		message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3_2, a1, getDataSrc(), 0, 8, true, null, null);
-		sccpProvider1.send(message);
-		Thread.sleep(100);
-		assertEquals(u1.getMessages().size(), 3);
-		assertEquals(u2.getMessages().size(), 8);
-		assertEquals(mtp3UserPart11.getMessages().size(), 3);
+        // Primary is available backup is disabled
+        this.mtp3UserPart1.sendPauseMessageToLocalUser(12);
+        Thread.sleep(100);
+        a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
+        message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
+        sccpProvider1.send(message);
+        Thread.sleep(100);
+        assertEquals(u1.getMessages().size(), 3);
+        assertEquals(u2.getMessages().size(), 7);
+        assertEquals(mtp3UserPart11.getMessages().size(), 3);
 
-		// Primary is disabled backup is available 
-		this.mtp3UserPart1.sendResumeMessageToLocalUser(12);
-		this.mtp3UserPart1.sendPauseMessageToLocalUser(getStack2PC());
-		Thread.sleep(100);
-		a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
-		message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
-		sccpProvider1.send(message);
-		Thread.sleep(100);
-		assertEquals(u1.getMessages().size(), 3);
-		assertEquals(u2.getMessages().size(), 8);
-		assertEquals(mtp3UserPart11.getMessages().size(), 4);
+        // Primary is available backup is disabled + CalledPartyAddress has SSN + primaryAddress has not SSN (SSN is taken from
+        // CalledPartyAddress)
+        SccpAddress a3_2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1,
+                "222222"), 8);
+        message = this.sccpProvider1.getMessageFactory()
+                .createDataMessageClass1(a3_2, a1, getDataSrc(), 0, 8, true, null, null);
+        sccpProvider1.send(message);
+        Thread.sleep(100);
+        assertEquals(u1.getMessages().size(), 3);
+        assertEquals(u2.getMessages().size(), 8);
+        assertEquals(mtp3UserPart11.getMessages().size(), 3);
 
-		// Primary and backup are disabled
-		this.mtp3UserPart1.sendPauseMessageToLocalUser(12);
-		Thread.sleep(100);
-		a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
-		message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
-		sccpProvider1.send(message);
-		Thread.sleep(100);
-		assertEquals(u1.getMessages().size(), 4);
-		assertEquals(u2.getMessages().size(), 8);
-		assertEquals(mtp3UserPart11.getMessages().size(), 4);
+        // Primary is disabled backup is available
+        this.mtp3UserPart1.sendResumeMessageToLocalUser(12);
+        this.mtp3UserPart1.sendPauseMessageToLocalUser(getStack2PC());
+        Thread.sleep(100);
+        a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
+        message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
+        sccpProvider1.send(message);
+        Thread.sleep(100);
+        assertEquals(u1.getMessages().size(), 3);
+        assertEquals(u2.getMessages().size(), 8);
+        assertEquals(mtp3UserPart11.getMessages().size(), 4);
 
-		this.mtp3UserPart1.sendResumeMessageToLocalUser(12);
-		this.mtp3UserPart1.sendResumeMessageToLocalUser(getStack2PC());
-		Thread.sleep(100);
+        // Primary and backup are disabled
+        this.mtp3UserPart1.sendPauseMessageToLocalUser(12);
+        Thread.sleep(100);
+        a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
+        message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
+        sccpProvider1.send(message);
+        Thread.sleep(100);
+        assertEquals(u1.getMessages().size(), 4);
+        assertEquals(u2.getMessages().size(), 8);
+        assertEquals(mtp3UserPart11.getMessages().size(), 4);
 
-		// ---- Broadcast case
-		sccpStack1.getRouter().removeRule(1);
-		sccpStack1.getRouter().removeRule(2);
-		sccpStack1.getRouter().addRule(1, RuleType.Broadcast, LoadSharingAlgorithm.Undefined, OriginationType.All, pattern, "K", 1, 3, null);
+        this.mtp3UserPart1.sendResumeMessageToLocalUser(12);
+        this.mtp3UserPart1.sendResumeMessageToLocalUser(getStack2PC());
+        Thread.sleep(100);
 
-		// Primary and backup are available
-		a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
-		message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
-		sccpProvider1.send(message);
-		Thread.sleep(100);
-		assertEquals(u1.getMessages().size(), 4);
-		assertEquals(u2.getMessages().size(), 9);
-		assertEquals(mtp3UserPart11.getMessages().size(), 5);
+        // ---- Broadcast case
+        sccpStack1.getRouter().removeRule(1);
+        sccpStack1.getRouter().removeRule(2);
+        sccpStack1.getRouter().addRule(1, RuleType.Broadcast, LoadSharingAlgorithm.Undefined, OriginationType.All, pattern,
+                "K", 1, 3, null);
 
-		// Primary is available backup is disabled
-		this.mtp3UserPart1.sendPauseMessageToLocalUser(12);
-		Thread.sleep(100);
-		a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
-		message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
-		sccpProvider1.send(message);
-		Thread.sleep(100);
-		assertEquals(u1.getMessages().size(), 4);
-		assertEquals(u2.getMessages().size(), 10);
-		assertEquals(mtp3UserPart11.getMessages().size(), 5);
+        // Primary and backup are available
+        a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
+        message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
+        sccpProvider1.send(message);
+        Thread.sleep(100);
+        assertEquals(u1.getMessages().size(), 4);
+        assertEquals(u2.getMessages().size(), 9);
+        assertEquals(mtp3UserPart11.getMessages().size(), 5);
 
-		// Primary is disabled backup is available 
-		this.mtp3UserPart1.sendResumeMessageToLocalUser(12);
-		this.mtp3UserPart1.sendPauseMessageToLocalUser(getStack2PC());
-		Thread.sleep(100);
-		a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
-		message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
-		sccpProvider1.send(message);
-		Thread.sleep(100);
-		assertEquals(u1.getMessages().size(), 4);
-		assertEquals(u2.getMessages().size(), 10);
-		assertEquals(mtp3UserPart11.getMessages().size(), 6);
+        // Primary is available backup is disabled
+        this.mtp3UserPart1.sendPauseMessageToLocalUser(12);
+        Thread.sleep(100);
+        a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
+        message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
+        sccpProvider1.send(message);
+        Thread.sleep(100);
+        assertEquals(u1.getMessages().size(), 4);
+        assertEquals(u2.getMessages().size(), 10);
+        assertEquals(mtp3UserPart11.getMessages().size(), 5);
 
-		// Primary and backup are disabled
-		this.mtp3UserPart1.sendPauseMessageToLocalUser(12);
-		Thread.sleep(100);
-		a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
-		message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
-		sccpProvider1.send(message);
-		Thread.sleep(100);
-		assertEquals(u1.getMessages().size(), 5);
-		assertEquals(u2.getMessages().size(), 10);
-		assertEquals(mtp3UserPart11.getMessages().size(), 6);
+        // Primary is disabled backup is available
+        this.mtp3UserPart1.sendResumeMessageToLocalUser(12);
+        this.mtp3UserPart1.sendPauseMessageToLocalUser(getStack2PC());
+        Thread.sleep(100);
+        a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
+        message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
+        sccpProvider1.send(message);
+        Thread.sleep(100);
+        assertEquals(u1.getMessages().size(), 4);
+        assertEquals(u2.getMessages().size(), 10);
+        assertEquals(mtp3UserPart11.getMessages().size(), 6);
 
-		this.mtp3UserPart1.sendResumeMessageToLocalUser(12);
-		this.mtp3UserPart1.sendResumeMessageToLocalUser(getStack2PC());
-		Thread.sleep(100);
-	}
+        // Primary and backup are disabled
+        this.mtp3UserPart1.sendPauseMessageToLocalUser(12);
+        Thread.sleep(100);
+        a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
+        message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
+        sccpProvider1.send(message);
+        Thread.sleep(100);
+        assertEquals(u1.getMessages().size(), 5);
+        assertEquals(u2.getMessages().size(), 10);
+        assertEquals(mtp3UserPart11.getMessages().size(), 6);
+
+        this.mtp3UserPart1.sendResumeMessageToLocalUser(12);
+        this.mtp3UserPart1.sendResumeMessageToLocalUser(getStack2PC());
+        Thread.sleep(100);
+    }
 }
-

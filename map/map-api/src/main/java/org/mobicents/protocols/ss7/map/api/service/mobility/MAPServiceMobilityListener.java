@@ -41,36 +41,47 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.InsertSubscriberDataResponse;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MAPServiceMobilityListener extends MAPServiceListener {
 
-	// -- Location Management Service
-	public void onUpdateLocationRequest(UpdateLocationRequest ind);
-	public void onUpdateLocationResponse(UpdateLocationResponse ind);
-	public void onCancelLocationRequest(CancelLocationRequest request);
-	public void onCancelLocationResponse(CancelLocationResponse response);
-	public void onSendIdentificationRequest(SendIdentificationRequest request);
-	public void onSendIdentificationResponse(SendIdentificationResponse response);
-	public void onUpdateGprsLocationRequest(UpdateGprsLocationRequest request);
-	public void onUpdateGprsLocationResponse(UpdateGprsLocationResponse response);
+    // -- Location Management Service
+    void onUpdateLocationRequest(UpdateLocationRequest ind);
 
-	// -- Authentication management services
-	public void onSendAuthenticationInfoRequest(SendAuthenticationInfoRequest ind);
-	public void onSendAuthenticationInfoResponse(SendAuthenticationInfoResponse ind);
+    void onUpdateLocationResponse(UpdateLocationResponse ind);
 
-	// -- Subscriber Information services
-	public void onAnyTimeInterrogationRequest(AnyTimeInterrogationRequest request);
-	public void onAnyTimeInterrogationResponse(AnyTimeInterrogationResponse response);
+    void onCancelLocationRequest(CancelLocationRequest request);
 
-	// -- Subscriber Management services
-	public void onInsertSubscriberDataRequest(InsertSubscriberDataRequest request);
-	public void onInsertSubscriberDataResponse(InsertSubscriberDataResponse request);
+    void onCancelLocationResponse(CancelLocationResponse response);
 
-	// -- International mobile equipment identities management services
-	public void onCheckImeiRequest(CheckImeiRequest request);
-	public void onCheckImeiResponse(CheckImeiResponse response);
+    void onSendIdentificationRequest(SendIdentificationRequest request);
+
+    void onSendIdentificationResponse(SendIdentificationResponse response);
+
+    void onUpdateGprsLocationRequest(UpdateGprsLocationRequest request);
+
+    void onUpdateGprsLocationResponse(UpdateGprsLocationResponse response);
+
+    // -- Authentication management services
+    void onSendAuthenticationInfoRequest(SendAuthenticationInfoRequest ind);
+
+    void onSendAuthenticationInfoResponse(SendAuthenticationInfoResponse ind);
+
+    // -- Subscriber Information services
+    void onAnyTimeInterrogationRequest(AnyTimeInterrogationRequest request);
+
+    void onAnyTimeInterrogationResponse(AnyTimeInterrogationResponse response);
+
+    // -- Subscriber Management services
+    void onInsertSubscriberDataRequest(InsertSubscriberDataRequest request);
+
+    void onInsertSubscriberDataResponse(InsertSubscriberDataResponse request);
+
+    // -- International mobile equipment identities management services
+    void onCheckImeiRequest(CheckImeiRequest request);
+
+    void onCheckImeiResponse(CheckImeiResponse response);
 
 }

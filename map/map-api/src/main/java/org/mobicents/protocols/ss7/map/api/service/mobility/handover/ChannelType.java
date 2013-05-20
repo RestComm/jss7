@@ -23,22 +23,16 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
 /**
- * 
-
-ChannelType ::= octet STRING (SIZE (1..10))
--- concatenation of
--- speech data indicator
--- channel rate
--- speech encoding algorithm/ data rate
--- and transparency indicator
--- as defined in TS GSM 08.08
-
- * 
+ *
+ ChannelType ::= octet STRING (SIZE (1..10)) -- concatenation of -- speech data indicator -- channel rate -- speech encoding
+ * algorithm/ data rate -- and transparency indicator -- as defined in TS GSM 08.08
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ChannelType {
 
-	public byte[] getData();
+    byte[] getData();
 
 }

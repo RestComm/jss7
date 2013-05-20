@@ -23,21 +23,16 @@
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
-*
-
-InformationToSend {PARAMETERS-BOUND : bound} ::= CHOICE { 
- inbandInfo       [0] InbandInfo {bound}, 
- tone        [1] Tone 
- }  
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ InformationToSend {PARAMETERS-BOUND : bound} ::= CHOICE { inbandInfo [0] InbandInfo {bound}, tone [1] Tone }
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface InformationToSend {
 
-	public InbandInfo getInbandInfo();
+    InbandInfo getInbandInfo();
 
-	public Tone getTone();
+    Tone getTone();
 
 }
-

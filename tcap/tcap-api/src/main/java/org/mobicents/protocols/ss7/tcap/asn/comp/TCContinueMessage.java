@@ -32,29 +32,35 @@ import org.mobicents.protocols.ss7.tcap.asn.Encodable;
  */
 public interface TCContinueMessage extends Encodable {
 
-	
-	public static final int _TAG = 0x05;
-	public static final boolean _TAG_PC_PRIMITIVE = false;
-	public static final int _TAG_CLASS = Tag.CLASS_APPLICATION;
-	
-	public static final int _TAG_OTX = 0x08;
-	public static final boolean _TAG_OTX_PC_PRIMITIVE = true;
-	public static final int _TAG_CLASS_OTX = Tag.CLASS_APPLICATION;
-	
-	public static final int _TAG_DTX = 0x09;
-	public static final boolean _TAG_DTX_PC_PRIMITIVE = true;
-	public static final int _TAG_CLASS_DTX = Tag.CLASS_APPLICATION;
-	
-	//mandatory
-	public byte[] getOriginatingTransactionId();
-	public void setOriginatingTransactionId(byte[] t);
-	public byte[] getDestinationTransactionId();
-	public void setDestinationTransactionId(byte[] t);
-	//opt FIXME: make this External?
-	public DialogPortion getDialogPortion();
-	public void setDialogPortion(DialogPortion dp);
-	//opt
-	public Component[] getComponent();
-	public void setComponent(Component[] c);
-	
+    int _TAG = 0x05;
+    boolean _TAG_PC_PRIMITIVE = false;
+    int _TAG_CLASS = Tag.CLASS_APPLICATION;
+
+    int _TAG_OTX = 0x08;
+    boolean _TAG_OTX_PC_PRIMITIVE = true;
+    int _TAG_CLASS_OTX = Tag.CLASS_APPLICATION;
+
+    int _TAG_DTX = 0x09;
+    boolean _TAG_DTX_PC_PRIMITIVE = true;
+    int _TAG_CLASS_DTX = Tag.CLASS_APPLICATION;
+
+    // mandatory
+    byte[] getOriginatingTransactionId();
+
+    void setOriginatingTransactionId(byte[] t);
+
+    byte[] getDestinationTransactionId();
+
+    void setDestinationTransactionId(byte[] t);
+
+    // opt FIXME: make this External?
+    DialogPortion getDialogPortion();
+
+    void setDialogPortion(DialogPortion dp);
+
+    // opt
+    Component[] getComponent();
+
+    void setComponent(Component[] c);
+
 }

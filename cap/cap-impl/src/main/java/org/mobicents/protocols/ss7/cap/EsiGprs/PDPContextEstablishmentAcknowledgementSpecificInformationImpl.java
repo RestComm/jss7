@@ -50,254 +50,260 @@ import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.GP
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.LocationInformationGPRSImpl;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class PDPContextEstablishmentAcknowledgementSpecificInformationImpl extends SequenceBase implements PDPContextEstablishmentAcknowledgementSpecificInformation{
+public class PDPContextEstablishmentAcknowledgementSpecificInformationImpl extends SequenceBase implements
+        PDPContextEstablishmentAcknowledgementSpecificInformation {
 
-	public static final int _ID_accessPointName = 0;
-	public static final int _ID_chargingID = 1;
-	public static final int _ID_locationInformationGPRS = 2;
-	public static final int _ID_endUserAddress = 3;
-	public static final int _ID_qualityOfService = 4;
-	public static final int _ID_timeAndTimezone = 5;
-	public static final int _ID_gsnAddress = 6;
-	
-	public static final int _ID_PDPContextEstablishmentAcknowledgementSpecificInformation = 5;
+    public static final int _ID_accessPointName = 0;
+    public static final int _ID_chargingID = 1;
+    public static final int _ID_locationInformationGPRS = 2;
+    public static final int _ID_endUserAddress = 3;
+    public static final int _ID_qualityOfService = 4;
+    public static final int _ID_timeAndTimezone = 5;
+    public static final int _ID_gsnAddress = 6;
 
-	private AccessPointName accessPointName;
-	private GPRSChargingID chargingID;
-	private LocationInformationGPRS locationInformationGPRS;
-	private EndUserAddress endUserAddress;
-	private QualityOfService qualityOfService;
-	private TimeAndTimezone timeAndTimezone;
-	private GSNAddress gsnAddress;
-	
-	public PDPContextEstablishmentAcknowledgementSpecificInformationImpl() {
-		super("PDPContextEstablishmentAcknowledgementSpecificInformation");
-	}
-	
-	public PDPContextEstablishmentAcknowledgementSpecificInformationImpl(
-			AccessPointName accessPointName,
-			GPRSChargingID chargingID,
-			LocationInformationGPRS locationInformationGPRS,
-			EndUserAddress endUserAddress, QualityOfService qualityOfService,
-			TimeAndTimezone timeAndTimezone, GSNAddress gsnAddress) {
-		super("PDPContextEstablishmentAcknowledgementSpecificInformation");
-		this.accessPointName = accessPointName;
-		this.chargingID = chargingID;
-		this.locationInformationGPRS = locationInformationGPRS;
-		this.endUserAddress = endUserAddress;
-		this.qualityOfService = qualityOfService;
-		this.timeAndTimezone = timeAndTimezone;
-		this.gsnAddress = gsnAddress;
-	}
+    public static final int _ID_PDPContextEstablishmentAcknowledgementSpecificInformation = 5;
 
-	@Override
-	public AccessPointName getAccessPointName() {
-		return this.accessPointName;
-	}
+    private AccessPointName accessPointName;
+    private GPRSChargingID chargingID;
+    private LocationInformationGPRS locationInformationGPRS;
+    private EndUserAddress endUserAddress;
+    private QualityOfService qualityOfService;
+    private TimeAndTimezone timeAndTimezone;
+    private GSNAddress gsnAddress;
 
-	@Override
-	public GPRSChargingID getChargingID() {
-		return this.chargingID;
-	}
+    public PDPContextEstablishmentAcknowledgementSpecificInformationImpl() {
+        super("PDPContextEstablishmentAcknowledgementSpecificInformation");
+    }
 
-	@Override
-	public LocationInformationGPRS getLocationInformationGPRS() {
-		return this.locationInformationGPRS;
-	}
+    public PDPContextEstablishmentAcknowledgementSpecificInformationImpl(AccessPointName accessPointName,
+            GPRSChargingID chargingID, LocationInformationGPRS locationInformationGPRS, EndUserAddress endUserAddress,
+            QualityOfService qualityOfService, TimeAndTimezone timeAndTimezone, GSNAddress gsnAddress) {
+        super("PDPContextEstablishmentAcknowledgementSpecificInformation");
+        this.accessPointName = accessPointName;
+        this.chargingID = chargingID;
+        this.locationInformationGPRS = locationInformationGPRS;
+        this.endUserAddress = endUserAddress;
+        this.qualityOfService = qualityOfService;
+        this.timeAndTimezone = timeAndTimezone;
+        this.gsnAddress = gsnAddress;
+    }
 
-	@Override
-	public EndUserAddress getEndUserAddress() {
-		return this.endUserAddress;
-	}
+    @Override
+    public AccessPointName getAccessPointName() {
+        return this.accessPointName;
+    }
 
-	@Override
-	public QualityOfService getQualityOfService() {
-		return this.qualityOfService;
-	}
+    @Override
+    public GPRSChargingID getChargingID() {
+        return this.chargingID;
+    }
 
-	@Override
-	public TimeAndTimezone getTimeAndTimezone() {
-		return this.timeAndTimezone;
-	}
+    @Override
+    public LocationInformationGPRS getLocationInformationGPRS() {
+        return this.locationInformationGPRS;
+    }
 
-	@Override
-	public GSNAddress getGSNAddress() {
-		return this.gsnAddress;
-	}
+    @Override
+    public EndUserAddress getEndUserAddress() {
+        return this.endUserAddress;
+    }
 
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
+    @Override
+    public QualityOfService getQualityOfService() {
+        return this.qualityOfService;
+    }
 
-	public int getTagClass() {
-		return Tag.CLASS_CONTEXT_SPECIFIC;
-	}
-	
-	@Override
-	protected void _decode(AsnInputStream asnIS, int length)
-			throws CAPParsingComponentException, IOException, AsnException,
-			MAPParsingComponentException {
-		this.accessPointName = null;
-		this.chargingID = null;
-		this.locationInformationGPRS = null;
-		this.endUserAddress = null;
-		this.qualityOfService = null;
-		this.timeAndTimezone = null;
-		this.gsnAddress = null;
+    @Override
+    public TimeAndTimezone getTimeAndTimezone() {
+        return this.timeAndTimezone;
+    }
 
-		AsnInputStream ais = asnIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+    @Override
+    public GSNAddress getGSNAddress() {
+        return this.gsnAddress;
+    }
 
-			int tag = ais.readTag();
+    public int getTag() throws CAPException {
+        return Tag.SEQUENCE;
+    }
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				
-				case _ID_accessPointName:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ".accessPointName: Parameter is not primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.accessPointName = new AccessPointNameImpl();
-					((AccessPointNameImpl) this.accessPointName).decodeAll(ais);
-					break;
-				case _ID_chargingID:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ".chargingID: Parameter is not primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.chargingID = new GPRSChargingIDImpl();
-					((GPRSChargingIDImpl) this.chargingID).decodeAll(ais);
-					break;
-				case _ID_locationInformationGPRS:
-					if (ais.isTagPrimitive())
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ".locationInformationGPRS: Parameter is  primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.locationInformationGPRS = new LocationInformationGPRSImpl();
-					((LocationInformationGPRSImpl) this.locationInformationGPRS).decodeAll(ais);
-					break;
-				case _ID_endUserAddress:
-					if (ais.isTagPrimitive())
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ".endUserAddress: Parameter is  primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.endUserAddress = new EndUserAddressImpl();
-					((EndUserAddressImpl) this.endUserAddress).decodeAll(ais);
-					break;
-				case _ID_qualityOfService:
-					if (ais.isTagPrimitive())
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ".qualityOfService: Parameter is primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.qualityOfService = new QualityOfServiceImpl();
-					((QualityOfServiceImpl) this.qualityOfService).decodeAll(ais);
-					break;
-				case _ID_timeAndTimezone:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ".timeAndTimezone: Parameter is not primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.timeAndTimezone = new TimeAndTimezoneImpl();
-					((TimeAndTimezoneImpl) this.timeAndTimezone).decodeAll(ais);
-					break;
-				case _ID_gsnAddress:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ".gsnAddress: Parameter is not primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.gsnAddress = new GSNAddressImpl();
-					((GSNAddressImpl) this.gsnAddress).decodeAll(ais);
-					break;
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
-	}
-	
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		try {
-			if (this.accessPointName != null)
-				((AccessPointNameImpl) this.accessPointName).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_accessPointName);
+    public int getTagClass() {
+        return Tag.CLASS_CONTEXT_SPECIFIC;
+    }
 
-			if (this.chargingID != null)
-				((GPRSChargingIDImpl) this.chargingID).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_chargingID);
+    @Override
+    protected void _decode(AsnInputStream asnIS, int length) throws CAPParsingComponentException, IOException, AsnException,
+            MAPParsingComponentException {
+        this.accessPointName = null;
+        this.chargingID = null;
+        this.locationInformationGPRS = null;
+        this.endUserAddress = null;
+        this.qualityOfService = null;
+        this.timeAndTimezone = null;
+        this.gsnAddress = null;
 
-			if (this.locationInformationGPRS != null)
-				((LocationInformationGPRSImpl) this.locationInformationGPRS).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_locationInformationGPRS);
-			
-			if (this.endUserAddress != null)
-				((EndUserAddressImpl) this.endUserAddress).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_endUserAddress);
-			
-			if (this.qualityOfService != null)
-				((QualityOfServiceImpl) this.qualityOfService).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_qualityOfService);
-			
-			if (this.timeAndTimezone != null)
-				((TimeAndTimezoneImpl) this.timeAndTimezone).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_timeAndTimezone);
-			
-			if (this.gsnAddress != null)
-				((GSNAddressImpl) this.gsnAddress).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_gsnAddress);
-		
-		} catch (MAPException e) {
-			throw new CAPException("MAPException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
+        AsnInputStream ais = asnIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-	}
-	
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName + " [");
+            int tag = ais.readTag();
 
-		if (this.accessPointName != null) {
-			sb.append("accessPointName=");
-			sb.append(this.accessPointName.toString());
-			sb.append(", ");
-		}
-	
-		if (this.chargingID != null) {
-			sb.append("chargingID=");
-			sb.append(this.chargingID.toString());
-			sb.append(", ");
-		}
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
 
-		if (this.locationInformationGPRS != null) {
-			sb.append("locationInformationGPRS=");
-			sb.append(this.locationInformationGPRS.toString());
-			sb.append(", ");
-		}
-		
-		if (this.endUserAddress != null) {
-			sb.append("endUserAddress=");
-			sb.append(this.endUserAddress.toString());
-			sb.append(", ");
-		}
-		
-		if (this.qualityOfService != null) {
-			sb.append("qualityOfService=");
-			sb.append(this.qualityOfService.toString());
-			sb.append(", ");
-		}
-		
-		if (this.timeAndTimezone != null) {
-			sb.append("timeAndTimezone=");
-			sb.append(this.timeAndTimezone.toString());
-			sb.append(", ");
-		}
-		
-		if (this.gsnAddress != null) {
-			sb.append("gsnAddress=");
-			sb.append(this.gsnAddress.toString());
-			sb.append(" ");
-		}
-	
-		sb.append("]");
+                    case _ID_accessPointName:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".accessPointName: Parameter is not primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.accessPointName = new AccessPointNameImpl();
+                        ((AccessPointNameImpl) this.accessPointName).decodeAll(ais);
+                        break;
+                    case _ID_chargingID:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".chargingID: Parameter is not primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.chargingID = new GPRSChargingIDImpl();
+                        ((GPRSChargingIDImpl) this.chargingID).decodeAll(ais);
+                        break;
+                    case _ID_locationInformationGPRS:
+                        if (ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".locationInformationGPRS: Parameter is  primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.locationInformationGPRS = new LocationInformationGPRSImpl();
+                        ((LocationInformationGPRSImpl) this.locationInformationGPRS).decodeAll(ais);
+                        break;
+                    case _ID_endUserAddress:
+                        if (ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".endUserAddress: Parameter is  primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.endUserAddress = new EndUserAddressImpl();
+                        ((EndUserAddressImpl) this.endUserAddress).decodeAll(ais);
+                        break;
+                    case _ID_qualityOfService:
+                        if (ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".qualityOfService: Parameter is primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.qualityOfService = new QualityOfServiceImpl();
+                        ((QualityOfServiceImpl) this.qualityOfService).decodeAll(ais);
+                        break;
+                    case _ID_timeAndTimezone:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".timeAndTimezone: Parameter is not primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.timeAndTimezone = new TimeAndTimezoneImpl();
+                        ((TimeAndTimezoneImpl) this.timeAndTimezone).decodeAll(ais);
+                        break;
+                    case _ID_gsnAddress:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".gsnAddress: Parameter is not primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.gsnAddress = new GSNAddressImpl();
+                        ((GSNAddressImpl) this.gsnAddress).decodeAll(ais);
+                        break;
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
+    }
 
-		return sb.toString();
-	}
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
+        try {
+            if (this.accessPointName != null)
+                ((AccessPointNameImpl) this.accessPointName).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_accessPointName);
+
+            if (this.chargingID != null)
+                ((GPRSChargingIDImpl) this.chargingID).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_chargingID);
+
+            if (this.locationInformationGPRS != null)
+                ((LocationInformationGPRSImpl) this.locationInformationGPRS).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_locationInformationGPRS);
+
+            if (this.endUserAddress != null)
+                ((EndUserAddressImpl) this.endUserAddress).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_endUserAddress);
+
+            if (this.qualityOfService != null)
+                ((QualityOfServiceImpl) this.qualityOfService).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_qualityOfService);
+
+            if (this.timeAndTimezone != null)
+                ((TimeAndTimezoneImpl) this.timeAndTimezone).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_timeAndTimezone);
+
+            if (this.gsnAddress != null)
+                ((GSNAddressImpl) this.gsnAddress).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_gsnAddress);
+
+        } catch (MAPException e) {
+            throw new CAPException("MAPException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
+
+        if (this.accessPointName != null) {
+            sb.append("accessPointName=");
+            sb.append(this.accessPointName.toString());
+            sb.append(", ");
+        }
+
+        if (this.chargingID != null) {
+            sb.append("chargingID=");
+            sb.append(this.chargingID.toString());
+            sb.append(", ");
+        }
+
+        if (this.locationInformationGPRS != null) {
+            sb.append("locationInformationGPRS=");
+            sb.append(this.locationInformationGPRS.toString());
+            sb.append(", ");
+        }
+
+        if (this.endUserAddress != null) {
+            sb.append("endUserAddress=");
+            sb.append(this.endUserAddress.toString());
+            sb.append(", ");
+        }
+
+        if (this.qualityOfService != null) {
+            sb.append("qualityOfService=");
+            sb.append(this.qualityOfService.toString());
+            sb.append(", ");
+        }
+
+        if (this.timeAndTimezone != null) {
+            sb.append("timeAndTimezone=");
+            sb.append(this.timeAndTimezone.toString());
+            sb.append(", ");
+        }
+
+        if (this.gsnAddress != null) {
+            sb.append("gsnAddress=");
+            sb.append(this.gsnAddress.toString());
+            sb.append(" ");
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 
 }

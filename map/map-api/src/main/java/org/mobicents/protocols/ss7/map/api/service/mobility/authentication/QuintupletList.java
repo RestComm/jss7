@@ -25,17 +25,15 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
 import java.util.ArrayList;
 
 /**
-*
-QuintupletList ::= SEQUENCE SIZE (1..5) OF
-				AuthenticationQuintuplet
-
-*
-* @author sergey vetyutnev
-* 
-*/
+ *
+ QuintupletList ::= SEQUENCE SIZE (1..5) OF AuthenticationQuintuplet
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface QuintupletList {
 
-	public ArrayList<AuthenticationQuintuplet> getAuthenticationQuintuplets();
+    ArrayList<AuthenticationQuintuplet> getAuthenticationQuintuplets();
 
 }
-

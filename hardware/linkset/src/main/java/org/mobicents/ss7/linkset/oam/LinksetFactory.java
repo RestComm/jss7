@@ -27,12 +27,12 @@ package org.mobicents.ss7.linkset.oam;
  * The abstract class represents a factory for creating {@link Linkset}
  * </p>
  * <p>
- * When {@link LinksetManager} receives command to create new {@link Linkset},
- * it uses linkset factory to create new linkset depending on options passed
+ * When {@link LinksetManager} receives command to create new {@link Linkset}, it uses linkset factory to create new linkset
+ * depending on options passed
  * </p>
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public abstract class LinksetFactory {
 
@@ -41,7 +41,7 @@ public abstract class LinksetFactory {
 
     /**
      * Create a new linkset analyzing the options passed
-     * 
+     *
      * @param options
      * @return
      * @throws Exception
@@ -50,35 +50,35 @@ public abstract class LinksetFactory {
 
     /**
      * Get name of this factory
-     * 
+     *
      * @return
      */
     public abstract String getName();
-    
+
     /**
      * Get linkset name
-     * 
+     *
      * @return
      */
     public abstract String getLinksetName();
-    
+
     /**
      * Get linkset class
-     * 
+     *
      * @return
      */
     public abstract Class getLinksetClass();
-    
+
     /**
      * Get link name
-     * 
+     *
      * @return
      */
     public abstract String getLinkName();
-    
+
     /**
      * Get link class
-     * 
+     *
      * @return
      */
     public abstract Class getLinkClass();

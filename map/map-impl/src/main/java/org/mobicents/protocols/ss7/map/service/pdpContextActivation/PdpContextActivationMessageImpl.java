@@ -28,14 +28,15 @@ import org.mobicents.protocols.ss7.map.api.service.pdpContextActivation.PdpConte
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
-public abstract class PdpContextActivationMessageImpl extends MessageImpl implements PdpContextActivationMessage, MAPAsnPrimitive {
+public abstract class PdpContextActivationMessageImpl extends MessageImpl implements PdpContextActivationMessage,
+        MAPAsnPrimitive {
 
-	public MAPDialogPdpContextActivation getMAPDialog() {
-		return (MAPDialogPdpContextActivation)super.getMAPDialog();
-	}
+    public MAPDialogPdpContextActivation getMAPDialog() {
+        return (MAPDialogPdpContextActivation) super.getMAPDialog();
+    }
 
 }

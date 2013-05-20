@@ -28,19 +28,18 @@ import org.mobicents.protocols.ss7.map.api.MAPServiceBase;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
-
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MAPServiceSms extends MAPServiceBase {
 
-	public MAPDialogSms createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress,
-			AddressString origReference, SccpAddress destAddress, AddressString destReference) throws MAPException;
+    MAPDialogSms createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress, AddressString origReference,
+            SccpAddress destAddress, AddressString destReference) throws MAPException;
 
-	public void addMAPServiceListener(MAPServiceSmsListener mapServiceListener);
+    void addMAPServiceListener(MAPServiceSmsListener mapServiceListener);
 
-	public void removeMAPServiceListener(MAPServiceSmsListener mapServiceListener);
+    void removeMAPServiceListener(MAPServiceSmsListener mapServiceListener);
 
 }

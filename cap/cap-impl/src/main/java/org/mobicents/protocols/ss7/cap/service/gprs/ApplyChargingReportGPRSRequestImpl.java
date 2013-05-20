@@ -44,287 +44,286 @@ import org.mobicents.protocols.ss7.cap.service.gprs.primitive.QualityOfServiceIm
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class ApplyChargingReportGPRSRequestImpl  extends GprsMessageImpl  implements ApplyChargingReportGPRSRequest {
-	
-	public static final String _PrimitiveName = "ApplyChargingReportGPRSRequest";
-	
-	public static final int _ID_chargingResult = 0;
-	public static final int _ID_qualityOfService = 1;
-	public static final int _ID_active = 2;
-	public static final int _ID_pdpID = 3;
-	public static final int _ID_chargingRollOver = 4;
-	
-	private ChargingResult chargingResult;
-	private QualityOfService qualityOfService;
-	private boolean active;
-	private PDPID pdpID;
-	private ChargingRollOver chargingRollOver;
+public class ApplyChargingReportGPRSRequestImpl extends GprsMessageImpl implements ApplyChargingReportGPRSRequest {
 
-	public ApplyChargingReportGPRSRequestImpl() {
-	}
-	
-	public ApplyChargingReportGPRSRequestImpl(ChargingResult chargingResult,
-			QualityOfService qualityOfService, boolean active, PDPID pdpID,
-			ChargingRollOver chargingRollOver) {
-		super();
-		this.chargingResult = chargingResult;
-		this.qualityOfService = qualityOfService;
-		this.active = active;
-		this.pdpID = pdpID;
-		this.chargingRollOver = chargingRollOver;
-	}
+    public static final String _PrimitiveName = "ApplyChargingReportGPRSRequest";
 
-	@Override
-	public ChargingResult getChargingResult(){
-		return this.chargingResult;
-	}
+    public static final int _ID_chargingResult = 0;
+    public static final int _ID_qualityOfService = 1;
+    public static final int _ID_active = 2;
+    public static final int _ID_pdpID = 3;
+    public static final int _ID_chargingRollOver = 4;
 
-	@Override
-	public QualityOfService getQualityOfService(){
-		return this.qualityOfService;
-	}
+    private ChargingResult chargingResult;
+    private QualityOfService qualityOfService;
+    private boolean active;
+    private PDPID pdpID;
+    private ChargingRollOver chargingRollOver;
 
-	@Override
-	public boolean getActive(){
-		return this.active;
-	}
+    public ApplyChargingReportGPRSRequestImpl() {
+    }
 
-	@Override
-	public PDPID getPDPID() {
-		return this.pdpID;
-	}
-	
-	@Override
-	public ChargingRollOver getChargingRollOver(){
-		return this.chargingRollOver;
-	}
+    public ApplyChargingReportGPRSRequestImpl(ChargingResult chargingResult, QualityOfService qualityOfService, boolean active,
+            PDPID pdpID, ChargingRollOver chargingRollOver) {
+        super();
+        this.chargingResult = chargingResult;
+        this.qualityOfService = qualityOfService;
+        this.active = active;
+        this.pdpID = pdpID;
+        this.chargingRollOver = chargingRollOver;
+    }
 
+    @Override
+    public ChargingResult getChargingResult() {
+        return this.chargingResult;
+    }
 
-	
-	@Override
-	public CAPMessageType getMessageType() {
-		return CAPMessageType.applyChargingGPRS_Request;
-	}
+    @Override
+    public QualityOfService getQualityOfService() {
+        return this.qualityOfService;
+    }
 
-	@Override
-	public int getOperationCode() {
-		return CAPOperationCode.applyChargingGPRS;
-	}
+    @Override
+    public boolean getActive() {
+        return this.active;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
+    @Override
+    public PDPID getPDPID() {
+        return this.pdpID;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public ChargingRollOver getChargingRollOver() {
+        return this.chargingRollOver;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    @Override
+    public CAPMessageType getMessageType() {
+        return CAPMessageType.applyChargingGPRS_Request;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS)
-			throws CAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public int getOperationCode() {
+        return CAPOperationCode.applyChargingGPRS;
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length)
-			throws CAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.SEQUENCE;
+    }
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException, MAPParsingComponentException {
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-		this.chargingResult = null;
-		this.qualityOfService = null;
-		this.active = true;
-		this.pdpID = null;
-		this.chargingRollOver = null;
+    @Override
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
-			
-			int tag = ais.readTag();
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_chargingResult:
-					if (ais.isTagPrimitive())
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ".chargingResult: Parameter is primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.chargingResult = new ChargingResultImpl();
-					AsnInputStream ais2 = ais.readSequenceStream();
-					ais2.readTag();
-					((ChargingResultImpl) this.chargingResult).decodeAll(ais2);
-					break;		
-				case _ID_qualityOfService:
-					if (ais.isTagPrimitive())
-						throw new CAPParsingComponentException(
-								"Error while decoding " + _PrimitiveName + ".qualityOfService: Parameter is primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.qualityOfService = new QualityOfServiceImpl();
-					((QualityOfServiceImpl) this.qualityOfService).decodeAll(ais);
-					break;
-				case _ID_active:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException(
-								"Error while decoding " + _PrimitiveName + ".active: Parameter is not primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.active = ais.readBoolean();
-					break;
-				case _ID_pdpID:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException(
-								"Error while decoding " + _PrimitiveName + ".pdpID: Parameter is not primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.pdpID = new PDPIDImpl();
-					((PDPIDImpl) this.pdpID).decodeAll(ais);
-					break;
-				case _ID_chargingRollOver:
-					if (ais.isTagPrimitive())
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ".chargingRollOver: Parameter is primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.chargingRollOver = new ChargingRollOverImpl();
-					AsnInputStream ais3 = ais.readSequenceStream();
-					ais3.readTag();
-					((ChargingRollOverImpl) this.chargingRollOver).decodeAll(ais3);
-					break;	
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
-			
-		if (this.chargingResult == null)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": parameter chargingResult is mandatory but not found",
-					CAPParsingComponentExceptionReason.MistypedParameter);
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	}
-	
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException,
+            MAPParsingComponentException {
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag)
-			throws CAPException {
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        this.chargingResult = null;
+        this.qualityOfService = null;
+        this.active = true;
+        this.pdpID = null;
+        this.chargingRollOver = null;
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-	
-		if (this.chargingResult == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": chargingResult must not be null");
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-		try {
-			asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_chargingResult);
-			int pos = asnOs.StartContentDefiniteLength();
-			((ChargingResultImpl) this.chargingResult).encodeAll(asnOs);
-			asnOs.FinalizeContent(pos);
-			
-			if (this.qualityOfService != null)
-				((QualityOfServiceImpl) this.qualityOfService).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_qualityOfService);
-			
-			asnOs.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC, _ID_active,active);
-			
-			if (this.pdpID != null)
-				((PDPIDImpl) this.pdpID).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_pdpID);
-			
-			if (this.chargingRollOver != null){
-				asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_chargingRollOver);
-				int pos1 = asnOs.StartContentDefiniteLength();
-				((ChargingRollOverImpl) this.chargingRollOver).encodeAll(asnOs);
-				asnOs.FinalizeContent(pos1);	
-			}
-			
-		} catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} 
-	}
-	
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName + " [");
+            int tag = ais.readTag();
 
-		if (this.chargingResult != null) {
-			sb.append("chargingResult=");
-			sb.append(this.chargingResult.toString());
-			sb.append(", ");
-		}
-		
-		if (this.qualityOfService != null) {
-			sb.append("qualityOfService=");
-			sb.append(this.qualityOfService.toString());
-			sb.append(", ");
-		}
-		
-		if (this.active) {
-			sb.append("active ");
-			sb.append(", ");
-		}
-		
-		if (this.pdpID != null) {
-			sb.append("pdpID=");
-			sb.append(this.pdpID.toString());
-			sb.append(", ");
-		}
-		
-		if (this.chargingRollOver != null) {
-			sb.append("chargingRollOver=");
-			sb.append(this.chargingRollOver.toString());
-		}
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_chargingResult:
+                        if (ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".chargingResult: Parameter is primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.chargingResult = new ChargingResultImpl();
+                        AsnInputStream ais2 = ais.readSequenceStream();
+                        ais2.readTag();
+                        ((ChargingResultImpl) this.chargingResult).decodeAll(ais2);
+                        break;
+                    case _ID_qualityOfService:
+                        if (ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".qualityOfService: Parameter is primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.qualityOfService = new QualityOfServiceImpl();
+                        ((QualityOfServiceImpl) this.qualityOfService).decodeAll(ais);
+                        break;
+                    case _ID_active:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".active: Parameter is not primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.active = ais.readBoolean();
+                        break;
+                    case _ID_pdpID:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".pdpID: Parameter is not primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.pdpID = new PDPIDImpl();
+                        ((PDPIDImpl) this.pdpID).decodeAll(ais);
+                        break;
+                    case _ID_chargingRollOver:
+                        if (ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".chargingRollOver: Parameter is primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.chargingRollOver = new ChargingRollOverImpl();
+                        AsnInputStream ais3 = ais.readSequenceStream();
+                        ais3.readTag();
+                        ((ChargingRollOverImpl) this.chargingRollOver).decodeAll(ais3);
+                        break;
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
 
-		sb.append("]");
+        if (this.chargingResult == null)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": parameter chargingResult is mandatory but not found",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
 
-		return sb.toString();
-	}
+    }
+
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
+
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
+
+        if (this.chargingResult == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": chargingResult must not be null");
+
+        try {
+            asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_chargingResult);
+            int pos = asnOs.StartContentDefiniteLength();
+            ((ChargingResultImpl) this.chargingResult).encodeAll(asnOs);
+            asnOs.FinalizeContent(pos);
+
+            if (this.qualityOfService != null)
+                ((QualityOfServiceImpl) this.qualityOfService).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_qualityOfService);
+
+            asnOs.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC, _ID_active, active);
+
+            if (this.pdpID != null)
+                ((PDPIDImpl) this.pdpID).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_pdpID);
+
+            if (this.chargingRollOver != null) {
+                asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_chargingRollOver);
+                int pos1 = asnOs.StartContentDefiniteLength();
+                ((ChargingRollOverImpl) this.chargingRollOver).encodeAll(asnOs);
+                asnOs.FinalizeContent(pos1);
+            }
+
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
+
+        if (this.chargingResult != null) {
+            sb.append("chargingResult=");
+            sb.append(this.chargingResult.toString());
+            sb.append(", ");
+        }
+
+        if (this.qualityOfService != null) {
+            sb.append("qualityOfService=");
+            sb.append(this.qualityOfService.toString());
+            sb.append(", ");
+        }
+
+        if (this.active) {
+            sb.append("active ");
+            sb.append(", ");
+        }
+
+        if (this.pdpID != null) {
+            sb.append("pdpID=");
+            sb.append(this.pdpID.toString());
+            sb.append(", ");
+        }
+
+        if (this.chargingRollOver != null) {
+            sb.append("chargingRollOver=");
+            sb.append(this.chargingRollOver.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }

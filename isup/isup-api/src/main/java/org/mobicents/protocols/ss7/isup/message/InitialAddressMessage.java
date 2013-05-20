@@ -67,23 +67,21 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD style="FONT-WEIGHT: bold; WIDTH: 328px; COLOR: teal; HEIGHT: 28px" align="center" colSpan="3">
  * <TABLE id="Table37" style="WIDTH: 575px; HEIGHT: 49px" cellSpacing="1" cellPadding="1" width="575" border="0">
  * <TR>
- * 
+ *
  * <TD style="FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: teal; HEIGHT: 28px; TEXT-ALIGN: center" colSpan="3">
  * IAM (Initial Address Message)</TD>
  * </TR>
  * <TR>
  * <TD style="FONT-SIZE: 9pt; COLOR: navy" colSpan="3">
  * <P>
- * An Initial Address Message (IAM) is sent in the "forward" direction by each
- * switch needed to complete the circuit between the calling party and called
- * party until the circuit connects to the destination switch. An IAM contains
- * the called party number in the mandatory variable part and may contain the
- * calling party name and number in the optional part.
+ * An Initial Address Message (IAM) is sent in the "forward" direction by each switch needed to complete the circuit between the
+ * calling party and called party until the circuit connects to the destination switch. An IAM contains the called party number
+ * in the mandatory variable part and may contain the calling party name and number in the optional part.
  * </P>
  * </TD>
  * </TR>
  * </TABLE>
- * 
+ *
  * </TD>
  * </TR>
  * <TR>
@@ -92,7 +90,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD style="FONT-WEIGHT: bold; WIDTH: 145px; HEIGHT: 30px">Type</TD>
  * <TD style="FONT-WEIGHT: bold; HEIGHT: 30px">Length (octet)</TD>
  * </TR>
- * 
+ *
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Message type</TD>
  * <TD style="WIDTH: 145px">F</TD>
@@ -100,14 +98,14 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * </TR>
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Nature of Connection Indicators</TD>
- * 
+ *
  * <TD style="WIDTH: 145px">F</TD>
  * <TD>1</TD>
  * </TR>
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Forward&nbsp;Call Indicators</TD>
  * <TD style="WIDTH: 145px">F</TD>
- * 
+ *
  * <TD>2</TD>
  * </TR>
  * <TR>
@@ -115,25 +113,23 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD style="WIDTH: 145px">F</TD>
  * <TD>1</TD>
  * </TR>
- * 
+ *
  * <TR>
- * <TD style="WIDTH: 283px; HEIGHT: 12px; TEXT-ALIGN: left">Transmission Medium
- * Requirement</TD>
+ * <TD style="WIDTH: 283px; HEIGHT: 12px; TEXT-ALIGN: left">Transmission Medium Requirement</TD>
  * <TD style="WIDTH: 145px; HEIGHT: 12px">F</TD>
  * <TD style="HEIGHT: 12px">1</TD>
  * </TR>
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Called Party Number</TD>
- * 
+ *
  * <TD style="WIDTH: 145px">V</TD>
  * <TD>4-11</TD>
  * </TR>
  * <TR>
- * <TD style="WIDTH: 283px; HEIGHT: 18px; TEXT-ALIGN: left">Transit Network
- * Selection</TD>
+ * <TD style="WIDTH: 283px; HEIGHT: 18px; TEXT-ALIGN: left">Transit Network Selection</TD>
  * <TD style="WIDTH: 145px; HEIGHT: 18px">O</TD>
  * <TD style="HEIGHT: 18px">4-?</TD>
- * 
+ *
  * </TR>
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Call Reference</TD>
@@ -141,7 +137,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD>7</TD>
  * </TR>
  * <TR>
- * 
+ *
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Calling Party Number</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>4-12</TD>
@@ -149,7 +145,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Optional Forward Call Indicators</TD>
  * <TD style="WIDTH: 145px">O</TD>
- * 
+ *
  * <TD>3</TD>
  * </TR>
  * <TR>
@@ -157,7 +153,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>4-12</TD>
  * </TR>
- * 
+ *
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Redirection Information</TD>
  * <TD style="WIDTH: 145px">O</TD>
@@ -165,7 +161,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * </TR>
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Closed User Group Interlock Code</TD>
- * 
+ *
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>6</TD>
  * </TR>
@@ -173,7 +169,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Connection Request</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>7-9</TD>
- * 
+ *
  * </TR>
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Origional Called Number</TD>
@@ -181,16 +177,15 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD>4-12</TD>
  * </TR>
  * <TR>
- * 
- * <TD style="WIDTH: 283px; HEIGHT: 17px; TEXT-ALIGN: left">User to User
- * Information</TD>
+ *
+ * <TD style="WIDTH: 283px; HEIGHT: 17px; TEXT-ALIGN: left">User to User Information</TD>
  * <TD style="WIDTH: 145px; HEIGHT: 17px">O</TD>
  * <TD style="HEIGHT: 17px">3-131</TD>
  * </TR>
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Access Transport</TD>
  * <TD style="WIDTH: 145px">O</TD>
- * 
+ *
  * <TD>3-?</TD>
  * </TR>
  * <TR>
@@ -198,7 +193,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>4-13</TD>
  * </TR>
- * 
+ *
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">User to User Indicators</TD>
  * <TD style="WIDTH: 145px">O</TD>
@@ -206,7 +201,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * </TR>
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Generic Number</TD>
- * 
+ *
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>5-13</TD>
  * </TR>
@@ -214,7 +209,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Propagation Delay Counter</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>4</TD>
- * 
+ *
  * </TR>
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">User Service Information Prime</TD>
@@ -222,7 +217,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD>4-13</TD>
  * </TR>
  * <TR>
- * 
+ *
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Network Specific Facility</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>4-?</TD>
@@ -230,7 +225,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Generic Digit</TD>
  * <TD style="WIDTH: 145px">O</TD>
- * 
+ *
  * <TD>?</TD>
  * </TR>
  * <TR>
@@ -238,7 +233,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>4</TD>
  * </TR>
- * 
+ *
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">User Service Information Prime</TD>
  * <TD style="WIDTH: 145px">O</TD>
@@ -246,16 +241,15 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * </TR>
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Remote Operations</TD>
- * 
+ *
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>?</TD>
  * </TR>
  * <TR>
- * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Parameter Compatibility
- * Information</TD>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Parameter Compatibility Information</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>4-?</TD>
- * 
+ *
  * </TR>
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Generic Notification</TD>
@@ -263,7 +257,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD>3</TD>
  * </TR>
  * <TR>
- * 
+ *
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Service Activation</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>3-?</TD>
@@ -271,7 +265,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Generic Reference</TD>
  * <TD style="WIDTH: 145px">O</TD>
- * 
+ *
  * <TD>5-?</TD>
  * </TR>
  * <TR>
@@ -279,16 +273,15 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>8</TD>
  * </TR>
- * 
+ *
  * <TR>
- * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Transmission Medium Requirement
- * Prime</TD>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Transmission Medium Requirement Prime</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>3</TD>
  * </TR>
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Location Number</TD>
- * 
+ *
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>5-12</TD>
  * </TR>
@@ -296,176 +289,176 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">End of Optional Parameters</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>1</TD>
- * 
+ *
  * </TR>
  * </TABLE>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface InitialAddressMessage extends ISUPMessage {
-	
-	/**
-	 * Initial Address Message, Q.763 reference table 32 <br>
-	 * {@link InitialAddressMessage}
-	 */
-	public static final int MESSAGE_CODE = 0x01;
-	
-	public NatureOfConnectionIndicators getNatureOfConnectionIndicators();
 
-	public void setNatureOfConnectionIndicators(NatureOfConnectionIndicators v);
+    /**
+     * Initial Address Message, Q.763 reference table 32 <br>
+     * {@link InitialAddressMessage}
+     */
+    int MESSAGE_CODE = 0x01;
 
-	public ForwardCallIndicators getForwardCallIndicators();
+    NatureOfConnectionIndicators getNatureOfConnectionIndicators();
 
-	public void setForwardCallIndicators(ForwardCallIndicators v);
+    void setNatureOfConnectionIndicators(NatureOfConnectionIndicators v);
 
-	public CallingPartyCategory getCallingPartCategory();
+    ForwardCallIndicators getForwardCallIndicators();
 
-	public void setCallingPartCategory(CallingPartyCategory v);
+    void setForwardCallIndicators(ForwardCallIndicators v);
 
-	public TransmissionMediumRequirement getTransmissionMediumRequirement();
+    CallingPartyCategory getCallingPartCategory();
 
-	public void setTransmissionMediumRequirement(TransmissionMediumRequirement v);
+    void setCallingPartCategory(CallingPartyCategory v);
 
-	public CalledPartyNumber getCalledPartyNumber();
+    TransmissionMediumRequirement getTransmissionMediumRequirement();
 
-	public void setCalledPartyNumber(CalledPartyNumber v);
+    void setTransmissionMediumRequirement(TransmissionMediumRequirement v);
 
-	public TransitNetworkSelection getTransitNetworkSelection();
+    CalledPartyNumber getCalledPartyNumber();
 
-	public void setTransitNetworkSelection(TransitNetworkSelection v);
+    void setCalledPartyNumber(CalledPartyNumber v);
 
-	public CallReference getCallReference();
+    TransitNetworkSelection getTransitNetworkSelection();
 
-	public void setCallReference(CallReference v);
+    void setTransitNetworkSelection(TransitNetworkSelection v);
 
-	public CallingPartyNumber getCallingPartyNumber();
+    CallReference getCallReference();
 
-	public void setCallingPartyNumber(CallingPartyNumber v);
+    void setCallReference(CallReference v);
 
-	public OptionalForwardCallIndicators getOptForwardCallIndicators();
+    CallingPartyNumber getCallingPartyNumber();
 
-	public void setOptForwardCallIndicators(OptionalForwardCallIndicators v);
+    void setCallingPartyNumber(CallingPartyNumber v);
 
-	public RedirectingNumber getRedirectingNumber();
+    OptionalForwardCallIndicators getOptForwardCallIndicators();
 
-	public void setRedirectingNumber(RedirectingNumber v);
+    void setOptForwardCallIndicators(OptionalForwardCallIndicators v);
 
-	public RedirectionInformation getRedirectionInformation();
+    RedirectingNumber getRedirectingNumber();
 
-	public void setRedirectionInformation(RedirectionInformation v);
+    void setRedirectingNumber(RedirectingNumber v);
 
-	public ClosedUserGroupInterlockCode getCUserGroupInterlockCode();
+    RedirectionInformation getRedirectionInformation();
 
-	public void setCUserGroupInterlockCode(ClosedUserGroupInterlockCode v);
+    void setRedirectionInformation(RedirectionInformation v);
 
-	public ConnectionRequest getConnectionRequest();
+    ClosedUserGroupInterlockCode getCUserGroupInterlockCode();
 
-	public void setConnectionRequest(ConnectionRequest v);
+    void setCUserGroupInterlockCode(ClosedUserGroupInterlockCode v);
 
-	public OriginalCalledNumber getOriginalCalledNumber();
+    ConnectionRequest getConnectionRequest();
 
-	public void setOriginalCalledNumber(OriginalCalledNumber v);
+    void setConnectionRequest(ConnectionRequest v);
 
-	public UserToUserInformation getU2UInformation();
+    OriginalCalledNumber getOriginalCalledNumber();
 
-	public void setU2UInformation(UserToUserInformation v);
+    void setOriginalCalledNumber(OriginalCalledNumber v);
 
-	public UserServiceInformation getUserServiceInformation();
+    UserToUserInformation getU2UInformation();
 
-	public void setUserServiceInformation(UserServiceInformation v);
+    void setU2UInformation(UserToUserInformation v);
 
-	public NetworkSpecificFacility getNetworkSpecificFacility();
+    UserServiceInformation getUserServiceInformation();
 
-	public void setNetworkSpecificFacility(NetworkSpecificFacility v);
+    void setUserServiceInformation(UserServiceInformation v);
 
-	public GenericDigits getGenericDigits();
+    NetworkSpecificFacility getNetworkSpecificFacility();
 
-	public void setGenericDigits(GenericDigits v);
+    void setNetworkSpecificFacility(NetworkSpecificFacility v);
 
-	public OriginatingISCPointCode getOriginatingISCPointCode();
+    GenericDigits getGenericDigits();
 
-	public void setOriginatingISCPointCode(OriginatingISCPointCode v);
+    void setGenericDigits(GenericDigits v);
 
-	public UserTeleserviceInformation getUserTeleserviceInformation();
+    OriginatingISCPointCode getOriginatingISCPointCode();
 
-	public void setUserTeleserviceInformation(UserTeleserviceInformation v);
+    void setOriginatingISCPointCode(OriginatingISCPointCode v);
 
-	public RemoteOperations getRemoteOperations();
+    UserTeleserviceInformation getUserTeleserviceInformation();
 
-	public void setRemoteOperations(RemoteOperations v);
+    void setUserTeleserviceInformation(UserTeleserviceInformation v);
 
-	public ParameterCompatibilityInformation getParameterCompatibilityInformation();
+    RemoteOperations getRemoteOperations();
 
-	public void setParameterCompatibilityInformation(ParameterCompatibilityInformation v);
+    void setRemoteOperations(RemoteOperations v);
 
-	public GenericNotificationIndicator getGenericNotificationIndicator();
+    ParameterCompatibilityInformation getParameterCompatibilityInformation();
 
-	public void setGenericNotificationIndicator(GenericNotificationIndicator v);
+    void setParameterCompatibilityInformation(ParameterCompatibilityInformation v);
 
-	public ServiceActivation getServiceActivation();
+    GenericNotificationIndicator getGenericNotificationIndicator();
 
-	public void setServiceActivation(ServiceActivation v);
+    void setGenericNotificationIndicator(GenericNotificationIndicator v);
 
-	public GenericReference getGenericReference();
+    ServiceActivation getServiceActivation();
 
-	public void setGenericReference(GenericReference v);
+    void setServiceActivation(ServiceActivation v);
 
-	public MLPPPrecedence getMLPPPrecedence();
+    GenericReference getGenericReference();
 
-	public void setMLPPPrecedence(MLPPPrecedence v);
+    void setGenericReference(GenericReference v);
 
-	public TransimissionMediumRequierementPrime getTransimissionMediumReqPrime();
+    MLPPPrecedence getMLPPPrecedence();
 
-	public void setTransimissionMediumReqPrime(TransimissionMediumRequierementPrime v);
+    void setMLPPPrecedence(MLPPPrecedence v);
 
-	public LocationNumber getLocationNumber();
+    TransimissionMediumRequierementPrime getTransimissionMediumReqPrime();
 
-	public void setLocationNumber(LocationNumber v);
+    void setTransimissionMediumReqPrime(TransimissionMediumRequierementPrime v);
 
-	public ForwardGVNS getForwardGVNS();
+    LocationNumber getLocationNumber();
 
-	public void setForwardGVNS(ForwardGVNS v);
+    void setLocationNumber(LocationNumber v);
 
-	public CCSS getCCSS();
+    ForwardGVNS getForwardGVNS();
 
-	public void setCCSS(CCSS v);
+    void setForwardGVNS(ForwardGVNS v);
 
-	public NetworkManagementControls getNetworkManagementControls();
+    CCSS getCCSS();
 
-	public void setNetworkManagementControls(NetworkManagementControls v);
+    void setCCSS(CCSS v);
 
-	/**
-	 * @param usip
-	 */
-	public void setUserServiceInformationPrime(UserServiceInformationPrime v);
+    NetworkManagementControls getNetworkManagementControls();
 
-	public UserServiceInformationPrime getUserServiceInformationPrime();
+    void setNetworkManagementControls(NetworkManagementControls v);
 
-	/**
-	 * @param pdc
-	 */
-	public void setPropagationDelayCounter(PropagationDelayCounter v);
+    /**
+     * @param usip
+     */
+    void setUserServiceInformationPrime(UserServiceInformationPrime v);
 
-	public PropagationDelayCounter getPropagationDelayCounter();
+    UserServiceInformationPrime getUserServiceInformationPrime();
 
-	/**
-	 * @param gn
-	 */
-	public void setGenericNumber(GenericNumber v);
+    /**
+     * @param pdc
+     */
+    void setPropagationDelayCounter(PropagationDelayCounter v);
 
-	public GenericNumber getGenericNumber();
+    PropagationDelayCounter getPropagationDelayCounter();
 
-	/**
-	 * @param utui
-	 */
-	public void setU2UIndicators(UserToUserIndicators v);
+    /**
+     * @param gn
+     */
+    void setGenericNumber(GenericNumber v);
 
-	public UserToUserIndicators getU2UIndicators();
+    GenericNumber getGenericNumber();
 
-	/**
-	 * @param at
-	 */
-	public void setAccessTransport(AccessTransport v);
+    /**
+     * @param utui
+     */
+    void setU2UIndicators(UserToUserIndicators v);
 
-	public AccessTransport getAccessTransport();
+    UserToUserIndicators getU2UIndicators();
+
+    /**
+     * @param at
+     */
+    void setAccessTransport(AccessTransport v);
+
+    AccessTransport getAccessTransport();
 }

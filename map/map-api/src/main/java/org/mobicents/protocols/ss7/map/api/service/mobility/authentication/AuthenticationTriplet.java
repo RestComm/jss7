@@ -23,28 +23,21 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
 
 /**
-*
-AuthenticationTriplet ::= SEQUENCE {
-	rand			RAND,
-	sres			SRES,
-	kc			Kc,
-	...}
-
-*
-* RAND ::= OCTET STRING (SIZE (16))
-* SRES ::= OCTET STRING (SIZE (4))
-* Kc ::= OCTET STRING (SIZE (8))
-*
-* @author sergey vetyutnev
-* 
-*/
+ *
+ AuthenticationTriplet ::= SEQUENCE { rand RAND, sres SRES, kc Kc, ...}
+ *
+ *
+ * RAND ::= OCTET STRING (SIZE (16)) SRES ::= OCTET STRING (SIZE (4)) Kc ::= OCTET STRING (SIZE (8))
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface AuthenticationTriplet {
 
-	public byte[] getRand();
+    byte[] getRand();
 
-	public byte[] getSres();
+    byte[] getSres();
 
-	public byte[] getKc();
+    byte[] getKc();
 
 }
-

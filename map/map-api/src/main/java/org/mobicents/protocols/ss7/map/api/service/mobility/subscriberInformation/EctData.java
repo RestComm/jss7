@@ -24,23 +24,19 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformati
 
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtSSStatus;
 
-/**	
- * 
-
-EctData ::= SEQUENCE {
-	ss-Status		[1] Ext-SS-Status,
-	notificationToCSE	[2] NULL		OPTIONAL,
-	... }
-
-
- * 
+/**
+ *
+ EctData ::= SEQUENCE { ss-Status [1] Ext-SS-Status, notificationToCSE [2] NULL OPTIONAL, ... }
+ *
+ *
+ *
  * @author sergey vetyutnev
  *
  */
 public interface EctData {
 
-	public ExtSSStatus getSsStatus();
+    ExtSSStatus getSsStatus();
 
-	public boolean getNotificationToCSE();
+    boolean getNotificationToCSE();
 
 }

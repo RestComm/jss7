@@ -25,12 +25,12 @@ package org.mobicents.protocols.ss7.cap.api.service.sms;
 import org.mobicents.protocols.ss7.cap.api.CAPMessage;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SmsMessage extends CAPMessage {
 
-	public CAPDialogSms getCAPDialog();
+    CAPDialogSms getCAPDialog();
 
 }

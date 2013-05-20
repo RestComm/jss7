@@ -34,38 +34,38 @@ import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsTest;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class ResetTimerTest {
 
-	public byte[] getData1() {
-		return new byte[] { 48, 30, (byte) 128, 1, 0, (byte) 129, 2, 3, (byte) 232, (byte) 162, 18, 48, 5, 2, 1, 2, (byte) 129, 0, 48, 9, 2, 1, 3, 10, 1, 1,
-				(byte) 129, 1, (byte) 255, (byte) 131, 1, 100 };
-	}
-	
-	@Test(groups = { "functional.decode","circuitSwitchedCall"})
-	public void testDecode() throws Exception {
+    public byte[] getData1() {
+        return new byte[] { 48, 30, (byte) 128, 1, 0, (byte) 129, 2, 3, (byte) 232, (byte) 162, 18, 48, 5, 2, 1, 2, (byte) 129,
+                0, 48, 9, 2, 1, 3, 10, 1, 1, (byte) 129, 1, (byte) 255, (byte) 131, 1, 100 };
+    }
 
-		byte[] data = this.getData1();
-		AsnInputStream ais = new AsnInputStream(data);
-		ResetTimerRequestImpl elem = new ResetTimerRequestImpl();
-		int tag = ais.readTag();
-		elem.decodeAll(ais);
-		assertEquals(elem.getTimerID(), TimerID.tssf);
-		assertEquals(elem.getTimerValue(), 1000);
-		assertTrue(CAPExtensionsTest.checkTestCAPExtensions(elem.getExtensions()));
-		assertEquals((int) elem.getCallSegmentID(), 100);
-	}
+    @Test(groups = { "functional.decode", "circuitSwitchedCall" })
+    public void testDecode() throws Exception {
 
-	@Test(groups = { "functional.encode","circuitSwitchedCall"})
-	public void testEncode() throws Exception {
-		
-		ResetTimerRequestImpl elem = new ResetTimerRequestImpl(TimerID.tssf, 1000, CAPExtensionsTest.createTestCAPExtensions(), 100);
-		AsnOutputStream aos = new AsnOutputStream();
-		elem.encodeAll(aos);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
-	}
+        byte[] data = this.getData1();
+        AsnInputStream ais = new AsnInputStream(data);
+        ResetTimerRequestImpl elem = new ResetTimerRequestImpl();
+        int tag = ais.readTag();
+        elem.decodeAll(ais);
+        assertEquals(elem.getTimerID(), TimerID.tssf);
+        assertEquals(elem.getTimerValue(), 1000);
+        assertTrue(CAPExtensionsTest.checkTestCAPExtensions(elem.getExtensions()));
+        assertEquals((int) elem.getCallSegmentID(), 100);
+    }
+
+    @Test(groups = { "functional.encode", "circuitSwitchedCall" })
+    public void testEncode() throws Exception {
+
+        ResetTimerRequestImpl elem = new ResetTimerRequestImpl(TimerID.tssf, 1000, CAPExtensionsTest.createTestCAPExtensions(),
+                100);
+        AsnOutputStream aos = new AsnOutputStream();
+        elem.encodeAll(aos);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
+    }
 }
-

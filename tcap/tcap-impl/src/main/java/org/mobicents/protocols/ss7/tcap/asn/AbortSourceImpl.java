@@ -36,58 +36,66 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
  */
 public class AbortSourceImpl implements AbortSource {
 
-	private AbortSourceType type;
-	
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.tcap.asn.AbortSource#getAbortSourceType()
-	 */
-	public AbortSourceType getAbortSourceType() {
-		return this.type;
-	}
+    private AbortSourceType type;
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.tcap.asn.AbortSource#setAbortSourceType(org.mobicents.protocols.ss7.tcap.asn.AbortSourceType)
-	 */
-	public void setAbortSourceType(AbortSourceType t) {
-		this.type = t;
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.tcap.asn.AbortSource#getAbortSourceType()
+     */
+    public AbortSourceType getAbortSourceType() {
+        return this.type;
+    }
 
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * org.mobicents.protocols.ss7.tcap.asn.AbortSource#setAbortSourceType(org.mobicents.protocols.ss7.tcap.asn.AbortSourceType)
+     */
+    public void setAbortSourceType(AbortSourceType t) {
+        this.type = t;
 
-	
-	public String toString() {
-		return "AbortSource[type=" + type + "]";
-	}
+    }
 
-	public void decode(AsnInputStream ais) throws ParseException {
-		
-		try {
-			long t = ais.readInteger();
-			this.type = AbortSourceType.getFromInt(t);
-			
-		} catch (IOException e) {
-			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "IOException while decoding AbortSource: " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "AsnException while decoding AbortSource: " + e.getMessage(), e);
-		}
-		
-	}
+    public String toString() {
+        return "AbortSource[type=" + type + "]";
+    }
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols.asn.AsnOutputStream)
-	 */
-	public void encode(AsnOutputStream aos) throws EncodeException {
-		
-		if (type == null)
-			throw new EncodeException("Error encoding AbortSource: No type set");
+    public void decode(AsnInputStream ais) throws ParseException {
 
-		try {
-			aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG, type.getType());
+        try {
+            long t = ais.readInteger();
+            this.type = AbortSourceType.getFromInt(t);
 
-		} catch (IOException e) {
-			throw new EncodeException("IOException while encoding AbortSource: " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new EncodeException("AsnException while encoding AbortSource: " + e.getMessage(), e);
-		}
-	}
+        } catch (IOException e) {
+            throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "IOException while decoding AbortSource: "
+                    + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "AsnException while decoding AbortSource: "
+                    + e.getMessage(), e);
+        }
+
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols.asn.AsnOutputStream)
+     */
+    public void encode(AsnOutputStream aos) throws EncodeException {
+
+        if (type == null)
+            throw new EncodeException("Error encoding AbortSource: No type set");
+
+        try {
+            aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG, type.getType());
+
+        } catch (IOException e) {
+            throw new EncodeException("IOException while encoding AbortSource: " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new EncodeException("AsnException while encoding AbortSource: " + e.getMessage(), e);
+        }
+    }
 
 }

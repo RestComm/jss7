@@ -46,80 +46,80 @@ import org.testng.annotations.Test;
 
 /**
  * @author amit bhayani
- * 
+ *
  */
 public class LCSPrivacyCheckTest {
-	MAPParameterFactory MAPParameterFactory = new MAPParameterFactoryImpl();
+    MAPParameterFactory MAPParameterFactory = new MAPParameterFactoryImpl();
 
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
 
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
 
-	@BeforeTest
-	public void setUp() {
-	}
+    @BeforeTest
+    public void setUp() {
+    }
 
-	@AfterTest
-	public void tearDown() {
-	}
+    @AfterTest
+    public void tearDown() {
+    }
 
-	@Test(groups = { "functional.decode","service.lsm"})
-	public void testDecode() throws Exception {
-		byte[] data = new byte[] { 0x30, 0x06, (byte) 0x80, 0x01, 0x00, (byte) 0x81, 0x01, 0x02 };
+    @Test(groups = { "functional.decode", "service.lsm" })
+    public void testDecode() throws Exception {
+        byte[] data = new byte[] { 0x30, 0x06, (byte) 0x80, 0x01, 0x00, (byte) 0x81, 0x01, 0x02 };
 
-		AsnInputStream asn = new AsnInputStream(data);
-		int tag = asn.readTag();
-		assertEquals(tag, Tag.SEQUENCE);
+        AsnInputStream asn = new AsnInputStream(data);
+        int tag = asn.readTag();
+        assertEquals(tag, Tag.SEQUENCE);
 
-		LCSPrivacyCheckImpl lcsPrivacyCheck = new LCSPrivacyCheckImpl();
-		lcsPrivacyCheck.decodeAll(asn);
+        LCSPrivacyCheckImpl lcsPrivacyCheck = new LCSPrivacyCheckImpl();
+        lcsPrivacyCheck.decodeAll(asn);
 
-		assertEquals( lcsPrivacyCheck.getCallSessionUnrelated(),PrivacyCheckRelatedAction.allowedWithoutNotification);
-		assertEquals( lcsPrivacyCheck.getCallSessionRelated(),PrivacyCheckRelatedAction.allowedIfNoResponse);
+        assertEquals(lcsPrivacyCheck.getCallSessionUnrelated(), PrivacyCheckRelatedAction.allowedWithoutNotification);
+        assertEquals(lcsPrivacyCheck.getCallSessionRelated(), PrivacyCheckRelatedAction.allowedIfNoResponse);
 
-	}
+    }
 
-	@Test(groups = { "functional.encode","service.lsm"})
-	public void testEncode() throws Exception {
-		byte[] data = new byte[] { 0x30, 0x06, (byte) 0x80, 0x01, 0x00, (byte) 0x81, 0x01, 0x02 };
+    @Test(groups = { "functional.encode", "service.lsm" })
+    public void testEncode() throws Exception {
+        byte[] data = new byte[] { 0x30, 0x06, (byte) 0x80, 0x01, 0x00, (byte) 0x81, 0x01, 0x02 };
 
-		PrivacyCheckRelatedAction callSessionUnrelated = PrivacyCheckRelatedAction.allowedWithoutNotification;
-		PrivacyCheckRelatedAction callSessionRelated = PrivacyCheckRelatedAction.allowedIfNoResponse;
+        PrivacyCheckRelatedAction callSessionUnrelated = PrivacyCheckRelatedAction.allowedWithoutNotification;
+        PrivacyCheckRelatedAction callSessionRelated = PrivacyCheckRelatedAction.allowedIfNoResponse;
 
-		LCSPrivacyCheckImpl lcsPrivacyCheck = new LCSPrivacyCheckImpl(callSessionUnrelated, callSessionRelated);
-		AsnOutputStream asnOS = new AsnOutputStream();
-		lcsPrivacyCheck.encodeAll(asnOS);
+        LCSPrivacyCheckImpl lcsPrivacyCheck = new LCSPrivacyCheckImpl(callSessionUnrelated, callSessionRelated);
+        AsnOutputStream asnOS = new AsnOutputStream();
+        lcsPrivacyCheck.encodeAll(asnOS);
 
-		byte[] encodedData = asnOS.toByteArray();
+        byte[] encodedData = asnOS.toByteArray();
 
-		assertTrue( Arrays.equals(data,encodedData));
-	}
-	
-	@Test(groups = { "functional.serialize", "service.lsm" })
-	public void testSerialization() throws Exception {
-		PrivacyCheckRelatedAction callSessionUnrelated = PrivacyCheckRelatedAction.allowedWithoutNotification;
-		PrivacyCheckRelatedAction callSessionRelated = PrivacyCheckRelatedAction.allowedIfNoResponse;
+        assertTrue(Arrays.equals(data, encodedData));
+    }
 
-		LCSPrivacyCheckImpl original = new LCSPrivacyCheckImpl(callSessionUnrelated, callSessionRelated);
+    @Test(groups = { "functional.serialize", "service.lsm" })
+    public void testSerialization() throws Exception {
+        PrivacyCheckRelatedAction callSessionUnrelated = PrivacyCheckRelatedAction.allowedWithoutNotification;
+        PrivacyCheckRelatedAction callSessionRelated = PrivacyCheckRelatedAction.allowedIfNoResponse;
 
-		// serialize
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ObjectOutputStream oos = new ObjectOutputStream(out);
-		oos.writeObject(original);
-		oos.close();
+        LCSPrivacyCheckImpl original = new LCSPrivacyCheckImpl(callSessionUnrelated, callSessionRelated);
 
-		// deserialize
-		byte[] pickled = out.toByteArray();
-		InputStream in = new ByteArrayInputStream(pickled);
-		ObjectInputStream ois = new ObjectInputStream(in);
-		Object o = ois.readObject();
-		LCSPrivacyCheckImpl copy = (LCSPrivacyCheckImpl) o;
-		
-		//test result
-		assertEquals(copy, original);
-	}
+        // serialize
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(out);
+        oos.writeObject(original);
+        oos.close();
+
+        // deserialize
+        byte[] pickled = out.toByteArray();
+        InputStream in = new ByteArrayInputStream(pickled);
+        ObjectInputStream ois = new ObjectInputStream(in);
+        Object o = ois.readObject();
+        LCSPrivacyCheckImpl copy = (LCSPrivacyCheckImpl) o;
+
+        // test result
+        assertEquals(copy, original);
+    }
 }

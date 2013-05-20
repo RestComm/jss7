@@ -37,188 +37,178 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage;
 /**
  * @author baranowb
  * @author sergey vetyutnev
- * 
+ *
  */
 public class TCBeginMessageImpl implements TCBeginMessage {
 
-	private static final String _OCTET_STRING_ENCODE = "US-ASCII";
-	// mandatory
-	private byte[] originatingTransactionId;
-	// opt
-	private DialogPortion dp;
-	// opt
-	private Component[] component;
+    private static final String _OCTET_STRING_ENCODE = "US-ASCII";
+    // mandatory
+    private byte[] originatingTransactionId;
+    // opt
+    private DialogPortion dp;
+    // opt
+    private Component[] component;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage#getComponent()
-	 */
-	public Component[] getComponent() {
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage#getComponent()
+     */
+    public Component[] getComponent() {
 
-		return this.component;
-	}
+        return this.component;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage#getDialogPortion
-	 * ()
-	 */
-	public DialogPortion getDialogPortion() {
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage#getDialogPortion ()
+     */
+    public DialogPortion getDialogPortion() {
 
-		return this.dp;
-	}
+        return this.dp;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage#
-	 * getOriginatingTransactionId()
-	 */
-	public byte[] getOriginatingTransactionId() {
+    /*
+     * (non-Javadoc)
+     *
+     * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage# getOriginatingTransactionId()
+     */
+    public byte[] getOriginatingTransactionId() {
 
-		return this.originatingTransactionId;
-	}
+        return this.originatingTransactionId;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage#setComponent
-	 * (org.mobicents.protocols.ss7.tcap.asn.comp.Component[])
-	 */
-	public void setComponent(Component[] c) {
-		this.component = c;
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage#setComponent
+     * (org.mobicents.protocols.ss7.tcap.asn.comp.Component[])
+     */
+    public void setComponent(Component[] c) {
+        this.component = c;
 
-	}
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage#setDialogPortion
-	 * (org.mobicents.protocols.ss7.tcap.asn.DialogPortion)
-	 */
-	public void setDialogPortion(DialogPortion dp) {
-		this.dp = dp;
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage#setDialogPortion
+     * (org.mobicents.protocols.ss7.tcap.asn.DialogPortion)
+     */
+    public void setDialogPortion(DialogPortion dp) {
+        this.dp = dp;
 
-	}
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage#
-	 * setOriginatingTransactionId(java.lang.String)
-	 */
-	public void setOriginatingTransactionId(byte[] t) {
-		this.originatingTransactionId = t;
+    /*
+     * (non-Javadoc)
+     *
+     * @seeorg.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage# setOriginatingTransactionId(java.lang.String)
+     */
+    public void setOriginatingTransactionId(byte[] t) {
+        this.originatingTransactionId = t;
 
-	}
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#decode(org.mobicents.protocols
-	 * .asn.AsnInputStream)
-	 */
-	public void decode(AsnInputStream ais) throws ParseException {
-		try {
-			AsnInputStream localAis = ais.readSequenceStream();
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.tcap.asn.Encodable#decode(org.mobicents.protocols .asn.AsnInputStream)
+     */
+    public void decode(AsnInputStream ais) throws ParseException {
+        try {
+            AsnInputStream localAis = ais.readSequenceStream();
 
-			int tag = localAis.readTag();
-			if (tag != _TAG_OTX || localAis.getTagClass() != Tag.CLASS_APPLICATION)
-				throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
-						"Error decoding TC-Begin: Expected OriginatingTransactionId, found tag: " + tag);
-			this.originatingTransactionId = localAis.readOctetString();
+            int tag = localAis.readTag();
+            if (tag != _TAG_OTX || localAis.getTagClass() != Tag.CLASS_APPLICATION)
+                throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
+                        "Error decoding TC-Begin: Expected OriginatingTransactionId, found tag: " + tag);
+            this.originatingTransactionId = localAis.readOctetString();
 
-			while (true) {
-				if (localAis.available() == 0)
-					return;
-				
-				tag = localAis.readTag();
-				if (localAis.isTagPrimitive() || localAis.getTagClass() != Tag.CLASS_APPLICATION)
-					throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
-							"Error decoding TC-Begin: DialogPortion and Component portion must be constructive and has tag class CLASS_APPLICATION");
-				
-				switch(tag) {
-				case DialogPortion._TAG:
-					this.dp = TcapFactory.createDialogPortion(localAis);
-					break;
-					
-				case Component._COMPONENT_TAG:
-					AsnInputStream compAis = localAis.readSequenceStream();
-					List<Component> cps = new ArrayList<Component>();
-					// its iterator :)
-					while (compAis.available() > 0) {
-						Component c = TcapFactory.createComponent(compAis);
-						if(c == null)
-						{
-							break;
-						}
-						cps.add(c);
-					}
+            while (true) {
+                if (localAis.available() == 0)
+                    return;
 
-					this.component = new Component[cps.size()];
-					this.component = cps.toArray(this.component);
-					break;
-					
-				default:
-					throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
-							"Error decoding TC-Begin: DialogPortion and Componebt parsing: bad tag - " + tag);
-				}
-			}
+                tag = localAis.readTag();
+                if (localAis.isTagPrimitive() || localAis.getTagClass() != Tag.CLASS_APPLICATION)
+                    throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
+                            "Error decoding TC-Begin: DialogPortion and Component portion must be constructive and has tag class CLASS_APPLICATION");
 
-		} catch (IOException e) {
-			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "IOException while decoding TC-Begin: " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "AsnException while decoding TC-Begin: " + e.getMessage(), e);
-		}
+                switch (tag) {
+                    case DialogPortion._TAG:
+                        this.dp = TcapFactory.createDialogPortion(localAis);
+                        break;
 
-	}
+                    case Component._COMPONENT_TAG:
+                        AsnInputStream compAis = localAis.readSequenceStream();
+                        List<Component> cps = new ArrayList<Component>();
+                        // its iterator :)
+                        while (compAis.available() > 0) {
+                            Component c = TcapFactory.createComponent(compAis);
+                            if (c == null) {
+                                break;
+                            }
+                            cps.add(c);
+                        }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols
-	 * .asn.AsnOutputStream)
-	 */
-	public void encode(AsnOutputStream aos) throws EncodeException {
-		
-//		if (this.originatingTransactionId == null)
-//			throw new ParseException("Error encoding TC-Begin: originatingTransactionId must not be null");
-		
-		try {
-			aos.writeTag(Tag.CLASS_APPLICATION, false, _TAG);
-			int pos = aos.StartContentDefiniteLength();
+                        this.component = new Component[cps.size()];
+                        this.component = cps.toArray(this.component);
+                        break;
 
-//			Utils.writeTransactionId(aos, this.originatingTransactionId, Tag.CLASS_APPLICATION, _TAG_OTX);
-			aos.writeOctetString(Tag.CLASS_APPLICATION, _TAG_OTX, this.originatingTransactionId);
+                    default:
+                        throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
+                                "Error decoding TC-Begin: DialogPortion and Componebt parsing: bad tag - " + tag);
+                }
+            }
 
-			if (this.dp != null)
-				this.dp.encode(aos);
+        } catch (IOException e) {
+            throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "IOException while decoding TC-Begin: "
+                    + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new ParseException(PAbortCauseType.BadlyFormattedTxPortion, null, "AsnException while decoding TC-Begin: "
+                    + e.getMessage(), e);
+        }
 
-			if (component != null) {
-				aos.writeTag(Tag.CLASS_APPLICATION, false, Component._COMPONENT_TAG);
-				int pos2 = aos.StartContentDefiniteLength();
-				for (Component c : this.component) {
-					c.encode(aos);
-				}
-				aos.FinalizeContent(pos2);
-			}
+    }
 
-			aos.FinalizeContent(pos);
-			
-		} catch (IOException e) {
-			throw new EncodeException("IOException while encoding TC-Begin: " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new EncodeException("AsnException while encoding TC-Begin: " + e.getMessage(), e);
-		}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols .asn.AsnOutputStream)
+     */
+    public void encode(AsnOutputStream aos) throws EncodeException {
 
-	}
+        // if (this.originatingTransactionId == null)
+        // throw new ParseException("Error encoding TC-Begin: originatingTransactionId must not be null");
+
+        try {
+            aos.writeTag(Tag.CLASS_APPLICATION, false, _TAG);
+            int pos = aos.StartContentDefiniteLength();
+
+            // Utils.writeTransactionId(aos, this.originatingTransactionId, Tag.CLASS_APPLICATION, _TAG_OTX);
+            aos.writeOctetString(Tag.CLASS_APPLICATION, _TAG_OTX, this.originatingTransactionId);
+
+            if (this.dp != null)
+                this.dp.encode(aos);
+
+            if (component != null) {
+                aos.writeTag(Tag.CLASS_APPLICATION, false, Component._COMPONENT_TAG);
+                int pos2 = aos.StartContentDefiniteLength();
+                for (Component c : this.component) {
+                    c.encode(aos);
+                }
+                aos.FinalizeContent(pos2);
+            }
+
+            aos.FinalizeContent(pos);
+
+        } catch (IOException e) {
+            throw new EncodeException("IOException while encoding TC-Begin: " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new EncodeException("AsnException while encoding TC-Begin: " + e.getMessage(), e);
+        }
+
+    }
 
 }

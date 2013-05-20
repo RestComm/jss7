@@ -27,92 +27,53 @@ import org.mobicents.protocols.ss7.map.api.primitives.GSNAddress;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
-/**	
- * 
- 
-MAP V1-2-3:
-
-MAP V3:
-activateTraceMode  OPERATION ::= {				--Timer m
-	ARGUMENT
-		ActivateTraceModeArg
-	RESULT
-		ActivateTraceModeRes
-		-- optional
-	ERRORS {
-		systemFailure |
-		dataMissing |
-		unexpectedDataValue |
-		facilityNotSupported |
-		unidentifiedSubscriber |
-		tracingBufferFull}
-	CODE	local:50 }
-
-MAP V2:
-ActivateTraceMode ::= OPERATION--Timer m
-ARGUMENT
-	activateTraceModeArg	ActivateTraceModeArg
-RESULT
-ERRORS {
-	SystemFailure,
-	DataMissing,
-	UnexpectedDataValue,
-	FacilityNotSupported,
-	UnidentifiedSubscriber,
-	TracingBufferFull}
-
-MAP V3:
-ActivateTraceModeArg ::= SEQUENCE {
-	imsi			[0] IMSI		OPTIONAL,
-	traceReference	[1] TraceReference,
-	traceType		[2] TraceType,
-	omc-Id		[3] AddressString	OPTIONAL,
-	extensionContainer	[4] ExtensionContainer	OPTIONAL,
-	...,
-	traceReference2	[5] TraceReference2	OPTIONAL,
-	traceDepthList	[6] TraceDepthList	OPTIONAL,
-	traceNE-TypeList	[7] TraceNE-TypeList	OPTIONAL,
-	traceInterfaceList	[8] TraceInterfaceList	OPTIONAL,
-	traceEventList	[9] TraceEventList	OPTIONAL,
-	traceCollectionEntity	[10] GSN-Address	OPTIONAL,
-	mdt-Configuration	[11] MDT-Configuration	OPTIONAL
-	}
-
-MAP V2:
-ActivateTraceModeArg ::= SEQUENCE {
-	imsi[0] 			IMSI	OPTIONAL,
-	traceReference[1] 	TraceReference,
-	traceType[2] 		TraceType,
-	omc-Id[3] 			AddressString	OPTIONAL,
-	...}
- * 
+/**
+ *
+ MAP V1-2-3:
+ *
+ * MAP V3: activateTraceMode OPERATION ::= { --Timer m ARGUMENT ActivateTraceModeArg RESULT ActivateTraceModeRes -- optional
+ * ERRORS { systemFailure | dataMissing | unexpectedDataValue | facilityNotSupported | unidentifiedSubscriber |
+ * tracingBufferFull} CODE local:50 }
+ *
+ * MAP V2: ActivateTraceMode ::= OPERATION--Timer m ARGUMENT activateTraceModeArg ActivateTraceModeArg RESULT ERRORS {
+ * SystemFailure, DataMissing, UnexpectedDataValue, FacilityNotSupported, UnidentifiedSubscriber, TracingBufferFull}
+ *
+ * MAP V3: ActivateTraceModeArg ::= SEQUENCE { imsi [0] IMSI OPTIONAL, traceReference [1] TraceReference, traceType [2]
+ * TraceType, omc-Id [3] AddressString OPTIONAL, extensionContainer [4] ExtensionContainer OPTIONAL, ..., traceReference2 [5]
+ * TraceReference2 OPTIONAL, traceDepthList [6] TraceDepthList OPTIONAL, traceNE-TypeList [7] TraceNE-TypeList OPTIONAL,
+ * traceInterfaceList [8] TraceInterfaceList OPTIONAL, traceEventList [9] TraceEventList OPTIONAL, traceCollectionEntity [10]
+ * GSN-Address OPTIONAL, mdt-Configuration [11] MDT-Configuration OPTIONAL }
+ *
+ * MAP V2: ActivateTraceModeArg ::= SEQUENCE { imsi[0] IMSI OPTIONAL, traceReference[1] TraceReference, traceType[2] TraceType,
+ * omc-Id[3] AddressString OPTIONAL, ...}
+ *
  * @author sergey vetyutnev
  *
  */
 public interface ActivateTraceModeRequest extends OamMessage {
 
-	public IMSI getImsi();
+    IMSI getImsi();
 
-	public TraceReference getTraceReference();
+    TraceReference getTraceReference();
 
-	public TraceType getTraceType();
+    TraceType getTraceType();
 
-	public AddressString getOmcId();
+    AddressString getOmcId();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public TraceReference2 getTraceReference2();
+    TraceReference2 getTraceReference2();
 
-	public TraceDepthList getTraceDepthList();
+    TraceDepthList getTraceDepthList();
 
-	public TraceNETypeList getTraceNeTypeList();
+    TraceNETypeList getTraceNeTypeList();
 
-	public TraceInterfaceList getTraceInterfaceList();
+    TraceInterfaceList getTraceInterfaceList();
 
-	public TraceEventList getTraceEventList();
+    TraceEventList getTraceEventList();
 
-	public GSNAddress getTraceCollectionEntity();
+    GSNAddress getTraceCollectionEntity();
 
-	public MDTConfiguration getMdtConfiguration();
+    MDTConfiguration getMdtConfiguration();
 
 }

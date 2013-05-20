@@ -25,21 +25,18 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformati
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-ModificationRequestFor-CSG ::= SEQUENCE {
-	modifyNotificationToCSE	[0]	ModificationInstruction	OPTIONAL,
-	extensionContainer	[1]	ExtensionContainer	OPTIONAL,
-	...}
-
- * 
+ *
+ ModificationRequestFor-CSG ::= SEQUENCE { modifyNotificationToCSE [0] ModificationInstruction OPTIONAL, extensionContainer
+ * [1] ExtensionContainer OPTIONAL, ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ModificationRequestForCSG {
 
-	public ModificationInstruction getModifyNotificationToCSE();
+    ModificationInstruction getModifyNotificationToCSE();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -34,64 +34,67 @@ import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRespons
 
 public class AlertServiceCentreResponseImpl extends SmsMessageImpl implements AlertServiceCentreResponse {
 
-	public int getTag() throws MAPException {
-		
-		throw new MAPException("AlertServiceCentreResponse has no MAP message primitive");
-	}
+    public int getTag() throws MAPException {
 
-	public MAPMessageType getMessageType() {
-		return MAPMessageType.alertServiceCentre_Response;
-	}
+        throw new MAPException("AlertServiceCentreResponse has no MAP message primitive");
+    }
 
-	public int getOperationCode() {
-		return MAPOperationCode.alertServiceCentre;
-	}
+    public MAPMessageType getMessageType() {
+        return MAPMessageType.alertServiceCentre_Response;
+    }
 
-	public int getTagClass() {
+    public int getOperationCode() {
+        return MAPOperationCode.alertServiceCentre;
+    }
 
-		return Tag.CLASS_UNIVERSAL;
-	}
+    public int getTagClass() {
 
-	public boolean getIsPrimitive() {
-		return false;
-	}
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-		throw new MAPParsingComponentException("AlertServiceCentreResponse has no MAP message primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-	}
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-		throw new MAPParsingComponentException("AlertServiceCentreResponse has no MAP message primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-	}
+    public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+        throw new MAPParsingComponentException("AlertServiceCentreResponse has no MAP message primitive",
+                MAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		throw new MAPException("AlertServiceCentreResponse has no MAP message primitive");
-	}
+    public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+        throw new MAPParsingComponentException("AlertServiceCentreResponse has no MAP message primitive",
+                MAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		throw new MAPException("AlertServiceCentreResponse has no MAP message primitive");
-	}
+    public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+        throw new MAPException("AlertServiceCentreResponse has no MAP message primitive");
+    }
 
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		throw new MAPException("AlertServiceCentreResponse has no MAP message primitive");
-	}
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+        throw new MAPException("AlertServiceCentreResponse has no MAP message primitive");
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		
-		StringBuilder sb = new StringBuilder();
-		sb.append("AlertServiceCentreResponse [");
-		
-		if(this.getMAPDialog() != null){
-			sb.append("DialogId=").append(this.getMAPDialog().getLocalDialogId());
-		}
-		
-		sb.append("]");
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
+        throw new MAPException("AlertServiceCentreResponse has no MAP message primitive");
+    }
 
-		return sb.toString();
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("AlertServiceCentreResponse [");
+
+        if (this.getMAPDialog() != null) {
+            sb.append("DialogId=").append(this.getMAPDialog().getLocalDialogId());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
-

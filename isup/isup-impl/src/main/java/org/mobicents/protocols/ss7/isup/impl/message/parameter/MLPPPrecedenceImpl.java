@@ -23,14 +23,12 @@
 /**
  * Start time:08:42:25 2009-04-02<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
- * 
+ *
  */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
-
-import java.io.IOException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.MLPPPrecedence;
@@ -38,114 +36,114 @@ import org.mobicents.protocols.ss7.isup.message.parameter.MLPPPrecedence;
 /**
  * Start time:08:42:25 2009-04-02<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
 public class MLPPPrecedenceImpl extends AbstractISUPParameter implements MLPPPrecedence {
 
-	private int lfb;
-	private int precedenceLevel;
-	private int mllpServiceDomain;
-	// FIXME: ensure zero in first digit.?
-	private byte[] niDigits;
+    private int lfb;
+    private int precedenceLevel;
+    private int mllpServiceDomain;
+    // FIXME: ensure zero in first digit.?
+    private byte[] niDigits;
 
-	public MLPPPrecedenceImpl() {
-		super();
-		
-	}
+    public MLPPPrecedenceImpl() {
+        super();
 
-	public MLPPPrecedenceImpl(byte[] b) throws ParameterException {
-		super();
-		decode(b);
-	}
+    }
 
-	public MLPPPrecedenceImpl(byte lfb, byte precedenceLevel, int mllpServiceDomain, byte[] niDigits) {
-		super();
-		this.lfb = lfb;
-		this.precedenceLevel = precedenceLevel;
-		this.mllpServiceDomain = mllpServiceDomain;
-		setNiDigits(niDigits);
-	}
+    public MLPPPrecedenceImpl(byte[] b) throws ParameterException {
+        super();
+        decode(b);
+    }
 
-	public int decode(byte[] b) throws ParameterException {
-		if (b == null || b.length != 6) {
-			throw new ParameterException("byte[] must  not be null and length must  be 6");
-		}
+    public MLPPPrecedenceImpl(byte lfb, byte precedenceLevel, int mllpServiceDomain, byte[] niDigits) {
+        super();
+        this.lfb = lfb;
+        this.precedenceLevel = precedenceLevel;
+        this.mllpServiceDomain = mllpServiceDomain;
+        setNiDigits(niDigits);
+    }
 
-		this.precedenceLevel = (byte) (b[0] & 0x0F);
-		this.lfb = (byte) ((b[0] >> 5) & 0x03);
-		byte v = 0;
-		this.niDigits = new byte[4];
-		for (int i = 0; i < 2; i++) {
-			v = 0;
-			v = b[i + 1];
-			this.niDigits[i * 2] = (byte) (v & 0x0F);
-			this.niDigits[i * 2 + 1] = (byte) ((v >> 4) & 0x0F);
-		}
+    public int decode(byte[] b) throws ParameterException {
+        if (b == null || b.length != 6) {
+            throw new ParameterException("byte[] must  not be null and length must  be 6");
+        }
 
-		this.mllpServiceDomain = b[3] << 16;
-		this.mllpServiceDomain |= b[4] << 8;
-		this.mllpServiceDomain |= b[5];
-		return 6;
-	}
+        this.precedenceLevel = (byte) (b[0] & 0x0F);
+        this.lfb = (byte) ((b[0] >> 5) & 0x03);
+        byte v = 0;
+        this.niDigits = new byte[4];
+        for (int i = 0; i < 2; i++) {
+            v = 0;
+            v = b[i + 1];
+            this.niDigits[i * 2] = (byte) (v & 0x0F);
+            this.niDigits[i * 2 + 1] = (byte) ((v >> 4) & 0x0F);
+        }
 
-	public byte[] encode() throws ParameterException {
-		byte[] b = new byte[6];
-		b[0] = (byte) ((this.lfb & 0x03) << 5);
-		b[0] |= this.precedenceLevel & 0x0F;
-		byte v = 0;
-		for (int i = 0; i < 2; i++) {
-			v = 0;
+        this.mllpServiceDomain = b[3] << 16;
+        this.mllpServiceDomain |= b[4] << 8;
+        this.mllpServiceDomain |= b[5];
+        return 6;
+    }
 
-			v |= (this.niDigits[i * 2] & 0x0F) << 4;
-			v |= (this.niDigits[i * 2 + 1] & 0x0F);
+    public byte[] encode() throws ParameterException {
+        byte[] b = new byte[6];
+        b[0] = (byte) ((this.lfb & 0x03) << 5);
+        b[0] |= this.precedenceLevel & 0x0F;
+        byte v = 0;
+        for (int i = 0; i < 2; i++) {
+            v = 0;
 
-			b[i + 1] = v;
-		}
+            v |= (this.niDigits[i * 2] & 0x0F) << 4;
+            v |= (this.niDigits[i * 2 + 1] & 0x0F);
 
-		b[3] = (byte) (this.mllpServiceDomain >> 16);
-		b[4] = (byte) (this.mllpServiceDomain >> 8);
-		b[5] = (byte) this.mllpServiceDomain;
-		return b;
-	}
+            b[i + 1] = v;
+        }
 
-	public byte getLfb() {
-		return (byte) lfb;
-	}
+        b[3] = (byte) (this.mllpServiceDomain >> 16);
+        b[4] = (byte) (this.mllpServiceDomain >> 8);
+        b[5] = (byte) this.mllpServiceDomain;
+        return b;
+    }
 
-	public void setLfb(byte lfb) {
-		this.lfb = lfb;
-	}
+    public byte getLfb() {
+        return (byte) lfb;
+    }
 
-	public byte getPrecedenceLevel() {
-		return (byte) precedenceLevel;
-	}
+    public void setLfb(byte lfb) {
+        this.lfb = lfb;
+    }
 
-	public void setPrecedenceLevel(byte precedenceLevel) {
-		this.precedenceLevel = precedenceLevel;
-	}
+    public byte getPrecedenceLevel() {
+        return (byte) precedenceLevel;
+    }
 
-	public int getMllpServiceDomain() {
-		return mllpServiceDomain;
-	}
+    public void setPrecedenceLevel(byte precedenceLevel) {
+        this.precedenceLevel = precedenceLevel;
+    }
 
-	public void setMllpServiceDomain(int mllpServiceDomain) {
-		this.mllpServiceDomain = mllpServiceDomain;
-	}
+    public int getMllpServiceDomain() {
+        return mllpServiceDomain;
+    }
 
-	public byte[] getNiDigits() {
-		return niDigits;
-	}
+    public void setMllpServiceDomain(int mllpServiceDomain) {
+        this.mllpServiceDomain = mllpServiceDomain;
+    }
 
-	public void setNiDigits(byte[] niDigits) {
-		if (niDigits == null || niDigits.length != 4) {
-			throw new IllegalArgumentException();
-		}
-		this.niDigits = niDigits;
-	}
+    public byte[] getNiDigits() {
+        return niDigits;
+    }
 
-	public int getCode() {
+    public void setNiDigits(byte[] niDigits) {
+        if (niDigits == null || niDigits.length != 4) {
+            throw new IllegalArgumentException();
+        }
+        this.niDigits = niDigits;
+    }
 
-		return _PARAMETER_CODE;
-	}
+    public int getCode() {
+
+        return _PARAMETER_CODE;
+    }
 }

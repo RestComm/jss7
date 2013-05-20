@@ -39,60 +39,58 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
 public class DPAnalysedInfoCriteriumTest {
-	
-	
-	public byte[] getData() {
-		return new byte[] { 48, 59, 4, 4, -111, 34, 50, -12, 2, 1, 7, 4, 4,
-				-111, 34, 50, -11, 2, 1, 0, 48, 39, -96, 32, 48, 10, 6, 3, 42,
-				3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3,
-				42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
-	};
-	
-	@Test(groups = { "functional.decode", "primitives" })
-	public void testDecode() throws Exception {
-		byte[] data = this.getData();
-		AsnInputStream asn = new AsnInputStream(data);
-		int tag = asn.readTag();
-		DPAnalysedInfoCriteriumImpl prim = new DPAnalysedInfoCriteriumImpl();
-		prim.decodeAll(asn);
-		
-		assertEquals(tag, Tag.SEQUENCE);
-		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
-		
-		MAPExtensionContainer extensionContainer = prim.getExtensionContainer();
-		ISDNAddressString dialledNumber = prim.getDialledNumber();
-		assertTrue(dialledNumber.getAddress().equals("22234"));
-		assertEquals(dialledNumber.getAddressNature(), AddressNature.international_number);
-		assertEquals(dialledNumber.getNumberingPlan(), NumberingPlan.ISDN);
-		assertEquals(prim.getServiceKey() , 7);
-		ISDNAddressString gsmSCFAddress = prim.getGsmSCFAddress();
-		assertTrue(gsmSCFAddress.getAddress().equals("22235"));
-		assertEquals(gsmSCFAddress.getAddressNature(), AddressNature.international_number);
-		assertEquals(gsmSCFAddress.getNumberingPlan(), NumberingPlan.ISDN);
-		assertEquals(prim.getDefaultCallHandling() , DefaultCallHandling.continueCall);
-		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
-	}
-	
-	@Test(groups = { "functional.encode", "primitives" })
-	public void testEncode() throws Exception {
-		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
-		
-		ISDNAddressStringImpl dialledNumber = new ISDNAddressStringImpl(AddressNature.international_number, 
-				NumberingPlan.ISDN, "22234");
-		ISDNAddressStringImpl gsmSCFAddress = new ISDNAddressStringImpl(AddressNature.international_number, 
-				NumberingPlan.ISDN, "22235");
-		
-		DPAnalysedInfoCriteriumImpl prim = new DPAnalysedInfoCriteriumImpl(dialledNumber, 7,
-				gsmSCFAddress, DefaultCallHandling.continueCall, extensionContainer);
-		
-		AsnOutputStream asn = new AsnOutputStream();
-		prim.encodeAll(asn);
 
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
-	}
+    public byte[] getData() {
+        return new byte[] { 48, 59, 4, 4, -111, 34, 50, -12, 2, 1, 7, 4, 4, -111, 34, 50, -11, 2, 1, 0, 48, 39, -96, 32, 48,
+                10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26,
+                -95, 3, 31, 32, 33 };
+    };
+
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testDecode() throws Exception {
+        byte[] data = this.getData();
+        AsnInputStream asn = new AsnInputStream(data);
+        int tag = asn.readTag();
+        DPAnalysedInfoCriteriumImpl prim = new DPAnalysedInfoCriteriumImpl();
+        prim.decodeAll(asn);
+
+        assertEquals(tag, Tag.SEQUENCE);
+        assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
+
+        MAPExtensionContainer extensionContainer = prim.getExtensionContainer();
+        ISDNAddressString dialledNumber = prim.getDialledNumber();
+        assertTrue(dialledNumber.getAddress().equals("22234"));
+        assertEquals(dialledNumber.getAddressNature(), AddressNature.international_number);
+        assertEquals(dialledNumber.getNumberingPlan(), NumberingPlan.ISDN);
+        assertEquals(prim.getServiceKey(), 7);
+        ISDNAddressString gsmSCFAddress = prim.getGsmSCFAddress();
+        assertTrue(gsmSCFAddress.getAddress().equals("22235"));
+        assertEquals(gsmSCFAddress.getAddressNature(), AddressNature.international_number);
+        assertEquals(gsmSCFAddress.getNumberingPlan(), NumberingPlan.ISDN);
+        assertEquals(prim.getDefaultCallHandling(), DefaultCallHandling.continueCall);
+        assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+    }
+
+    @Test(groups = { "functional.encode", "primitives" })
+    public void testEncode() throws Exception {
+        MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
+
+        ISDNAddressStringImpl dialledNumber = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN,
+                "22234");
+        ISDNAddressStringImpl gsmSCFAddress = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN,
+                "22235");
+
+        DPAnalysedInfoCriteriumImpl prim = new DPAnalysedInfoCriteriumImpl(dialledNumber, 7, gsmSCFAddress,
+                DefaultCallHandling.continueCall, extensionContainer);
+
+        AsnOutputStream asn = new AsnOutputStream();
+        prim.encodeAll(asn);
+
+        assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+    }
 }

@@ -23,39 +23,30 @@
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
 /**
- * 
-
-PGW-InterfaceList ::= BIT STRING {
-	s2a (0),
-	s2b (1),
-	s2c (2),
-	s5 (3),
-	s6b (4),
-	gx (5),
-	s8b (6),
-	sgi (7)} (SIZE (8..16))
--- Other bits than listed above shall be discarded.
-
- * 
+ *
+ PGW-InterfaceList ::= BIT STRING { s2a (0), s2b (1), s2c (2), s5 (3), s6b (4), gx (5), s8b (6), sgi (7)} (SIZE (8..16)) --
+ * Other bits than listed above shall be discarded.
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface PGWInterfaceList {
 
-	public boolean getS2a();
+    boolean getS2a();
 
-	public boolean getS2b();
+    boolean getS2b();
 
-	public boolean getS2c();
+    boolean getS2c();
 
-	public boolean getS5();
+    boolean getS5();
 
-	public boolean getS6b();
+    boolean getS6b();
 
-	public boolean getGx();
+    boolean getGx();
 
-	public boolean getS8b();
+    boolean getS8b();
 
-	public boolean getSgi();
+    boolean getSgi();
 
 }

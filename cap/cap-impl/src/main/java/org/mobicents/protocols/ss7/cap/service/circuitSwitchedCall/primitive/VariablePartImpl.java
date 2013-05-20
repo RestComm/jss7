@@ -40,253 +40,253 @@ import org.mobicents.protocols.ss7.cap.isup.DigitsImpl;
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class VariablePartImpl implements VariablePart, CAPAsnPrimitive {
 
-	public static final int _ID_integer = 0;
-	public static final int _ID_number = 1;
-	public static final int _ID_time = 2;
-	public static final int _ID_date = 3;
-	public static final int _ID_price = 4;
+    public static final int _ID_integer = 0;
+    public static final int _ID_number = 1;
+    public static final int _ID_time = 2;
+    public static final int _ID_date = 3;
+    public static final int _ID_price = 4;
 
-	public static final String _PrimitiveName = "VariablePart";
+    public static final String _PrimitiveName = "VariablePart";
 
-	private Integer integer;
-	private Digits number;
-	private VariablePartTime time;
-	private VariablePartDate date;
-	private VariablePartPrice price;
+    private Integer integer;
+    private Digits number;
+    private VariablePartTime time;
+    private VariablePartDate date;
+    private VariablePartPrice price;
 
-	public VariablePartImpl() {
-	}
+    public VariablePartImpl() {
+    }
 
-	public VariablePartImpl(Integer integer) {
-		this.integer = integer;
-	}
+    public VariablePartImpl(Integer integer) {
+        this.integer = integer;
+    }
 
-	public VariablePartImpl(Digits number) {
-		this.number = number;
-	}
+    public VariablePartImpl(Digits number) {
+        this.number = number;
+    }
 
-	public VariablePartImpl(VariablePartTime time) {
-		this.time = time;
-	}
+    public VariablePartImpl(VariablePartTime time) {
+        this.time = time;
+    }
 
-	public VariablePartImpl(VariablePartDate date) {
-		this.date = date;
-	}
+    public VariablePartImpl(VariablePartDate date) {
+        this.date = date;
+    }
 
-	public VariablePartImpl(VariablePartPrice price) {
-		this.price = price;
-	}
+    public VariablePartImpl(VariablePartPrice price) {
+        this.price = price;
+    }
 
-	@Override
-	public Integer getInteger() {
-		return integer;
-	}
+    @Override
+    public Integer getInteger() {
+        return integer;
+    }
 
-	@Override
-	public Digits getNumber() {
-		return number;
-	}
+    @Override
+    public Digits getNumber() {
+        return number;
+    }
 
-	@Override
-	public VariablePartTime getTime() {
-		return time;
-	}
+    @Override
+    public VariablePartTime getTime() {
+        return time;
+    }
 
-	@Override
-	public VariablePartDate getDate() {
-		return date;
-	}
+    @Override
+    public VariablePartDate getDate() {
+        return date;
+    }
 
-	@Override
-	public VariablePartPrice getPrice() {
-		return price;
-	}
+    @Override
+    public VariablePartPrice getPrice() {
+        return price;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
+    @Override
+    public int getTag() throws CAPException {
 
-		if (this.integer != null) {
-			return _ID_integer;
-		} else if (this.number != null) {
-			return _ID_number;
-		} else if (this.time != null) {
-			return _ID_time;
-		} else if (this.date != null) {
-			return _ID_date;
-		} else if (this.price != null) {
-			return _ID_price;
-		} else {
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": no of choices has been definite");
-		}
-	}
+        if (this.integer != null) {
+            return _ID_integer;
+        } else if (this.number != null) {
+            return _ID_number;
+        } else if (this.time != null) {
+            return _ID_time;
+        } else if (this.date != null) {
+            return _ID_date;
+        } else if (this.price != null) {
+            return _ID_price;
+        } else {
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": no of choices has been definite");
+        }
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_CONTEXT_SPECIFIC;
-	}
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_CONTEXT_SPECIFIC;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return true;
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return true;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, IOException, AsnException {
+    private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		this.integer = null;
-		this.number = null;
-		this.time = null;
-		this.date = null;
-		this.price = null;
+        this.integer = null;
+        this.number = null;
+        this.time = null;
+        this.date = null;
+        this.price = null;
 
-		if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tagClass or is not primitive",
-					CAPParsingComponentExceptionReason.MistypedParameter);
+        if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": bad tagClass or is not primitive", CAPParsingComponentExceptionReason.MistypedParameter);
 
-		switch (ais.getTag()) {
-		case _ID_integer:
-			this.integer = (int) ais.readIntegerData(length);
-			break;
-		case _ID_number:
-			this.number = new DigitsImpl();
-			((DigitsImpl) this.number).decodeData(ais, length);
-			this.number.setIsGenericDigits();
-			break;
-		case _ID_time:
-			this.time = new VariablePartTimeImpl();
-			((VariablePartTimeImpl) this.time).decodeData(ais, length);
-			break;
-		case _ID_date:
-			this.date = new VariablePartDateImpl();
-			((VariablePartDateImpl) this.date).decodeData(ais, length);
-			break;
-		case _ID_price:
-			this.price = new VariablePartPriceImpl();
-			((VariablePartPriceImpl) this.price).decodeData(ais, length);
-			break;
-		default:
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag: " + ais.getTag(),
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        switch (ais.getTag()) {
+            case _ID_integer:
+                this.integer = (int) ais.readIntegerData(length);
+                break;
+            case _ID_number:
+                this.number = new DigitsImpl();
+                ((DigitsImpl) this.number).decodeData(ais, length);
+                this.number.setIsGenericDigits();
+                break;
+            case _ID_time:
+                this.time = new VariablePartTimeImpl();
+                ((VariablePartTimeImpl) this.time).decodeData(ais, length);
+                break;
+            case _ID_date:
+                this.date = new VariablePartDateImpl();
+                ((VariablePartDateImpl) this.date).decodeData(ais, length);
+                break;
+            case _ID_price:
+                this.price = new VariablePartPriceImpl();
+                ((VariablePartPriceImpl) this.price).decodeData(ais, length);
+                break;
+            default:
+                throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag: " + ais.getTag(),
+                        CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-		int choiceCnt = 0;
-		if (this.integer != null)
-			choiceCnt++;
-		if (this.number != null)
-			choiceCnt++;
-		if (this.time != null)
-			choiceCnt++;
-		if (this.date != null)
-			choiceCnt++;
-		if (this.price != null)
-			choiceCnt++;
-		
-		if (choiceCnt != 1)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": only one choice must be definite, found: " + choiceCnt);
+        int choiceCnt = 0;
+        if (this.integer != null)
+            choiceCnt++;
+        if (this.number != null)
+            choiceCnt++;
+        if (this.time != null)
+            choiceCnt++;
+        if (this.date != null)
+            choiceCnt++;
+        if (this.price != null)
+            choiceCnt++;
 
-		try {
-			if (this.integer != null)
-				asnOs.writeIntegerData(this.integer);
-			if (this.number != null)
-				((DigitsImpl) this.number).encodeData(asnOs);
-			if (this.time != null)
-				((VariablePartTimeImpl) this.time).encodeData(asnOs);
-			if (this.date != null)
-				((VariablePartDateImpl) this.date).encodeData(asnOs);
-			if (this.price != null)
-				((VariablePartPriceImpl) this.price).encodeData(asnOs);
-		} catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        if (choiceCnt != 1)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": only one choice must be definite, found: "
+                    + choiceCnt);
 
-	@Override
-	public String toString() {
+        try {
+            if (this.integer != null)
+                asnOs.writeIntegerData(this.integer);
+            if (this.number != null)
+                ((DigitsImpl) this.number).encodeData(asnOs);
+            if (this.time != null)
+                ((VariablePartTimeImpl) this.time).encodeData(asnOs);
+            if (this.date != null)
+                ((VariablePartDateImpl) this.date).encodeData(asnOs);
+            if (this.price != null)
+                ((VariablePartPriceImpl) this.price).encodeData(asnOs);
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
-		
-		if (this.integer != null) {
-			sb.append("integer=");
-			sb.append(integer);
-		}
-		if (this.number != null) {
-			sb.append(" number=");
-			sb.append(number.toString());
-		}
-		if (this.time != null) {
-			sb.append(" time=");
-			sb.append(time.toString());
-		}
-		if (this.date != null) {
-			sb.append(" date=");
-			sb.append(date.toString());
-		}
-		if (this.price != null) {
-			sb.append(" price=");
-			sb.append(price.toString());
-		}
+    @Override
+    public String toString() {
 
-		sb.append("]");
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		return sb.toString();
-	}
+        if (this.integer != null) {
+            sb.append("integer=");
+            sb.append(integer);
+        }
+        if (this.number != null) {
+            sb.append(" number=");
+            sb.append(number.toString());
+        }
+        if (this.time != null) {
+            sb.append(" time=");
+            sb.append(time.toString());
+        }
+        if (this.date != null) {
+            sb.append(" date=");
+            sb.append(date.toString());
+        }
+        if (this.price != null) {
+            sb.append(" price=");
+            sb.append(price.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
-

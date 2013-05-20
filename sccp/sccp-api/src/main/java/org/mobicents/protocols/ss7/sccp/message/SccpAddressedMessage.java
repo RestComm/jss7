@@ -26,32 +26,32 @@ import org.mobicents.protocols.ss7.sccp.parameter.HopCounter;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
- * 
+ *
  * This interface represents a SCCP message that addressed with Called/CallingPartyAddresses
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SccpAddressedMessage extends SccpMessage {
 
-	public SccpAddress getCalledPartyAddress();
+    SccpAddress getCalledPartyAddress();
 
-	public SccpAddress getCallingPartyAddress();
+    SccpAddress getCallingPartyAddress();
 
-	public boolean getReturnMessageOnError();
+    boolean getReturnMessageOnError();
 
-	public void clearReturnMessageOnError();
+    void clearReturnMessageOnError();
 
-	public boolean getSccpCreatesSls();
+    boolean getSccpCreatesSls();
 
-	public HopCounter getHopCounter();
+    HopCounter getHopCounter();
 
-	public void setCalledPartyAddress(SccpAddress v);
+    void setCalledPartyAddress(SccpAddress v);
 
-	public void setCallingPartyAddress(SccpAddress v);
+    void setCallingPartyAddress(SccpAddress v);
 
-	public void setHopCounter(HopCounter hopCounter);
+    void setHopCounter(HopCounter hopCounter);
 
-	public boolean reduceHopCounter();
+    boolean reduceHopCounter();
 
 }

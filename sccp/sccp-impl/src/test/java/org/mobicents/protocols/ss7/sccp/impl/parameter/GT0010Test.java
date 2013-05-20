@@ -22,8 +22,7 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.parameter;
 
-import org.testng.annotations.*;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,59 +30,61 @@ import java.io.ByteArrayOutputStream;
 import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
 
-
 import org.mobicents.protocols.ss7.sccp.parameter.GT0010;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 /**
  * @author amit bhayani
- * 
+ *
  */
 public class GT0010Test {
-	private byte[] data = new byte[] { 3, 0x09, 0x32, 0x26, 0x59, 0x18 };
-	private GT0010Codec codec = new GT0010Codec();
+    private byte[] data = new byte[] { 3, 0x09, 0x32, 0x26, 0x59, 0x18 };
+    private GT0010Codec codec = new GT0010Codec();
 
-	public GT0010Test() {
-	}
+    public GT0010Test() {
+    }
 
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
 
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
 
-	@BeforeMethod
-	public void setUp() {
-	}
+    @BeforeMethod
+    public void setUp() {
+    }
 
-	@AfterMethod
-	public void tearDown() {
-	}
+    @AfterMethod
+    public void tearDown() {
+    }
 
+    @Test(groups = { "parameter", "functional.encode" })
+    public void testSerialization() throws Exception {
+        GT0010 gt = new GT0010(0, "9023629581");
 
+        // Writes
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(output);
+        writer.setIndentation("\t"); // Optional (use tabulation for
+        // indentation).
+        writer.write(gt, "GT0010", GT0010.class);
+        writer.close();
 
-	@Test(groups = { "parameter","functional.encode"})
-	public void testSerialization() throws Exception {
-		GT0010 gt = new GT0010(0, "9023629581");
+        System.out.println(output.toString());
 
-		// Writes
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		XMLObjectWriter writer = XMLObjectWriter.newInstance(output);
-		writer.setIndentation("\t"); // Optional (use tabulation for
-		// indentation).
-		writer.write(gt, "GT0010", GT0010.class);
-		writer.close();
+        ByteArrayInputStream input = new ByteArrayInputStream(output.toByteArray());
+        XMLObjectReader reader = XMLObjectReader.newInstance(input);
+        GT0010 aiOut = reader.read("GT0010", GT0010.class);
 
-		System.out.println(output.toString());
-
-		ByteArrayInputStream input = new ByteArrayInputStream(output.toByteArray());
-		XMLObjectReader reader = XMLObjectReader.newInstance(input);
-		GT0010 aiOut = reader.read("GT0010", GT0010.class);
-
-		// check results
-		assertEquals( aiOut.getTranslationType(),0);
-		assertEquals( aiOut.getDigits(),"9023629581");
-	}
+        // check results
+        assertEquals(aiOut.getTranslationType(), 0);
+        assertEquals(aiOut.getDigits(), "9023629581");
+    }
 
 }

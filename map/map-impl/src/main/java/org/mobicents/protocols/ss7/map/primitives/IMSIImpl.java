@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -28,39 +28,39 @@ import javolution.xml.stream.XMLStreamException;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class IMSIImpl extends TbcdString implements IMSI {
 
-	private static final String NUMBER = "number";
+    private static final String NUMBER = "number";
 
-	public IMSIImpl() {
-		super(3, 8, "IMSI");
-	}
+    public IMSIImpl() {
+        super(3, 8, "IMSI");
+    }
 
-	public IMSIImpl(String data) {
-		super(3, 8, "IMSI", data);
-	}
+    public IMSIImpl(String data) {
+        super(3, 8, "IMSI", data);
+    }
 
-	public String getData() {
-		return this.data;
-	}
+    public String getData() {
+        return this.data;
+    }
 
-	/**
-	 * XML Serialization/Deserialization
-	 */
-	protected static final XMLFormat<IMSIImpl> IMSI_XML = new XMLFormat<IMSIImpl>(IMSIImpl.class) {
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<IMSIImpl> IMSI_XML = new XMLFormat<IMSIImpl>(IMSIImpl.class) {
 
-		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml, IMSIImpl imsi) throws XMLStreamException {
-			imsi.data = xml.getAttribute(NUMBER, "");
-		}
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, IMSIImpl imsi) throws XMLStreamException {
+            imsi.data = xml.getAttribute(NUMBER, "");
+        }
 
-		@Override
-		public void write(IMSIImpl imsi, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
-			xml.setAttribute(NUMBER, imsi.data);
-		}
-	};
+        @Override
+        public void write(IMSIImpl imsi, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+            xml.setAttribute(NUMBER, imsi.data);
+        }
+    };
 }

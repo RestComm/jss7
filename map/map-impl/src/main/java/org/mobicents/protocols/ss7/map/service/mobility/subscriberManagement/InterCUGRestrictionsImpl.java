@@ -27,46 +27,46 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.primitives.OctetStringLength1Base;
 
 /**
-*
-* @author sergey vetyutnev
-*
-*/
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class InterCUGRestrictionsImpl extends OctetStringLength1Base implements InterCUGRestrictions {
 
-	public InterCUGRestrictionsImpl() {
-		super("InterCUGRestrictions");
-	}
+    public InterCUGRestrictionsImpl() {
+        super("InterCUGRestrictions");
+    }
 
-	public InterCUGRestrictionsImpl(int data) {
-		super("InterCUGRestrictions", data);
-	}
+    public InterCUGRestrictionsImpl(int data) {
+        super("InterCUGRestrictions", data);
+    }
 
-	public InterCUGRestrictionsImpl(InterCUGRestrictionsValue val) {
-		super("InterCUGRestrictions", (val != null ? val.getCode() : 0));
-	}
+    public InterCUGRestrictionsImpl(InterCUGRestrictionsValue val) {
+        super("InterCUGRestrictions", (val != null ? val.getCode() : 0));
+    }
 
-	@Override
-	public int getData() {
-		return this.data;
-	}
+    @Override
+    public int getData() {
+        return this.data;
+    }
 
-	@Override
-	public InterCUGRestrictionsValue getInterCUGRestrictionsValue() {
-		return InterCUGRestrictionsValue.getInstance(data);
-	}
+    @Override
+    public InterCUGRestrictionsValue getInterCUGRestrictionsValue() {
+        return InterCUGRestrictionsValue.getInstance(data);
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
 
-		sb.append("InterCUGRestrictions=" + this.getInterCUGRestrictionsValue());
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		sb.append("]");
+        sb.append("InterCUGRestrictions=" + this.getInterCUGRestrictionsValue());
 
-		return sb.toString();
-	}
+        sb.append("]");
+
+        return sb.toString();
+    }
 
 }

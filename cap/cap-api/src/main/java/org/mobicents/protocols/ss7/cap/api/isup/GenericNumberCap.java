@@ -26,28 +26,24 @@ import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
 
 /**
-*
-
-ISUP GenericNumber wrapper
-
-GenericNumber {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE(
-bound.&minGenericNumberLength .. bound.&maxGenericNumberLength))
--- Indicates a generic number. Refer to ETSI EN 300 356-1 [23] Generic number for encoding.
-minGenericNumberLength ::= 3
-maxGenericNumberLength ::= 11
-
-GenericNumbers {PARAMETERS-BOUND : bound} ::= SET SIZE(1..bound.&numOfGenericNumbers) OF
-GenericNumber {bound}
-numOfGenericNumbers ::= 5
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ ISUP GenericNumber wrapper
+ *
+ * GenericNumber {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE( bound.&minGenericNumberLength ..
+ * bound.&maxGenericNumberLength)) -- Indicates a generic number. Refer to ETSI EN 300 356-1 [23] Generic number for encoding.
+ * minGenericNumberLength ::= 3 maxGenericNumberLength ::= 11
+ *
+ * GenericNumbers {PARAMETERS-BOUND : bound} ::= SET SIZE(1..bound.&numOfGenericNumbers) OF GenericNumber {bound}
+ * numOfGenericNumbers ::= 5
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface GenericNumberCap {
 
-	public byte[] getData();
+    byte[] getData();
 
-	public GenericNumber getGenericNumber() throws CAPException;
+    GenericNumber getGenericNumber() throws CAPException;
 
 }

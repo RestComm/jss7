@@ -30,92 +30,91 @@ import org.mobicents.protocols.ss7.m3ua.parameter.DestinationPointCode;
 import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
 
 /**
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public class DestinationPointCodeImpl extends ParameterImpl implements DestinationPointCode, XMLSerializable {
 
-	private static final String DPC = "dpc";
-	private static final String MASK = "mask";
+    private static final String DPC = "dpc";
+    private static final String MASK = "mask";
 
-	private int destPC = 0;
-	private short mask = 0;
-	private byte[] value;
+    private int destPC = 0;
+    private short mask = 0;
+    private byte[] value;
 
-	public DestinationPointCodeImpl(){
-		this.tag = Parameter.Destination_Point_Code;
-	}
-	protected DestinationPointCodeImpl(byte[] value) {
-		this.tag = Parameter.Destination_Point_Code;
-		this.value = value;
-		this.mask = value[0];
+    public DestinationPointCodeImpl() {
+        this.tag = Parameter.Destination_Point_Code;
+    }
 
-		destPC = 0;
-		destPC |= value[1] & 0xFF;
-		destPC <<= 8;
-		destPC |= value[2] & 0xFF;
-		destPC <<= 8;
-		destPC |= value[3] & 0xFF;
-	}
+    protected DestinationPointCodeImpl(byte[] value) {
+        this.tag = Parameter.Destination_Point_Code;
+        this.value = value;
+        this.mask = value[0];
 
-	protected DestinationPointCodeImpl(int pc, short mask) {
-		this.tag = Parameter.Destination_Point_Code;
-		this.destPC = pc;
-		this.mask = mask;
-		encode();
-	}
+        destPC = 0;
+        destPC |= value[1] & 0xFF;
+        destPC <<= 8;
+        destPC |= value[2] & 0xFF;
+        destPC <<= 8;
+        destPC |= value[3] & 0xFF;
+    }
 
-	private void encode() {
-		// create byte array taking into account data, point codes and
-		// indicators;
-		this.value = new byte[4];
-		// encode point code with mask
-		value[0] = (byte) this.mask;// Mask
+    protected DestinationPointCodeImpl(int pc, short mask) {
+        this.tag = Parameter.Destination_Point_Code;
+        this.destPC = pc;
+        this.mask = mask;
+        encode();
+    }
 
-		value[1] = (byte) (destPC >> 16);
-		value[2] = (byte) (destPC >> 8);
-		value[3] = (byte) (destPC);
-	}
+    private void encode() {
+        // create byte array taking into account data, point codes and
+        // indicators;
+        this.value = new byte[4];
+        // encode point code with mask
+        value[0] = (byte) this.mask;// Mask
 
-	public int getPointCode() {
-		return destPC;
-	}
+        value[1] = (byte) (destPC >> 16);
+        value[2] = (byte) (destPC >> 8);
+        value[3] = (byte) (destPC);
+    }
 
-	@Override
-	protected byte[] getValue() {
-		return value;
-	}
+    public int getPointCode() {
+        return destPC;
+    }
 
-	public short getMask() {
-		return this.mask;
-	}
+    @Override
+    protected byte[] getValue() {
+        return value;
+    }
 
-	@Override
-	public String toString() {
-		return String.format("DestinationPointCode dpc=%d mask=%d", destPC, mask);
-	}
+    public short getMask() {
+        return this.mask;
+    }
 
-	/**
-	 * XML Serialization/Deserialization
-	 */
-	protected static final XMLFormat<DestinationPointCodeImpl> RC_XML = new XMLFormat<DestinationPointCodeImpl>(
-			DestinationPointCodeImpl.class) {
+    @Override
+    public String toString() {
+        return String.format("DestinationPointCode dpc=%d mask=%d", destPC, mask);
+    }
 
-		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml, DestinationPointCodeImpl dpc)
-				throws XMLStreamException {
-			dpc.destPC = xml.getAttribute(DPC).toInt();
-			dpc.mask = (short) xml.getAttribute(MASK).toInt();
-			dpc.encode();
-		}
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<DestinationPointCodeImpl> RC_XML = new XMLFormat<DestinationPointCodeImpl>(
+            DestinationPointCodeImpl.class) {
 
-		@Override
-		public void write(DestinationPointCodeImpl dpc, javolution.xml.XMLFormat.OutputElement xml)
-				throws XMLStreamException {
-			xml.setAttribute(DPC, dpc.destPC);
-			xml.setAttribute(MASK, dpc.mask);
-		}
-	};
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, DestinationPointCodeImpl dpc) throws XMLStreamException {
+            dpc.destPC = xml.getAttribute(DPC).toInt();
+            dpc.mask = (short) xml.getAttribute(MASK).toInt();
+            dpc.encode();
+        }
+
+        @Override
+        public void write(DestinationPointCodeImpl dpc, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+            xml.setAttribute(DPC, dpc.destPC);
+            xml.setAttribute(MASK, dpc.mask);
+        }
+    };
 
 }

@@ -23,25 +23,21 @@
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
 /**
-*
-
-EndUserAddress {PARAMETERS-BOUND: bound} ::= SEQUENCE {
-pDPTypeOrganization [0] PDPTypeOrganization,
-pDPTypeNumber [1] PDPTypeNumber,
-pDPAddress [2] PDPAddress OPTIONAL
-}
--- Indicates the EndUserAddress, refer to 3GPP TS 29.060 [12] for the encoding.
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ EndUserAddress {PARAMETERS-BOUND: bound} ::= SEQUENCE { pDPTypeOrganization [0] PDPTypeOrganization, pDPTypeNumber [1]
+ * PDPTypeNumber, pDPAddress [2] PDPAddress OPTIONAL } -- Indicates the EndUserAddress, refer to 3GPP TS 29.060 [12] for the
+ * encoding.
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface EndUserAddress {
 
-	public PDPTypeOrganization getPDPTypeOrganization();
+    PDPTypeOrganization getPDPTypeOrganization();
 
-	public PDPTypeNumber getPDPTypeNumber();
+    PDPTypeNumber getPDPTypeNumber();
 
-	public PDPAddress getPDPAddress();
+    PDPAddress getPDPAddress();
 
 }

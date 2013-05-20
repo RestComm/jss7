@@ -23,24 +23,19 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
 
 /**
- * 
-
-UMTS-SecurityContextData ::= SEQUENCE {
-	ck			CK,
-	ik			IK,
-	ksi			KSI,
-	... }
-
- * 
+ *
+ UMTS-SecurityContextData ::= SEQUENCE { ck CK, ik IK, ksi KSI, ... }
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface UMTSSecurityContextData {
 
-	public CK getCK();
+    CK getCK();
 
-	public IK getIK();
+    IK getIK();
 
-	public KSI getKSI();
+    KSI getKSI();
 
 }

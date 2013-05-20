@@ -21,7 +21,7 @@
  */
 
 /**
- * 
+ *
  */
 package org.mobicents.protocols.ss7.tcap.api.tc.dialog.events;
 
@@ -35,34 +35,40 @@ import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
  */
 public interface TCBeginRequest extends DialogRequest {
 
-	public void setReturnMessageOnError(boolean val);
+    void setReturnMessageOnError(boolean val);
 
-	public boolean getReturnMessageOnError();
-	
-	
-	/**
-	 * Destination address. If this address is different than one in dialog, this value will overwrite dialog value.
-	 */
-	public SccpAddress getDestinationAddress();
-	public void setDestinationAddress(SccpAddress dest);
-	/**
-	 * Origin address. If this address is different than one in dialog, this value will overwrite dialog value.
-	 */
-	public SccpAddress getOriginatingAddress();
-	public void setOriginatingAddress(SccpAddress dest);
-	
-	/**
-	 * Application context name for this dialog. 
-	 * @return
-	 */
-	public ApplicationContextName getApplicationContextName();
-	public void setApplicationContextName(ApplicationContextName acn);
-	/**
-	 * User information for this dialog.
-	 * @return
-	 */
-	public UserInformation getUserInformation();	
-	public void setUserInformation(UserInformation acn);
-	
-	
+    boolean getReturnMessageOnError();
+
+    /**
+     * Destination address. If this address is different than one in dialog, this value will overwrite dialog value.
+     */
+    SccpAddress getDestinationAddress();
+
+    void setDestinationAddress(SccpAddress dest);
+
+    /**
+     * Origin address. If this address is different than one in dialog, this value will overwrite dialog value.
+     */
+    SccpAddress getOriginatingAddress();
+
+    void setOriginatingAddress(SccpAddress dest);
+
+    /**
+     * Application context name for this dialog.
+     *
+     * @return
+     */
+    ApplicationContextName getApplicationContextName();
+
+    void setApplicationContextName(ApplicationContextName acn);
+
+    /**
+     * User information for this dialog.
+     *
+     * @return
+     */
+    UserInformation getUserInformation();
+
+    void setUserInformation(UserInformation acn);
+
 }

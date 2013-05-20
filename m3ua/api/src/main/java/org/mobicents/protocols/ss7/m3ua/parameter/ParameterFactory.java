@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -26,86 +26,72 @@ import org.mobicents.protocols.ss7.m3ua.parameter.CongestedIndication.Congestion
 
 /**
  * Constructs parameters.
- * 
+ *
  * @author amit bhayani
  * @author kulikov
  */
 public interface ParameterFactory {
     /**
      * Constructs Protocol Data parameter.
-     * 
-     * @param opc
-     *            the origination point code
-     * @param dpc
-     *            the destination point code
-     * @param si
-     *            the service indicator
-     * @param ni
-     *            the network indicator
-     * @param mp
-     *            the message priority indicator
-     * @param sls
-     *            the signaling link selection
-     * @param data
-     *            message payload
+     *
+     * @param opc the origination point code
+     * @param dpc the destination point code
+     * @param si the service indicator
+     * @param ni the network indicator
+     * @param mp the message priority indicator
+     * @param sls the signaling link selection
+     * @param data message payload
      * @return Protocol data parameter
      */
-    public ProtocolData createProtocolData(int opc, int dpc, int si, int ni,
-            int mp, int sls, byte[] data);
+    ProtocolData createProtocolData(int opc, int dpc, int si, int ni, int mp, int sls, byte[] data);
 
+    ProtocolData createProtocolData(byte[] payloadData);
 
-    public ProtocolData createProtocolData(byte[] payloadData);
+    NetworkAppearance createNetworkAppearance(long netApp);
 
-    public NetworkAppearance createNetworkAppearance(long netApp);
+    RoutingContext createRoutingContext(long[] routCntx);
 
-    public RoutingContext createRoutingContext(long[] routCntx);
+    CorrelationId createCorrelationId(long corrId);
 
-    public CorrelationId createCorrelationId(long corrId);
+    AffectedPointCode createAffectedPointCode(int[] pc, short[] mask);
 
-    public AffectedPointCode createAffectedPointCode(int[] pc, short[] mask);
+    DestinationPointCode createDestinationPointCode(int pc, short mask);
 
-    public DestinationPointCode createDestinationPointCode(int pc, short mask);
+    InfoString createInfoString(String string);
 
-    public InfoString createInfoString(String string);
+    ConcernedDPC createConcernedDPC(int pointCode);
 
-    public ConcernedDPC createConcernedDPC(int pointCode);
+    CongestedIndication createCongestedIndication(CongestionLevel level);
 
-    public CongestedIndication createCongestedIndication(CongestionLevel level);
+    UserCause createUserCause(int user, int cause);
 
-    public UserCause createUserCause(int user, int cause);
+    ASPIdentifier createASPIdentifier(long aspId);
 
-    public ASPIdentifier createASPIdentifier(long aspId);
+    LocalRKIdentifier createLocalRKIdentifier(long id);
 
-    public LocalRKIdentifier createLocalRKIdentifier(long id);
+    OPCList createOPCList(int[] pc, short[] mask);
 
-    public OPCList createOPCList(int[] pc, short[] mask);
+    ServiceIndicators createServiceIndicators(short[] inds);
 
-    public ServiceIndicators createServiceIndicators(short[] inds);
+    TrafficModeType createTrafficModeType(int mode);
 
-    public TrafficModeType createTrafficModeType(int mode); 
+    RegistrationStatus createRegistrationStatus(int status);
 
-    public RegistrationStatus createRegistrationStatus(int status);
+    DiagnosticInfo createDiagnosticInfo(String info);
 
-    public DiagnosticInfo createDiagnosticInfo(String info);
+    RoutingKey createRoutingKey(LocalRKIdentifier localRkId, RoutingContext rc, TrafficModeType trafMdTy,
+            NetworkAppearance netApp, DestinationPointCode[] dpc, ServiceIndicators[] servInds, OPCList[] opcList);
 
-    public RoutingKey createRoutingKey(LocalRKIdentifier localRkId,
-            RoutingContext rc, TrafficModeType trafMdTy,
-            NetworkAppearance netApp, DestinationPointCode[] dpc,
-            ServiceIndicators[] servInds, OPCList[] opcList);
+    RegistrationResult createRegistrationResult(LocalRKIdentifier localRkId, RegistrationStatus status, RoutingContext rc);
 
-    public RegistrationResult createRegistrationResult(
-            LocalRKIdentifier localRkId, RegistrationStatus status,
-            RoutingContext rc);
+    DeregistrationStatus createDeregistrationStatus(int status);
 
-    public DeregistrationStatus createDeregistrationStatus(int status);
+    DeregistrationResult createDeregistrationResult(RoutingContext rc, DeregistrationStatus status);
 
-    public DeregistrationResult createDeregistrationResult(RoutingContext rc,
-            DeregistrationStatus status);
+    ErrorCode createErrorCode(int code);
 
-    public ErrorCode createErrorCode(int code);
+    Status createStatus(int type, int info);
 
-    public Status createStatus(int type, int info);
-    
-    public HeartbeatData createHeartbeatData(byte[] data);
+    HeartbeatData createHeartbeatData(byte[] data);
 
 }

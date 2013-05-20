@@ -27,32 +27,27 @@ import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
 
 /**
-*
-timeDurationChargingResult [0] SEQUENCE {
-partyToCharge [0] ReceivingSideID,
-timeInformation [1] TimeInformation,
-legActive [2] BOOLEAN DEFAULT TRUE,
-callLegReleasedAtTcpExpiry [3] NULL OPTIONAL,
-extensions [4] Extensions {bound} OPTIONAL,
-aChChargingAddress [5] AChChargingAddress {bound}
-DEFAULT legID:receivingSideID:leg1,
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ timeDurationChargingResult [0] SEQUENCE { partyToCharge [0] ReceivingSideID, timeInformation [1] TimeInformation, legActive
+ * [2] BOOLEAN DEFAULT TRUE, callLegReleasedAtTcpExpiry [3] NULL OPTIONAL, extensions [4] Extensions {bound} OPTIONAL,
+ * aChChargingAddress [5] AChChargingAddress {bound} DEFAULT legID:receivingSideID:leg1,
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface TimeDurationChargingResult {
 
-	public ReceivingSideID getPartyToCharge();
+    ReceivingSideID getPartyToCharge();
 
-	public TimeInformation getTimeInformation();
+    TimeInformation getTimeInformation();
 
-	public boolean getLegActive();
+    boolean getLegActive();
 
-	public boolean getCallLegReleasedAtTcpExpiry();
+    boolean getCallLegReleasedAtTcpExpiry();
 
-	public CAPExtensions getExtensions();
+    CAPExtensions getExtensions();
 
-	public AChChargingAddress getAChChargingAddress();
+    AChChargingAddress getAChChargingAddress();
 
 }

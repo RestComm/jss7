@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -23,19 +23,17 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
 /**
-*
-Ext-BasicServiceCode ::= CHOICE {
-	ext-BearerService	[2] Ext-BearerServiceCode,
-	ext-Teleservice	[3] Ext-TeleserviceCode}
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ Ext-BasicServiceCode ::= CHOICE { ext-BearerService [2] Ext-BearerServiceCode, ext-Teleservice [3] Ext-TeleserviceCode}
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface ExtBasicServiceCode {
 
-	public ExtBearerServiceCode getExtBearerService();
+    ExtBearerServiceCode getExtBearerService();
 
-	public ExtTeleserviceCode getExtTeleservice();
+    ExtTeleserviceCode getExtTeleservice();
 
 }

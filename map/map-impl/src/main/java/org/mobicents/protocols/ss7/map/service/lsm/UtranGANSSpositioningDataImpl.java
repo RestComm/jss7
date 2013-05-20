@@ -26,22 +26,22 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.UtranGANSSpositioningData
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
-*
-* @author sergey vetyutnev
-* 
-*/
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class UtranGANSSpositioningDataImpl extends OctetStringBase implements UtranGANSSpositioningData {
 
-	public UtranGANSSpositioningDataImpl() {
-		super(1, 9, "UtranGANSSpositioningData");
-	}
+    public UtranGANSSpositioningDataImpl() {
+        super(1, 9, "UtranGANSSpositioningData");
+    }
 
-	public UtranGANSSpositioningDataImpl(byte[] data) {
-		super(1, 9, "UtranGANSSpositioningData", data);
-	}
+    public UtranGANSSpositioningDataImpl(byte[] data) {
+        super(1, 9, "UtranGANSSpositioningData", data);
+    }
 
-	public byte[] getData() {
-		return data;
-	}	
+    public byte[] getData() {
+        return data;
+    }
 
 }

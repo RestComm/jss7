@@ -25,46 +25,46 @@ package org.mobicents.protocols.ss7.cap.api.service.gprs;
 import org.mobicents.protocols.ss7.cap.api.CAPServiceListener;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CAPServiceGprsListener extends CAPServiceListener {
-	
-	public void onInitialDpGprsRequest(InitialDpGprsRequest ind);
-	
-	public void onRequestReportGPRSEventRequest(RequestReportGPRSEventRequest ind);
-	
-	public void onApplyChargingGPRSRequest(ApplyChargingGPRSRequest ind);
-	
-	public void onEntityReleasedGPRSRequest(EntityReleasedGPRSRequest ind);
-	
-	public void onEntityReleasedGPRSResponse(EntityReleasedGPRSResponse ind);
-	
-	public void onConnectGPRSRequest(ConnectGPRSRequest ind);
-	
-	public void onContinueGPRSRequest(ContinueGPRSRequest ind);
-	
-	public void onReleaseGPRSRequest(ReleaseGPRSRequest ind);
-	
-	public void onResetTimerGPRSRequest(ResetTimerGPRSRequest ind);
-	
-	public void onFurnishChargingInformationGPRSRequest(FurnishChargingInformationGPRSRequest ind);
-	
-	public void onCancelGPRSRequest(CancelGPRSRequest ind);
-	
-	public void onSendChargingInformationGPRSRequest(SendChargingInformationGPRSRequest ind);
-	
-	public void onApplyChargingReportGPRSRequest(ApplyChargingReportGPRSRequest ind);
-	
-	public void onApplyChargingReportGPRSResponse(ApplyChargingReportGPRSResponse ind);
-	
-	public void onEventReportGPRSRequest(EventReportGPRSRequest ind);
-	
-	public void onEventReportGPRSResponse(EventReportGPRSResponse ind);
-	
-	public void onActivityTestGPRSRequest(ActivityTestGPRSRequest ind);
-	
-	public void onActivityTestGPRSResponse(ActivityTestGPRSResponse ind);
+
+    void onInitialDpGprsRequest(InitialDpGprsRequest ind);
+
+    void onRequestReportGPRSEventRequest(RequestReportGPRSEventRequest ind);
+
+    void onApplyChargingGPRSRequest(ApplyChargingGPRSRequest ind);
+
+    void onEntityReleasedGPRSRequest(EntityReleasedGPRSRequest ind);
+
+    void onEntityReleasedGPRSResponse(EntityReleasedGPRSResponse ind);
+
+    void onConnectGPRSRequest(ConnectGPRSRequest ind);
+
+    void onContinueGPRSRequest(ContinueGPRSRequest ind);
+
+    void onReleaseGPRSRequest(ReleaseGPRSRequest ind);
+
+    void onResetTimerGPRSRequest(ResetTimerGPRSRequest ind);
+
+    void onFurnishChargingInformationGPRSRequest(FurnishChargingInformationGPRSRequest ind);
+
+    void onCancelGPRSRequest(CancelGPRSRequest ind);
+
+    void onSendChargingInformationGPRSRequest(SendChargingInformationGPRSRequest ind);
+
+    void onApplyChargingReportGPRSRequest(ApplyChargingReportGPRSRequest ind);
+
+    void onApplyChargingReportGPRSResponse(ApplyChargingReportGPRSResponse ind);
+
+    void onEventReportGPRSRequest(EventReportGPRSRequest ind);
+
+    void onEventReportGPRSResponse(EventReportGPRSResponse ind);
+
+    void onActivityTestGPRSRequest(ActivityTestGPRSRequest ind);
+
+    void onActivityTestGPRSResponse(ActivityTestGPRSResponse ind);
 
 }

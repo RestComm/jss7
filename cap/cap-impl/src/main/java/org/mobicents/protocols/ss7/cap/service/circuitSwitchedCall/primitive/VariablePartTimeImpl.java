@@ -35,158 +35,159 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class VariablePartTimeImpl implements VariablePartTime, CAPAsnPrimitive {
 
-	public static final String _PrimitiveName = "VariablePartDate";
+    public static final String _PrimitiveName = "VariablePartDate";
 
-	private byte[] data;
-	
-	public VariablePartTimeImpl() {
-	}
+    private byte[] data;
 
-	public VariablePartTimeImpl(byte[] data) {
-		this.data = data;
-	}
+    public VariablePartTimeImpl() {
+    }
 
-	public VariablePartTimeImpl(int hour, int minute) {
-		this.data = new byte[2];
+    public VariablePartTimeImpl(byte[] data) {
+        this.data = data;
+    }
 
-		this.data[0] = (byte) this.encodeByte(hour);
-		this.data[1] = (byte) this.encodeByte(minute);
-	}
+    public VariablePartTimeImpl(int hour, int minute) {
+        this.data = new byte[2];
 
-	@Override
-	public byte[] getData() {
-		return this.data;
-	}
+        this.data[0] = (byte) this.encodeByte(hour);
+        this.data[1] = (byte) this.encodeByte(minute);
+    }
 
-	@Override
-	public int getHour() {
+    @Override
+    public byte[] getData() {
+        return this.data;
+    }
 
-		if (this.data == null || this.data.length != 2)
-			return 0;
+    @Override
+    public int getHour() {
 
-		return this.decodeByte(data[0]);
-	}
+        if (this.data == null || this.data.length != 2)
+            return 0;
 
-	@Override
-	public int getMinute() {
+        return this.decodeByte(data[0]);
+    }
 
-		if (this.data == null || this.data.length != 2)
-			return 0;
+    @Override
+    public int getMinute() {
 
-		return this.decodeByte(data[1]);
-	}
+        if (this.data == null || this.data.length != 2)
+            return 0;
 
-	private int decodeByte(int bt) {
-		return (bt & 0x0F) * 10 + ((bt & 0xF0) >> 4);
-	}
+        return this.decodeByte(data[1]);
+    }
 
-	private int encodeByte(int val) {
-		return (val / 10) | (val % 10) << 4;
-	}
+    private int decodeByte(int bt) {
+        return (bt & 0x0F) * 10 + ((bt & 0xF0) >> 4);
+    }
 
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.STRING_OCTET;
-	}
+    private int encodeByte(int val) {
+        return (val / 10) | (val % 10) << 4;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.STRING_OCTET;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return true;
-	}
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public boolean getIsPrimitive() {
+        return true;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		this.data = ansIS.readOctetStringData(length);
-		if (this.data.length < 2 || this.data.length > 2)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": data must be from 2 to 2 bytes length, found: "
-					+ this.data.length, CAPParsingComponentExceptionReason.MistypedParameter);
-	}
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+        this.data = ansIS.readOctetStringData(length);
+        if (this.data.length < 2 || this.data.length > 2)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": data must be from 2 to 2 bytes length, found: " + this.data.length,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		if (this.data == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": data field must not be null");
-		if (this.data.length != 2)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": data field length must be equal 2");
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-		asnOs.writeOctetStringData(data);
-	}
+        if (this.data == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": data field must not be null");
+        if (this.data.length != 2)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": data field length must be equal 2");
 
-	@Override
-	public String toString() {
+        asnOs.writeOctetStringData(data);
+    }
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+    @Override
+    public String toString() {
 
-		if (this.data != null && this.data.length == 2) {
-			sb.append("hour=");
-			sb.append(this.getHour());
-			sb.append(", minute=");
-			sb.append(this.getMinute());
-		}
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		sb.append("]");
+        if (this.data != null && this.data.length == 2) {
+            sb.append("hour=");
+            sb.append(this.getHour());
+            sb.append(", minute=");
+            sb.append(this.getMinute());
+        }
 
-		return sb.toString();
-	}
+        sb.append("]");
+
+        return sb.toString();
+    }
 }

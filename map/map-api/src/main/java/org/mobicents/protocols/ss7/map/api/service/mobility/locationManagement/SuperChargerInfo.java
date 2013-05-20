@@ -23,23 +23,20 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
 
 /**
- * 
- *	SuperChargerInfo ::= CHOICE {
- *		sendSubscriberData	[0] NULL,
- *		subscriberDataStored	[1] AgeIndicator }
- *	
- *		AgeIndicator ::= OCTET STRING (SIZE (1..6))
- *	-- The internal structure of this parameter is implementation specific.
+ *
+ * SuperChargerInfo ::= CHOICE { sendSubscriberData [0] NULL, subscriberDataStored [1] AgeIndicator }
+ *
+ * AgeIndicator ::= OCTET STRING (SIZE (1..6)) -- The internal structure of this parameter is implementation specific.
  *
  *
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SuperChargerInfo {
 
-	public Boolean getSendSubscriberData();
+    Boolean getSendSubscriberData();
 
-	public byte[] getSubscriberDataStored();
+    byte[] getSubscriberDataStored();
 
 }

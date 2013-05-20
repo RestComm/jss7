@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -35,44 +35,44 @@ import org.testng.annotations.Test;
 
 /**
  * @author Amit Bhayani
- * 
+ *
  */
 public class TNoAnswerSpecificInfoTest {
 
-	/**
-	 * 
+    /**
+	 *
 	 */
-	public TNoAnswerSpecificInfoTest() {
-		// TODO Auto-generated constructor stub
-	}
+    public TNoAnswerSpecificInfoTest() {
+        // TODO Auto-generated constructor stub
+    }
 
-	@Test(groups = { "functional.xml.serialize", "circuitSwitchedCall.primitive" })
-	public void testXMLSerializaion() throws Exception {
-		CalledPartyNumberImpl calledPartyNumber = new CalledPartyNumberImpl(0, "111222333", 1, 1);
-		CalledPartyNumberCapImpl forwardingDestinationNumber = new CalledPartyNumberCapImpl(calledPartyNumber);
-		TNoAnswerSpecificInfoImpl original = new TNoAnswerSpecificInfoImpl(true, forwardingDestinationNumber);
+    @Test(groups = { "functional.xml.serialize", "circuitSwitchedCall.primitive" })
+    public void testXMLSerializaion() throws Exception {
+        CalledPartyNumberImpl calledPartyNumber = new CalledPartyNumberImpl(0, "111222333", 1, 1);
+        CalledPartyNumberCapImpl forwardingDestinationNumber = new CalledPartyNumberCapImpl(calledPartyNumber);
+        TNoAnswerSpecificInfoImpl original = new TNoAnswerSpecificInfoImpl(true, forwardingDestinationNumber);
 
-		// Writes the area to a file.
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
-		// writer.setBinding(binding); // Optional.
-		writer.setIndentation("\t"); // Optional (use tabulation for
-										// indentation).
-		writer.write(original, "tNoAnswerSpecificInfo", TNoAnswerSpecificInfoImpl.class);
-		writer.close();
+        // Writes the area to a file.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for
+                                     // indentation).
+        writer.write(original, "tNoAnswerSpecificInfo", TNoAnswerSpecificInfoImpl.class);
+        writer.close();
 
-		byte[] rawData = baos.toByteArray();
-		String serializedEvent = new String(rawData);
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
 
-		System.out.println(serializedEvent);
+        System.out.println(serializedEvent);
 
-		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
-		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
-		TNoAnswerSpecificInfoImpl copy = reader.read("tNoAnswerSpecificInfo", TNoAnswerSpecificInfoImpl.class);
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        TNoAnswerSpecificInfoImpl copy = reader.read("tNoAnswerSpecificInfo", TNoAnswerSpecificInfoImpl.class);
 
-		assertEquals(copy.getForwardingDestinationNumber().getCalledPartyNumber().getAddress(), original
-				.getForwardingDestinationNumber().getCalledPartyNumber().getAddress());
-		assertEquals(copy.getCallForwarded(), original.getCallForwarded());
-	}
+        assertEquals(copy.getForwardingDestinationNumber().getCalledPartyNumber().getAddress(), original
+                .getForwardingDestinationNumber().getCalledPartyNumber().getAddress());
+        assertEquals(copy.getCallForwarded(), original.getCallForwarded());
+    }
 
 }

@@ -38,169 +38,164 @@ import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class FCIBCCCAMELsequence1Impl  extends SequenceBase  implements FCIBCCCAMELsequence1{
-	
-	public static final int _ID_freeFormatData = 0;
-	public static final int _ID_pdpID = 1;
-	public static final int _ID_appendFreeFormatData = 2;
-	
-	public static final int _ID_FCIBCCCAMELsequence1 = 0;
-	
-	private FreeFormatData freeFormatData;
-	private PDPID pdpID;
-	private AppendFreeFormatData appendFreeFormatData;
-	
-	
-	public FCIBCCCAMELsequence1Impl() {
-		super("FCIBCCCAMELsequence1");
-	}
+public class FCIBCCCAMELsequence1Impl extends SequenceBase implements FCIBCCCAMELsequence1 {
 
-	public FCIBCCCAMELsequence1Impl(FreeFormatData freeFormatData, PDPID pdpID,
-			AppendFreeFormatData appendFreeFormatData) {
-		super("FCIBCCCAMELsequence1");
-		this.freeFormatData = freeFormatData;
-		this.pdpID = pdpID;
-		this.appendFreeFormatData = appendFreeFormatData;
-	}
+    public static final int _ID_freeFormatData = 0;
+    public static final int _ID_pdpID = 1;
+    public static final int _ID_appendFreeFormatData = 2;
 
-	@Override
-	public FreeFormatData getFreeFormatData() {
-		return this.freeFormatData;
-	}
-	@Override
-	public PDPID getPDPID() {
-		return this.pdpID;
-	}
-	@Override
-	public AppendFreeFormatData getAppendFreeFormatData() {
-		return this.appendFreeFormatData;
-	}
-	
-	@Override
-	public int getTag() throws CAPException {
-		return _ID_FCIBCCCAMELsequence1;
-	}
+    public static final int _ID_FCIBCCCAMELsequence1 = 0;
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_CONTEXT_SPECIFIC;
-	}
-	
-	
-	@Override
-	protected void _decode(AsnInputStream asnIS, int length)
-			throws CAPParsingComponentException, IOException, AsnException,
-			MAPParsingComponentException {
+    private FreeFormatData freeFormatData;
+    private PDPID pdpID;
+    private AppendFreeFormatData appendFreeFormatData;
 
-		this.freeFormatData = null;
-		this.pdpID = null;
-		this.appendFreeFormatData = AppendFreeFormatData.overwrite;
-		
-		AsnInputStream ais = asnIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+    public FCIBCCCAMELsequence1Impl() {
+        super("FCIBCCCAMELsequence1");
+    }
 
-			int tag = ais.readTag();
+    public FCIBCCCAMELsequence1Impl(FreeFormatData freeFormatData, PDPID pdpID, AppendFreeFormatData appendFreeFormatData) {
+        super("FCIBCCCAMELsequence1");
+        this.freeFormatData = freeFormatData;
+        this.pdpID = pdpID;
+        this.appendFreeFormatData = appendFreeFormatData;
+    }
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_freeFormatData:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException(
-								"Error while decoding " + _PrimitiveName + ".freeFormatData: Parameter is not primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.freeFormatData = new FreeFormatDataImpl();
-					((FreeFormatDataImpl) this.freeFormatData).decodeAll(ais);
-					break;			
-				case _ID_pdpID:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException(
-								"Error while decoding " + _PrimitiveName + ".pdpID: Parameter is not primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.pdpID = new PDPIDImpl();
-					((PDPIDImpl) this.pdpID).decodeAll(ais);
-					break;
-				case _ID_appendFreeFormatData:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException(
-								"Error while decoding " + _PrimitiveName + ".appendFreeFormatData: Parameter is not primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					int i1 = (int) ais.readInteger();
-					this.appendFreeFormatData = AppendFreeFormatData.getInstance(i1);
-					break;
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
-		
-		
-		if (this.freeFormatData == null)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": parameter freeFormatData is mandatory but not found",
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		
-	
-	}
-	
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
+    @Override
+    public FreeFormatData getFreeFormatData() {
+        return this.freeFormatData;
+    }
 
-		if (this.freeFormatData == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": freeFormatData must not be null");
+    @Override
+    public PDPID getPDPID() {
+        return this.pdpID;
+    }
 
-		try {
+    @Override
+    public AppendFreeFormatData getAppendFreeFormatData() {
+        return this.appendFreeFormatData;
+    }
 
-			((FreeFormatDataImpl) this.freeFormatData).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_freeFormatData);
-			
-			if (this.pdpID != null)
-				((PDPIDImpl) this.pdpID).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_pdpID);
-			
-			if(this.appendFreeFormatData!=null){
-				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_appendFreeFormatData, this.appendFreeFormatData.getCode());
-			}
-			
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (IOException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
-	
+    @Override
+    public int getTag() throws CAPException {
+        return _ID_FCIBCCCAMELsequence1;
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName + " [");
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_CONTEXT_SPECIFIC;
+    }
 
-		if (this.freeFormatData != null) {
-			sb.append("freeFormatData=");
-			sb.append(this.freeFormatData.toString());
-			sb.append(", ");
-		}
-		
-		if (this.pdpID != null) {
-			sb.append("pdpID=");
-			sb.append(this.pdpID.toString());
-			sb.append(", ");
-		}
-		
-		if (this.appendFreeFormatData != null) {
-			sb.append("appendFreeFormatData=");
-			sb.append(this.appendFreeFormatData.toString());
-		}
+    @Override
+    protected void _decode(AsnInputStream asnIS, int length) throws CAPParsingComponentException, IOException, AsnException,
+            MAPParsingComponentException {
 
-		sb.append("]");
+        this.freeFormatData = null;
+        this.pdpID = null;
+        this.appendFreeFormatData = AppendFreeFormatData.overwrite;
 
-		return sb.toString();
-	}
-	
-	
+        AsnInputStream ais = asnIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
+
+            int tag = ais.readTag();
+
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_freeFormatData:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".freeFormatData: Parameter is not primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.freeFormatData = new FreeFormatDataImpl();
+                        ((FreeFormatDataImpl) this.freeFormatData).decodeAll(ais);
+                        break;
+                    case _ID_pdpID:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".pdpID: Parameter is not primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.pdpID = new PDPIDImpl();
+                        ((PDPIDImpl) this.pdpID).decodeAll(ais);
+                        break;
+                    case _ID_appendFreeFormatData:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".appendFreeFormatData: Parameter is not primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        int i1 = (int) ais.readInteger();
+                        this.appendFreeFormatData = AppendFreeFormatData.getInstance(i1);
+                        break;
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
+
+        if (this.freeFormatData == null)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": parameter freeFormatData is mandatory but not found",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+
+    }
+
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
+
+        if (this.freeFormatData == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": freeFormatData must not be null");
+
+        try {
+
+            ((FreeFormatDataImpl) this.freeFormatData).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_freeFormatData);
+
+            if (this.pdpID != null)
+                ((PDPIDImpl) this.pdpID).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_pdpID);
+
+            if (this.appendFreeFormatData != null) {
+                asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_appendFreeFormatData, this.appendFreeFormatData.getCode());
+            }
+
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (IOException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
+
+        if (this.freeFormatData != null) {
+            sb.append("freeFormatData=");
+            sb.append(this.freeFormatData.toString());
+            sb.append(", ");
+        }
+
+        if (this.pdpID != null) {
+            sb.append("pdpID=");
+            sb.append(this.pdpID.toString());
+            sb.append(", ");
+        }
+
+        if (this.appendFreeFormatData != null) {
+            sb.append("appendFreeFormatData=");
+            sb.append(this.appendFreeFormatData.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
+
 }

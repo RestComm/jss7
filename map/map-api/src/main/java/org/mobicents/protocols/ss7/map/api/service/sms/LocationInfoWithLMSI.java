@@ -30,35 +30,27 @@ import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
- * LocationInfoWithLMSI ::= SEQUENCE {
- *	networkNode-Number	[1] ISDN-AddressString,
- *	lmsi			LMSI			OPTIONAL,
- *	extensionContainer	ExtensionContainer	OPTIONAL,
- *	...,
- *	gprsNodeIndicator	[5]	NULL		OPTIONAL,
- *	-- gprsNodeIndicator is set only if the SGSN number is sent as the 
- *	-- Network Node Number
- *	additional-Number	[6] Additional-Number	OPTIONAL 
- *	-- NetworkNode-number can be either msc-number or sgsn-number
- *	}
+ *
+ * LocationInfoWithLMSI ::= SEQUENCE { networkNode-Number [1] ISDN-AddressString, lmsi LMSI OPTIONAL, extensionContainer
+ * ExtensionContainer OPTIONAL, ..., gprsNodeIndicator [5] NULL OPTIONAL, -- gprsNodeIndicator is set only if the SGSN number is
+ * sent as the -- Network Node Number additional-Number [6] Additional-Number OPTIONAL -- NetworkNode-number can be either
+ * msc-number or sgsn-number }
  *
  *
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface LocationInfoWithLMSI extends Serializable {
-	
-	public ISDNAddressString getNetworkNodeNumber();
 
-	public LMSI getLMSI();
+    ISDNAddressString getNetworkNodeNumber();
 
-	public MAPExtensionContainer getExtensionContainer();
-	
-	public AdditionalNumberType getAdditionalNumberType();
-	
-	public ISDNAddressString getAdditionalNumber();
-	
+    LMSI getLMSI();
+
+    MAPExtensionContainer getExtensionContainer();
+
+    AdditionalNumberType getAdditionalNumberType();
+
+    ISDNAddressString getAdditionalNumber();
+
 }
-

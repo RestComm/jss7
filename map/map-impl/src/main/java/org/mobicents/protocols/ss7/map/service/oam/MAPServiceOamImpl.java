@@ -45,60 +45,58 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class MAPServiceOamImpl extends MAPServiceBaseImpl implements MAPServiceOam {
 
-	protected Logger loger = Logger.getLogger(MAPServiceOamImpl.class);
+    protected Logger loger = Logger.getLogger(MAPServiceOamImpl.class);
 
-	public MAPServiceOamImpl(MAPProviderImpl mapProviderImpl) {
-		super(mapProviderImpl);
-	}
+    public MAPServiceOamImpl(MAPProviderImpl mapProviderImpl) {
+        super(mapProviderImpl);
+    }
 
-	/*
-	 * Creating a new outgoing MAP OAM dialog and adding it to the
-	 * MAPProvider.dialog collection
-	 * 
-	 */
-	public MAPDialogOam createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress, AddressString origReference, SccpAddress destAddress,
-			AddressString destReference) throws MAPException {
+    /*
+     * Creating a new outgoing MAP OAM dialog and adding it to the MAPProvider.dialog collection
+     */
+    public MAPDialogOam createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress, AddressString origReference,
+            SccpAddress destAddress, AddressString destReference) throws MAPException {
 
-		// We cannot create a dialog if the service is not activated
-		if (!this.isActivated())
-			throw new MAPException(
-					"Cannot create MAPDialogOam because MAPServiceOam is not activated");
+        // We cannot create a dialog if the service is not activated
+        if (!this.isActivated())
+            throw new MAPException("Cannot create MAPDialogOam because MAPServiceOam is not activated");
 
-		Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress);
-		MAPDialogOamImpl dialog = new MAPDialogOamImpl(appCntx, tcapDialog, this.mapProviderImpl, this, origReference, destReference);
+        Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress);
+        MAPDialogOamImpl dialog = new MAPDialogOamImpl(appCntx, tcapDialog, this.mapProviderImpl, this, origReference,
+                destReference);
 
-		this.putMAPDialogIntoCollection(dialog);
+        this.putMAPDialogIntoCollection(dialog);
 
-		return dialog;
-	}
+        return dialog;
+    }
 
-	protected MAPDialogImpl createNewDialogIncoming(MAPApplicationContext appCntx, Dialog tcapDialog) {
-		return new MAPDialogOamImpl(appCntx, tcapDialog, this.mapProviderImpl, this, null, null);
-	}
+    protected MAPDialogImpl createNewDialogIncoming(MAPApplicationContext appCntx, Dialog tcapDialog) {
+        return new MAPDialogOamImpl(appCntx, tcapDialog, this.mapProviderImpl, this, null, null);
+    }
 
-	public void addMAPServiceListener(MAPServiceOamListener mapServiceListener) {
-		super.addMAPServiceListener(mapServiceListener);
-	}
+    public void addMAPServiceListener(MAPServiceOamListener mapServiceListener) {
+        super.addMAPServiceListener(mapServiceListener);
+    }
 
-	public void removeMAPServiceListener(MAPServiceOamListener mapServiceListener) {
-		super.removeMAPServiceListener(mapServiceListener);
-	}
+    public void removeMAPServiceListener(MAPServiceOamListener mapServiceListener) {
+        super.removeMAPServiceListener(mapServiceListener);
+    }
 
-	public ServingCheckData isServingService(MAPApplicationContext dialogApplicationContext) {
-		// TODO implement it
-		
-		return new ServingCheckDataImpl(ServingCheckResult.AC_NotServing);
-	}
+    public ServingCheckData isServingService(MAPApplicationContext dialogApplicationContext) {
+        // TODO implement it
 
-	public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog, Long invokeId, Long linkedId,
-			Invoke linkedInvoke) throws MAPParsingComponentException {
-		// TODO implement it
-		
-	}
+        return new ServingCheckDataImpl(ServingCheckResult.AC_NotServing);
+    }
+
+    public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog,
+            Long invokeId, Long linkedId, Invoke linkedInvoke) throws MAPParsingComponentException {
+        // TODO implement it
+
+    }
 }

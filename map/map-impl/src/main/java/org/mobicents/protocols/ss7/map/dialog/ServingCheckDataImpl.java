@@ -28,23 +28,23 @@ import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 
 public class ServingCheckDataImpl implements ServingCheckData {
 
-	private ServingCheckResult result;
-	private ApplicationContextName alternativeApplicationContext = null;
+    private ServingCheckResult result;
+    private ApplicationContextName alternativeApplicationContext = null;
 
-	public ServingCheckDataImpl(ServingCheckResult result) {
-		this.result = result;
-	}
+    public ServingCheckDataImpl(ServingCheckResult result) {
+        this.result = result;
+    }
 
-	public ServingCheckDataImpl(ServingCheckResult result, ApplicationContextName alternativeApplicationContext) {
-		this.result = result;
-		this.alternativeApplicationContext = alternativeApplicationContext;
-	}
+    public ServingCheckDataImpl(ServingCheckResult result, ApplicationContextName alternativeApplicationContext) {
+        this.result = result;
+        this.alternativeApplicationContext = alternativeApplicationContext;
+    }
 
-	public ServingCheckResult getResult() {
-		return this.result;
-	}
+    public ServingCheckResult getResult() {
+        return this.result;
+    }
 
-	public ApplicationContextName getAlternativeApplicationContext() {
-		return this.alternativeApplicationContext;
-	}
+    public ApplicationContextName getAlternativeApplicationContext() {
+        return this.alternativeApplicationContext;
+    }
 }

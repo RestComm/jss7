@@ -33,59 +33,39 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
 
 /**
- * 
-
-MAP V3:
-noteMM-Event  OPERATION ::= {				--Timer m
-	ARGUMENT
-		NoteMM-EventArg
-	RESULT
-		NoteMM-EventRes
-	ERRORS {
-		dataMissing |
-		unexpectedDataValue |
-		unknownSubscriber |
-		mm-EventNotSupported}
-	CODE	local:89 }
-
-NoteMM-EventArg::= SEQUENCE {
-	serviceKey	ServiceKey,
-	eventMet		[0]	MM-Code,
-	imsi			[1]	IMSI,
-	msisdn		[2]	ISDN-AddressString,
-	locationInformation	[3]	LocationInformation	OPTIONAL,
-	supportedCAMELPhases	[5]	SupportedCamelPhases	OPTIONAL,
-	extensionContainer	[6]	ExtensionContainer	OPTIONAL,
-	...,
-	locationInformationGPRS	[7]	LocationInformationGPRS	OPTIONAL,
-	offeredCamel4Functionalities	[8] OfferedCamel4Functionalities	OPTIONAL
-}
-
-ServiceKey ::= INTEGER (0..2147483647)
-
- * 
+ *
+ MAP V3: noteMM-Event OPERATION ::= { --Timer m ARGUMENT NoteMM-EventArg RESULT NoteMM-EventRes ERRORS { dataMissing |
+ * unexpectedDataValue | unknownSubscriber | mm-EventNotSupported} CODE local:89 }
+ *
+ * NoteMM-EventArg::= SEQUENCE { serviceKey ServiceKey, eventMet [0] MM-Code, imsi [1] IMSI, msisdn [2] ISDN-AddressString,
+ * locationInformation [3] LocationInformation OPTIONAL, supportedCAMELPhases [5] SupportedCamelPhases OPTIONAL,
+ * extensionContainer [6] ExtensionContainer OPTIONAL, ..., locationInformationGPRS [7] LocationInformationGPRS OPTIONAL,
+ * offeredCamel4Functionalities [8] OfferedCamel4Functionalities OPTIONAL }
+ *
+ * ServiceKey ::= INTEGER (0..2147483647)
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface NoteMMEventRequest extends MobilityMessage {
 
-	public long getServiceKey();
+    long getServiceKey();
 
-	public MMCode getMMCode();
+    MMCode getMMCode();
 
-	public IMSI getImsi();
+    IMSI getImsi();
 
-	public ISDNAddressString getMsisdn();
+    ISDNAddressString getMsisdn();
 
-	public LocationInformation getLocationInformation();
+    LocationInformation getLocationInformation();
 
-	public SupportedCamelPhases getSupportedCamelPhases();
+    SupportedCamelPhases getSupportedCamelPhases();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public LocationInformationGPRS getLocationInformationGPRS();
+    LocationInformationGPRS getLocationInformationGPRS();
 
-	public OfferedCamel4Functionalities getOfferedCamel4Functionalities();
+    OfferedCamel4Functionalities getOfferedCamel4Functionalities();
 
 }
-

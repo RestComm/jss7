@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -23,13 +23,13 @@ package org.mobicents.protocols.ss7.isup;
 
 /**
  * @author baranowb
- * 
+ *
  */
 public interface ISUPTimeout {
     // This is a bit of hack, but its the only way to avoid:
     // 1. breaking general standard in ISUP stack - deinfition of int vars to indicate certain cases ( instead of enums)
     // 2. redefining this in every class which may indicate timer: local in stack and for instance in RA.
-    
+
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -40,27 +40,26 @@ public interface ISUPTimeout {
      * <li>On expire: Re-transmirt REL and restart T1</li>
      * </ul>
      */
-    public static final int T1 = 1;
+    int T1 = 1;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T1_DEFAULT = 15 * 1000;
+    int T1_DEFAULT = 15 * 1000;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
      * <li>Default value: {@link #T2_DEFAULT}.</li>
      * <li>Time span: 3 min</li>
      * <li>Started: When controlling exchange receives suspend (user) message.</li>
-     * <li>Terminated: At receipt of resume (user) message at controlling
-     * exchange.</li>
+     * <li>Terminated: At receipt of resume (user) message at controlling exchange.</li>
      * <li>On expire: Initiate release procedure.</li>
      * </ul>
      */
-    public static final int T2 = 2;
+    int T2 = 2;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T2_DEFAULT = 3 * 60 * 1000;
+    int T2_DEFAULT = 3 * 60 * 1000;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -71,27 +70,26 @@ public interface ISUPTimeout {
      * <li>On expire: Initiate release procedure.</li>
      * </ul>
      */
-    public static final int T3 = 3;
+    int T3 = 3;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T3_DEFAULT = 2 * 60 * 1000;
+    int T3_DEFAULT = 2 * 60 * 1000;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
      * <li>Default value: {@link #T4_DEFAULT}.</li>
      * <li>Time span: 5-15 min</li>
-     * <li>Started: At receipt of MTP-STATUS primitive with the cause
-     * "inaccessible remote user".</li>
+     * <li>Started: At receipt of MTP-STATUS primitive with the cause "inaccessible remote user".</li>
      * <li>Terminated: On expire or on receipt of UPA message( or any other).</li>
      * <li>On expire: Send User Part Test and start T4</li>
      * </ul>
      */
-    public static final int T4 = 4;
+    int T4 = 4;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T4_DEFAULT = 6 * 60 * 1000;
+    int T4_DEFAULT = 6 * 60 * 1000;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -99,15 +97,14 @@ public interface ISUPTimeout {
      * <li>Time span: 5-15 min</li>
      * <li>Started: When initial REL message is sent.</li>
      * <li>Terminated: At receipt of RLC.</li>
-     * <li>On expire: Send Reset Circuit message, alert personel, stopT1,start
-     * T17. Run in loop...</li>
+     * <li>On expire: Send Reset Circuit message, alert personel, stopT1,start T17. Run in loop...</li>
      * </ul>
      */
-    public static final int T5 = 5;
+    int T5 = 5;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T5_DEFAULT = 6 * 60 * 1000;
+    int T5_DEFAULT = 6 * 60 * 1000;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -118,11 +115,11 @@ public interface ISUPTimeout {
      * <li>On expire: n/a</li>
      * </ul>
      */
-    public static final int T6 = 6;
+    int T6 = 6;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T6_DEFAULT = -1;
+    int T6_DEFAULT = -1;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -133,28 +130,27 @@ public interface ISUPTimeout {
      * <li>On expire: Send RLC message.</li>
      * </ul>
      */
-    public static final int T7 = 7;
+    int T7 = 7;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T7_DEFAULT = 20 * 1000;
+    int T7_DEFAULT = 20 * 1000;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
      * <li>Default value: {@link #T8_DEFAULT}.</li>
      * <li>Time span: 10-15 sec</li>
-     * <li>Started: When exchange receives IAM which requires continuity check
-     * on its circuit or indicates that continuity has been performed on a
-     * previous circuit.</li>
+     * <li>Started: When exchange receives IAM which requires continuity check on its circuit or indicates that continuity has
+     * been performed on a previous circuit.</li>
      * <li>Terminated: At receipt of continuity message(CON).</li>
      * <li>On expire:</li>
      * </ul>
      */
-    public static final int T8 = 8;
+    int T8 = 8;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T8_DEFAULT = 10 * 1000;
+    int T8_DEFAULT = 10 * 1000;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -165,11 +161,11 @@ public interface ISUPTimeout {
      * <li>On expire: n/a</li>
      * </ul>
      */
-    public static final int T9 = 9;
+    int T9 = 9;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T9_DEFAULT = -1;
+    int T9_DEFAULT = -1;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -180,27 +176,26 @@ public interface ISUPTimeout {
      * <li>On expire: Send ACM.</li>
      * </ul>
      */
-    public static final int T10 = 10;
+    int T10 = 10;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T10_DEFAULT = 4 * 1000;
+    int T10_DEFAULT = 4 * 1000;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
      * <li>Default value: {@link #T11_DEFAULT}.</li>
      * <li>Time span: 15-20 sec</li>
-     * <li>Started: When latest address message is received in interworking
-     * situations.</li>
+     * <li>Started: When latest address message is received in interworking situations.</li>
      * <li>Terminated: When ACM is sent.</li>
      * <li>On expire: Send ACM.</li>
      * </ul>
      */
-    public static final int T11 = 11;
+    int T11 = 11;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T11_DEFAULT = 20 * 1000;
+    int T11_DEFAULT = 20 * 1000;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -211,11 +206,11 @@ public interface ISUPTimeout {
      * <li>On expire: Retransmit BLO and start T12.</li>
      * </ul>
      */
-    public static final int T12 = 12;
+    int T12 = 12;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T12_DEFAULT = 15 * 1000;
+    int T12_DEFAULT = 15 * 1000;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -223,15 +218,14 @@ public interface ISUPTimeout {
      * <li>Time span: 5-15 min</li>
      * <li>Started: When initial BLO is sent.</li>
      * <li>Terminated: At receipt of BLA.</li>
-     * <li>On expire: Send BLO, alert personel, stop T12, start T13. Run in
-     * loop.</li>
+     * <li>On expire: Send BLO, alert personel, stop T12, start T13. Run in loop.</li>
      * </ul>
      */
-    public static final int T13 = 13;
+    int T13 = 13;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T13_DEFAULT = 5 * 60 * 1000;
+    int T13_DEFAULT = 5 * 60 * 1000;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -242,11 +236,11 @@ public interface ISUPTimeout {
      * <li>On expire: Send UBL and restart T14</li>
      * </ul>
      */
-    public static final int T14 = 14;
+    int T14 = 14;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T14_DEFAULT = 15 * 1000;
+    int T14_DEFAULT = 15 * 1000;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -257,11 +251,11 @@ public interface ISUPTimeout {
      * <li>On expire: Retransmit UBL, stop T14, start T15 and run in loop.</li>
      * </ul>
      */
-    public static final int T15 = 15;
+    int T15 = 15;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T15_DEFAULT = 5 * 60 * 1000;
+    int T15_DEFAULT = 5 * 60 * 1000;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -272,11 +266,11 @@ public interface ISUPTimeout {
      * <li>On expire: Retransmit Reset Circuit and start T16.</li>
      * </ul>
      */
-    public static final int T16 = 16;
+    int T16 = 16;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T16_DEFAULT = 15 * 1000;
+    int T16_DEFAULT = 15 * 1000;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -287,11 +281,11 @@ public interface ISUPTimeout {
      * <li>On expire:</li>
      * </ul>
      */
-    public static final int T17 = 17;
+    int T17 = 17;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T17_DEFAULT = 5 * 60 * 1000;
+    int T17_DEFAULT = 5 * 60 * 1000;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -302,11 +296,11 @@ public interface ISUPTimeout {
      * <li>On expire: Retransmit GBL and start T18.</li>
      * </ul>
      */
-    public static final int T18 = 18;
+    int T18 = 18;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T18_DEFAULT = 15 * 1000;
+    int T18_DEFAULT = 15 * 1000;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -314,15 +308,14 @@ public interface ISUPTimeout {
      * <li>Time span: 5-15 min</li>
      * <li>Started: When initial GBL is sent</li>
      * <li>Terminated: At receipt of GBA.</li>
-     * <li>On expire: Retransmit GBL, stop T18, start T19, alert staff, run in
-     * loop.</li>
+     * <li>On expire: Retransmit GBL, stop T18, start T19, alert staff, run in loop.</li>
      * </ul>
      */
-    public static final int T19 = 19;
+    int T19 = 19;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T19_DEFAULT = 5 * 60 * 1000;
+    int T19_DEFAULT = 5 * 60 * 1000;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -333,11 +326,11 @@ public interface ISUPTimeout {
      * <li>On expire: Retransmit CGU, start T20.</li>
      * </ul>
      */
-    public static final int T20 = 20;
+    int T20 = 20;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T20_DEFAULT = 15 * 1000;
+    int T20_DEFAULT = 15 * 1000;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -345,15 +338,14 @@ public interface ISUPTimeout {
      * <li>Time span: 5-15 min</li>
      * <li>Started: When initial CGU is sent.</li>
      * <li>Terminated: At receipt of CGUA.</li>
-     * <li>On expire: Retransmit CGU, stop T20, start T21, alert staff, run in
-     * loop.</li>
+     * <li>On expire: Retransmit CGU, stop T20, start T21, alert staff, run in loop.</li>
      * </ul>
      */
-    public static final int T21 = 21;
+    int T21 = 21;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T21_DEFAULT = 5 * 60 * 1000;
+    int T21_DEFAULT = 5 * 60 * 1000;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -364,11 +356,11 @@ public interface ISUPTimeout {
      * <li>On expire: Retransmit GRS, start T22.</li>
      * </ul>
      */
-    public static final int T22 = 22;
+    int T22 = 22;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T22_DEFAULT = 15 * 1000;
+    int T22_DEFAULT = 15 * 1000;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -376,15 +368,14 @@ public interface ISUPTimeout {
      * <li>Time span: 5-15 min</li>
      * <li>Started: When initial GRs is sent.</li>
      * <li>Terminated: At receipt of GRA.</li>
-     * <li>On expire: Retransmit GRS, stop T22, start T23, alert staff, run in
-     * loop.</li>
+     * <li>On expire: Retransmit GRS, stop T22, start T23, alert staff, run in loop.</li>
      * </ul>
      */
-    public static final int T23 = 23;
+    int T23 = 23;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T23_DEFAULT = 5 * 60 * 1000;
+    int T23_DEFAULT = 5 * 60 * 1000;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -395,11 +386,11 @@ public interface ISUPTimeout {
      * <li>On expire: n/a</li>
      * </ul>
      */
-    public static final int T24 = 24;
+    int T24 = 24;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T24_DEFAULT = -1;
+    int T24_DEFAULT = -1;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -410,11 +401,11 @@ public interface ISUPTimeout {
      * <li>On expire: n/a</li>
      * </ul>
      */
-    public static final int T25 = 25;
+    int T25 = 25;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T25_DEFAULT = -1;
+    int T25_DEFAULT = -1;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -425,11 +416,11 @@ public interface ISUPTimeout {
      * <li>On expire: n/a</li>
      * </ul>
      */
-    public static final int T26 = 26;
+    int T26 = 26;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T26_DEFAULT = -1;
+    int T26_DEFAULT = -1;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -440,26 +431,26 @@ public interface ISUPTimeout {
      * <li>On expire: n/a</li>
      * </ul>
      */
-    public static final int T27 = 27;
+    int T27 = 27;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T27_DEFAULT = -1;
+    int T27_DEFAULT = -1;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
      * <li>Default value: {@link #T28_DEFAULT}.</li>
      * <li>Time span: 10s</li>
-     * <li>Started: When CQM is sent. </li>
-     * <li>Terminated:On receipt of CQR. </li>
+     * <li>Started: When CQM is sent.</li>
+     * <li>Terminated:On receipt of CQR.</li>
      * <li>On expire: Alert staff</li>
      * </ul>
      */
-    public static final int T28 = 28;
+    int T28 = 28;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T28_DEFAULT = 10 * 1000;
+    int T28_DEFAULT = 10 * 1000;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -470,11 +461,11 @@ public interface ISUPTimeout {
      * <li>On expire: n/a</li>
      * </ul>
      */
-    public static final int T29 = 29;
+    int T29 = 29;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T29_DEFAULT = -1;
+    int T29_DEFAULT = -1;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -485,11 +476,11 @@ public interface ISUPTimeout {
      * <li>On expire: n/a</li>
      * </ul>
      */
-    public static final int T30 = 30;
+    int T30 = 30;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T30_DEFAULT = -1;
+    int T30_DEFAULT = -1;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -500,11 +491,11 @@ public interface ISUPTimeout {
      * <li>On expire: n/a</li>
      * </ul>
      */
-    public static final int T31 = 31;
+    int T31 = 31;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T31_DEFAULT = -1;
+    int T31_DEFAULT = -1;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -515,11 +506,11 @@ public interface ISUPTimeout {
      * <li>On expire: n/a</li>
      * </ul>
      */
-    public static final int T32 = 32;
+    int T32 = 32;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T32_DEFAULT = -1;
+    int T32_DEFAULT = -1;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -530,27 +521,26 @@ public interface ISUPTimeout {
      * <li>On expire: Release call, alert staff.</li>
      * </ul>
      */
-    public static final int T33 = 33;
+    int T33 = 33;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T33_DEFAULT = 12 * 1000;
+    int T33_DEFAULT = 12 * 1000;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
      * <li>Default value: {@link #T34_DEFAULT}.</li>
      * <li>Time span: 2-4 sec</li>
-     * <li>Started: When segmentation indication is received in IAM/ACM/CPG/ANM
-     * or CON.</li>
+     * <li>Started: When segmentation indication is received in IAM/ACM/CPG/ANM or CON.</li>
      * <li>Terminated: At receipt of SEG.</li>
      * <li>On expire: Proceed with call.</li>
      * </ul>
      */
-    public static final int T34 = 34;
+    int T34 = 34;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T34_DEFAULT = 2 * 1000;
+    int T34_DEFAULT = 2 * 1000;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -561,11 +551,11 @@ public interface ISUPTimeout {
      * <li>On expire: n/a</li>
      * </ul>
      */
-    public static final int T35 = 35;
+    int T35 = 35;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T35_DEFAULT = -1;
+    int T35_DEFAULT = -1;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -576,11 +566,11 @@ public interface ISUPTimeout {
      * <li>On expire: n/a</li>
      * </ul>
      */
-    public static final int T36 = 36;
+    int T36 = 36;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T36_DEFAULT = -1;
+    int T36_DEFAULT = -1;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -591,11 +581,11 @@ public interface ISUPTimeout {
      * <li>On expire: n/a</li>
      * </ul>
      */
-    public static final int T37 = 37;
+    int T37 = 37;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T37_DEFAULT = -1;
+    int T37_DEFAULT = -1;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -606,11 +596,11 @@ public interface ISUPTimeout {
      * <li>On expire: n/a</li>
      * </ul>
      */
-    public static final int T38 = 38;
+    int T38 = 38;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T38_DEFAULT = -1;
+    int T38_DEFAULT = -1;
     /**
      * Timer ID used as argument in TimeoutEvent:
      * <ul>
@@ -621,9 +611,9 @@ public interface ISUPTimeout {
      * <li>On expire: n/a</li>
      * </ul>
      */
-    public static final int T39 = 39;
+    int T39 = 39;
     /**
      * Default miliseconds for timers.
      */
-    public static final int T39_DEFAULT = -1;
+    int T39_DEFAULT = -1;
 }

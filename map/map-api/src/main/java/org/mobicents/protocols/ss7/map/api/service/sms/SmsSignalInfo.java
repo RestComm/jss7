@@ -27,14 +27,14 @@ import org.mobicents.protocols.ss7.map.api.smstpdu.SmsTpdu;
 
 /**
  * Sms signal info
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SmsSignalInfo {
 
-	public byte[] getData();
+    byte[] getData();
 
-	public SmsTpdu decodeTpdu(boolean mobileOriginatedMessage) throws MAPException;
+    SmsTpdu decodeTpdu(boolean mobileOriginatedMessage) throws MAPException;
 
 }

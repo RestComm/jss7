@@ -28,15 +28,14 @@ import java.nio.ByteBuffer;
  * <p>
  * Construct the Shell Command Message
  * </p>
- * 
+ *
  * <p>
- * A given invocation of the Java virtual machine maintains a single system-wide
- * default message factory instance, which is returned by the
- * {@link ChannelProvider#getMessageFactory() getMessageFactory} method.
+ * A given invocation of the Java virtual machine maintains a single system-wide default message factory instance, which is
+ * returned by the {@link ChannelProvider#getMessageFactory() getMessageFactory} method.
  * </p>
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public class MessageFactory {
 
@@ -56,7 +55,7 @@ public class MessageFactory {
 
     /**
      * Crate new instance of message object
-     * 
+     *
      * @param message
      * @return
      */
@@ -65,10 +64,9 @@ public class MessageFactory {
     }
 
     /**
-     * The received buffer may not have necessary bytes to decode a message.
-     * Instance of this factory keeps data locally till next set of data is
-     * received and a message can be successfully decoded
-     * 
+     * The received buffer may not have necessary bytes to decode a message. Instance of this factory keeps data locally till
+     * next set of data is received and a message can be successfully decoded
+     *
      * @param buffer
      * @return
      */
@@ -94,9 +92,9 @@ public class MessageFactory {
             length += ((header[1] & 0xff) << 16);
             length += ((header[2] & 0xff) << 8);
             length += (header[3] & 0xff);
-            
-            length-=4;
-            
+
+            length -= 4;
+
             params = new byte[length];
 
             // finally switch cursor position
@@ -107,7 +105,7 @@ public class MessageFactory {
 
         // at this point we must recheck remainder of the input buffer
         // because possible case when input buffer fits exactly to the header
-        if (length>0 && !buffer.hasRemaining()) {
+        if (length > 0 && !buffer.hasRemaining()) {
             return null;
         }
 

@@ -26,40 +26,31 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
  * The MAP ReturnError message: MessageFacilityNotSup with parameters
- * 
- * facilityNotSupported  ERROR ::= {
- *	PARAMETER
- *		FacilityNotSupParam
- *		-- optional
- *		-- FacilityNotSupParam must not be used in version <3
- *	CODE	local:21 }
  *
- * 
- * FacilityNotSupParam ::= SEQUENCE {
- *	extensionContainer	ExtensionContainer	OPTIONAL,
- *	...,
- *	shapeOfLocationEstimateNotSupported [0]	NULL		OPTIONAL,
- *	neededLcsCapabilityNotSupportedInServingNode [1] NULL	OPTIONAL }
+ * facilityNotSupported ERROR ::= { PARAMETER FacilityNotSupParam -- optional -- FacilityNotSupParam must not be used in version
+ * <3 CODE local:21 }
  *
- * 
- * 
+ *
+ * FacilityNotSupParam ::= SEQUENCE { extensionContainer ExtensionContainer OPTIONAL, ..., shapeOfLocationEstimateNotSupported
+ * [0] NULL OPTIONAL, neededLcsCapabilityNotSupportedInServingNode [1] NULL OPTIONAL }
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MAPErrorMessageFacilityNotSup extends MAPErrorMessage {
-	
-	public MAPExtensionContainer getExtensionContainer();
 
-	public Boolean getShapeOfLocationEstimateNotSupported();
+    MAPExtensionContainer getExtensionContainer();
 
-	public Boolean getNeededLcsCapabilityNotSupportedInServingNode();
+    Boolean getShapeOfLocationEstimateNotSupported();
 
-	public void setExtensionContainer(MAPExtensionContainer extensionContainer);
+    Boolean getNeededLcsCapabilityNotSupportedInServingNode();
 
-	public void setShapeOfLocationEstimateNotSupported(Boolean shapeOfLocationEstimateNotSupported);
+    void setExtensionContainer(MAPExtensionContainer extensionContainer);
 
-	public void getNeededLcsCapabilityNotSupportedInServingNode(Boolean neededLcsCapabilityNotSupportedInServingNode);
+    void setShapeOfLocationEstimateNotSupported(Boolean shapeOfLocationEstimateNotSupported);
+
+    void getNeededLcsCapabilityNotSupportedInServingNode(Boolean neededLcsCapabilityNotSupportedInServingNode);
 
 }
-
-

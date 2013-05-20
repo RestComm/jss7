@@ -28,17 +28,15 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * LCSClientExternalID ::= SEQUENCE {
- *    externalAddress [0] ISDN-AddressString OPTIONAL,
- *    extensionContainer [1] ExtensionContainer OPTIONAL,
- *    ... }
- * 
+ * LCSClientExternalID ::= SEQUENCE { externalAddress [0] ISDN-AddressString OPTIONAL, extensionContainer [1] ExtensionContainer
+ * OPTIONAL, ... }
+ *
  * @author amit bhayani
  *
  */
 public interface LCSClientExternalID extends Serializable {
-	
-	public ISDNAddressString getExternalAddress();
-	
-	public MAPExtensionContainer getExtensionContainer();
+
+    ISDNAddressString getExternalAddress();
+
+    MAPExtensionContainer getExtensionContainer();
 }

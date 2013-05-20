@@ -30,65 +30,59 @@ import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CAPAsnPrimitive extends Serializable {
 
-	public int getTag() throws CAPException;
+    int getTag() throws CAPException;
 
-	public int getTagClass();
+    int getTagClass();
 
-	public boolean getIsPrimitive();
+    boolean getIsPrimitive();
 
-	/**
-	 * Decoding the length and the content of the primitive (the tag has already
-	 * read)
-	 * 
-	 * @param ansIS
-	 *            The AsnInputStream that contains the length and the content of
-	 *            the primitive
-	 * @throws CAPParsingComponentException
-	 */
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException;
+    /**
+     * Decoding the length and the content of the primitive (the tag has already read)
+     *
+     * @param ansIS The AsnInputStream that contains the length and the content of the primitive
+     * @throws CAPParsingComponentException
+     */
+    void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException;
 
-	/**
-	 * Decoding the content of the primitive (the tag and the length have
-	 * already read)
-	 * 
-	 * @param ansIS
-	 *            The AsnInputStream that contains the content of the primitive
-	 * @param length
-	 *            The length of the content
-	 * @throws CAPParsingComponentException
-	 */
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException;
+    /**
+     * Decoding the content of the primitive (the tag and the length have already read)
+     *
+     * @param ansIS The AsnInputStream that contains the content of the primitive
+     * @param length The length of the content
+     * @throws CAPParsingComponentException
+     */
+    void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException;
 
-	/**
-	 * Encoding the tag, the length and the content. Tag and tag class are universal
-	 * 
-	 * @param asnOs
-	 * @throws CAPException
-	 */
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException;
+    /**
+     * Encoding the tag, the length and the content. Tag and tag class are universal
+     *
+     * @param asnOs
+     * @throws CAPException
+     */
+    void encodeAll(AsnOutputStream asnOs) throws CAPException;
 
-	/**
-	 * Encoding the tag, the length and the content. Tag and tag class are defined
-	 * 
-	 * @param asnOs
-	 * @param tagClass
-	 * @param tag
-	 * @throws CAPException
-	 */
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException;
+    /**
+     * Encoding the tag, the length and the content. Tag and tag class are defined
+     *
+     * @param asnOs
+     * @param tagClass
+     * @param tag
+     * @throws CAPException
+     */
+    void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException;
 
-	/**
-	 * Encoding the content.
-	 * 
-	 * @param asnOs
-	 * @throws CAPException
-	 */
-	public void encodeData(AsnOutputStream asnOs) throws CAPException;
+    /**
+     * Encoding the content.
+     *
+     * @param asnOs
+     * @throws CAPException
+     */
+    void encodeData(AsnOutputStream asnOs) throws CAPException;
 
 }

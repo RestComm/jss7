@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -25,37 +25,37 @@ package org.mobicents.protocols.ss7.sccp;
 /**
  * @author amit bhayani
  * @author sergey vetyutnev
- * 
+ *
  */
 public enum RuleType {
-	Solitary("Solitary"), Dominant("Dominant"), Loadshared("Loadshared"), Broadcast("Broadcast");
+    Solitary("Solitary"), Dominant("Dominant"), Loadshared("Loadshared"), Broadcast("Broadcast");
 
-	private static final String SOLITARY = "Solitary";
-	private static final String DOMINANT = "Dominant";
-	private static final String LOADSHARED = "Loadshared";
-	private static final String BROADCAST = "Broadcast";
+    private static final String SOLITARY = "Solitary";
+    private static final String DOMINANT = "Dominant";
+    private static final String LOADSHARED = "Loadshared";
+    private static final String BROADCAST = "Broadcast";
 
-	private final String type;
+    private final String type;
 
-	private RuleType(String type) {
-		this.type = type;
-	}
+    private RuleType(String type) {
+        this.type = type;
+    }
 
-	public static RuleType getInstance(String type) {
-		if (SOLITARY.equalsIgnoreCase(type)) {
-			return Solitary;
-		} else if (DOMINANT.equalsIgnoreCase(type)) {
-			return Dominant;
-		} else if (LOADSHARED.equalsIgnoreCase(type)) {
-			return Loadshared;
-		} else if (BROADCAST.equalsIgnoreCase(type)) {
-			return Broadcast;
-		}
+    public static RuleType getInstance(String type) {
+        if (SOLITARY.equalsIgnoreCase(type)) {
+            return Solitary;
+        } else if (DOMINANT.equalsIgnoreCase(type)) {
+            return Dominant;
+        } else if (LOADSHARED.equalsIgnoreCase(type)) {
+            return Loadshared;
+        } else if (BROADCAST.equalsIgnoreCase(type)) {
+            return Broadcast;
+        }
 
-		return null;
-	}
-	
-	public String getType(){
-		return this.type;
-	}
+        return null;
+    }
+
+    public String getType() {
+        return this.type;
+    }
 }

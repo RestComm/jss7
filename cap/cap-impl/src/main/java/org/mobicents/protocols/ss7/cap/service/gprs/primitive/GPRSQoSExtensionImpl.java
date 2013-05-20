@@ -38,97 +38,99 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Ext2QoSSubscribedImpl;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class GPRSQoSExtensionImpl extends SequenceBase implements GPRSQoSExtension{
+public class GPRSQoSExtensionImpl extends SequenceBase implements GPRSQoSExtension {
 
-	public static final int _ID_supplementToLongQoSFormat = 0;
-	
-	private Ext2QoSSubscribed supplementToLongQoSFormat;
-	
-	public GPRSQoSExtensionImpl() {
-		super("GPRSQoSExtension");
-	}
+    public static final int _ID_supplementToLongQoSFormat = 0;
 
-	public GPRSQoSExtensionImpl(Ext2QoSSubscribed supplementToLongQoSFormat) {
-		super("GPRSQoSExtension");
-		this.supplementToLongQoSFormat = supplementToLongQoSFormat;
-	}
+    private Ext2QoSSubscribed supplementToLongQoSFormat;
 
-	public void setSupplementToLongQoSFormat(
-			Ext2QoSSubscribed supplementToLongQoSFormat) {
-		this.supplementToLongQoSFormat = supplementToLongQoSFormat;
-	}
+    public GPRSQoSExtensionImpl() {
+        super("GPRSQoSExtension");
+    }
 
-	@Override
-	public Ext2QoSSubscribed getSupplementToLongQoSFormat() {
-		return this.supplementToLongQoSFormat;
-	}
+    public GPRSQoSExtensionImpl(Ext2QoSSubscribed supplementToLongQoSFormat) {
+        super("GPRSQoSExtension");
+        this.supplementToLongQoSFormat = supplementToLongQoSFormat;
+    }
 
-	@Override
-	protected void _decode(AsnInputStream asnIS, int length)
-			throws CAPParsingComponentException, IOException, AsnException, MAPParsingComponentException {
-		
-		this.supplementToLongQoSFormat = null;
+    public void setSupplementToLongQoSFormat(Ext2QoSSubscribed supplementToLongQoSFormat) {
+        this.supplementToLongQoSFormat = supplementToLongQoSFormat;
+    }
 
-		AsnInputStream ais = asnIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+    @Override
+    public Ext2QoSSubscribed getSupplementToLongQoSFormat() {
+        return this.supplementToLongQoSFormat;
+    }
 
-			int tag = ais.readTag();
+    @Override
+    protected void _decode(AsnInputStream asnIS, int length) throws CAPParsingComponentException, IOException, AsnException,
+            MAPParsingComponentException {
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_supplementToLongQoSFormat:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ".supplementToLongQoSFormat: Parameter is not primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.supplementToLongQoSFormat = new Ext2QoSSubscribedImpl();
-					((Ext2QoSSubscribedImpl) this.supplementToLongQoSFormat).decodeAll(ais);
-					break;
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
+        this.supplementToLongQoSFormat = null;
 
-		if (this.supplementToLongQoSFormat == null)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": supplementToLongQoSFormat is mandatory but not found",
-					CAPParsingComponentExceptionReason.MistypedParameter);
-	}
-	
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		try{
-			if (this.supplementToLongQoSFormat == null)
-				throw new CAPException("Error while encoding " + _PrimitiveName + ": supplementToLongQoSFormat must not be null");
-		
-			((Ext2QoSSubscribedImpl) this.supplementToLongQoSFormat).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_supplementToLongQoSFormat);
-		
-		}catch (MAPException e) {
-			throw new CAPException("MAPException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
-	
+        AsnInputStream ais = asnIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName + " [");
+            int tag = ais.readTag();
 
-		if (this.supplementToLongQoSFormat != null) {
-			sb.append("supplementToLongQoSFormat=");
-			sb.append(this.supplementToLongQoSFormat.toString());
-		}
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_supplementToLongQoSFormat:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".supplementToLongQoSFormat: Parameter is not primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.supplementToLongQoSFormat = new Ext2QoSSubscribedImpl();
+                        ((Ext2QoSSubscribedImpl) this.supplementToLongQoSFormat).decodeAll(ais);
+                        break;
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
 
-		sb.append("]");
+        if (this.supplementToLongQoSFormat == null)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": supplementToLongQoSFormat is mandatory but not found",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-		return sb.toString();
-	}
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
+        try {
+            if (this.supplementToLongQoSFormat == null)
+                throw new CAPException("Error while encoding " + _PrimitiveName
+                        + ": supplementToLongQoSFormat must not be null");
+
+            ((Ext2QoSSubscribedImpl) this.supplementToLongQoSFormat).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
+                    _ID_supplementToLongQoSFormat);
+
+        } catch (MAPException e) {
+            throw new CAPException("MAPException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
+
+        if (this.supplementToLongQoSFormat != null) {
+            sb.append("supplementToLongQoSFormat=");
+            sb.append(this.supplementToLongQoSFormat.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }

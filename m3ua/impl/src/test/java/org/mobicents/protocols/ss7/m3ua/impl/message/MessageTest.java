@@ -21,14 +21,14 @@
  */
 
 package org.mobicents.protocols.ss7.m3ua.impl.message;
-import org.testng.annotations.*;
-import static org.testng.Assert.*;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
-
 
 import org.mobicents.protocols.ss7.m3ua.impl.message.aspsm.ASPDownAckImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.message.aspsm.ASPDownImpl;
@@ -81,743 +81,650 @@ import org.mobicents.protocols.ss7.m3ua.parameter.ServiceIndicators;
 import org.mobicents.protocols.ss7.m3ua.parameter.Status;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 import org.mobicents.protocols.ss7.m3ua.parameter.UserCause;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author kulikov
  */
 public class MessageTest {
 
-	private ParameterFactoryImpl parmFactory = new ParameterFactoryImpl();
-	private MessageFactoryImpl messageFactory = new MessageFactoryImpl();
-
-	public MessageTest() {
-	}
-
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
+    private ParameterFactoryImpl parmFactory = new ParameterFactoryImpl();
+    private MessageFactoryImpl messageFactory = new MessageFactoryImpl();
 
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
+    public MessageTest() {
+    }
 
-	@BeforeMethod
-	public void setUp() {
-	}
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
 
-	@AfterMethod
-	public void tearDown() {
-	}
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
 
-	/**
-	 * Test of getOpc method, of class ProtocolDataImpl.
-	 */
-	@Test
-	public void testPayloadData() throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocate(8192);
+    @BeforeMethod
+    public void setUp() {
+    }
 
-		PayloadDataImpl msg = (PayloadDataImpl) messageFactory.createMessage(
-				MessageClass.TRANSFER_MESSAGES, MessageType.PAYLOAD);
-		ProtocolDataImpl p1 = (ProtocolDataImpl) parmFactory
-				.createProtocolData(1408, 14150, 1, 1, 0, 0, new byte[] { 1, 2,
-						3, 4 });
-		msg.setData(p1);
-		msg.encode(buffer);
+    @AfterMethod
+    public void tearDown() {
+    }
 
-		buffer.flip();
+    /**
+     * Test of getOpc method, of class ProtocolDataImpl.
+     */
+    @Test
+    public void testPayloadData() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(8192);
 
-		PayloadDataImpl msg1 = (PayloadDataImpl) messageFactory
-				.createMessage(buffer);
+        PayloadDataImpl msg = (PayloadDataImpl) messageFactory.createMessage(MessageClass.TRANSFER_MESSAGES,
+                MessageType.PAYLOAD);
+        ProtocolDataImpl p1 = (ProtocolDataImpl) parmFactory.createProtocolData(1408, 14150, 1, 1, 0, 0, new byte[] { 1, 2, 3,
+                4 });
+        msg.setData(p1);
+        msg.encode(buffer);
 
-		ProtocolDataImpl p2 = (ProtocolDataImpl) msg1.getData();
+        buffer.flip();
 
-		assertEquals(p1.getTag(), p2.getTag());
-		assertEquals(p1.getOpc(), p2.getOpc());
-		assertEquals(p1.getDpc(), p2.getDpc());
-		assertEquals(p1.getSI(), p2.getSI());
-		assertEquals(p1.getNI(), p2.getNI());
-		assertEquals(p1.getMP(), p2.getMP());
-		assertEquals(p1.getSLS(), p2.getSLS());
-	}
+        PayloadDataImpl msg1 = (PayloadDataImpl) messageFactory.createMessage(buffer);
 
-	@Test
-	public void testDestinationUnavailable() throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ProtocolDataImpl p2 = (ProtocolDataImpl) msg1.getData();
 
-		DestinationUnavailableImpl msg = (DestinationUnavailableImpl) messageFactory
-				.createMessage(MessageClass.SIGNALING_NETWORK_MANAGEMENT,
-						MessageType.DESTINATION_UNAVAILABLE);
-		NetworkAppearance netApp = parmFactory.createNetworkAppearance(1233);
-		msg.setNetworkAppearance(netApp);
+        assertEquals(p1.getTag(), p2.getTag());
+        assertEquals(p1.getOpc(), p2.getOpc());
+        assertEquals(p1.getDpc(), p2.getDpc());
+        assertEquals(p1.getSI(), p2.getSI());
+        assertEquals(p1.getNI(), p2.getNI());
+        assertEquals(p1.getMP(), p2.getMP());
+        assertEquals(p1.getSLS(), p2.getSLS());
+    }
 
-		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 12 });
-		msg.setRoutingContexts(rc);
+    @Test
+    public void testDestinationUnavailable() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(8192);
 
-		AffectedPointCode afpc = parmFactory.createAffectedPointCode(
-				new int[] { 123 }, new short[] { 0 });
-		msg.setAffectedPointCodes(afpc);
+        DestinationUnavailableImpl msg = (DestinationUnavailableImpl) messageFactory.createMessage(
+                MessageClass.SIGNALING_NETWORK_MANAGEMENT, MessageType.DESTINATION_UNAVAILABLE);
+        NetworkAppearance netApp = parmFactory.createNetworkAppearance(1233);
+        msg.setNetworkAppearance(netApp);
 
-		msg.encode(buffer);
+        RoutingContext rc = parmFactory.createRoutingContext(new long[] { 12 });
+        msg.setRoutingContexts(rc);
 
-		buffer.flip();
+        AffectedPointCode afpc = parmFactory.createAffectedPointCode(new int[] { 123 }, new short[] { 0 });
+        msg.setAffectedPointCodes(afpc);
 
-		DestinationUnavailableImpl msg1 = (DestinationUnavailableImpl) messageFactory
-				.createMessage(buffer);
+        msg.encode(buffer);
 
-		NetworkAppearance netApp1 = (NetworkAppearance) msg1
-				.getNetworkAppearance();
+        buffer.flip();
 
-		assertEquals(netApp.getNetApp(), netApp1.getNetApp());
-	}
+        DestinationUnavailableImpl msg1 = (DestinationUnavailableImpl) messageFactory.createMessage(buffer);
 
-	@Test
-	public void testDestinationAvailable() throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocate(8192);
+        NetworkAppearance netApp1 = (NetworkAppearance) msg1.getNetworkAppearance();
 
-		DestinationAvailableImpl msg = (DestinationAvailableImpl) messageFactory
-				.createMessage(MessageClass.SIGNALING_NETWORK_MANAGEMENT,
-						MessageType.DESTINATION_AVAILABLE);
-		NetworkAppearance netApp = parmFactory.createNetworkAppearance(11233);
-		msg.setNetworkAppearance(netApp);
+        assertEquals(netApp.getNetApp(), netApp1.getNetApp());
+    }
 
-		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 12,
-				13 });
-		msg.setRoutingContexts(rc);
+    @Test
+    public void testDestinationAvailable() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(8192);
 
-		AffectedPointCode afpc = parmFactory.createAffectedPointCode(new int[] {
-				123, 456 }, new short[] { 0, 1 });
-		msg.setAffectedPointCodes(afpc);
+        DestinationAvailableImpl msg = (DestinationAvailableImpl) messageFactory.createMessage(
+                MessageClass.SIGNALING_NETWORK_MANAGEMENT, MessageType.DESTINATION_AVAILABLE);
+        NetworkAppearance netApp = parmFactory.createNetworkAppearance(11233);
+        msg.setNetworkAppearance(netApp);
 
-		InfoString str = parmFactory.createInfoString("Some debug message");
-		msg.setInfoString(str);
+        RoutingContext rc = parmFactory.createRoutingContext(new long[] { 12, 13 });
+        msg.setRoutingContexts(rc);
 
-		msg.encode(buffer);
+        AffectedPointCode afpc = parmFactory.createAffectedPointCode(new int[] { 123, 456 }, new short[] { 0, 1 });
+        msg.setAffectedPointCodes(afpc);
 
-		buffer.flip();
+        InfoString str = parmFactory.createInfoString("Some debug message");
+        msg.setInfoString(str);
 
-		DestinationAvailableImpl msg1 = (DestinationAvailableImpl) messageFactory
-				.createMessage(buffer);
+        msg.encode(buffer);
 
-		NetworkAppearance netApp1 = (NetworkAppearance) msg1
-				.getNetworkAppearance();
+        buffer.flip();
 
-		assertEquals(netApp.getNetApp(), netApp1.getNetApp());
+        DestinationAvailableImpl msg1 = (DestinationAvailableImpl) messageFactory.createMessage(buffer);
 
-		RoutingContext rc1 = msg1.getRoutingContexts();
+        NetworkAppearance netApp1 = (NetworkAppearance) msg1.getNetworkAppearance();
 
-		assertTrue(Arrays.equals(rc.getRoutingContexts(),
-				rc1.getRoutingContexts()));
-	}
+        assertEquals(netApp.getNetApp(), netApp1.getNetApp());
 
-	@Test
-	public void testSignallingCongestion() throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocate(8192);
+        RoutingContext rc1 = msg1.getRoutingContexts();
 
-		SignallingCongestion msg = (SignallingCongestion) messageFactory
-				.createMessage(MessageClass.SIGNALING_NETWORK_MANAGEMENT,
-						MessageType.SIGNALING_CONGESTION);
-		NetworkAppearance netApp = parmFactory.createNetworkAppearance(11233);
-		msg.setNetworkAppearance(netApp);
+        assertTrue(Arrays.equals(rc.getRoutingContexts(), rc1.getRoutingContexts()));
+    }
 
-		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 12,
-				13 });
-		msg.setRoutingContexts(rc);
+    @Test
+    public void testSignallingCongestion() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(8192);
 
-		AffectedPointCode afpc = parmFactory.createAffectedPointCode(new int[] {
-				123, 456 }, new short[] { 0, 1 });
-		msg.setAffectedPointCodes(afpc);
+        SignallingCongestion msg = (SignallingCongestion) messageFactory.createMessage(
+                MessageClass.SIGNALING_NETWORK_MANAGEMENT, MessageType.SIGNALING_CONGESTION);
+        NetworkAppearance netApp = parmFactory.createNetworkAppearance(11233);
+        msg.setNetworkAppearance(netApp);
 
-		InfoString str = parmFactory.createInfoString("Some debug message");
-		msg.setInfoString(str);
+        RoutingContext rc = parmFactory.createRoutingContext(new long[] { 12, 13 });
+        msg.setRoutingContexts(rc);
 
-		ConcernedDPC pointCode = parmFactory.createConcernedDPC(234567);
-		msg.setConcernedDPC(pointCode);
+        AffectedPointCode afpc = parmFactory.createAffectedPointCode(new int[] { 123, 456 }, new short[] { 0, 1 });
+        msg.setAffectedPointCodes(afpc);
 
-		CongestedIndication congInd = parmFactory
-				.createCongestedIndication(CongestionLevel.LEVEL1);
-		msg.setCongestedIndication(congInd);
+        InfoString str = parmFactory.createInfoString("Some debug message");
+        msg.setInfoString(str);
 
-		((SignallingCongestionImpl) msg).encode(buffer);
+        ConcernedDPC pointCode = parmFactory.createConcernedDPC(234567);
+        msg.setConcernedDPC(pointCode);
 
-		buffer.flip();
+        CongestedIndication congInd = parmFactory.createCongestedIndication(CongestionLevel.LEVEL1);
+        msg.setCongestedIndication(congInd);
 
-		SignallingCongestion msg1 = (SignallingCongestion) messageFactory
-				.createMessage(buffer);
+        ((SignallingCongestionImpl) msg).encode(buffer);
 
-		NetworkAppearance netApp1 = (NetworkAppearance) msg1
-				.getNetworkAppearance();
+        buffer.flip();
 
-		assertEquals(netApp.getNetApp(), netApp1.getNetApp());
+        SignallingCongestion msg1 = (SignallingCongestion) messageFactory.createMessage(buffer);
 
-		RoutingContext rc1 = msg1.getRoutingContexts();
+        NetworkAppearance netApp1 = (NetworkAppearance) msg1.getNetworkAppearance();
 
-		assertTrue(Arrays.equals(rc.getRoutingContexts(),
-				rc1.getRoutingContexts()));
+        assertEquals(netApp.getNetApp(), netApp1.getNetApp());
 
-		assertEquals(msg.getConcernedDPC().getPointCode(), msg1
-				.getConcernedDPC().getPointCode());
-		assertEquals(msg.getCongestedIndication().getCongestionLevel(), msg1
-				.getCongestedIndication().getCongestionLevel());
-	}
+        RoutingContext rc1 = msg1.getRoutingContexts();
 
-	@Test
-	public void testDestinationUPUnavailable() throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocate(8192);
+        assertTrue(Arrays.equals(rc.getRoutingContexts(), rc1.getRoutingContexts()));
 
-		DestinationUPUnavailableImpl msg = (DestinationUPUnavailableImpl) messageFactory
-				.createMessage(MessageClass.SIGNALING_NETWORK_MANAGEMENT,
-						MessageType.DESTINATION_USER_PART_UNAVAILABLE);
-		NetworkAppearance netApp = parmFactory.createNetworkAppearance(1233);
-		msg.setNetworkAppearance(netApp);
+        assertEquals(msg.getConcernedDPC().getPointCode(), msg1.getConcernedDPC().getPointCode());
+        assertEquals(msg.getCongestedIndication().getCongestionLevel(), msg1.getCongestedIndication().getCongestionLevel());
+    }
 
-		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 12 });
-		msg.setRoutingContext(rc);
+    @Test
+    public void testDestinationUPUnavailable() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(8192);
 
-		AffectedPointCode afpc = parmFactory.createAffectedPointCode(
-				new int[] { 123 }, new short[] { 0 });
-		msg.setAffectedPointCode(afpc);
+        DestinationUPUnavailableImpl msg = (DestinationUPUnavailableImpl) messageFactory.createMessage(
+                MessageClass.SIGNALING_NETWORK_MANAGEMENT, MessageType.DESTINATION_USER_PART_UNAVAILABLE);
+        NetworkAppearance netApp = parmFactory.createNetworkAppearance(1233);
+        msg.setNetworkAppearance(netApp);
 
-		UserCause usrCau = parmFactory.createUserCause(5, 0);
-		msg.setUserCause(usrCau);
+        RoutingContext rc = parmFactory.createRoutingContext(new long[] { 12 });
+        msg.setRoutingContext(rc);
 
-		msg.encode(buffer);
+        AffectedPointCode afpc = parmFactory.createAffectedPointCode(new int[] { 123 }, new short[] { 0 });
+        msg.setAffectedPointCode(afpc);
 
-		buffer.flip();
+        UserCause usrCau = parmFactory.createUserCause(5, 0);
+        msg.setUserCause(usrCau);
 
-		DestinationUPUnavailableImpl msg1 = (DestinationUPUnavailableImpl) messageFactory
-				.createMessage(buffer);
+        msg.encode(buffer);
 
-		NetworkAppearance netApp1 = (NetworkAppearance) msg1
-				.getNetworkAppearance();
+        buffer.flip();
 
-		assertEquals(netApp.getNetApp(), netApp1.getNetApp());
+        DestinationUPUnavailableImpl msg1 = (DestinationUPUnavailableImpl) messageFactory.createMessage(buffer);
 
-		assertEquals(msg.getUserCause().getUser(), msg1.getUserCause()
-				.getUser());
-		assertEquals(msg.getUserCause().getCause(), msg1.getUserCause()
-				.getCause());
-	}
+        NetworkAppearance netApp1 = (NetworkAppearance) msg1.getNetworkAppearance();
 
-	@Test
-	public void testASPUp() throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocate(8192);
+        assertEquals(netApp.getNetApp(), netApp1.getNetApp());
 
-		ASPUpImpl msg = (ASPUpImpl) messageFactory.createMessage(
-				MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP);
-		ASPIdentifier aspId = parmFactory.createASPIdentifier(1234);
-		msg.setASPIdentifier(aspId);
+        assertEquals(msg.getUserCause().getUser(), msg1.getUserCause().getUser());
+        assertEquals(msg.getUserCause().getCause(), msg1.getUserCause().getCause());
+    }
 
-		msg.encode(buffer);
+    @Test
+    public void testASPUp() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(8192);
 
-		buffer.flip();
+        ASPUpImpl msg = (ASPUpImpl) messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP);
+        ASPIdentifier aspId = parmFactory.createASPIdentifier(1234);
+        msg.setASPIdentifier(aspId);
 
-		ASPUpImpl msg1 = (ASPUpImpl) messageFactory.createMessage(buffer);
+        msg.encode(buffer);
 
-		assertEquals(msg.getASPIdentifier().getAspId(), msg1.getASPIdentifier()
-				.getAspId());
-	}
+        buffer.flip();
 
-	@Test
-	public void testASPUpAck() throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ASPUpImpl msg1 = (ASPUpImpl) messageFactory.createMessage(buffer);
 
-		ASPUpAckImpl msg = (ASPUpAckImpl) messageFactory.createMessage(
-				MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP_ACK);
-		ASPIdentifier aspId = parmFactory.createASPIdentifier(1234);
-		msg.setASPIdentifier(aspId);
+        assertEquals(msg.getASPIdentifier().getAspId(), msg1.getASPIdentifier().getAspId());
+    }
 
-		InfoString infStr = parmFactory.createInfoString("Hello World");
-		msg.setInfoString(infStr);
+    @Test
+    public void testASPUpAck() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(8192);
 
-		msg.encode(buffer);
+        ASPUpAckImpl msg = (ASPUpAckImpl) messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE,
+                MessageType.ASP_UP_ACK);
+        ASPIdentifier aspId = parmFactory.createASPIdentifier(1234);
+        msg.setASPIdentifier(aspId);
 
-		buffer.flip();
+        InfoString infStr = parmFactory.createInfoString("Hello World");
+        msg.setInfoString(infStr);
 
-		ASPUpAckImpl msg1 = (ASPUpAckImpl) messageFactory.createMessage(buffer);
+        msg.encode(buffer);
 
-		assertEquals(msg.getASPIdentifier().getAspId(), msg1.getASPIdentifier()
-				.getAspId());
-		assertEquals(msg.getInfoString().getString(), msg1.getInfoString()
-				.getString());
-	}
+        buffer.flip();
 
-	@Test
-	public void testASPDown() throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ASPUpAckImpl msg1 = (ASPUpAckImpl) messageFactory.createMessage(buffer);
 
-		ASPDownImpl msg = (ASPDownImpl) messageFactory.createMessage(
-				MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN);
+        assertEquals(msg.getASPIdentifier().getAspId(), msg1.getASPIdentifier().getAspId());
+        assertEquals(msg.getInfoString().getString(), msg1.getInfoString().getString());
+    }
 
-		msg.encode(buffer);
+    @Test
+    public void testASPDown() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(8192);
 
-		buffer.flip();
+        ASPDownImpl msg = (ASPDownImpl) messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN);
 
-		ASPDownImpl msg1 = (ASPDownImpl) messageFactory.createMessage(buffer);
+        msg.encode(buffer);
 
-		assertNotNull(msg1);
-	}
+        buffer.flip();
 
-	@Test
-	public void testASPDownAck() throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ASPDownImpl msg1 = (ASPDownImpl) messageFactory.createMessage(buffer);
 
-		ASPDownAckImpl msg = (ASPDownAckImpl) messageFactory.createMessage(
-				MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN_ACK);
+        assertNotNull(msg1);
+    }
 
-		msg.encode(buffer);
+    @Test
+    public void testASPDownAck() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(8192);
 
-		buffer.flip();
+        ASPDownAckImpl msg = (ASPDownAckImpl) messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE,
+                MessageType.ASP_DOWN_ACK);
 
-		ASPDownAckImpl msg1 = (ASPDownAckImpl) messageFactory
-				.createMessage(buffer);
+        msg.encode(buffer);
 
-		assertNotNull(msg1);
-	}
+        buffer.flip();
 
-	@Test
-	public void testRegistrationRequest() throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ASPDownAckImpl msg1 = (ASPDownAckImpl) messageFactory.createMessage(buffer);
 
-		RegistrationRequestImpl msg = (RegistrationRequestImpl) messageFactory
-				.createMessage(MessageClass.ROUTING_KEY_MANAGEMENT,
-						MessageType.REG_REQUEST);
-		ASPIdentifier aspId = parmFactory.createASPIdentifier(1234);
+        assertNotNull(msg1);
+    }
 
-		LocalRKIdentifier localRkId = parmFactory.createLocalRKIdentifier(12);
-		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 1 });
-		TrafficModeType trafMdTy = parmFactory.createTrafficModeType(1);
-		NetworkAppearance netApp = parmFactory.createNetworkAppearance(1);
-		DestinationPointCode[] dpc = new DestinationPointCode[] {
-				parmFactory.createDestinationPointCode(123, (short) 0),
-				parmFactory.createDestinationPointCode(456, (short) 1) };
-		ServiceIndicators[] servInds = new ServiceIndicators[] {
-				parmFactory.createServiceIndicators(new short[] { 1, 2 }),
-				parmFactory.createServiceIndicators(new short[] { 1, 2 }) };
-		OPCList[] opcList = new OPCList[] {
-				parmFactory.createOPCList(new int[] { 1, 2, 3 }, new short[] {
-						0, 0, 0 }),
-				parmFactory.createOPCList(new int[] { 4, 5, 6 }, new short[] {
-						0, 0, 0 }) };
+    @Test
+    public void testRegistrationRequest() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(8192);
 
-		RoutingKeyImpl routKey = (RoutingKeyImpl) parmFactory.createRoutingKey(
-				localRkId, rc, trafMdTy, netApp, dpc, servInds, opcList);
+        RegistrationRequestImpl msg = (RegistrationRequestImpl) messageFactory.createMessage(
+                MessageClass.ROUTING_KEY_MANAGEMENT, MessageType.REG_REQUEST);
+        ASPIdentifier aspId = parmFactory.createASPIdentifier(1234);
 
-		msg.setRoutingKey(routKey);
+        LocalRKIdentifier localRkId = parmFactory.createLocalRKIdentifier(12);
+        RoutingContext rc = parmFactory.createRoutingContext(new long[] { 1 });
+        TrafficModeType trafMdTy = parmFactory.createTrafficModeType(1);
+        NetworkAppearance netApp = parmFactory.createNetworkAppearance(1);
+        DestinationPointCode[] dpc = new DestinationPointCode[] { parmFactory.createDestinationPointCode(123, (short) 0),
+                parmFactory.createDestinationPointCode(456, (short) 1) };
+        ServiceIndicators[] servInds = new ServiceIndicators[] { parmFactory.createServiceIndicators(new short[] { 1, 2 }),
+                parmFactory.createServiceIndicators(new short[] { 1, 2 }) };
+        OPCList[] opcList = new OPCList[] { parmFactory.createOPCList(new int[] { 1, 2, 3 }, new short[] { 0, 0, 0 }),
+                parmFactory.createOPCList(new int[] { 4, 5, 6 }, new short[] { 0, 0, 0 }) };
 
-		msg.encode(buffer);
+        RoutingKeyImpl routKey = (RoutingKeyImpl) parmFactory.createRoutingKey(localRkId, rc, trafMdTy, netApp, dpc, servInds,
+                opcList);
 
-		buffer.flip();
+        msg.setRoutingKey(routKey);
 
-		RegistrationRequestImpl msg1 = (RegistrationRequestImpl) messageFactory
-				.createMessage(buffer);
+        msg.encode(buffer);
 
-		assertEquals(msg.getRoutingKey().getLocalRKIdentifier().getId(), msg1
-				.getRoutingKey().getLocalRKIdentifier().getId());
-	}
+        buffer.flip();
 
-	@Test
-	public void testRegistrationResponse() throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocate(8192);
+        RegistrationRequestImpl msg1 = (RegistrationRequestImpl) messageFactory.createMessage(buffer);
 
-		RegistrationResponseImpl msg = (RegistrationResponseImpl) messageFactory
-				.createMessage(MessageClass.ROUTING_KEY_MANAGEMENT,
-						MessageType.REG_RESPONSE);
+        assertEquals(msg.getRoutingKey().getLocalRKIdentifier().getId(), msg1.getRoutingKey().getLocalRKIdentifier().getId());
+    }
 
-		LocalRKIdentifier localRkId = parmFactory.createLocalRKIdentifier(12);
-		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 1 });
-		RegistrationStatus status = parmFactory.createRegistrationStatus(0);
+    @Test
+    public void testRegistrationResponse() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(8192);
 
-		RegistrationResult result = (RegistrationResult) parmFactory
-				.createRegistrationResult(localRkId, status, rc);
+        RegistrationResponseImpl msg = (RegistrationResponseImpl) messageFactory.createMessage(
+                MessageClass.ROUTING_KEY_MANAGEMENT, MessageType.REG_RESPONSE);
 
-		msg.setRegistrationResult(result);
+        LocalRKIdentifier localRkId = parmFactory.createLocalRKIdentifier(12);
+        RoutingContext rc = parmFactory.createRoutingContext(new long[] { 1 });
+        RegistrationStatus status = parmFactory.createRegistrationStatus(0);
 
-		msg.encode(buffer);
+        RegistrationResult result = (RegistrationResult) parmFactory.createRegistrationResult(localRkId, status, rc);
 
-		buffer.flip();
+        msg.setRegistrationResult(result);
 
-		RegistrationResponseImpl msg1 = (RegistrationResponseImpl) messageFactory
-				.createMessage(buffer);
+        msg.encode(buffer);
 
-		assertEquals(
-				msg.getRegistrationResult().getLocalRKIdentifier().getId(),
-				msg1.getRegistrationResult().getLocalRKIdentifier().getId());
-	}
+        buffer.flip();
 
-	@Test
-	public void testDeregistrationRequest() throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocate(8192);
+        RegistrationResponseImpl msg1 = (RegistrationResponseImpl) messageFactory.createMessage(buffer);
 
-		DeregistrationRequestImpl msg = (DeregistrationRequestImpl) messageFactory
-				.createMessage(MessageClass.ROUTING_KEY_MANAGEMENT,
-						MessageType.DEREG_REQUEST);
+        assertEquals(msg.getRegistrationResult().getLocalRKIdentifier().getId(), msg1.getRegistrationResult()
+                .getLocalRKIdentifier().getId());
+    }
 
-		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 1 });
+    @Test
+    public void testDeregistrationRequest() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(8192);
 
-		msg.setRoutingContext(rc);
+        DeregistrationRequestImpl msg = (DeregistrationRequestImpl) messageFactory.createMessage(
+                MessageClass.ROUTING_KEY_MANAGEMENT, MessageType.DEREG_REQUEST);
 
-		msg.encode(buffer);
+        RoutingContext rc = parmFactory.createRoutingContext(new long[] { 1 });
 
-		buffer.flip();
+        msg.setRoutingContext(rc);
 
-		DeregistrationRequestImpl msg1 = (DeregistrationRequestImpl) messageFactory
-				.createMessage(buffer);
+        msg.encode(buffer);
 
-		assertTrue(Arrays.equals(msg.getRoutingContext().getRoutingContexts(),
-				msg1.getRoutingContext().getRoutingContexts()));
-	}
+        buffer.flip();
 
-	@Test
-	public void testDeregistrationResponse() throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocate(8192);
+        DeregistrationRequestImpl msg1 = (DeregistrationRequestImpl) messageFactory.createMessage(buffer);
 
-		DeregistrationResponseImpl msg = (DeregistrationResponseImpl) messageFactory
-				.createMessage(MessageClass.ROUTING_KEY_MANAGEMENT,
-						MessageType.DEREG_RESPONSE);
+        assertTrue(Arrays.equals(msg.getRoutingContext().getRoutingContexts(), msg1.getRoutingContext().getRoutingContexts()));
+    }
 
-		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 1 });
-		DeregistrationStatus status = parmFactory.createDeregistrationStatus(0);
+    @Test
+    public void testDeregistrationResponse() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(8192);
 
-		DeregistrationResult result = (DeregistrationResult) parmFactory
-				.createDeregistrationResult(rc, status);
+        DeregistrationResponseImpl msg = (DeregistrationResponseImpl) messageFactory.createMessage(
+                MessageClass.ROUTING_KEY_MANAGEMENT, MessageType.DEREG_RESPONSE);
 
-		msg.setDeregistrationResult(result);
+        RoutingContext rc = parmFactory.createRoutingContext(new long[] { 1 });
+        DeregistrationStatus status = parmFactory.createDeregistrationStatus(0);
 
-		msg.encode(buffer);
+        DeregistrationResult result = (DeregistrationResult) parmFactory.createDeregistrationResult(rc, status);
 
-		buffer.flip();
+        msg.setDeregistrationResult(result);
 
-		DeregistrationResponseImpl msg1 = (DeregistrationResponseImpl) messageFactory
-				.createMessage(buffer);
+        msg.encode(buffer);
 
-		assertEquals(msg.getDeregistrationResult().getDeregistrationStatus()
-				.getStatus(), msg1.getDeregistrationResult()
-				.getDeregistrationStatus().getStatus());
-	}
+        buffer.flip();
 
-	@Test
-	public void testASPActive() throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocate(8192);
+        DeregistrationResponseImpl msg1 = (DeregistrationResponseImpl) messageFactory.createMessage(buffer);
 
-		ASPActiveImpl msg = (ASPActiveImpl) messageFactory.createMessage(
-				MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_ACTIVE);
+        assertEquals(msg.getDeregistrationResult().getDeregistrationStatus().getStatus(), msg1.getDeregistrationResult()
+                .getDeregistrationStatus().getStatus());
+    }
 
-		TrafficModeType mode = parmFactory.createTrafficModeType(1);
-		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 1 });
-		InfoString str = parmFactory.createInfoString("There it is");
-		msg.setTrafficModeType(mode);
-		msg.setRoutingContext(rc);
-		msg.setInfoString(str);
+    @Test
+    public void testASPActive() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(8192);
 
-		msg.encode(buffer);
+        ASPActiveImpl msg = (ASPActiveImpl) messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE,
+                MessageType.ASP_ACTIVE);
 
-		buffer.flip();
+        TrafficModeType mode = parmFactory.createTrafficModeType(1);
+        RoutingContext rc = parmFactory.createRoutingContext(new long[] { 1 });
+        InfoString str = parmFactory.createInfoString("There it is");
+        msg.setTrafficModeType(mode);
+        msg.setRoutingContext(rc);
+        msg.setInfoString(str);
 
-		ASPActiveImpl msg1 = (ASPActiveImpl) messageFactory
-				.createMessage(buffer);
+        msg.encode(buffer);
 
-		assertEquals(msg.getTrafficModeType().getMode(), msg1
-				.getTrafficModeType().getMode());
-		assertEquals(msg.getInfoString().getString(), msg1.getInfoString()
-				.getString());
-	}
+        buffer.flip();
 
-	@Test
-	public void testASPActiveAck() throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ASPActiveImpl msg1 = (ASPActiveImpl) messageFactory.createMessage(buffer);
 
-		ASPActiveAckImpl msg = (ASPActiveAckImpl) messageFactory.createMessage(
-				MessageClass.ASP_TRAFFIC_MAINTENANCE,
-				MessageType.ASP_ACTIVE_ACK);
+        assertEquals(msg.getTrafficModeType().getMode(), msg1.getTrafficModeType().getMode());
+        assertEquals(msg.getInfoString().getString(), msg1.getInfoString().getString());
+    }
 
-		TrafficModeType mode = parmFactory.createTrafficModeType(1);
-		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 1 });
-		InfoString str = parmFactory.createInfoString("There it is");
-		msg.setTrafficModeType(mode);
-		msg.setRoutingContext(rc);
-		msg.setInfoString(str);
+    @Test
+    public void testASPActiveAck() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(8192);
 
-		msg.encode(buffer);
+        ASPActiveAckImpl msg = (ASPActiveAckImpl) messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE,
+                MessageType.ASP_ACTIVE_ACK);
 
-		buffer.flip();
+        TrafficModeType mode = parmFactory.createTrafficModeType(1);
+        RoutingContext rc = parmFactory.createRoutingContext(new long[] { 1 });
+        InfoString str = parmFactory.createInfoString("There it is");
+        msg.setTrafficModeType(mode);
+        msg.setRoutingContext(rc);
+        msg.setInfoString(str);
 
-		ASPActiveAckImpl msg1 = (ASPActiveAckImpl) messageFactory
-				.createMessage(buffer);
+        msg.encode(buffer);
 
-		assertEquals(msg.getTrafficModeType().getMode(), msg1
-				.getTrafficModeType().getMode());
-		assertEquals(msg.getInfoString().getString(), msg1.getInfoString()
-				.getString());
-		assertTrue(Arrays.equals(msg.getRoutingContext().getRoutingContexts(),
-				msg1.getRoutingContext().getRoutingContexts()));
-	}
+        buffer.flip();
 
-	@Test
-	public void testASPInactive() throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ASPActiveAckImpl msg1 = (ASPActiveAckImpl) messageFactory.createMessage(buffer);
 
-		ASPInactiveImpl msg = (ASPInactiveImpl) messageFactory.createMessage(
-				MessageClass.ASP_TRAFFIC_MAINTENANCE, MessageType.ASP_INACTIVE);
+        assertEquals(msg.getTrafficModeType().getMode(), msg1.getTrafficModeType().getMode());
+        assertEquals(msg.getInfoString().getString(), msg1.getInfoString().getString());
+        assertTrue(Arrays.equals(msg.getRoutingContext().getRoutingContexts(), msg1.getRoutingContext().getRoutingContexts()));
+    }
 
-		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 1 });
-		InfoString str = parmFactory.createInfoString("There it is");
-		msg.setRoutingContext(rc);
-		msg.setInfoString(str);
+    @Test
+    public void testASPInactive() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(8192);
 
-		msg.encode(buffer);
+        ASPInactiveImpl msg = (ASPInactiveImpl) messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE,
+                MessageType.ASP_INACTIVE);
 
-		buffer.flip();
+        RoutingContext rc = parmFactory.createRoutingContext(new long[] { 1 });
+        InfoString str = parmFactory.createInfoString("There it is");
+        msg.setRoutingContext(rc);
+        msg.setInfoString(str);
 
-		ASPInactiveImpl msg1 = (ASPInactiveImpl) messageFactory
-				.createMessage(buffer);
+        msg.encode(buffer);
 
-		assertEquals(msg.getInfoString().getString(), msg1.getInfoString()
-				.getString());
+        buffer.flip();
 
-		assertTrue(Arrays.equals(msg.getRoutingContext().getRoutingContexts(),
-				msg1.getRoutingContext().getRoutingContexts()));
-	}
+        ASPInactiveImpl msg1 = (ASPInactiveImpl) messageFactory.createMessage(buffer);
 
-	@Test
-	public void testASPInactiveAck() throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocate(8192);
+        assertEquals(msg.getInfoString().getString(), msg1.getInfoString().getString());
 
-		ASPInactiveAckImpl msg = (ASPInactiveAckImpl) messageFactory
-				.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE,
-						MessageType.ASP_INACTIVE_ACK);
+        assertTrue(Arrays.equals(msg.getRoutingContext().getRoutingContexts(), msg1.getRoutingContext().getRoutingContexts()));
+    }
 
-		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 1 });
-		InfoString str = parmFactory.createInfoString("There it is");
-		msg.setRoutingContext(rc);
-		msg.setInfoString(str);
+    @Test
+    public void testASPInactiveAck() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(8192);
 
-		msg.encode(buffer);
+        ASPInactiveAckImpl msg = (ASPInactiveAckImpl) messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE,
+                MessageType.ASP_INACTIVE_ACK);
 
-		buffer.flip();
+        RoutingContext rc = parmFactory.createRoutingContext(new long[] { 1 });
+        InfoString str = parmFactory.createInfoString("There it is");
+        msg.setRoutingContext(rc);
+        msg.setInfoString(str);
 
-		ASPInactiveAckImpl msg1 = (ASPInactiveAckImpl) messageFactory
-				.createMessage(buffer);
+        msg.encode(buffer);
 
-		assertEquals(msg.getInfoString().getString(), msg1.getInfoString()
-				.getString());
-		assertTrue(Arrays.equals(msg.getRoutingContext().getRoutingContexts(),
-				msg1.getRoutingContext().getRoutingContexts()));
-	}
+        buffer.flip();
 
-	@Test
-	public void testError() throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ASPInactiveAckImpl msg1 = (ASPInactiveAckImpl) messageFactory.createMessage(buffer);
 
-		ErrorImpl msg = (ErrorImpl) messageFactory.createMessage(
-				MessageClass.MANAGEMENT, MessageType.ERROR);
+        assertEquals(msg.getInfoString().getString(), msg1.getInfoString().getString());
+        assertTrue(Arrays.equals(msg.getRoutingContext().getRoutingContexts(), msg1.getRoutingContext().getRoutingContexts()));
+    }
 
-		ErrorCode code = parmFactory.createErrorCode(0x08);
-		msg.setErrorCode(code);
+    @Test
+    public void testError() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(8192);
 
-		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 1 });
-		msg.setRoutingContext(rc);
+        ErrorImpl msg = (ErrorImpl) messageFactory.createMessage(MessageClass.MANAGEMENT, MessageType.ERROR);
 
-		AffectedPointCode affPc = parmFactory.createAffectedPointCode(
-				new int[] { 1, 2 }, new short[] { 0, 0 });
-		msg.setAffectedPointCode(affPc);
+        ErrorCode code = parmFactory.createErrorCode(0x08);
+        msg.setErrorCode(code);
 
-		NetworkAppearance netApp = parmFactory.createNetworkAppearance(12345l);
-		msg.setNetworkAppearance(netApp);
+        RoutingContext rc = parmFactory.createRoutingContext(new long[] { 1 });
+        msg.setRoutingContext(rc);
 
-		DiagnosticInfo str = parmFactory.createDiagnosticInfo("There it is");
-		msg.setDiagnosticInfo(str);
+        AffectedPointCode affPc = parmFactory.createAffectedPointCode(new int[] { 1, 2 }, new short[] { 0, 0 });
+        msg.setAffectedPointCode(affPc);
 
-		msg.encode(buffer);
+        NetworkAppearance netApp = parmFactory.createNetworkAppearance(12345l);
+        msg.setNetworkAppearance(netApp);
 
-		buffer.flip();
+        DiagnosticInfo str = parmFactory.createDiagnosticInfo("There it is");
+        msg.setDiagnosticInfo(str);
 
-		ErrorImpl msg1 = (ErrorImpl) messageFactory.createMessage(buffer);
+        msg.encode(buffer);
 
-		assertEquals(msg.getErrorCode().getCode(), msg1.getErrorCode()
-				.getCode());
-		assertTrue(Arrays.equals(msg.getRoutingContext().getRoutingContexts(),
-				msg1.getRoutingContext().getRoutingContexts()));
-		assertTrue(Arrays.equals(msg.getAffectedPointCode().getPointCodes(),
-				msg1.getAffectedPointCode().getPointCodes()));
-		assertTrue(Arrays.equals(msg.getAffectedPointCode().getMasks(), msg1
-				.getAffectedPointCode().getMasks()));
+        buffer.flip();
 
-		assertEquals(msg.getNetworkAppearance().getNetApp(), msg1
-				.getNetworkAppearance().getNetApp());
+        ErrorImpl msg1 = (ErrorImpl) messageFactory.createMessage(buffer);
 
-		assertEquals(msg.getDiagnosticInfo().getInfo(), msg1
-				.getDiagnosticInfo().getInfo());
-	}
+        assertEquals(msg.getErrorCode().getCode(), msg1.getErrorCode().getCode());
+        assertTrue(Arrays.equals(msg.getRoutingContext().getRoutingContexts(), msg1.getRoutingContext().getRoutingContexts()));
+        assertTrue(Arrays.equals(msg.getAffectedPointCode().getPointCodes(), msg1.getAffectedPointCode().getPointCodes()));
+        assertTrue(Arrays.equals(msg.getAffectedPointCode().getMasks(), msg1.getAffectedPointCode().getMasks()));
 
-	@Test
-	public void testNotify() throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocate(8192);
+        assertEquals(msg.getNetworkAppearance().getNetApp(), msg1.getNetworkAppearance().getNetApp());
 
-		NotifyImpl msg = (NotifyImpl) messageFactory.createMessage(
-				MessageClass.MANAGEMENT, MessageType.NOTIFY);
+        assertEquals(msg.getDiagnosticInfo().getInfo(), msg1.getDiagnosticInfo().getInfo());
+    }
 
-		Status status = parmFactory.createStatus(1, 4);
-		msg.setStatus(status);
+    @Test
+    public void testNotify() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(8192);
 
-		ASPIdentifier aspId = parmFactory.createASPIdentifier(123);
-		msg.setASPIdentifier(aspId);
+        NotifyImpl msg = (NotifyImpl) messageFactory.createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
 
-		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 1 });
-		msg.setRoutingContext(rc);
+        Status status = parmFactory.createStatus(1, 4);
+        msg.setStatus(status);
 
-		msg.encode(buffer);
+        ASPIdentifier aspId = parmFactory.createASPIdentifier(123);
+        msg.setASPIdentifier(aspId);
 
-		buffer.flip();
+        RoutingContext rc = parmFactory.createRoutingContext(new long[] { 1 });
+        msg.setRoutingContext(rc);
 
-		NotifyImpl msg1 = (NotifyImpl) messageFactory.createMessage(buffer);
+        msg.encode(buffer);
 
-		assertEquals(msg.getStatus().getType(), msg1.getStatus().getType());
-		assertEquals(msg.getStatus().getInfo(), msg1.getStatus().getInfo());
-		assertEquals(msg.getASPIdentifier().getAspId(), msg1.getASPIdentifier()
-				.getAspId());
-		assertTrue(Arrays.equals(msg.getRoutingContext().getRoutingContexts(),
-				msg1.getRoutingContext().getRoutingContexts()));
-	}
+        buffer.flip();
 
-	@Test
-	public void encodeTwoMessages() throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocate(8192);
+        NotifyImpl msg1 = (NotifyImpl) messageFactory.createMessage(buffer);
 
-		PayloadDataImpl payloadMsg = (PayloadDataImpl) messageFactory
-				.createMessage(MessageClass.TRANSFER_MESSAGES,
-						MessageType.PAYLOAD);
-		ProtocolDataImpl p1 = (ProtocolDataImpl) parmFactory
-				.createProtocolData(1408, 14150, 1, 1, 0, 0, new byte[] { 1, 2,
-						3, 4 });
-		payloadMsg.setData(p1);
-		payloadMsg.encode(buffer);
+        assertEquals(msg.getStatus().getType(), msg1.getStatus().getType());
+        assertEquals(msg.getStatus().getInfo(), msg1.getStatus().getInfo());
+        assertEquals(msg.getASPIdentifier().getAspId(), msg1.getASPIdentifier().getAspId());
+        assertTrue(Arrays.equals(msg.getRoutingContext().getRoutingContexts(), msg1.getRoutingContext().getRoutingContexts()));
+    }
 
-		DestinationUnavailableImpl dunaMsg = (DestinationUnavailableImpl) messageFactory
-				.createMessage(MessageClass.SIGNALING_NETWORK_MANAGEMENT,
-						MessageType.DESTINATION_UNAVAILABLE);
-		NetworkAppearance netApp = parmFactory.createNetworkAppearance(1233);
-		dunaMsg.setNetworkAppearance(netApp);
+    @Test
+    public void encodeTwoMessages() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(8192);
 
-		RoutingContext rc = parmFactory.createRoutingContext(new long[] { 12 });
-		dunaMsg.setRoutingContexts(rc);
+        PayloadDataImpl payloadMsg = (PayloadDataImpl) messageFactory.createMessage(MessageClass.TRANSFER_MESSAGES,
+                MessageType.PAYLOAD);
+        ProtocolDataImpl p1 = (ProtocolDataImpl) parmFactory.createProtocolData(1408, 14150, 1, 1, 0, 0, new byte[] { 1, 2, 3,
+                4 });
+        payloadMsg.setData(p1);
+        payloadMsg.encode(buffer);
 
-		AffectedPointCode afpc = parmFactory.createAffectedPointCode(
-				new int[] { 123 }, new short[] { 0 });
-		dunaMsg.setAffectedPointCodes(afpc);
+        DestinationUnavailableImpl dunaMsg = (DestinationUnavailableImpl) messageFactory.createMessage(
+                MessageClass.SIGNALING_NETWORK_MANAGEMENT, MessageType.DESTINATION_UNAVAILABLE);
+        NetworkAppearance netApp = parmFactory.createNetworkAppearance(1233);
+        dunaMsg.setNetworkAppearance(netApp);
 
-		dunaMsg.encode(buffer);
+        RoutingContext rc = parmFactory.createRoutingContext(new long[] { 12 });
+        dunaMsg.setRoutingContexts(rc);
 
-		buffer.flip();
+        AffectedPointCode afpc = parmFactory.createAffectedPointCode(new int[] { 123 }, new short[] { 0 });
+        dunaMsg.setAffectedPointCodes(afpc);
 
-		// Paylod decode
-		PayloadDataImpl payloadMsg1 = (PayloadDataImpl) messageFactory
-				.createMessage(buffer);
+        dunaMsg.encode(buffer);
 
-		ProtocolDataImpl p2 = (ProtocolDataImpl) payloadMsg1.getData();
+        buffer.flip();
 
-		assertEquals(p1.getTag(), p2.getTag());
-		assertEquals(p1.getOpc(), p2.getOpc());
-		assertEquals(p1.getDpc(), p2.getDpc());
-		assertEquals(p1.getSI(), p2.getSI());
-		assertEquals(p1.getNI(), p2.getNI());
-		assertEquals(p1.getMP(), p2.getMP());
-		assertEquals(p1.getSLS(), p2.getSLS());
+        // Paylod decode
+        PayloadDataImpl payloadMsg1 = (PayloadDataImpl) messageFactory.createMessage(buffer);
 
-		assertTrue(buffer.hasRemaining());
+        ProtocolDataImpl p2 = (ProtocolDataImpl) payloadMsg1.getData();
 
-		DestinationUnavailableImpl dunaMsg1 = (DestinationUnavailableImpl) messageFactory
-				.createMessage(buffer);
+        assertEquals(p1.getTag(), p2.getTag());
+        assertEquals(p1.getOpc(), p2.getOpc());
+        assertEquals(p1.getDpc(), p2.getDpc());
+        assertEquals(p1.getSI(), p2.getSI());
+        assertEquals(p1.getNI(), p2.getNI());
+        assertEquals(p1.getMP(), p2.getMP());
+        assertEquals(p1.getSLS(), p2.getSLS());
 
-		NetworkAppearance netApp1 = (NetworkAppearance) dunaMsg1
-				.getNetworkAppearance();
+        assertTrue(buffer.hasRemaining());
 
-		assertEquals(netApp.getNetApp(), netApp1.getNetApp());
+        DestinationUnavailableImpl dunaMsg1 = (DestinationUnavailableImpl) messageFactory.createMessage(buffer);
 
-	}
+        NetworkAppearance netApp1 = (NetworkAppearance) dunaMsg1.getNetworkAppearance();
 
-	@Test
-	public void testHeartBeat() throws IOException {
+        assertEquals(netApp.getNetApp(), netApp1.getNetApp());
 
-		// Test encode
-		ByteBuffer buffer = ByteBuffer.allocate(8192);
+    }
 
-		byte[] data = new byte[] { 0x01, 0x00, 0x03, 0x03, 0x00, 0x00, 0x00,
-				0x1c, 0x00, 0x09, 0x00, 0x14, 0x00, 0x02, 0x00, 0x00, 0x00,
-				0x07, (byte) 0xaf, 0x3e, 0x75, 0x40, 0x03, 0x13, 0x05, 0x07,
-				0x11, 0x20 };
+    @Test
+    public void testHeartBeat() throws IOException {
 
-		byte[] heratbeatData = new byte[] { 0x00, 0x02, 0x00, 0x00, 0x00, 0x07,
-				(byte) 0xaf, 0x3e, 0x75, 0x40, 0x03, 0x13, 0x05, 0x07, 0x11,
-				0x20 };
-		Heartbeat heartbeat = (Heartbeat) messageFactory.createMessage(
-				MessageClass.ASP_STATE_MAINTENANCE, MessageType.HEARTBEAT);
+        // Test encode
+        ByteBuffer buffer = ByteBuffer.allocate(8192);
 
-		HeartbeatData hrBtData = parmFactory.createHeartbeatData(heratbeatData);
+        byte[] data = new byte[] { 0x01, 0x00, 0x03, 0x03, 0x00, 0x00, 0x00, 0x1c, 0x00, 0x09, 0x00, 0x14, 0x00, 0x02, 0x00,
+                0x00, 0x00, 0x07, (byte) 0xaf, 0x3e, 0x75, 0x40, 0x03, 0x13, 0x05, 0x07, 0x11, 0x20 };
 
-		heartbeat.setHeartbeatData(hrBtData);
+        byte[] heratbeatData = new byte[] { 0x00, 0x02, 0x00, 0x00, 0x00, 0x07, (byte) 0xaf, 0x3e, 0x75, 0x40, 0x03, 0x13,
+                0x05, 0x07, 0x11, 0x20 };
+        Heartbeat heartbeat = (Heartbeat) messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE,
+                MessageType.HEARTBEAT);
 
-		((HeartbeatImpl) heartbeat).encode(buffer);
+        HeartbeatData hrBtData = parmFactory.createHeartbeatData(heratbeatData);
 
-		buffer.flip();
+        heartbeat.setHeartbeatData(hrBtData);
 
-		byte[] rawData = new byte[buffer.limit()];
-		buffer.get(rawData);
+        ((HeartbeatImpl) heartbeat).encode(buffer);
 
-		assertTrue(Arrays.equals(data, rawData));
+        buffer.flip();
 
-		// Test Decode
-		M3UAMessageImpl m3uaMessageImpl = messageFactory
-				.createSctpMessage(data);
-		assertTrue((m3uaMessageImpl instanceof HeartbeatImpl));
-		assertNotNull(((HeartbeatImpl) m3uaMessageImpl).getHeartbeatData());
+        byte[] rawData = new byte[buffer.limit()];
+        buffer.get(rawData);
 
-		assertTrue(Arrays.equals(heratbeatData,
-				((HeartbeatImpl) m3uaMessageImpl).getHeartbeatData().getData()));
+        assertTrue(Arrays.equals(data, rawData));
 
-	}
+        // Test Decode
+        M3UAMessageImpl m3uaMessageImpl = messageFactory.createSctpMessage(data);
+        assertTrue((m3uaMessageImpl instanceof HeartbeatImpl));
+        assertNotNull(((HeartbeatImpl) m3uaMessageImpl).getHeartbeatData());
 
-	@Test
-	public void testHeartBeatAck() throws IOException {
+        assertTrue(Arrays.equals(heratbeatData, ((HeartbeatImpl) m3uaMessageImpl).getHeartbeatData().getData()));
 
-		// Test encode
-		ByteBuffer buffer = ByteBuffer.allocate(8192);
+    }
 
-		byte[] data = new byte[] { 0x01, 0x00, 0x03, 0x06, 0x00, 0x00, 0x00,
-				0x1c, 0x00, 0x09, 0x00, 0x14, 0x00, 0x02, 0x00, 0x00, 0x00,
-				0x07, (byte) 0xaf, 0x3e, 0x75, 0x40, 0x03, 0x13, 0x05, 0x07,
-				0x11, 0x20 };
+    @Test
+    public void testHeartBeatAck() throws IOException {
 
-		byte[] heratbeatAckData = new byte[] { 0x00, 0x02, 0x00, 0x00, 0x00,
-				0x07, (byte) 0xaf, 0x3e, 0x75, 0x40, 0x03, 0x13, 0x05, 0x07,
-				0x11, 0x20 };
-		HeartbeatAck heartbeatAck = (HeartbeatAck) messageFactory
-				.createMessage(MessageClass.ASP_STATE_MAINTENANCE,
-						MessageType.HEARTBEAT_ACK);
+        // Test encode
+        ByteBuffer buffer = ByteBuffer.allocate(8192);
 
-		HeartbeatData hrBtData = parmFactory
-				.createHeartbeatData(heratbeatAckData);
+        byte[] data = new byte[] { 0x01, 0x00, 0x03, 0x06, 0x00, 0x00, 0x00, 0x1c, 0x00, 0x09, 0x00, 0x14, 0x00, 0x02, 0x00,
+                0x00, 0x00, 0x07, (byte) 0xaf, 0x3e, 0x75, 0x40, 0x03, 0x13, 0x05, 0x07, 0x11, 0x20 };
 
-		heartbeatAck.setHeartbeatData(hrBtData);
+        byte[] heratbeatAckData = new byte[] { 0x00, 0x02, 0x00, 0x00, 0x00, 0x07, (byte) 0xaf, 0x3e, 0x75, 0x40, 0x03, 0x13,
+                0x05, 0x07, 0x11, 0x20 };
+        HeartbeatAck heartbeatAck = (HeartbeatAck) messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE,
+                MessageType.HEARTBEAT_ACK);
 
-		((HeartbeatAckImpl) heartbeatAck).encode(buffer);
+        HeartbeatData hrBtData = parmFactory.createHeartbeatData(heratbeatAckData);
 
-		buffer.flip();
+        heartbeatAck.setHeartbeatData(hrBtData);
 
-		byte[] rawData = new byte[buffer.limit()];
-		buffer.get(rawData);
+        ((HeartbeatAckImpl) heartbeatAck).encode(buffer);
 
-		assertTrue(Arrays.equals(data, rawData));
+        buffer.flip();
 
-		// Test Decode
-		M3UAMessageImpl m3uaMessageImpl = messageFactory
-				.createSctpMessage(data);
-		assertTrue((m3uaMessageImpl instanceof HeartbeatAckImpl));
-		assertNotNull(((HeartbeatAckImpl) m3uaMessageImpl).getHeartbeatData());
+        byte[] rawData = new byte[buffer.limit()];
+        buffer.get(rawData);
 
-		assertTrue(Arrays.equals(heratbeatAckData,
-				((HeartbeatAckImpl) m3uaMessageImpl).getHeartbeatData()
-						.getData()));
+        assertTrue(Arrays.equals(data, rawData));
 
-	}
+        // Test Decode
+        M3UAMessageImpl m3uaMessageImpl = messageFactory.createSctpMessage(data);
+        assertTrue((m3uaMessageImpl instanceof HeartbeatAckImpl));
+        assertNotNull(((HeartbeatAckImpl) m3uaMessageImpl).getHeartbeatData());
+
+        assertTrue(Arrays.equals(heratbeatAckData, ((HeartbeatAckImpl) m3uaMessageImpl).getHeartbeatData().getData()));
+
+    }
 }

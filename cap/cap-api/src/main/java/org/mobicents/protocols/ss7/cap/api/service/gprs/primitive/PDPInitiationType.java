@@ -23,39 +23,35 @@
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
 /**
-*
-PDPInitiationType ::= ENUMERATED {
-mSInitiated (0),
-networkInitiated (1)
-}
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ PDPInitiationType ::= ENUMERATED { mSInitiated (0), networkInitiated (1) }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public enum PDPInitiationType {
-	mSInitiated(0), 
-	networkInitiated(1);
+    mSInitiated(0), networkInitiated(1);
 
-	private int code;
+    private int code;
 
-	private PDPInitiationType(int code) {
-		this.code = code;
-	}
+    private PDPInitiationType(int code) {
+        this.code = code;
+    }
 
-	public int getCode() {
-		return this.code;
-	}
+    public int getCode() {
+        return this.code;
+    }
 
-	public static PDPInitiationType getInstance(int code) {
-		switch (code) {
-		case 0:
-			return PDPInitiationType.mSInitiated;
-		case 1:
-			return PDPInitiationType.networkInitiated;
-		default:
-			return null;
-		}
-	}
+    public static PDPInitiationType getInstance(int code) {
+        switch (code) {
+            case 0:
+                return PDPInitiationType.mSInitiated;
+            case 1:
+                return PDPInitiationType.networkInitiated;
+            default:
+                return null;
+        }
+    }
 
 }

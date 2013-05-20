@@ -32,15 +32,15 @@ import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
  */
 public class PDPTypeImpl extends OctetStringBase implements PDPType {
 
-	public PDPTypeImpl() {
-		super(2, 2, "PDPType");
-	}
+    public PDPTypeImpl() {
+        super(2, 2, "PDPType");
+    }
 
-	public PDPTypeImpl(byte[] data) {
-		super(2, 2, "PDPType", data);
-	}
+    public PDPTypeImpl(byte[] data) {
+        super(2, 2, "PDPType", data);
+    }
 
-	public byte[] getData() {
-		return data;
-	}	
+    public byte[] getData() {
+        return data;
+    }
 }

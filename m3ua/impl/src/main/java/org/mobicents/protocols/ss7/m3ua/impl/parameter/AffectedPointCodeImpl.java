@@ -28,12 +28,11 @@ import org.mobicents.protocols.ss7.m3ua.parameter.AffectedPointCode;
 import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
 
 /**
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
-public class AffectedPointCodeImpl extends ParameterImpl implements
-        AffectedPointCode {
+public class AffectedPointCodeImpl extends ParameterImpl implements AffectedPointCode {
 
     private byte[] value;
     private int[] pointCodes;
@@ -100,10 +99,8 @@ public class AffectedPointCodeImpl extends ParameterImpl implements
 
     @Override
     public String toString() {
-        return String
-                .format("AffectedPointCode pointCode=%s mask=%s",
-                        Arrays.toString(this.pointCodes), Arrays
-                                .toString(this.masks));
+        return String.format("AffectedPointCode pointCode=%s mask=%s", Arrays.toString(this.pointCodes),
+                Arrays.toString(this.masks));
     }
 
 }

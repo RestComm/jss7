@@ -23,19 +23,17 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
 /**
- * 
-
-ZoneCode ::= OCTET STRING (SIZE (2))
-	-- internal structure is defined in TS 3GPP TS 23.003 [17]
-
- * 
+ *
+ ZoneCode ::= OCTET STRING (SIZE (2)) -- internal structure is defined in TS 3GPP TS 23.003 [17]
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ZoneCode {
 
-	public byte[] getData();
+    byte[] getData();
 
-	public int getValue();
+    int getValue();
 
 }

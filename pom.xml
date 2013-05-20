@@ -1,10 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>org.mobicents</groupId>
 		<artifactId>mobicents-parent</artifactId>
-		<version>2.24</version>
+		<version>2.26-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>ss7-parent</artifactId>
@@ -75,7 +76,7 @@
 				<groupId>org.mobicents.commons</groupId>
 				<artifactId>commons</artifactId>
 				<version>${commons.version}</version>
-			</dependency>			
+			</dependency>
 			<!-- SCTP -->
 			<dependency>
 				<groupId>org.mobicents.protocols.sctp</groupId>
@@ -284,123 +285,127 @@
 	</dependencyManagement>
 
 	<profiles>
-		 <profile>
-                        <id>maven-release</id>
-                        <modules />
-                        <build>
-                                <plugins>
-                                        <plugin>
-                                                <groupId>org.apache.maven.plugins</groupId>
-                                                <artifactId>maven-release-plugin</artifactId>
-                                                <configuration>
-                                                        <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
-                                                        <preparationGoals>clean install</preparationGoals>
-                                                        <autoVersionSubmodules>true</autoVersionSubmodules>         
-                                                </configuration>
-                                        </plugin>
-                                </plugins>
-                        </build>
-                </profile>
-                <profile>
-                        <id>release</id>
-                        <modules />
-                </profile>
-                <profile>
-                      <id>release-sign-artifacts</id>
-                      <activation>
-                        <property>
-                          <name>performRelease</name>
-                          <value>true</value>
-                        </property>
-                      </activation>
-                      <build>
-                        <plugins>
-                          <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-gpg-plugin</artifactId>
-                            <executions>
-                              <execution>
-                                <id>sign-artifacts</id>
-                                <phase>install</phase>
-                                <goals>
-                                  <goal>sign</goal>
-                                </goals>
-                              </execution>
-                            </executions>
-                          </plugin>
-                        <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <version>2.1.2</version>
-                        <executions>
-                                <execution>
-                                        <id>attach-sources</id>
-                                        <phase>verify</phase>
-                                        <goals>
-                                                <goal>jar</goal>
-                                        </goals>
-                                </execution>
-                        </executions>
-                        </plugin>
-                        </plugins>
-                      </build>
-               </profile>
+		<profile>
+			<id>maven-release</id>
+			<modules />
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-release-plugin</artifactId>
+						<configuration>
+							<allowTimestampedSnapshots>true</allowTimestampedSnapshots>
+							<preparationGoals>clean install</preparationGoals>
+							<autoVersionSubmodules>true</autoVersionSubmodules>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>release</id>
+			<modules />
+		</profile>
+		<profile>
+			<id>release-sign-artifacts</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>install</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<version>2.1.2</version>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 	<developers>
-                <developer>
-                        <id>serg.vetyutnev</id>
-                        <name>Sergey</name>
-                        <email>serg.vetyutnev@gmail.com</email>
-                        <organization>TeleStax</organization>
-                        <organizationUrl>http://telestax.com/</organizationUrl>
-                        <roles>
-                                <role>Active Developer</role>
-                        </roles>
-                        <timezone>+3</timezone>
-                </developer>
-                <developer>
-                        <id>amit.bhayani</id>
-                        <name>Amit Bhayani</name>
-                        <email>amit.bhayani@gmail.com</email>
-                        <organization>TeleStax</organization>
-                        <organizationUrl>http://telestax.com/</organizationUrl>
-                        <roles>
-                                <role>Active Developer</role>
-                        </roles>
-                        <timezone>+5.5</timezone>
-                </developer>
-                <developer>
-                        <id>baranowb</id>
-                        <name>Bartosz Baranowski</name>
-                        <email>baranowb@gmail.com</email>
-                        <organization>JBoss/Red Hat</organization>
-                        <organizationUrl>http://www.redhat.com/</organizationUrl>
-                        <roles>
-                                <role>Active Developer</role>
-                        </roles>
-                        <timezone>+1</timezone>
-                </developer>
-                <developer>
-                        <id>oleg.kulikoff</id>
-                        <name>Oleg Kulikoff</name>
-                        <email>oleg.kulikoff@gmail.com</email>
-                        <organization>JBoss/Red Hat</organization>
-                        <organizationUrl>http://www.redhat.com/</organizationUrl>
-                        <roles>
-                                <role>Inactive Developer</role>
-                        </roles>
-                        <timezone>+3</timezone>
-                </developer>
+		<developer>
+			<id>serg.vetyutnev</id>
+			<name>Sergey</name>
+			<email>serg.vetyutnev@gmail.com</email>
+			<organization>TeleStax</organization>
+			<organizationUrl>http://telestax.com/</organizationUrl>
+			<roles>
+				<role>Active Developer</role>
+			</roles>
+			<timezone>+3</timezone>
+		</developer>
+		<developer>
+			<id>amit.bhayani</id>
+			<name>Amit Bhayani</name>
+			<email>amit.bhayani@gmail.com</email>
+			<organization>TeleStax</organization>
+			<organizationUrl>http://telestax.com/</organizationUrl>
+			<roles>
+				<role>Active Developer</role>
+			</roles>
+			<timezone>+5.5</timezone>
+		</developer>
+		<developer>
+			<id>baranowb</id>
+			<name>Bartosz Baranowski</name>
+			<email>baranowb@gmail.com</email>
+			<organization>JBoss/Red Hat</organization>
+			<organizationUrl>http://www.redhat.com/</organizationUrl>
+			<roles>
+				<role>Active Developer</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
+		<developer>
+			<id>oleg.kulikoff</id>
+			<name>Oleg Kulikoff</name>
+			<email>oleg.kulikoff@gmail.com</email>
+			<organization>JBoss/Red Hat</organization>
+			<organizationUrl>http://www.redhat.com/</organizationUrl>
+			<roles>
+				<role>Inactive Developer</role>
+			</roles>
+			<timezone>+3</timezone>
+		</developer>
 	</developers>
-        <licenses>
-                <license>
-                        <name>GNU LESSER GENERAL PUBLIC LICENSE</name>
-                        <url>http://www.gnu.org/licenses/lgpl.html</url>
-                        <distribution>repo</distribution>
-                </license>
-        </licenses>
+	<licenses>
+		<license>
+			<name>GNU LESSER GENERAL PUBLIC LICENSE</name>
+			<url>http://www.gnu.org/licenses/lgpl.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+			</plugin>
 			<plugin>
 				<artifactId>maven-eclipse-plugin</artifactId>
 				<groupId>org.mobicents.tools</groupId>
@@ -437,39 +442,39 @@
 		</plugins>
 	</build>
 
-        <scm>
-                <connection>scm:git:https://code.google.com/p/jss7/</connection>
-                <developerConnection>scm:git:https://code.google.com/p/jss7/</developerConnection>
-                <url>https://code.google.com/p/jss7/</url>
-        </scm>
-        <!-- repositories -->
-        <repositories>
-                <repository>
-                          <id>mobicents-public-repository-group</id>
-                          <name>Mobicens Public Maven Repository Group</name>
-                          <url>http://oss.sonatype.org/content/groups/public/</url>
-                          <layout>default</layout>
-                          <releases>
-                            <enabled>true</enabled>
-                            <updatePolicy>never</updatePolicy>
-                          </releases>
-                          <snapshots>
-                            <enabled>true</enabled>
-                            <updatePolicy>never</updatePolicy>
-                          </snapshots>
-                </repository>
-            <repository>
-                <id>java.net-Public</id>
-                <name>Maven Java Net Snapshots and Releases</name>
-                <url>http://download.java.net/maven/2/</url>
-                <releases>
-                                <enabled>true</enabled>
-                                <updatePolicy>never</updatePolicy>
-                        </releases>
-                        <snapshots>
-                                <enabled>true</enabled>
-                                <updatePolicy>never</updatePolicy>
-                        </snapshots>
-            </repository>               
-        </repositories>
+	<scm>
+		<connection>scm:git:https://code.google.com/p/jss7/</connection>
+		<developerConnection>scm:git:https://code.google.com/p/jss7/</developerConnection>
+		<url>https://code.google.com/p/jss7/</url>
+	</scm>
+	<!-- repositories -->
+	<repositories>
+		<repository>
+			<id>mobicents-public-repository-group</id>
+			<name>Mobicens Public Maven Repository Group</name>
+			<url>http://oss.sonatype.org/content/groups/public/</url>
+			<layout>default</layout>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>java.net-Public</id>
+			<name>Maven Java Net Snapshots and Releases</name>
+			<url>http://download.java.net/maven/2/</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</repository>
+	</repositories>
 </project>

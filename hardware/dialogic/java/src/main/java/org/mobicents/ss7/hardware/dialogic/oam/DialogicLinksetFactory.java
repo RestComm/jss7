@@ -30,15 +30,15 @@ import org.mobicents.ss7.linkset.oam.LinksetFactory;
  * <p>
  * Factory for creating <tt>dialogic</tt> based {@link Linkset}
  * </p>
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public class DialogicLinksetFactory extends LinksetFactory {
 
     private static final String NAME = "dialogic";
     private static final String LINKSET_NAME = "dialogiclinkset";
-    
+
     public DialogicLinksetFactory() {
         super();
     }
@@ -100,41 +100,37 @@ public class DialogicLinksetFactory extends LinksetFactory {
 
     /**
      * Get linkset name
-     * 
+     *
      * @return
      */
-    public String getLinksetName()
-    {
-    	return LINKSET_NAME;
+    public String getLinksetName() {
+        return LINKSET_NAME;
     }
-    
+
     /**
      * Get linkset class
-     * 
+     *
      * @return
      */
-    public Class getLinksetClass()
-    {
-    	return DialogicLinkset.class;
+    public Class getLinksetClass() {
+        return DialogicLinkset.class;
     }
-    
+
     /**
      * Get link name
-     * 
+     *
      * @return
      */
-    public String getLinkName()
-    {
-    	return null;
+    public String getLinkName() {
+        return null;
     }
-    
+
     /**
      * Get link class
-     * 
+     *
      * @return
      */
-    public Class getLinkClass()
-    {
-    	return null;
+    public Class getLinkClass() {
+        return null;
     }
 }

@@ -31,15 +31,16 @@ import org.mobicents.protocols.ss7.map.api.service.pdpContextActivation.MAPServi
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class MAPDialogPdpContextActivationImpl extends MAPDialogImpl implements MAPDialogPdpContextActivation {
 
-	protected MAPDialogPdpContextActivationImpl(MAPApplicationContext appCntx, Dialog tcapDialog, MAPProviderImpl mapProviderImpl,
-			MAPServicePdpContextActivation mapService, AddressString origReference, AddressString destReference) {
-		super(appCntx, tcapDialog, mapProviderImpl, mapService, origReference, destReference);
-	}
+    protected MAPDialogPdpContextActivationImpl(MAPApplicationContext appCntx, Dialog tcapDialog,
+            MAPProviderImpl mapProviderImpl, MAPServicePdpContextActivation mapService, AddressString origReference,
+            AddressString destReference) {
+        super(appCntx, tcapDialog, mapProviderImpl, mapService, origReference, destReference);
+    }
 
 }

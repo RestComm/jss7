@@ -23,21 +23,18 @@
 package org.mobicents.protocols.ss7.inap.api.primitives;
 
 /**
-*
-MiscCallInfo ::= SEQUENCE {
-  messageType   [0]  ENUMERATED {request(0), notification(1)},
-  dpAssignment
-    [1]  ENUMERATED {individualLine(0), groupBased(1), officeBased(2)} OPTIONAL
-}
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ MiscCallInfo ::= SEQUENCE { messageType [0] ENUMERATED {request(0), notification(1)}, dpAssignment [1] ENUMERATED
+ * {individualLine(0), groupBased(1), officeBased(2)} OPTIONAL }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface MiscCallInfo {
 
-	public MiscCallInfoMessageType getMessageType();
+    MiscCallInfoMessageType getMessageType();
 
-	public MiscCallInfoDpAssignment getDpAssignment();
+    MiscCallInfoDpAssignment getDpAssignment();
 
 }

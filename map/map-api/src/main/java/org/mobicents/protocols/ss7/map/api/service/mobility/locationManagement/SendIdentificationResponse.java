@@ -29,38 +29,27 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.Authe
 import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.CurrentSecurityContext;
 
 /**
- * 
-
-MAP V3:
-SendIdentificationRes ::= [3] SEQUENCE {
-	imsi			IMSI			OPTIONAL,
-	-- IMSI shall be present in the first (or only) service response of a dialogue.
-	-- If multiple service requests are present in a dialogue then IMSI
-	-- shall not be present in any service response other than the first one.
-	authenticationSetList	AuthenticationSetList	OPTIONAL,
-	currentSecurityContext	[2]CurrentSecurityContext	OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
-	...}
-
-MAP V2:
-SendIdentificationRes ::= SEQUENCE {
-	imsi IMSI
-	authenticationSetList AuthenticationSetList OPTIONAL,
-	...}
-
-
- * 
+ *
+ MAP V3: SendIdentificationRes ::= [3] SEQUENCE { imsi IMSI OPTIONAL, -- IMSI shall be present in the first (or only) service
+ * response of a dialogue. -- If multiple service requests are present in a dialogue then IMSI -- shall not be present in any
+ * service response other than the first one. authenticationSetList AuthenticationSetList OPTIONAL, currentSecurityContext
+ * [2]CurrentSecurityContext OPTIONAL, extensionContainer [3] ExtensionContainer OPTIONAL, ...}
+ *
+ * MAP V2: SendIdentificationRes ::= SEQUENCE { imsi IMSI authenticationSetList AuthenticationSetList OPTIONAL, ...}
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SendIdentificationResponse extends MobilityMessage {
 
-	public IMSI getImsi();
+    IMSI getImsi();
 
-	public AuthenticationSetList getAuthenticationSetList();
+    AuthenticationSetList getAuthenticationSetList();
 
-	public CurrentSecurityContext getCurrentSecurityContext();
+    CurrentSecurityContext getCurrentSecurityContext();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

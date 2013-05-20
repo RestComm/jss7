@@ -40,192 +40,191 @@ import org.mobicents.protocols.ss7.cap.service.gprs.primitive.PDPIDImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class ConnectGPRSRequestImpl   extends GprsMessageImpl  implements ConnectGPRSRequest {
-	
-	public static final String _PrimitiveName = "ConnectGPRSRequest";
-	
-	public static final int _ID_accessPointName = 0;
-	public static final int _ID_pdpID = 1;
-	
-	private AccessPointName accessPointName;
-	private PDPID pdpID;
-	
-	public ConnectGPRSRequestImpl() {
-	}
+public class ConnectGPRSRequestImpl extends GprsMessageImpl implements ConnectGPRSRequest {
 
-	public ConnectGPRSRequestImpl(AccessPointName accessPointName, PDPID pdpID) {
-		super();
-		this.accessPointName = accessPointName;
-		this.pdpID = pdpID;
-	}
+    public static final String _PrimitiveName = "ConnectGPRSRequest";
 
-	@Override
-	public AccessPointName getAccessPointName(){
-		return this.accessPointName;
-	}
+    public static final int _ID_accessPointName = 0;
+    public static final int _ID_pdpID = 1;
 
-	@Override
-	public PDPID getPDPID() {
-		return this.pdpID;
-	}
-	
-	@Override
-	public CAPMessageType getMessageType() {
-		return CAPMessageType.connectGPRS_Request;
-	}
+    private AccessPointName accessPointName;
+    private PDPID pdpID;
 
-	@Override
-	public int getOperationCode() {
-		return CAPOperationCode.connectGPRS;
-	}
+    public ConnectGPRSRequestImpl() {
+    }
 
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
+    public ConnectGPRSRequestImpl(AccessPointName accessPointName, PDPID pdpID) {
+        super();
+        this.accessPointName = accessPointName;
+        this.pdpID = pdpID;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public AccessPointName getAccessPointName() {
+        return this.accessPointName;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    @Override
+    public PDPID getPDPID() {
+        return this.pdpID;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS)
-			throws CAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public CAPMessageType getMessageType() {
+        return CAPMessageType.connectGPRS_Request;
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length)
-			throws CAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public int getOperationCode() {
+        return CAPOperationCode.connectGPRS;
+    }
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException, MAPParsingComponentException {
-		
-		this.accessPointName = null;
-		this.pdpID = null;
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.SEQUENCE;
+    }
 
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-			int tag = ais.readTag();
+    @Override
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {	
-				case _ID_accessPointName:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException(
-								"Error while decoding " + _PrimitiveName + ".accessPointName: Parameter is not primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.accessPointName = new AccessPointNameImpl();
-					((AccessPointNameImpl) this.accessPointName).decodeAll(ais);
-					break;
-				case _ID_pdpID:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException(
-								"Error while decoding " + _PrimitiveName + ".pdpID: Parameter is not primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.pdpID = new PDPIDImpl();
-					((PDPIDImpl) this.pdpID).decodeAll(ais);
-					break;
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
-			
-		if (this.accessPointName == null)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": parameter accessPointName is mandatory but not found",
-					CAPParsingComponentExceptionReason.MistypedParameter);
-	}
-	
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag)
-			throws CAPException {
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-	
-		if (this.accessPointName == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": accessPointName must not be null");
-		
-		((AccessPointNameImpl) this.accessPointName).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_accessPointName);
-		
-		if (this.pdpID != null)
-			((PDPIDImpl) this.pdpID).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_pdpID);
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException,
+            MAPParsingComponentException {
 
-	}
-	
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName + " [");
-		
-		if (this.accessPointName != null) {
-			sb.append("accessPointName=");
-			sb.append(this.accessPointName.toString());
-			sb.append(", ");
-		}
-		
-		if (this.pdpID != null) {
-			sb.append("pdpID=");
-			sb.append(this.pdpID.toString());
-		}
+        this.accessPointName = null;
+        this.pdpID = null;
 
-		sb.append("]");
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-		return sb.toString();
-	}
+            int tag = ais.readTag();
+
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_accessPointName:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".accessPointName: Parameter is not primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.accessPointName = new AccessPointNameImpl();
+                        ((AccessPointNameImpl) this.accessPointName).decodeAll(ais);
+                        break;
+                    case _ID_pdpID:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".pdpID: Parameter is not primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.pdpID = new PDPIDImpl();
+                        ((PDPIDImpl) this.pdpID).decodeAll(ais);
+                        break;
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
+
+        if (this.accessPointName == null)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": parameter accessPointName is mandatory but not found",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+    }
+
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
+
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
+
+        if (this.accessPointName == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": accessPointName must not be null");
+
+        ((AccessPointNameImpl) this.accessPointName).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_accessPointName);
+
+        if (this.pdpID != null)
+            ((PDPIDImpl) this.pdpID).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_pdpID);
+
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
+
+        if (this.accessPointName != null) {
+            sb.append("accessPointName=");
+            sb.append(this.accessPointName.toString());
+            sb.append(", ");
+        }
+
+        if (this.pdpID != null) {
+            sb.append("pdpID=");
+            sb.append(this.pdpID.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }

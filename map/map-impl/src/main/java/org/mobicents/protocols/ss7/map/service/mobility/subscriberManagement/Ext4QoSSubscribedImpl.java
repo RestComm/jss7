@@ -26,21 +26,21 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.primitives.OctetStringLength1Base;
 
 /**
-*
-* @author sergey vetyutnev
-*
-*/
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class Ext4QoSSubscribedImpl extends OctetStringLength1Base implements Ext4QoSSubscribed {
 
-	public Ext4QoSSubscribedImpl() {
-		super("Ext4QoSSubscribed");
-	}
+    public Ext4QoSSubscribedImpl() {
+        super("Ext4QoSSubscribed");
+    }
 
-	public Ext4QoSSubscribedImpl(int data) {
-		super("Ext4QoSSubscribed", data);
-	}
+    public Ext4QoSSubscribedImpl(int data) {
+        super("Ext4QoSSubscribed", data);
+    }
 
-	public int getData() {
-		return data;
-	}	
+    public int getData() {
+        return data;
+    }
 }

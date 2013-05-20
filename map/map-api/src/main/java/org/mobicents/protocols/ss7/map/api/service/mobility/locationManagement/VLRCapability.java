@@ -27,47 +27,40 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
 
 /**
- * 
- *	VLR-Capability ::= SEQUENCE{
- *		supportedCamelPhases  						[0] 	SupportedCamelPhases	OPTIONAL,
- *		extensionContainer									ExtensionContainer	OPTIONAL,
- *		... ,
- *		solsaSupportIndicator						[2] 	NULL		OPTIONAL,
- *		istSupportIndicator							[1] 	IST-SupportIndicator	OPTIONAL,
- *		superChargerSupportedInServingNetworkEntity	[3] 	SuperChargerInfo	OPTIONAL,
- *		longFTN-Supported							[4]		NULL		OPTIONAL,
- *		supportedLCS-CapabilitySets					[5]		SupportedLCS-CapabilitySets	OPTIONAL,
- *		offeredCamel4CSIs							[6] 	OfferedCamel4CSIs	OPTIONAL,
- *		supportedRAT-TypesIndicator					[7]		SupportedRAT-Types	OPTIONAL,
- *		longGroupID-Supported						[8]		NULL		OPTIONAL,
- *		mtRoamingForwardingSupported				[9]		NULL		OPTIONAL }
  *
- * 
+ * VLR-Capability ::= SEQUENCE{ supportedCamelPhases [0] SupportedCamelPhases OPTIONAL, extensionContainer ExtensionContainer
+ * OPTIONAL, ... , solsaSupportIndicator [2] NULL OPTIONAL, istSupportIndicator [1] IST-SupportIndicator OPTIONAL,
+ * superChargerSupportedInServingNetworkEntity [3] SuperChargerInfo OPTIONAL, longFTN-Supported [4] NULL OPTIONAL,
+ * supportedLCS-CapabilitySets [5] SupportedLCS-CapabilitySets OPTIONAL, offeredCamel4CSIs [6] OfferedCamel4CSIs OPTIONAL,
+ * supportedRAT-TypesIndicator [7] SupportedRAT-Types OPTIONAL, longGroupID-Supported [8] NULL OPTIONAL,
+ * mtRoamingForwardingSupported [9] NULL OPTIONAL }
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface VLRCapability {
 
-	public SupportedCamelPhases getSupportedCamelPhases();
+    SupportedCamelPhases getSupportedCamelPhases();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public boolean getSolsaSupportIndicator();
+    boolean getSolsaSupportIndicator();
 
-	public ISTSupportIndicator getIstSupportIndicator();
+    ISTSupportIndicator getIstSupportIndicator();
 
-	public SuperChargerInfo getSuperChargerSupportedInServingNetworkEntity();
+    SuperChargerInfo getSuperChargerSupportedInServingNetworkEntity();
 
-	public boolean getLongFtnSupported();
+    boolean getLongFtnSupported();
 
-	public SupportedLCSCapabilitySets getSupportedLCSCapabilitySets();
+    SupportedLCSCapabilitySets getSupportedLCSCapabilitySets();
 
-	public OfferedCamel4CSIs getOfferedCamel4CSIs();
+    OfferedCamel4CSIs getOfferedCamel4CSIs();
 
-	public SupportedRATTypes getSupportedRATTypesIndicator();
+    SupportedRATTypes getSupportedRATTypesIndicator();
 
-	public boolean getLongGroupIDSupported();
+    boolean getLongGroupIDSupported();
 
-	public boolean getMtRoamingForwardingSupported();
+    boolean getMtRoamingForwardingSupported();
 
 }

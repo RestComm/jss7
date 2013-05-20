@@ -26,25 +26,23 @@ import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectingNumber;
 
 /**
-*
-ISUP RedirectingNumber wrapper
-
-RedirectingPartyID {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE ( 
- bound.&minRedirectingPartyIDLength .. bound.&maxRedirectingPartyIDLength)) 
--- Indicates redirecting number. 
--- Refer to ETSI EN 300 356-1 [23] Redirecting number for encoding. 
-
-minRedirectingPartyIDLength ::= 2
-maxRedirectingPartyIDLength ::= 10
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ ISUP RedirectingNumber wrapper
+ *
+ * RedirectingPartyID {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE ( bound.&minRedirectingPartyIDLength ..
+ * bound.&maxRedirectingPartyIDLength)) -- Indicates redirecting number. -- Refer to ETSI EN 300 356-1 [23] Redirecting number
+ * for encoding.
+ *
+ * minRedirectingPartyIDLength ::= 2 maxRedirectingPartyIDLength ::= 10
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface RedirectingPartyIDCap {
 
-	public byte[] getData();
+    byte[] getData();
 
-	public RedirectingNumber getRedirectingNumber() throws CAPException;
+    RedirectingNumber getRedirectingNumber() throws CAPException;
 
 }

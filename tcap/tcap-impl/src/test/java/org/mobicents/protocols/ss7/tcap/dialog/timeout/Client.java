@@ -26,15 +26,15 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.EventTestHarness;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
 
-public class Client  extends EventTestHarness{
+public class Client extends EventTestHarness {
 
-	/**
-	 * @param stack
-	 * @param thisAddress
-	 * @param remoteAddress
-	 */
-	public Client(TCAPStack stack, SccpAddress thisAddress, SccpAddress remoteAddress) {
-		super(stack, thisAddress, remoteAddress);
-	
-	}
+    /**
+     * @param stack
+     * @param thisAddress
+     * @param remoteAddress
+     */
+    public Client(TCAPStack stack, SccpAddress thisAddress, SccpAddress remoteAddress) {
+        super(stack, thisAddress, remoteAddress);
+
+    }
 }

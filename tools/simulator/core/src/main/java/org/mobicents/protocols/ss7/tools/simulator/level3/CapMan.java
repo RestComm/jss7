@@ -32,139 +32,135 @@ import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class CapMan implements CapManMBean, Stoppable {
 
-	public static String SOURCE_NAME = "CAP";
+    public static String SOURCE_NAME = "CAP";
 
-	private final String name;
-	private TesterHost testerHost;
+    private final String name;
+    private TesterHost testerHost;
 
-	private SccpStack sccpStack;
+    private SccpStack sccpStack;
 
-	private CAPStackImpl capStack;
-	private CAPProvider capProvider;
+    private CAPStackImpl capStack;
+    private CAPProvider capProvider;
 
+    public CapMan() {
+        this.name = "???";
+    }
 
-	public CapMan() {
-		this.name = "???";
-	}
+    public CapMan(String name) {
+        this.name = name;
+    }
 
-	public CapMan(String name) {
-		this.name = name;
-	}
+    public void setTesterHost(TesterHost testerHost) {
+        this.testerHost = testerHost;
+    }
 
-	public void setTesterHost(TesterHost testerHost) {
-		this.testerHost = testerHost;
-	}
+    public void setSccpStack(SccpStack val) {
+        this.sccpStack = val;
+    }
 
-	public void setSccpStack(SccpStack val) {
-		this.sccpStack = val;
-	}	
+    // @Override
+    // public int getRemoteSsn() {
+    // return this.testerHost.getConfigurationData().getCapConfigurationData().getRemoteSsn();
+    // }
+    //
+    // @Override
+    // public void setRemoteSsn(int val) {
+    // this.testerHost.getConfigurationData().getCapConfigurationData().setRemoteSsn(val);
+    // this.testerHost.markStore();
+    // }
+    //
+    // @Override
+    // public int getLocalSsn() {
+    // return this.testerHost.getConfigurationData().getCapConfigurationData().getLocalSsn();
+    // }
+    //
+    // @Override
+    // public void setLocalSsn(int val) {
+    // this.testerHost.getConfigurationData().getCapConfigurationData().setLocalSsn(val);
+    // this.testerHost.markStore();
+    // }
 
+    @Override
+    public String getRemoteAddressDigits() {
+        return this.testerHost.getConfigurationData().getCapConfigurationData().getRemoteAddressDigits();
+    }
 
-//	@Override
-//	public int getRemoteSsn() {
-//		return this.testerHost.getConfigurationData().getCapConfigurationData().getRemoteSsn();
-//	}
-//
-//	@Override
-//	public void setRemoteSsn(int val) {
-//		this.testerHost.getConfigurationData().getCapConfigurationData().setRemoteSsn(val);
-//		this.testerHost.markStore();
-//	}
-//
-//	@Override
-//	public int getLocalSsn() {
-//		return this.testerHost.getConfigurationData().getCapConfigurationData().getLocalSsn();
-//	}
-//
-//	@Override
-//	public void setLocalSsn(int val) {
-//		this.testerHost.getConfigurationData().getCapConfigurationData().setLocalSsn(val);
-//		this.testerHost.markStore();
-//	}
+    @Override
+    public void setRemoteAddressDigits(String val) {
+        this.testerHost.getConfigurationData().getCapConfigurationData().setRemoteAddressDigits(val);
+        this.testerHost.markStore();
+    }
 
-	@Override
-	public String getRemoteAddressDigits() {
-		return this.testerHost.getConfigurationData().getCapConfigurationData().getRemoteAddressDigits();
-	}
+    @Override
+    public String getState() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("TCAP+CAP: Started");
+        return sb.toString();
+    }
 
-	@Override
-	public void setRemoteAddressDigits(String val) {
-		this.testerHost.getConfigurationData().getCapConfigurationData().setRemoteAddressDigits(val);
-		this.testerHost.markStore();
-	}
+    public boolean start() {
+        try {
+            this.initCap(this.sccpStack, this.testerHost.getSccpMan().getLocalSsn());
+            this.testerHost.sendNotif(SOURCE_NAME, "TCAP+CAP has been started", "", Level.INFO);
+            return true;
+        } catch (Throwable e) {
+            this.testerHost.sendNotif(SOURCE_NAME, "Exception when starting CapMan", e, Level.ERROR);
+            return false;
+        }
+    }
 
+    @Override
+    public void stop() {
+        try {
+            this.stopCap();
+            this.testerHost.sendNotif(SOURCE_NAME, "TCAP+CAP has been stopped", "", Level.INFO);
+        } catch (Exception e) {
+            this.testerHost.sendNotif(SOURCE_NAME, "Exception when stopping CapMan", e, Level.ERROR);
+        }
+    }
 
-	@Override
-	public String getState() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("TCAP+CAP: Started");
-		return sb.toString();
-	}
+    @Override
+    public void execute() {
+    }
 
+    private void initCap(SccpStack sccpStack, int ssn) {
 
-	public boolean start() {
-		try {
-			this.initCap(this.sccpStack, this.testerHost.getSccpMan().getLocalSsn());
-			this.testerHost.sendNotif(SOURCE_NAME, "TCAP+CAP has been started", "", Level.INFO);
-			return true;
-		} catch (Throwable e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when starting CapMan", e, Level.ERROR);
-			return false;
-		}
-	}
+        this.capStack = new CAPStackImpl(sccpStack.getSccpProvider(), ssn);
+        this.capStack.start();
+    }
 
-	@Override
-	public void stop() {
-		try {
-			this.stopCap();
-			this.testerHost.sendNotif(SOURCE_NAME, "TCAP+CAP has been stopped", "", Level.INFO);
-		} catch (Exception e) {
-			this.testerHost.sendNotif(SOURCE_NAME, "Exception when stopping CapMan", e, Level.ERROR);
-		}
-	}
+    private void stopCap() {
 
-	@Override
-	public void execute() {
-	}
+        this.capStack.stop();
+    }
 
-	private void initCap(SccpStack sccpStack, int ssn) {
+    public CAPStack getCAPStack() {
+        return this.capStack;
+    }
 
-		this.capStack = new CAPStackImpl(sccpStack.getSccpProvider(), ssn);
-		this.capStack.start();
-	}
+    public SccpAddress createOrigAddress() {
+        return this.testerHost.getSccpMan().createCallingPartyAddress();
+    }
 
-	private void stopCap() {
+    public SccpAddress createDestAddress() {
+        if (this.testerHost.getConfigurationData().getCapConfigurationData().getRemoteAddressDigits() == null
+                || this.testerHost.getConfigurationData().getCapConfigurationData().getRemoteAddressDigits().equals("")) {
+            return this.testerHost.getSccpMan().createCalledPartyAddress();
+        } else {
+            return this.testerHost.getSccpMan().createCalledPartyAddress(
+                    this.testerHost.getConfigurationData().getCapConfigurationData().getRemoteAddressDigits(),
+                    this.testerHost.getSccpMan().getRemoteSsn());
+        }
+    }
 
-		this.capStack.stop();
-	}
-
-	public CAPStack getCAPStack() {
-		return this.capStack;
-	}
-
-	public SccpAddress createOrigAddress() {
-		return this.testerHost.getSccpMan().createCallingPartyAddress();
-	}
-
-	public SccpAddress createDestAddress() {
-		if (this.testerHost.getConfigurationData().getCapConfigurationData().getRemoteAddressDigits() == null
-				|| this.testerHost.getConfigurationData().getCapConfigurationData().getRemoteAddressDigits().equals("")) {
-			return this.testerHost.getSccpMan().createCalledPartyAddress();
-		} else {
-			return this.testerHost.getSccpMan().createCalledPartyAddress(
-					this.testerHost.getConfigurationData().getCapConfigurationData().getRemoteAddressDigits(),
-					this.testerHost.getSccpMan().getRemoteSsn());
-		}
-	}
-
-	public SccpAddress createDestAddress(String address, int ssn) {
-		return this.testerHost.getSccpMan().createCalledPartyAddress(address, ssn);
-	}
+    public SccpAddress createDestAddress(String address, int ssn) {
+        return this.testerHost.getSccpMan().createCalledPartyAddress(address, ssn);
+    }
 
 }

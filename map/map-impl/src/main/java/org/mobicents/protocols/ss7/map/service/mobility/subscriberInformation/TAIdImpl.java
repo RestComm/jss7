@@ -37,43 +37,43 @@ import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
  */
 public class TAIdImpl extends OctetStringBase implements TAId {
 
-	private static final String DATA = "data";
+    private static final String DATA = "data";
 
-	private static final String DEFAULT_VALUE = null;
+    private static final String DEFAULT_VALUE = null;
 
-	public TAIdImpl() {
-		super(5, 5, "TAId");
-	}
+    public TAIdImpl() {
+        super(5, 5, "TAId");
+    }
 
-	public TAIdImpl(byte[] data) {
-		super(5, 5, "TAId", data);
-	}
+    public TAIdImpl(byte[] data) {
+        super(5, 5, "TAId", data);
+    }
 
-	public byte[] getData() {
-		return data;
-	}	
+    public byte[] getData() {
+        return data;
+    }
 
-	// TODO: add implementing of internal structure
+    // TODO: add implementing of internal structure
 
-	/**
-	 * XML Serialization/Deserialization
-	 */
-	protected static final XMLFormat<TAIdImpl> TA_ID_XML = new XMLFormat<TAIdImpl>(TAIdImpl.class) {
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<TAIdImpl> TA_ID_XML = new XMLFormat<TAIdImpl>(TAIdImpl.class) {
 
-		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml, TAIdImpl taId) throws XMLStreamException {
-			String s = xml.getAttribute(DATA, DEFAULT_VALUE);
-			if (s != null) {
-				taId.data = DatatypeConverter.parseHexBinary(s);
-			}
-		}
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, TAIdImpl taId) throws XMLStreamException {
+            String s = xml.getAttribute(DATA, DEFAULT_VALUE);
+            if (s != null) {
+                taId.data = DatatypeConverter.parseHexBinary(s);
+            }
+        }
 
-		@Override
-		public void write(TAIdImpl taId, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
-			if (taId.data != null) {
-				xml.setAttribute(DATA, DatatypeConverter.printHexBinary(taId.data));
-			}
-		}
-	};
+        @Override
+        public void write(TAIdImpl taId, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+            if (taId.data != null) {
+                xml.setAttribute(DATA, DatatypeConverter.printHexBinary(taId.data));
+            }
+        }
+    };
 
 }

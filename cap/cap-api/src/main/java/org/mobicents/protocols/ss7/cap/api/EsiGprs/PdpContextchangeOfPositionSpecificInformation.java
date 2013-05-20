@@ -31,38 +31,30 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformationGPRS;
 
 /**
-*
-
-pdp-ContextchangeOfPositionSpecificInformation
-[1] SEQUENCE {
-accessPointName [0] AccessPointName {bound} OPTIONAL,
-chargingID [1] GPRSChargingID OPTIONAL,
-locationInformationGPRS [2] LocationInformationGPRS OPTIONAL,
-endUserAddress [3] EndUserAddress {bound} OPTIONAL,
-qualityOfService [4] QualityOfService OPTIONAL,
-timeAndTimeZone [5] TimeAndTimezone {bound} OPTIONAL,
-...,
-gGSNAddress [6] GSN-Address OPTIONAL
-},
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ pdp-ContextchangeOfPositionSpecificInformation [1] SEQUENCE { accessPointName [0] AccessPointName {bound} OPTIONAL,
+ * chargingID [1] GPRSChargingID OPTIONAL, locationInformationGPRS [2] LocationInformationGPRS OPTIONAL, endUserAddress [3]
+ * EndUserAddress {bound} OPTIONAL, qualityOfService [4] QualityOfService OPTIONAL, timeAndTimeZone [5] TimeAndTimezone {bound}
+ * OPTIONAL, ..., gGSNAddress [6] GSN-Address OPTIONAL },
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface PdpContextchangeOfPositionSpecificInformation {
 
-	public AccessPointName getAccessPointName();
+    AccessPointName getAccessPointName();
 
-	public GPRSChargingID getChargingID();
+    GPRSChargingID getChargingID();
 
-	public LocationInformationGPRS getLocationInformationGPRS();
+    LocationInformationGPRS getLocationInformationGPRS();
 
-	public EndUserAddress getEndUserAddress();
+    EndUserAddress getEndUserAddress();
 
-	public QualityOfService getQualityOfService();
+    QualityOfService getQualityOfService();
 
-	public TimeAndTimezone getTimeAndTimezone();
+    TimeAndTimezone getTimeAndTimezone();
 
-	public GSNAddress getGSNAddress();
+    GSNAddress getGSNAddress();
 
 }

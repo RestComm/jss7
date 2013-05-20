@@ -23,46 +23,38 @@
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
 import java.util.ArrayList;
+
 import org.mobicents.protocols.ss7.map.api.primitives.EMLPPPriority;
 
 /**
- * 
-
-GenericServiceInfo ::= SEQUENCE {
-	ss-Status	SS-Status,
-	cliRestrictionOption	CliRestrictionOption	OPTIONAL,
-	...,
-	maximumEntitledPriority	[0] EMLPP-Priority	OPTIONAL,
-	defaultPriority	[1] EMLPP-Priority	OPTIONAL,
-	ccbs-FeatureList	[2] CCBS-FeatureList	OPTIONAL,
-	nbrSB		[3] MaxMC-Bearers	OPTIONAL,
-	nbrUser		[4] MC-Bearers	OPTIONAL,
-	nbrSN		[5] MC-Bearers	OPTIONAL }
-
-CCBS-FeatureList ::= SEQUENCE SIZE (1..5) OF CCBS-Feature
-
-MC-Bearers ::= INTEGER (1..7)
-MaxMC-Bearers ::= INTEGER (2..7)
- * 
+ *
+ GenericServiceInfo ::= SEQUENCE { ss-Status SS-Status, cliRestrictionOption CliRestrictionOption OPTIONAL, ...,
+ * maximumEntitledPriority [0] EMLPP-Priority OPTIONAL, defaultPriority [1] EMLPP-Priority OPTIONAL, ccbs-FeatureList [2]
+ * CCBS-FeatureList OPTIONAL, nbrSB [3] MaxMC-Bearers OPTIONAL, nbrUser [4] MC-Bearers OPTIONAL, nbrSN [5] MC-Bearers OPTIONAL }
+ *
+ * CCBS-FeatureList ::= SEQUENCE SIZE (1..5) OF CCBS-Feature
+ *
+ * MC-Bearers ::= INTEGER (1..7) MaxMC-Bearers ::= INTEGER (2..7)
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface GenericServiceInfo {
 
-	public SSStatus getSsStatus();
+    SSStatus getSsStatus();
 
-	public CliRestrictionOption getCliRestrictionOption();
+    CliRestrictionOption getCliRestrictionOption();
 
-	public EMLPPPriority getMaximumEntitledPriority();
+    EMLPPPriority getMaximumEntitledPriority();
 
-	public EMLPPPriority getDefaultPriority();
+    EMLPPPriority getDefaultPriority();
 
-	public ArrayList<CCBSFeature> getCcbsFeatureList();
+    ArrayList<CCBSFeature> getCcbsFeatureList();
 
-	public Integer getNbrSB();
+    Integer getNbrSB();
 
-	public Integer getNbrUser();
+    Integer getNbrUser();
 
-	public Integer getNbrSN();
+    Integer getNbrSN();
 
 }

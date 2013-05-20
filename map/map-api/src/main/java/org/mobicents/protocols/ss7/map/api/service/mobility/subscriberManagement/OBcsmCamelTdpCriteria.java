@@ -23,41 +23,37 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
 import java.util.ArrayList;
+
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-O-BcsmCamelTDP-Criteria ::= SEQUENCE {
-	o-BcsmTriggerDetectionPoint	O-BcsmTriggerDetectionPoint,	
-	destinationNumberCriteria 	[0] DestinationNumberCriteria	OPTIONAL,
-	basicServiceCriteria	[1] BasicServiceCriteria	OPTIONAL,
-	callTypeCriteria	[2] CallTypeCriteria	OPTIONAL,
-	...,
-	o-CauseValueCriteria	[3] O-CauseValueCriteria	OPTIONAL,
-	extensionContainer	[4] ExtensionContainer	OPTIONAL }
-
-BasicServiceCriteria   ::= SEQUENCE SIZE(1..5) OF Ext-BasicServiceCode
-
-O-CauseValueCriteria   ::= SEQUENCE SIZE(1..5) OF CauseValue
-
- * 
- * 
+ *
+ O-BcsmCamelTDP-Criteria ::= SEQUENCE { o-BcsmTriggerDetectionPoint O-BcsmTriggerDetectionPoint, destinationNumberCriteria [0]
+ * DestinationNumberCriteria OPTIONAL, basicServiceCriteria [1] BasicServiceCriteria OPTIONAL, callTypeCriteria [2]
+ * CallTypeCriteria OPTIONAL, ..., o-CauseValueCriteria [3] O-CauseValueCriteria OPTIONAL, extensionContainer [4]
+ * ExtensionContainer OPTIONAL }
+ *
+ * BasicServiceCriteria ::= SEQUENCE SIZE(1..5) OF Ext-BasicServiceCode
+ *
+ * O-CauseValueCriteria ::= SEQUENCE SIZE(1..5) OF CauseValue
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface OBcsmCamelTdpCriteria {
 
-	public OBcsmTriggerDetectionPoint getOBcsmTriggerDetectionPoint();
+    OBcsmTriggerDetectionPoint getOBcsmTriggerDetectionPoint();
 
-	public DestinationNumberCriteria getDestinationNumberCriteria();
+    DestinationNumberCriteria getDestinationNumberCriteria();
 
-	public ArrayList<ExtBasicServiceCode> getBasicServiceCriteria();
+    ArrayList<ExtBasicServiceCode> getBasicServiceCriteria();
 
-	public CallTypeCriteria getCallTypeCriteria();
+    CallTypeCriteria getCallTypeCriteria();
 
-	public ArrayList<CauseValue> getOCauseValueCriteria();
+    ArrayList<CauseValue> getOCauseValueCriteria();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

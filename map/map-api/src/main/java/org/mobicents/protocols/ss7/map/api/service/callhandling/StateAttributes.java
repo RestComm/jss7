@@ -23,28 +23,24 @@
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
 /**
- * 
-
-StateAttributes ::= SEQUENCE {
-	downlinkAttached			[5] NULL		OPTIONAL,
-	uplinkAttached			[6] NULL		OPTIONAL,
-	dualCommunication			[7] NULL		OPTIONAL,
-	callOriginator			[8] NULL		OPTIONAL }
-
-	-- Refers to 3GPP TS 44.068 for definitions of StateAttributes fields. 
-
- * 
+ *
+ StateAttributes ::= SEQUENCE { downlinkAttached [5] NULL OPTIONAL, uplinkAttached [6] NULL OPTIONAL, dualCommunication [7]
+ * NULL OPTIONAL, callOriginator [8] NULL OPTIONAL }
+ *
+ * -- Refers to 3GPP TS 44.068 for definitions of StateAttributes fields.
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface StateAttributes {
 
-	public boolean getDownlinkAttached();
+    boolean getDownlinkAttached();
 
-	public boolean getUplinkAttached();
+    boolean getUplinkAttached();
 
-	public boolean getDualCommunication();
+    boolean getDualCommunication();
 
-	public boolean getCallOriginator();
+    boolean getCallOriginator();
 
 }

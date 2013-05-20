@@ -33,71 +33,70 @@ import org.mobicents.protocols.asn.Tag;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
 public class ISRInformationTest {
 
-	public byte[] getData1() {
-		return new byte[] { 3, 2, 5, -32 };
-	};
-	
-	public byte[] getData2() {
-		return new byte[] { 3, 2, 5, 0};
-	};
-	
-	
-	@Test(groups = { "functional.decode", "primitives" })
-	public void testDecode() throws Exception {
-		//option 1
-		byte[] data = this.getData1();
-		AsnInputStream asn = new AsnInputStream(data);
-		int tag = asn.readTag();
+    public byte[] getData1() {
+        return new byte[] { 3, 2, 5, -32 };
+    };
 
-		ISRInformationImpl prim = new ISRInformationImpl();
-		prim.decodeAll(asn);
+    public byte[] getData2() {
+        return new byte[] { 3, 2, 5, 0 };
+    };
 
-		assertEquals(tag, Tag.STRING_BIT);
-		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testDecode() throws Exception {
+        // option 1
+        byte[] data = this.getData1();
+        AsnInputStream asn = new AsnInputStream(data);
+        int tag = asn.readTag();
 
-		assertTrue(prim.getCancelSGSN());
-		assertTrue(prim.getInitialAttachIndicator());
-		assertTrue(prim.getUpdateMME());
-		
-		//option 2
-		data = this.getData2();
-		asn = new AsnInputStream(data);
-		tag = asn.readTag();
+        ISRInformationImpl prim = new ISRInformationImpl();
+        prim.decodeAll(asn);
 
-		prim = new ISRInformationImpl();
-		prim.decodeAll(asn);
+        assertEquals(tag, Tag.STRING_BIT);
+        assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
 
-		assertEquals(tag, Tag.STRING_BIT);
-		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
+        assertTrue(prim.getCancelSGSN());
+        assertTrue(prim.getInitialAttachIndicator());
+        assertTrue(prim.getUpdateMME());
 
-		assertFalse(prim.getCancelSGSN());
-		assertFalse(prim.getInitialAttachIndicator());
-		assertFalse(prim.getUpdateMME());
-		
-	}
+        // option 2
+        data = this.getData2();
+        asn = new AsnInputStream(data);
+        tag = asn.readTag();
 
-	@Test(groups = { "functional.decode", "primitives" })
-	public void testEncode() throws Exception {
-		//option 1
-		ISRInformationImpl prim = new ISRInformationImpl(true, true, true);
-		AsnOutputStream asn = new AsnOutputStream();
-		prim.encodeAll(asn);
+        prim = new ISRInformationImpl();
+        prim.decodeAll(asn);
 
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData1()));
-		
-		//option 2
-		prim = new ISRInformationImpl(false, false, false);
-		asn = new AsnOutputStream();
-		prim.encodeAll(asn);
-		
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData2()));
-		
-	}
+        assertEquals(tag, Tag.STRING_BIT);
+        assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
+
+        assertFalse(prim.getCancelSGSN());
+        assertFalse(prim.getInitialAttachIndicator());
+        assertFalse(prim.getUpdateMME());
+
+    }
+
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testEncode() throws Exception {
+        // option 1
+        ISRInformationImpl prim = new ISRInformationImpl(true, true, true);
+        AsnOutputStream asn = new AsnOutputStream();
+        prim.encodeAll(asn);
+
+        assertTrue(Arrays.equals(asn.toByteArray(), this.getData1()));
+
+        // option 2
+        prim = new ISRInformationImpl(false, false, false);
+        asn = new AsnOutputStream();
+        prim.encodeAll(asn);
+
+        assertTrue(Arrays.equals(asn.toByteArray(), this.getData2()));
+
+    }
 
 }

@@ -23,21 +23,18 @@
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
 /**
-*
-
-rO-VolumeIfTariffSwitch [1] SEQUENCE {
-rO-VolumeSinceLastTariffSwitch [0] INTEGER (0..255) OPTIONAL,
-rO-VolumeTariffSwitchInterval [1] INTEGER (0..255) OPTIONAL
-}
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ rO-VolumeIfTariffSwitch [1] SEQUENCE { rO-VolumeSinceLastTariffSwitch [0] INTEGER (0..255) OPTIONAL,
+ * rO-VolumeTariffSwitchInterval [1] INTEGER (0..255) OPTIONAL }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface ROVolumeIfTariffSwitch {
 
-	public Integer getROVolumeSinceLastTariffSwitch();
+    Integer getROVolumeSinceLastTariffSwitch();
 
-	public Integer getROVolumeTariffSwitchInterval();
+    Integer getROVolumeTariffSwitchInterval();
 
 }

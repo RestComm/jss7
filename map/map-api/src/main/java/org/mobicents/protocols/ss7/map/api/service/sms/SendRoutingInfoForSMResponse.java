@@ -25,38 +25,27 @@ package org.mobicents.protocols.ss7.map.api.service.sms;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
-
 /**
- * 
-
-MAP V3:
-RoutingInfoForSM-Res ::= SEQUENCE {
-	imsi					IMSI,
-	locationInfoWithLMSI	[0] LocationInfoWithLMSI,
-	extensionContainer		[4] ExtensionContainer	OPTIONAL,
-	...}
-
-MAP V2:
-RoutingInfoForSM-Res::= SEQUENCE {
-	imsi 					IMSI,
-	locationInfoWithLMSI 	[0] LocationInfoWithLMSI,
-	mwd-Set 				[2] BOOLEAN OPTIONAL,
-	-- mwd-Set must be absent in version greater 1
-	...}
  *
- * 
+ MAP V3: RoutingInfoForSM-Res ::= SEQUENCE { imsi IMSI, locationInfoWithLMSI [0] LocationInfoWithLMSI, extensionContainer [4]
+ * ExtensionContainer OPTIONAL, ...}
+ *
+ * MAP V2: RoutingInfoForSM-Res::= SEQUENCE { imsi IMSI, locationInfoWithLMSI [0] LocationInfoWithLMSI, mwd-Set [2] BOOLEAN
+ * OPTIONAL, -- mwd-Set must be absent in version greater 1 ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SendRoutingInfoForSMResponse extends SmsMessage {
 
-	public IMSI getIMSI();
-	
-	public LocationInfoWithLMSI getLocationInfoWithLMSI();
+    IMSI getIMSI();
 
-	public MAPExtensionContainer getExtensionContainer();
+    LocationInfoWithLMSI getLocationInfoWithLMSI();
 
-	// for MAP V1 only
-	public Boolean getMwdSet();
+    MAPExtensionContainer getExtensionContainer();
+
+    // for MAP V1 only
+    Boolean getMwdSet();
 
 }

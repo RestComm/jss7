@@ -22,20 +22,17 @@
 
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
-/**	
- * 
-
-Password ::= NumericString
-	(FROM ("0"|"1"|"2"|"3"|"4"|"5"|"6"|"7"|"8"|"9"))
-	(SIZE (4))
-
-
- * 
+/**
+ *
+ Password ::= NumericString (FROM ("0"|"1"|"2"|"3"|"4"|"5"|"6"|"7"|"8"|"9")) (SIZE (4))
+ *
+ *
+ *
  * @author sergey vetyutnev
  *
  */
 public interface Password {
 
-	public String getData();
+    String getData();
 
 }

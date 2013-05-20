@@ -25,18 +25,17 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
 import org.mobicents.protocols.asn.BitSetStrictLength;
 
 /**
-*
-CSG-Id ::= BIT STRING (SIZE (27))
-	-- coded according to 3GPP TS 23.003 [17].
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ CSG-Id ::= BIT STRING (SIZE (27)) -- coded according to 3GPP TS 23.003 [17].
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface CSGId {
 
-	public BitSetStrictLength getData();
+    BitSetStrictLength getData();
 
-	// TODO: add implementing of internal structure (?)
+    // TODO: add implementing of internal structure (?)
 
 }

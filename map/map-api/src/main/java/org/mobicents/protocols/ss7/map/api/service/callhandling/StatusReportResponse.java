@@ -25,18 +25,15 @@ package org.mobicents.protocols.ss7.map.api.service.callhandling;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-StatusReportRes ::= SEQUENCE {
-	extensionContainer	[0]	ExtensionContainer	OPTIONAL,
-	...}
-
- * 
+ *
+ StatusReportRes ::= SEQUENCE { extensionContainer [0] ExtensionContainer OPTIONAL, ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface StatusReportResponse extends CallHandlingMessage {
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

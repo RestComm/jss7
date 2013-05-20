@@ -23,39 +23,31 @@
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
 /**
- * 
-
-TraceEventList ::= SEQUENCE {
-	msc-s-List	[0] MSC-S-EventList	OPTIONAL,
-	mgw-List		[1] MGW-EventList	OPTIONAL,
-	sgsn-List		[2] SGSN-EventList	OPTIONAL,
-	ggsn-List		[3] GGSN-EventList	OPTIONAL,
-	bmsc-List		[4] BMSC-EventList	OPTIONAL,
-	...,
-	mme-List		[5] MME-EventList	OPTIONAL,
-	sgw-List		[6] SGW-EventList	OPTIONAL,
-	pgw-List		[7] PGW-EventList	OPTIONAL}
-
- * 
+ *
+ TraceEventList ::= SEQUENCE { msc-s-List [0] MSC-S-EventList OPTIONAL, mgw-List [1] MGW-EventList OPTIONAL, sgsn-List [2]
+ * SGSN-EventList OPTIONAL, ggsn-List [3] GGSN-EventList OPTIONAL, bmsc-List [4] BMSC-EventList OPTIONAL, ..., mme-List [5]
+ * MME-EventList OPTIONAL, sgw-List [6] SGW-EventList OPTIONAL, pgw-List [7] PGW-EventList OPTIONAL}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface TraceEventList {
 
-	public MSCSEventList getMscSList();
+    MSCSEventList getMscSList();
 
-	public MGWEventList getMgwList();
+    MGWEventList getMgwList();
 
-	public SGSNEventList getSgsnList();
+    SGSNEventList getSgsnList();
 
-	public GGSNEventList getGgsnList();
+    GGSNEventList getGgsnList();
 
-	public BMSCEventList getBmscList();
+    BMSCEventList getBmscList();
 
-	public MMEEventList getMmeList();
+    MMEEventList getMmeList();
 
-	public SGWEventList getSgwList();
+    SGWEventList getSgwList();
 
-	public PGWEventList getPgwList();
+    PGWEventList getPgwList();
 
 }

@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -24,34 +24,34 @@ package org.mobicents.protocols.ss7.map.api.primitives;
 
 import java.io.Serializable;
 import java.nio.charset.Charset;
+
 import org.mobicents.protocols.ss7.map.api.MAPException;
 
 /**
- * USSD-String ::= OCTET STRING (SIZE (1..maxUSSD-StringLength))
- *     -- The structure of the contents of the USSD-String is dependent
- *     -- on the USSD-DataCodingScheme as described in TS 3GPP TS 23.038 [25].
- * 
+ * USSD-String ::= OCTET STRING (SIZE (1..maxUSSD-StringLength)) -- The structure of the contents of the USSD-String is
+ * dependent -- on the USSD-DataCodingScheme as described in TS 3GPP TS 23.038 [25].
+ *
  * maxUSSD-StringLength INTEGER ::= 160
  *
- * 
+ *
  * @author amit bhayani
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface USSDString extends Serializable {
 
-	/**
-	 * Get the byte[] that represents encoded USSD String
-	 * 
-	 * @return
-	 */
-	public byte[] getEncodedString();
+    /**
+     * Get the byte[] that represents encoded USSD String
+     *
+     * @return
+     */
+    byte[] getEncodedString();
 
-	/**
-	 * Get the decoded USSD String
-	 * 
-	 * @return
-	 */
-	public String getString(Charset gsm8Charset) throws MAPException;
+    /**
+     * Get the decoded USSD String
+     *
+     * @return
+     */
+    String getString(Charset gsm8Charset) throws MAPException;
 
 }

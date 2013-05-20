@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -32,84 +32,84 @@ import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
  * @author kulikov
  */
 public interface SccpStack {
-	public final static int UDT_ONLY = 1;
-	public final static int XUDT_ONLY = 2;
+    int UDT_ONLY = 1;
+    int XUDT_ONLY = 2;
 
-	/**
-	 * Starts SCCP stack.
-	 * 
-	 * @throws java.lang.IllegalStateException
-	 */
-	public void start() throws IllegalStateException;
+    /**
+     * Starts SCCP stack.
+     *
+     * @throws java.lang.IllegalStateException
+     */
+    void start() throws IllegalStateException;
 
-	/**
-	 * Terminates SCCP stack.
-	 * 
-	 * @throws java.lang.IllegalStateException
-	 * @throws org.mobicents.protocols.StartFailedException
-	 */
-	public void stop();
-	
-	/**
-	 * Returns the name of this stack
-	 * @return
-	 */
-	public String getName();
+    /**
+     * Terminates SCCP stack.
+     *
+     * @throws java.lang.IllegalStateException
+     * @throws org.mobicents.protocols.StartFailedException
+     */
+    void stop();
 
-	/**
-	 * Exposes SCCP provider object to SCCP user.
-	 * 
-	 * @return SCCP provider object.
-	 */
-	public SccpProvider getSccpProvider();
+    /**
+     * Returns the name of this stack
+     *
+     * @return
+     */
+    String getName();
 
-	/**
-	 * Set the persist directory to store the xml files
-	 * 
-	 * @return
-	 */
-	public String getPersistDir();
+    /**
+     * Exposes SCCP provider object to SCCP user.
+     *
+     * @return SCCP provider object.
+     */
+    SccpProvider getSccpProvider();
 
-	/**
-	 * Get the persist directory from which to read the xml files
-	 * 
-	 * @param persistDir
-	 */
-	public void setPersistDir(String persistDir);
+    /**
+     * Set the persist directory to store the xml files
+     *
+     * @return
+     */
+    String getPersistDir();
 
-	/**
-	 * If set, the signaling point code from SCCP called/calling address will be
-	 * removed if corresponding routing is based on GT
-	 * 
-	 * @param removeSpc
-	 */
-	public void setRemoveSpc(boolean removeSpc);
+    /**
+     * Get the persist directory from which to read the xml files
+     *
+     * @param persistDir
+     */
+    void setPersistDir(String persistDir);
 
-	/**
-	 * Get the remove siganling point code flag
-	 * 
-	 * @return
-	 */
-	public boolean isRemoveSpc();
+    /**
+     * If set, the signaling point code from SCCP called/calling address will be removed if corresponding routing is based on GT
+     *
+     * @param removeSpc
+     */
+    void setRemoveSpc(boolean removeSpc);
 
-	public SccpResource getSccpResource();
+    /**
+     * Get the remove siganling point code flag
+     *
+     * @return
+     */
+    boolean isRemoveSpc();
 
-	public int getSstTimerDuration_Min();
-	
-	public int getSstTimerDuration_Max();
-	
-	public double getSstTimerDuration_IncreaseFactor();
-	
-	public int getZMarginXudtMessage();
-	
-	public int getMaxDataMessage();
-	
-	public int getReassemblyTimerDelay();
-	
-	public Map<Integer, Mtp3UserPart> getMtp3UserParts();
+    SccpResource getSccpResource();
 
-	public Mtp3UserPart getMtp3UserPart(int id);
-	
-	public Router getRouter();
+    int getSstTimerDuration_Min();
+
+    int getSstTimerDuration_Max();
+
+    double getSstTimerDuration_IncreaseFactor();
+
+    int getZMarginXudtMessage();
+
+    int getMaxDataMessage();
+
+    int getReassemblyTimerDelay();
+
+    Map<Integer, Mtp3UserPart> getMtp3UserParts();
+
+    Mtp3UserPart getMtp3UserPart(int id);
+
+    Router getRouter();
 
 }

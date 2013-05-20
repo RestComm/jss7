@@ -27,9 +27,8 @@ import org.mobicents.protocols.ss7.sccp.SccpProvider;
 
 public class CAPStackImplWrapper extends CAPStackImpl {
 
-	public CAPStackImplWrapper(SccpProvider sccpPprovider, int ssn) {
-		super(sccpPprovider, ssn);
-		this.capProvider = new CAPProviderImplWrapper(this.tcapStack.getProvider());
-	}
+    public CAPStackImplWrapper(SccpProvider sccpPprovider, int ssn) {
+        super(sccpPprovider, ssn);
+        this.capProvider = new CAPProviderImplWrapper(this.tcapStack.getProvider());
+    }
 }
-

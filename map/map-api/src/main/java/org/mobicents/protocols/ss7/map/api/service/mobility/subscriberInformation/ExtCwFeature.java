@@ -25,23 +25,19 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformati
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtSSStatus;
 
-/**	
- * 
-
-Ext-CwFeature ::= SEQUENCE {
-	basicService	[1] Ext-BasicServiceCode, 
-	ss-Status		[2] Ext-SS-Status,
-	... }
-
-
- * 
+/**
+ *
+ Ext-CwFeature ::= SEQUENCE { basicService [1] Ext-BasicServiceCode, ss-Status [2] Ext-SS-Status, ... }
+ *
+ *
+ *
  * @author sergey vetyutnev
  *
  */
 public interface ExtCwFeature {
 
-	public ExtBasicServiceCode getBasicService();
+    ExtBasicServiceCode getBasicService();
 
-	public ExtSSStatus getSsStatus();
+    ExtSSStatus getSsStatus();
 
 }

@@ -24,20 +24,20 @@ package org.mobicents.protocols.ss7.map.api.smstpdu;
 
 /**
  * User data header for concatenates SMS messages
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ConcatenatedShortMessagesIdentifier extends UserDataHeaderElement {
 
-	public boolean getReferenceIs16bit();
+    boolean getReferenceIs16bit();
 
-	public int getReference();
+    int getReference();
 
-	public int getMesageSegmentCount();
+    int getMesageSegmentCount();
 
-	public int getMesageSegmentNumber();
+    int getMesageSegmentNumber();
 
-	public byte[] getEncodedInformationElementData();
+    byte[] getEncodedInformationElementData();
 
 }

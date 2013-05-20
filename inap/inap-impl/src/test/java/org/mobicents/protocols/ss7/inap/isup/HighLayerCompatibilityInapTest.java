@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -22,7 +22,8 @@
 
 package org.mobicents.protocols.ss7.inap.isup;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -36,86 +37,91 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.UserTeleserviceInformationImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserTeleserviceInformation;
-import org.testng.annotations.*;
+import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class HighLayerCompatibilityInapTest {
 
-	public byte[] getData() {
-		return new byte[] { (byte) 151, 2, (byte) 145, (byte) 129 };
-	}
+    public byte[] getData() {
+        return new byte[] { (byte) 151, 2, (byte) 145, (byte) 129 };
+    }
 
-	public byte[] getIntData() {
-		return new byte[] { (byte) 145, (byte) 129 };
-	}
+    public byte[] getIntData() {
+        return new byte[] { (byte) 145, (byte) 129 };
+    }
 
-	@Test(groups = { "functional.decode","isup"})
-	public void testDecode() throws Exception {
+    @Test(groups = { "functional.decode", "isup" })
+    public void testDecode() throws Exception {
 
-		byte[] data = this.getData();
-		AsnInputStream ais = new AsnInputStream(data);
-		HighLayerCompatibilityInapImpl elem = new HighLayerCompatibilityInapImpl();
-		int tag = ais.readTag();
-		elem.decodeAll(ais);
-		UserTeleserviceInformation hlc = elem.getHighLayerCompatibility();
-		assertTrue(Arrays.equals(elem.getData(), this.getIntData()));
-		assertEquals(hlc.getCodingStandard(), 0);
-		assertEquals(hlc.getEHighLayerCharIdentification(), 0);
-		assertEquals(hlc.getEVideoTelephonyCharIdentification(), 0);
-		assertEquals(hlc.getInterpretation(), 4);
-		assertEquals(hlc.getPresentationMethod(), 1);
-		assertEquals(hlc.getHighLayerCharIdentification(), 1);
-	}
+        byte[] data = this.getData();
+        AsnInputStream ais = new AsnInputStream(data);
+        HighLayerCompatibilityInapImpl elem = new HighLayerCompatibilityInapImpl();
+        int tag = ais.readTag();
+        elem.decodeAll(ais);
+        UserTeleserviceInformation hlc = elem.getHighLayerCompatibility();
+        assertTrue(Arrays.equals(elem.getData(), this.getIntData()));
+        assertEquals(hlc.getCodingStandard(), 0);
+        assertEquals(hlc.getEHighLayerCharIdentification(), 0);
+        assertEquals(hlc.getEVideoTelephonyCharIdentification(), 0);
+        assertEquals(hlc.getInterpretation(), 4);
+        assertEquals(hlc.getPresentationMethod(), 1);
+        assertEquals(hlc.getHighLayerCharIdentification(), 1);
+    }
 
-	@Test(groups = { "functional.encode","isup"})
-	public void testEncode() throws Exception {
+    @Test(groups = { "functional.encode", "isup" })
+    public void testEncode() throws Exception {
 
-		HighLayerCompatibilityInapImpl elem = new HighLayerCompatibilityInapImpl(this.getIntData());
-		AsnOutputStream aos = new AsnOutputStream();
-		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 23);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
+        HighLayerCompatibilityInapImpl elem = new HighLayerCompatibilityInapImpl(this.getIntData());
+        AsnOutputStream aos = new AsnOutputStream();
+        elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 23);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
 
-		UserTeleserviceInformation hlc = new UserTeleserviceInformationImpl(0, 4, 1, 1);
-		elem = new HighLayerCompatibilityInapImpl(hlc);
-		aos = new AsnOutputStream();
-		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 23);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
-		
-//		int codingStandard, int interpretation, int presentationMethod, int highLayerCharIdentification
-	}
+        UserTeleserviceInformation hlc = new UserTeleserviceInformationImpl(0, 4, 1, 1);
+        elem = new HighLayerCompatibilityInapImpl(hlc);
+        aos = new AsnOutputStream();
+        elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 23);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
 
-	@Test(groups = { "functional.xml.serialize", "isup" })
-	public void testXMLSerialize() throws Exception {
+        // int codingStandard, int interpretation, int presentationMethod, int highLayerCharIdentification
+    }
 
-		UserTeleserviceInformationImpl prim = new UserTeleserviceInformationImpl(UserTeleserviceInformation._CODING_STANDARD_NATIONAL,
-				UserTeleserviceInformation._INTERPRETATION_FHGCI, UserTeleserviceInformation._PRESENTATION_METHOD_HLPP, UserTeleserviceInformation._HLCI_IVTI);
-		HighLayerCompatibilityInapImpl original = new HighLayerCompatibilityInapImpl(prim);
+    @Test(groups = { "functional.xml.serialize", "isup" })
+    public void testXMLSerialize() throws Exception {
 
-		// Writes the area to a file.
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
-		// writer.setBinding(binding); // Optional.
-		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
-		writer.write(original, "highLayerCompatibilityInap", HighLayerCompatibilityInapImpl.class);
-		writer.close();
+        UserTeleserviceInformationImpl prim = new UserTeleserviceInformationImpl(
+                UserTeleserviceInformation._CODING_STANDARD_NATIONAL, UserTeleserviceInformation._INTERPRETATION_FHGCI,
+                UserTeleserviceInformation._PRESENTATION_METHOD_HLPP, UserTeleserviceInformation._HLCI_IVTI);
+        HighLayerCompatibilityInapImpl original = new HighLayerCompatibilityInapImpl(prim);
 
-		byte[] rawData = baos.toByteArray();
-		String serializedEvent = new String(rawData);
+        // Writes the area to a file.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+        writer.write(original, "highLayerCompatibilityInap", HighLayerCompatibilityInapImpl.class);
+        writer.close();
 
-		System.out.println(serializedEvent);
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
 
-		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
-		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
-		HighLayerCompatibilityInapImpl copy = reader.read("highLayerCompatibilityInap", HighLayerCompatibilityInapImpl.class);
+        System.out.println(serializedEvent);
 
-		assertEquals(copy.getHighLayerCompatibility().getCodingStandard(), original.getHighLayerCompatibility().getCodingStandard());
-		assertEquals(copy.getHighLayerCompatibility().getInterpretation(), original.getHighLayerCompatibility().getInterpretation());
-		assertEquals(copy.getHighLayerCompatibility().getPresentationMethod(), original.getHighLayerCompatibility().getPresentationMethod());
-		assertEquals(copy.getHighLayerCompatibility().getHighLayerCharIdentification(), original.getHighLayerCompatibility().getHighLayerCharIdentification());
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        HighLayerCompatibilityInapImpl copy = reader.read("highLayerCompatibilityInap", HighLayerCompatibilityInapImpl.class);
 
-	}
+        assertEquals(copy.getHighLayerCompatibility().getCodingStandard(), original.getHighLayerCompatibility()
+                .getCodingStandard());
+        assertEquals(copy.getHighLayerCompatibility().getInterpretation(), original.getHighLayerCompatibility()
+                .getInterpretation());
+        assertEquals(copy.getHighLayerCompatibility().getPresentationMethod(), original.getHighLayerCompatibility()
+                .getPresentationMethod());
+        assertEquals(copy.getHighLayerCompatibility().getHighLayerCharIdentification(), original.getHighLayerCompatibility()
+                .getHighLayerCharIdentification());
+
+    }
 }

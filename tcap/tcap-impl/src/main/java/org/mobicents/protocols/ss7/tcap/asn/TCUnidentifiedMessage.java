@@ -31,67 +31,67 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 
 /**
  * @author amit bhayani
- * 
+ *
  */
 public class TCUnidentifiedMessage implements Encodable {
 
-	private static final Logger logger = Logger.getLogger(TCUnidentifiedMessage.class);
+    private static final Logger logger = Logger.getLogger(TCUnidentifiedMessage.class);
 
-	public static final int _TAG_OTX = 0x08;
+    public static final int _TAG_OTX = 0x08;
 
-	public static final int _TAG_DTX = 0x09;
+    public static final int _TAG_DTX = 0x09;
 
-	// mandatory
-	private byte[] originatingTransactionId;
-	private byte[] destinationTransactionId;
+    // mandatory
+    private byte[] originatingTransactionId;
+    private byte[] destinationTransactionId;
 
-	/**
-	 * 
-	 */
-	public TCUnidentifiedMessage() {
-	}
+    /**
+     *
+     */
+    public TCUnidentifiedMessage() {
+    }
 
-	public byte[] getOriginatingTransactionId() {
-		return originatingTransactionId;
-	}
+    public byte[] getOriginatingTransactionId() {
+        return originatingTransactionId;
+    }
 
-	public byte[] getDestinationTransactionId() {
-		return destinationTransactionId;
-	}
+    public byte[] getDestinationTransactionId() {
+        return destinationTransactionId;
+    }
 
-	public void encode(AsnOutputStream aos) throws EncodeException {
-		throw new EncodeException("Not Supported");
-	}
+    public void encode(AsnOutputStream aos) throws EncodeException {
+        throw new EncodeException("Not Supported");
+    }
 
-	public void decode(AsnInputStream ais) throws ParseException {
-		try {
-			AsnInputStream localAis = ais.readSequenceStream();
+    public void decode(AsnInputStream ais) throws ParseException {
+        try {
+            AsnInputStream localAis = ais.readSequenceStream();
 
-			int tag = localAis.readTag();
-			if (tag != _TAG_OTX) {
-				return;
-			}
+            int tag = localAis.readTag();
+            if (tag != _TAG_OTX) {
+                return;
+            }
 
-//			this.originatingTransactionId = Utils.readTransactionId(localAis);
-			this.originatingTransactionId = localAis.readOctetString();
+            // this.originatingTransactionId = Utils.readTransactionId(localAis);
+            this.originatingTransactionId = localAis.readOctetString();
 
-			if (localAis.available() > 0) {
-				tag = localAis.readTag();
+            if (localAis.available() > 0) {
+                tag = localAis.readTag();
 
-				if (tag != _TAG_DTX) {
-					return;
-				}
+                if (tag != _TAG_DTX) {
+                    return;
+                }
 
-//				this.destinationTransactionId = Utils.readTransactionId(localAis);
-				this.destinationTransactionId = localAis.readOctetString();
-			}
+                // this.destinationTransactionId = Utils.readTransactionId(localAis);
+                this.destinationTransactionId = localAis.readOctetString();
+            }
 
-		} catch (IOException e) {
-			logger.error("Error while decoding for TCUnidentifiedMessage", e);
-		} catch (AsnException e) {
-			logger.error("Error while decoding for TCUnidentifiedMessage", e);
-		}
+        } catch (IOException e) {
+            logger.error("Error while decoding for TCUnidentifiedMessage", e);
+        } catch (AsnException e) {
+            logger.error("Error while decoding for TCUnidentifiedMessage", e);
+        }
 
-	}
+    }
 
 }

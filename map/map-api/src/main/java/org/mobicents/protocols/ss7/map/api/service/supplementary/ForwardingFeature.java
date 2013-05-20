@@ -27,38 +27,32 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
 
 /**
- * 
-
-ForwardingFeature ::= SEQUENCE {
-	basicService	BasicServiceCode	OPTIONAL,
-	ss-Status		[4] SS-Status	OPTIONAL,
-	forwardedToNumber	[5] ISDN-AddressString	OPTIONAL,
-	forwardedToSubaddress	[8] ISDN-SubaddressString	OPTIONAL,
-	forwardingOptions	[6] ForwardingOptions	OPTIONAL,
-	noReplyConditionTime	[7] NoReplyConditionTime	OPTIONAL,
-	...,
-	longForwardedToNumber	[9] FTN-AddressString	OPTIONAL }
-
-NoReplyConditionTime ::= INTEGER (5..30)
-
- * 
+ *
+ ForwardingFeature ::= SEQUENCE { basicService BasicServiceCode OPTIONAL, ss-Status [4] SS-Status OPTIONAL, forwardedToNumber
+ * [5] ISDN-AddressString OPTIONAL, forwardedToSubaddress [8] ISDN-SubaddressString OPTIONAL, forwardingOptions [6]
+ * ForwardingOptions OPTIONAL, noReplyConditionTime [7] NoReplyConditionTime OPTIONAL, ..., longForwardedToNumber [9]
+ * FTN-AddressString OPTIONAL }
+ *
+ * NoReplyConditionTime ::= INTEGER (5..30)
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ForwardingFeature {
 
-	public BasicServiceCode getBasicService();
+    BasicServiceCode getBasicService();
 
-	public SSStatus getSsStatus();
+    SSStatus getSsStatus();
 
-	public ISDNAddressString getForwardedToNumber();
+    ISDNAddressString getForwardedToNumber();
 
-	public ISDNAddressString getForwardedToSubaddress();
+    ISDNAddressString getForwardedToSubaddress();
 
-	public ForwardingOptions getForwardingOptions();
+    ForwardingOptions getForwardingOptions();
 
-	public Integer getNoReplyConditionTime();
+    Integer getNoReplyConditionTime();
 
-	public FTNAddressString getLongForwardedToNumber();
+    FTNAddressString getLongForwardedToNumber();
 
 }

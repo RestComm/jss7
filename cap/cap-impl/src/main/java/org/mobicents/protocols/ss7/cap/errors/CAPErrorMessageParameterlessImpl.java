@@ -30,65 +30,64 @@ import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageParameterless;
 
 /**
  * The CAP ReturnError message without any parameters
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class CAPErrorMessageParameterlessImpl extends CAPErrorMessageImpl implements CAPErrorMessageParameterless {
 
-	public CAPErrorMessageParameterlessImpl(Long errorCode) {
-		super(errorCode);
-	}
-	
-	@Override
-	public boolean isEmParameterless() {
-		return true;
-	}
+    public CAPErrorMessageParameterlessImpl(Long errorCode) {
+        super(errorCode);
+    }
 
-	@Override
-	public CAPErrorMessageParameterless getEmParameterless() {
-		return this;
-	}	
-	
+    @Override
+    public boolean isEmParameterless() {
+        return true;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
-		throw new CAPException("CAPErrorMessageParameterless does not support encoding");
-	}
+    @Override
+    public CAPErrorMessageParameterless getEmParameterless() {
+        return this;
+    }
 
-	@Override
-	public int getTagClass() {
-		return 0;
-	}
+    @Override
+    public int getTag() throws CAPException {
+        throw new CAPException("CAPErrorMessageParameterless does not support encoding");
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    @Override
+    public int getTagClass() {
+        return 0;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
-	}
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-	}
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-	}
-	
-	@Override
-	public String toString() {
-		return "CAPErrorMessageParameterless [errorCode=" + this.errorCode + "]"; 
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    }
+
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
+    }
+
+    @Override
+    public String toString() {
+        return "CAPErrorMessageParameterless [errorCode=" + this.errorCode + "]";
+    }
 
 }

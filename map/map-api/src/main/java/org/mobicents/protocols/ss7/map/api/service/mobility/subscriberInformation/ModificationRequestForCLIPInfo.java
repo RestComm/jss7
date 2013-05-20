@@ -27,27 +27,23 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.supplementary.OverrideCategory;
 
 /**
- * 
-
-ModificationRequestFor-CLIP-Info ::= SEQUENCE {
-	ss-Status		[0]	Ext-SS-Status	OPTIONAL,
-	overrideCategory	[1]  OverrideCategory	OPTIONAL,
-	modifyNotificationToCSE	[2]	ModificationInstruction	OPTIONAL,
-	extensionContainer	[3]	ExtensionContainer	OPTIONAL,
-	...}
-
- * 
+ *
+ ModificationRequestFor-CLIP-Info ::= SEQUENCE { ss-Status [0] Ext-SS-Status OPTIONAL, overrideCategory [1] OverrideCategory
+ * OPTIONAL, modifyNotificationToCSE [2] ModificationInstruction OPTIONAL, extensionContainer [3] ExtensionContainer OPTIONAL,
+ * ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ModificationRequestForCLIPInfo {
 
-	public ExtSSStatus getSsStatus();
+    ExtSSStatus getSsStatus();
 
-	public OverrideCategory getOverrideCategory();
+    OverrideCategory getOverrideCategory();
 
-	public ModificationInstruction getModifyNotificationToCSE();
+    ModificationInstruction getModifyNotificationToCSE();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

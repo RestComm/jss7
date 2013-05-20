@@ -32,7 +32,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.ErrorCode;
 import org.mobicents.protocols.ss7.m3ua.parameter.Status;
 
 /**
- * 
+ *
  * @author amit bhayani
  *
  */
@@ -51,18 +51,18 @@ public class TransitionState {
     public static final String ASP_UP_SENT = "aspupsent";
     public static final String ASP_UP = "aspup";
     public static final String ASP_UP_ACK = "aspupack";
-    
+
     public static final String ASP_DOWN_SENT = "aspdownsent";
     public static final String ASP_DOWN = "aspdown";
     public static final String ASP_DOWN_ACK = "aspdownack";
-    
+
     public static final String HEARTBEAT = "heartbeat";
     public static final String HEARTBEAT_ACK = "heartbeatack";
 
     public static final String ASP_INACTIVE_SENT = "aspinactivesent";
     public static final String ASP_INACTIVE = "aspinactive";
     public static final String ASP_INACTIVE_ACK = "aspinactiveack";
-    
+
     public static final String ASP_ACTIVE = "aspactive";
     public static final String ASP_ACTIVE_SENT = "aspactivesent";
     public static final String ASP_ACTIVE_ACK = "aspactiveack";
@@ -131,8 +131,7 @@ public class TransitionState {
         mgmtTransCont.put((Status.STATUS_AS_State_Change << 16 | Status.INFO_AS_ACTIVE), AS_STATE_CHANGE_ACTIVE);
         mgmtTransCont.put((Status.STATUS_AS_State_Change << 16 | Status.INFO_AS_PENDING), AS_STATE_CHANGE_PENDING);
 
-        mgmtTransCont.put((Status.STATUS_Other << 16 | Status.INFO_Insufficient_ASP_Resources_Active),
-                OTHER_INSUFFICIENT_ASP);
+        mgmtTransCont.put((Status.STATUS_Other << 16 | Status.INFO_Insufficient_ASP_Resources_Active), OTHER_INSUFFICIENT_ASP);
         mgmtTransCont.put((Status.STATUS_Other << 16 | Status.INFO_Alternate_ASP_Active), OTHER_ALTERNATE_ASP_ACTIVE);
         mgmtTransCont.put((Status.STATUS_Other << 16 | Status.INFO_Alternate_ASP_Failure), OTHER_ALTERNATE_ASP_FAILURE);
         // Err cde
@@ -143,15 +142,15 @@ public class TransitionState {
 
     public static String getTransition(M3UAMessage message) {
         switch (message.getMessageClass()) {
-        case MessageClass.MANAGEMENT:
-            switch (message.getMessageType()) {
-            case MessageType.ERROR:
-            case MessageType.NOTIFY:
-                Status status = ((Notify) message).getStatus();
-                return transContainer.get(message.getMessageClass()).get((status.getType() << 16 | status.getInfo()));
-            }
-        default:
-            return transContainer.get(message.getMessageClass()).get(message.getMessageType());
+            case MessageClass.MANAGEMENT:
+                switch (message.getMessageType()) {
+                    case MessageType.ERROR:
+                    case MessageType.NOTIFY:
+                        Status status = ((Notify) message).getStatus();
+                        return transContainer.get(message.getMessageClass()).get((status.getType() << 16 | status.getInfo()));
+                }
+            default:
+                return transContainer.get(message.getMessageClass()).get(message.getMessageType());
         }
     }
 }

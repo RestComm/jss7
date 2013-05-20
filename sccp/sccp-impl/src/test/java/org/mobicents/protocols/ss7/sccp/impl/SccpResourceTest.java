@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -37,66 +37,66 @@ import org.testng.annotations.Test;
 
 /**
  * @author amit bhayani
- * 
+ *
  */
 public class SccpResourceTest {
-	
-	private SccpResourceImpl resource = null;
 
-	public SccpResourceTest() {
-	}
+    private SccpResourceImpl resource = null;
 
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
+    public SccpResourceTest() {
+    }
 
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
 
-	@BeforeMethod
-	public void setUp() {
-		resource = new SccpResourceImpl("SccpResourceTest");
-		resource.setPersistDir(Util.getTmpTestDir());
-		resource.start();
-		resource.removeAllResourses();
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
 
-	}
+    @BeforeMethod
+    public void setUp() {
+        resource = new SccpResourceImpl("SccpResourceTest");
+        resource.setPersistDir(Util.getTmpTestDir());
+        resource.start();
+        resource.removeAllResourses();
 
-	@AfterMethod
-	public void tearDown() {
-		resource.removeAllResourses();
-		resource.stop();
-	}
-	
-	@Test(groups = { "sccpresource","functional.encode"})
-	public void testSerialization() throws Exception {
+    }
 
-		resource.addRemoteSpc(1, 6034, 0, 0);
-		resource.addRemoteSpc(2, 6045, 0, 0);
+    @AfterMethod
+    public void tearDown() {
+        resource.removeAllResourses();
+        resource.stop();
+    }
 
-		resource.addRemoteSsn(1, 6034, 8, 0, false);
-		resource.addRemoteSsn(2, 6045, 8, 0, false);
+    @Test(groups = { "sccpresource", "functional.encode" })
+    public void testSerialization() throws Exception {
 
-		resource.addConcernedSpc(1, 603);
-		resource.addConcernedSpc(2, 604);
+        resource.addRemoteSpc(1, 6034, 0, 0);
+        resource.addRemoteSpc(2, 6045, 0, 0);
 
-		SccpResourceImpl resource1 = new SccpResourceImpl("SccpResourceTest");
-		resource1.setPersistDir(Util.getTmpTestDir());
-		resource1.start();
+        resource.addRemoteSsn(1, 6034, 8, 0, false);
+        resource.addRemoteSsn(2, 6045, 8, 0, false);
 
-		assertEquals( resource1.getRemoteSpcs().size(),2);
-		RemoteSignalingPointCode rsp1Temp = resource1.getRemoteSpc(1);
-		assertNotNull(rsp1Temp);
-		assertEquals( rsp1Temp.getRemoteSpc(),6034);
-		
-		assertEquals( resource1.getRemoteSsns().size(),2);
-		RemoteSubSystem rss1Temp = resource1.getRemoteSsn(1);
-		assertEquals( rss1Temp.getRemoteSsn(),8);
-		
-		assertEquals(resource1.getConcernedSpcs().size(), 2);
-		ConcernedSignalingPointCode cspc1Temp = resource1.getConcernedSpc(1);
-		assertEquals(cspc1Temp.getRemoteSpc(), 603);
-	}
+        resource.addConcernedSpc(1, 603);
+        resource.addConcernedSpc(2, 604);
+
+        SccpResourceImpl resource1 = new SccpResourceImpl("SccpResourceTest");
+        resource1.setPersistDir(Util.getTmpTestDir());
+        resource1.start();
+
+        assertEquals(resource1.getRemoteSpcs().size(), 2);
+        RemoteSignalingPointCode rsp1Temp = resource1.getRemoteSpc(1);
+        assertNotNull(rsp1Temp);
+        assertEquals(rsp1Temp.getRemoteSpc(), 6034);
+
+        assertEquals(resource1.getRemoteSsns().size(), 2);
+        RemoteSubSystem rss1Temp = resource1.getRemoteSsn(1);
+        assertEquals(rss1Temp.getRemoteSsn(), 8);
+
+        assertEquals(resource1.getConcernedSpcs().size(), 2);
+        ConcernedSignalingPointCode cspc1Temp = resource1.getConcernedSpc(1);
+        assertEquals(cspc1Temp.getRemoteSpc(), 603);
+    }
 
 }

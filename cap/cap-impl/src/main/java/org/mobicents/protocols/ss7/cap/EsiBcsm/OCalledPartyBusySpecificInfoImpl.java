@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -40,104 +40,104 @@ import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
  * @author Amit Bhayani
- * 
+ *
  */
 public class OCalledPartyBusySpecificInfoImpl extends SequenceBase implements OCalledPartyBusySpecificInfo {
 
-	private static final String BUSY_CAUSE = "busyCause";
+    private static final String BUSY_CAUSE = "busyCause";
 
-	public static final int _ID_busyCause = 0;
+    public static final int _ID_busyCause = 0;
 
-	private CauseCap busyCause;
+    private CauseCap busyCause;
 
-	public OCalledPartyBusySpecificInfoImpl() {
-		super("OCalledPartyBusySpecificInfo");
-	}
+    public OCalledPartyBusySpecificInfoImpl() {
+        super("OCalledPartyBusySpecificInfo");
+    }
 
-	public OCalledPartyBusySpecificInfoImpl(CauseCap busyCause) {
-		super("OCalledPartyBusySpecificInfo");
-		this.busyCause = busyCause;
-	}
+    public OCalledPartyBusySpecificInfoImpl(CauseCap busyCause) {
+        super("OCalledPartyBusySpecificInfo");
+        this.busyCause = busyCause;
+    }
 
-	@Override
-	public CauseCap getBusyCause() {
-		return busyCause;
-	}
+    @Override
+    public CauseCap getBusyCause() {
+        return busyCause;
+    }
 
-	protected void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException,
-			MAPParsingComponentException, IOException, AsnException {
+    protected void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException,
+            IOException, AsnException {
 
-		this.busyCause = null;
+        this.busyCause = null;
 
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-			int tag = ais.readTag();
+            int tag = ais.readTag();
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_busyCause:
-					this.busyCause = new CauseCapImpl();
-					((CauseCapImpl) this.busyCause).decodeAll(ais);
-					break;
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_busyCause:
+                        this.busyCause = new CauseCapImpl();
+                        ((CauseCapImpl) this.busyCause).decodeAll(ais);
+                        break;
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
-	}
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		if (this.busyCause != null) {
-			((CauseCapImpl) this.busyCause).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_busyCause);
-		}
-	}
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
+        if (this.busyCause != null) {
+            ((CauseCapImpl) this.busyCause).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_busyCause);
+        }
+    }
 
-	@Override
-	public String toString() {
+    @Override
+    public String toString() {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
-		if (this.busyCause != null) {
-			sb.append("busyCause= [");
-			sb.append(busyCause);
-			sb.append("]");
-		}
-		sb.append("]");
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+        if (this.busyCause != null) {
+            sb.append("busyCause= [");
+            sb.append(busyCause);
+            sb.append("]");
+        }
+        sb.append("]");
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 
-	/**
-	 * XML Serialization/Deserialization
-	 */
-	protected static final XMLFormat<OCalledPartyBusySpecificInfoImpl> ROUTE_SELECT_FAILURE_SPECIFIC_INFO_XML = new XMLFormat<OCalledPartyBusySpecificInfoImpl>(
-			OCalledPartyBusySpecificInfoImpl.class) {
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<OCalledPartyBusySpecificInfoImpl> ROUTE_SELECT_FAILURE_SPECIFIC_INFO_XML = new XMLFormat<OCalledPartyBusySpecificInfoImpl>(
+            OCalledPartyBusySpecificInfoImpl.class) {
 
-		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml,
-				OCalledPartyBusySpecificInfoImpl oCalledPartyBusySpecificInfo) throws XMLStreamException {
-			oCalledPartyBusySpecificInfo.busyCause = xml.get(BUSY_CAUSE, CauseCapImpl.class);
-		}
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml,
+                OCalledPartyBusySpecificInfoImpl oCalledPartyBusySpecificInfo) throws XMLStreamException {
+            oCalledPartyBusySpecificInfo.busyCause = xml.get(BUSY_CAUSE, CauseCapImpl.class);
+        }
 
-		@Override
-		public void write(OCalledPartyBusySpecificInfoImpl oCalledPartyBusySpecificInfo,
-				javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+        @Override
+        public void write(OCalledPartyBusySpecificInfoImpl oCalledPartyBusySpecificInfo,
+                javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
 
-			if (oCalledPartyBusySpecificInfo.busyCause != null) {
-				xml.add(((CauseCapImpl) oCalledPartyBusySpecificInfo.busyCause), BUSY_CAUSE, CauseCapImpl.class);
-			}
-		}
-	};
+            if (oCalledPartyBusySpecificInfo.busyCause != null) {
+                xml.add(((CauseCapImpl) oCalledPartyBusySpecificInfo.busyCause), BUSY_CAUSE, CauseCapImpl.class);
+            }
+        }
+    };
 }

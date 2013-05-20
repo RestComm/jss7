@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -22,7 +22,8 @@
 
 package org.mobicents.protocols.ss7.inap.isup;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -36,85 +37,88 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.RedirectionInformationImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionInformation;
-import org.testng.annotations.*;
+import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class RedirectionInformationInapTest {
 
-	public byte[] getData() {
-		return new byte[] { (byte) 158, 2, 3, 97 };
-	}
+    public byte[] getData() {
+        return new byte[] { (byte) 158, 2, 3, 97 };
+    }
 
-	public byte[] getIntData() {
-		return new byte[] { 3, 97 };
-	}
+    public byte[] getIntData() {
+        return new byte[] { 3, 97 };
+    }
 
-	@Test(groups = { "functional.decode","isup"})
-	public void testDecode() throws Exception {
+    @Test(groups = { "functional.decode", "isup" })
+    public void testDecode() throws Exception {
 
-		byte[] data = this.getData();
-		AsnInputStream ais = new AsnInputStream(data);
-		RedirectionInformationInapImpl elem = new RedirectionInformationInapImpl();
-		int tag = ais.readTag();
-		elem.decodeAll(ais);
-		RedirectionInformation ri = elem.getRedirectionInformation();
-		assertTrue(Arrays.equals(elem.getData(), this.getIntData()));
-		assertEquals(ri.getOriginalRedirectionReason(), 0);
-		assertEquals(ri.getRedirectingIndicator(), 3);
-		assertEquals(ri.getRedirectionCounter(), 1);
-		assertEquals(ri.getRedirectionReason(), 6);
-	}
+        byte[] data = this.getData();
+        AsnInputStream ais = new AsnInputStream(data);
+        RedirectionInformationInapImpl elem = new RedirectionInformationInapImpl();
+        int tag = ais.readTag();
+        elem.decodeAll(ais);
+        RedirectionInformation ri = elem.getRedirectionInformation();
+        assertTrue(Arrays.equals(elem.getData(), this.getIntData()));
+        assertEquals(ri.getOriginalRedirectionReason(), 0);
+        assertEquals(ri.getRedirectingIndicator(), 3);
+        assertEquals(ri.getRedirectionCounter(), 1);
+        assertEquals(ri.getRedirectionReason(), 6);
+    }
 
-	@Test(groups = { "functional.encode","isup"})
-	public void testEncode() throws Exception {
+    @Test(groups = { "functional.encode", "isup" })
+    public void testEncode() throws Exception {
 
-		RedirectionInformationInapImpl elem = new RedirectionInformationInapImpl(this.getIntData());
-		AsnOutputStream aos = new AsnOutputStream();
-		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 30);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
+        RedirectionInformationInapImpl elem = new RedirectionInformationInapImpl(this.getIntData());
+        AsnOutputStream aos = new AsnOutputStream();
+        elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 30);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
 
-		RedirectionInformation ri = new RedirectionInformationImpl(3, 0, 1, 6);
-		elem = new RedirectionInformationInapImpl(ri);
-		aos = new AsnOutputStream();
-		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 30);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
-		
-//		int redirectingIndicator, int originalRedirectionReason, int redirectionCounter, int redirectionReason
-	}
+        RedirectionInformation ri = new RedirectionInformationImpl(3, 0, 1, 6);
+        elem = new RedirectionInformationInapImpl(ri);
+        aos = new AsnOutputStream();
+        elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 30);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
 
-	@Test(groups = { "functional.xml.serialize", "isup" })
-	public void testXMLSerialize() throws Exception {
+        // int redirectingIndicator, int originalRedirectionReason, int redirectionCounter, int redirectionReason
+    }
 
-		RedirectionInformationImpl prim = new RedirectionInformationImpl(RedirectionInformation._RI_CALL_D, RedirectionInformation._ORR_NO_REPLY, 4,
-				RedirectionInformation._RI_CALL_REROUTED);
-		RedirectionInformationInapImpl original = new RedirectionInformationInapImpl(prim);
+    @Test(groups = { "functional.xml.serialize", "isup" })
+    public void testXMLSerialize() throws Exception {
 
-		// Writes the area to a file.
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
-		// writer.setBinding(binding); // Optional.
-		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
-		writer.write(original, "redirectionInformationInap", RedirectionInformationInapImpl.class);
-		writer.close();
+        RedirectionInformationImpl prim = new RedirectionInformationImpl(RedirectionInformation._RI_CALL_D,
+                RedirectionInformation._ORR_NO_REPLY, 4, RedirectionInformation._RI_CALL_REROUTED);
+        RedirectionInformationInapImpl original = new RedirectionInformationInapImpl(prim);
 
-		byte[] rawData = baos.toByteArray();
-		String serializedEvent = new String(rawData);
+        // Writes the area to a file.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+        writer.write(original, "redirectionInformationInap", RedirectionInformationInapImpl.class);
+        writer.close();
 
-		System.out.println(serializedEvent);
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
 
-		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
-		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
-		RedirectionInformationInapImpl copy = reader.read("redirectionInformationInap", RedirectionInformationInapImpl.class);
+        System.out.println(serializedEvent);
 
-		assertEquals(copy.getRedirectionInformation().getRedirectingIndicator(), original.getRedirectionInformation().getRedirectingIndicator());
-		assertEquals(copy.getRedirectionInformation().getOriginalRedirectionReason(), original.getRedirectionInformation().getOriginalRedirectionReason());
-		assertEquals(copy.getRedirectionInformation().getRedirectionCounter(), original.getRedirectionInformation().getRedirectionCounter());
-		assertEquals(copy.getRedirectionInformation().getRedirectionReason(), original.getRedirectionInformation().getRedirectionReason());
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        RedirectionInformationInapImpl copy = reader.read("redirectionInformationInap", RedirectionInformationInapImpl.class);
 
-	}
+        assertEquals(copy.getRedirectionInformation().getRedirectingIndicator(), original.getRedirectionInformation()
+                .getRedirectingIndicator());
+        assertEquals(copy.getRedirectionInformation().getOriginalRedirectionReason(), original.getRedirectionInformation()
+                .getOriginalRedirectionReason());
+        assertEquals(copy.getRedirectionInformation().getRedirectionCounter(), original.getRedirectionInformation()
+                .getRedirectionCounter());
+        assertEquals(copy.getRedirectionInformation().getRedirectionReason(), original.getRedirectionInformation()
+                .getRedirectionReason());
+
+    }
 }
-

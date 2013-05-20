@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.map.service.sms;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
+
 import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -36,148 +37,143 @@ import org.mobicents.protocols.ss7.map.smstpdu.AddressFieldImpl;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
  *
  */
 public class SM_RP_SMEATest {
 
-	private byte[] getEncodedData() {
-		return new byte[] { (byte) 137, 11, 18, (byte) 208, 77, (byte) 170, 19, 36, 12, (byte) 143, (byte) 215, 117, 56 };
-	}
+    private byte[] getEncodedData() {
+        return new byte[] { (byte) 137, 11, 18, (byte) 208, 77, (byte) 170, 19, 36, 12, (byte) 143, (byte) 215, 117, 56 };
+    }
 
-	private byte[] getEncodedData2() {
-		return new byte[] { (byte) 137, 4, 3, (byte) 129, 54, (byte) 241 };
-	}
+    private byte[] getEncodedData2() {
+        return new byte[] { (byte) 137, 4, 3, (byte) 129, 54, (byte) 241 };
+    }
 
-	private byte[] getEncodedData3() {
-		return new byte[] { (byte) 137, 9, 13, (byte) 145, 50, (byte) 132, 48, 80, 22, 38, (byte) 244 };
-	}
+    private byte[] getEncodedData3() {
+        return new byte[] { (byte) 137, 9, 13, (byte) 145, 50, (byte) 132, 48, 80, 22, 38, (byte) 244 };
+    }
 
-	private byte[] getEncodedData4() {
-		return new byte[] { (byte) 137, 4, 4, (byte) 129, 20, 0 };
-	}
+    private byte[] getEncodedData4() {
+        return new byte[] { (byte) 137, 4, 4, (byte) 129, 20, 0 };
+    }
 
-	@Test(groups = { "functional.decode","service.sms"})
-	public void testDecode() throws Exception {
+    @Test(groups = { "functional.decode", "service.sms" })
+    public void testDecode() throws Exception {
 
-		byte[] rawData = getEncodedData();
-		AsnInputStream asn = new AsnInputStream(rawData);
+        byte[] rawData = getEncodedData();
+        AsnInputStream asn = new AsnInputStream(rawData);
 
-		int tag = asn.readTag();
-		SM_RP_SMEAImpl da = new SM_RP_SMEAImpl();
-		da.decodeAll(asn);
+        int tag = asn.readTag();
+        SM_RP_SMEAImpl da = new SM_RP_SMEAImpl();
+        da.decodeAll(asn);
 
-		assertEquals(tag, 9);
-		assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
-		
-		AddressField af = da.getAddressField();
+        assertEquals(tag, 9);
+        assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
 
-		assertEquals(af.getTypeOfNumber(), TypeOfNumber.Alphanumeric);
-		assertEquals(af.getNumberingPlanIdentification(), NumberingPlanIdentification.Unknown);
-		assertTrue(af.getAddressValue().equals("MTN Backup"));
+        AddressField af = da.getAddressField();
 
-		
-		rawData = getEncodedData2();
-		asn = new AsnInputStream(rawData);
+        assertEquals(af.getTypeOfNumber(), TypeOfNumber.Alphanumeric);
+        assertEquals(af.getNumberingPlanIdentification(), NumberingPlanIdentification.Unknown);
+        assertTrue(af.getAddressValue().equals("MTN Backup"));
 
-		tag = asn.readTag();
-		da = new SM_RP_SMEAImpl();
-		da.decodeAll(asn);
+        rawData = getEncodedData2();
+        asn = new AsnInputStream(rawData);
 
-		assertEquals(tag, 9);
-		assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
-		
-		af = da.getAddressField();
+        tag = asn.readTag();
+        da = new SM_RP_SMEAImpl();
+        da.decodeAll(asn);
 
-		assertEquals(af.getTypeOfNumber(), TypeOfNumber.Unknown);
-		assertEquals(af.getNumberingPlanIdentification(), NumberingPlanIdentification.ISDNTelephoneNumberingPlan);
-		assertTrue(af.getAddressValue().equals("631"));
+        assertEquals(tag, 9);
+        assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
 
-		
-		rawData = getEncodedData3();
-		asn = new AsnInputStream(rawData);
+        af = da.getAddressField();
 
-		tag = asn.readTag();
-		da = new SM_RP_SMEAImpl();
-		da.decodeAll(asn);
+        assertEquals(af.getTypeOfNumber(), TypeOfNumber.Unknown);
+        assertEquals(af.getNumberingPlanIdentification(), NumberingPlanIdentification.ISDNTelephoneNumberingPlan);
+        assertTrue(af.getAddressValue().equals("631"));
 
-		assertEquals(tag, 9);
-		assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
-		
-		af = da.getAddressField();
+        rawData = getEncodedData3();
+        asn = new AsnInputStream(rawData);
 
-		assertEquals(af.getTypeOfNumber(), TypeOfNumber.InternationalNumber);
-		assertEquals(af.getNumberingPlanIdentification(), NumberingPlanIdentification.ISDNTelephoneNumberingPlan);
-		assertTrue(af.getAddressValue().equals("2348030561624"));
+        tag = asn.readTag();
+        da = new SM_RP_SMEAImpl();
+        da.decodeAll(asn);
 
-		
-		rawData = getEncodedData4();
-		asn = new AsnInputStream(rawData);
+        assertEquals(tag, 9);
+        assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
 
-		tag = asn.readTag();
-		da = new SM_RP_SMEAImpl();
-		da.decodeAll(asn);
+        af = da.getAddressField();
 
-		assertEquals(tag, 9);
-		assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
-		
-		af = da.getAddressField();
+        assertEquals(af.getTypeOfNumber(), TypeOfNumber.InternationalNumber);
+        assertEquals(af.getNumberingPlanIdentification(), NumberingPlanIdentification.ISDNTelephoneNumberingPlan);
+        assertTrue(af.getAddressValue().equals("2348030561624"));
 
-		assertEquals(af.getTypeOfNumber(), TypeOfNumber.Unknown);
-		assertEquals(af.getNumberingPlanIdentification(), NumberingPlanIdentification.ISDNTelephoneNumberingPlan);
-		assertTrue(af.getAddressValue().equals("4100"));
-	}
+        rawData = getEncodedData4();
+        asn = new AsnInputStream(rawData);
 
-	@Test(groups = { "functional.encode","service.sms"})
-	public void testEncode() throws Exception {
+        tag = asn.readTag();
+        da = new SM_RP_SMEAImpl();
+        da.decodeAll(asn);
 
-		AddressFieldImpl af = new AddressFieldImpl(TypeOfNumber.Alphanumeric, NumberingPlanIdentification.Unknown, "MTN Backup");
-		SM_RP_SMEAImpl da = new SM_RP_SMEAImpl(af);
+        assertEquals(tag, 9);
+        assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
 
-		AsnOutputStream asnOS = new AsnOutputStream();
-		da.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, 9);
-		
-		byte[] encodedData = asnOS.toByteArray();
-		byte[] rawData = getEncodedData();		
-		assertTrue(Arrays.equals(rawData, encodedData));
+        af = da.getAddressField();
 
+        assertEquals(af.getTypeOfNumber(), TypeOfNumber.Unknown);
+        assertEquals(af.getNumberingPlanIdentification(), NumberingPlanIdentification.ISDNTelephoneNumberingPlan);
+        assertTrue(af.getAddressValue().equals("4100"));
+    }
 
-		af = new AddressFieldImpl(TypeOfNumber.Unknown, NumberingPlanIdentification.ISDNTelephoneNumberingPlan, "631");
-		da = new SM_RP_SMEAImpl(af);
+    @Test(groups = { "functional.encode", "service.sms" })
+    public void testEncode() throws Exception {
 
-		asnOS = new AsnOutputStream();
-		da.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, 9);
-		
-		encodedData = asnOS.toByteArray();
-		rawData = getEncodedData2();		
-		assertTrue(Arrays.equals(rawData, encodedData));
+        AddressFieldImpl af = new AddressFieldImpl(TypeOfNumber.Alphanumeric, NumberingPlanIdentification.Unknown, "MTN Backup");
+        SM_RP_SMEAImpl da = new SM_RP_SMEAImpl(af);
 
+        AsnOutputStream asnOS = new AsnOutputStream();
+        da.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, 9);
 
-		af = new AddressFieldImpl(TypeOfNumber.InternationalNumber, NumberingPlanIdentification.ISDNTelephoneNumberingPlan, "2348030561624");
-		da = new SM_RP_SMEAImpl(af);
+        byte[] encodedData = asnOS.toByteArray();
+        byte[] rawData = getEncodedData();
+        assertTrue(Arrays.equals(rawData, encodedData));
 
-		asnOS = new AsnOutputStream();
-		da.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, 9);
-		
-		encodedData = asnOS.toByteArray();
-		rawData = getEncodedData3();		
-		assertTrue(Arrays.equals(rawData, encodedData));
+        af = new AddressFieldImpl(TypeOfNumber.Unknown, NumberingPlanIdentification.ISDNTelephoneNumberingPlan, "631");
+        da = new SM_RP_SMEAImpl(af);
 
+        asnOS = new AsnOutputStream();
+        da.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, 9);
 
-		af = new AddressFieldImpl(TypeOfNumber.Unknown, NumberingPlanIdentification.ISDNTelephoneNumberingPlan, "4100");
-		da = new SM_RP_SMEAImpl(af);
+        encodedData = asnOS.toByteArray();
+        rawData = getEncodedData2();
+        assertTrue(Arrays.equals(rawData, encodedData));
 
-		asnOS = new AsnOutputStream();
-		da.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, 9);
-		
-		encodedData = asnOS.toByteArray();
-		rawData = getEncodedData4();		
-		assertTrue(Arrays.equals(rawData, encodedData));
-	}
+        af = new AddressFieldImpl(TypeOfNumber.InternationalNumber, NumberingPlanIdentification.ISDNTelephoneNumberingPlan,
+                "2348030561624");
+        da = new SM_RP_SMEAImpl(af);
 
-	@Test(groups = { "functional.serialize", "service.sms" })
-	public void testSerialization() throws Exception {
-	}
+        asnOS = new AsnOutputStream();
+        da.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, 9);
+
+        encodedData = asnOS.toByteArray();
+        rawData = getEncodedData3();
+        assertTrue(Arrays.equals(rawData, encodedData));
+
+        af = new AddressFieldImpl(TypeOfNumber.Unknown, NumberingPlanIdentification.ISDNTelephoneNumberingPlan, "4100");
+        da = new SM_RP_SMEAImpl(af);
+
+        asnOS = new AsnOutputStream();
+        da.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, 9);
+
+        encodedData = asnOS.toByteArray();
+        rawData = getEncodedData4();
+        assertTrue(Arrays.equals(rawData, encodedData));
+    }
+
+    @Test(groups = { "functional.serialize", "service.sms" })
+    public void testSerialization() throws Exception {
+    }
 
 }

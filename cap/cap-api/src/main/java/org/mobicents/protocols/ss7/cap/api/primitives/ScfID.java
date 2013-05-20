@@ -23,21 +23,18 @@
 package org.mobicents.protocols.ss7.cap.api.primitives;
 
 /**
-*
-ScfID {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE( 
- bound.&minScfIDLength .. bound.&maxScfIDLength)) 
--- defined by network operator. 
--- Indicates the gsmSCF identity.
-
-minScfIDLength ::= 2
-maxScfIDLength ::= 10
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ ScfID {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE( bound.&minScfIDLength .. bound.&maxScfIDLength)) -- defined by
+ * network operator. -- Indicates the gsmSCF identity.
+ *
+ * minScfIDLength ::= 2 maxScfIDLength ::= 10
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface ScfID {
 
-	public byte[] getData();
+    byte[] getData();
 
 }

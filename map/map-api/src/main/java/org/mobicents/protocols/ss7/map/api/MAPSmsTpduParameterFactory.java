@@ -57,52 +57,86 @@ import org.mobicents.protocols.ss7.map.api.smstpdu.ValidityEnhancedFormatData;
 import org.mobicents.protocols.ss7.map.api.smstpdu.ValidityPeriod;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MAPSmsTpduParameterFactory {
 
-	public SmsCommandTpdu createSmsCommandTpdu(boolean statusReportRequest, int messageReference, ProtocolIdentifier protocolIdentifier,
-			CommandType commandType, int messageNumber, AddressField destinationAddress, CommandData commandData);
-	public SmsDeliverReportTpdu createSmsDeliverReportTpdu(FailureCause failureCause, ProtocolIdentifier protocolIdentifier, UserData userData);
-	public SmsDeliverTpdu createSmsDeliverTpdu(boolean moreMessagesToSend, boolean forwardedOrSpawned, boolean replyPathExists, boolean statusReportIndication,
-			AddressField originatingAddress, ProtocolIdentifier protocolIdentifier, AbsoluteTimeStamp serviceCentreTimeStamp, UserData userData);
-	public SmsStatusReportTpdu createSmsStatusReportTpdu(boolean moreMessagesToSend, boolean forwardedOrSpawned, StatusReportQualifier statusReportQualifier,
-			int messageReference, AddressField recipientAddress, AbsoluteTimeStamp serviceCentreTimeStamp, AbsoluteTimeStamp dischargeTime, Status status,
-			ProtocolIdentifier protocolIdentifier, UserData userData);
-	public SmsSubmitReportTpdu createSmsSubmitReportTpdu(FailureCause failureCause, AbsoluteTimeStamp serviceCentreTimeStamp,
-			ProtocolIdentifier protocolIdentifier, UserData userData);
-	public SmsSubmitTpdu createSmsSubmitTpdu(boolean rejectDuplicates, boolean replyPathExists, boolean statusReportRequest, int messageReference,
-			AddressField destinationAddress, ProtocolIdentifier protocolIdentifier, ValidityPeriod validityPeriod, UserData userData);
+    SmsCommandTpdu createSmsCommandTpdu(boolean statusReportRequest, int messageReference,
+            ProtocolIdentifier protocolIdentifier, CommandType commandType, int messageNumber, AddressField destinationAddress,
+            CommandData commandData);
 
-	public AbsoluteTimeStamp createAbsoluteTimeStamp(int year, int month, int day, int hour, int minute, int second, int timeZone);
-	public AddressField createAddressField(TypeOfNumber typeOfNumber, NumberingPlanIdentification numberingPlanIdentification, String addressValue);
-	public CommandType createCommandType(int code);
-	public CommandType createCommandType(CommandTypeValue value);
-	public DataCodingScheme createDataCodingScheme(int code);
-	public DataCodingScheme createDataCodingScheme(DataCodingGroup dataCodingGroup, DataCodingSchemaMessageClass messageClass,
-			DataCodingSchemaIndicationType dataCodingSchemaIndicationType, Boolean setIndicationActive, CharacterSet characterSet, boolean isCompressed);
-	public FailureCause createFailureCause(int code);
-	public ParameterIndicator createParameterIndicator(boolean TP_UDLPresence, boolean getTP_DCSPresence, boolean getTP_PIDPresence);
-	public ProtocolIdentifier createProtocolIdentifier(int code);
-	public Status createStatus(int code);
-	public ValidityEnhancedFormatData createValidityEnhancedFormatData(byte[] data);
-	public ValidityPeriod createValidityPeriod(int relativeFormatValue);
-	public ValidityPeriod createValidityPeriod(AbsoluteTimeStamp absoluteFormatValue);
-	public ValidityPeriod createValidityPeriod(ValidityEnhancedFormatData enhancedFormatValue);
+    SmsDeliverReportTpdu createSmsDeliverReportTpdu(FailureCause failureCause, ProtocolIdentifier protocolIdentifier,
+            UserData userData);
 
-	public UserDataHeader createUserDataHeader();
-	public UserData createUserData(byte[] encodedData, DataCodingScheme dataCodingScheme, int encodedUserDataLength, boolean encodedUserDataHeaderIndicator,
-			Charset gsm8Charset);
-	public UserData createUserData(String decodedMessage, DataCodingScheme dataCodingScheme, UserDataHeader decodedUserDataHeader, Charset gsm8Charset);
-	public CommandData createCommandData(byte[] data);
-	public CommandData createCommandData(String decodedMessage);
+    SmsDeliverTpdu createSmsDeliverTpdu(boolean moreMessagesToSend, boolean forwardedOrSpawned, boolean replyPathExists,
+            boolean statusReportIndication, AddressField originatingAddress, ProtocolIdentifier protocolIdentifier,
+            AbsoluteTimeStamp serviceCentreTimeStamp, UserData userData);
 
-	public ConcatenatedShortMessagesIdentifier createConcatenatedShortMessagesIdentifier(boolean referenceIs16bit, int reference, int mesageSegmentCount,
-			int mesageSegmentNumber);
-	public NationalLanguageLockingShiftIdentifier createNationalLanguageLockingShiftIdentifier(NationalLanguageIdentifier nationalLanguageCode);
-	public NationalLanguageSingleShiftIdentifier createNationalLanguageSingleShiftIdentifier(NationalLanguageIdentifier nationalLanguageCode);
+    SmsStatusReportTpdu createSmsStatusReportTpdu(boolean moreMessagesToSend, boolean forwardedOrSpawned,
+            StatusReportQualifier statusReportQualifier, int messageReference, AddressField recipientAddress,
+            AbsoluteTimeStamp serviceCentreTimeStamp, AbsoluteTimeStamp dischargeTime, Status status,
+            ProtocolIdentifier protocolIdentifier, UserData userData);
+
+    SmsSubmitReportTpdu createSmsSubmitReportTpdu(FailureCause failureCause, AbsoluteTimeStamp serviceCentreTimeStamp,
+            ProtocolIdentifier protocolIdentifier, UserData userData);
+
+    SmsSubmitTpdu createSmsSubmitTpdu(boolean rejectDuplicates, boolean replyPathExists, boolean statusReportRequest,
+            int messageReference, AddressField destinationAddress, ProtocolIdentifier protocolIdentifier,
+            ValidityPeriod validityPeriod, UserData userData);
+
+    AbsoluteTimeStamp createAbsoluteTimeStamp(int year, int month, int day, int hour, int minute, int second,
+            int timeZone);
+
+    AddressField createAddressField(TypeOfNumber typeOfNumber, NumberingPlanIdentification numberingPlanIdentification,
+            String addressValue);
+
+    CommandType createCommandType(int code);
+
+    CommandType createCommandType(CommandTypeValue value);
+
+    DataCodingScheme createDataCodingScheme(int code);
+
+    DataCodingScheme createDataCodingScheme(DataCodingGroup dataCodingGroup, DataCodingSchemaMessageClass messageClass,
+            DataCodingSchemaIndicationType dataCodingSchemaIndicationType, Boolean setIndicationActive,
+            CharacterSet characterSet, boolean isCompressed);
+
+    FailureCause createFailureCause(int code);
+
+    ParameterIndicator createParameterIndicator(boolean TP_UDLPresence, boolean getTP_DCSPresence,
+            boolean getTP_PIDPresence);
+
+    ProtocolIdentifier createProtocolIdentifier(int code);
+
+    Status createStatus(int code);
+
+    ValidityEnhancedFormatData createValidityEnhancedFormatData(byte[] data);
+
+    ValidityPeriod createValidityPeriod(int relativeFormatValue);
+
+    ValidityPeriod createValidityPeriod(AbsoluteTimeStamp absoluteFormatValue);
+
+    ValidityPeriod createValidityPeriod(ValidityEnhancedFormatData enhancedFormatValue);
+
+    UserDataHeader createUserDataHeader();
+
+    UserData createUserData(byte[] encodedData, DataCodingScheme dataCodingScheme, int encodedUserDataLength,
+            boolean encodedUserDataHeaderIndicator, Charset gsm8Charset);
+
+    UserData createUserData(String decodedMessage, DataCodingScheme dataCodingScheme,
+            UserDataHeader decodedUserDataHeader, Charset gsm8Charset);
+
+    CommandData createCommandData(byte[] data);
+
+    CommandData createCommandData(String decodedMessage);
+
+    ConcatenatedShortMessagesIdentifier createConcatenatedShortMessagesIdentifier(boolean referenceIs16bit,
+            int reference, int mesageSegmentCount, int mesageSegmentNumber);
+
+    NationalLanguageLockingShiftIdentifier createNationalLanguageLockingShiftIdentifier(
+            NationalLanguageIdentifier nationalLanguageCode);
+
+    NationalLanguageSingleShiftIdentifier createNationalLanguageSingleShiftIdentifier(
+            NationalLanguageIdentifier nationalLanguageCode);
 }
-
-

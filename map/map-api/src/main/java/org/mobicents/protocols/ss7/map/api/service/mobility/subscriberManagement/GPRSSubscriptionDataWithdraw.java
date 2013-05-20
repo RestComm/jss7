@@ -25,24 +25,21 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
 import java.util.ArrayList;
 
 /**
- * 
-
-GPRSSubscriptionDataWithdraw ::= CHOICE {
-	allGPRSData	NULL,
-	contextIdList	ContextIdList}
-
-ContextIdList ::= SEQUENCE SIZE (1..50) OF ContextId
-
-ContextId ::= INTEGER (1..50)
-
- * 
+ *
+ GPRSSubscriptionDataWithdraw ::= CHOICE { allGPRSData NULL, contextIdList ContextIdList}
+ *
+ * ContextIdList ::= SEQUENCE SIZE (1..50) OF ContextId
+ *
+ * ContextId ::= INTEGER (1..50)
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface GPRSSubscriptionDataWithdraw {
 
-	public boolean getAllGPRSData();
+    boolean getAllGPRSData();
 
-	public ArrayList<Integer> getContextIdList();
+    ArrayList<Integer> getContextIdList();
 
 }

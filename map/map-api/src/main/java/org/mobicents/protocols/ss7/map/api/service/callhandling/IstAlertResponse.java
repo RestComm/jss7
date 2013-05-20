@@ -25,29 +25,24 @@ package org.mobicents.protocols.ss7.map.api.service.callhandling;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-IST-AlertRes ::= SEQUENCE{
-	istAlertTimer	[0]	IST-AlertTimerValue 	OPTIONAL,
-	istInformationWithdraw	[1]	NULL		OPTIONAL,
-	callTerminationIndicator	[2]	CallTerminationIndicator	OPTIONAL,
-	extensionContainer	[3]	ExtensionContainer	OPTIONAL,
-	...}
-
-IST-AlertTimerValue ::= INTEGER (15..255)
-
- * 
+ *
+ IST-AlertRes ::= SEQUENCE{ istAlertTimer [0] IST-AlertTimerValue OPTIONAL, istInformationWithdraw [1] NULL OPTIONAL,
+ * callTerminationIndicator [2] CallTerminationIndicator OPTIONAL, extensionContainer [3] ExtensionContainer OPTIONAL, ...}
+ *
+ * IST-AlertTimerValue ::= INTEGER (15..255)
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface IstAlertResponse extends CallHandlingMessage {
 
-	public Integer getIstAlertTimer();
+     Integer getIstAlertTimer();
 
-	public boolean getIstInformationWithdraw();
+     boolean getIstInformationWithdraw();
 
-	public CallTerminationIndicator getCallTerminationIndicator();
+     CallTerminationIndicator getCallTerminationIndicator();
 
-	public MAPExtensionContainer getExtensionContainer();
+     MAPExtensionContainer getExtensionContainer();
 
 }

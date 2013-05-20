@@ -25,19 +25,15 @@ package org.mobicents.protocols.ss7.cap.api.EsiSms;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.MTSMSCause;
 
 /**
-*
-
-t-smsFailureSpecificInfo [2] SEQUENCE {
-failureCause [0] MT-SMSCause OPTIONAL,
-...
-},
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ t-smsFailureSpecificInfo [2] SEQUENCE { failureCause [0] MT-SMSCause OPTIONAL, ... },
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface TSmsFailureSpecificInfo {
 
-	public MTSMSCause GetFailureCause();
+    MTSMSCause GetFailureCause();
 
 }

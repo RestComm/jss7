@@ -22,22 +22,19 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
-/**	
- * 
-
-BasicServiceCode ::= CHOICE {
-	bearerService	[2] BearerServiceCode,
-	teleservice	[3] TeleserviceCode}
-
-
- * 
+/**
+ *
+ BasicServiceCode ::= CHOICE { bearerService [2] BearerServiceCode, teleservice [3] TeleserviceCode}
+ *
+ *
+ *
  * @author sergey vetyutnev
  *
  */
 public interface BasicServiceCode {
 
-	public BearerServiceCode getBearerService();
+    BearerServiceCode getBearerService();
 
-	public TeleserviceCode getTeleservice();
+    TeleserviceCode getTeleservice();
 
 }

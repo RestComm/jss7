@@ -26,34 +26,22 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-MAP V3:
-
-releaseResources  OPERATION::= {				--Timer m
-	ARGUMENT
-		ReleaseResourcesArg
-	RESULT
-		ReleaseResourcesRes
-		-- optional
-	ERRORS {
-		unexpectedDataValue |
-		systemFailure }
-	CODE	local:20 }
-
-ReleaseResourcesArg ::= SEQUENCE{
-	msrn			ISDN-AddressString, 
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...}
-
- * 
+ *
+ MAP V3:
+ *
+ * releaseResources OPERATION::= { --Timer m ARGUMENT ReleaseResourcesArg RESULT ReleaseResourcesRes -- optional ERRORS {
+ * unexpectedDataValue | systemFailure } CODE local:20 }
+ *
+ * ReleaseResourcesArg ::= SEQUENCE{ msrn ISDN-AddressString, extensionContainer ExtensionContainer OPTIONAL, ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ReleaseResourcesRequest {
 
-	public ISDNAddressString getMsrn();
+     ISDNAddressString getMsrn();
 
-	public MAPExtensionContainer getExtensionContainer();
+     MAPExtensionContainer getExtensionContainer();
 
 }

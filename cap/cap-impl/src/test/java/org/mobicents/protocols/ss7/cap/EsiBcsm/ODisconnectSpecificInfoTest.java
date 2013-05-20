@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -36,48 +36,50 @@ import org.testng.annotations.Test;
 
 /**
  * @author Amit Bhayani
- * 
+ *
  */
 public class ODisconnectSpecificInfoTest {
 
-	/**
-	 * 
+    /**
+	 *
 	 */
-	public ODisconnectSpecificInfoTest() {
-		// TODO Auto-generated constructor stub
-	}
+    public ODisconnectSpecificInfoTest() {
+        // TODO Auto-generated constructor stub
+    }
 
-	@Test(groups = { "functional.xml.serialize", "circuitSwitchedCall.primitive" })
-	public void testXMLSerializaion() throws Exception {
+    @Test(groups = { "functional.xml.serialize", "circuitSwitchedCall.primitive" })
+    public void testXMLSerializaion() throws Exception {
 
-		CauseIndicatorsImpl prim = new CauseIndicatorsImpl(CauseIndicators._CODING_STANDARD_ITUT,
-				CauseIndicators._LOCATION_PRIVATE_NSRU, 0, CauseIndicators._CV_CALL_REJECTED, null);
+        CauseIndicatorsImpl prim = new CauseIndicatorsImpl(CauseIndicators._CODING_STANDARD_ITUT,
+                CauseIndicators._LOCATION_PRIVATE_NSRU, 0, CauseIndicators._CV_CALL_REJECTED, null);
 
-		CauseCapImpl cause = new CauseCapImpl(prim);
-		ODisconnectSpecificInfoImpl original = new ODisconnectSpecificInfoImpl(cause);
+        CauseCapImpl cause = new CauseCapImpl(prim);
+        ODisconnectSpecificInfoImpl original = new ODisconnectSpecificInfoImpl(cause);
 
-		// Writes the area to a file.
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
-		// writer.setBinding(binding); // Optional.
-		writer.setIndentation("\t"); // Optional (use tabulation for
-										// indentation).
-		writer.write(original, "oDisconnectSpecificInfoImpl", ODisconnectSpecificInfoImpl.class);
-		writer.close();
+        // Writes the area to a file.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for
+                                     // indentation).
+        writer.write(original, "oDisconnectSpecificInfoImpl", ODisconnectSpecificInfoImpl.class);
+        writer.close();
 
-		byte[] rawData = baos.toByteArray();
-		String serializedEvent = new String(rawData);
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
 
-		System.out.println(serializedEvent);
+        System.out.println(serializedEvent);
 
-		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
-		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
-		ODisconnectSpecificInfoImpl copy = reader
-				.read("oDisconnectSpecificInfoImpl", ODisconnectSpecificInfoImpl.class);
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        ODisconnectSpecificInfoImpl copy = reader.read("oDisconnectSpecificInfoImpl", ODisconnectSpecificInfoImpl.class);
 
-		assertEquals(copy.getReleaseCause().getCauseIndicators().getLocation(), original.getReleaseCause().getCauseIndicators().getLocation());
-		assertEquals(copy.getReleaseCause().getCauseIndicators().getCauseValue(), original.getReleaseCause().getCauseIndicators().getCauseValue());
-		assertEquals(copy.getReleaseCause().getCauseIndicators().getCodingStandard(), original.getReleaseCause().getCauseIndicators().getCodingStandard());
-	}
+        assertEquals(copy.getReleaseCause().getCauseIndicators().getLocation(), original.getReleaseCause().getCauseIndicators()
+                .getLocation());
+        assertEquals(copy.getReleaseCause().getCauseIndicators().getCauseValue(), original.getReleaseCause()
+                .getCauseIndicators().getCauseValue());
+        assertEquals(copy.getReleaseCause().getCauseIndicators().getCodingStandard(), original.getReleaseCause()
+                .getCauseIndicators().getCodingStandard());
+    }
 
 }

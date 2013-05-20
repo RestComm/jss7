@@ -23,10 +23,10 @@
 /**
  * Start time:08:17:06 2009-04-06<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
- * 
+ *
  */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
@@ -39,74 +39,68 @@ import org.mobicents.protocols.ss7.isup.message.parameter.HTRInformation;
 /**
  * Start time:08:17:06 2009-04-06<br>
  * Project: mobicents-isup-stack<br>
- * 
- * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
- *         </a>
+ *
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class HTRInformationImpl extends AbstractNAINumber implements HTRInformation{
-	
-	
-	
+public class HTRInformationImpl extends AbstractNAINumber implements HTRInformation {
 
-	private int numberingPlanIndicator;
+    private int numberingPlanIndicator;
 
-	public HTRInformationImpl(byte[] representation) throws ParameterException {
-		super(representation);
-		
-	}
+    public HTRInformationImpl(byte[] representation) throws ParameterException {
+        super(representation);
 
-	public HTRInformationImpl(ByteArrayInputStream bis) throws ParameterException {
-		super(bis);
-		
-	}
+    }
 
-	public HTRInformationImpl(int natureOfAddresIndicator, String address, int numberingPlanIndicator) {
-		super(natureOfAddresIndicator, address);
-		this.numberingPlanIndicator = numberingPlanIndicator;
-	}
+    public HTRInformationImpl(ByteArrayInputStream bis) throws ParameterException {
+        super(bis);
 
-	public HTRInformationImpl() {
-		super();
-		
-	}
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.mobicents.isup.parameters.AbstractNumber#decodeBody(java.io.
-	 * ByteArrayInputStream)
-	 */
-	
-	public int decodeBody(ByteArrayInputStream bis) throws IllegalArgumentException {
-		int b = bis.read() & 0xff;
+    public HTRInformationImpl(int natureOfAddresIndicator, String address, int numberingPlanIndicator) {
+        super(natureOfAddresIndicator, address);
+        this.numberingPlanIndicator = numberingPlanIndicator;
+    }
 
-		this.numberingPlanIndicator = (b & 0x70) >> 4;
-		return 1;
-	}
+    public HTRInformationImpl() {
+        super();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.mobicents.isup.parameters.AbstractNumber#encodeBody(java.io.
-	 * ByteArrayOutputStream)
-	 */
-	
-	public int encodeBody(ByteArrayOutputStream bos) {
-		int c = (this.numberingPlanIndicator & 0x07) << 4;
-		bos.write(c);
-		return 1;
-	}
+    }
 
-	public int getNumberingPlanIndicator() {
-		return numberingPlanIndicator;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @seeorg.mobicents.isup.parameters.AbstractNumber#decodeBody(java.io. ByteArrayInputStream)
+     */
 
-	public void setNumberingPlanIndicator(int numberingPlanIndicator) {
-		this.numberingPlanIndicator = numberingPlanIndicator;
-	}
+    public int decodeBody(ByteArrayInputStream bis) throws IllegalArgumentException {
+        int b = bis.read() & 0xff;
 
-	public int getCode() {
+        this.numberingPlanIndicator = (b & 0x70) >> 4;
+        return 1;
+    }
 
-		return _PARAMETER_CODE;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @seeorg.mobicents.isup.parameters.AbstractNumber#encodeBody(java.io. ByteArrayOutputStream)
+     */
+
+    public int encodeBody(ByteArrayOutputStream bos) {
+        int c = (this.numberingPlanIndicator & 0x07) << 4;
+        bos.write(c);
+        return 1;
+    }
+
+    public int getNumberingPlanIndicator() {
+        return numberingPlanIndicator;
+    }
+
+    public void setNumberingPlanIndicator(int numberingPlanIndicator) {
+        this.numberingPlanIndicator = numberingPlanIndicator;
+    }
+
+    public int getCode() {
+
+        return _PARAMETER_CODE;
+    }
 }

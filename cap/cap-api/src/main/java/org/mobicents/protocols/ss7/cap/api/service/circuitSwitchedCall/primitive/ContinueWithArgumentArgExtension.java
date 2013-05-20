@@ -23,27 +23,23 @@
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
-*
-ContinueWithArgumentArgExtension {PARAMETERS-BOUND : bound} ::= SEQUENCE { 
- suppress-D-CSI      [0] NULL         OPTIONAL, 
- suppress-N-CSI      [1] NULL         OPTIONAL, 
- suppressOutgoingCallBarring   [2] NULL         OPTIONAL, 
- legOrCallSegment     [3] LegOrCallSegment {bound}    OPTIONAL, 
- ... 
- } 
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ ContinueWithArgumentArgExtension {PARAMETERS-BOUND : bound} ::= SEQUENCE { suppress-D-CSI [0] NULL OPTIONAL, suppress-N-CSI
+ * [1] NULL OPTIONAL, suppressOutgoingCallBarring [2] NULL OPTIONAL, legOrCallSegment [3] LegOrCallSegment {bound} OPTIONAL, ...
+ * }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface ContinueWithArgumentArgExtension {
 
-	public boolean getSuppressDCsi();
+    boolean getSuppressDCsi();
 
-	public boolean getSuppressNCsi();
+    boolean getSuppressNCsi();
 
-	public boolean getSuppressOutgoingCallBarring();
+    boolean getSuppressOutgoingCallBarring();
 
-	public LegOrCallSegment getLegOrCallSegment();
+    LegOrCallSegment getLegOrCallSegment();
 
 }

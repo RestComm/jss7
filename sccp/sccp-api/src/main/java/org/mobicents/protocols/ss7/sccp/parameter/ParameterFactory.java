@@ -30,45 +30,44 @@ import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
  *
  * @author kulikov
  */
-public interface ParameterFactory extends Serializable  {
+public interface ParameterFactory extends Serializable {
 
-	/**
-	 * Create SccpAddress parameter
-	 * 
-	 * @param ri
-	 * @param dpc
-	 * @param gt
-	 * @param ssn
-	 * @return
-	 */
-	public SccpAddress createSccpAddress(RoutingIndicator ri, int dpc, GlobalTitle gt, int ssn);
-	
+    /**
+     * Create SccpAddress parameter
+     *
+     * @param ri
+     * @param dpc
+     * @param gt
+     * @param ssn
+     * @return
+     */
+    SccpAddress createSccpAddress(RoutingIndicator ri, int dpc, GlobalTitle gt, int ssn);
+
     /**
      * Create Importance parameter.
-     * 
+     *
      * @param value the value of this parameter
      * @return parameter
      */
-    public Importance createImportance(int value);
+    Importance createImportance(int value);
 
     /**
      * Create hop counter parameter
      */
-    public HopCounter createHopCounter(int hopCount);
+    HopCounter createHopCounter(int hopCount);
 
-    
-//    public ReturnCause createReturnCause(int cause);
-//  /** 
-//  * Creates protocol class parameter.
-//  * 
-//  * @param value the value of the parameter
-//  * @return parameter
-//  */
-// public ProtocolClass createProtocolClass(int pClass, boolean returnMessageOnError);
-//    /**
-//     * Create segemntation parameter
-//     * 
-//     * @return parameter.
-//     */
-//    public Segmentation createSegmentation();
+    // ReturnCause createReturnCause(int cause);
+    // /**
+    // * Creates protocol class parameter.
+    // *
+    // * @param value the value of the parameter
+    // * @return parameter
+    // */
+    // ProtocolClass createProtocolClass(int pClass, boolean returnMessageOnError);
+    // /**
+    // * Create segemntation parameter
+    // *
+    // * @return parameter.
+    // */
+    // Segmentation createSegmentation();
 }

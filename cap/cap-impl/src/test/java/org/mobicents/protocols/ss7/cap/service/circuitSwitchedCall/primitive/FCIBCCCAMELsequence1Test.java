@@ -35,43 +35,42 @@ import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class FCIBCCCAMELsequence1Test {
 
-	public byte[] getData1() {
-		return new byte[] { 48, 14, (byte) 128, 4, 4, 5, 6, 7, (byte) 161, 3, (byte) 128, 1, 2, (byte) 130, 1, 1 };
-	}
+    public byte[] getData1() {
+        return new byte[] { 48, 14, (byte) 128, 4, 4, 5, 6, 7, (byte) 161, 3, (byte) 128, 1, 2, (byte) 130, 1, 1 };
+    }
 
-	public byte[] getDataFFD() {
-		return new byte[] { 4, 5, 6, 7 };
-	}
+    public byte[] getDataFFD() {
+        return new byte[] { 4, 5, 6, 7 };
+    }
 
-	@Test(groups = { "functional.decode","circuitSwitchedCall.primitive"})
-	public void testDecode() throws Exception {
+    @Test(groups = { "functional.decode", "circuitSwitchedCall.primitive" })
+    public void testDecode() throws Exception {
 
-		byte[] data = this.getData1();
-		AsnInputStream ais = new AsnInputStream(data);
-		FCIBCCCAMELsequence1Impl elem = new FCIBCCCAMELsequence1Impl();
-		int tag = ais.readTag();
-		elem.decodeAll(ais);
-		assertTrue(Arrays.equals(elem.getFreeFormatData(), this.getDataFFD()));
-		assertEquals(elem.getPartyToCharge().getSendingSideID(), LegType.leg2);
-		assertEquals(elem.getAppendFreeFormatData(), AppendFreeFormatData.append);
-	}
+        byte[] data = this.getData1();
+        AsnInputStream ais = new AsnInputStream(data);
+        FCIBCCCAMELsequence1Impl elem = new FCIBCCCAMELsequence1Impl();
+        int tag = ais.readTag();
+        elem.decodeAll(ais);
+        assertTrue(Arrays.equals(elem.getFreeFormatData(), this.getDataFFD()));
+        assertEquals(elem.getPartyToCharge().getSendingSideID(), LegType.leg2);
+        assertEquals(elem.getAppendFreeFormatData(), AppendFreeFormatData.append);
+    }
 
-	@Test(groups = { "functional.encode","circuitSwitchedCall.primitive"})
-	public void testEncode() throws Exception {
+    @Test(groups = { "functional.encode", "circuitSwitchedCall.primitive" })
+    public void testEncode() throws Exception {
 
-		SendingSideIDImpl partyToCharge = new SendingSideIDImpl(LegType.leg2);
-		FCIBCCCAMELsequence1Impl elem = new FCIBCCCAMELsequence1Impl(getDataFFD(), partyToCharge, AppendFreeFormatData.append);
-		AsnOutputStream aos = new AsnOutputStream();
-		elem.encodeAll(aos);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
+        SendingSideIDImpl partyToCharge = new SendingSideIDImpl(LegType.leg2);
+        FCIBCCCAMELsequence1Impl elem = new FCIBCCCAMELsequence1Impl(getDataFFD(), partyToCharge, AppendFreeFormatData.append);
+        AsnOutputStream aos = new AsnOutputStream();
+        elem.encodeAll(aos);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
 
-		// byte[] freeFormatData, SendingSideID partyToCharge, AppendFreeFormatData appendFreeFormatData
-	}
+        // byte[] freeFormatData, SendingSideID partyToCharge, AppendFreeFormatData appendFreeFormatData
+    }
 }
-

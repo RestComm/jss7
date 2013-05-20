@@ -25,34 +25,27 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformati
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-ModificationRequestFor-CSI ::= SEQUENCE {
-	requestedCamel-SubscriptionInfo	[0]	RequestedCAMEL-SubscriptionInfo,
-	modifyNotificationToCSE	[1]	ModificationInstruction	OPTIONAL,
-	modifyCSI-State	[2]	ModificationInstruction	OPTIONAL,
-	extensionContainer	[3]	ExtensionContainer	OPTIONAL,
-	...,
-	additionalRequestedCAMEL-SubscriptionInfo
-				[4] AdditionalRequestedCAMEL-SubscriptionInfo
-							OPTIONAL }
--- requestedCamel-SubscriptionInfo shall be discarded if
--- additionalRequestedCAMEL-SubscriptionInfo is received
-
- * 
+ *
+ ModificationRequestFor-CSI ::= SEQUENCE { requestedCamel-SubscriptionInfo [0] RequestedCAMEL-SubscriptionInfo,
+ * modifyNotificationToCSE [1] ModificationInstruction OPTIONAL, modifyCSI-State [2] ModificationInstruction OPTIONAL,
+ * extensionContainer [3] ExtensionContainer OPTIONAL, ..., additionalRequestedCAMEL-SubscriptionInfo [4]
+ * AdditionalRequestedCAMEL-SubscriptionInfo OPTIONAL } -- requestedCamel-SubscriptionInfo shall be discarded if --
+ * additionalRequestedCAMEL-SubscriptionInfo is received
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ModificationRequestForCSI {
 
-	public RequestedCAMELSubscriptionInfo getRequestedCamelSubscriptionInfo();
+    RequestedCAMELSubscriptionInfo getRequestedCamelSubscriptionInfo();
 
-	public ModificationInstruction getModifyNotificationToCSE();
+    ModificationInstruction getModifyNotificationToCSE();
 
-	public ModificationInstruction getModifyCSIState();
+    ModificationInstruction getModifyCSIState();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public AdditionalRequestedCAMELSubscriptionInfo getAdditionalRequestedCamelSubscriptionInfo();
+    AdditionalRequestedCAMELSubscriptionInfo getAdditionalRequestedCamelSubscriptionInfo();
 
 }

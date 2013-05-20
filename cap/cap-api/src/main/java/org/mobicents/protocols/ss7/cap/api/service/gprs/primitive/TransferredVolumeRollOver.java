@@ -23,26 +23,20 @@
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
 /**
-*
-
-TransferredVolumeRollOver ::= CHOICE {
-rO-VolumeIfNoTariffSwitch [0] INTEGER (0..255),
-rO-VolumeIfTariffSwitch [1] SEQUENCE {
-rO-VolumeSinceLastTariffSwitch [0] INTEGER (0..255) OPTIONAL,
-rO-VolumeTariffSwitchInterval [1] INTEGER (0..255) OPTIONAL
-}
-}
--- rO-VolumeIfNoTariffSwitch, rO-VolumeSinceLastTariffSwitch and rO-VolumeTariffSwitchInterval
--- present counters indicating the number of parameter range rollovers.
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ TransferredVolumeRollOver ::= CHOICE { rO-VolumeIfNoTariffSwitch [0] INTEGER (0..255), rO-VolumeIfTariffSwitch [1] SEQUENCE {
+ * rO-VolumeSinceLastTariffSwitch [0] INTEGER (0..255) OPTIONAL, rO-VolumeTariffSwitchInterval [1] INTEGER (0..255) OPTIONAL } }
+ * -- rO-VolumeIfNoTariffSwitch, rO-VolumeSinceLastTariffSwitch and rO-VolumeTariffSwitchInterval -- present counters indicating
+ * the number of parameter range rollovers.
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface TransferredVolumeRollOver {
 
-	public Integer getROVolumeIfNoTariffSwitch();
+    Integer getROVolumeIfNoTariffSwitch();
 
-	public ROVolumeIfTariffSwitch getROVolumeIfTariffSwitch();
+    ROVolumeIfTariffSwitch getROVolumeIfTariffSwitch();
 
 }

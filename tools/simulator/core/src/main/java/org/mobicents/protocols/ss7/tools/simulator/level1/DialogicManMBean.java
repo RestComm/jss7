@@ -23,19 +23,18 @@
 package org.mobicents.protocols.ss7.tools.simulator.level1;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface DialogicManMBean {
 
-	public int getSourceModuleId();
+    int getSourceModuleId();
 
-	public void setSourceModuleId(int val);
+    void setSourceModuleId(int val);
 
-	public int getDestinationModuleId();
+    int getDestinationModuleId();
 
-	public void setDestinationModuleId(int val);
+    void setDestinationModuleId(int val);
 
 }
-

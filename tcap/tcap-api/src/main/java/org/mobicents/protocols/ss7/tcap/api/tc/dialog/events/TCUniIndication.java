@@ -21,7 +21,7 @@
  */
 
 /**
- * 
+ *
  */
 package org.mobicents.protocols.ss7.tcap.api.tc.dialog.events;
 
@@ -31,18 +31,18 @@ import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 
 /**
  * @author baranowb
- * 
+ *
  */
 public interface TCUniIndication extends DialogIndication {
 
-//	public Byte getQOS();
+    // public Byte getQOS();
 
-	// parts from DialogPortion, if present
-	public ApplicationContextName getApplicationContextName();
+    // parts from DialogPortion, if present
+    ApplicationContextName getApplicationContextName();
 
-	public UserInformation getUserInformation();
+    UserInformation getUserInformation();
 
-	public SccpAddress getDestinationAddress();
+    SccpAddress getDestinationAddress();
 
-	public SccpAddress getOriginatingAddress();
+    SccpAddress getOriginatingAddress();
 }

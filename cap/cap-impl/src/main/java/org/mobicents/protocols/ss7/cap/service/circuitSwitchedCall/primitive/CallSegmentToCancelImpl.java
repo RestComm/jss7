@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -38,200 +38,199 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
  * @author Amit Bhayani
- * 
+ *
  */
 public class CallSegmentToCancelImpl implements CallSegmentToCancel, CAPAsnPrimitive {
 
-	private static final String INVOKE_ID = "invokeID";
-	private static final String CALL_SEGMENT_ID = "callSegmentID";
+    private static final String INVOKE_ID = "invokeID";
+    private static final String CALL_SEGMENT_ID = "callSegmentID";
 
-	public static final int _ID_invokeID = 0;
-	public static final int _ID_callSegmentID = 1;
+    public static final int _ID_invokeID = 0;
+    public static final int _ID_callSegmentID = 1;
 
-	public static final String _PrimitiveName = "CallSegmentToCancel";
+    public static final String _PrimitiveName = "CallSegmentToCancel";
 
-	private Integer invokeID;
-	private Integer callSegmentID;
+    private Integer invokeID;
+    private Integer callSegmentID;
 
-	public CallSegmentToCancelImpl() {
-	}
+    public CallSegmentToCancelImpl() {
+    }
 
-	public CallSegmentToCancelImpl(Integer invokeID, Integer callSegmentID) {
-		this.invokeID = invokeID;
-		this.callSegmentID = callSegmentID;
-	}
+    public CallSegmentToCancelImpl(Integer invokeID, Integer callSegmentID) {
+        this.invokeID = invokeID;
+        this.callSegmentID = callSegmentID;
+    }
 
-	@Override
-	public Integer getInvokeID() {
-		return invokeID;
-	}
+    @Override
+    public Integer getInvokeID() {
+        return invokeID;
+    }
 
-	@Override
-	public Integer getCallSegmentID() {
-		return callSegmentID;
-	}
+    @Override
+    public Integer getCallSegmentID() {
+        return callSegmentID;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.SEQUENCE;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException,
-			AsnException {
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		this.invokeID = null;
-		this.callSegmentID = null;
+        this.invokeID = null;
+        this.callSegmentID = null;
 
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-			int tag = ais.readTag();
+            int tag = ais.readTag();
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_invokeID:
-					this.invokeID = (int) ais.readInteger();
-					break;
-				case _ID_callSegmentID:
-					this.callSegmentID = (int) ais.readInteger();
-					break;
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_invokeID:
+                        this.invokeID = (int) ais.readInteger();
+                        break;
+                    case _ID_callSegmentID:
+                        this.callSegmentID = (int) ais.readInteger();
+                        break;
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
-	}
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 
-	}
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream aos) throws CAPException {
+    @Override
+    public void encodeData(AsnOutputStream aos) throws CAPException {
 
-		try {
-			if (this.invokeID != null)
-				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_invokeID, this.invokeID);
-			if (this.callSegmentID != null)
-				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_callSegmentID, this.callSegmentID);
+        try {
+            if (this.invokeID != null)
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_invokeID, this.invokeID);
+            if (this.callSegmentID != null)
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_callSegmentID, this.callSegmentID);
 
-		} catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public String toString() {
+    @Override
+    public String toString() {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		if (this.invokeID != null) {
-			sb.append("invokeID=");
-			sb.append(this.invokeID);
-		}
-		if (this.callSegmentID != null) {
-			sb.append(", callSegmentID=");
-			sb.append(this.callSegmentID);
-		}
+        if (this.invokeID != null) {
+            sb.append("invokeID=");
+            sb.append(this.invokeID);
+        }
+        if (this.callSegmentID != null) {
+            sb.append(", callSegmentID=");
+            sb.append(this.callSegmentID);
+        }
 
-		sb.append("]");
+        sb.append("]");
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 
-	/**
-	 * XML Serialization/Deserialization
-	 */
-	protected static final XMLFormat<CallSegmentToCancelImpl> CALL_SEGMENT_TO_CANCEL_XML = new XMLFormat<CallSegmentToCancelImpl>(
-			CallSegmentToCancelImpl.class) {
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<CallSegmentToCancelImpl> CALL_SEGMENT_TO_CANCEL_XML = new XMLFormat<CallSegmentToCancelImpl>(
+            CallSegmentToCancelImpl.class) {
 
-		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml, CallSegmentToCancelImpl callSegmentToCancel)
-				throws XMLStreamException {
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, CallSegmentToCancelImpl callSegmentToCancel)
+                throws XMLStreamException {
 
-			callSegmentToCancel.invokeID = xml.get(INVOKE_ID, Integer.class);
-			callSegmentToCancel.callSegmentID = xml.get(CALL_SEGMENT_ID, Integer.class);
-		}
+            callSegmentToCancel.invokeID = xml.get(INVOKE_ID, Integer.class);
+            callSegmentToCancel.callSegmentID = xml.get(CALL_SEGMENT_ID, Integer.class);
+        }
 
-		@Override
-		public void write(CallSegmentToCancelImpl callSegmentToCancel, javolution.xml.XMLFormat.OutputElement xml)
-				throws XMLStreamException {
+        @Override
+        public void write(CallSegmentToCancelImpl callSegmentToCancel, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
 
-			if (callSegmentToCancel.invokeID != null) {
-				xml.add(((Integer) callSegmentToCancel.invokeID), INVOKE_ID, Integer.class);
-			}
+            if (callSegmentToCancel.invokeID != null) {
+                xml.add(((Integer) callSegmentToCancel.invokeID), INVOKE_ID, Integer.class);
+            }
 
-			if (callSegmentToCancel.callSegmentID != null) {
-				xml.add(((Integer) callSegmentToCancel.callSegmentID), CALL_SEGMENT_ID, Integer.class);
-			}
+            if (callSegmentToCancel.callSegmentID != null) {
+                xml.add(((Integer) callSegmentToCancel.callSegmentID), CALL_SEGMENT_ID, Integer.class);
+            }
 
-		}
-	};
+        }
+    };
 }

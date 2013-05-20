@@ -27,7 +27,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.HeartbeatData;
 import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
 
 /**
- * 
+ *
  * @author amit bhayani
  *
  */

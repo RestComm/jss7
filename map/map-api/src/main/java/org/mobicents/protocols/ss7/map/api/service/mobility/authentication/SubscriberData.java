@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
 
 import java.util.ArrayList;
+
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BearerServiceCode;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.Category;
@@ -33,54 +34,43 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SSInfo;
 
 /**
- * 
-
-SubscriberData ::= SEQUENCE { 
-	msisdn 				[1] ISDN-AddressString OPTIONAL, 
-	category 			[2] Category OPTIONAL, 
-	subscriberStatus 	[3] SubscriberStatus OPTIONAL, 
-	bearerServiceList 	[4] BearerServiceList OPTIONAL, 
-	teleserviceList 	[6] TeleserviceList OPTIONAL, 
-	provisionedSS 		[7] SS-InfoList OPTIONAL, 
-	odb-Data 			[8] ODB-Data OPTIONAL, 
--- odb-Data must be absent in version 1
-	roamingRestrictionDueToUnsupportedFeature [9] NULL OPTIONAL, 
--- roamingRestrictionDueToUnsupportedFeature must be absent
--- in version 1
-	regionalSubscriptionData [10] ZoneCodeList OPTIONAL 
--- regionalSubscriptionData must be absent in version 1
-}
-
-BearerServiceList ::= SEQUENCE SIZE (1..50) OF BearerServiceCode
-
-TeleserviceList ::= SEQUENCE SIZE (1..20) OF TeleserviceCode
-
-SS-InfoList ::= SEQUENCE SIZE (1..30) OF SS-Info
-
-ZoneCodeList ::= SEQUENCE SIZE (1..10) OF ZoneCode
-
- * 
+ *
+ SubscriberData ::= SEQUENCE { msisdn [1] ISDN-AddressString OPTIONAL, category [2] Category OPTIONAL, subscriberStatus [3]
+ * SubscriberStatus OPTIONAL, bearerServiceList [4] BearerServiceList OPTIONAL, teleserviceList [6] TeleserviceList OPTIONAL,
+ * provisionedSS [7] SS-InfoList OPTIONAL, odb-Data [8] ODB-Data OPTIONAL, -- odb-Data must be absent in version 1
+ * roamingRestrictionDueToUnsupportedFeature [9] NULL OPTIONAL, -- roamingRestrictionDueToUnsupportedFeature must be absent --
+ * in version 1 regionalSubscriptionData [10] ZoneCodeList OPTIONAL -- regionalSubscriptionData must be absent in version 1 }
+ *
+ * BearerServiceList ::= SEQUENCE SIZE (1..50) OF BearerServiceCode
+ *
+ * TeleserviceList ::= SEQUENCE SIZE (1..20) OF TeleserviceCode
+ *
+ * SS-InfoList ::= SEQUENCE SIZE (1..30) OF SS-Info
+ *
+ * ZoneCodeList ::= SEQUENCE SIZE (1..10) OF ZoneCode
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SubscriberData {
 
-	public ISDNAddressString getMsisdn();
+    ISDNAddressString getMsisdn();
 
-	public Category getCategory();
+    Category getCategory();
 
-	public SubscriberStatus getSubscriberStatus();
+    SubscriberStatus getSubscriberStatus();
 
-	public ArrayList<BearerServiceCode> getBearerServiceList();
+    ArrayList<BearerServiceCode> getBearerServiceList();
 
-	public ArrayList<TeleserviceCode> getTeleserviceList();
+    ArrayList<TeleserviceCode> getTeleserviceList();
 
-	public ArrayList<SSInfo> getProvisionedSS();
+    ArrayList<SSInfo> getProvisionedSS();
 
-	public ODBData getOdbData();
+    ODBData getOdbData();
 
-	public boolean getRoamingRestrictionDueToUnsupportedFeature();
+    boolean getRoamingRestrictionDueToUnsupportedFeature();
 
-	public ArrayList<ZoneCode> getRegionalSubscriptionData();
+    ArrayList<ZoneCode> getRegionalSubscriptionData();
 
 }

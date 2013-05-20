@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -29,12 +29,12 @@ import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSM;
  */
 public class SEHLocalAsStateEnterPen extends SEHAsStateEnterPen {
 
-	/**
-	 * @param asImpl
-	 * @param fsm
-	 */
-	public SEHLocalAsStateEnterPen(AsImpl asImpl, FSM fsm) {
-		super(asImpl, fsm);
-	}
+    /**
+     * @param asImpl
+     * @param fsm
+     */
+    public SEHLocalAsStateEnterPen(AsImpl asImpl, FSM fsm) {
+        super(asImpl, fsm);
+    }
 
 }

@@ -23,15 +23,13 @@
 package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 
 /**
-*
-MetDPCriterionAlt {PARAMETERS-BOUND : bound} ::= SEQUENCE {
-...
-}
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ MetDPCriterionAlt {PARAMETERS-BOUND : bound} ::= SEQUENCE { ... }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface MetDPCriterionAlt {
 
 }

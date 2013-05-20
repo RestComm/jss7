@@ -33,14 +33,12 @@ package org.mobicents.protocols.ss7.isup.message;
  * <TD style="FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: teal; HEIGHT: 28px; TEXT-ALIGN: center" colSpan="3">
  * Forward Transfer&nbsp;&nbsp;Message (FOT)</TD>
  * </TR>
- * 
+ *
  * <TR>
  * <TD style="FONT-SIZE: 9pt; COLOR: navy" colSpan="3">
- * <FONT face="Times New Roman" size="3">A message sent in the forward direction
- * on semi automatic calls when the outgoing international exchange operator
- * wants the help of an operator at the incoming international exchange. The
- * message will normally serve to bring an assistance operator into the call if
- * the call is automatically set up at the exchange.</FONT></TD>
+ * <FONT face="Times New Roman" size="3">A message sent in the forward direction on semi automatic calls when the outgoing
+ * international exchange operator wants the help of an operator at the incoming international exchange. The message will
+ * normally serve to bring an assistance operator into the call if the call is automatically set up at the exchange.</FONT></TD>
  * </TR>
  * </TABLE>
  * </TD>
@@ -48,7 +46,7 @@ package org.mobicents.protocols.ss7.isup.message;
  * <TR>
  * <TD style="FONT-WEIGHT: bold; WIDTH: 283px; HEIGHT: 30px; TEXT-ALIGN: center">
  * Parameter</TD>
- * 
+ *
  * <TD style="FONT-WEIGHT: bold; WIDTH: 145px; HEIGHT: 30px">Type</TD>
  * <TD style="FONT-WEIGHT: bold; HEIGHT: 30px">Length (octet)</TD>
  * </TR>
@@ -56,7 +54,7 @@ package org.mobicents.protocols.ss7.isup.message;
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Message type</TD>
  * <TD style="WIDTH: 145px">F</TD>
  * <TD>1</TD>
- * 
+ *
  * </TR>
  * <TR>
  * <TD style="WIDTH: 283px; HEIGHT: 18px; TEXT-ALIGN: left">Call Reference</TD>
@@ -64,19 +62,19 @@ package org.mobicents.protocols.ss7.isup.message;
  * <TD style="HEIGHT: 18px">7</TD>
  * </TR>
  * <TR>
- * 
+ *
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">End of Optional Parameters</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>1</TD>
  * </TR>
  * </TABLE>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface ForwardTransferMessage extends ISUPMessage {
-	/**
-	 * Forward Transfer Message, Q.763 reference table 37 <br>
-	 * {@link ForwardTransferMessage}
-	 */
-	public static final int MESSAGE_CODE = 0x08;
+    /**
+     * Forward Transfer Message, Q.763 reference table 37 <br>
+     * {@link ForwardTransferMessage}
+     */
+    int MESSAGE_CODE = 0x08;
 }

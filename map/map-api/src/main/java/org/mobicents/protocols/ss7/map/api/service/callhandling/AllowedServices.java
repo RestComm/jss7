@@ -23,17 +23,15 @@
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
 /**
- * AllowedServices ::= BIT STRING {
- * firstServiceAllowed (0),
- * secondServiceAllowed (1) } (SIZE (2..8))
- * -- firstService is the service indicated in the networkSignalInfo
- * -- secondService is the service indicated in the networkSignalInfo2
- * -- Other bits than listed above shall be discarded
- * 
+ * AllowedServices ::= BIT STRING { firstServiceAllowed (0), secondServiceAllowed (1) } (SIZE (2..8)) -- firstService is the
+ * service indicated in the networkSignalInfo -- secondService is the service indicated in the networkSignalInfo2 -- Other bits
+ * than listed above shall be discarded
+ *
  * @author cristian veliscu
- * 
+ *
  */
 public interface AllowedServices {
-	public boolean getFirstServiceAllowed();
-	public boolean getSecondServiceAllowed();
+    boolean getFirstServiceAllowed();
+
+    boolean getSecondServiceAllowed();
 }

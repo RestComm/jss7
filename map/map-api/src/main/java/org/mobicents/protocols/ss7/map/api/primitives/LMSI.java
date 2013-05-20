@@ -26,13 +26,13 @@ import java.io.Serializable;
 
 /**
  * LMSI ::= OCTET STRING (SIZE (4))
- * 
- * 
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface LMSI extends Serializable {
 
-	public byte[] getData();
+    byte[] getData();
 
 }

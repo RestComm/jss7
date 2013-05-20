@@ -26,72 +26,73 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.primitives.OctetStringLength1Base;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class LSAAttributesImpl extends OctetStringLength1Base implements LSAAttributes{
+public class LSAAttributesImpl extends OctetStringLength1Base implements LSAAttributes {
 
-	static private int preferentialAccess_mask = 0x10;
-	static private int activeModeSupport_mask = 0x20;
-	static private int lsaIdentificationPriority_mask = 0x0F;
+    private static int preferentialAccess_mask = 0x10;
+    private static int activeModeSupport_mask = 0x20;
+    private static int lsaIdentificationPriority_mask = 0x0F;
 
+    public LSAAttributesImpl() {
+        super("LSAAttributes");
+    }
 
-	public LSAAttributesImpl() {
-		super("LSAAttributes");
-	}
+    public LSAAttributesImpl(int data) {
+        super("LSAAttributes", data);
+    }
 
-	public LSAAttributesImpl(int data) {
-		super("LSAAttributes", data);
-	}
-	
-	public LSAAttributesImpl(LSAIdentificationPriorityValue value,boolean preferentialAccessAvailable,boolean activeModeSupportAvailable) {
-		super("LSAAttributes",value.getCode() | (preferentialAccessAvailable?preferentialAccess_mask:0) | (activeModeSupportAvailable?activeModeSupport_mask:0));
-	}
-	
-	@Override
-	public int getData() {
-		return data;
-	}
-	
-	@Override
-	public LSAIdentificationPriorityValue getLSAIdentificationPriority(){
-		return LSAIdentificationPriorityValue.getInstance(data & lsaIdentificationPriority_mask);
-	}
-	
-	@Override
-	public boolean isPreferentialAccessAvailable(){
-		return ((data & preferentialAccess_mask ) == preferentialAccess_mask);
-	}
-	
-	@Override
-	public boolean isActiveModeSupportAvailable(){
-		return ((data & activeModeSupport_mask ) == activeModeSupport_mask);
-	} 
+    public LSAAttributesImpl(LSAIdentificationPriorityValue value, boolean preferentialAccessAvailable,
+            boolean activeModeSupportAvailable) {
+        super("LSAAttributes", value.getCode() | (preferentialAccessAvailable ? preferentialAccess_mask : 0)
+                | (activeModeSupportAvailable ? activeModeSupport_mask : 0));
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(this._PrimitiveName);
-		sb.append(" [");
+    @Override
+    public int getData() {
+        return data;
+    }
 
-		sb.append("  LSAIdentificationPriorityValue=");
-		sb.append(this.getLSAIdentificationPriority());
+    @Override
+    public LSAIdentificationPriorityValue getLSAIdentificationPriority() {
+        return LSAIdentificationPriorityValue.getInstance(data & lsaIdentificationPriority_mask);
+    }
 
-		if(this.isPreferentialAccessAvailable()){
-			sb.append(" , PreferentialAccessAvailable ");
-		}
+    @Override
+    public boolean isPreferentialAccessAvailable() {
+        return ((data & preferentialAccess_mask) == preferentialAccess_mask);
+    }
 
-		if(this.isActiveModeSupportAvailable()){
-			sb.append(" , ActiveModeSupportAvailable ");
-		}
+    @Override
+    public boolean isActiveModeSupportAvailable() {
+        return ((data & activeModeSupport_mask) == activeModeSupport_mask);
+    }
 
-		sb.append(", Data=");
-		sb.append(this.data);
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(this._PrimitiveName);
+        sb.append(" [");
 
-		sb.append("]");
+        sb.append("  LSAIdentificationPriorityValue=");
+        sb.append(this.getLSAIdentificationPriority());
 
-		return sb.toString();
-	}
+        if (this.isPreferentialAccessAvailable()) {
+            sb.append(" , PreferentialAccessAvailable ");
+        }
+
+        if (this.isActiveModeSupportAvailable()) {
+            sb.append(" , ActiveModeSupportAvailable ");
+        }
+
+        sb.append(", Data=");
+        sb.append(this.data);
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 
 }

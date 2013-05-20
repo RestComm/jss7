@@ -36,189 +36,189 @@ import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class TransferredVolumeImpl  implements TransferredVolume , CAPAsnPrimitive{
-	
-	public static final String _PrimitiveName = "TransferredVolume";
-	
-	public static final int _ID_volumeIfNoTariffSwitch = 0;
-	public static final int _ID_volumeIfTariffSwitch = 1;
-	
-	private Long volumeIfNoTariffSwitch;
-	private VolumeIfTariffSwitch volumeIfTariffSwitch;
-	
-	public TransferredVolumeImpl() {
+public class TransferredVolumeImpl implements TransferredVolume, CAPAsnPrimitive {
 
-	}
-	
-	public TransferredVolumeImpl(Long volumeIfNoTariffSwitch) {
-		this.volumeIfNoTariffSwitch = volumeIfNoTariffSwitch;
-	}
-	
-	public TransferredVolumeImpl(VolumeIfTariffSwitch volumeIfTariffSwitch) {
-		this.volumeIfTariffSwitch = volumeIfTariffSwitch;
-	}
-	
-	public Long getVolumeIfNoTariffSwitch(){
-		return this.volumeIfNoTariffSwitch;
-	}
+    public static final String _PrimitiveName = "TransferredVolume";
 
-	public VolumeIfTariffSwitch getVolumeIfTariffSwitch(){
-		return this.volumeIfTariffSwitch;
-	}
+    public static final int _ID_volumeIfNoTariffSwitch = 0;
+    public static final int _ID_volumeIfTariffSwitch = 1;
 
-	@Override
-	public int getTag() throws CAPException {
-		if(volumeIfNoTariffSwitch!=null){
-			return _ID_volumeIfNoTariffSwitch;
-		}else{
-			return _ID_volumeIfTariffSwitch;
-		}		
-	}
-	
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_CONTEXT_SPECIFIC;
-	}
-	
-	@Override
-	public boolean getIsPrimitive() {
-		if(volumeIfNoTariffSwitch!=null){
-			return true;
-		}else{
-			return false;
-		}	
-	}
-	
-	@Override
-	public void decodeAll(AsnInputStream ansIS)
-			throws CAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length)
-			throws CAPParsingComponentException {
+    private Long volumeIfNoTariffSwitch;
+    private VolumeIfTariffSwitch volumeIfTariffSwitch;
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-		
-	}
-	
-	private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, IOException, AsnException, MAPParsingComponentException {
-		
-		this.volumeIfNoTariffSwitch = null;
-		this.volumeIfTariffSwitch = null;
+    public TransferredVolumeImpl() {
 
-		int tag = ais.getTag();
+    }
 
-		if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-			switch (tag) {
-			case _ID_volumeIfNoTariffSwitch:
-				if (!ais.isTagPrimitive())
-					throw new CAPParsingComponentException(
-							"Error while decoding " + _PrimitiveName + ".volumeIfNoTariffSwitch: Parameter is not primitive",
-							CAPParsingComponentExceptionReason.MistypedParameter);
-				this.volumeIfNoTariffSwitch = ais.readIntegerData(length);
-				break;
-			case _ID_volumeIfTariffSwitch:
-				if (ais.isTagPrimitive())
-					throw new CAPParsingComponentException(
-							"Error while decoding " + _PrimitiveName + ".volumeIfTariffSwitch: Parameter is primitive",
-							CAPParsingComponentExceptionReason.MistypedParameter);
-				this.volumeIfTariffSwitch = new VolumeIfTariffSwitchImpl();
-				((VolumeIfTariffSwitchImpl) this.volumeIfTariffSwitch).decodeData(ais, length);
-				break;
+    public TransferredVolumeImpl(Long volumeIfNoTariffSwitch) {
+        this.volumeIfNoTariffSwitch = volumeIfNoTariffSwitch;
+    }
 
-			default:
-				throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tag",
-						CAPParsingComponentExceptionReason.MistypedParameter);
-			}
-		} else {
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tagClass",
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
+    public TransferredVolumeImpl(VolumeIfTariffSwitch volumeIfTariffSwitch) {
+        this.volumeIfTariffSwitch = volumeIfTariffSwitch;
+    }
 
-	}
-	
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-		}
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag)
-			throws CAPException {
+    public Long getVolumeIfNoTariffSwitch() {
+        return this.volumeIfNoTariffSwitch;
+    }
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
-	
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		if (this.volumeIfNoTariffSwitch == null && this.volumeIfTariffSwitch == null || this.volumeIfNoTariffSwitch != null && this.volumeIfTariffSwitch != null) {
-			throw new CAPException("Error while decoding " + _PrimitiveName + ": One and only one choice must be selected");
-		}
+    public VolumeIfTariffSwitch getVolumeIfTariffSwitch() {
+        return this.volumeIfTariffSwitch;
+    }
 
-		try {
-			if (this.volumeIfNoTariffSwitch != null) {
-				asnOs.writeIntegerData(volumeIfNoTariffSwitch.longValue());
-			} else {
-				((VolumeIfTariffSwitchImpl) this.volumeIfTariffSwitch).encodeData(asnOs);
-			}	
-		} catch (IOException e) {
-			throw new CAPException("MAPException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
-	
+    @Override
+    public int getTag() throws CAPException {
+        if (volumeIfNoTariffSwitch != null) {
+            return _ID_volumeIfNoTariffSwitch;
+        } else {
+            return _ID_volumeIfTariffSwitch;
+        }
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName + " [");
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_CONTEXT_SPECIFIC;
+    }
 
-		if (this.volumeIfNoTariffSwitch != null) {
-			sb.append("volumeIfNoTariffSwitch=");
-			sb.append(this.volumeIfNoTariffSwitch.toString());
-		}
-		
-		if (this.volumeIfTariffSwitch != null) {
-			sb.append("volumeIfTariffSwitch=");
-			sb.append(this.volumeIfTariffSwitch.toString());
-		}
-		
-		sb.append("]");
+    @Override
+    public boolean getIsPrimitive() {
+        if (volumeIfNoTariffSwitch != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-		return sb.toString();
-	}
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
+
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+
+    }
+
+    private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, IOException, AsnException,
+            MAPParsingComponentException {
+
+        this.volumeIfNoTariffSwitch = null;
+        this.volumeIfTariffSwitch = null;
+
+        int tag = ais.getTag();
+
+        if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+            switch (tag) {
+                case _ID_volumeIfNoTariffSwitch:
+                    if (!ais.isTagPrimitive())
+                        throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                + ".volumeIfNoTariffSwitch: Parameter is not primitive",
+                                CAPParsingComponentExceptionReason.MistypedParameter);
+                    this.volumeIfNoTariffSwitch = ais.readIntegerData(length);
+                    break;
+                case _ID_volumeIfTariffSwitch:
+                    if (ais.isTagPrimitive())
+                        throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                + ".volumeIfTariffSwitch: Parameter is primitive",
+                                CAPParsingComponentExceptionReason.MistypedParameter);
+                    this.volumeIfTariffSwitch = new VolumeIfTariffSwitchImpl();
+                    ((VolumeIfTariffSwitchImpl) this.volumeIfTariffSwitch).decodeData(ais, length);
+                    break;
+
+                default:
+                    throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tag",
+                            CAPParsingComponentExceptionReason.MistypedParameter);
+            }
+        } else {
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tagClass",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+
+    }
+
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
+
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
+        if (this.volumeIfNoTariffSwitch == null && this.volumeIfTariffSwitch == null || this.volumeIfNoTariffSwitch != null
+                && this.volumeIfTariffSwitch != null) {
+            throw new CAPException("Error while decoding " + _PrimitiveName + ": One and only one choice must be selected");
+        }
+
+        try {
+            if (this.volumeIfNoTariffSwitch != null) {
+                asnOs.writeIntegerData(volumeIfNoTariffSwitch.longValue());
+            } else {
+                ((VolumeIfTariffSwitchImpl) this.volumeIfTariffSwitch).encodeData(asnOs);
+            }
+        } catch (IOException e) {
+            throw new CAPException("MAPException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
+
+        if (this.volumeIfNoTariffSwitch != null) {
+            sb.append("volumeIfNoTariffSwitch=");
+            sb.append(this.volumeIfNoTariffSwitch.toString());
+        }
+
+        if (this.volumeIfTariffSwitch != null) {
+            sb.append("volumeIfTariffSwitch=");
+            sb.append(this.volumeIfTariffSwitch.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 
 }

@@ -25,26 +25,22 @@ package org.mobicents.protocols.ss7.map.api.service.callhandling;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
-*
-UU-Data ::= SEQUENCE {
-	uuIndicator	[0] UUIndicator	OPTIONAL,
-	uui			[1] UUI		OPTIONAL,
-	uusCFInteraction	[2] NULL		OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
-	...}
- 
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ UU-Data ::= SEQUENCE { uuIndicator [0] UUIndicator OPTIONAL, uui [1] UUI OPTIONAL, uusCFInteraction [2] NULL OPTIONAL,
+ * extensionContainer [3] ExtensionContainer OPTIONAL, ...}
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface UUData {
 
-	public byte[] getUUIndicator(); // TODO: add ISUP data -UserToUserIndicators
+    byte[] getUUIndicator(); // TODO: add ISUP data -UserToUserIndicators
 
-	public byte[] getUUI(); // TODO: add ISUP data - UserToUserInformation
+    byte[] getUUI(); // TODO: add ISUP data - UserToUserInformation
 
-	public boolean getUusCFInteraction();
+    boolean getUusCFInteraction();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

@@ -29,12 +29,11 @@ import org.testng.annotations.Test;
  *
  */
 public class UBL4Test extends UBLTest {
-	//thanks to magic of super class, this is whole test :)
-	
-	@Test(groups = { "functional.timer","timer.answer"})
-	public void testNoTimeoutWithAnswer() throws Exception
-	{
-		super.testNoTimeoutWithAnswer();
-	}
-	
+    // thanks to magic of super class, this is whole test :)
+
+    @Test(groups = { "functional.timer", "timer.answer" })
+    public void testNoTimeoutWithAnswer() throws Exception {
+        super.testNoTimeoutWithAnswer();
+    }
+
 }

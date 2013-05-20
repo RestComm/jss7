@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -24,47 +24,51 @@ package org.mobicents.protocols.ss7.sccp.impl.router;
 
 /**
  * Class for exception concerning rule.
+ *
  * @author baranowb
  *
  */
 public class RuleException extends RuntimeException {
 
-	private RuleImpl rule;
-	/**
-	 * 
-	 */
-	public RuleException(RuleImpl rule) {
-		this.rule = rule;
-	}
+    /**
+     */
+    private static final long serialVersionUID = 6024579057121898624L;
+    private RuleImpl rule;
 
-	/**
-	 * @param message
-	 */
-	public RuleException(String message,RuleImpl rule) {
-		super(message);
-		this.rule = rule;
-	}
+    /**
+     *
+     */
+    public RuleException(RuleImpl rule) {
+        this.rule = rule;
+    }
 
-	/**
-	 * @param cause
-	 */
-	public RuleException(Throwable cause,RuleImpl rule) {
-		super(cause);
-		this.rule = rule;
-	}
+    /**
+     * @param message
+     */
+    public RuleException(String message, RuleImpl rule) {
+        super(message);
+        this.rule = rule;
+    }
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public RuleException(String message, Throwable cause,RuleImpl rule) {
-		super(message, cause);
-		this.rule = rule;
-	}
+    /**
+     * @param cause
+     */
+    public RuleException(Throwable cause, RuleImpl rule) {
+        super(cause);
+        this.rule = rule;
+    }
 
-	
-	public String toString() {
-		return "RuleException [rule=" + rule + ", toString()=" + super.toString() + "]";
-	}
+    /**
+     * @param message
+     * @param cause
+     */
+    public RuleException(String message, Throwable cause, RuleImpl rule) {
+        super(message, cause);
+        this.rule = rule;
+    }
+
+    public String toString() {
+        return "RuleException [rule=" + rule + ", toString()=" + super.toString() + "]";
+    }
 
 }

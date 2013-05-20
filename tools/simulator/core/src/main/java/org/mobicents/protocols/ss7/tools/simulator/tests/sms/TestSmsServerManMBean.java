@@ -27,87 +27,84 @@ import org.mobicents.protocols.ss7.tools.simulator.level3.MapProtocolVersion;
 import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface TestSmsServerManMBean {
 
-	public AddressNatureType getAddressNature();
+    AddressNatureType getAddressNature();
 
-	public String getAddressNature_Value();
+    String getAddressNature_Value();
 
-	public void setAddressNature(AddressNatureType val);
+    void setAddressNature(AddressNatureType val);
 
-	public NumberingPlanMapType getNumberingPlan();
+    NumberingPlanMapType getNumberingPlan();
 
-	public String getNumberingPlan_Value();
+    String getNumberingPlan_Value();
 
-	public void setNumberingPlan(NumberingPlanMapType val);
+    void setNumberingPlan(NumberingPlanMapType val);
 
-	public String getServiceCenterAddress();
+    String getServiceCenterAddress();
 
-	public void setServiceCenterAddress(String val);	
+    void setServiceCenterAddress(String val);
 
-	public MapProtocolVersion getMapProtocolVersion();
+    MapProtocolVersion getMapProtocolVersion();
 
-	public String getMapProtocolVersion_Value();
+    String getMapProtocolVersion_Value();
 
-	public void setMapProtocolVersion(MapProtocolVersion val);
+    void setMapProtocolVersion(MapProtocolVersion val);
 
-	public int getHlrSsn();
+    int getHlrSsn();
 
-	public void setHlrSsn(int val);
+    void setHlrSsn(int val);
 
-	public int getVlrSsn();
+    int getVlrSsn();
 
-	public void setVlrSsn(int val);
+    void setVlrSsn(int val);
 
-	public TypeOfNumberType getTypeOfNumber();
+    TypeOfNumberType getTypeOfNumber();
 
-	public String getTypeOfNumber_Value();
+    String getTypeOfNumber_Value();
 
-	public void setTypeOfNumber(TypeOfNumberType val);
+    void setTypeOfNumber(TypeOfNumberType val);
 
-	public NumberingPlanIdentificationType getNumberingPlanIdentification();
+    NumberingPlanIdentificationType getNumberingPlanIdentification();
 
-	public String getNumberingPlanIdentification_Value();
+    String getNumberingPlanIdentification_Value();
 
-	public void setNumberingPlanIdentification(NumberingPlanIdentificationType val);
+    void setNumberingPlanIdentification(NumberingPlanIdentificationType val);
 
-	public SmsCodingType getSmsCodingType();
+    SmsCodingType getSmsCodingType();
 
-	public String getSmsCodingType_Value();
+    String getSmsCodingType_Value();
 
-	public void setSmsCodingType(SmsCodingType val);
+    void setSmsCodingType(SmsCodingType val);
 
-	public boolean isSendSrsmdsIfError();
+    boolean isSendSrsmdsIfError();
 
-	public void setSendSrsmdsIfError(boolean val);
+    void setSendSrsmdsIfError(boolean val);
 
+    void putAddressNature(String val);
 
-	public void putAddressNature(String val);
+    void putNumberingPlan(String val);
 
-	public void putNumberingPlan(String val);
+    void putMapProtocolVersion(String val);
 
-	public void putMapProtocolVersion(String val);
+    void putTypeOfNumber(String val);
 
-	public void putTypeOfNumber(String val);
+    void putNumberingPlanIdentification(String val);
 
-	public void putNumberingPlanIdentification(String val);
+    void putSmsCodingType(String val);
 
-	public void putSmsCodingType(String val);
+    String getCurrentRequestDef();
 
+    String performSRIForSM(String destIsdnNumber);
 
-	public String getCurrentRequestDef();
+    String performSRIForSM_MtForwardSM(String msg, String destIsdnNumber, String origIsdnNumber);
 
-	
-	public String performSRIForSM(String destIsdnNumber);
+    String performMtForwardSM(String msg, String destImsi, String vlrNumber, String origIsdnNumber);
 
-	public String performSRIForSM_MtForwardSM(String msg, String destIsdnNumber, String origIsdnNumber);
-
-	public String performMtForwardSM(String msg, String destImsi, String vlrNumber, String origIsdnNumber);
-
-	public String closeCurrentDialog();
+    String closeCurrentDialog();
 
 }

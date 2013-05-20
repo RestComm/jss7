@@ -23,21 +23,17 @@
 package org.mobicents.protocols.ss7.cap.api.primitives;
 
 /**
-*
-BurstList ::= SEQUENCE {
-warningPeriod [0] INTEGER (1..1200) DEFAULT 30,
-bursts [1] Burst,
-...
-}
--- warningPeriod is measured in 1 second units.
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ BurstList ::= SEQUENCE { warningPeriod [0] INTEGER (1..1200) DEFAULT 30, bursts [1] Burst, ... } -- warningPeriod is measured
+ * in 1 second units.
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface BurstList {
 
-	public int getWarningPeriod();
+    int getWarningPeriod();
 
-	public Burst getBurst();
+    Burst getBurst();
 
 }

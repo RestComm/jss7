@@ -22,7 +22,9 @@
 
 package org.mobicents.protocols.ss7.map.primitives;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,115 +35,110 @@ import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.ss7.map.primitives.LAIFixedLengthImpl;
-import org.testng.annotations.*;
-
+import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class LAIFixedLengthTest {
 
-	public byte[] getData() {
-		return new byte[] { 4, 5, 82, (byte) 240, 16, 17, 92 };
-	};
+    public byte[] getData() {
+        return new byte[] { 4, 5, 82, (byte) 240, 16, 17, 92 };
+    };
 
-	public byte[] getDataVal() {
-		return new byte[] { 82, (byte) 240, 16, 17, 92 };
-	};
+    public byte[] getDataVal() {
+        return new byte[] { 82, (byte) 240, 16, 17, 92 };
+    };
 
-	public byte[] getData2() {
-		return new byte[] { 4, 5, 16, 97, 66, 1, 77 };
-	};
-	
-	@Test(groups = { "functional.decode", "primitives" })
-	public void testDecode() throws Exception {
+    public byte[] getData2() {
+        return new byte[] { 4, 5, 16, 97, 66, 1, 77 };
+    };
 
-		byte[] data = this.getData();
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testDecode() throws Exception {
 
-		AsnInputStream asn = new AsnInputStream(data);
-		int tag = asn.readTag();
+        byte[] data = this.getData();
 
-		LAIFixedLengthImpl prim = new LAIFixedLengthImpl();
-		prim.decodeAll(asn);
+        AsnInputStream asn = new AsnInputStream(data);
+        int tag = asn.readTag();
 
-		assertNotNull(prim.getData());
-		assertTrue(Arrays.equals(getDataVal(), prim.getData()));		
-		
-		assertEquals(prim.getMCC(), 250);
-		assertEquals(prim.getMNC(), 1);
-		assertEquals(prim.getLac(), 4444);
+        LAIFixedLengthImpl prim = new LAIFixedLengthImpl();
+        prim.decodeAll(asn);
 
-		
-		data = this.getData2();
+        assertNotNull(prim.getData());
+        assertTrue(Arrays.equals(getDataVal(), prim.getData()));
 
-		asn = new AsnInputStream(data);
-		tag = asn.readTag();
+        assertEquals(prim.getMCC(), 250);
+        assertEquals(prim.getMNC(), 1);
+        assertEquals(prim.getLac(), 4444);
 
-		prim = new LAIFixedLengthImpl();
-		prim.decodeAll(asn);
+        data = this.getData2();
 
-		assertNotNull(prim.getData());
-		
-		assertEquals(prim.getMCC(), 11);
-		assertEquals(prim.getMNC(), 246);
-		assertEquals(prim.getLac(), 333);
-	}
-	
-	@Test(groups = { "functional.decode", "primitives" })
-	public void testEncode() throws Exception {
+        asn = new AsnInputStream(data);
+        tag = asn.readTag();
 
-		LAIFixedLengthImpl prim = new LAIFixedLengthImpl(250, 1, 4444);
+        prim = new LAIFixedLengthImpl();
+        prim.decodeAll(asn);
 
-		AsnOutputStream asn = new AsnOutputStream();
-		prim.encodeAll(asn);
+        assertNotNull(prim.getData());
 
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+        assertEquals(prim.getMCC(), 11);
+        assertEquals(prim.getMNC(), 246);
+        assertEquals(prim.getLac(), 333);
+    }
 
-		
-		prim = new LAIFixedLengthImpl(getDataVal());
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testEncode() throws Exception {
 
-		asn = new AsnOutputStream();
-		prim.encodeAll(asn);
+        LAIFixedLengthImpl prim = new LAIFixedLengthImpl(250, 1, 4444);
 
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+        AsnOutputStream asn = new AsnOutputStream();
+        prim.encodeAll(asn);
 
-		
-		prim = new LAIFixedLengthImpl(11, 246, 333);
+        assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
 
-		asn = new AsnOutputStream();
-		prim.encodeAll(asn);
+        prim = new LAIFixedLengthImpl(getDataVal());
 
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData2()));
-	}
+        asn = new AsnOutputStream();
+        prim.encodeAll(asn);
 
-	@Test(groups = { "functional.xml.serialize", "primitives" })
-	public void testXMLSerialize() throws Exception {
+        assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
 
-		LAIFixedLengthImpl original = new LAIFixedLengthImpl(250, 1, 4444);
+        prim = new LAIFixedLengthImpl(11, 246, 333);
 
-		// Writes the area to a file.
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
-		// writer.setBinding(binding); // Optional.
-		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
-		writer.write(original, "laiFixedLength", LAIFixedLengthImpl.class);
-		writer.close();
+        asn = new AsnOutputStream();
+        prim.encodeAll(asn);
 
-		byte[] rawData = baos.toByteArray();
-		String serializedEvent = new String(rawData);
+        assertTrue(Arrays.equals(asn.toByteArray(), this.getData2()));
+    }
 
-		System.out.println(serializedEvent);
+    @Test(groups = { "functional.xml.serialize", "primitives" })
+    public void testXMLSerialize() throws Exception {
 
-		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
-		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
-		LAIFixedLengthImpl copy = reader.read("laiFixedLength", LAIFixedLengthImpl.class);
+        LAIFixedLengthImpl original = new LAIFixedLengthImpl(250, 1, 4444);
 
-		assertEquals(copy.getMCC(), original.getMCC());
-		assertEquals(copy.getMNC(), original.getMNC());
-		assertEquals(copy.getLac(), original.getLac());
+        // Writes the area to a file.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+        writer.write(original, "laiFixedLength", LAIFixedLengthImpl.class);
+        writer.close();
 
-	}
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        LAIFixedLengthImpl copy = reader.read("laiFixedLength", LAIFixedLengthImpl.class);
+
+        assertEquals(copy.getMCC(), original.getMCC());
+        assertEquals(copy.getMNC(), original.getMNC());
+        assertEquals(copy.getLac(), original.getLac());
+
+    }
 }

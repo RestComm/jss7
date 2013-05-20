@@ -28,11 +28,11 @@ import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 
 public interface TCContinueIndication extends DialogIndication {
 
-//	public Byte getQOS();
+    // public Byte getQOS();
 
-	public ApplicationContextName getApplicationContextName();
+    ApplicationContextName getApplicationContextName();
 
-	public UserInformation getUserInformation();
+    UserInformation getUserInformation();
 
-	public SccpAddress getOriginatingAddress();
+    SccpAddress getOriginatingAddress();
 }

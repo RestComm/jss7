@@ -22,15 +22,13 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
 
 /**
- * 
-
-KSI ::= OCTET STRING (SIZE (1))
--- The internal structure is defined in 3GPP TS 24.008
-
- * 
+ *
+ KSI ::= OCTET STRING (SIZE (1)) -- The internal structure is defined in 3GPP TS 24.008
+ *
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
 public interface KSI {
-	public int getData();
+    int getData();
 }

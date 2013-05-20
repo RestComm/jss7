@@ -38,71 +38,71 @@ import org.mobicents.protocols.asn.Tag;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
  *
  */
-public class MWStatusTest  {
-	
-	private byte[] getEncodedData() {
-		return new byte[] { 3, 2, 2, 64 };
-	}
+public class MWStatusTest {
 
-	@Test(groups = { "functional.decode","service.sms"})
-	public void testDecode() throws Exception {
-		
-		byte[] rawData = getEncodedData();
-		AsnInputStream asn = new AsnInputStream(rawData);
+    private byte[] getEncodedData() {
+        return new byte[] { 3, 2, 2, 64 };
+    }
 
-		int tag = asn.readTag();
-		MWStatusImpl mws = new MWStatusImpl();
-		mws.decodeAll(asn);
+    @Test(groups = { "functional.decode", "service.sms" })
+    public void testDecode() throws Exception {
 
-		assertEquals( tag,Tag.STRING_BIT);
-		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
+        byte[] rawData = getEncodedData();
+        AsnInputStream asn = new AsnInputStream(rawData);
 
-		assertEquals( (boolean)mws.getMcefSet(),false);
-		assertEquals( (boolean)mws.getMnrfSet(),true);
-		assertEquals( (boolean)mws.getMnrgSet(),false);
-		assertEquals( (boolean)mws.getScAddressNotIncluded(),false);
-	}
+        int tag = asn.readTag();
+        MWStatusImpl mws = new MWStatusImpl();
+        mws.decodeAll(asn);
 
-	@Test(groups = { "functional.encode","service.sms"})
-	public void testEncode() throws Exception {
-		
-		MWStatusImpl mws = new MWStatusImpl(false, true, false, false);
-		
-		AsnOutputStream asnOS = new AsnOutputStream();
-		mws.encodeAll(asnOS);
-		
-		byte[] encodedData = asnOS.toByteArray();
-		byte[] rawData = getEncodedData();		
-		assertTrue( Arrays.equals(rawData,encodedData));
-		
-	}
-	
-	@Test(groups = { "functional.serialize", "service.sms" })
-	public void testSerialization() throws Exception {
-		MWStatusImpl original = new MWStatusImpl(false, true, false, false);
-		
-		// serialize
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ObjectOutputStream oos = new ObjectOutputStream(out);
-		oos.writeObject(original);
-		oos.close();
+        assertEquals(tag, Tag.STRING_BIT);
+        assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
 
-		// deserialize
-		byte[] pickled = out.toByteArray();
-		InputStream in = new ByteArrayInputStream(pickled);
-		ObjectInputStream ois = new ObjectInputStream(in);
-		Object o = ois.readObject();
-		MWStatusImpl copy = (MWStatusImpl) o;
-		
-		//test result
-		assertEquals(copy.getMcefSet(), original.getMcefSet());
-		assertEquals(copy.getScAddressNotIncluded(), original.getScAddressNotIncluded());
-		assertEquals(copy.getMnrfSet(), original.getMnrfSet());
-		assertEquals(copy.getMnrgSet(), original.getMnrgSet());
-	}
+        assertEquals((boolean) mws.getMcefSet(), false);
+        assertEquals((boolean) mws.getMnrfSet(), true);
+        assertEquals((boolean) mws.getMnrgSet(), false);
+        assertEquals((boolean) mws.getScAddressNotIncluded(), false);
+    }
+
+    @Test(groups = { "functional.encode", "service.sms" })
+    public void testEncode() throws Exception {
+
+        MWStatusImpl mws = new MWStatusImpl(false, true, false, false);
+
+        AsnOutputStream asnOS = new AsnOutputStream();
+        mws.encodeAll(asnOS);
+
+        byte[] encodedData = asnOS.toByteArray();
+        byte[] rawData = getEncodedData();
+        assertTrue(Arrays.equals(rawData, encodedData));
+
+    }
+
+    @Test(groups = { "functional.serialize", "service.sms" })
+    public void testSerialization() throws Exception {
+        MWStatusImpl original = new MWStatusImpl(false, true, false, false);
+
+        // serialize
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(out);
+        oos.writeObject(original);
+        oos.close();
+
+        // deserialize
+        byte[] pickled = out.toByteArray();
+        InputStream in = new ByteArrayInputStream(pickled);
+        ObjectInputStream ois = new ObjectInputStream(in);
+        Object o = ois.readObject();
+        MWStatusImpl copy = (MWStatusImpl) o;
+
+        // test result
+        assertEquals(copy.getMcefSet(), original.getMcefSet());
+        assertEquals(copy.getScAddressNotIncluded(), original.getScAddressNotIncluded());
+        assertEquals(copy.getMnrfSet(), original.getMnrfSet());
+        assertEquals(copy.getMnrgSet(), original.getMnrgSet());
+    }
 
 }

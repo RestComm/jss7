@@ -26,11 +26,11 @@ import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 
 /**
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ServingCheckData {
 
-	public ServingCheckResult getResult();
+    ServingCheckResult getResult();
 
-	public ApplicationContextName getAlternativeApplicationContext();
+    ApplicationContextName getAlternativeApplicationContext();
 }

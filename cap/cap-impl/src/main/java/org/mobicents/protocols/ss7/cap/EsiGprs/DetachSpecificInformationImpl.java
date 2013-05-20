@@ -36,129 +36,127 @@ import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
 public class DetachSpecificInformationImpl extends SequenceBase implements DetachSpecificInformation {
 
-	public static final int _ID_initiatingEntity = 0;
-	public static final int _ID_routeingAreaUpdate = 1;
-	
-	public static final int _ID_DetachSpecificInformation = 2;
-	
-	private InitiatingEntity initiatingEntity;
-	private boolean routeingAreaUpdate;
-	
-	public DetachSpecificInformationImpl() {
-		super("DetachSpecificInformation");
-	}
+    public static final int _ID_initiatingEntity = 0;
+    public static final int _ID_routeingAreaUpdate = 1;
 
-	public DetachSpecificInformationImpl(
-			InitiatingEntity initiatingEntity, boolean routeingAreaUpdate) {
-		super("DetachSpecificInformation");
-		this.initiatingEntity = initiatingEntity;
-		this.routeingAreaUpdate = routeingAreaUpdate;
-	}
+    public static final int _ID_DetachSpecificInformation = 2;
 
+    private InitiatingEntity initiatingEntity;
+    private boolean routeingAreaUpdate;
 
-	@Override
-	public InitiatingEntity getInitiatingEntity() {
-		return this.initiatingEntity;
-	}
+    public DetachSpecificInformationImpl() {
+        super("DetachSpecificInformation");
+    }
 
-	@Override
-	public boolean getRouteingAreaUpdate() {
-		return this.routeingAreaUpdate;
-	}
-	
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
+    public DetachSpecificInformationImpl(InitiatingEntity initiatingEntity, boolean routeingAreaUpdate) {
+        super("DetachSpecificInformation");
+        this.initiatingEntity = initiatingEntity;
+        this.routeingAreaUpdate = routeingAreaUpdate;
+    }
 
-	public int getTagClass() {
-		return Tag.CLASS_CONTEXT_SPECIFIC;
-	}
+    @Override
+    public InitiatingEntity getInitiatingEntity() {
+        return this.initiatingEntity;
+    }
 
-	@Override
-	protected void _decode(AsnInputStream asnIS, int length)
-			throws CAPParsingComponentException, IOException, AsnException,
-			MAPParsingComponentException {
-		this.initiatingEntity = null;
-		this.routeingAreaUpdate = false;
+    @Override
+    public boolean getRouteingAreaUpdate() {
+        return this.routeingAreaUpdate;
+    }
 
-		AsnInputStream ais = asnIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+    public int getTag() throws CAPException {
+        return Tag.SEQUENCE;
+    }
 
-			int tag = ais.readTag();
+    public int getTagClass() {
+        return Tag.CLASS_CONTEXT_SPECIFIC;
+    }
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				
-				case _ID_initiatingEntity:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ".initiatingEntity: Parameter is not  primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					int i1 = (int) ais.readInteger();;
-					this.initiatingEntity = InitiatingEntity.getInstance(i1);
-					break;
-				case _ID_routeingAreaUpdate:
-					if (!ais.isTagPrimitive())
-						throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ".routeingAreaUpdate: Parameter is not  primitive",
-								CAPParsingComponentExceptionReason.MistypedParameter);
-					this.routeingAreaUpdate = true;
-					ais.readNull();
-					break;
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
-	}
-	
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		
-		try {
-			if (this.initiatingEntity != null)
-				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_initiatingEntity, this.initiatingEntity.getCode());
-				
-			if (routeingAreaUpdate)
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_routeingAreaUpdate);
+    @Override
+    protected void _decode(AsnInputStream asnIS, int length) throws CAPParsingComponentException, IOException, AsnException,
+            MAPParsingComponentException {
+        this.initiatingEntity = null;
+        this.routeingAreaUpdate = false;
 
-		}catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
-	
-	
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName + " [");
+        AsnInputStream ais = asnIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-		if (this.initiatingEntity != null) {
-			sb.append("initiatingEntity=");
-			sb.append(this.initiatingEntity.toString());
-			sb.append(", ");
-		}
-		
-		if (this.routeingAreaUpdate) {
-			sb.append("routeingAreaUpdate ");
-			sb.append(" ");
-		}
-	
-		sb.append("]");
+            int tag = ais.readTag();
 
-		return sb.toString();
-	}
-	
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+
+                    case _ID_initiatingEntity:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".initiatingEntity: Parameter is not  primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        int i1 = (int) ais.readInteger();
+
+                        this.initiatingEntity = InitiatingEntity.getInstance(i1);
+                        break;
+                    case _ID_routeingAreaUpdate:
+                        if (!ais.isTagPrimitive())
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".routeingAreaUpdate: Parameter is not  primitive",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.routeingAreaUpdate = true;
+                        ais.readNull();
+                        break;
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
+    }
+
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
+
+        try {
+            if (this.initiatingEntity != null)
+                asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_initiatingEntity, this.initiatingEntity.getCode());
+
+            if (routeingAreaUpdate)
+                asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_routeingAreaUpdate);
+
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
+
+        if (this.initiatingEntity != null) {
+            sb.append("initiatingEntity=");
+            sb.append(this.initiatingEntity.toString());
+            sb.append(", ");
+        }
+
+        if (this.routeingAreaUpdate) {
+            sb.append("routeingAreaUpdate ");
+            sb.append(" ");
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 
 }

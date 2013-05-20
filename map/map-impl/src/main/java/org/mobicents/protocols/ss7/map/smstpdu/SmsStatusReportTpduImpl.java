@@ -40,290 +40,294 @@ import org.mobicents.protocols.ss7.map.api.smstpdu.StatusReportQualifier;
 import org.mobicents.protocols.ss7.map.api.smstpdu.UserData;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class SmsStatusReportTpduImpl extends SmsTpduImpl implements SmsStatusReportTpdu {
 
-	private boolean userDataHeaderIndicator;
-	private boolean moreMessagesToSend;
-	private boolean forwardedOrSpawned;
-	private StatusReportQualifier statusReportQualifier;
-	private int messageReference;
-	private AddressField recipientAddress;
-	private AbsoluteTimeStamp serviceCentreTimeStamp;
-	private AbsoluteTimeStamp dischargeTime;
-	private Status status;
-	private ParameterIndicator parameterIndicator;
-	private ProtocolIdentifier protocolIdentifier;
-	private DataCodingScheme dataCodingScheme;
-	private int userDataLength;
-	private UserData userData;
+    private boolean userDataHeaderIndicator;
+    private boolean moreMessagesToSend;
+    private boolean forwardedOrSpawned;
+    private StatusReportQualifier statusReportQualifier;
+    private int messageReference;
+    private AddressField recipientAddress;
+    private AbsoluteTimeStamp serviceCentreTimeStamp;
+    private AbsoluteTimeStamp dischargeTime;
+    private Status status;
+    private ParameterIndicator parameterIndicator;
+    private ProtocolIdentifier protocolIdentifier;
+    private DataCodingScheme dataCodingScheme;
+    private int userDataLength;
+    private UserData userData;
 
-	private SmsStatusReportTpduImpl() {
-		this.tpduType = SmsTpduType.SMS_STATUS_REPORT;
-		this.mobileOriginatedMessage = false;
-	}
+    private SmsStatusReportTpduImpl() {
+        this.tpduType = SmsTpduType.SMS_STATUS_REPORT;
+        this.mobileOriginatedMessage = false;
+    }
 
-	public SmsStatusReportTpduImpl(boolean moreMessagesToSend, boolean forwardedOrSpawned, StatusReportQualifier statusReportQualifier, int messageReference,
-			AddressField recipientAddress, AbsoluteTimeStamp serviceCentreTimeStamp, AbsoluteTimeStamp dischargeTime, Status status,
-			ProtocolIdentifier protocolIdentifier, UserData userData) {
-		this();
+    public SmsStatusReportTpduImpl(boolean moreMessagesToSend, boolean forwardedOrSpawned,
+            StatusReportQualifier statusReportQualifier, int messageReference, AddressField recipientAddress,
+            AbsoluteTimeStamp serviceCentreTimeStamp, AbsoluteTimeStamp dischargeTime, Status status,
+            ProtocolIdentifier protocolIdentifier, UserData userData) {
+        this();
 
-		this.moreMessagesToSend = moreMessagesToSend;
-		this.forwardedOrSpawned = forwardedOrSpawned;
-		this.statusReportQualifier = statusReportQualifier;
-		this.messageReference = messageReference;
-		this.recipientAddress = recipientAddress;
-		this.serviceCentreTimeStamp = serviceCentreTimeStamp;
-		this.dischargeTime = dischargeTime;
-		this.status = status;
-		this.protocolIdentifier = protocolIdentifier;
-		this.userData = userData;
-	}
-	
-	public SmsStatusReportTpduImpl(byte[] data, Charset gsm8Charset) throws MAPException {
-		this();
+        this.moreMessagesToSend = moreMessagesToSend;
+        this.forwardedOrSpawned = forwardedOrSpawned;
+        this.statusReportQualifier = statusReportQualifier;
+        this.messageReference = messageReference;
+        this.recipientAddress = recipientAddress;
+        this.serviceCentreTimeStamp = serviceCentreTimeStamp;
+        this.dischargeTime = dischargeTime;
+        this.status = status;
+        this.protocolIdentifier = protocolIdentifier;
+        this.userData = userData;
+    }
 
-		if (data == null)
-			throw new MAPException("Error creating a new SmsStatusReport instance: data is empty");
-		if (data.length < 1)
-			throw new MAPException("Error creating a new SmsStatusReport instance: data length is equal zero");
+    public SmsStatusReportTpduImpl(byte[] data, Charset gsm8Charset) throws MAPException {
+        this();
 
-		ByteArrayInputStream stm = new ByteArrayInputStream(data);
+        if (data == null)
+            throw new MAPException("Error creating a new SmsStatusReport instance: data is empty");
+        if (data.length < 1)
+            throw new MAPException("Error creating a new SmsStatusReport instance: data length is equal zero");
 
-		int bt = stm.read();
-		if ((bt & _MASK_TP_UDHI) != 0)
-			this.userDataHeaderIndicator = true;
-		if ((bt & _MASK_TP_MMS) == 0)
-			this.moreMessagesToSend = true;
-		if ((bt & _MASK_TP_LP) != 0)
-			this.forwardedOrSpawned = true;
-		int code = (bt & _MASK_TP_SRQ) >> 5;
-		this.statusReportQualifier = StatusReportQualifier.getInstance(code);
+        ByteArrayInputStream stm = new ByteArrayInputStream(data);
 
-		this.messageReference = stm.read();
-		if (this.messageReference == -1)
-			throw new MAPException("Error creating a new SmsStatusReport instance: messageReference field has not been found");
+        int bt = stm.read();
+        if ((bt & _MASK_TP_UDHI) != 0)
+            this.userDataHeaderIndicator = true;
+        if ((bt & _MASK_TP_MMS) == 0)
+            this.moreMessagesToSend = true;
+        if ((bt & _MASK_TP_LP) != 0)
+            this.forwardedOrSpawned = true;
+        int code = (bt & _MASK_TP_SRQ) >> 5;
+        this.statusReportQualifier = StatusReportQualifier.getInstance(code);
 
-		this.recipientAddress = AddressFieldImpl.createMessage(stm);
-		this.serviceCentreTimeStamp = AbsoluteTimeStampImpl.createMessage(stm);
-		this.dischargeTime = AbsoluteTimeStampImpl.createMessage(stm);
+        this.messageReference = stm.read();
+        if (this.messageReference == -1)
+            throw new MAPException("Error creating a new SmsStatusReport instance: messageReference field has not been found");
 
-		bt = stm.read();
-		if (bt == -1)
-			throw new MAPException("Error creating a new SmsStatusReport instance: Status field has not been found");
-		this.status = new StatusImpl(bt);
+        this.recipientAddress = AddressFieldImpl.createMessage(stm);
+        this.serviceCentreTimeStamp = AbsoluteTimeStampImpl.createMessage(stm);
+        this.dischargeTime = AbsoluteTimeStampImpl.createMessage(stm);
 
-		bt = stm.read();
-		if (bt == -1)
-			this.parameterIndicator = new ParameterIndicatorImpl(0);
-		else
-			this.parameterIndicator = new ParameterIndicatorImpl(bt);
+        bt = stm.read();
+        if (bt == -1)
+            throw new MAPException("Error creating a new SmsStatusReport instance: Status field has not been found");
+        this.status = new StatusImpl(bt);
 
-		if (this.parameterIndicator.getTP_PIDPresence()) {
-			bt = stm.read();
-			if (bt == -1)
-				throw new MAPException("Error creating a new SmsStatusReport instance: protocolIdentifier field has not been found");
-			this.protocolIdentifier = new ProtocolIdentifierImpl(bt);
-		}
+        bt = stm.read();
+        if (bt == -1)
+            this.parameterIndicator = new ParameterIndicatorImpl(0);
+        else
+            this.parameterIndicator = new ParameterIndicatorImpl(bt);
 
-		if (this.parameterIndicator.getTP_DCSPresence()) {
-			bt = stm.read();
-			if (bt == -1)
-				throw new MAPException("Error creating a new SmsStatusReport instance: dataCodingScheme field has not been found");
-			this.dataCodingScheme = new DataCodingSchemeImpl(bt);
-		}
+        if (this.parameterIndicator.getTP_PIDPresence()) {
+            bt = stm.read();
+            if (bt == -1)
+                throw new MAPException(
+                        "Error creating a new SmsStatusReport instance: protocolIdentifier field has not been found");
+            this.protocolIdentifier = new ProtocolIdentifierImpl(bt);
+        }
 
-		if (this.parameterIndicator.getTP_UDLPresence()) {
-			this.userDataLength = stm.read();
-			if (this.userDataLength == -1)
-				throw new MAPException("Error creating a new SmsStatusReport instance: userDataLength field has not been found");
+        if (this.parameterIndicator.getTP_DCSPresence()) {
+            bt = stm.read();
+            if (bt == -1)
+                throw new MAPException(
+                        "Error creating a new SmsStatusReport instance: dataCodingScheme field has not been found");
+            this.dataCodingScheme = new DataCodingSchemeImpl(bt);
+        }
 
-			int avail = stm.available();
-			byte[] buf = new byte[avail];
-			try {
-				stm.read(buf);
-			} catch (IOException e) {
-				throw new MAPException("IOException while creating a new SmsStatusReport instance: " + e.getMessage(), e);
-			}
-			userData = new UserDataImpl(buf, dataCodingScheme, userDataLength, userDataHeaderIndicator, gsm8Charset);
-		}
-	}
+        if (this.parameterIndicator.getTP_UDLPresence()) {
+            this.userDataLength = stm.read();
+            if (this.userDataLength == -1)
+                throw new MAPException("Error creating a new SmsStatusReport instance: userDataLength field has not been found");
 
-	public boolean getUserDataHeaderIndicator() {
-		return this.userDataHeaderIndicator;
-	}
+            int avail = stm.available();
+            byte[] buf = new byte[avail];
+            try {
+                stm.read(buf);
+            } catch (IOException e) {
+                throw new MAPException("IOException while creating a new SmsStatusReport instance: " + e.getMessage(), e);
+            }
+            userData = new UserDataImpl(buf, dataCodingScheme, userDataLength, userDataHeaderIndicator, gsm8Charset);
+        }
+    }
 
-	public boolean getMoreMessagesToSend() {
-		return this.moreMessagesToSend;
-	}
+    public boolean getUserDataHeaderIndicator() {
+        return this.userDataHeaderIndicator;
+    }
 
-	public boolean getForwardedOrSpawned() {
-		return this.forwardedOrSpawned;
-	}
+    public boolean getMoreMessagesToSend() {
+        return this.moreMessagesToSend;
+    }
 
-	public StatusReportQualifier getStatusReportQualifier() {
-		return this.statusReportQualifier;
-	}
+    public boolean getForwardedOrSpawned() {
+        return this.forwardedOrSpawned;
+    }
 
-	public int getMessageReference() {
-		return messageReference;
-	}
+    public StatusReportQualifier getStatusReportQualifier() {
+        return this.statusReportQualifier;
+    }
 
-	public AddressField getRecipientAddress() {
-		return recipientAddress;
-	}
+    public int getMessageReference() {
+        return messageReference;
+    }
 
-	public AbsoluteTimeStamp getServiceCentreTimeStamp() {
-		return serviceCentreTimeStamp;
-	}
+    public AddressField getRecipientAddress() {
+        return recipientAddress;
+    }
 
-	public AbsoluteTimeStamp getDischargeTime() {
-		return dischargeTime;
-	}
+    public AbsoluteTimeStamp getServiceCentreTimeStamp() {
+        return serviceCentreTimeStamp;
+    }
 
-	public Status getStatus() {
-		return status;
-	}
+    public AbsoluteTimeStamp getDischargeTime() {
+        return dischargeTime;
+    }
 
-	public ParameterIndicator getParameterIndicator() {
-		return parameterIndicator;
-	}
+    public Status getStatus() {
+        return status;
+    }
 
-	public ProtocolIdentifier getProtocolIdentifier() {
-		return protocolIdentifier;
-	}
+    public ParameterIndicator getParameterIndicator() {
+        return parameterIndicator;
+    }
 
-	public DataCodingScheme getDataCodingScheme() {
-		return dataCodingScheme;
-	}
+    public ProtocolIdentifier getProtocolIdentifier() {
+        return protocolIdentifier;
+    }
 
-	public int getUserDataLength() {
-		return userDataLength;
-	}
+    public DataCodingScheme getDataCodingScheme() {
+        return dataCodingScheme;
+    }
 
-	public UserData getUserData() {
-		return userData;
-	}
+    public int getUserDataLength() {
+        return userDataLength;
+    }
 
-	public byte[] encodeData() throws MAPException {
+    public UserData getUserData() {
+        return userData;
+    }
 
-		if (statusReportQualifier == null || this.recipientAddress == null || this.serviceCentreTimeStamp == null || this.dischargeTime == null
-				|| this.status == null)
-			throw new MAPException(
-					"Error encoding a SmsStatusReportTpdu: statusReportQualifier, recipientAddress, serviceCentreTimeStamp, dischargeTime and status must no be null");
+    public byte[] encodeData() throws MAPException {
 
-		if (this.userData != null) {
-			this.userData.encode();
-			this.userDataHeaderIndicator = this.userData.getEncodedUserDataHeaderIndicator();
-			this.userDataLength = this.userData.getEncodedUserDataLength();
-			this.dataCodingScheme = this.userData.getDataCodingScheme();
-			if (this.userData.getEncodedData().length > _UserDataStatusReportLimit)
-				throw new MAPException("User data field length may not increase " + _UserDataStatusReportLimit);
-		}
+        if (statusReportQualifier == null || this.recipientAddress == null || this.serviceCentreTimeStamp == null
+                || this.dischargeTime == null || this.status == null)
+            throw new MAPException(
+                    "Error encoding a SmsStatusReportTpdu: statusReportQualifier, recipientAddress, serviceCentreTimeStamp, dischargeTime and status must no be null");
 
-		AsnOutputStream res = new AsnOutputStream();
+        if (this.userData != null) {
+            this.userData.encode();
+            this.userDataHeaderIndicator = this.userData.getEncodedUserDataHeaderIndicator();
+            this.userDataLength = this.userData.getEncodedUserDataLength();
+            this.dataCodingScheme = this.userData.getDataCodingScheme();
+            if (this.userData.getEncodedData().length > _UserDataStatusReportLimit)
+                throw new MAPException("User data field length may not increase " + _UserDataStatusReportLimit);
+        }
 
-		// byte 0
-		res.write(SmsTpduType.SMS_COMMAND.getEncodedValue() | (this.userDataHeaderIndicator ? _MASK_TP_UDHI : 0)
-				| (!this.moreMessagesToSend ? _MASK_TP_MMS : 0) | (this.forwardedOrSpawned ? _MASK_TP_LP : 0) | (this.statusReportQualifier.getCode() << 5));
+        AsnOutputStream res = new AsnOutputStream();
 
-		res.write(this.messageReference);
-		this.recipientAddress.encodeData(res);
-		this.serviceCentreTimeStamp.encodeData(res);
-		this.dischargeTime.encodeData(res);
-		res.write(this.status.getCode());
+        // byte 0
+        res.write(SmsTpduType.SMS_COMMAND.getEncodedValue() | (this.userDataHeaderIndicator ? _MASK_TP_UDHI : 0)
+                | (!this.moreMessagesToSend ? _MASK_TP_MMS : 0) | (this.forwardedOrSpawned ? _MASK_TP_LP : 0)
+                | (this.statusReportQualifier.getCode() << 5));
 
-		this.parameterIndicator = new ParameterIndicatorImpl(this.userData != null, this.dataCodingScheme != null, this.protocolIdentifier != null);
+        res.write(this.messageReference);
+        this.recipientAddress.encodeData(res);
+        this.serviceCentreTimeStamp.encodeData(res);
+        this.dischargeTime.encodeData(res);
+        res.write(this.status.getCode());
 
-		if (this.parameterIndicator.getCode() != 0) {
-			res.write(this.parameterIndicator.getCode());
-		}
-		if (this.protocolIdentifier != null) {
-			res.write(this.protocolIdentifier.getCode());
-		}
-		if (this.dataCodingScheme != null) {
-			res.write(this.dataCodingScheme.getCode());
-		}
+        this.parameterIndicator = new ParameterIndicatorImpl(this.userData != null, this.dataCodingScheme != null,
+                this.protocolIdentifier != null);
 
-		if (this.userData != null) {
-			res.write(this.userDataLength);
-			res.write(this.userData.getEncodedData());
-		}
+        if (this.parameterIndicator.getCode() != 0) {
+            res.write(this.parameterIndicator.getCode());
+        }
+        if (this.protocolIdentifier != null) {
+            res.write(this.protocolIdentifier.getCode());
+        }
+        if (this.dataCodingScheme != null) {
+            res.write(this.dataCodingScheme.getCode());
+        }
 
-		return res.toByteArray();
-	}
+        if (this.userData != null) {
+            res.write(this.userDataLength);
+            res.write(this.userData.getEncodedData());
+        }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
+        return res.toByteArray();
+    }
 
-		sb.append("SMS-STATUS-REPORT tpdu [");
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
 
-		boolean started = false;
-		if (this.userDataHeaderIndicator) {
-			sb.append("userDataHeaderIndicator");
-			started = true;
-		}
-		if (this.moreMessagesToSend) {
-			if (started)
-				sb.append(", ");
-			sb.append("moreMessagesToSend");
-			started = true;
-		}
-		if (this.forwardedOrSpawned) {
-			if (started)
-				sb.append(", ");
-			sb.append("forwardedOrSpawned");
-			started = true;
-		}
-		if (this.statusReportQualifier != null) {
-			if (started)
-				sb.append(", ");
-			sb.append("statusReportQualifier=");
-			sb.append(this.statusReportQualifier);
-		}
+        sb.append("SMS-STATUS-REPORT tpdu [");
 
-		sb.append(", messageReference=");
-		sb.append(this.messageReference);
-		if (this.recipientAddress != null) {
-			sb.append(", recipientAddress [");
-			sb.append(this.recipientAddress.toString());
-			sb.append("]");
-		}
-		if (this.serviceCentreTimeStamp != null) {
-			sb.append(", serviceCentreTimeStamp [");
-			sb.append(this.serviceCentreTimeStamp.toString());
-			sb.append("]");
-		}
-		if (this.dischargeTime != null) {
-			sb.append(", dischargeTime [");
-			sb.append(this.dischargeTime.toString());
-			sb.append("]");
-		}
-		if (this.status != null) {
-			sb.append(", ");
-			sb.append(this.status.toString());
-		}
-		if (this.parameterIndicator != null) {
-			sb.append(", ");
-			sb.append(this.parameterIndicator.toString());
-		}
-		if (this.protocolIdentifier != null) {
-			sb.append(", ");
-			sb.append(this.protocolIdentifier.toString());
-		}
-		if (this.userData != null) {
-			sb.append("\nMSG [");
-			sb.append(this.userData.toString());
-			sb.append("]");
-		}
+        boolean started = false;
+        if (this.userDataHeaderIndicator) {
+            sb.append("userDataHeaderIndicator");
+            started = true;
+        }
+        if (this.moreMessagesToSend) {
+            if (started)
+                sb.append(", ");
+            sb.append("moreMessagesToSend");
+            started = true;
+        }
+        if (this.forwardedOrSpawned) {
+            if (started)
+                sb.append(", ");
+            sb.append("forwardedOrSpawned");
+            started = true;
+        }
+        if (this.statusReportQualifier != null) {
+            if (started)
+                sb.append(", ");
+            sb.append("statusReportQualifier=");
+            sb.append(this.statusReportQualifier);
+        }
 
-		sb.append("]");
+        sb.append(", messageReference=");
+        sb.append(this.messageReference);
+        if (this.recipientAddress != null) {
+            sb.append(", recipientAddress [");
+            sb.append(this.recipientAddress.toString());
+            sb.append("]");
+        }
+        if (this.serviceCentreTimeStamp != null) {
+            sb.append(", serviceCentreTimeStamp [");
+            sb.append(this.serviceCentreTimeStamp.toString());
+            sb.append("]");
+        }
+        if (this.dischargeTime != null) {
+            sb.append(", dischargeTime [");
+            sb.append(this.dischargeTime.toString());
+            sb.append("]");
+        }
+        if (this.status != null) {
+            sb.append(", ");
+            sb.append(this.status.toString());
+        }
+        if (this.parameterIndicator != null) {
+            sb.append(", ");
+            sb.append(this.parameterIndicator.toString());
+        }
+        if (this.protocolIdentifier != null) {
+            sb.append(", ");
+            sb.append(this.protocolIdentifier.toString());
+        }
+        if (this.userData != null) {
+            sb.append("\nMSG [");
+            sb.append(this.userData.toString());
+            sb.append("]");
+        }
 
-		return sb.toString();
-	}
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
-

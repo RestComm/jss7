@@ -26,68 +26,66 @@ import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface TestUssdClientManMBean {
 
-	public String getMsisdnAddress();
+    String getMsisdnAddress();
 
-	public void setMsisdnAddress(String val);
+    void setMsisdnAddress(String val);
 
-	public AddressNatureType getMsisdnAddressNature();
+    AddressNatureType getMsisdnAddressNature();
 
-	public String getMsisdnAddressNature_Value();
+    String getMsisdnAddressNature_Value();
 
-	public void setMsisdnAddressNature(AddressNatureType val);
+    void setMsisdnAddressNature(AddressNatureType val);
 
-	public NumberingPlanMapType getMsisdnNumberingPlan();
+    NumberingPlanMapType getMsisdnNumberingPlan();
 
-	public String getMsisdnNumberingPlan_Value();
+    String getMsisdnNumberingPlan_Value();
 
-	public void setMsisdnNumberingPlan(NumberingPlanMapType val);
+    void setMsisdnNumberingPlan(NumberingPlanMapType val);
 
-	public int getDataCodingScheme();
+    int getDataCodingScheme();
 
-	public void setDataCodingScheme(int val);
+    void setDataCodingScheme(int val);
 
-	public int getAlertingPattern();
+    int getAlertingPattern();
 
-	public void setAlertingPattern(int val);
-	
-	public UssdClientAction getUssdClientAction();
+    void setAlertingPattern(int val);
 
-	public String getUssdClientAction_Value();
+    UssdClientAction getUssdClientAction();
 
-	public void setUssdClientAction(UssdClientAction val);
+    String getUssdClientAction_Value();
 
-	public String getAutoRequestString();
+    void setUssdClientAction(UssdClientAction val);
 
-	public void setAutoRequestString(String val);
+    String getAutoRequestString();
 
-	public int getMaxConcurrentDialogs();
+    void setAutoRequestString(String val);
 
-	public void setMaxConcurrentDialogs(int val);
+    int getMaxConcurrentDialogs();
 
-	public boolean isOneNotificationFor100Dialogs();
+    void setMaxConcurrentDialogs(int val);
 
-	public void setOneNotificationFor100Dialogs(boolean val);
+    boolean isOneNotificationFor100Dialogs();
 
+    void setOneNotificationFor100Dialogs(boolean val);
 
-	public String getCurrentRequestDef();
+    String getCurrentRequestDef();
 
+    String performProcessUnstructuredRequest(String msg);
 
-	public String performProcessUnstructuredRequest(String msg);
+    String performUnstructuredResponse(String msg);
 
-	public String performUnstructuredResponse(String msg);
+    String closeCurrentDialog();
 
-	public String closeCurrentDialog();
+    void putMsisdnAddressNature(String val);
 
-	public void putMsisdnAddressNature(String val);
+    void putMsisdnNumberingPlan(String val);
 
-	public void putMsisdnNumberingPlan(String val);
-
-	public void putUssdClientAction(String val);
+    void putUssdClientAction(String val);
 
 }

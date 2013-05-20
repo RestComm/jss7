@@ -42,197 +42,200 @@ import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.IPSSPCapabilitiesImpl;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
-public class AssistRequestInstructionsRequestImpl extends CircuitSwitchedCallMessageImpl implements AssistRequestInstructionsRequest {
+public class AssistRequestInstructionsRequestImpl extends CircuitSwitchedCallMessageImpl implements
+        AssistRequestInstructionsRequest {
 
-	public static final int _ID_correlationID = 0;
-	public static final int _ID_iPSSPCapabilities = 2;
-	public static final int _ID_extensions = 3;
+    public static final int _ID_correlationID = 0;
+    public static final int _ID_iPSSPCapabilities = 2;
+    public static final int _ID_extensions = 3;
 
-	public static final String _PrimitiveName = "AssistRequestInstructionsRequestIndication";
+    public static final String _PrimitiveName = "AssistRequestInstructionsRequestIndication";
 
-	private Digits correlationID;
-	private IPSSPCapabilities iPSSPCapabilities;
-	private CAPExtensions extensions;	
+    private Digits correlationID;
+    private IPSSPCapabilities iPSSPCapabilities;
+    private CAPExtensions extensions;
 
-	
-	public AssistRequestInstructionsRequestImpl(){
-	}
+    public AssistRequestInstructionsRequestImpl() {
+    }
 
-	public AssistRequestInstructionsRequestImpl(Digits correlationID, IPSSPCapabilities ipSSPCapabilities, CAPExtensions extensions) {
-		this.correlationID = correlationID;
-		this.iPSSPCapabilities = ipSSPCapabilities;
-		this.extensions = extensions;
-	}	
+    public AssistRequestInstructionsRequestImpl(Digits correlationID, IPSSPCapabilities ipSSPCapabilities,
+            CAPExtensions extensions) {
+        this.correlationID = correlationID;
+        this.iPSSPCapabilities = ipSSPCapabilities;
+        this.extensions = extensions;
+    }
 
-	@Override
-	public CAPMessageType getMessageType() {
-		return CAPMessageType.assistRequestInstructions_Request;
-	}
+    @Override
+    public CAPMessageType getMessageType() {
+        return CAPMessageType.assistRequestInstructions_Request;
+    }
 
-	@Override
-	public int getOperationCode() {
-		return CAPOperationCode.assistRequestInstructions;
-	}
+    @Override
+    public int getOperationCode() {
+        return CAPOperationCode.assistRequestInstructions;
+    }
 
-	@Override
-	public Digits getCorrelationID() {
-		return correlationID;
-	}
+    @Override
+    public Digits getCorrelationID() {
+        return correlationID;
+    }
 
-	@Override
-	public IPSSPCapabilities getIPSSPCapabilities() {
-		return iPSSPCapabilities;
-	}
+    @Override
+    public IPSSPCapabilities getIPSSPCapabilities() {
+        return iPSSPCapabilities;
+    }
 
-	@Override
-	public CAPExtensions getExtensions() {
-		return extensions;
-	}
-	
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
+    @Override
+    public CAPExtensions getExtensions() {
+        return extensions;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.SEQUENCE;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		this.correlationID = null;
-		this.iPSSPCapabilities = null;
-		this.extensions = null;
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+        this.correlationID = null;
+        this.iPSSPCapabilities = null;
+        this.extensions = null;
 
-			int tag = ais.readTag();
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_correlationID:
-					this.correlationID = new DigitsImpl();
-					((DigitsImpl) this.correlationID).decodeAll(ais);
-					this.correlationID.setIsGenericNumber();
-					break;
-				case _ID_iPSSPCapabilities:
-					this.iPSSPCapabilities = new IPSSPCapabilitiesImpl();
-					((IPSSPCapabilitiesImpl) this.iPSSPCapabilities).decodeAll(ais);
-					break;
-				case _ID_extensions:
-					this.extensions = new CAPExtensionsImpl();
-					((CAPExtensionsImpl) this.extensions).decodeAll(ais);
-					break;
+            int tag = ais.readTag();
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_correlationID:
+                        this.correlationID = new DigitsImpl();
+                        ((DigitsImpl) this.correlationID).decodeAll(ais);
+                        this.correlationID.setIsGenericNumber();
+                        break;
+                    case _ID_iPSSPCapabilities:
+                        this.iPSSPCapabilities = new IPSSPCapabilitiesImpl();
+                        ((IPSSPCapabilitiesImpl) this.iPSSPCapabilities).decodeAll(ais);
+                        break;
+                    case _ID_extensions:
+                        this.extensions = new CAPExtensionsImpl();
+                        ((CAPExtensionsImpl) this.extensions).decodeAll(ais);
+                        break;
 
-		if (this.correlationID == null || this.iPSSPCapabilities == null)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-					+ ": parameters correlationID and iPSSPCapabilities are mandatory but not found", CAPParsingComponentExceptionReason.MistypedParameter);
-	}
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+        if (this.correlationID == null || this.iPSSPCapabilities == null)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": parameters correlationID and iPSSPCapabilities are mandatory but not found",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-	@Override
-	public void encodeData(AsnOutputStream aos) throws CAPException {
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		if (this.correlationID == null || this.iPSSPCapabilities == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": correlationID and iPSSPCapabilities must not be null");
+    @Override
+    public void encodeData(AsnOutputStream aos) throws CAPException {
 
-		((DigitsImpl) this.correlationID).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_correlationID);
-		((IPSSPCapabilitiesImpl) this.iPSSPCapabilities).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_iPSSPCapabilities);
+        if (this.correlationID == null || this.iPSSPCapabilities == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName
+                    + ": correlationID and iPSSPCapabilities must not be null");
 
-		if (this.extensions != null)
-			((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
-	}
+        ((DigitsImpl) this.correlationID).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_correlationID);
+        ((IPSSPCapabilitiesImpl) this.iPSSPCapabilities).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_iPSSPCapabilities);
 
-	@Override
-	public String toString() {
+        if (this.extensions != null)
+            ((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
+    }
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+    @Override
+    public String toString() {
 
-		if (this.correlationID != null) {
-			sb.append("correlationID=");
-			sb.append(correlationID.toString());
-		}
-		if (this.iPSSPCapabilities != null) {
-			sb.append(", iPSSPCapabilities=");
-			sb.append(iPSSPCapabilities.toString());
-		}
-		if (this.extensions != null) {
-			sb.append(", extensions=");
-			sb.append(extensions.toString());
-		}
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		sb.append("]");
+        if (this.correlationID != null) {
+            sb.append("correlationID=");
+            sb.append(correlationID.toString());
+        }
+        if (this.iPSSPCapabilities != null) {
+            sb.append(", iPSSPCapabilities=");
+            sb.append(iPSSPCapabilities.toString());
+        }
+        if (this.extensions != null) {
+            sb.append(", extensions=");
+            sb.append(extensions.toString());
+        }
 
-		return sb.toString();
-	}
+        sb.append("]");
+
+        return sb.toString();
+    }
 }

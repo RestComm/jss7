@@ -27,19 +27,18 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
 
 /**
- * CamelInfo ::= SEQUENCE {
- * supportedCamelPhases SupportedCamelPhases,
- * suppress-T-CSI NULL OPTIONAL,
- * extensionContainer ExtensionContainer OPTIONAL,
- * ... ,
- * offeredCamel4CSIs [0] OfferedCamel4CSIs OPTIONAL }
- * 
+ * CamelInfo ::= SEQUENCE { supportedCamelPhases SupportedCamelPhases, suppress-T-CSI NULL OPTIONAL, extensionContainer
+ * ExtensionContainer OPTIONAL, ... , offeredCamel4CSIs [0] OfferedCamel4CSIs OPTIONAL }
+ *
  * @author cristian veliscu
- * 
+ *
  */
 public interface CamelInfo {
-	public SupportedCamelPhases getSupportedCamelPhases();
-	public boolean getSuppressTCSI();
-	public MAPExtensionContainer getExtensionContainer();
-	public OfferedCamel4CSIs getOfferedCamel4CSIs();
+    SupportedCamelPhases getSupportedCamelPhases();
+
+    boolean getSuppressTCSI();
+
+    MAPExtensionContainer getExtensionContainer();
+
+    OfferedCamel4CSIs getOfferedCamel4CSIs();
 }

@@ -32,20 +32,18 @@ package org.mobicents.protocols.ss7.isup.message;
  * <TR>
  * <TD style="FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: teal; HEIGHT: 28px; TEXT-ALIGN: center" colSpan="3">
  * Reset Circuit (RSC)</TD>
- * 
+ *
  * </TR>
- * 
+ *
  * <TR>
  * <TD style="FONT-SIZE: 9pt; BORDER-BOTTOM: silver thin solid" colSpan="3">
- * Reset Circuit (RSC) message sent to release a circuit/CIC when, due to memory
- * mutilation or other causes, it is unknown whether for example, a Release or a
- * Release Complete message is appropriate. If, at the receiving end, the
- * circuit/CIC is remotely blocked, reception of this message should cause that
- * condition to be removed.</TD>
+ * Reset Circuit (RSC) message sent to release a circuit/CIC when, due to memory mutilation or other causes, it is unknown
+ * whether for example, a Release or a Release Complete message is appropriate. If, at the receiving end, the circuit/CIC is
+ * remotely blocked, reception of this message should cause that condition to be removed.</TD>
  * </TR>
  * </TABLE>
  * </TD>
- * 
+ *
  * </TR>
  * <TR>
  * <TD style="FONT-WEIGHT: bold; WIDTH: 283px; HEIGHT: 30px; TEXT-ALIGN: center">
@@ -54,19 +52,19 @@ package org.mobicents.protocols.ss7.isup.message;
  * <TD style="FONT-WEIGHT: bold; HEIGHT: 30px">Length (octet)</TD>
  * </TR>
  * <TR>
- * 
+ *
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Message type</TD>
  * <TD style="WIDTH: 145px">F</TD>
  * <TD>1</TD>
  * </TR>
  * </TABLE>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface ResetCircuitMessage extends ISUPMessage {
-	/**
-	 * Reset Circuit Message, Q.763 reference table 39 <br>
-	 * {@link ResetCircuitMessage}
-	 */
-	public static final int MESSAGE_CODE = 0x12;
+    /**
+     * Reset Circuit Message, Q.763 reference table 39 <br>
+     * {@link ResetCircuitMessage}
+     */
+    int MESSAGE_CODE = 0x12;
 }

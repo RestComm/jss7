@@ -33,40 +33,40 @@ import javolution.xml.XMLObjectWriter;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
  *
  */
 public class EUtranCgiTest {
 
-	private byte[] getData() {
-		return new byte[] { 12, 23, 45, 67, 78, 11, 22 };
-	}
-	
-	@Test(groups = { "functional.xml.serialize", "subscriberInformation" })
-	public void testXMLSerialize() throws Exception {
+    private byte[] getData() {
+        return new byte[] { 12, 23, 45, 67, 78, 11, 22 };
+    }
 
-		EUtranCgiImpl original = new EUtranCgiImpl(getData());
-		
-		// Writes the area to a file.
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
-		// writer.setBinding(binding); // Optional.
-		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
-		writer.write(original, "eUtranCgi", EUtranCgiImpl.class);
-		writer.close();
+    @Test(groups = { "functional.xml.serialize", "subscriberInformation" })
+    public void testXMLSerialize() throws Exception {
 
-		byte[] rawData = baos.toByteArray();
-		String serializedEvent = new String(rawData);
+        EUtranCgiImpl original = new EUtranCgiImpl(getData());
 
-		System.out.println(serializedEvent);
+        // Writes the area to a file.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+        writer.write(original, "eUtranCgi", EUtranCgiImpl.class);
+        writer.close();
 
-		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
-		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
-		EUtranCgiImpl copy = reader.read("eUtranCgi", EUtranCgiImpl.class);
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
 
-		assertEquals(copy.getData(), original.getData());
-		
-	}
+        System.out.println(serializedEvent);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        EUtranCgiImpl copy = reader.read("eUtranCgi", EUtranCgiImpl.class);
+
+        assertEquals(copy.getData(), original.getData());
+
+    }
 
 }

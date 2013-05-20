@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -21,10 +21,10 @@
  */
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
 
+import static org.testng.Assert.assertEquals;
+
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BearerServiceCodeValue;
 import org.testng.annotations.Test;
-
-import static org.testng.Assert.*;
 
 /**
  * @author Amit Bhayani
@@ -32,20 +32,20 @@ import static org.testng.Assert.*;
  */
 public class BearerServiceCodeValueTest {
 
-	/**
-	 * 
+    /**
+	 *
 	 */
-	public BearerServiceCodeValueTest() {
-		// TODO Auto-generated constructor stub
-	}
-	
-	@Test(groups = { "functional.encode","primitives"})
-	public void test() throws Exception {
-		int code = BearerServiceCodeValue.Asynchronous9_6kbps.getBearerServiceCode();
-		
-		BearerServiceCodeValue valueFromCode = BearerServiceCodeValue.getInstance(code);
-		
-		assertEquals(valueFromCode, BearerServiceCodeValue.Asynchronous9_6kbps);
-	}
+    public BearerServiceCodeValueTest() {
+        // TODO Auto-generated constructor stub
+    }
+
+    @Test(groups = { "functional.encode", "primitives" })
+    public void test() throws Exception {
+        int code = BearerServiceCodeValue.Asynchronous9_6kbps.getBearerServiceCode();
+
+        BearerServiceCodeValue valueFromCode = BearerServiceCodeValue.getInstance(code);
+
+        assertEquals(valueFromCode, BearerServiceCodeValue.Asynchronous9_6kbps);
+    }
 
 }

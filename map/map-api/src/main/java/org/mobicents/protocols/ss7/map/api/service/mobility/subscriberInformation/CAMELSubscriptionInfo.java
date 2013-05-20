@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
 import java.util.ArrayList;
+
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.DCSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.GPRSCSI;
@@ -37,92 +38,74 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TBcsmCamelTdpCriteria;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TCSI;
 
-/**	
- * 
-
-CAMEL-SubscriptionInfo ::= SEQUENCE {
-	o-CSI		[0]	O-CSI	OPTIONAL,
-	o-BcsmCamelTDP-CriteriaList	[1]	O-BcsmCamelTDPCriteriaList	OPTIONAL, 
-	d-CSI		[2]	D-CSI	OPTIONAL,
-	t-CSI		[3]	T-CSI	OPTIONAL,
-	t-BCSM-CAMEL-TDP-CriteriaList	[4]	T-BCSM-CAMEL-TDP-CriteriaList	OPTIONAL,
-	vt-CSI		[5]	T-CSI	OPTIONAL,
-	vt-BCSM-CAMEL-TDP-CriteriaList	[6]	T-BCSM-CAMEL-TDP-CriteriaList	OPTIONAL,
-	tif-CSI		[7]	NULL		OPTIONAL,
-	tif-CSI-NotificationToCSE	[8]	NULL		OPTIONAL,
-	gprs-CSI		[9]	GPRS-CSI	OPTIONAL,
-	mo-sms-CSI	[10]	SMS-CSI	OPTIONAL,
-	ss-CSI		[11]	SS-CSI	OPTIONAL,
-	m-CSI		[12]	M-CSI	OPTIONAL,
-	extensionContainer	[13]	ExtensionContainer	OPTIONAL,
-	...,
-	specificCSIDeletedList	[14]	SpecificCSI-Withdraw	OPTIONAL,
-	mt-sms-CSI	[15]	SMS-CSI	OPTIONAL,
-	mt-smsCAMELTDP-CriteriaList	[16]	MT-smsCAMELTDP-CriteriaList	OPTIONAL,
-	mg-csi		[17]	MG-CSI	OPTIONAL,
-	o-IM-CSI		[18] O-CSI	OPTIONAL,
-	o-IM-BcsmCamelTDP-CriteriaList	[19] O-BcsmCamelTDPCriteriaList	OPTIONAL,
-	d-IM-CSI		[20] D-CSI	OPTIONAL,
-	vt-IM-CSI		[21] T-CSI	OPTIONAL,
-	vt-IM-BCSM-CAMEL-TDP-CriteriaList	[22]	T-BCSM-CAMEL-TDP-CriteriaList	OPTIONAL
-	}
-
-O-BcsmCamelTDPCriteriaList ::= SEQUENCE SIZE (1..10) OF O-BcsmCamelTDP-Criteria 
-
-T-BCSM-CAMEL-TDP-CriteriaList ::= SEQUENCE SIZE (1..10) OF T-BCSM-CAMEL-TDP-Criteria 
-
-MT-smsCAMELTDP-CriteriaList ::= SEQUENCE SIZE (1.. 10) OF MT-smsCAMELTDP-Criteria
-
- * 
+/**
+ *
+ CAMEL-SubscriptionInfo ::= SEQUENCE { o-CSI [0] O-CSI OPTIONAL, o-BcsmCamelTDP-CriteriaList [1] O-BcsmCamelTDPCriteriaList
+ * OPTIONAL, d-CSI [2] D-CSI OPTIONAL, t-CSI [3] T-CSI OPTIONAL, t-BCSM-CAMEL-TDP-CriteriaList [4] T-BCSM-CAMEL-TDP-CriteriaList
+ * OPTIONAL, vt-CSI [5] T-CSI OPTIONAL, vt-BCSM-CAMEL-TDP-CriteriaList [6] T-BCSM-CAMEL-TDP-CriteriaList OPTIONAL, tif-CSI [7]
+ * NULL OPTIONAL, tif-CSI-NotificationToCSE [8] NULL OPTIONAL, gprs-CSI [9] GPRS-CSI OPTIONAL, mo-sms-CSI [10] SMS-CSI OPTIONAL,
+ * ss-CSI [11] SS-CSI OPTIONAL, m-CSI [12] M-CSI OPTIONAL, extensionContainer [13] ExtensionContainer OPTIONAL, ...,
+ * specificCSIDeletedList [14] SpecificCSI-Withdraw OPTIONAL, mt-sms-CSI [15] SMS-CSI OPTIONAL, mt-smsCAMELTDP-CriteriaList [16]
+ * MT-smsCAMELTDP-CriteriaList OPTIONAL, mg-csi [17] MG-CSI OPTIONAL, o-IM-CSI [18] O-CSI OPTIONAL,
+ * o-IM-BcsmCamelTDP-CriteriaList [19] O-BcsmCamelTDPCriteriaList OPTIONAL, d-IM-CSI [20] D-CSI OPTIONAL, vt-IM-CSI [21] T-CSI
+ * OPTIONAL, vt-IM-BCSM-CAMEL-TDP-CriteriaList [22] T-BCSM-CAMEL-TDP-CriteriaList OPTIONAL }
+ *
+ * O-BcsmCamelTDPCriteriaList ::= SEQUENCE SIZE (1..10) OF O-BcsmCamelTDP-Criteria
+ *
+ * T-BCSM-CAMEL-TDP-CriteriaList ::= SEQUENCE SIZE (1..10) OF T-BCSM-CAMEL-TDP-Criteria
+ *
+ * MT-smsCAMELTDP-CriteriaList ::= SEQUENCE SIZE (1.. 10) OF MT-smsCAMELTDP-Criteria
+ *
+ *
  * @author sergey vetyutnev
  *
  */
 public interface CAMELSubscriptionInfo {
 
-	public OCSI getOCsi();
+    OCSI getOCsi();
 
-	public ArrayList<OBcsmCamelTdpCriteria> getOBcsmCamelTDPCriteriaList();
+    ArrayList<OBcsmCamelTdpCriteria> getOBcsmCamelTDPCriteriaList();
 
-	public DCSI getDCsi();
+    DCSI getDCsi();
 
-	public TCSI getTCsi();
+    TCSI getTCsi();
 
-	public ArrayList<TBcsmCamelTdpCriteria> getTBcsmCamelTdpCriteriaList();
+    ArrayList<TBcsmCamelTdpCriteria> getTBcsmCamelTdpCriteriaList();
 
-	public TCSI getVtCsi();
+    TCSI getVtCsi();
 
-	public ArrayList<TBcsmCamelTdpCriteria> getVtBcsmCamelTdpCriteriaList();
+    ArrayList<TBcsmCamelTdpCriteria> getVtBcsmCamelTdpCriteriaList();
 
-	public boolean getTifCsi();
+    boolean getTifCsi();
 
-	public boolean getTifCsiNotificationToCSE();
+    boolean getTifCsiNotificationToCSE();
 
-	public GPRSCSI getGprsCsi();
+    GPRSCSI getGprsCsi();
 
-	public SMSCSI getMoSmsCsi();
+    SMSCSI getMoSmsCsi();
 
-	public SSCSI getSsCsi();
+    SSCSI getSsCsi();
 
-	public MCSI getMCsi();
+    MCSI getMCsi();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public SpecificCSIWithdraw getSpecificCSIDeletedList();
+    SpecificCSIWithdraw getSpecificCSIDeletedList();
 
-	public SMSCSI getMtSmsCsi();
+    SMSCSI getMtSmsCsi();
 
-	public ArrayList<MTsmsCAMELTDPCriteria> getMtSmsCamelTdpCriteriaList();
+    ArrayList<MTsmsCAMELTDPCriteria> getMtSmsCamelTdpCriteriaList();
 
-	public MGCSI getMgCsi();
+    MGCSI getMgCsi();
 
-	public OCSI geToImCsi();
+    OCSI geToImCsi();
 
-	public ArrayList<OBcsmCamelTdpCriteria> getOImBcsmCamelTdpCriteriaList();
+    ArrayList<OBcsmCamelTdpCriteria> getOImBcsmCamelTdpCriteriaList();
 
-	public DCSI getDImCsi();
+    DCSI getDImCsi();
 
-	public TCSI getVtImCsi();
+    TCSI getVtImCsi();
 
-	public ArrayList<TBcsmCamelTdpCriteria> getVtImBcsmCamelTdpCriteriaList();
+    ArrayList<TBcsmCamelTdpCriteria> getVtImBcsmCamelTdpCriteriaList();
 
 }

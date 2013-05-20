@@ -26,29 +26,24 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
 
 /**
- * 
-
-CCBS-Feature ::= SEQUENCE {
-	ccbs-Index	[0] CCBS-Index	OPTIONAL,
-	b-subscriberNumber	[1] ISDN-AddressString	OPTIONAL,
-	b-subscriberSubaddress	[2] ISDN-SubaddressString	OPTIONAL,
-	basicServiceGroup	[3] BasicServiceCode	OPTIONAL,
-	...}
-
-CCBS-Index  ::= INTEGER (1..5)
-
- * 
+ *
+ CCBS-Feature ::= SEQUENCE { ccbs-Index [0] CCBS-Index OPTIONAL, b-subscriberNumber [1] ISDN-AddressString OPTIONAL,
+ * b-subscriberSubaddress [2] ISDN-SubaddressString OPTIONAL, basicServiceGroup [3] BasicServiceCode OPTIONAL, ...}
+ *
+ * CCBS-Index ::= INTEGER (1..5)
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CCBSFeature {
 
-	public Integer getCcbsIndex();
+    Integer getCcbsIndex();
 
-	public ISDNAddressString getBSubscriberNumber();
+    ISDNAddressString getBSubscriberNumber();
 
-	public ISDNAddressString getBSubscriberSubaddress();
+    ISDNAddressString getBSubscriberSubaddress();
 
-	public BasicServiceCode getBasicServiceCode();
+    BasicServiceCode getBasicServiceCode();
 
 }

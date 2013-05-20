@@ -36,66 +36,64 @@ import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
-
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class SccpProviderWrapper implements SccpProvider {
-	
-	private SccpStackImpl stack;
 
-	public SccpProviderWrapper(SccpStackImpl stack) {
-		this.stack = stack;
-	}
+    private SccpStackImpl stack;
 
-	public MessageFactory getMessageFactory() {
-		return new MessageFactoryImpl(this.stack);
-	}
+    public SccpProviderWrapper(SccpStackImpl stack) {
+        this.stack = stack;
+    }
 
-	public ParameterFactory getParameterFactory() {
-		return new ParameterFactoryImpl();
-	}
+    public MessageFactory getMessageFactory() {
+        return new MessageFactoryImpl(this.stack);
+    }
 
-	public void registerSccpListener(int ssn, SccpListener listener) {
-		// TODO Auto-generated method stub
+    public ParameterFactory getParameterFactory() {
+        return new ParameterFactoryImpl();
+    }
 
-	}
+    public void registerSccpListener(int ssn, SccpListener listener) {
+        // TODO Auto-generated method stub
 
-	public void deregisterSccpListener(int ssn) {
-		// TODO Auto-generated method stub
+    }
 
-	}
+    public void deregisterSccpListener(int ssn) {
+        // TODO Auto-generated method stub
 
-	public void send(SccpMessage message, int seqControl) throws IOException {
-		// TODO Auto-generated method stub
+    }
 
-	}
+    public void send(SccpMessage message, int seqControl) throws IOException {
+        // TODO Auto-generated method stub
 
-	@Override
-	public int getMaxUserDataLength(SccpAddress arg0, SccpAddress arg1) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    }
 
-	@Override
-	public void send(SccpDataMessage arg0) throws IOException {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public int getMaxUserDataLength(SccpAddress arg0, SccpAddress arg1) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 
-	@Override
-	public void registerManagementEventListener(SccpManagementEventListener listener) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void send(SccpDataMessage arg0) throws IOException {
+        // TODO Auto-generated method stub
 
-	@Override
-	public void deregisterManagementEventListener(SccpManagementEventListener listener) {
-		// TODO Auto-generated method stub
-		
-	}
+    }
+
+    @Override
+    public void registerManagementEventListener(SccpManagementEventListener listener) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void deregisterManagementEventListener(SccpManagementEventListener listener) {
+        // TODO Auto-generated method stub
+
+    }
 
 }
-

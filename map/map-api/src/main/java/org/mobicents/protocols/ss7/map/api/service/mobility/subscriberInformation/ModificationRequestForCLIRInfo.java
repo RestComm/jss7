@@ -27,27 +27,23 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.supplementary.CliRestrictionOption;
 
 /**
- * 
-
-ModificationRequestFor-CLIR-Info ::= SEQUENCE {
-	ss-Status		[0]	Ext-SS-Status	OPTIONAL,
-	cliRestrictionOption	[1]  CliRestrictionOption	OPTIONAL,
-	modifyNotificationToCSE	[2]	ModificationInstruction	OPTIONAL,
-	extensionContainer	[3]	ExtensionContainer	OPTIONAL,
-	...}
-
- * 
+ *
+ ModificationRequestFor-CLIR-Info ::= SEQUENCE { ss-Status [0] Ext-SS-Status OPTIONAL, cliRestrictionOption [1]
+ * CliRestrictionOption OPTIONAL, modifyNotificationToCSE [2] ModificationInstruction OPTIONAL, extensionContainer [3]
+ * ExtensionContainer OPTIONAL, ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ModificationRequestForCLIRInfo {
 
-	public ExtSSStatus getSsStatus();
+    ExtSSStatus getSsStatus();
 
-	public CliRestrictionOption getCliRestrictionOption();
+    CliRestrictionOption getCliRestrictionOption();
 
-	public ModificationInstruction getModifyNotificationToCSE();
+    ModificationInstruction getModifyNotificationToCSE();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

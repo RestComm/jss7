@@ -29,6 +29,6 @@ package org.mobicents.protocols.ss7.tcap.asn.comp;
 
 public enum ErrorCodeType {
 
-	Local, Global
+    Local, Global
 
 }

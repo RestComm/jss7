@@ -25,24 +25,21 @@ package org.mobicents.protocols.ss7.map.api.errors;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
-*
-* ExtensibleCallBarredParam ::= SEQUENCE {
-* 	callBarringCause	CallBarringCause	OPTIONAL,
-* 	extensionContainer	ExtensionContainer	OPTIONAL,
-* 	... ,
-* 	unauthorisedMessageOriginator	[1] NULL		OPTIONAL }
-*  
-*
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ * ExtensibleCallBarredParam ::= SEQUENCE { callBarringCause CallBarringCause OPTIONAL, extensionContainer ExtensionContainer
+ * OPTIONAL, ... , unauthorisedMessageOriginator [1] NULL OPTIONAL }
+ *
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface ExtensibleCallBarredParam {
-	
-	public CallBarringCause getCallBarringCause();
-	
-	public MAPExtensionContainer getExtensionContainer();
 
-	public Boolean getUnauthorisedMessageOriginator();
+    CallBarringCause getCallBarringCause();
+
+    MAPExtensionContainer getExtensionContainer();
+
+    Boolean getUnauthorisedMessageOriginator();
 
 }

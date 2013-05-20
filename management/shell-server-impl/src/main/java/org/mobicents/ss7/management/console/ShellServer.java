@@ -42,231 +42,229 @@ import org.mobicents.ss7.management.transceiver.ShellServerChannel;
 
 /**
  * @author amit bhayani
- * 
+ *
  */
 public class ShellServer extends Task {
-	Logger logger = Logger.getLogger(ShellServer.class);
+    Logger logger = Logger.getLogger(ShellServer.class);
 
-	public static final String CONNECTED_MESSAGE = "Connected to %s %s %s";
-	
-	Version version = Version.instance;
+    public static final String CONNECTED_MESSAGE = "Connected to %s %s %s";
 
-	private ChannelProvider provider;
-	private ShellServerChannel serverChannel;
-	private ShellChannel channel;
-	private ChannelSelector selector;
-	private ChannelSelectionKey skey;
+    Version version = Version.instance;
 
-	private MessageFactory messageFactory = null;
+    private ChannelProvider provider;
+    private ShellServerChannel serverChannel;
+    private ShellChannel channel;
+    private ChannelSelector selector;
+    private ChannelSelectionKey skey;
 
-	private String rxMessage = "";
-	private String txMessage = "";
+    private MessageFactory messageFactory = null;
 
-	private volatile boolean started = false;
+    private String rxMessage = "";
+    private String txMessage = "";
 
-	private String address;
+    private volatile boolean started = false;
 
-	private int port;
+    private String address;
 
-	private final FastList<ShellExecutor> shellExecutors = new FastList<ShellExecutor>();
+    private int port;
 
-	public ShellServer(Scheduler scheduler, List<ShellExecutor> shellExecutors) throws IOException {
-		super(scheduler);
-		this.shellExecutors.addAll(shellExecutors);
-	}
+    private final FastList<ShellExecutor> shellExecutors = new FastList<ShellExecutor>();
 
-	public String getAddress() {
-		return address;
-	}
+    public ShellServer(Scheduler scheduler, List<ShellExecutor> shellExecutors) throws IOException {
+        super(scheduler);
+        this.shellExecutors.addAll(shellExecutors);
+    }
 
-	public void setAddress(String address) {
-		this.address = address;
-	}
+    public String getAddress() {
+        return address;
+    }
 
-	public int getPort() {
-		return port;
-	}
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
-	public void setPort(int port) {
-		this.port = port;
-	}
+    public int getPort() {
+        return port;
+    }
 
-	public void start() throws IOException {
-		logger.info("Starting SS7 management shell environment");
-		provider = ChannelProvider.provider();
-		serverChannel = provider.openServerChannel();
-		InetSocketAddress inetSocketAddress = new InetSocketAddress(address, port);
-		serverChannel.bind(inetSocketAddress);
+    public void setPort(int port) {
+        this.port = port;
+    }
 
-		selector = provider.openSelector();
-		skey = serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+    public void start() throws IOException {
+        logger.info("Starting SS7 management shell environment");
+        provider = ChannelProvider.provider();
+        serverChannel = provider.openServerChannel();
+        InetSocketAddress inetSocketAddress = new InetSocketAddress(address, port);
+        serverChannel.bind(inetSocketAddress);
 
-		messageFactory = ChannelProvider.provider().getMessageFactory();
+        selector = provider.openSelector();
+        skey = serverChannel.register(selector, SelectionKey.OP_ACCEPT);
 
-		this.logger.info(String.format("ShellExecutor listening at %s", inetSocketAddress));
+        messageFactory = ChannelProvider.provider().getMessageFactory();
 
-		this.started = true;
-		this.activate(false);
-		scheduler.submit(this, scheduler.MANAGEMENT_QUEUE);
-	}
+        this.logger.info(String.format("ShellExecutor listening at %s", inetSocketAddress));
 
-	public void stop() {
-		this.started = false;
+        this.started = true;
+        this.activate(false);
+        scheduler.submit(this, scheduler.MANAGEMENT_QUEUE);
+    }
 
-		try {
-			skey.cancel();
-			if (this.channel != null) {
-				this.channel.close();
-				this.channel = null;
-			}
-			serverChannel.close();
-			selector.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+    public void stop() {
+        this.started = false;
 
-		this.logger.info("Stopped ShellExecutor service");
-	}
+        try {
+            skey.cancel();
+            if (this.channel != null) {
+                this.channel.close();
+                this.channel = null;
+            }
+            serverChannel.close();
+            selector.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-	public int getQueueNumber() {
-		return scheduler.MANAGEMENT_QUEUE;
-	}
+        this.logger.info("Stopped ShellExecutor service");
+    }
 
-	public long perform() {
-		if (!this.started)
-			return 0;
+    public int getQueueNumber() {
+        return scheduler.MANAGEMENT_QUEUE;
+    }
 
-		try {
-			FastSet<ChannelSelectionKey> keys = selector.selectNow();
+    public long perform() {
+        if (!this.started)
+            return 0;
 
-			for (FastSet.Record record = keys.head(), end = keys.tail(); (record = record.getNext()) != end;) {
-				ChannelSelectionKey key = (ChannelSelectionKey) keys.valueOf(record);
+        try {
+            FastSet<ChannelSelectionKey> keys = selector.selectNow();
 
-				if (key.isAcceptable()) {
-					accept();
-				} else if (key.isReadable()) {
-					ShellChannel chan = (ShellChannel) key.channel();
-					Message msg = (Message) chan.receive();
+            for (FastSet.Record record = keys.head(), end = keys.tail(); (record = record.getNext()) != end;) {
+                ChannelSelectionKey key = (ChannelSelectionKey) keys.valueOf(record);
 
-					if (msg != null) {
-						rxMessage = msg.toString();
-						logger.info("received command : " + rxMessage);
-						if (rxMessage.compareTo("disconnect") == 0) {
-							this.txMessage = "Bye";
-							chan.send(messageFactory.createMessage(txMessage));
+                if (key.isAcceptable()) {
+                    accept();
+                } else if (key.isReadable()) {
+                    ShellChannel chan = (ShellChannel) key.channel();
+                    Message msg = (Message) chan.receive();
 
-						} else {
-							String[] options = rxMessage.split(" ");
-							ShellExecutor shellExecutor = null;
-							for (FastList.Node<ShellExecutor> n = this.shellExecutors.head(), end1 = this.shellExecutors
-									.tail(); (n = n.getNext()) != end1;) {
-								ShellExecutor value = n.getValue();
-								if (value.handles(options[0])) {
-									shellExecutor = value;
-									break;
-								}
-							}
+                    if (msg != null) {
+                        rxMessage = msg.toString();
+                        logger.info("received command : " + rxMessage);
+                        if (rxMessage.compareTo("disconnect") == 0) {
+                            this.txMessage = "Bye";
+                            chan.send(messageFactory.createMessage(txMessage));
 
-							if (shellExecutor == null) {
-								logger.warn(String.format(
-										"Received command=\"%s\" for which no ShellExecutor is configured ", rxMessage));
-								chan.send(messageFactory.createMessage("Invalid command"));
-							} else {
-								this.txMessage = shellExecutor.execute(options);
-								chan.send(messageFactory.createMessage(this.txMessage));
-							}
+                        } else {
+                            String[] options = rxMessage.split(" ");
+                            ShellExecutor shellExecutor = null;
+                            for (FastList.Node<ShellExecutor> n = this.shellExecutors.head(), end1 = this.shellExecutors.tail(); (n = n
+                                    .getNext()) != end1;) {
+                                ShellExecutor value = n.getValue();
+                                if (value.handles(options[0])) {
+                                    shellExecutor = value;
+                                    break;
+                                }
+                            }
 
-						} // if (rxMessage.compareTo("disconnect")
-					} // if (msg != null)
+                            if (shellExecutor == null) {
+                                logger.warn(String.format("Received command=\"%s\" for which no ShellExecutor is configured ",
+                                        rxMessage));
+                                chan.send(messageFactory.createMessage("Invalid command"));
+                            } else {
+                                this.txMessage = shellExecutor.execute(options);
+                                chan.send(messageFactory.createMessage(this.txMessage));
+                            }
 
-					// TODO Handle message
+                        } // if (rxMessage.compareTo("disconnect")
+                    } // if (msg != null)
 
-					rxMessage = "";
+                    // TODO Handle message
 
-				} else if (key.isWritable() && txMessage.length() > 0) {
+                    rxMessage = "";
 
-					if (this.txMessage.compareTo("Bye") == 0) {
-						this.closeChannel();
-					}
-					this.txMessage = "";
-				}
-			}
-		} catch (IOException e) {
-			logger.error(
-					"IO Exception while operating on ChannelSelectionKey. Client CLI connection will be closed now", e);
-			try {
-				this.closeChannel();
-			} catch (IOException e1) {
-				logger.error("IO Exception while closing Channel", e);
-			}
-		} catch (Exception e) {
-			logger.error("Exception while operating on ChannelSelectionKey. Client CLI connection will be closed now",
-					e);
-			try {
-				this.closeChannel();
-			} catch (IOException e1) {
-				logger.error("IO Exception while closing Channel", e);
-			}
-		}
+                } else if (key.isWritable() && txMessage.length() > 0) {
 
-		if (this.started)
-			scheduler.submit(this, scheduler.MANAGEMENT_QUEUE);
+                    if (this.txMessage.compareTo("Bye") == 0) {
+                        this.closeChannel();
+                    }
+                    this.txMessage = "";
+                }
+            }
+        } catch (IOException e) {
+            logger.error("IO Exception while operating on ChannelSelectionKey. Client CLI connection will be closed now", e);
+            try {
+                this.closeChannel();
+            } catch (IOException e1) {
+                logger.error("IO Exception while closing Channel", e);
+            }
+        } catch (Exception e) {
+            logger.error("Exception while operating on ChannelSelectionKey. Client CLI connection will be closed now", e);
+            try {
+                this.closeChannel();
+            } catch (IOException e1) {
+                logger.error("IO Exception while closing Channel", e);
+            }
+        }
 
-		return 0;
-	}
+        if (this.started)
+            scheduler.submit(this, scheduler.MANAGEMENT_QUEUE);
 
-	private void accept() throws IOException {
-		ShellChannel channelTmp = serverChannel.accept();
+        return 0;
+    }
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("Accepting client connection. Remote Address= " + channelTmp.getRemoteAddress());
-		}
+    private void accept() throws IOException {
+        ShellChannel channelTmp = serverChannel.accept();
 
-		if (this.channel != null) {
-			String exitmessage = "Already client from " + this.channel.getRemoteAddress()
-					+ " is connected. Closing this connection";
-			
-			logger.warn(exitmessage);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Accepting client connection. Remote Address= " + channelTmp.getRemoteAddress());
+        }
 
-			channelTmp.sendImmediate(messageFactory.createMessage(exitmessage));
+        if (this.channel != null) {
+            String exitmessage = "Already client from " + this.channel.getRemoteAddress()
+                    + " is connected. Closing this connection";
 
-			channelTmp.close();
-			return;
-		}
+            logger.warn(exitmessage);
 
-		this.channel = channelTmp;
+            channelTmp.sendImmediate(messageFactory.createMessage(exitmessage));
 
-		// skey.cancel();
-		// skey = this.channel.register(selector, SelectionKey.OP_READ |
-		// SelectionKey.OP_WRITE);
-		this.channel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+            channelTmp.close();
+            return;
+        }
 
-		String messageToSend = String.format(CONNECTED_MESSAGE, this.version.getProperty("name"),
-				this.version.getProperty("version"), this.version.getProperty("vendor"));
-		this.channel.send(messageFactory.createMessage(messageToSend));
+        this.channel = channelTmp;
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("Sent message to remote client= " + messageToSend);
-		}
+        // skey.cancel();
+        // skey = this.channel.register(selector, SelectionKey.OP_READ |
+        // SelectionKey.OP_WRITE);
+        this.channel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
 
-	}
+        String messageToSend = String.format(CONNECTED_MESSAGE, this.version.getProperty("name"),
+                this.version.getProperty("version"), this.version.getProperty("vendor"));
+        this.channel.send(messageFactory.createMessage(messageToSend));
 
-	private void closeChannel() throws IOException {
-		if (this.channel != null) {
-			try {
-				this.channel.close();
-			} catch (IOException e) {
-				logger.error("Error closing channel", e);
-			}
+        if (logger.isDebugEnabled()) {
+            logger.debug("Sent message to remote client= " + messageToSend);
+        }
 
-			if (logger.isDebugEnabled()) {
-				logger.debug("Closed client connection. Remote Address= " + this.channel.getRemoteAddress());
-			}
+    }
 
-			this.channel = null;
-		}
+    private void closeChannel() throws IOException {
+        if (this.channel != null) {
+            try {
+                this.channel.close();
+            } catch (IOException e) {
+                logger.error("Error closing channel", e);
+            }
 
-		// skey.cancel();
-		// skey = serverChannel.register(selector, SelectionKey.OP_ACCEPT);
-	}
+            if (logger.isDebugEnabled()) {
+                logger.debug("Closed client connection. Remote Address= " + this.channel.getRemoteAddress());
+            }
+
+            this.channel = null;
+        }
+
+        // skey.cancel();
+        // skey = serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+    }
 }

@@ -30,17 +30,17 @@ package org.mobicents.protocols.ss7.isup.message;
  * <TD style="FONT-WEIGHT: bold; WIDTH: 328px; COLOR: teal; HEIGHT: 28px; TEXT-ALIGN: center" align="center" colSpan="3">
  * <TABLE id="Table60" style="WIDTH: 575px; HEIGHT: 49px" cellSpacing="1" cellPadding="1" width="575" border="0">
  * <TR>
- * 
+ *
  * <TD style="FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: teal; HEIGHT: 28px; TEXT-ALIGN: center" colSpan="3">
  * Identification Response (IRS) Message</TD>
  * </TR>
  * <TR>
- * <TD style="FONT-SIZE: 9pt; COLOR: navy" colSpan="3">Identification Response
- * (IRS)&nbsp;message sent in response to the identification request message.</TD>
+ * <TD style="FONT-SIZE: 9pt; COLOR: navy" colSpan="3">Identification Response (IRS)&nbsp;message sent in response to the
+ * identification request message.</TD>
  * </TR>
  * </TABLE>
  * </TD>
- * 
+ *
  * </TR>
  * <TR>
  * <TD style="FONT-WEIGHT: bold; WIDTH: 283px; HEIGHT: 30px; TEXT-ALIGN: center">
@@ -49,7 +49,7 @@ package org.mobicents.protocols.ss7.isup.message;
  * <TD style="FONT-WEIGHT: bold; HEIGHT: 30px">Length (octet)</TD>
  * </TR>
  * <TR>
- * 
+ *
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Message type</TD>
  * <TD style="WIDTH: 145px">F</TD>
  * <TD>1</TD>
@@ -57,24 +57,22 @@ package org.mobicents.protocols.ss7.isup.message;
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">MCID Response Indicators</TD>
  * <TD style="WIDTH: 145px">O</TD>
- * 
+ *
  * <TD>3-?</TD>
  * </TR>
  * <TR>
- * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Message&nbsp;Compatibility
- * Information</TD>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Message&nbsp;Compatibility Information</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>4-?</TD>
- * 
+ *
  * </TR>
  * <TR>
- * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Parameter Compatibility
- * Information</TD>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Parameter Compatibility Information</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>4-?</TD>
  * </TR>
  * <TR>
- * 
+ *
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Calling Party Number</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>5-12</TD>
@@ -82,7 +80,7 @@ package org.mobicents.protocols.ss7.isup.message;
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Access Transport</TD>
  * <TD style="WIDTH: 145px">O</TD>
- * 
+ *
  * <TD>3-?</TD>
  * </TR>
  * <TR>
@@ -90,20 +88,20 @@ package org.mobicents.protocols.ss7.isup.message;
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>5-13</TD>
  * </TR>
- * 
+ *
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">End of Optional Parameters</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>1</TD>
  * </TR>
  * </TABLE>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface IdentificationResponseMessage extends ISUPMessage {
-	/**
-	 * Identification Response Message, Q.763 reference table 48 <br>
-	 * {@link IdentificationResponseMessage}
-	 */
-	public static final int MESSAGE_CODE = 0x37;
+    /**
+     * Identification Response Message, Q.763 reference table 48 <br>
+     * {@link IdentificationResponseMessage}
+     */
+    int MESSAGE_CODE = 0x37;
 }

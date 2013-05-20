@@ -23,11 +23,11 @@
 package org.mobicents.protocols.ss7.inap.api;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public enum INAPParsingComponentExceptionReason {
-	UnrecognizedOperation, MistypedParameter, LinkedResponseUnexpected , UnexpectedLinkedOperation;
+    UnrecognizedOperation, MistypedParameter, LinkedResponseUnexpected, UnexpectedLinkedOperation;
 
 }

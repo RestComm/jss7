@@ -25,20 +25,18 @@ package org.mobicents.protocols.ss7.cap.api.gap;
 import org.mobicents.protocols.ss7.cap.api.primitives.ScfID;
 
 /**
-*
-CompoundCriteria {PARAMETERS-BOUND : bound} ::= SEQUENCE {
-basicGapCriteria [0] BasicGapCriteria {bound},
-scfID [1] ScfID {bound} OPTIONAL
-}
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ CompoundCriteria {PARAMETERS-BOUND : bound} ::= SEQUENCE { basicGapCriteria [0] BasicGapCriteria {bound}, scfID [1] ScfID
+ * {bound} OPTIONAL }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface CompoundCriteria {
 
-	public BasicGapCriteria getBasicGapCriteria();
+    BasicGapCriteria getBasicGapCriteria();
 
-	public ScfID getScfID();
+    ScfID getScfID();
 
 }

@@ -23,17 +23,15 @@
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
 /**
- * 
-
-	RESULT
-		Password
-
- * 
+ *
+ RESULT Password
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface RegisterPasswordResponse extends SupplementaryMessage {
 
-	public Password getPassword();
+    Password getPassword();
 
 }

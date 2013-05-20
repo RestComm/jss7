@@ -22,17 +22,15 @@
 
 package org.mobicents.protocols.ss7.isup;
 
-
 /**
  *
  * @author kulikov
  * @author baranowb
  */
 public interface ISUPListener {
-	
-	
-	public void onEvent(ISUPEvent event);
-	
-	public void onTimeout(ISUPTimeoutEvent event);
-	
+
+    void onEvent(ISUPEvent event);
+
+    void onTimeout(ISUPTimeoutEvent event);
+
 }

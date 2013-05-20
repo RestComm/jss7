@@ -39,228 +39,231 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 
 /**
- * 
+ *
  * @author amit bhayani
  * @author sergey vetyutnev
- * 
+ *
  */
 public class AddressStringImpl implements AddressString, MAPAsnPrimitive {
-	
-	private static final String NAI = "nai";
-	private static final String NPI = "npi";
-	private static final String NUMBER = "number";
 
-	private static final String DEFAULT_STRING_VALUE = null;
+    private static final String NAI = "nai";
+    private static final String NPI = "npi";
+    private static final String NUMBER = "number";
 
-	protected int NO_EXTENSION_MASK = 0x80;
-	protected int NATURE_OF_ADD_IND_MASK = 0x70;
-	protected int NUMBERING_PLAN_IND_MASK = 0x0F;
+    private static final String DEFAULT_STRING_VALUE = null;
 
-	protected AddressNature addressNature;
-	protected NumberingPlan numberingPlan;
-	protected String address;
+    protected int NO_EXTENSION_MASK = 0x80;
+    protected int NATURE_OF_ADD_IND_MASK = 0x70;
+    protected int NUMBERING_PLAN_IND_MASK = 0x0F;
 
-	private boolean isExtension;
+    protected AddressNature addressNature;
+    protected NumberingPlan numberingPlan;
+    protected String address;
 
-	public AddressStringImpl() {
-	}
+    private boolean isExtension;
 
-	public AddressStringImpl(AddressNature addressNature, NumberingPlan numberingPlan, String address) {
-		super();
-		this.addressNature = addressNature;
-		this.numberingPlan = numberingPlan;
-		this.address = address;
-	}
+    public AddressStringImpl() {
+    }
 
-	public String getAddress() {
-		return this.address;
-	}
+    public AddressStringImpl(AddressNature addressNature, NumberingPlan numberingPlan, String address) {
+        super();
+        this.addressNature = addressNature;
+        this.numberingPlan = numberingPlan;
+        this.address = address;
+    }
 
-	public AddressNature getAddressNature() {
-		return this.addressNature;
-	}
+    public String getAddress() {
+        return this.address;
+    }
 
-	public NumberingPlan getNumberingPlan() {
-		return this.numberingPlan;
-	}
+    public AddressNature getAddressNature() {
+        return this.addressNature;
+    }
 
-	public boolean isExtension() {
-		return isExtension;
-	}
+    public NumberingPlan getNumberingPlan() {
+        return this.numberingPlan;
+    }
 
-	public int getTag() throws MAPException {
-		return Tag.STRING_OCTET;
-	}
+    public boolean isExtension() {
+        return isExtension;
+    }
 
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    public int getTag() throws MAPException {
+        return Tag.STRING_OCTET;
+    }
 
-	public boolean getIsPrimitive() {
-		return true;
-	}
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+    public boolean getIsPrimitive() {
+        return true;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding AddressString: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding AddressString: " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding AddressString: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
-	protected void _testLengthDecode(int length) throws MAPParsingComponentException {
-		if (length > 20)
-			throw new MAPParsingComponentException("Error when decoding AddressString: mesage length must not exceed 20",
-					MAPParsingComponentExceptionReason.MistypedParameter);
-	}
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding AddressString: " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException {
+    protected void _testLengthDecode(int length) throws MAPParsingComponentException {
+        if (length > 20)
+            throw new MAPParsingComponentException("Error when decoding AddressString: mesage length must not exceed 20",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-		this._testLengthDecode(length);
+    private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException {
 
-		// The first byte has extension, nature of address indicator and
-		// numbering plan indicator
-		int nature = ansIS.read();
+        this._testLengthDecode(length);
 
-		if ((nature & NO_EXTENSION_MASK) == 0x80) {
-			this.isExtension = false;
-		} else {
-			this.isExtension = true;
-		}
+        // The first byte has extension, nature of address indicator and
+        // numbering plan indicator
+        int nature = ansIS.read();
 
-		int natureOfAddInd = ((nature & NATURE_OF_ADD_IND_MASK) >> 4);
+        if ((nature & NO_EXTENSION_MASK) == 0x80) {
+            this.isExtension = false;
+        } else {
+            this.isExtension = true;
+        }
 
-		this.addressNature = AddressNature.getInstance(natureOfAddInd);
+        int natureOfAddInd = ((nature & NATURE_OF_ADD_IND_MASK) >> 4);
 
-		int numbPlanInd = (nature & NUMBERING_PLAN_IND_MASK);
+        this.addressNature = AddressNature.getInstance(natureOfAddInd);
 
-		this.numberingPlan = NumberingPlan.getInstance(numbPlanInd);
+        int numbPlanInd = (nature & NUMBERING_PLAN_IND_MASK);
 
-		this.address = TbcdString.decodeString(ansIS, length - 1);
-	}
+        this.numberingPlan = NumberingPlan.getInstance(numbPlanInd);
 
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+        this.address = TbcdString.decodeString(ansIS, length - 1);
+    }
 
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET);
-	}
+    public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+        this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET);
+    }
 
-		try {
-			asnOs.writeTag(tagClass, true, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding AddressString: " + e.getMessage(), e);
-		}
-	}
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 
-	protected void _testLengthEncode() throws MAPException {
+        try {
+            asnOs.writeTag(tagClass, true, tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding AddressString: " + e.getMessage(), e);
+        }
+    }
 
-		if (this.address.length() > 38)
-			throw new MAPException("Error when encoding AddressString: address length must not exceed 38 digits");
-	}
+    protected void _testLengthEncode() throws MAPException {
 
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+        if (this.address.length() > 38)
+            throw new MAPException("Error when encoding AddressString: address length must not exceed 38 digits");
+    }
 
-		if (this.addressNature == null || this.numberingPlan == null || this.address == null)
-			throw new MAPException("Error when encoding AddressString: addressNature, numberingPlan or address is empty");
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-		this._testLengthEncode();
+        if (this.addressNature == null || this.numberingPlan == null || this.address == null)
+            throw new MAPException("Error when encoding AddressString: addressNature, numberingPlan or address is empty");
 
-		int nature = 1;
+        this._testLengthEncode();
 
-		if (this.isExtension) {
-			nature = 0;
-		}
+        int nature = 1;
 
-		nature = nature << 7;
+        if (this.isExtension) {
+            nature = 0;
+        }
 
-		nature = nature | (this.addressNature.getIndicator() << 4);
+        nature = nature << 7;
 
-		nature = nature | (this.numberingPlan.getIndicator());
+        nature = nature | (this.addressNature.getIndicator() << 4);
 
-		asnOs.write(nature);
+        nature = nature | (this.numberingPlan.getIndicator());
 
-		TbcdString.encodeString(asnOs, this.address);
-	}
+        asnOs.write(nature);
 
-	@Override
-	public String toString() {
-		return "AddressString[AddressNature=" + this.addressNature.toString() + ", NumberingPlan=" + this.numberingPlan.toString() + ", Address="
-				+ this.address + "]";
-	}
+        TbcdString.encodeString(asnOs, this.address);
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((address == null) ? 0 : address.hashCode());
-		result = prime * result + ((addressNature == null) ? 0 : addressNature.hashCode());
-		result = prime * result + ((numberingPlan == null) ? 0 : numberingPlan.hashCode());
-		return result;
-	}
+    @Override
+    public String toString() {
+        return "AddressString[AddressNature=" + this.addressNature.toString() + ", NumberingPlan="
+                + this.numberingPlan.toString() + ", Address=" + this.address + "]";
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		AddressStringImpl other = (AddressStringImpl) obj;
-		if (address == null) {
-			if (other.address != null)
-				return false;
-		} else if (!address.equals(other.address))
-			return false;
-		if (addressNature != other.addressNature)
-			return false;
-		if (numberingPlan != other.numberingPlan)
-			return false;
-		return true;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((address == null) ? 0 : address.hashCode());
+        result = prime * result + ((addressNature == null) ? 0 : addressNature.hashCode());
+        result = prime * result + ((numberingPlan == null) ? 0 : numberingPlan.hashCode());
+        return result;
+    }
 
-	/**
-	 * XML Serialization/Deserialization
-	 */
-	protected static final XMLFormat<AddressStringImpl> ADDRESS_STRING_XML = new XMLFormat<AddressStringImpl>(AddressStringImpl.class) {
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        AddressStringImpl other = (AddressStringImpl) obj;
+        if (address == null) {
+            if (other.address != null)
+                return false;
+        } else if (!address.equals(other.address))
+            return false;
+        if (addressNature != other.addressNature)
+            return false;
+        if (numberingPlan != other.numberingPlan)
+            return false;
+        return true;
+    }
 
-		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml, AddressStringImpl addressStringImpl) throws XMLStreamException {
-			addressStringImpl.address = xml.getAttribute(NUMBER, "");
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<AddressStringImpl> ADDRESS_STRING_XML = new XMLFormat<AddressStringImpl>(
+            AddressStringImpl.class) {
 
-			String nai = xml.getAttribute(NAI, DEFAULT_STRING_VALUE);
-			String npi = xml.getAttribute(NPI, DEFAULT_STRING_VALUE);
-			if (nai != null) {
-				addressStringImpl.addressNature = Enum.valueOf(AddressNature.class, nai);
-			}
-			if (npi != null) {
-				addressStringImpl.numberingPlan = Enum.valueOf(NumberingPlan.class, npi);
-			}
-		}
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, AddressStringImpl addressStringImpl)
+                throws XMLStreamException {
+            addressStringImpl.address = xml.getAttribute(NUMBER, "");
 
-		@Override
-		public void write(AddressStringImpl addressStringImpl, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+            String nai = xml.getAttribute(NAI, DEFAULT_STRING_VALUE);
+            String npi = xml.getAttribute(NPI, DEFAULT_STRING_VALUE);
+            if (nai != null) {
+                addressStringImpl.addressNature = Enum.valueOf(AddressNature.class, nai);
+            }
+            if (npi != null) {
+                addressStringImpl.numberingPlan = Enum.valueOf(NumberingPlan.class, npi);
+            }
+        }
 
-			xml.setAttribute(NUMBER, addressStringImpl.address);
-			xml.setAttribute(NAI, addressStringImpl.addressNature.toString());
-			xml.setAttribute(NPI, addressStringImpl.numberingPlan.toString());
-		}
-	};
+        @Override
+        public void write(AddressStringImpl addressStringImpl, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+
+            xml.setAttribute(NUMBER, addressStringImpl.address);
+            xml.setAttribute(NAI, addressStringImpl.addressNature.toString());
+            xml.setAttribute(NPI, addressStringImpl.numberingPlan.toString());
+        }
+    };
 }

@@ -23,14 +23,12 @@
 /**
  * Start time:17:31:22 2009-03-30<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
- * 
+ *
  */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
-
-import java.io.IOException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.ClosedUserGroupInterlockCode;
@@ -38,101 +36,99 @@ import org.mobicents.protocols.ss7.isup.message.parameter.ClosedUserGroupInterlo
 /**
  * Start time:17:31:22 2009-03-30<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
 public class ClosedUserGroupInterlockCodeImpl extends AbstractISUPParameter implements ClosedUserGroupInterlockCode {
 
-	// XXX: this parameter is weird, it does not follow general convention of
-	// parameters :/
-	private byte[] niDigits = null;
-	private int binaryCode = 0;
+    // XXX: this parameter is weird, it does not follow general convention of
+    // parameters :/
+    private byte[] niDigits = null;
+    private int binaryCode = 0;
 
-	public ClosedUserGroupInterlockCodeImpl(byte[] b) throws ParameterException {
-		super();
-		decode(b);
-	}
+    public ClosedUserGroupInterlockCodeImpl(byte[] b) throws ParameterException {
+        super();
+        decode(b);
+    }
 
-	public ClosedUserGroupInterlockCodeImpl() {
-		super();
-		
-	}
+    public ClosedUserGroupInterlockCodeImpl() {
+        super();
 
-	/**
-	 * 
-	 * @param niDigits
-	 *            - arrays of NetworkIdentiti digits, it must be of length 4, if
-	 *            only 2 digits are required - last two must be empty (zero,
-	 *            default int value)
-	 * @param binaryCode
-	 */
-	public ClosedUserGroupInterlockCodeImpl(byte[] niDigits, int binaryCode) {
-		super();
+    }
 
-		// FIXME: add check for range ?
-		this.setNiDigits(niDigits);
-		this.binaryCode = binaryCode;
-	}
+    /**
+     *
+     * @param niDigits - arrays of NetworkIdentiti digits, it must be of length 4, if only 2 digits are required - last two must
+     *        be empty (zero, default int value)
+     * @param binaryCode
+     */
+    public ClosedUserGroupInterlockCodeImpl(byte[] niDigits, int binaryCode) {
+        super();
 
-	public int decode(byte[] b) throws ParameterException {
-		if (b == null || b.length != 4) {
-			throw new ParameterException("byte[] must not be null and must have length of 4");
-		}
-		int v = 0;
-		this.niDigits = new byte[4];
+        // FIXME: add check for range ?
+        this.setNiDigits(niDigits);
+        this.binaryCode = binaryCode;
+    }
 
-		for (int i = 0; i < 2; i++) {
-			v = 0;
-			v = b[i];
-			this.niDigits[i * 2] = (byte) (v & 0x0F);
-			this.niDigits[i * 2 + 1] = (byte) ((v >> 4) & 0x0F);
-		}
+    public int decode(byte[] b) throws ParameterException {
+        if (b == null || b.length != 4) {
+            throw new ParameterException("byte[] must not be null and must have length of 4");
+        }
+        int v = 0;
+        this.niDigits = new byte[4];
 
-		this.binaryCode = b[2] << 8;
-		this.binaryCode |= b[3];
+        for (int i = 0; i < 2; i++) {
+            v = 0;
+            v = b[i];
+            this.niDigits[i * 2] = (byte) (v & 0x0F);
+            this.niDigits[i * 2 + 1] = (byte) ((v >> 4) & 0x0F);
+        }
 
-		return 4;
-	}
+        this.binaryCode = b[2] << 8;
+        this.binaryCode |= b[3];
 
-	public byte[] encode() throws ParameterException {
-		byte[] b = new byte[4];
-		int v = 0;
-		for (int i = 0; i < 2; i++) {
-			v = 0;
+        return 4;
+    }
 
-			v |= (this.niDigits[i * 2] & 0x0F) << 4;
-			v |= (this.niDigits[i * 2 + 1] & 0x0F);
+    public byte[] encode() throws ParameterException {
+        byte[] b = new byte[4];
+        int v = 0;
+        for (int i = 0; i < 2; i++) {
+            v = 0;
 
-			b[i] = (byte) v;
-		}
-		b[2] = (byte) (this.binaryCode >> 8);
-		b[3] = (byte) this.binaryCode;
+            v |= (this.niDigits[i * 2] & 0x0F) << 4;
+            v |= (this.niDigits[i * 2 + 1] & 0x0F);
 
-		return b;
-	}
+            b[i] = (byte) v;
+        }
+        b[2] = (byte) (this.binaryCode >> 8);
+        b[3] = (byte) this.binaryCode;
 
-	public byte[] getNiDigits() {
-		return niDigits;
-	}
+        return b;
+    }
 
-	public void setNiDigits(byte[] niDigits) {
-		if (niDigits == null || niDigits.length != 4) {
-			throw new IllegalArgumentException();
-		}
+    public byte[] getNiDigits() {
+        return niDigits;
+    }
 
-		this.niDigits = niDigits;
-	}
+    public void setNiDigits(byte[] niDigits) {
+        if (niDigits == null || niDigits.length != 4) {
+            throw new IllegalArgumentException();
+        }
 
-	public int getBinaryCode() {
-		return binaryCode;
-	}
+        this.niDigits = niDigits;
+    }
 
-	public void setBinaryCode(int binaryCode) {
-		this.binaryCode = binaryCode;
-	}
+    public int getBinaryCode() {
+        return binaryCode;
+    }
 
-	public int getCode() {
+    public void setBinaryCode(int binaryCode) {
+        this.binaryCode = binaryCode;
+    }
 
-		return _PARAMETER_CODE;
-	}
+    public int getCode() {
+
+        return _PARAMETER_CODE;
+    }
 }

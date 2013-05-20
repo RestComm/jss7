@@ -23,27 +23,21 @@
 package org.mobicents.protocols.ss7.cap.api.gap;
 
 /**
-*
-GapIndicators ::= SEQUENCE {
-duration [0] Duration,
-gapInterval [1] Interval,
-...
-}
--- Indicates the call gapping characteristics.
--- No call gapping when gapInterval equals 0
-
-Duration ::= INTEGER (-2..86400)
-Interval ::= INTEGER (-1..60000)
-
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ GapIndicators ::= SEQUENCE { duration [0] Duration, gapInterval [1] Interval, ... } -- Indicates the call gapping
+ * characteristics. -- No call gapping when gapInterval equals 0
+ *
+ * Duration ::= INTEGER (-2..86400) Interval ::= INTEGER (-1..60000)
+ *
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface GapIndicators {
 
-	public int getDuration();
+    int getDuration();
 
-	public int getGapInterval();
+    int getGapInterval();
 
 }

@@ -23,10 +23,10 @@
 /**
  * Start time:16:49:41 2009-03-30<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
- * 
+ *
  */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
@@ -39,67 +39,62 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CircuitGroupSuperVisio
 /**
  * Start time:16:49:41 2009-03-30<br>
  * Project: mobicents-isup-stack<br>
- * 
- * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
- *         </a>
+ *
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class CircuitGroupSuperVisionMessageTypeImpl extends AbstractISUPParameter implements CircuitGroupSuperVisionMessageType{
+public class CircuitGroupSuperVisionMessageTypeImpl extends AbstractISUPParameter implements CircuitGroupSuperVisionMessageType {
 
-	
-	
+    private int CircuitGroupSuperVisionMessageTypeIndicator = 0;
 
-	private int CircuitGroupSuperVisionMessageTypeIndicator = 0;
+    public CircuitGroupSuperVisionMessageTypeImpl(byte[] b) throws ParameterException {
+        super();
+        decode(b);
+    }
 
-	public CircuitGroupSuperVisionMessageTypeImpl(byte[] b) throws ParameterException {
-		super();
-		decode(b);
-	}
+    public CircuitGroupSuperVisionMessageTypeImpl(int CircuitGroupSuperVisionMessageTypeIndicator) {
+        super();
+        this.CircuitGroupSuperVisionMessageTypeIndicator = CircuitGroupSuperVisionMessageTypeIndicator;
+    }
 
-	public CircuitGroupSuperVisionMessageTypeImpl(int CircuitGroupSuperVisionMessageTypeIndicator) {
-		super();
-		this.CircuitGroupSuperVisionMessageTypeIndicator = CircuitGroupSuperVisionMessageTypeIndicator;
-	}
+    public CircuitGroupSuperVisionMessageTypeImpl() {
+        super();
 
-	public CircuitGroupSuperVisionMessageTypeImpl() {
-		super();
-		
-	}
+    }
 
-	public int decode(byte[] b) throws ParameterException {
-		if (b == null || b.length != 1) {
-			throw new ParameterException("byte[] must not be null or has size different than 1.");
-		}
-		this.CircuitGroupSuperVisionMessageTypeIndicator = b[0] & 0x03;
-		return 1;
-	}
+    public int decode(byte[] b) throws ParameterException {
+        if (b == null || b.length != 1) {
+            throw new ParameterException("byte[] must not be null or has size different than 1.");
+        }
+        this.CircuitGroupSuperVisionMessageTypeIndicator = b[0] & 0x03;
+        return 1;
+    }
 
-	public byte[] encode() throws ParameterException {
-		byte[] b = new byte[] { (byte) (this.CircuitGroupSuperVisionMessageTypeIndicator & 0x03) };
+    public byte[] encode() throws ParameterException {
+        byte[] b = new byte[] { (byte) (this.CircuitGroupSuperVisionMessageTypeIndicator & 0x03) };
 
-		return b;
-	}
+        return b;
+    }
 
-	
-	public int encode(ByteArrayOutputStream bos) throws ParameterException {
-		byte[] b = this.encode();
-		try {
-			bos.write(b);
-		} catch (IOException e) {
-			throw new ParameterException(e);
-		}
-		return b.length;
-	}
+    public int encode(ByteArrayOutputStream bos) throws ParameterException {
+        byte[] b = this.encode();
+        try {
+            bos.write(b);
+        } catch (IOException e) {
+            throw new ParameterException(e);
+        }
+        return b.length;
+    }
 
-	public int getCircuitGroupSuperVisionMessageTypeIndicator() {
-		return CircuitGroupSuperVisionMessageTypeIndicator;
-	}
+    public int getCircuitGroupSuperVisionMessageTypeIndicator() {
+        return CircuitGroupSuperVisionMessageTypeIndicator;
+    }
 
-	public void setCircuitGroupSuperVisionMessageTypeIndicator(int CircuitGroupSuperVisionMessageTypeIndicator) {
-		this.CircuitGroupSuperVisionMessageTypeIndicator = CircuitGroupSuperVisionMessageTypeIndicator;
-	}
+    public void setCircuitGroupSuperVisionMessageTypeIndicator(int CircuitGroupSuperVisionMessageTypeIndicator) {
+        this.CircuitGroupSuperVisionMessageTypeIndicator = CircuitGroupSuperVisionMessageTypeIndicator;
+    }
 
-	public int getCode() {
+    public int getCode() {
 
-		return _PARAMETER_CODE;
-	}
+        return _PARAMETER_CODE;
+    }
 }

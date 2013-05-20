@@ -1,6 +1,6 @@
 package org.mobicents.protocols.ss7.m3ua;
-import java.io.File;
 
+import java.io.File;
 
 public class Util {
 
@@ -17,5 +17,5 @@ public class Util {
 
         return null;
     }
-    
+
 }

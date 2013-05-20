@@ -23,17 +23,15 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
 /**
- * 
-
-HandoverPriority ::= octet STRING (SIZE (1))
--- The internal structure is defined in TS GSM 08.08.
-
- * 
+ *
+ HandoverPriority ::= octet STRING (SIZE (1)) -- The internal structure is defined in TS GSM 08.08.
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface HandoverPriority {
 
-	public int getData();
+    int getData();
 
 }

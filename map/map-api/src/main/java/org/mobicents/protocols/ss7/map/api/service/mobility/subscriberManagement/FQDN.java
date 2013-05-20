@@ -23,17 +23,15 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
 /**
- * 
-
-FQDN ::=  OCTET STRING (SIZE (9..255))
-
- * 
+ *
+ FQDN ::= OCTET STRING (SIZE (9..255))
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface FQDN {
 
-	public byte[] getData();
+    byte[] getData();
 
 }
-

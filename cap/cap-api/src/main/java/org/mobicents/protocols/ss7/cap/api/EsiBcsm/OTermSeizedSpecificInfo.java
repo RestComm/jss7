@@ -24,20 +24,16 @@ package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformation;
 
-
 /**
-*
-oTermSeizedSpecificInfo [13] SEQUENCE {
-locationInformation [50] LocationInformation OPTIONAL,
-...
-},
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ oTermSeizedSpecificInfo [13] SEQUENCE { locationInformation [50] LocationInformation OPTIONAL, ... },
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface OTermSeizedSpecificInfo {
-	
-	public LocationInformation getLocationInformation();
+
+    LocationInformation getLocationInformation();
 
 }

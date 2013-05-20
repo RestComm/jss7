@@ -26,9 +26,9 @@ import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
 import org.mobicents.protocols.ss7.m3ua.parameter.UserCause;
 
 /**
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public class UserCauseImpl extends ParameterImpl implements UserCause {
 
@@ -88,8 +88,7 @@ public class UserCauseImpl extends ParameterImpl implements UserCause {
 
     @Override
     public String toString() {
-        return String.format("UserCause cause = %d user = %d", this.cause,
-                this.user);
+        return String.format("UserCause cause = %d user = %d", this.cause, this.user);
     }
 
 }

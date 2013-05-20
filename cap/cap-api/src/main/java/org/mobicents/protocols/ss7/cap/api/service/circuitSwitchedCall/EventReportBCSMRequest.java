@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -30,46 +30,36 @@ import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
 
 /**
  * <p>
- * The event report BCSM (ERB) operation is used in combination with CAP Request Report BCSM (RRB). 
- * It is used to report the occurrence of an event, in the case that the event was previously armed. 
- * The mode in which the event is reported (EDP-N, EDP-R) depends on the arming state of the event. 
- * See also the description of request report BCSM {@link RequestReportBCSMEventRequest}
-
+ * The event report BCSM (ERB) operation is used in combination with CAP Request Report BCSM (RRB). It is used to report the
+ * occurrence of an event, in the case that the event was previously armed. The mode in which the event is reported (EDP-N,
+ * EDP-R) depends on the arming state of the event. See also the description of request report BCSM
+ * {@link RequestReportBCSMEventRequest}
+ *
  * </p>
  *
- * eventReportBCSM {PARAMETERS-BOUND : bound} OPERATION ::= { 
- *  ARGUMENT  EventReportBCSMArg {bound} 
- * RETURN RESULT FALSE 
- * ALWAYS RESPONDS FALSE 
- * CODE   opcode-eventReportBCSM} 
- * -- Direction: gsmSSF -> gsmSCF, Timer: Terb 
- * -- This operation is used to notify the gsmSCF of a call-related event (e.g. BCSM 
- * -- events such as O_Busy or O_No_Answer) previously requested by the gsmSCF in a 
- * -- RequestReportBCSMEvent operation. 
+ * eventReportBCSM {PARAMETERS-BOUND : bound} OPERATION ::= { ARGUMENT EventReportBCSMArg {bound} RETURN RESULT FALSE ALWAYS
+ * RESPONDS FALSE CODE opcode-eventReportBCSM} -- Direction: gsmSSF -> gsmSCF, Timer: Terb -- This operation is used to notify
+ * the gsmSCF of a call-related event (e.g. BCSM -- events such as O_Busy or O_No_Answer) previously requested by the gsmSCF in
+ * a -- RequestReportBCSMEvent operation.
  *
- * EventReportBCSMArg {PARAMETERS-BOUND : bound} ::= SEQUENCE {
- * eventTypeBCSM [0] EventTypeBCSM,
- * eventSpecificInformationBCSM [2] EventSpecificInformationBCSM {bound} OPTIONAL,
- * legID [3] ReceivingSideID OPTIONAL,
- * miscCallInfo [4] MiscCallInfo DEFAULT {messageType request},
- * extensions [5] Extensions {bound} OPTIONAL,
- * ...
- * }
+ * EventReportBCSMArg {PARAMETERS-BOUND : bound} ::= SEQUENCE { eventTypeBCSM [0] EventTypeBCSM, eventSpecificInformationBCSM
+ * [2] EventSpecificInformationBCSM {bound} OPTIONAL, legID [3] ReceivingSideID OPTIONAL, miscCallInfo [4] MiscCallInfo DEFAULT
+ * {messageType request}, extensions [5] Extensions {bound} OPTIONAL, ... }
  *
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface EventReportBCSMRequest extends CircuitSwitchedCallMessage {
 
-	public EventTypeBCSM getEventTypeBCSM();
+    EventTypeBCSM getEventTypeBCSM();
 
-	public EventSpecificInformationBCSM getEventSpecificInformationBCSM();
+    EventSpecificInformationBCSM getEventSpecificInformationBCSM();
 
-	public ReceivingSideID getLegID();
+    ReceivingSideID getLegID();
 
-	public MiscCallInfo getMiscCallInfo();
+    MiscCallInfo getMiscCallInfo();
 
-	public CAPExtensions getExtensions();
+    CAPExtensions getExtensions();
 
 }

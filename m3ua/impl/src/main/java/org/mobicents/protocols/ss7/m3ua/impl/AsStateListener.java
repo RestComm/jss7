@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -23,26 +23,25 @@ package org.mobicents.protocols.ss7.m3ua.impl;
 
 /**
  * <p>
- * The listener interface for receiving events when {@link AsImpl} state changes to
- * Active or not-active
+ * The listener interface for receiving events when {@link AsImpl} state changes to Active or not-active
  * </p>
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public interface AsStateListener {
 
-	/**
-	 * Invoked when {@link AsImpl} becomes active
-	 * 
-	 * @param asImpl
-	 */
-	public void onAsActive(AsImpl asImpl);
+    /**
+     * Invoked when {@link AsImpl} becomes active
+     *
+     * @param asImpl
+     */
+    void onAsActive(AsImpl asImpl);
 
-	/**
-	 * Invoked when {@link AsImpl} becomes inactive
-	 * 
-	 * @param asImpl
-	 */
-	public void onAsInActive(AsImpl asImpl);
+    /**
+     * Invoked when {@link AsImpl} becomes inactive
+     *
+     * @param asImpl
+     */
+    void onAsInActive(AsImpl asImpl);
 }

@@ -22,11 +22,13 @@
 
 package org.mobicents.protocols.ss7.map.dialog;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+
 import java.util.Arrays;
-
-import static org.testng.Assert.*;
-
-import org.testng.annotations.*;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -36,167 +38,169 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
+import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author amit bhayani
  * @author sergey vetyutnev
- * 
+ *
  */
-public class MAPOpenInfoTest  {
+public class MAPOpenInfoTest {
 
-	private byte[] getDataFull() {
-		return new byte[] { -96, 61, -128, 9, -106, 2, 36, -128, 3, 0, -128, 0, -14, -127, 7, -111, 19, 38, -104, -122, 3, -16, 48, 39, -96, 32, 48, 10, 6, 3,
-				42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
-	}
+    private byte[] getDataFull() {
+        return new byte[] { -96, 61, -128, 9, -106, 2, 36, -128, 3, 0, -128, 0, -14, -127, 7, -111, 19, 38, -104, -122, 3, -16,
+                48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21,
+                22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
+    }
 
-	private byte[] getDataEri() {
-		return new byte[] { -96, 35, -128, 6, 17, 33, 34, 17, 33, 34, -127, 7, -111, 19, 38, -104, -122, 3, -16, -126, 9, -106, 2, 36, -128, 3, 0, -128, 0,
-				-14, -125, 5, -111, -128, 55, 33, -12 };
-	}
-	
-	@Test(groups = { "functional.decode","dialog"})
-	public void testDecode() throws Exception {
+    private byte[] getDataEri() {
+        return new byte[] { -96, 35, -128, 6, 17, 33, 34, 17, 33, 34, -127, 7, -111, 19, 38, -104, -122, 3, -16, -126, 9, -106,
+                2, 36, -128, 3, 0, -128, 0, -14, -125, 5, -111, -128, 55, 33, -12 };
+    }
 
-		// The raw data is from packet 2 of nad1053.pcap
-		byte[] data = new byte[] { (byte) 0xa0, (byte) 0x80, (byte) 0x80, 0x09, (byte) 0x96, 0x02, 0x24, (byte) 0x80,
-				0x03, 0x00, (byte) 0x80, 0x00, (byte) 0xf2, (byte) 0x81, 0x07, (byte) 0x91, 0x13, 0x26, (byte) 0x98,
-				(byte) 0x86, 0x03, (byte) 0xf0, 0x00, 0x00 };
+    @Test(groups = { "functional.decode", "dialog" })
+    public void testDecode() throws Exception {
 
-		AsnInputStream asnIs = new AsnInputStream(data);
+        // The raw data is from packet 2 of nad1053.pcap
+        byte[] data = new byte[] { (byte) 0xa0, (byte) 0x80, (byte) 0x80, 0x09, (byte) 0x96, 0x02, 0x24, (byte) 0x80, 0x03,
+                0x00, (byte) 0x80, 0x00, (byte) 0xf2, (byte) 0x81, 0x07, (byte) 0x91, 0x13, 0x26, (byte) 0x98, (byte) 0x86,
+                0x03, (byte) 0xf0, 0x00, 0x00 };
 
-		int tag = asnIs.readTag();
-		assertEquals( tag,0);
+        AsnInputStream asnIs = new AsnInputStream(data);
 
-		MAPOpenInfoImpl mapOpenInfoImpl = new MAPOpenInfoImpl();
-		mapOpenInfoImpl.decodeAll(asnIs);
+        int tag = asnIs.readTag();
+        assertEquals(tag, 0);
 
-		AddressString destRef = mapOpenInfoImpl.getDestReference();
-		AddressString origRef = mapOpenInfoImpl.getOrigReference();
+        MAPOpenInfoImpl mapOpenInfoImpl = new MAPOpenInfoImpl();
+        mapOpenInfoImpl.decodeAll(asnIs);
 
-		assertNotNull(destRef);
+        AddressString destRef = mapOpenInfoImpl.getDestReference();
+        AddressString origRef = mapOpenInfoImpl.getOrigReference();
 
-		assertEquals( destRef.getAddressNature(),AddressNature.international_number);
-		assertEquals( destRef.getNumberingPlan(),NumberingPlan.land_mobile);
-		assertTrue(destRef.getAddress().endsWith("204208300008002"));
+        assertNotNull(destRef);
 
-		assertNotNull(origRef);
+        assertEquals(destRef.getAddressNature(), AddressNature.international_number);
+        assertEquals(destRef.getNumberingPlan(), NumberingPlan.land_mobile);
+        assertTrue(destRef.getAddress().endsWith("204208300008002"));
 
-		assertEquals( origRef.getAddressNature(),AddressNature.international_number);
-		assertEquals( origRef.getNumberingPlan(),NumberingPlan.ISDN);
-		assertTrue(origRef.getAddress().equals("31628968300"));
-		assertFalse( mapOpenInfoImpl.getEriStyle());
+        assertNotNull(origRef);
 
-		
-		asnIs = new AsnInputStream(this.getDataFull());
+        assertEquals(origRef.getAddressNature(), AddressNature.international_number);
+        assertEquals(origRef.getNumberingPlan(), NumberingPlan.ISDN);
+        assertTrue(origRef.getAddress().equals("31628968300"));
+        assertFalse(mapOpenInfoImpl.getEriStyle());
 
-		tag = asnIs.readTag();
-		assertEquals( tag,0);
+        asnIs = new AsnInputStream(this.getDataFull());
 
-		mapOpenInfoImpl = new MAPOpenInfoImpl();
-		mapOpenInfoImpl.decodeAll(asnIs);
+        tag = asnIs.readTag();
+        assertEquals(tag, 0);
 
-		destRef = mapOpenInfoImpl.getDestReference();
-		origRef = mapOpenInfoImpl.getOrigReference();
+        mapOpenInfoImpl = new MAPOpenInfoImpl();
+        mapOpenInfoImpl.decodeAll(asnIs);
 
-		assertNotNull(destRef);
+        destRef = mapOpenInfoImpl.getDestReference();
+        origRef = mapOpenInfoImpl.getOrigReference();
 
-		assertEquals( destRef.getAddressNature(),AddressNature.international_number);
-		assertEquals(destRef.getNumberingPlan(), NumberingPlan.land_mobile);
-		assertTrue(destRef.getAddress().equals("204208300008002"));
+        assertNotNull(destRef);
 
-		assertNotNull(origRef);
+        assertEquals(destRef.getAddressNature(), AddressNature.international_number);
+        assertEquals(destRef.getNumberingPlan(), NumberingPlan.land_mobile);
+        assertTrue(destRef.getAddress().equals("204208300008002"));
 
-		assertEquals(origRef.getAddressNature(), AddressNature.international_number);
-		assertEquals(origRef.getNumberingPlan(), NumberingPlan.ISDN);
-		assertTrue(origRef.getAddress().equals("31628968300"));
+        assertNotNull(origRef);
 
-		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(mapOpenInfoImpl.getExtensionContainer()));
-		assertFalse( mapOpenInfoImpl.getEriStyle());
+        assertEquals(origRef.getAddressNature(), AddressNature.international_number);
+        assertEquals(origRef.getNumberingPlan(), NumberingPlan.ISDN);
+        assertTrue(origRef.getAddress().equals("31628968300"));
 
-		
-		asnIs = new AsnInputStream(this.getDataEri());
-		tag = asnIs.readTag();
-		assertEquals( tag,0);
+        assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(mapOpenInfoImpl.getExtensionContainer()));
+        assertFalse(mapOpenInfoImpl.getEriStyle());
 
-		mapOpenInfoImpl = new MAPOpenInfoImpl();
-		mapOpenInfoImpl.decodeAll(asnIs);
+        asnIs = new AsnInputStream(this.getDataEri());
+        tag = asnIs.readTag();
+        assertEquals(tag, 0);
 
-		destRef = mapOpenInfoImpl.getDestReference();
-		origRef = mapOpenInfoImpl.getOrigReference();
+        mapOpenInfoImpl = new MAPOpenInfoImpl();
+        mapOpenInfoImpl.decodeAll(asnIs);
 
-		assertNotNull(destRef);
+        destRef = mapOpenInfoImpl.getDestReference();
+        origRef = mapOpenInfoImpl.getOrigReference();
 
-		assertEquals(destRef.getAddressNature(), AddressNature.international_number);
-		assertEquals(destRef.getNumberingPlan(), NumberingPlan.land_mobile);
-		assertTrue(destRef.getAddress().equals("204208300008002"));
+        assertNotNull(destRef);
 
-		assertNotNull(origRef);
+        assertEquals(destRef.getAddressNature(), AddressNature.international_number);
+        assertEquals(destRef.getNumberingPlan(), NumberingPlan.land_mobile);
+        assertTrue(destRef.getAddress().equals("204208300008002"));
 
-		assertEquals(origRef.getAddressNature(), AddressNature.international_number);
-		assertEquals(origRef.getNumberingPlan(), NumberingPlan.ISDN);
-		assertTrue(origRef.getAddress().equals("31628968300"));
+        assertNotNull(origRef);
 
-		assertNull(mapOpenInfoImpl.getExtensionContainer());
-		assertTrue( mapOpenInfoImpl.getEriStyle());
-		assertTrue( mapOpenInfoImpl.getEriImsi().getData().equals("111222111222"));
+        assertEquals(origRef.getAddressNature(), AddressNature.international_number);
+        assertEquals(origRef.getNumberingPlan(), NumberingPlan.ISDN);
+        assertTrue(origRef.getAddress().equals("31628968300"));
 
-		AddressString eriVlrNo = mapOpenInfoImpl.getEriVlrNo();
-		assertEquals(eriVlrNo.getAddressNature(), AddressNature.international_number);
-		assertEquals(eriVlrNo.getNumberingPlan(), NumberingPlan.ISDN);
-		assertTrue(eriVlrNo.getAddress().equals("0873124"));
+        assertNull(mapOpenInfoImpl.getExtensionContainer());
+        assertTrue(mapOpenInfoImpl.getEriStyle());
+        assertTrue(mapOpenInfoImpl.getEriImsi().getData().equals("111222111222"));
 
-	}
+        AddressString eriVlrNo = mapOpenInfoImpl.getEriVlrNo();
+        assertEquals(eriVlrNo.getAddressNature(), AddressNature.international_number);
+        assertEquals(eriVlrNo.getNumberingPlan(), NumberingPlan.ISDN);
+        assertTrue(eriVlrNo.getAddress().equals("0873124"));
 
-	@Test(groups = { "functional.encode","dialog"})
-	public void testEncode() throws Exception {
+    }
 
-		MAPParameterFactory servFact = new MAPParameterFactoryImpl();
+    @Test(groups = { "functional.encode", "dialog" })
+    public void testEncode() throws Exception {
 
-		MAPOpenInfoImpl mapOpenInfoImpl = new MAPOpenInfoImpl();
-		AddressString destReference = servFact.createAddressString(AddressNature.international_number,
-				NumberingPlan.land_mobile, "204208300008002");
-		mapOpenInfoImpl.setDestReference(destReference);
-		AddressString origReference = servFact.createAddressString(AddressNature.international_number,
-				NumberingPlan.ISDN, "31628968300");
-		mapOpenInfoImpl.setOrigReference(origReference);
-		AsnOutputStream asnOS = new AsnOutputStream();
+        MAPParameterFactory servFact = new MAPParameterFactoryImpl();
 
-		mapOpenInfoImpl.encodeAll(asnOS);
-		byte[] data = asnOS.toByteArray();
-		// System.out.println(dump(data, data.length, false));
-		assertTrue(Arrays.equals(new byte[] { (byte) 0xa0, (byte) 0x14, (byte) 0x80, 0x09, (byte) 0x96, 0x02, 0x24,
-				(byte) 0x80, 0x03, 0x00, (byte) 0x80, 0x00, (byte) 0xf2, (byte) 0x81, 0x07, (byte) 0x91, 0x13, 0x26,
-				(byte) 0x98, (byte) 0x86, 0x03, (byte) 0xf0 }, data));
+        MAPOpenInfoImpl mapOpenInfoImpl = new MAPOpenInfoImpl();
+        AddressString destReference = servFact.createAddressString(AddressNature.international_number,
+                NumberingPlan.land_mobile, "204208300008002");
+        mapOpenInfoImpl.setDestReference(destReference);
+        AddressString origReference = servFact.createAddressString(AddressNature.international_number, NumberingPlan.ISDN,
+                "31628968300");
+        mapOpenInfoImpl.setOrigReference(origReference);
+        AsnOutputStream asnOS = new AsnOutputStream();
 
-		
-		mapOpenInfoImpl = new MAPOpenInfoImpl();
-		destReference = servFact.createAddressString(AddressNature.international_number, NumberingPlan.land_mobile, "204208300008002");
-		mapOpenInfoImpl.setDestReference(destReference);
-		origReference = servFact.createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628968300");
-		mapOpenInfoImpl.setOrigReference(origReference);
-		mapOpenInfoImpl.setExtensionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
+        mapOpenInfoImpl.encodeAll(asnOS);
+        byte[] data = asnOS.toByteArray();
+        // System.out.println(dump(data, data.length, false));
+        assertTrue(Arrays.equals(new byte[] { (byte) 0xa0, (byte) 0x14, (byte) 0x80, 0x09, (byte) 0x96, 0x02, 0x24,
+                (byte) 0x80, 0x03, 0x00, (byte) 0x80, 0x00, (byte) 0xf2, (byte) 0x81, 0x07, (byte) 0x91, 0x13, 0x26,
+                (byte) 0x98, (byte) 0x86, 0x03, (byte) 0xf0 }, data));
 
-		asnOS = new AsnOutputStream();
-		mapOpenInfoImpl.encodeAll(asnOS);
-		data = asnOS.toByteArray();
-		assertTrue(Arrays.equals(this.getDataFull(), data));
-		
-		// Eri
-		mapOpenInfoImpl = new MAPOpenInfoImpl();
-		destReference = servFact.createAddressString(AddressNature.international_number, NumberingPlan.land_mobile, "204208300008002");
-		mapOpenInfoImpl.setDestReference(destReference);
-		origReference = servFact.createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628968300");
-		mapOpenInfoImpl.setOrigReference(origReference);
-		mapOpenInfoImpl.setExtensionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
+        mapOpenInfoImpl = new MAPOpenInfoImpl();
+        destReference = servFact.createAddressString(AddressNature.international_number, NumberingPlan.land_mobile,
+                "204208300008002");
+        mapOpenInfoImpl.setDestReference(destReference);
+        origReference = servFact.createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628968300");
+        mapOpenInfoImpl.setOrigReference(origReference);
+        mapOpenInfoImpl.setExtensionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
 
-		mapOpenInfoImpl.setEriStyle(true);
-		mapOpenInfoImpl.setEriImsi(servFact.createIMSI("111222111222"));
-		mapOpenInfoImpl.setEriVlrNo(servFact.createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "0873124"));
+        asnOS = new AsnOutputStream();
+        mapOpenInfoImpl.encodeAll(asnOS);
+        data = asnOS.toByteArray();
+        assertTrue(Arrays.equals(this.getDataFull(), data));
 
-		asnOS = new AsnOutputStream();
-		mapOpenInfoImpl.encodeAll(asnOS);
-		data = asnOS.toByteArray();
-		assertTrue(Arrays.equals(this.getDataEri(), data));
-	}
+        // Eri
+        mapOpenInfoImpl = new MAPOpenInfoImpl();
+        destReference = servFact.createAddressString(AddressNature.international_number, NumberingPlan.land_mobile,
+                "204208300008002");
+        mapOpenInfoImpl.setDestReference(destReference);
+        origReference = servFact.createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628968300");
+        mapOpenInfoImpl.setOrigReference(origReference);
+        mapOpenInfoImpl.setExtensionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
+
+        mapOpenInfoImpl.setEriStyle(true);
+        mapOpenInfoImpl.setEriImsi(servFact.createIMSI("111222111222"));
+        mapOpenInfoImpl.setEriVlrNo(servFact.createAddressString(AddressNature.international_number, NumberingPlan.ISDN,
+                "0873124"));
+
+        asnOS = new AsnOutputStream();
+        mapOpenInfoImpl.encodeAll(asnOS);
+        data = asnOS.toByteArray();
+        assertTrue(Arrays.equals(this.getDataEri(), data));
+    }
 }

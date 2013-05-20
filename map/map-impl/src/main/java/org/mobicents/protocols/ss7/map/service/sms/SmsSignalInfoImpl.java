@@ -38,136 +38,134 @@ import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.smstpdu.SmsTpduImpl;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class SmsSignalInfoImpl implements SmsSignalInfo, MAPAsnPrimitive {
 
-	public static final String _PrimitiveName = "SmsSignalInfo";
-	
-	private byte[] data;
-	private Charset gsm8Charset;
-	
-	public SmsSignalInfoImpl() {
-	}
+    public static final String _PrimitiveName = "SmsSignalInfo";
 
-	public SmsSignalInfoImpl(byte[] data, Charset gsm8Charset) {
-		this.data = data;
-		this.gsm8Charset = gsm8Charset;
-	}
+    private byte[] data;
+    private Charset gsm8Charset;
 
-	public SmsSignalInfoImpl(SmsTpdu tpdu, Charset gsm8Charset) throws MAPException {
-		if (tpdu == null)
-			throw new MAPException("SmsTpdu must not be null");
+    public SmsSignalInfoImpl() {
+    }
 
-		this.data = tpdu.encodeData();
-		this.gsm8Charset = gsm8Charset;
-	}
+    public SmsSignalInfoImpl(byte[] data, Charset gsm8Charset) {
+        this.data = data;
+        this.gsm8Charset = gsm8Charset;
+    }
 
+    public SmsSignalInfoImpl(SmsTpdu tpdu, Charset gsm8Charset) throws MAPException {
+        if (tpdu == null)
+            throw new MAPException("SmsTpdu must not be null");
 
-	public byte[] getData() {
-		return this.data;
-	}
+        this.data = tpdu.encodeData();
+        this.gsm8Charset = gsm8Charset;
+    }
 
-	public SmsTpdu decodeTpdu(boolean mobileOriginatedMessage) throws MAPException {
-		return SmsTpduImpl.createInstance(this.data, mobileOriginatedMessage, this.gsm8Charset);
-	}
-	
-	public int getTag() throws MAPException {
-		return Tag.STRING_OCTET;
-	}
+    public byte[] getData() {
+        return this.data;
+    }
 
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    public SmsTpdu decodeTpdu(boolean mobileOriginatedMessage) throws MAPException {
+        return SmsTpduImpl.createInstance(this.data, mobileOriginatedMessage, this.gsm8Charset);
+    }
 
-	public boolean getIsPrimitive() {
-		return true;
-	}
+    public int getTag() throws MAPException {
+        return Tag.STRING_OCTET;
+    }
 
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public boolean getIsPrimitive() {
+        return true;
+    }
 
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+    public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	private void _decode(AsnInputStream ansIS, int length) throws IOException, AsnException {
+    public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
-		this.data = ansIS.readOctetStringData(length);
-	}
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, this.getTag());
-	}
+    private void _decode(AsnInputStream ansIS, int length) throws IOException, AsnException {
 
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		
-		try {
-			asnOs.writeTag(tagClass, true, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        this.data = ansIS.readOctetStringData(length);
+    }
 
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+    public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+        this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, this.getTag());
+    }
 
-		if (this.data == null || this.data.length == 0)
-			throw new MAPException("Error when encoding " + _PrimitiveName + ": data is empty");
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 
-		asnOs.writeOctetStringData(data);
-	}
-	
-	@Override
-	public String toString() {
+        try {
+            asnOs.writeTag(tagClass, true, tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		StringBuilder sb = new StringBuilder();
-		sb.append("SmsSignalInfo [");
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-		boolean moExists = false;
-		try {
-			SmsTpdu tpdu = SmsTpduImpl.createInstance(this.data, true, gsm8Charset);
-			sb.append("MO case: ");
-			sb.append(tpdu.toString());
-			moExists = true;
-		} catch (MAPException e) {
-		}
-		try {
-			if (moExists)
-				sb.append("\n");
-			SmsTpdu tpdu = SmsTpduImpl.createInstance(this.data, false, gsm8Charset);
-			sb.append("MT case: ");
-			sb.append(tpdu.toString());
-		} catch (MAPException e) {
-		}
+        if (this.data == null || this.data.length == 0)
+            throw new MAPException("Error when encoding " + _PrimitiveName + ": data is empty");
 
-		sb.append("]");
+        asnOs.writeOctetStringData(data);
+    }
 
-		return sb.toString();
-	}
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("SmsSignalInfo [");
+
+        boolean moExists = false;
+        try {
+            SmsTpdu tpdu = SmsTpduImpl.createInstance(this.data, true, gsm8Charset);
+            sb.append("MO case: ");
+            sb.append(tpdu.toString());
+            moExists = true;
+        } catch (MAPException e) {
+        }
+        try {
+            if (moExists)
+                sb.append("\n");
+            SmsTpdu tpdu = SmsTpduImpl.createInstance(this.data, false, gsm8Charset);
+            sb.append("MT case: ");
+            sb.append(tpdu.toString());
+        } catch (MAPException e) {
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
-

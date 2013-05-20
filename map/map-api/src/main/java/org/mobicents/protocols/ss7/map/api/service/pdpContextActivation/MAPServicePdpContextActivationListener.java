@@ -25,12 +25,12 @@ package org.mobicents.protocols.ss7.map.api.service.pdpContextActivation;
 import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MAPServicePdpContextActivationListener extends MAPServiceListener {
 
-	// TODO: implement listeners
+    // TODO: implement listeners
 
 }

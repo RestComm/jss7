@@ -23,7 +23,7 @@
 /**
  * Start time:13:34:38 2009-07-23<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 package org.mobicents.protocols.ss7.isup.message.parameter;
@@ -31,44 +31,40 @@ package org.mobicents.protocols.ss7.isup.message.parameter;
 /**
  * Start time:13:34:38 2009-07-23<br>
  * Project: mobicents-isup-stack<br>
- * 
- * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski
- *         </a>
+ *
+ * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface NetworkSpecificFacility extends ISUPParameter {
-	public static final int _PARAMETER_CODE = 0x2F;
-	
-	/**
-	 * See Q.763 Type of network identification : national network
-	 * identification
-	 */
-	public static final int _TNI_NNI = 0x02;
+    int _PARAMETER_CODE = 0x2F;
 
-	/**
-	 * See Q.763 Type of network identification : reserved for international
-	 * network identification
-	 */
-	public static final int _TNI_RESERVED_INI = 0x03;
-	
-	
-	public boolean isIncludeNetworkIdentification();
+    /**
+     * See Q.763 Type of network identification : national network identification
+     */
+    int _TNI_NNI = 0x02;
 
-	public int getLengthOfNetworkIdentification() ;
+    /**
+     * See Q.763 Type of network identification : reserved for international network identification
+     */
+    int _TNI_RESERVED_INI = 0x03;
 
-	public int getTypeOfNetworkIdentification() ;
+    boolean isIncludeNetworkIdentification();
 
-	public void setTypeOfNetworkIdentification(byte typeOfNetworkIdentification);
+    int getLengthOfNetworkIdentification();
 
-	public int getNetworkIdentificationPlan() ;
+    int getTypeOfNetworkIdentification();
 
-	public void setNetworkIdentificationPlan(byte networkdIdentificationPlan) ;
+    void setTypeOfNetworkIdentification(byte typeOfNetworkIdentification);
 
-	public byte[] getNetworkIdentification() ;
+    int getNetworkIdentificationPlan();
 
-	public void setNetworkIdentification(byte[] networkdIdentification) ;
+    void setNetworkIdentificationPlan(byte networkdIdentificationPlan);
 
-	public byte[] getNetworkSpecificaFacilityIndicator() ;
+    byte[] getNetworkIdentification();
 
-	public void setNetworkSpecificaFacilityIndicator(byte[] networkSpecificaFacilityIndicator) ;
-	
+    void setNetworkIdentification(byte[] networkdIdentification);
+
+    byte[] getNetworkSpecificaFacilityIndicator();
+
+    void setNetworkSpecificaFacilityIndicator(byte[] networkSpecificaFacilityIndicator);
+
 }

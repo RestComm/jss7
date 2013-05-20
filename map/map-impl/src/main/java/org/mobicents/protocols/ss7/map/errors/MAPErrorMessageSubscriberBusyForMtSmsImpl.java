@@ -37,184 +37,182 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
-public class MAPErrorMessageSubscriberBusyForMtSmsImpl extends MAPErrorMessageImpl implements MAPErrorMessageSubscriberBusyForMtSms {
+public class MAPErrorMessageSubscriberBusyForMtSmsImpl extends MAPErrorMessageImpl implements
+        MAPErrorMessageSubscriberBusyForMtSms {
 
-	private MAPExtensionContainer extensionContainer;
-	private Boolean gprsConnectionSuspended;	
-	
-	
-	public MAPErrorMessageSubscriberBusyForMtSmsImpl(MAPExtensionContainer extensionContainer, Boolean gprsConnectionSuspended) {
-		super((long) MAPErrorCode.subscriberBusyForMTSMS);
+    private MAPExtensionContainer extensionContainer;
+    private Boolean gprsConnectionSuspended;
 
-		this.extensionContainer = extensionContainer;
-		this.gprsConnectionSuspended = gprsConnectionSuspended;
-	}
+    public MAPErrorMessageSubscriberBusyForMtSmsImpl(MAPExtensionContainer extensionContainer, Boolean gprsConnectionSuspended) {
+        super((long) MAPErrorCode.subscriberBusyForMTSMS);
 
-	protected MAPErrorMessageSubscriberBusyForMtSmsImpl() {
-		super((long) MAPErrorCode.subscriberBusyForMTSMS);
-	}
+        this.extensionContainer = extensionContainer;
+        this.gprsConnectionSuspended = gprsConnectionSuspended;
+    }
 
+    protected MAPErrorMessageSubscriberBusyForMtSmsImpl() {
+        super((long) MAPErrorCode.subscriberBusyForMTSMS);
+    }
 
-	public boolean isEmSubscriberBusyForMtSms() {
-		return true;
-	}
+    public boolean isEmSubscriberBusyForMtSms() {
+        return true;
+    }
 
-	public MAPErrorMessageSubscriberBusyForMtSms getEmSubscriberBusyForMtSms() {
-		return this;
-	}
+    public MAPErrorMessageSubscriberBusyForMtSms getEmSubscriberBusyForMtSms() {
+        return this;
+    }
 
-	public MAPExtensionContainer getExtensionContainer() {
-		return this.extensionContainer;
-	}
+    public MAPExtensionContainer getExtensionContainer() {
+        return this.extensionContainer;
+    }
 
-	public Boolean getGprsConnectionSuspended() {
-		return this.gprsConnectionSuspended;
-	}
+    public Boolean getGprsConnectionSuspended() {
+        return this.gprsConnectionSuspended;
+    }
 
-	public void setExtensionContainer(MAPExtensionContainer extensionContainer) {
-		this.extensionContainer = extensionContainer;
-	}
+    public void setExtensionContainer(MAPExtensionContainer extensionContainer) {
+        this.extensionContainer = extensionContainer;
+    }
 
-	public void setGprsConnectionSuspended(Boolean gprsConnectionSuspended) {
-		this.gprsConnectionSuspended = gprsConnectionSuspended;
-	}
-	
-	
-	public int getTag() throws MAPException {
-		return Tag.SEQUENCE;
-	}
+    public void setGprsConnectionSuspended(Boolean gprsConnectionSuspended) {
+        this.gprsConnectionSuspended = gprsConnectionSuspended;
+    }
 
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    public int getTag() throws MAPException {
+        return Tag.SEQUENCE;
+    }
 
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding MAPErrorMessageSubscriberBusyForMtSms: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding MAPErrorMessageSubscriberBusyForMtSms: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding MAPErrorMessageSubscriberBusyForMtSms: "
+                    + e.getMessage(), e, MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding MAPErrorMessageSubscriberBusyForMtSms: "
+                    + e.getMessage(), e, MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding MAPErrorMessageSubscriberBusyForMtSms: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding MAPErrorMessageSubscriberBusyForMtSms: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
-	private void _decode(AsnInputStream localAis, int length) throws MAPParsingComponentException, IOException, AsnException {
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding MAPErrorMessageSubscriberBusyForMtSms: "
+                    + e.getMessage(), e, MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding MAPErrorMessageSubscriberBusyForMtSms: "
+                    + e.getMessage(), e, MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		this.extensionContainer = null;
-		this.gprsConnectionSuspended = null;
-		
-		if (localAis.getTagClass() != Tag.CLASS_UNIVERSAL || localAis.getTag() != Tag.SEQUENCE || localAis.isTagPrimitive())
-			throw new MAPParsingComponentException(
-					"Error decoding MAPErrorMessageSubscriberBusyForMtSms: bad tag class or tag or parameter is primitive",
-					MAPParsingComponentExceptionReason.MistypedParameter);
+    private void _decode(AsnInputStream localAis, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-		AsnInputStream ais = localAis.readSequenceStreamData(length);
+        this.extensionContainer = null;
+        this.gprsConnectionSuspended = null;
 
-		while (true) {
-			if (ais.available() == 0)
-				break;
+        if (localAis.getTagClass() != Tag.CLASS_UNIVERSAL || localAis.getTag() != Tag.SEQUENCE || localAis.isTagPrimitive())
+            throw new MAPParsingComponentException(
+                    "Error decoding MAPErrorMessageSubscriberBusyForMtSms: bad tag class or tag or parameter is primitive",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
 
-			int tag = ais.readTag();
+        AsnInputStream ais = localAis.readSequenceStreamData(length);
 
-			switch (ais.getTagClass()) {
-			case Tag.CLASS_UNIVERSAL:
-				switch (tag) {
-				case Tag.SEQUENCE:
-					this.extensionContainer = new MAPExtensionContainerImpl();
-					((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
-					break;
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-				case Tag.NULL:
-					ais.readNull();
-					this.gprsConnectionSuspended = true;
-					break;
+            int tag = ais.readTag();
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-				break;
+            switch (ais.getTagClass()) {
+                case Tag.CLASS_UNIVERSAL:
+                    switch (tag) {
+                        case Tag.SEQUENCE:
+                            this.extensionContainer = new MAPExtensionContainerImpl();
+                            ((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+                            break;
 
-			default:
-				ais.advanceElement();
-				break;
-			}
-		}
-		
-		if (this.gprsConnectionSuspended == null)
-			this.gprsConnectionSuspended = false;
-	}
+                        case Tag.NULL:
+                            ais.readNull();
+                            this.gprsConnectionSuspended = true;
+                            break;
 
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
-	}
+                        default:
+                            ais.advanceElement();
+                            break;
+                    }
+                    break;
 
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		
-		try {
-			asnOs.writeTag(tagClass, false, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding MAPErrorMessageSubscriberBusyForMtSms: " + e.getMessage(), e);
-		}
-	}
+                default:
+                    ais.advanceElement();
+                    break;
+            }
+        }
 
-	public void encodeData(AsnOutputStream aos) throws MAPException {
+        if (this.gprsConnectionSuspended == null)
+            this.gprsConnectionSuspended = false;
+    }
 
-		if (this.gprsConnectionSuspended == null && this.extensionContainer == null)
-			return;
+    public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+        this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+    }
 
-		try {
-			if (this.extensionContainer != null)
-				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(aos);
-			if (this.gprsConnectionSuspended != null && this.gprsConnectionSuspended == true)
-				aos.writeNull();
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 
-		} catch (IOException e) {
-			throw new MAPException("IOException when encoding MAPErrorMessageSubscriberBusyForMtSms: " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding MAPErrorMessageSubscriberBusyForMtSms: " + e.getMessage(), e);
-		}
-	}
+        try {
+            asnOs.writeTag(tagClass, false, tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding MAPErrorMessageSubscriberBusyForMtSms: " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		
-		sb.append("MAPErrorMessageSubscriberBusyForMtSms [");
-		if (this.extensionContainer != null)
-			sb.append("extensionContainer=" + this.extensionContainer.toString());
-		if (this.gprsConnectionSuspended != null && this.gprsConnectionSuspended == true)
-			sb.append(", gprsConnectionSuspended=true");
-		sb.append("]");
-		
-		return sb.toString();
-	}
+    public void encodeData(AsnOutputStream aos) throws MAPException {
+
+        if (this.gprsConnectionSuspended == null && this.extensionContainer == null)
+            return;
+
+        try {
+            if (this.extensionContainer != null)
+                ((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(aos);
+            if (this.gprsConnectionSuspended != null && this.gprsConnectionSuspended == true)
+                aos.writeNull();
+
+        } catch (IOException e) {
+            throw new MAPException("IOException when encoding MAPErrorMessageSubscriberBusyForMtSms: " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding MAPErrorMessageSubscriberBusyForMtSms: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("MAPErrorMessageSubscriberBusyForMtSms [");
+        if (this.extensionContainer != null)
+            sb.append("extensionContainer=" + this.extensionContainer.toString());
+        if (this.gprsConnectionSuspended != null && this.gprsConnectionSuspended == true)
+            sb.append(", gprsConnectionSuspended=true");
+        sb.append("]");
+
+        return sb.toString();
+    }
 }

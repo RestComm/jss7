@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -28,28 +28,28 @@ import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformation
 /**
  * Start time:12:36:18 2009-04-04<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski</a>
  * @author <a href="mailto:oifa.yulian@gmail.com"> Yulian Oifa</a>
  * @author sergey vetyutnev
  */
 public class UserServiceInformationImpl extends UserServiceInformationBaseImpl implements UserServiceInformation {
 
-	public UserServiceInformationImpl() {
-		super();
+    public UserServiceInformationImpl() {
+        super();
 
-	}
+    }
 
-	public UserServiceInformationImpl(byte[] b) throws ParameterException {
-		super(b);
-	}
+    public UserServiceInformationImpl(byte[] b) throws ParameterException {
+        super(b);
+    }
 
-	protected String getPrimitiveName() {
-		return "UserServiceInformation";
-	}
+    protected String getPrimitiveName() {
+        return "UserServiceInformation";
+    }
 
-	public int getCode() {
+    public int getCode() {
 
-		return _PARAMETER_CODE;
-	}
+        return _PARAMETER_CODE;
+    }
 }

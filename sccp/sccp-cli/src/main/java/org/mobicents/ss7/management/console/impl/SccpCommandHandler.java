@@ -28,100 +28,97 @@ import org.mobicents.ss7.management.console.Tree.Node;
 
 /**
  * @author amit bhayani
- * 
+ *
  */
 public class SccpCommandHandler extends CommandHandlerWithHelp {
 
-	static final Tree commandTree = new Tree("sccp");
-	static {
-		Node parent = commandTree.getTopNode();
-		Node sap = parent.addChild("sap");
-		sap.addChild("create");
-		sap.addChild("modify");
-		sap.addChild("delete");
-		sap.addChild("show");
-		
-		Node dest = parent.addChild("dest");
-		dest.addChild("create");
-		dest.addChild("modify");
-		dest.addChild("delete");
-		dest.addChild("show");
+    static final Tree commandTree = new Tree("sccp");
+    static {
+        Node parent = commandTree.getTopNode();
+        Node sap = parent.addChild("sap");
+        sap.addChild("create");
+        sap.addChild("modify");
+        sap.addChild("delete");
+        sap.addChild("show");
 
-		Node rule = parent.addChild("rule");
-		rule.addChild("create");
-		rule.addChild("modify");
-		rule.addChild("delete");
-		rule.addChild("show");
-		
-		Node address = parent.addChild("address");
-		address.addChild("create");
-		address.addChild("modify");
-		address.addChild("delete");
-		address.addChild("show");
-		
-		Node rsp = parent.addChild("rsp");
-		rsp.addChild("create");
-		rsp.addChild("modify");
-		rsp.addChild("delete");
-		rsp.addChild("show");
-		
-		Node rss = parent.addChild("rss");
-		rss.addChild("create");
-		rss.addChild("modify");
-		rss.addChild("delete");
-		rss.addChild("show");
-		
-		Node lmr = parent.addChild("lmr");
-		lmr.addChild("create");
-		lmr.addChild("modify");
-		lmr.addChild("delete");
-		lmr.addChild("show");
-		
-		Node csp = parent.addChild("csp");
-		csp.addChild("create");
-		csp.addChild("modify");
-		csp.addChild("delete");
-		csp.addChild("show");
-		
-		Node set = parent.addChild("set");
+        Node dest = parent.addChild("dest");
+        dest.addChild("create");
+        dest.addChild("modify");
+        dest.addChild("delete");
+        dest.addChild("show");
 
-	};
-	
-	public SccpCommandHandler() {
-		super(commandTree, CONNECT_MANDATORY_FLAG);
-	}
+        Node rule = parent.addChild("rule");
+        rule.addChild("create");
+        rule.addChild("modify");
+        rule.addChild("delete");
+        rule.addChild("show");
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.ss7.management.console.CommandHandler#isValid(java.lang
-	 * .String)
-	 */
-	@Override
-	public void handle(CommandContext ctx, String commandLine) {
-		// TODO Validate command
-		if (commandLine.contains("--help")) {
-			this.printHelp(commandLine, ctx);
-			return;
-		}
-		ctx.sendMessage(commandLine);
-	}
+        Node address = parent.addChild("address");
+        address.addChild("create");
+        address.addChild("modify");
+        address.addChild("delete");
+        address.addChild("show");
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.ss7.management.console.CommandHandler#isAvailable(org.mobicents
-	 * .ss7.management.console.CommandContext)
-	 */
-	@Override
-	public boolean isAvailable(CommandContext ctx) {
-		if (!ctx.isControllerConnected()) {
-			ctx.printLine("The command is not available in the current context. Please connnect first");
-			return false;
-		}
-		return true;
-	}
+        Node rsp = parent.addChild("rsp");
+        rsp.addChild("create");
+        rsp.addChild("modify");
+        rsp.addChild("delete");
+        rsp.addChild("show");
+
+        Node rss = parent.addChild("rss");
+        rss.addChild("create");
+        rss.addChild("modify");
+        rss.addChild("delete");
+        rss.addChild("show");
+
+        Node lmr = parent.addChild("lmr");
+        lmr.addChild("create");
+        lmr.addChild("modify");
+        lmr.addChild("delete");
+        lmr.addChild("show");
+
+        Node csp = parent.addChild("csp");
+        csp.addChild("create");
+        csp.addChild("modify");
+        csp.addChild("delete");
+        csp.addChild("show");
+
+        Node set = parent.addChild("set");
+
+    };
+
+    public SccpCommandHandler() {
+        super(commandTree, CONNECT_MANDATORY_FLAG);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.ss7.management.console.CommandHandler#isValid(java.lang .String)
+     */
+    @Override
+    public void handle(CommandContext ctx, String commandLine) {
+        // TODO Validate command
+        if (commandLine.contains("--help")) {
+            this.printHelp(commandLine, ctx);
+            return;
+        }
+        ctx.sendMessage(commandLine);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.ss7.management.console.CommandHandler#isAvailable(org.mobicents
+     * .ss7.management.console.CommandContext)
+     */
+    @Override
+    public boolean isAvailable(CommandContext ctx) {
+        if (!ctx.isControllerConnected()) {
+            ctx.printLine("The command is not available in the current context. Please connnect first");
+            return false;
+        }
+        return true;
+    }
 
 }

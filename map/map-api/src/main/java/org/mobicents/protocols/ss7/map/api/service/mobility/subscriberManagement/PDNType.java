@@ -23,20 +23,18 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
 /**
- * 
-
-PDN-Type ::= OCTET STRING (SIZE (1))
-	-- Octet is coded according to TS 3GPP TS 29.274 [140]
-
- * 
- * 
+ *
+ PDN-Type ::= OCTET STRING (SIZE (1)) -- Octet is coded according to TS 3GPP TS 29.274 [140]
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface PDNType {
 
-	public int getData();
-	
-	public PDNTypeValue getPDNTypeValue();
+    int getData();
+
+    PDNTypeValue getPDNTypeValue();
 
 }

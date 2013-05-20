@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -39,165 +39,164 @@ import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
  * @author Amit Bhayani
- * 
+ *
  */
 public class SendingSideIDImpl implements SendingSideID, CAPAsnPrimitive {
 
-	private static final String SENDING_SIDE_ID = "sendingSideID";
+    private static final String SENDING_SIDE_ID = "sendingSideID";
 
-	public static final int _ID_sendingSideID = 0;
+    public static final int _ID_sendingSideID = 0;
 
-	public static final String _PrimitiveName = "SendingSideID";
+    public static final String _PrimitiveName = "SendingSideID";
 
-	public LegType sendingSideID;
+    public LegType sendingSideID;
 
-	public SendingSideIDImpl() {
-	}
+    public SendingSideIDImpl() {
+    }
 
-	public SendingSideIDImpl(LegType sendingSideID) {
-		this.sendingSideID = sendingSideID;
-	}
+    public SendingSideIDImpl(LegType sendingSideID) {
+        this.sendingSideID = sendingSideID;
+    }
 
-	@Override
-	public LegType getSendingSideID() {
-		return sendingSideID;
-	}
+    @Override
+    public LegType getSendingSideID() {
+        return sendingSideID;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
-		return _ID_sendingSideID;
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return _ID_sendingSideID;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_CONTEXT_SPECIFIC;
-	}
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_CONTEXT_SPECIFIC;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return true;
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return true;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
-					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
-					+ ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException,
-			MAPParsingComponentException, IOException, AsnException {
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException,
+            IOException, AsnException {
 
-		this.sendingSideID = null;
+        this.sendingSideID = null;
 
-		if (ansIS.getTag() != _ID_sendingSideID || ansIS.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
-			throw new CAPParsingComponentException("Error when decoding " + _PrimitiveName
-					+ ": sendingSideID choice has bad tag oe tagClass, tag=" + ansIS.getTag() + ", tagClass="
-					+ ansIS.getTagClass(), CAPParsingComponentExceptionReason.MistypedParameter);
+        if (ansIS.getTag() != _ID_sendingSideID || ansIS.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
+            throw new CAPParsingComponentException("Error when decoding " + _PrimitiveName
+                    + ": sendingSideID choice has bad tag oe tagClass, tag=" + ansIS.getTag() + ", tagClass="
+                    + ansIS.getTagClass(), CAPParsingComponentExceptionReason.MistypedParameter);
 
-		int i1 = (int) ansIS.readIntegerData(length);
-		this.sendingSideID = LegType.getInstance(i1);
-		if (this.sendingSideID == null)
-			throw new CAPParsingComponentException("Error when decoding " + _PrimitiveName
-					+ ": LegType must be leg1 or leg2, but the code = " + i1,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-	}
+        int i1 = (int) ansIS.readIntegerData(length);
+        this.sendingSideID = LegType.getInstance(i1);
+        if (this.sendingSideID == null)
+            throw new CAPParsingComponentException("Error when decoding " + _PrimitiveName
+                    + ": LegType must be leg1 or leg2, but the code = " + i1,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-		if (this.sendingSideID == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": sendingSideID field must not be null");
+        if (this.sendingSideID == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": sendingSideID field must not be null");
 
-		try {
-			asnOs.writeIntegerData(this.sendingSideID.getCode());
-		} catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        try {
+            asnOs.writeIntegerData(this.sendingSideID.getCode());
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public String toString() {
+    @Override
+    public String toString() {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		if (this.sendingSideID != null) {
-			sb.append("sendingSideID=");
-			sb.append(sendingSideID.toString());
-		}
+        if (this.sendingSideID != null) {
+            sb.append("sendingSideID=");
+            sb.append(sendingSideID.toString());
+        }
 
-		sb.append("]");
+        sb.append("]");
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 
-	/**
-	 * XML Serialization/Deserialization
-	 */
-	protected static final XMLFormat<SendingSideIDImpl> SENDING_SIDE_ID_XML = new XMLFormat<SendingSideIDImpl>(
-			SendingSideIDImpl.class) {
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<SendingSideIDImpl> SENDING_SIDE_ID_XML = new XMLFormat<SendingSideIDImpl>(
+            SendingSideIDImpl.class) {
 
-		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml, SendingSideIDImpl sendingSideID)
-				throws XMLStreamException {
-			sendingSideID.sendingSideID = LegType.getInstance(xml.get(SENDING_SIDE_ID, Integer.class));
-		}
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, SendingSideIDImpl sendingSideID) throws XMLStreamException {
+            sendingSideID.sendingSideID = LegType.getInstance(xml.get(SENDING_SIDE_ID, Integer.class));
+        }
 
-		@Override
-		public void write(SendingSideIDImpl sendingSideID, javolution.xml.XMLFormat.OutputElement xml)
-				throws XMLStreamException {
-			xml.add(sendingSideID.sendingSideID.getCode(), SENDING_SIDE_ID, Integer.class);
-		}
-	};
+        @Override
+        public void write(SendingSideIDImpl sendingSideID, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            xml.add(sendingSideID.sendingSideID.getCode(), SENDING_SIDE_ID, Integer.class);
+        }
+    };
 }

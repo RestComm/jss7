@@ -23,21 +23,17 @@
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
 /**
-*
-
-ChargingResult ::= CHOICE {
-transferredVolume [0] TransferredVolume,
-elapsedTime [1] ElapsedTime
-}
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ ChargingResult ::= CHOICE { transferredVolume [0] TransferredVolume, elapsedTime [1] ElapsedTime }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface ChargingResult {
 
-	public TransferredVolume getTransferredVolume();
+    TransferredVolume getTransferredVolume();
 
-	public ElapsedTime getElapsedTime();
+    ElapsedTime getElapsedTime();
 
 }

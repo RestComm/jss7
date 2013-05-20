@@ -23,18 +23,16 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
 /**
- * 
-
-ChargingCharacteristics ::= OCTET STRING (SIZE (2))
-	-- Octets are coded according to 3GPP TS 32.215.
-
- * 
- * 
+ *
+ ChargingCharacteristics ::= OCTET STRING (SIZE (2)) -- Octets are coded according to 3GPP TS 32.215.
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ChargingCharacteristics {
 
-	public byte[] getData();
+    byte[] getData();
 
 }

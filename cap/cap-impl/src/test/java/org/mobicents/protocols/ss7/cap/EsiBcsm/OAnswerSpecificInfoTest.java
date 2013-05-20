@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -40,55 +40,55 @@ import org.testng.annotations.Test;
 
 /**
  * @author Amit Bhayani
- * 
+ *
  */
 public class OAnswerSpecificInfoTest {
 
-	/**
-	 * 
+    /**
+	 *
 	 */
-	public OAnswerSpecificInfoTest() {
-		// TODO Auto-generated constructor stub
-	}
+    public OAnswerSpecificInfoTest() {
+        // TODO Auto-generated constructor stub
+    }
 
-	@Test(groups = { "functional.xml.serialize", "circuitSwitchedCall.primitive" })
-	public void testXMLSerializaion() throws Exception {
-		CalledPartyNumberImpl calledPartyNumber = new CalledPartyNumberImpl(0, "111222333", 1, 1);
-		CalledPartyNumberCapImpl forwardingDestinationNumber = new CalledPartyNumberCapImpl(calledPartyNumber);
-		ExtTeleserviceCodeImpl extTeleservice = new ExtTeleserviceCodeImpl(TeleserviceCodeValue.allSpeechTransmissionServices);
-		ExtTeleserviceCodeImpl extTeleservice2 = new ExtTeleserviceCodeImpl(TeleserviceCodeValue.allShortMessageServices);
+    @Test(groups = { "functional.xml.serialize", "circuitSwitchedCall.primitive" })
+    public void testXMLSerializaion() throws Exception {
+        CalledPartyNumberImpl calledPartyNumber = new CalledPartyNumberImpl(0, "111222333", 1, 1);
+        CalledPartyNumberCapImpl forwardingDestinationNumber = new CalledPartyNumberCapImpl(calledPartyNumber);
+        ExtTeleserviceCodeImpl extTeleservice = new ExtTeleserviceCodeImpl(TeleserviceCodeValue.allSpeechTransmissionServices);
+        ExtTeleserviceCodeImpl extTeleservice2 = new ExtTeleserviceCodeImpl(TeleserviceCodeValue.allShortMessageServices);
 
-		ExtBasicServiceCode extBasicSer = new ExtBasicServiceCodeImpl(extTeleservice);
-		ExtBasicServiceCode extBasicSer2 = new ExtBasicServiceCodeImpl(extTeleservice2);
+        ExtBasicServiceCode extBasicSer = new ExtBasicServiceCodeImpl(extTeleservice);
+        ExtBasicServiceCode extBasicSer2 = new ExtBasicServiceCodeImpl(extTeleservice2);
 
-		OAnswerSpecificInfoImpl original = new OAnswerSpecificInfoImpl(forwardingDestinationNumber, false, true, null,
-				extBasicSer, extBasicSer2);
+        OAnswerSpecificInfoImpl original = new OAnswerSpecificInfoImpl(forwardingDestinationNumber, false, true, null,
+                extBasicSer, extBasicSer2);
 
-		// Writes the area to a file.
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
-		// writer.setBinding(binding); // Optional.
-		writer.setIndentation("\t"); // Optional (use tabulation for
-										// indentation).
-		writer.write(original, "oAnswerSpecificInfo", OAnswerSpecificInfoImpl.class);
-		writer.close();
+        // Writes the area to a file.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for
+                                     // indentation).
+        writer.write(original, "oAnswerSpecificInfo", OAnswerSpecificInfoImpl.class);
+        writer.close();
 
-		byte[] rawData = baos.toByteArray();
-		String serializedEvent = new String(rawData);
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
 
-		System.out.println(serializedEvent);
+        System.out.println(serializedEvent);
 
-		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
-		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
-		OAnswerSpecificInfoImpl copy = reader.read("oAnswerSpecificInfo", OAnswerSpecificInfoImpl.class);
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        OAnswerSpecificInfoImpl copy = reader.read("oAnswerSpecificInfo", OAnswerSpecificInfoImpl.class);
 
-		assertEquals(copy.getDestinationAddress().getCalledPartyNumber().getAddress(), original.getDestinationAddress()
-				.getCalledPartyNumber().getAddress());
-		assertEquals(copy.getOrCall(), original.getOrCall());
-		assertEquals(copy.getForwardedCall(), original.getForwardedCall());
-		assertEquals(copy.getExtBasicServiceCode().getExtTeleservice().getTeleserviceCodeValue(), original.getExtBasicServiceCode().getExtTeleservice()
-				.getTeleserviceCodeValue());
-		assertEquals(copy.getExtBasicServiceCode2().getExtTeleservice().getTeleserviceCodeValue(), original.getExtBasicServiceCode2().getExtTeleservice()
-				.getTeleserviceCodeValue());
-	}
+        assertEquals(copy.getDestinationAddress().getCalledPartyNumber().getAddress(), original.getDestinationAddress()
+                .getCalledPartyNumber().getAddress());
+        assertEquals(copy.getOrCall(), original.getOrCall());
+        assertEquals(copy.getForwardedCall(), original.getForwardedCall());
+        assertEquals(copy.getExtBasicServiceCode().getExtTeleservice().getTeleserviceCodeValue(), original
+                .getExtBasicServiceCode().getExtTeleservice().getTeleserviceCodeValue());
+        assertEquals(copy.getExtBasicServiceCode2().getExtTeleservice().getTeleserviceCodeValue(), original
+                .getExtBasicServiceCode2().getExtTeleservice().getTeleserviceCodeValue());
+    }
 }

@@ -26,21 +26,21 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
-*
-* @author sergey vetyutnev
-*
-*/
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class ChargingCharacteristicsImpl extends OctetStringBase implements ChargingCharacteristics {
 
-	public ChargingCharacteristicsImpl() {
-		super(2, 2, "ChargingCharacteristics");
-	}
+    public ChargingCharacteristicsImpl() {
+        super(2, 2, "ChargingCharacteristics");
+    }
 
-	public ChargingCharacteristicsImpl(byte[] data) {
-		super(2, 2, "ChargingCharacteristics", data);
-	}
+    public ChargingCharacteristicsImpl(byte[] data) {
+        super(2, 2, "ChargingCharacteristics", data);
+    }
 
-	public byte[] getData() {
-		return data;
-	}	
+    public byte[] getData() {
+        return data;
+    }
 }

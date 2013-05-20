@@ -26,20 +26,17 @@ import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.TMSI;
 
 /**
- * 
-
-SubscriberId ::= CHOICE { 
-	imsi [0] IMSI, 
-	tmsi [1] TMSI}
-
- * 
+ *
+ SubscriberId ::= CHOICE { imsi [0] IMSI, tmsi [1] TMSI}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SubscriberId {
 
-	public IMSI getImsi();
+    IMSI getImsi();
 
-	public TMSI getTmsi();
+    TMSI getTmsi();
 
 }

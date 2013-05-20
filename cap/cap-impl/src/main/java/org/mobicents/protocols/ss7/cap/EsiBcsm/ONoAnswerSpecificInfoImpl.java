@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -37,61 +37,61 @@ import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
  * @author Amit Bhayani
- * 
+ *
  */
 public class ONoAnswerSpecificInfoImpl extends SequenceBase implements ONoAnswerSpecificInfo {
 
-	public ONoAnswerSpecificInfoImpl() {
-		super("ONoAnswerSpecificInfo");
-	}
+    public ONoAnswerSpecificInfoImpl() {
+        super("ONoAnswerSpecificInfo");
+    }
 
-	protected void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException,
-			MAPParsingComponentException, IOException, AsnException {
+    protected void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException,
+            IOException, AsnException {
 
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-			int tag = ais.readTag();
+            int tag = ais.readTag();
 
-			ais.advanceElement();
-		}
-	}
+            ais.advanceElement();
+        }
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-	}
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
+    }
 
-	@Override
-	public String toString() {
+    @Override
+    public String toString() {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
-		sb.append("]");
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+        sb.append("]");
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 
-	/**
-	 * XML Serialization/Deserialization
-	 */
-	protected static final XMLFormat<ONoAnswerSpecificInfoImpl> O_NO_ANSWER_SPECIFIC_INFO_XML = new XMLFormat<ONoAnswerSpecificInfoImpl>(
-			ONoAnswerSpecificInfoImpl.class) {
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<ONoAnswerSpecificInfoImpl> O_NO_ANSWER_SPECIFIC_INFO_XML = new XMLFormat<ONoAnswerSpecificInfoImpl>(
+            ONoAnswerSpecificInfoImpl.class) {
 
-		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml, ONoAnswerSpecificInfoImpl oNoAnswerSpecificInfo)
-				throws XMLStreamException {
-		}
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, ONoAnswerSpecificInfoImpl oNoAnswerSpecificInfo)
+                throws XMLStreamException {
+        }
 
-		@Override
-		public void write(ONoAnswerSpecificInfoImpl oNoAnswerSpecificInfo, javolution.xml.XMLFormat.OutputElement xml)
-				throws XMLStreamException {
+        @Override
+        public void write(ONoAnswerSpecificInfoImpl oNoAnswerSpecificInfo, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
 
-		}
-	};
+        }
+    };
 }

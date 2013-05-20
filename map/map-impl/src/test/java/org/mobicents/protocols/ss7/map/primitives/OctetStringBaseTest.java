@@ -23,10 +23,12 @@
 package org.mobicents.protocols.ss7.map.primitives;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
 import java.util.Arrays;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
@@ -36,156 +38,156 @@ import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Ext
 import org.testng.annotations.Test;
 
 /**
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class OctetStringBaseTest {
 
-	private byte[] getEncodedData() {
-		return new byte[] { 4, 5, 1, 2, 3, 4, 5 };
-	}
+    private byte[] getEncodedData() {
+        return new byte[] { 4, 5, 1, 2, 3, 4, 5 };
+    }
 
-	private byte[] getEncodedDataTooShort() {
-		return new byte[] { 4, 1, 1 };
-	}
+    private byte[] getEncodedDataTooShort() {
+        return new byte[] { 4, 1, 1 };
+    }
 
-	private byte[] getEncodedDataTooLong() {
-		return new byte[] { 5, 8, 1, 2, 3, 4, 5, 6, 7, 8 };
-	}
+    private byte[] getEncodedDataTooLong() {
+        return new byte[] { 5, 8, 1, 2, 3, 4, 5, 6, 7, 8 };
+    }
 
-	private byte[] getData() {
-		return new byte[] { 1, 2, 3, 4, 5 };
-	}
+    private byte[] getData() {
+        return new byte[] { 1, 2, 3, 4, 5 };
+    }
 
-	private byte[] getDataTooShort() {
-		return new byte[] { 1 };
-	}
+    private byte[] getDataTooShort() {
+        return new byte[] { 1 };
+    }
 
-	private byte[] getDataTooLong() {
-		return new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
-	}
+    private byte[] getDataTooLong() {
+        return new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
+    }
 
-	@Test(groups = { "functional.decode","primitives"})
-	public void testDecode() throws Exception {
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testDecode() throws Exception {
 
-		// correct data
-		byte[] rawData = getEncodedData();
+        // correct data
+        byte[] rawData = getEncodedData();
 
-		AsnInputStream asn = new AsnInputStream(rawData);
+        AsnInputStream asn = new AsnInputStream(rawData);
 
-		int tag = asn.readTag();
-		TestOctetStringImpl pi = new TestOctetStringImpl();
-		pi.decodeAll(asn);
+        int tag = asn.readTag();
+        TestOctetStringImpl pi = new TestOctetStringImpl();
+        pi.decodeAll(asn);
 
-		assertEquals( tag,Tag.STRING_OCTET);
-		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
-		
-		assertTrue(Arrays.equals(getData(), pi.getData()));
+        assertEquals(tag, Tag.STRING_OCTET);
+        assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
 
-		// bad data
-		rawData = getEncodedDataTooShort();
-		asn = new AsnInputStream(rawData);
-		tag = asn.readTag();
-		pi = new TestOctetStringImpl();
-		try {
-			pi.decodeAll(asn);
-			assertFalse(true);
-		} catch (MAPParsingComponentException e) {
-			assertNotNull(e);
-		}
+        assertTrue(Arrays.equals(getData(), pi.getData()));
 
-		rawData = getEncodedDataTooLong();
-		asn = new AsnInputStream(rawData);
-		tag = asn.readTag();
-		pi = new TestOctetStringImpl();
-		try {
-			pi.decodeAll(asn);
-			assertFalse(true);
-		} catch (MAPParsingComponentException e) {
-			assertNotNull(e);
-		}
-	}
+        // bad data
+        rawData = getEncodedDataTooShort();
+        asn = new AsnInputStream(rawData);
+        tag = asn.readTag();
+        pi = new TestOctetStringImpl();
+        try {
+            pi.decodeAll(asn);
+            assertFalse(true);
+        } catch (MAPParsingComponentException e) {
+            assertNotNull(e);
+        }
 
-	@Test(groups = { "functional.encode","primitives"})
-	public void testEncode() throws Exception {
+        rawData = getEncodedDataTooLong();
+        asn = new AsnInputStream(rawData);
+        tag = asn.readTag();
+        pi = new TestOctetStringImpl();
+        try {
+            pi.decodeAll(asn);
+            assertFalse(true);
+        } catch (MAPParsingComponentException e) {
+            assertNotNull(e);
+        }
+    }
 
-		// correct data
-		TestOctetStringImpl pi = new TestOctetStringImpl(getData());
-		AsnOutputStream asnOS = new AsnOutputStream();
-		
-		pi.encodeAll(asnOS);
-		
-		byte[] encodedData = asnOS.toByteArray();
-		byte[] rawData = getEncodedData();		
-		assertTrue( Arrays.equals(rawData,encodedData));
+    @Test(groups = { "functional.encode", "primitives" })
+    public void testEncode() throws Exception {
 
-		// bad data
-		pi = new TestOctetStringImpl(null);
-		asnOS = new AsnOutputStream();
-		try {
-			pi.encodeAll(asnOS);
-			assertFalse(true);
-		} catch (MAPException e) {
-			assertNotNull(e);
-		}
+        // correct data
+        TestOctetStringImpl pi = new TestOctetStringImpl(getData());
+        AsnOutputStream asnOS = new AsnOutputStream();
 
-		pi = new TestOctetStringImpl(getDataTooShort());
-		asnOS = new AsnOutputStream();
-		try {
-			pi.encodeAll(asnOS);
-		} catch (MAPException e) {
-			assertNotNull(e);
-		}
+        pi.encodeAll(asnOS);
 
-		pi = new TestOctetStringImpl(getDataTooLong());
-		asnOS = new AsnOutputStream();
-		try {
-			pi.encodeAll(asnOS);
-			assertFalse(true);
-		} catch (MAPException e) {
-			assertNotNull(e);
-		}
-		
-	}
+        byte[] encodedData = asnOS.toByteArray();
+        byte[] rawData = getEncodedData();
+        assertTrue(Arrays.equals(rawData, encodedData));
 
-	@Test(groups = { "functional.encode","equality"})
-	public void testEqality() throws Exception {
-		
-		byte[] testD1 = new byte[2];
-		byte[] testD2 = new byte[2];
-		byte[] testD3 = new byte[2];
-		testD1[0] = 11;
-		testD1[1] = 12;
-		testD2[0] = 11;
-		testD2[1] = 12;
-		testD3[0] = 21;
-		testD3[1] = 22;
-		
-		ExtPDPTypeImpl imp1 = new ExtPDPTypeImpl(testD1); 
-		ExtPDPTypeImpl imp2 = new ExtPDPTypeImpl(testD2); 
-		ExtPDPTypeImpl imp3 = new ExtPDPTypeImpl(testD3); 
+        // bad data
+        pi = new TestOctetStringImpl(null);
+        asnOS = new AsnOutputStream();
+        try {
+            pi.encodeAll(asnOS);
+            assertFalse(true);
+        } catch (MAPException e) {
+            assertNotNull(e);
+        }
 
-		assertTrue(imp1.equals(imp1));
-		assertTrue(imp1.equals(imp2));
-		assertFalse(imp1.equals(imp3));
-		assertFalse(imp2.equals(imp3));
-		
-		int i1 = imp1.hashCode();
-	}
+        pi = new TestOctetStringImpl(getDataTooShort());
+        asnOS = new AsnOutputStream();
+        try {
+            pi.encodeAll(asnOS);
+        } catch (MAPException e) {
+            assertNotNull(e);
+        }
 
-	private class TestOctetStringImpl extends OctetStringBase {
+        pi = new TestOctetStringImpl(getDataTooLong());
+        asnOS = new AsnOutputStream();
+        try {
+            pi.encodeAll(asnOS);
+            assertFalse(true);
+        } catch (MAPException e) {
+            assertNotNull(e);
+        }
 
-		public TestOctetStringImpl(byte[] data) {
-			super(2, 7, "Test OctetString primitive", data);
-		}
+    }
 
-		public TestOctetStringImpl() {
-			super(2, 7, "Test OctetString primitive");
-		}
+    @Test(groups = { "functional.encode", "equality" })
+    public void testEqality() throws Exception {
 
-		public byte[] getData() {
-			return this.data;
-		}
-	}
+        byte[] testD1 = new byte[2];
+        byte[] testD2 = new byte[2];
+        byte[] testD3 = new byte[2];
+        testD1[0] = 11;
+        testD1[1] = 12;
+        testD2[0] = 11;
+        testD2[1] = 12;
+        testD3[0] = 21;
+        testD3[1] = 22;
+
+        ExtPDPTypeImpl imp1 = new ExtPDPTypeImpl(testD1);
+        ExtPDPTypeImpl imp2 = new ExtPDPTypeImpl(testD2);
+        ExtPDPTypeImpl imp3 = new ExtPDPTypeImpl(testD3);
+
+        assertTrue(imp1.equals(imp1));
+        assertTrue(imp1.equals(imp2));
+        assertFalse(imp1.equals(imp3));
+        assertFalse(imp2.equals(imp3));
+
+        int i1 = imp1.hashCode();
+    }
+
+    private class TestOctetStringImpl extends OctetStringBase {
+
+        public TestOctetStringImpl(byte[] data) {
+            super(2, 7, "Test OctetString primitive", data);
+        }
+
+        public TestOctetStringImpl() {
+            super(2, 7, "Test OctetString primitive");
+        }
+
+        public byte[] getData() {
+            return this.data;
+        }
+    }
 }

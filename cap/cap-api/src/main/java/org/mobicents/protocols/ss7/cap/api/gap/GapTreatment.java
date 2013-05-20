@@ -26,21 +26,18 @@ import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.InformationToSend;
 
 /**
-*
-GapTreatment {PARAMETERS-BOUND : bound} ::= CHOICE {
-informationToSend [0] InformationToSend {bound},
-releaseCause [1] Cause {bound}
-}
--- The default value for Cause is the same as in ISUP.
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ GapTreatment {PARAMETERS-BOUND : bound} ::= CHOICE { informationToSend [0] InformationToSend {bound}, releaseCause [1] Cause
+ * {bound} } -- The default value for Cause is the same as in ISUP.
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface GapTreatment {
 
-	public InformationToSend getInformationToSend();
+    InformationToSend getInformationToSend();
 
-	public CauseCap getCause();
+    CauseCap getCause();
 
 }

@@ -25,16 +25,15 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
 import java.util.ArrayList;
 
 /**
-*
-EPS-AuthenticationSetList ::= SEQUENCE SIZE (1..5) OF
-				EPC-AV
-
-*
-* @author sergey vetyutnev
-* 
-*/
+ *
+ EPS-AuthenticationSetList ::= SEQUENCE SIZE (1..5) OF EPC-AV
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface EpsAuthenticationSetList {
 
-	public ArrayList<EpcAv> getEpcAv();
+    ArrayList<EpcAv> getEpcAv();
 
 }

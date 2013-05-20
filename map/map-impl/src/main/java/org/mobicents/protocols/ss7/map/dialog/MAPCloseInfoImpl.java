@@ -36,136 +36,132 @@ import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
- * 
+ *
  * @author amit bhayani
  * @author sergey vetyutnev
  *
  */
 public class MAPCloseInfoImpl implements MAPAsnPrimitive {
-	
-	public static final int MAP_CLOSE_INFO_TAG = 0x02;
 
-	protected static final int CLOSE_INFO_TAG_CLASS = Tag.CLASS_CONTEXT_SPECIFIC;
-	protected static final boolean CLOSE_INFO_TAG_PC_PRIMITIVE = true;
-	protected static final boolean CLOSE_INFO_TAG_PC_CONSTRUCTED = false;
+    public static final int MAP_CLOSE_INFO_TAG = 0x02;
 
-	private MAPExtensionContainer extensionContainer;
+    protected static final int CLOSE_INFO_TAG_CLASS = Tag.CLASS_CONTEXT_SPECIFIC;
+    protected static final boolean CLOSE_INFO_TAG_PC_PRIMITIVE = true;
+    protected static final boolean CLOSE_INFO_TAG_PC_CONSTRUCTED = false;
 
+    private MAPExtensionContainer extensionContainer;
 
-	public MAPExtensionContainer getExtensionContainer() {
-		return extensionContainer;
-	}
+    public MAPExtensionContainer getExtensionContainer() {
+        return extensionContainer;
+    }
 
-	public void setExtensionContainer(MAPExtensionContainer extensionContainer) {
-		this.extensionContainer = extensionContainer;
-	}
+    public void setExtensionContainer(MAPExtensionContainer extensionContainer) {
+        this.extensionContainer = extensionContainer;
+    }
 
+    public int getTag() throws MAPException {
+        return MAP_CLOSE_INFO_TAG;
+    }
 
-	public int getTag() throws MAPException {
-		return MAP_CLOSE_INFO_TAG;
-	}
+    public int getTagClass() {
+        return Tag.CLASS_CONTEXT_SPECIFIC;
+    }
 
-	public int getTagClass() {
-		return Tag.CLASS_CONTEXT_SPECIFIC;
-	}
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding MAPCloseInfo: " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding MAPCloseInfo: " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding MAPCloseInfo: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding MAPCloseInfo: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding MAPCloseInfo: " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding MAPCloseInfo: " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding MAPCloseInfo: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding MAPCloseInfo: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-	
-	private void _decode(AsnInputStream ais, int length) throws MAPParsingComponentException, IOException, AsnException {
-		// MAP-CloseInfo ::= SEQUENCE { 
-		//   ... ,  
-		//   extensionContainer SEQUENCE { 
-		//      privateExtensionList [0] IMPLICIT SEQUENCE SIZE (1 .. 10 ) OF 
-		//         SEQUENCE { 
-		//            extId      MAP-EXTENSION .&extensionId  ( { 
-		//               ,  
-		//               ...} ) ,  
-		//            extType    MAP-EXTENSION .&ExtensionType  ( { 
-		//               ,  
-		//               ...} { @extId   }  )  OPTIONAL} OPTIONAL,  
-		//      pcs-Extensions [1] IMPLICIT SEQUENCE { 
-		//         ... } OPTIONAL,  
-		//      ... } OPTIONAL} 
-		
-		this.setExtensionContainer(null);
+    private void _decode(AsnInputStream ais, int length) throws MAPParsingComponentException, IOException, AsnException {
+        // MAP-CloseInfo ::= SEQUENCE {
+        // ... ,
+        // extensionContainer SEQUENCE {
+        // privateExtensionList [0] IMPLICIT SEQUENCE SIZE (1 .. 10 ) OF
+        // SEQUENCE {
+        // extId MAP-EXTENSION .&extensionId ( {
+        // ,
+        // ...} ) ,
+        // extType MAP-EXTENSION .&ExtensionType ( {
+        // ,
+        // ...} { @extId } ) OPTIONAL} OPTIONAL,
+        // pcs-Extensions [1] IMPLICIT SEQUENCE {
+        // ... } OPTIONAL,
+        // ... } OPTIONAL}
 
-		AsnInputStream localAis = ais.readSequenceStreamData(length);
+        this.setExtensionContainer(null);
 
-		while (localAis.available() > 0) {
-			int tag = localAis.readTag();
+        AsnInputStream localAis = ais.readSequenceStreamData(length);
 
-			switch (localAis.getTagClass()) {
-			case Tag.CLASS_UNIVERSAL:
-				switch (tag) {
-				case Tag.SEQUENCE:
-					this.extensionContainer = new MAPExtensionContainerImpl();
-					((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(localAis);
-					break;
+        while (localAis.available() > 0) {
+            int tag = localAis.readTag();
 
-				default:
-					localAis.advanceElement();
-					break;
-				}
-				break;
+            switch (localAis.getTagClass()) {
+                case Tag.CLASS_UNIVERSAL:
+                    switch (tag) {
+                        case Tag.SEQUENCE:
+                            this.extensionContainer = new MAPExtensionContainerImpl();
+                            ((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(localAis);
+                            break;
 
-			default:
-				localAis.advanceElement();
-				break;
-			}
-		}
-	}
+                        default:
+                            localAis.advanceElement();
+                            break;
+                    }
+                    break;
 
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+                default:
+                    localAis.advanceElement();
+                    break;
+            }
+        }
+    }
 
-		this.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, MAP_CLOSE_INFO_TAG);
-	}
+    public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		
-		try {
-			asnOs.writeTag(tagClass, false, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding MAPCloseInfo: " + e.getMessage(), e);
-		}
-	}
+        this.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, MAP_CLOSE_INFO_TAG);
+    }
 
-	public void encodeData(AsnOutputStream asnOS) throws MAPException {
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 
-		if (this.extensionContainer != null)
-			((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOS);
-	}
+        try {
+            asnOs.writeTag(tagClass, false, tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding MAPCloseInfo: " + e.getMessage(), e);
+        }
+    }
+
+    public void encodeData(AsnOutputStream asnOS) throws MAPException {
+
+        if (this.extensionContainer != null)
+            ((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOS);
+    }
 }
-
-

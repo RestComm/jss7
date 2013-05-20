@@ -33,15 +33,14 @@ package org.mobicents.protocols.ss7.isup.message;
  * <TD style="FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: teal; HEIGHT: 28px; TEXT-ALIGN: center" colSpan="3">
  * Facility Request&nbsp;(FAR)&nbsp;Message</TD>
  * </TR>
- * 
+ *
  * <TR>
  * <TD style="FONT-SIZE: 9pt" colSpan="3">
- * <FONT face="Times New Roman" size="3">Facility Request (FAR)&nbsp;message
- * sent from a node to another node to request activation of a facility. </FONT>
- * </TD>
+ * <FONT face="Times New Roman" size="3">Facility Request (FAR)&nbsp;message sent from a node to another node to request
+ * activation of a facility. </FONT></TD>
  * </TR>
  * </TABLE>
- * 
+ *
  * </TD>
  * </TR>
  * <TR>
@@ -50,7 +49,7 @@ package org.mobicents.protocols.ss7.isup.message;
  * <TD style="FONT-WEIGHT: bold; WIDTH: 145px; HEIGHT: 30px">Type</TD>
  * <TD style="FONT-WEIGHT: bold; HEIGHT: 30px">Length (octet)</TD>
  * </TR>
- * 
+ *
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Message type</TD>
  * <TD style="WIDTH: 145px">F</TD>
@@ -58,7 +57,7 @@ package org.mobicents.protocols.ss7.isup.message;
  * </TR>
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Facility&nbsp;Indicators</TD>
- * 
+ *
  * <TD style="WIDTH: 145px">F</TD>
  * <TD>1</TD>
  * </TR>
@@ -66,7 +65,7 @@ package org.mobicents.protocols.ss7.isup.message;
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Call Reference</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>7</TD>
- * 
+ *
  * </TR>
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">User to User Indicators</TD>
@@ -74,16 +73,15 @@ package org.mobicents.protocols.ss7.isup.message;
  * <TD>3</TD>
  * </TR>
  * <TR>
- * 
+ *
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Connection Request</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>9</TD>
  * </TR>
  * <TR>
- * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Parameter Compatibility
- * Information</TD>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Parameter Compatibility Information</TD>
  * <TD style="WIDTH: 145px">O</TD>
- * 
+ *
  * <TD>4-?</TD>
  * </TR>
  * <TR>
@@ -91,15 +89,15 @@ package org.mobicents.protocols.ss7.isup.message;
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>1</TD>
  * </TR>
- * 
+ *
  * </TABLE>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface FacilityRequestMessage extends ISUPMessage {
-	/**
-	 * Facility Request Message, Q.763 reference table 42 <br>
-	 * {@link FacilityRequestMessage}
-	 */
-	public static final int MESSAGE_CODE = 0x1F;
+    /**
+     * Facility Request Message, Q.763 reference table 42 <br>
+     * {@link FacilityRequestMessage}
+     */
+    int MESSAGE_CODE = 0x1F;
 }

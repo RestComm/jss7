@@ -23,17 +23,16 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
 /**
-*
-
-Ext3-QoS-Subscribed ::= OCTET STRING (SIZE (1..2))
-	-- Octets 1-2 are coded according to 3GPP TS 24.008 [35] Quality of Service Octets 17-18.
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ Ext3-QoS-Subscribed ::= OCTET STRING (SIZE (1..2)) -- Octets 1-2 are coded according to 3GPP TS 24.008 [35] Quality of
+ * Service Octets 17-18.
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface Ext3QoSSubscribed {
 
-	public byte[] getData();
+    byte[] getData();
 
 }

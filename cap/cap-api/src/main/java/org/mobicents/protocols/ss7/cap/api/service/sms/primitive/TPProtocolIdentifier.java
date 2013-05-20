@@ -23,17 +23,16 @@
 package org.mobicents.protocols.ss7.cap.api.service.sms.primitive;
 
 /**
-*
-
-TPProtocolIdentifier ::= OCTET STRING (SIZE (1))
--- indicates the protocol used above the SM-Transfer Layer as specified in 3GPP TS 23.040 [6].
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ TPProtocolIdentifier ::= OCTET STRING (SIZE (1)) -- indicates the protocol used above the SM-Transfer Layer as specified in
+ * 3GPP TS 23.040 [6].
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface TPProtocolIdentifier {
 
-	public int getData();
+    int getData();
 
 }

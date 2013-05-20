@@ -23,40 +23,22 @@
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
 /**
- * 
-
-MAP V2:
-
-activateSS  OPERATION ::= {				--Timer m
-	ARGUMENT
-		SS-ForBS-Code
-	RESULT
-		SS-Info
-		-- optional
-	ERRORS {
-		systemFailure |
-		dataMissing |
-		unexpectedDataValue |
-		bearerServiceNotProvisioned |
-		teleserviceNotProvisioned |
-		callBarred |
-		illegalSS-Operation |
-		ss-ErrorStatus |
-		ss-SubscriptionViolation |
-		ss-Incompatibility |
-		negativePW-Check |
-		numberOfPW-AttemptsViolation}
-	CODE	local:12 }
-
-	ARGUMENT
-		SS-ForBS-Code
-
- * 
+ *
+ MAP V2:
+ *
+ * activateSS OPERATION ::= { --Timer m ARGUMENT SS-ForBS-Code RESULT SS-Info -- optional ERRORS { systemFailure | dataMissing |
+ * unexpectedDataValue | bearerServiceNotProvisioned | teleserviceNotProvisioned | callBarred | illegalSS-Operation |
+ * ss-ErrorStatus | ss-SubscriptionViolation | ss-Incompatibility | negativePW-Check | numberOfPW-AttemptsViolation} CODE
+ * local:12 }
+ *
+ * ARGUMENT SS-ForBS-Code
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ActivateSSRequest extends SupplementaryMessage {
 
-	public SSForBSCode getSsForBSCode();
+    SSForBSCode getSsForBSCode();
 
 }

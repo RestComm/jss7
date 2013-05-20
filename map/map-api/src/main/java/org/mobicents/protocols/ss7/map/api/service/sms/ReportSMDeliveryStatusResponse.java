@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -26,30 +26,22 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
-*
-
-MAP V3:
-ReportSM-DeliveryStatusRes ::= SEQUENCE {
-	storedMSISDN	ISDN-AddressString	OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...}
-
-MAP V2:
-RESULT
-	storedMSISDN ISDN-AddressString
-	-- optional
-	-- storedMSISDN must be absent in version 1
-	-- storedMSISDN must be present in version greater 1
-* 
-* 
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ MAP V3: ReportSM-DeliveryStatusRes ::= SEQUENCE { storedMSISDN ISDN-AddressString OPTIONAL, extensionContainer
+ * ExtensionContainer OPTIONAL, ...}
+ *
+ * MAP V2: RESULT storedMSISDN ISDN-AddressString -- optional -- storedMSISDN must be absent in version 1 -- storedMSISDN must
+ * be present in version greater 1
+ *
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface ReportSMDeliveryStatusResponse extends SmsMessage {
 
-	public ISDNAddressString getStoredMSISDN();
+    ISDNAddressString getStoredMSISDN();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

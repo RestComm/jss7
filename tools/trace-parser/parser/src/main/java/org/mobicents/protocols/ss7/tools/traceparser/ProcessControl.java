@@ -23,20 +23,20 @@
 package org.mobicents.protocols.ss7.tools.traceparser;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ProcessControl {
 
-	public boolean isFinished();
+    boolean isFinished();
 
-	public String getErrorMessage();
+    String getErrorMessage();
 
-	public void interrupt();
-	
-	public boolean checkNeedInterrupt();
+    void interrupt();
 
-	public int getMsgCount();
+    boolean checkNeedInterrupt();
+
+    int getMsgCount();
 
 }

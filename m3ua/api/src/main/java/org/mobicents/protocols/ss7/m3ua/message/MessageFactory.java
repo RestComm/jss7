@@ -24,28 +24,24 @@ package org.mobicents.protocols.ss7.m3ua.message;
 
 import java.nio.ByteBuffer;
 
-
 /**
  * Constructs M3UA message.
- * 
+ *
  * @author amit bhayani
  * @author kulikov
  */
 public interface MessageFactory {
-	/**
-	 * Constructs M3UAMessage.
-	 * 
-	 * @param messageClass
-	 *            the class of the message
-	 * @param messageTypethe
-	 *            type of the message
-	 * @return M3UA message.
-	 */
-	public M3UAMessage createMessage(int messageClass, int messageType);
+    /**
+     * Constructs M3UAMessage.
+     *
+     * @param messageClass the class of the message
+     * @param messageTypethe type of the message
+     * @return M3UA message.
+     */
+    M3UAMessage createMessage(int messageClass, int messageType);
 
-	public M3UAMessage createSctpMessage(byte[] buffer);
+    M3UAMessage createSctpMessage(byte[] buffer);
 
-	public M3UAMessage createMessage(ByteBuffer buffer);
+    M3UAMessage createMessage(ByteBuffer buffer);
 
 }
-

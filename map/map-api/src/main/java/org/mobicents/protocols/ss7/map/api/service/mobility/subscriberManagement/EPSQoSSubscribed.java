@@ -25,25 +25,21 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-EPS-QoS-Subscribed ::= SEQUENCE {
-	qos-Class-Identifier	[0] QoS-Class-Identifier,
-	allocation-Retention-Priority	[1] Allocation-Retention-Priority,
-	extensionContainer	[2] ExtensionContainer	OPTIONAL,
-	... }
-
- * 
- * 
+ *
+ EPS-QoS-Subscribed ::= SEQUENCE { qos-Class-Identifier [0] QoS-Class-Identifier, allocation-Retention-Priority [1]
+ * Allocation-Retention-Priority, extensionContainer [2] ExtensionContainer OPTIONAL, ... }
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface EPSQoSSubscribed {
 
-	public QoSClassIdentifier getQoSClassIdentifier();
+    QoSClassIdentifier getQoSClassIdentifier();
 
-	public AllocationRetentionPriority getAllocationRetentionPriority();
+    AllocationRetentionPriority getAllocationRetentionPriority();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

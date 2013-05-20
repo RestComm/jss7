@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -22,23 +22,19 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
-
 /**
-*
-SubscriberState ::= CHOICE {
-	assumedIdle	[0] NULL,
-	camelBusy		[1] NULL,
-	netDetNotReachable	NotReachableReason,
-	notProvidedFromVLR	[2] NULL}
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ SubscriberState ::= CHOICE { assumedIdle [0] NULL, camelBusy [1] NULL, netDetNotReachable NotReachableReason,
+ * notProvidedFromVLR [2] NULL}
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface SubscriberState {
 
-	public SubscriberStateChoice getSubscriberStateChoice();
-	
-	// return a value when getSubscriberStateChoice()==SubscriberStateChoice.netDetNotReachable
-	public NotReachableReason getNotReachableReason();
-	
+    SubscriberStateChoice getSubscriberStateChoice();
+
+    // return a value when getSubscriberStateChoice()==SubscriberStateChoice.netDetNotReachable
+    NotReachableReason getNotReachableReason();
+
 }

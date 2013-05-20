@@ -23,14 +23,14 @@
 package org.mobicents.protocols.ss7.map.api.smstpdu;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface UserDataHeaderElement {
 
-	public int getEncodedInformationElementIdentifier();
+    int getEncodedInformationElementIdentifier();
 
-	public byte[] getEncodedInformationElementData();
+    byte[] getEncodedInformationElementData();
 
 }

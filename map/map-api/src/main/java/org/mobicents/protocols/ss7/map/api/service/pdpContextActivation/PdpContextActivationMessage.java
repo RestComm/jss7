@@ -25,12 +25,12 @@ package org.mobicents.protocols.ss7.map.api.service.pdpContextActivation;
 import org.mobicents.protocols.ss7.map.api.MAPMessage;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface PdpContextActivationMessage extends MAPMessage {
 
-	public MAPDialogPdpContextActivation getMAPDialog();
+    MAPDialogPdpContextActivation getMAPDialog();
 
 }

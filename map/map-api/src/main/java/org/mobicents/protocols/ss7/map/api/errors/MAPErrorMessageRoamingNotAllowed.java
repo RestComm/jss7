@@ -25,39 +25,32 @@ package org.mobicents.protocols.ss7.map.api.errors;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
-*
-
-roamingNotAllowed  ERROR ::= {
-	PARAMETER
-		RoamingNotAllowedParam
-	CODE	local:8 }
-
-RoamingNotAllowedParam ::= SEQUENCE {
-	roamingNotAllowedCause	RoamingNotAllowedCause,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...,
-	additionalRoamingNotAllowedCause	[0] AdditionalRoamingNotAllowedCause OPTIONAL }
-
---	if the additionalRoamingNotallowedCause is received by the MSC/VLR or SGSN then the 
---	roamingNotAllowedCause shall be discarded.
-
-  
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ roamingNotAllowed ERROR ::= { PARAMETER RoamingNotAllowedParam CODE local:8 }
+ *
+ * RoamingNotAllowedParam ::= SEQUENCE { roamingNotAllowedCause RoamingNotAllowedCause, extensionContainer ExtensionContainer
+ * OPTIONAL, ..., additionalRoamingNotAllowedCause [0] AdditionalRoamingNotAllowedCause OPTIONAL }
+ *
+ * -- if the additionalRoamingNotallowedCause is received by the MSC/VLR or SGSN then the -- roamingNotAllowedCause shall be
+ * discarded.
+ *
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface MAPErrorMessageRoamingNotAllowed extends MAPErrorMessage {
 
-	public RoamingNotAllowedCause getRoamingNotAllowedCause();
+    RoamingNotAllowedCause getRoamingNotAllowedCause();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public AdditionalRoamingNotAllowedCause getAdditionalRoamingNotAllowedCause();
+    AdditionalRoamingNotAllowedCause getAdditionalRoamingNotAllowedCause();
 
-	public void setRoamingNotAllowedCause(RoamingNotAllowedCause val);
+    void setRoamingNotAllowedCause(RoamingNotAllowedCause val);
 
-	public void setExtensionContainer(MAPExtensionContainer val);
+    void setExtensionContainer(MAPExtensionContainer val);
 
-	public void setAdditionalRoamingNotAllowedCause(AdditionalRoamingNotAllowedCause val);
+    void setAdditionalRoamingNotAllowedCause(AdditionalRoamingNotAllowedCause val);
 
 }

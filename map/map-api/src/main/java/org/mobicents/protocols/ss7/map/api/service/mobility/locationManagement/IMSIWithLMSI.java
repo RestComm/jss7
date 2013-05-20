@@ -26,22 +26,17 @@ import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 
 /**
- * 
-
-IMSI-WithLMSI ::= SEQUENCE {
-	imsi			IMSI,
-	lmsi			LMSI,
-	-- a special value 00000000 indicates that the LMSI is not in use
-	...}
-
- * 
+ *
+ IMSI-WithLMSI ::= SEQUENCE { imsi IMSI, lmsi LMSI, -- a special value 00000000 indicates that the LMSI is not in use ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface IMSIWithLMSI {
 
-	public IMSI getImsi();
+    IMSI getImsi();
 
-	public LMSI getLmsi();
+    LMSI getLmsi();
 
 }

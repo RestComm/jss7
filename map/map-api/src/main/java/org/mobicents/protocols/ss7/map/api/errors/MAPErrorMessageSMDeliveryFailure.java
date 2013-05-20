@@ -26,36 +26,30 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
  * The MAP ReturnError message: MessageSMDeliveryFailure with parameters
- * 
- * sm-DeliveryFailure  ERROR ::= {
- *	PARAMETER
- *		SM-DeliveryFailureCause
- *	CODE	local:32 }
+ *
+ * sm-DeliveryFailure ERROR ::= { PARAMETER SM-DeliveryFailureCause CODE local:32 }
  *
  *
- * 
- * SM-DeliveryFailureCause ::= SEQUENCE {
- *	sm-EnumeratedDeliveryFailureCause	SM-EnumeratedDeliveryFailureCause,
- *	diagnosticInfo	SignalInfo	OPTIONAL,
- *	extensionContainer	ExtensionContainer	OPTIONAL,
- *	...}
  *
- * 
- * 
+ * SM-DeliveryFailureCause ::= SEQUENCE { sm-EnumeratedDeliveryFailureCause SM-EnumeratedDeliveryFailureCause, diagnosticInfo
+ * SignalInfo OPTIONAL, extensionContainer ExtensionContainer OPTIONAL, ...}
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MAPErrorMessageSMDeliveryFailure extends MAPErrorMessage {
 
-	public SMEnumeratedDeliveryFailureCause getSMEnumeratedDeliveryFailureCause();
+    SMEnumeratedDeliveryFailureCause getSMEnumeratedDeliveryFailureCause();
 
-	public byte[] getSignalInfo();
+    byte[] getSignalInfo();
 
-	public MAPExtensionContainer getExtensionContainer();
-	
-	public void setSMEnumeratedDeliveryFailureCause(SMEnumeratedDeliveryFailureCause sMEnumeratedDeliveryFailureCause);
+    MAPExtensionContainer getExtensionContainer();
 
-	public void setSignalInfo(byte[] signalInfo);
+    void setSMEnumeratedDeliveryFailureCause(SMEnumeratedDeliveryFailureCause sMEnumeratedDeliveryFailureCause);
 
-	public void setExtensionContainer(MAPExtensionContainer extensionContainer);
+    void setSignalInfo(byte[] signalInfo);
+
+    void setExtensionContainer(MAPExtensionContainer extensionContainer);
 }

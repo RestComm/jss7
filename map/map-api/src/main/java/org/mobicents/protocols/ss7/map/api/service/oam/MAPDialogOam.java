@@ -25,12 +25,12 @@ package org.mobicents.protocols.ss7.map.api.service.oam;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MAPDialogOam extends MAPDialog {
 
-	// TODO: add service component adders
+    // TODO: add service component adders
 
 }

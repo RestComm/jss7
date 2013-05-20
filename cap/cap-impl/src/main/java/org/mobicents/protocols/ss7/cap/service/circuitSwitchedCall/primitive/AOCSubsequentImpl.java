@@ -36,174 +36,173 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 
 /**
-*
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class AOCSubsequentImpl implements AOCSubsequent, CAPAsnPrimitive {
 
-	public static final int _ID_cAI_GSM0224 = 0;
-	public static final int _ID_tariffSwitchInterval = 1;
+    public static final int _ID_cAI_GSM0224 = 0;
+    public static final int _ID_tariffSwitchInterval = 1;
 
-	public static final String _PrimitiveName = "AOCSubsequent";
+    public static final String _PrimitiveName = "AOCSubsequent";
 
-	private CAI_GSM0224 cai_GSM0224;
-	private Integer tariffSwitchInterval;
+    private CAI_GSM0224 cai_GSM0224;
+    private Integer tariffSwitchInterval;
 
-	public AOCSubsequentImpl() {
-	}
+    public AOCSubsequentImpl() {
+    }
 
-	public AOCSubsequentImpl(CAI_GSM0224 cai_GSM0224, Integer tariffSwitchInterval) {
-		this.cai_GSM0224 = cai_GSM0224;
-		this.tariffSwitchInterval = tariffSwitchInterval;
-	}
-	
-	@Override
-	public CAI_GSM0224 getCAI_GSM0224() {
-		return cai_GSM0224;
-	}
+    public AOCSubsequentImpl(CAI_GSM0224 cai_GSM0224, Integer tariffSwitchInterval) {
+        this.cai_GSM0224 = cai_GSM0224;
+        this.tariffSwitchInterval = tariffSwitchInterval;
+    }
 
-	@Override
-	public Integer getTariffSwitchInterval() {
-		return tariffSwitchInterval;
-	}
+    @Override
+    public CAI_GSM0224 getCAI_GSM0224() {
+        return cai_GSM0224;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
+    @Override
+    public Integer getTariffSwitchInterval() {
+        return tariffSwitchInterval;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.SEQUENCE;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		this.cai_GSM0224 = null;
-		this.tariffSwitchInterval = null;
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+        this.cai_GSM0224 = null;
+        this.tariffSwitchInterval = null;
 
-			int tag = ais.readTag();
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_cAI_GSM0224:
-					this.cai_GSM0224 = new CAI_GSM0224Impl();
-					((CAI_GSM0224Impl) this.cai_GSM0224).decodeAll(ais);
-					break;
-				case _ID_tariffSwitchInterval:
-					this.tariffSwitchInterval = (int) ais.readInteger();
-					break;
+            int tag = ais.readTag();
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_cAI_GSM0224:
+                        this.cai_GSM0224 = new CAI_GSM0224Impl();
+                        ((CAI_GSM0224Impl) this.cai_GSM0224).decodeAll(ais);
+                        break;
+                    case _ID_tariffSwitchInterval:
+                        this.tariffSwitchInterval = (int) ais.readInteger();
+                        break;
 
-		if (this.cai_GSM0224 == null)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": cai_GSM0224 is mandatory but not found",
-					CAPParsingComponentExceptionReason.MistypedParameter);
-	}
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+        if (this.cai_GSM0224 == null)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": cai_GSM0224 is mandatory but not found", CAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-	@Override
-	public void encodeData(AsnOutputStream aos) throws CAPException {
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		if (this.cai_GSM0224 == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": cai_GSM0224 must not be null");
+    @Override
+    public void encodeData(AsnOutputStream aos) throws CAPException {
 
-		try {
-			((CAI_GSM0224Impl) this.cai_GSM0224).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_cAI_GSM0224);
+        if (this.cai_GSM0224 == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": cai_GSM0224 must not be null");
 
-			if (this.tariffSwitchInterval != null)
-				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_tariffSwitchInterval, this.tariffSwitchInterval);
-		} catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        try {
+            ((CAI_GSM0224Impl) this.cai_GSM0224).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_cAI_GSM0224);
 
-	@Override
-	public String toString() {
+            if (this.tariffSwitchInterval != null)
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_tariffSwitchInterval, this.tariffSwitchInterval);
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+    @Override
+    public String toString() {
 
-		if (this.cai_GSM0224 != null) {
-			sb.append("cai_GSM0224=");
-			sb.append(cai_GSM0224.toString());
-		}
-		if (this.tariffSwitchInterval != null) {
-			sb.append(", tariffSwitchInterval=");
-			sb.append(tariffSwitchInterval);
-		}
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		sb.append("]");
+        if (this.cai_GSM0224 != null) {
+            sb.append("cai_GSM0224=");
+            sb.append(cai_GSM0224.toString());
+        }
+        if (this.tariffSwitchInterval != null) {
+            sb.append(", tariffSwitchInterval=");
+            sb.append(tariffSwitchInterval);
+        }
 
-		return sb.toString();
-	}
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
-

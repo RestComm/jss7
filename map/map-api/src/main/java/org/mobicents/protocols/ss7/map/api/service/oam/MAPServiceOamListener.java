@@ -25,12 +25,12 @@ package org.mobicents.protocols.ss7.map.api.service.oam;
 import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MAPServiceOamListener extends MAPServiceListener {
 
-	// TODO: add listeners
+    // TODO: add listeners
 
 }

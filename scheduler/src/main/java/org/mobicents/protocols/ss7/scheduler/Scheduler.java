@@ -22,92 +22,83 @@
 
 package org.mobicents.protocols.ss7.scheduler;
 
-import java.lang.InterruptedException;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.CompletionService;
-import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.LockSupport;
 
 import org.apache.log4j.Logger;
 
 /**
  * Implements scheduler with multi-level priority queue.
  *
- * This scheduler implementation follows to uniprocessor model with "super" thread.
- * The "super" thread includes IO bound thread and one or more CPU bound threads
- * with equal priorities.
+ * This scheduler implementation follows to uniprocessor model with "super" thread. The "super" thread includes IO bound thread
+ * and one or more CPU bound threads with equal priorities.
  *
- * The actual priority is assigned to task instead of process and can be
- * changed dynamically at runtime using the initial priority level, feedback
- * and other parameters.
+ * The actual priority is assigned to task instead of process and can be changed dynamically at runtime using the initial
+ * priority level, feedback and other parameters.
  *
  *
  * @author oifa.yulian
  */
-public class Scheduler  {
-	//MANAGEMENT QUEUE SHOULD CONTAIN ONLY TASKS THAT ARE NOT TIME DEPENDENT
-	public static final Integer MANAGEMENT_QUEUE=0;
-	
-	//MTP2/SCTP READ
-	public static final Integer L2READ_QUEUE=1;
-	//MTP3/M3UA READ
-	public static final Integer L3READ_QUEUE=2;
-	//ISUP / SCCP READ
-	public static final Integer L4READ_QUEUE=3;
-	//TCAP READ
-	public static final Integer TCAPREAD_QUEUE=4;
-	//MAP/INUP and other APP LAYER READ
-	public static final Integer APPREAD_QUEUE=5;
-		
-	//MAP/INUP and other APP LAYER WRITE	
-	public static final Integer APPWRITE_QUEUE=6;	
-	//TCAP WRITE
-	public static final Integer TCAPWRITE_QUEUE=7;	
-	//ISUP / SCCP WRITE
-	public static final Integer L4WRITE_QUEUE=8;	
-	//MTP3/M3UA WRITE
-	public static final Integer L3WRITE_QUEUE=9;
-	//MTP2/SCTP WRITE
-	public static final Integer L2WRITE_QUEUE=10;
-	
-	
-	//INTERNETWORKING OCCURES OVER L3 NO HIGHER LAYERS ARE USED
-	//BASICALLY DOEST NOT MATTER WHAT QUEUE WE CHOOSE , IT SHOULD BE BETWEEN L3READ_QUEUE AND L3WRITE_QUEUE
-	public static final Integer INTERNETWORKING_QUEUE=3;
-			
-	public static final Integer HEARTBEAT_QUEUE=-1;
-	
-    //The clock for time measurement
+public class Scheduler {
+    // MANAGEMENT QUEUE SHOULD CONTAIN ONLY TASKS THAT ARE NOT TIME DEPENDENT
+    public static final Integer MANAGEMENT_QUEUE = 0;
+
+    // MTP2/SCTP READ
+    public static final Integer L2READ_QUEUE = 1;
+    // MTP3/M3UA READ
+    public static final Integer L3READ_QUEUE = 2;
+    // ISUP / SCCP READ
+    public static final Integer L4READ_QUEUE = 3;
+    // TCAP READ
+    public static final Integer TCAPREAD_QUEUE = 4;
+    // MAP/INUP and other APP LAYER READ
+    public static final Integer APPREAD_QUEUE = 5;
+
+    // MAP/INUP and other APP LAYER WRITE
+    public static final Integer APPWRITE_QUEUE = 6;
+    // TCAP WRITE
+    public static final Integer TCAPWRITE_QUEUE = 7;
+    // ISUP / SCCP WRITE
+    public static final Integer L4WRITE_QUEUE = 8;
+    // MTP3/M3UA WRITE
+    public static final Integer L3WRITE_QUEUE = 9;
+    // MTP2/SCTP WRITE
+    public static final Integer L2WRITE_QUEUE = 10;
+
+    // INTERNETWORKING OCCURES OVER L3 NO HIGHER LAYERS ARE USED
+    // BASICALLY DOEST NOT MATTER WHAT QUEUE WE CHOOSE , IT SHOULD BE BETWEEN L3READ_QUEUE AND L3WRITE_QUEUE
+    public static final Integer INTERNETWORKING_QUEUE = 3;
+
+    public static final Integer HEARTBEAT_QUEUE = -1;
+
+    // The clock for time measurement
     private Clock clock;
 
-    //priority queue
+    // priority queue
     protected OrderedTaskQueue[] taskQueues = new OrderedTaskQueue[11];
 
     protected OrderedTaskQueue heartBeatQueue;
-    //CPU bound threads
+    // CPU bound threads
     private CpuThread cpuThread;
-    
-    //flag indicating state of the scheduler
+
+    // flag indicating state of the scheduler
     private boolean isActive;
 
-    private Logger logger = Logger.getLogger(Scheduler.class) ;
-    
+    private Logger logger = Logger.getLogger(Scheduler.class);
+
     /**
      * Creates new instance of scheduler.
      */
     public Scheduler() {
-    	for(int i=0;i<taskQueues.length;i++)
-    		taskQueues[i]=new OrderedTaskQueue();
-    	
-    	heartBeatQueue=new OrderedTaskQueue();
-    	
-        cpuThread = new CpuThread(String.format("Scheduler"));        
-    }    
+        for (int i = 0; i < taskQueues.length; i++)
+            taskQueues[i] = new OrderedTaskQueue();
+
+        heartBeatQueue = new OrderedTaskQueue();
+
+        cpuThread = new CpuThread(String.format("Scheduler"));
+    }
 
     /**
      * Sets clock.
@@ -132,11 +123,11 @@ public class Scheduler  {
      *
      * @param task the task to be executed.
      */
-    public void submit(Task task,Integer index) {
+    public void submit(Task task, Integer index) {
         task.activate(false);
         taskQueues[index].accept(task);
     }
-    
+
     /**
      * Queues task for execution according to its priority.
      *
@@ -146,24 +137,24 @@ public class Scheduler  {
         task.activate(true);
         heartBeatQueue.accept(task);
     }
-    
+
     /**
      * Starts scheduler.
      */
     public void start() {
-    	if(this.isActive)
-    		return;
-    	
+        if (this.isActive)
+            return;
+
         if (clock == null) {
             throw new IllegalStateException("Clock is not set");
         }
 
         this.isActive = true;
-        
+
         logger.info("Starting ");
-        
+
         cpuThread.activate();
-        
+
         logger.info("Started ");
     }
 
@@ -176,25 +167,22 @@ public class Scheduler  {
         }
 
         cpuThread.shutdown();
-        
-        try
-        {
-        	Thread.sleep(40);
+
+        try {
+            Thread.sleep(40);
+        } catch (InterruptedException e) {
         }
-        catch(InterruptedException e)
-		{                				
-		}
-        
-        for(int i=0;i<taskQueues.length;i++)
-        	taskQueues[i].clear();
-        
+
+        for (int i = 0; i < taskQueues.length; i++)
+            taskQueues[i].clear();
+
         heartBeatQueue.clear();
     }
 
-    //removed statistics to increase perfomance
+    // removed statistics to increase perfomance
     /**
      * Shows the miss rate.
-     * 
+     *
      * @return the miss rate value;
      */
     public double getMissRate() {
@@ -205,117 +193,107 @@ public class Scheduler  {
         return 0;
     }
 
-    public void notifyCompletion()
-    {
-    	cpuThread.notifyCompletion();
+    public void notifyCompletion() {
+        cpuThread.notifyCompletion();
     }
-    
+
     /**
      * Executor thread.
      */
-    private class CpuThread extends Thread {        
+    private class CpuThread extends Thread {
         private volatile boolean active;
-        private int currQueue=MANAGEMENT_QUEUE;        
-        private AtomicInteger activeTasksCount=new AtomicInteger();
-        private long cycleStart=0;
-        private int runIndex=0;
+        private int currQueue = MANAGEMENT_QUEUE;
+        private AtomicInteger activeTasksCount = new AtomicInteger();
+        private long cycleStart = 0;
+        private int runIndex = 0;
         private ExecutorService eservice;
-        private Object LOCK=new Object();
-        
+        private Object LOCK = new Object();
+
         public CpuThread(String name) {
             super(name);
-            int size=Runtime.getRuntime().availableProcessors()*2;
-            eservice =new ThreadPoolExecutor(size, size,0L, TimeUnit.MILLISECONDS,new ConcurrentLinkedList<Runnable>());                       
+            int size = Runtime.getRuntime().availableProcessors() * 2;
+            eservice = new ThreadPoolExecutor(size, size, 0L, TimeUnit.MILLISECONDS, new ConcurrentLinkedList<Runnable>());
         }
-        
-        public void activate() {        	        	
-        	this.active = true;
-        	this.start();
+
+        public void activate() {
+            this.active = true;
+            this.start();
         }
-        
+
         public void notifyCompletion() {
-        	int newValue=activeTasksCount.decrementAndGet();
-        	if(newValue==0 && this.active)
-        		synchronized(LOCK) {
-        			LOCK.notify();
-        		}        	        	
+            int newValue = activeTasksCount.decrementAndGet();
+            if (newValue == 0 && this.active)
+                synchronized (LOCK) {
+                    LOCK.notify();
+                }
         }
-        
+
         @Override
-        public void run() {        	
-        	long cycleDuration,cycleDuration2;
-        	cycleStart = System.nanoTime();
-        	
-        	while(active)
-        	{        		
-        		while(currQueue<=L2WRITE_QUEUE)
-    			{
-        			synchronized(LOCK) {    					
-    					if(executeQueue(taskQueues[currQueue]))
-    						try {
-    							LOCK.wait();
-    						}
-    						catch(InterruptedException e)  {                                               
-    							//lets continue
-    						}
-    				}
-    				
-    				currQueue++;
-    			}        		        		        		
-				
-        		runIndex=(runIndex+1)%25;
-        		if(runIndex==0)
-        		{
-        			synchronized(LOCK) {
-        				if(executeQueue(heartBeatQueue))
-        					try  {
-        						LOCK.wait();
-        					}
-							catch(InterruptedException e)  {                                               
-							//lets continue
-							}
-        			}
-        		}
-    			
-    			//sleep till next cycle
-        		cycleDuration=System.nanoTime() - cycleStart;
-        		if(cycleDuration<4000000L)
-        		{
-        			try  {                                               
-                        sleep(4L-cycleDuration/1000000L,(int)((4000000L-cycleDuration)%1000000L));
-        			}
-        			catch(InterruptedException e)  {                                               
-        				//lets continue
-        			}
-        		}
-        		
-        		//new cycle starts , updating cycle start time by 4ms
-        		//cycleDuration2=System.nanoTime() - cycleStart;
-        		cycleStart = cycleStart + 4000000L;
-                currQueue=MANAGEMENT_QUEUE;
-                
-                //if(cycleDuration2>4100000L)
-                //	System.out.println("TIME LONGER THEN 4.1MS,DURATION:" + cycleDuration);
-                //else if(cycleDuration2<3900000L)
-                //	System.out.println("TIME SHORTER THEN 3.9MS,DURATION:" + cycleDuration);
-        	}
+        public void run() {
+            long cycleDuration, cycleDuration2;
+            cycleStart = System.nanoTime();
+
+            while (active) {
+                while (currQueue <= L2WRITE_QUEUE) {
+                    synchronized (LOCK) {
+                        if (executeQueue(taskQueues[currQueue]))
+                            try {
+                                LOCK.wait();
+                            } catch (InterruptedException e) {
+                                // lets continue
+                            }
+                    }
+
+                    currQueue++;
+                }
+
+                runIndex = (runIndex + 1) % 25;
+                if (runIndex == 0) {
+                    synchronized (LOCK) {
+                        if (executeQueue(heartBeatQueue))
+                            try {
+                                LOCK.wait();
+                            } catch (InterruptedException e) {
+                                // lets continue
+                            }
+                    }
+                }
+
+                // sleep till next cycle
+                cycleDuration = System.nanoTime() - cycleStart;
+                if (cycleDuration < 4000000L) {
+                    try {
+                        sleep(4L - cycleDuration / 1000000L, (int) ((4000000L - cycleDuration) % 1000000L));
+                    } catch (InterruptedException e) {
+                        // lets continue
+                    }
+                }
+
+                // new cycle starts , updating cycle start time by 4ms
+                // cycleDuration2=System.nanoTime() - cycleStart;
+                cycleStart = cycleStart + 4000000L;
+                currQueue = MANAGEMENT_QUEUE;
+
+                // if(cycleDuration2>4100000L)
+                // System.out.println("TIME LONGER THEN 4.1MS,DURATION:" + cycleDuration);
+                // else if(cycleDuration2<3900000L)
+                // System.out.println("TIME SHORTER THEN 3.9MS,DURATION:" + cycleDuration);
+            }
         }
-        
-        private boolean executeQueue(OrderedTaskQueue currQueue)
-        {
-        	Task t;        	
-        	currQueue.changePool();
-            int currQueueSize=currQueue.size();
+
+        private boolean executeQueue(OrderedTaskQueue currQueue) {
+            Task t;
+            currQueue.changePool();
+            int currQueueSize = currQueue.size();
             activeTasksCount.set(currQueueSize);
             t = currQueue.poll();
-            //submit all tasks in current queue
-            while(t!=null)
-            {            	
-            	eservice.execute(t);
-            	t = currQueue.poll();
+            // submit all tasks in current queue
+            while (t != null) {
+                eservice.execute(t);
+                t = currQueue.poll();
             }
-            
-            return currQueueSize!=0;
+
+            return currQueueSize != 0;
         }
 
         /**
@@ -324,5 +302,5 @@ public class Scheduler  {
         private void shutdown() {
             this.active = false;
         }
-    }    
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -25,35 +25,35 @@ package org.mobicents.protocols.ss7.sccp;
 /**
  *
  * @author sergey vetyutnev
- * 
+ *
  */
 public enum OriginationType {
-	LocalOriginated("LocalOriginated"), RemoteOriginated("RemoteOriginated"), All("All");
+    LocalOriginated("LocalOriginated"), RemoteOriginated("RemoteOriginated"), All("All");
 
-	private static final String LOCAL_ORIGINATED = "LocalOriginated";
-	private static final String REMOTE_ORIGINATED = "RemoteOriginated";
-	private static final String ALL = "All";
+    private static final String LOCAL_ORIGINATED = "LocalOriginated";
+    private static final String REMOTE_ORIGINATED = "RemoteOriginated";
+    private static final String ALL = "All";
 
-	private final String type;
+    private final String type;
 
-	private OriginationType(String type) {
-		this.type = type;
-	}
+    private OriginationType(String type) {
+        this.type = type;
+    }
 
-	public static OriginationType getInstance(String type) {
-		if (LOCAL_ORIGINATED.equalsIgnoreCase(type)) {
-			return LocalOriginated;
-		} else if (REMOTE_ORIGINATED.equalsIgnoreCase(type)) {
-			return RemoteOriginated;
-		} else if (ALL.equalsIgnoreCase(type)) {
-			return All;
-		}
+    public static OriginationType getInstance(String type) {
+        if (LOCAL_ORIGINATED.equalsIgnoreCase(type)) {
+            return LocalOriginated;
+        } else if (REMOTE_ORIGINATED.equalsIgnoreCase(type)) {
+            return RemoteOriginated;
+        } else if (ALL.equalsIgnoreCase(type)) {
+            return All;
+        }
 
-		return null;
-	}
-	
-	public String getType(){
-		return this.type;
-	}
+        return null;
+    }
+
+    public String getType() {
+        return this.type;
+    }
 
 }

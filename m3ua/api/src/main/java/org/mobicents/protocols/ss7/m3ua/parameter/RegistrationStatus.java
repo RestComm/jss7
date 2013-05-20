@@ -43,12 +43,12 @@ package org.mobicents.protocols.ss7.m3ua.parameter;
  * <li>12 Error - Routing Key Already Registered</li>
  * </ul>
  * </p>
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public interface RegistrationStatus extends Parameter {
 
-    public int getStatus();
+    int getStatus();
 
 }

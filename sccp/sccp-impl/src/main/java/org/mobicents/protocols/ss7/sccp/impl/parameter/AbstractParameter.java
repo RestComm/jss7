@@ -29,31 +29,30 @@ import java.io.OutputStream;
 import org.mobicents.protocols.ss7.sccp.parameter.Parameter;
 
 /**
- * 
+ *
  * @author baranowb
  */
 public abstract class AbstractParameter implements Parameter { // implement
-																// marker
-																// interface.
+                                                               // marker
+                                                               // interface.
 
-	public abstract void decode(InputStream in) throws IOException;
+    public abstract void decode(InputStream in) throws IOException;
 
-	public abstract void encode(OutputStream os) throws IOException;
+    public abstract void encode(OutputStream os) throws IOException;
 
-	/**
-	 * Accepts only body for decoding operation, that is leng and tag must be
-	 * processed.
-	 * 
-	 * @param b
-	 * @throws IOException
-	 */
-	public abstract void decode(byte[] b) throws IOException;
+    /**
+     * Accepts only body for decoding operation, that is leng and tag must be processed.
+     *
+     * @param b
+     * @throws IOException
+     */
+    public abstract void decode(byte[] b) throws IOException;
 
-	/**
-	 * Encodes only body of parameter, tag and len must be encoded.
-	 * 
-	 * @return
-	 * @throws IOException
-	 */
-	public abstract byte[] encode() throws IOException;
+    /**
+     * Encodes only body of parameter, tag and len must be encoded.
+     *
+     * @return
+     * @throws IOException
+     */
+    public abstract byte[] encode() throws IOException;
 }

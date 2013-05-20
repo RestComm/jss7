@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -27,46 +27,42 @@ package org.mobicents.protocols.ss7.m3ua;
  * </p>
  * <ol>
  * <li>
- * Single Exchange (SE) model : Only a single exchange of ASP Traffic
- * Maintenance (ASPTM) Messages and ASP State Maintenance (ASPSM) Messages is
- * needed to change the {@link As} states. This means that a set of requests
- * from one end and acknowledgements from the other will be enough.</li>
+ * Single Exchange (SE) model : Only a single exchange of ASP Traffic Maintenance (ASPTM) Messages and ASP State Maintenance
+ * (ASPSM) Messages is needed to change the {@link As} states. This means that a set of requests from one end and
+ * acknowledgements from the other will be enough.</li>
  * <li>
- * Double Exchange (DE) model : A double exchange of ASPTM and ASPSM messages is
- * normally needed. When using double exchanges for ASPSM messages, the
- * management of the connection in the two directions is considered independent.
- * This means that connections from As-A to As-B is handled independently of
- * connections from As-B to As-A. Therefore, it could happen that only one of
- * the two directions is activated or closed, while the other remains in the
- * same state as it was.</li>
+ * Double Exchange (DE) model : A double exchange of ASPTM and ASPSM messages is normally needed. When using double exchanges
+ * for ASPSM messages, the management of the connection in the two directions is considered independent. This means that
+ * connections from As-A to As-B is handled independently of connections from As-B to As-A. Therefore, it could happen that only
+ * one of the two directions is activated or closed, while the other remains in the same state as it was.</li>
  * </ol>
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public enum ExchangeType {
-	SE("SE"), DE("DE");
+    SE("SE"), DE("DE");
 
-	private static final String TYPE_SE = "SE";
-	private static final String TYPE_DE = "DE";
+    private static final String TYPE_SE = "SE";
+    private static final String TYPE_DE = "DE";
 
-	private String type = null;
+    private String type = null;
 
-	private ExchangeType(String type) {
-		this.type = type;
-	}
+    private ExchangeType(String type) {
+        this.type = type;
+    }
 
-	public static ExchangeType getExchangeType(String type) {
-		if (TYPE_SE.equals(type)) {
-			return SE;
-		} else if (TYPE_DE.equals(type)) {
-			return DE;
-		} else {
-			return null;
-		}
-	}
+    public static ExchangeType getExchangeType(String type) {
+        if (TYPE_SE.equals(type)) {
+            return SE;
+        } else if (TYPE_DE.equals(type)) {
+            return DE;
+        } else {
+            return null;
+        }
+    }
 
-	public String getType() {
-		return this.type;
-	}
+    public String getType() {
+        return this.type;
+    }
 }

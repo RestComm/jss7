@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -33,70 +33,53 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
 
 /**
-*
-
-CAP V4:
-InitialDPArgExtension {PARAMETERS-BOUND : bound} ::= SEQUENCE { 
- gmscAddress       [0] ISDN-AddressString      OPTIONAL, 
- forwardingDestinationNumber   [1] CalledPartyNumber {bound}    OPTIONAL, 
- ms-Classmark2      [2] MS-Classmark2       OPTIONAL, 
- iMEI        [3] IMEI         OPTIONAL, 
- supportedCamelPhases    [4] SupportedCamelPhases     OPTIONAL, 
- offeredCamel4Functionalities   [5] OfferedCamel4Functionalities   OPTIONAL, 
- bearerCapability2     [6] BearerCapability {bound}    OPTIONAL, 
- ext-basicServiceCode2    [7] Ext-BasicServiceCode     OPTIONAL, 
- highLayerCompatibility2    [8] HighLayerCompatibility     OPTIONAL, 
- lowLayerCompatibility    [9] LowLayerCompatibility {bound}   OPTIONAL, 
- lowLayerCompatibility2    [10] LowLayerCompatibility {bound}   OPTIONAL, 
- ..., 
- enhancedDialledServicesAllowed  [11] NULL         OPTIONAL, 
- uu-Data        [12] UU-Data        OPTIONAL
-}
-
-CAP V2:
-InitialDPArgExtension ::= SEQUENCE {
-naCarrierInformation [0] NACarrierInformation OPTIONAL,
-gmscAddress [1] ISDN-AddressString OPTIONAL,
-...
-}
-
--- If iPSSPCapabilities is not present then this denotes that a colocated gsmSRF is not  
--- supported by the gsmSSF. If present, then the gsmSSF supports a colocated gsmSRF capable  
--- of playing announcements via elementaryMessageIDs and variableMessages, the playing of 
--- tones and the collection of DTMF digits. Other supported capabilities are explicitly  
--- detailed in the IPSSPCapabilities parameter itself. 
--- Carrier is included at the discretion of the gsmSSF operator.  
- 
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ CAP V4: InitialDPArgExtension {PARAMETERS-BOUND : bound} ::= SEQUENCE { gmscAddress [0] ISDN-AddressString OPTIONAL,
+ * forwardingDestinationNumber [1] CalledPartyNumber {bound} OPTIONAL, ms-Classmark2 [2] MS-Classmark2 OPTIONAL, iMEI [3] IMEI
+ * OPTIONAL, supportedCamelPhases [4] SupportedCamelPhases OPTIONAL, offeredCamel4Functionalities [5]
+ * OfferedCamel4Functionalities OPTIONAL, bearerCapability2 [6] BearerCapability {bound} OPTIONAL, ext-basicServiceCode2 [7]
+ * Ext-BasicServiceCode OPTIONAL, highLayerCompatibility2 [8] HighLayerCompatibility OPTIONAL, lowLayerCompatibility [9]
+ * LowLayerCompatibility {bound} OPTIONAL, lowLayerCompatibility2 [10] LowLayerCompatibility {bound} OPTIONAL, ...,
+ * enhancedDialledServicesAllowed [11] NULL OPTIONAL, uu-Data [12] UU-Data OPTIONAL }
+ *
+ * CAP V2: InitialDPArgExtension ::= SEQUENCE { naCarrierInformation [0] NACarrierInformation OPTIONAL, gmscAddress [1]
+ * ISDN-AddressString OPTIONAL, ... }
+ *
+ * -- If iPSSPCapabilities is not present then this denotes that a colocated gsmSRF is not -- supported by the gsmSSF. If
+ * present, then the gsmSSF supports a colocated gsmSRF capable -- of playing announcements via elementaryMessageIDs and
+ * variableMessages, the playing of -- tones and the collection of DTMF digits. Other supported capabilities are explicitly --
+ * detailed in the IPSSPCapabilities parameter itself. -- Carrier is included at the discretion of the gsmSSF operator.
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface InitialDPArgExtension {
 
-	public ISDNAddressString getGmscAddress();
+    ISDNAddressString getGmscAddress();
 
-	public CalledPartyNumberCap getForwardingDestinationNumber();
+    CalledPartyNumberCap getForwardingDestinationNumber();
 
-	public MSClassmark2 getMSClassmark2();
+    MSClassmark2 getMSClassmark2();
 
-	public IMEI getIMEI();
+    IMEI getIMEI();
 
-	public SupportedCamelPhases getSupportedCamelPhases();
+    SupportedCamelPhases getSupportedCamelPhases();
 
-	public OfferedCamel4Functionalities getOfferedCamel4Functionalities();
+    OfferedCamel4Functionalities getOfferedCamel4Functionalities();
 
-	public BearerCapability getBearerCapability2();
+    BearerCapability getBearerCapability2();
 
-	public ExtBasicServiceCode getExtBasicServiceCode2();
+    ExtBasicServiceCode getExtBasicServiceCode2();
 
-	public HighLayerCompatibilityInap getHighLayerCompatibility2();
+    HighLayerCompatibilityInap getHighLayerCompatibility2();
 
-	public LowLayerCompatibility getLowLayerCompatibility();
+    LowLayerCompatibility getLowLayerCompatibility();
 
-	public LowLayerCompatibility getLowLayerCompatibility2();
+    LowLayerCompatibility getLowLayerCompatibility2();
 
-	public boolean getEnhancedDialledServicesAllowed();
+    boolean getEnhancedDialledServicesAllowed();
 
-	public UUData getUUData();
+    UUData getUUData();
 
 }

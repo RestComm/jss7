@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -38,48 +38,50 @@ import org.testng.annotations.Test;
  *
  */
 public class OCalledPartyBusySpecificInfoTest {
-	
-	public byte[] getIntData() {
-		return new byte[] { (byte) 132, (byte) 144 };
-	}
 
+    public byte[] getIntData() {
+        return new byte[] { (byte) 132, (byte) 144 };
+    }
 
-	/**
-	 * 
+    /**
+	 *
 	 */
-	public OCalledPartyBusySpecificInfoTest() {
-		// TODO Auto-generated constructor stub
-	}
-	
-	@Test(groups = { "functional.xml.serialize","circuitSwitchedCall.primitive"})
-	public void testXMLSerializaion() throws Exception {
+    public OCalledPartyBusySpecificInfoTest() {
+        // TODO Auto-generated constructor stub
+    }
 
-		CauseCapImpl cause = new CauseCapImpl(this.getIntData());
-		OCalledPartyBusySpecificInfoImpl original = new OCalledPartyBusySpecificInfoImpl(cause);
-		
-		
-		// Writes the area to a file.
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
-		// writer.setBinding(binding); // Optional.
-		writer.setIndentation("\t"); // Optional (use tabulation for
-										// indentation).
-		writer.write(original, "OCalledPartyBusySpecificInfoImpl", OCalledPartyBusySpecificInfoImpl.class);
-		writer.close();
+    @Test(groups = { "functional.xml.serialize", "circuitSwitchedCall.primitive" })
+    public void testXMLSerializaion() throws Exception {
 
-		byte[] rawData = baos.toByteArray();
-		String serializedEvent = new String(rawData);
+        CauseCapImpl cause = new CauseCapImpl(this.getIntData());
+        OCalledPartyBusySpecificInfoImpl original = new OCalledPartyBusySpecificInfoImpl(cause);
 
-		System.out.println(serializedEvent);
+        // Writes the area to a file.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for
+                                     // indentation).
+        writer.write(original, "OCalledPartyBusySpecificInfoImpl", OCalledPartyBusySpecificInfoImpl.class);
+        writer.close();
 
-		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
-		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
-		OCalledPartyBusySpecificInfoImpl copy = reader.read("OCalledPartyBusySpecificInfoImpl", OCalledPartyBusySpecificInfoImpl.class);
-		
-		assertEquals(copy.getBusyCause().getCauseIndicators().getLocation(), original.getBusyCause().getCauseIndicators().getLocation());
-		assertEquals(copy.getBusyCause().getCauseIndicators().getCauseValue(), original.getBusyCause().getCauseIndicators().getCauseValue());
-		assertEquals(copy.getBusyCause().getCauseIndicators().getCodingStandard(), original.getBusyCause().getCauseIndicators().getCodingStandard());
-		
-	}
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        OCalledPartyBusySpecificInfoImpl copy = reader.read("OCalledPartyBusySpecificInfoImpl",
+                OCalledPartyBusySpecificInfoImpl.class);
+
+        assertEquals(copy.getBusyCause().getCauseIndicators().getLocation(), original.getBusyCause().getCauseIndicators()
+                .getLocation());
+        assertEquals(copy.getBusyCause().getCauseIndicators().getCauseValue(), original.getBusyCause().getCauseIndicators()
+                .getCauseValue());
+        assertEquals(copy.getBusyCause().getCauseIndicators().getCodingStandard(), original.getBusyCause().getCauseIndicators()
+                .getCodingStandard());
+
+    }
 
 }

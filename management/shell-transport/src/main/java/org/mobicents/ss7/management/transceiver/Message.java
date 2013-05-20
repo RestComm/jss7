@@ -27,9 +27,9 @@ import java.util.Arrays;
 
 /**
  * Represents the Shell Command protocol data unit
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public class Message {
     protected byte[] data = null;
@@ -44,7 +44,7 @@ public class Message {
 
     /**
      * Decodes the received byte[]
-     * 
+     *
      * @param data
      */
     protected void decode(byte[] data) {
@@ -52,9 +52,8 @@ public class Message {
     }
 
     /**
-     * Encodes this message. The protocol is first 4 bytes are length of this
-     * command followed by the byte stream of command
-     * 
+     * Encodes this message. The protocol is first 4 bytes are length of this command followed by the byte stream of command
+     *
      * @param txBuffer
      */
     protected void encode(ByteBuffer txBuffer) {
@@ -76,32 +75,36 @@ public class Message {
         return new String(data);
     }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + Arrays.hashCode(data);
-		return result;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(data);
+        return result;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Message other = (Message) obj;
-		if (!Arrays.equals(data, other.data))
-			return false;
-		return true;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Message other = (Message) obj;
+        if (!Arrays.equals(data, other.data))
+            return false;
+        return true;
+    }
 
 }

@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -46,90 +46,89 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class TBusySpecificInfoTest {
 
-	public byte[] getData1() {
-		return new byte[] { (byte) 168, 20, (byte) 128, 2, (byte) 132, (byte) 144, (byte) 159, 50, 0, (byte) 159, 51,
-				0, (byte) 159, 52, 7, (byte) 128, (byte) 144, 17, 33, 34, 51, 3 };
-	}
+    public byte[] getData1() {
+        return new byte[] { (byte) 168, 20, (byte) 128, 2, (byte) 132, (byte) 144, (byte) 159, 50, 0, (byte) 159, 51, 0,
+                (byte) 159, 52, 7, (byte) 128, (byte) 144, 17, 33, 34, 51, 3 };
+    }
 
-	@Test(groups = { "functional.decode", "circuitSwitchedCall.primitive" })
-	public void testDecode() throws Exception {
+    @Test(groups = { "functional.decode", "circuitSwitchedCall.primitive" })
+    public void testDecode() throws Exception {
 
-		byte[] data = this.getData1();
-		AsnInputStream ais = new AsnInputStream(data);
-		EventSpecificInformationBCSMImpl elem = new EventSpecificInformationBCSMImpl();
-		int tag = ais.readTag();
-		elem.decodeAll(ais);
-		CauseIndicators ci = elem.getTBusySpecificInfo().getBusyCause().getCauseIndicators();
-		assertEquals(ci.getCauseValue(), 16);
-		assertEquals(ci.getCodingStandard(), 0);
-		assertEquals(ci.getLocation(), 4);
-		assertTrue(elem.getTBusySpecificInfo().getCallForwarded());
-		assertTrue(elem.getTBusySpecificInfo().getRouteNotPermitted());
-		CalledPartyNumberCap fdn = elem.getTBusySpecificInfo().getForwardingDestinationNumber();
-		CalledPartyNumber cpn = fdn.getCalledPartyNumber();
-		assertTrue(cpn.getAddress().endsWith("111222333"));
-		assertEquals(cpn.getNatureOfAddressIndicator(), 0);
-		assertEquals(cpn.getNumberingPlanIndicator(), 1);
-		assertEquals(cpn.getInternalNetworkNumberIndicator(), 1);
-	}
+        byte[] data = this.getData1();
+        AsnInputStream ais = new AsnInputStream(data);
+        EventSpecificInformationBCSMImpl elem = new EventSpecificInformationBCSMImpl();
+        int tag = ais.readTag();
+        elem.decodeAll(ais);
+        CauseIndicators ci = elem.getTBusySpecificInfo().getBusyCause().getCauseIndicators();
+        assertEquals(ci.getCauseValue(), 16);
+        assertEquals(ci.getCodingStandard(), 0);
+        assertEquals(ci.getLocation(), 4);
+        assertTrue(elem.getTBusySpecificInfo().getCallForwarded());
+        assertTrue(elem.getTBusySpecificInfo().getRouteNotPermitted());
+        CalledPartyNumberCap fdn = elem.getTBusySpecificInfo().getForwardingDestinationNumber();
+        CalledPartyNumber cpn = fdn.getCalledPartyNumber();
+        assertTrue(cpn.getAddress().endsWith("111222333"));
+        assertEquals(cpn.getNatureOfAddressIndicator(), 0);
+        assertEquals(cpn.getNumberingPlanIndicator(), 1);
+        assertEquals(cpn.getInternalNetworkNumberIndicator(), 1);
+    }
 
-	@Test(groups = { "functional.encode", "circuitSwitchedCall.primitive" })
-	public void testEncode() throws Exception {
+    @Test(groups = { "functional.encode", "circuitSwitchedCall.primitive" })
+    public void testEncode() throws Exception {
 
-		CauseIndicators causeIndicators = new CauseIndicatorsImpl(0, 4, 0, 16, null);
-		CauseCap busyCause = new CauseCapImpl(causeIndicators);
-		CalledPartyNumberImpl calledPartyNumber = new CalledPartyNumberImpl(0, "111222333", 1, 1);
-		CalledPartyNumberCapImpl forwardingDestinationNumber = new CalledPartyNumberCapImpl(calledPartyNumber);
-		TBusySpecificInfoImpl tBusySpecificInfo = new TBusySpecificInfoImpl(busyCause, true, true,
-				forwardingDestinationNumber);
-		EventSpecificInformationBCSMImpl elem = new EventSpecificInformationBCSMImpl(tBusySpecificInfo);
-		AsnOutputStream aos = new AsnOutputStream();
-		elem.encodeAll(aos);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
+        CauseIndicators causeIndicators = new CauseIndicatorsImpl(0, 4, 0, 16, null);
+        CauseCap busyCause = new CauseCapImpl(causeIndicators);
+        CalledPartyNumberImpl calledPartyNumber = new CalledPartyNumberImpl(0, "111222333", 1, 1);
+        CalledPartyNumberCapImpl forwardingDestinationNumber = new CalledPartyNumberCapImpl(calledPartyNumber);
+        TBusySpecificInfoImpl tBusySpecificInfo = new TBusySpecificInfoImpl(busyCause, true, true, forwardingDestinationNumber);
+        EventSpecificInformationBCSMImpl elem = new EventSpecificInformationBCSMImpl(tBusySpecificInfo);
+        AsnOutputStream aos = new AsnOutputStream();
+        elem.encodeAll(aos);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
 
-		// int natureOfAddresIndicator, String address, int
-		// numberingPlanIndicator, int internalNetworkNumberIndicator
-		// CauseCap busyCause, boolean callForwarded, boolean routeNotPermitted,
-		// CalledPartyNumberCap forwardingDestinationNumber
-	}
+        // int natureOfAddresIndicator, String address, int
+        // numberingPlanIndicator, int internalNetworkNumberIndicator
+        // CauseCap busyCause, boolean callForwarded, boolean routeNotPermitted,
+        // CalledPartyNumberCap forwardingDestinationNumber
+    }
 
-	@Test(groups = { "functional.xml.serialize", "circuitSwitchedCall.primitive" })
-	public void testXMLSerializaion() throws Exception {
-		CauseIndicators causeIndicators = new CauseIndicatorsImpl(0, 4, 0, 16, null);
-		CauseCap busyCause = new CauseCapImpl(causeIndicators);
-		CalledPartyNumberImpl calledPartyNumber = new CalledPartyNumberImpl(0, "111222333", 1, 1);
-		CalledPartyNumberCapImpl forwardingDestinationNumber = new CalledPartyNumberCapImpl(calledPartyNumber);
-		TBusySpecificInfoImpl original = new TBusySpecificInfoImpl(busyCause, true, true, forwardingDestinationNumber);
+    @Test(groups = { "functional.xml.serialize", "circuitSwitchedCall.primitive" })
+    public void testXMLSerializaion() throws Exception {
+        CauseIndicators causeIndicators = new CauseIndicatorsImpl(0, 4, 0, 16, null);
+        CauseCap busyCause = new CauseCapImpl(causeIndicators);
+        CalledPartyNumberImpl calledPartyNumber = new CalledPartyNumberImpl(0, "111222333", 1, 1);
+        CalledPartyNumberCapImpl forwardingDestinationNumber = new CalledPartyNumberCapImpl(calledPartyNumber);
+        TBusySpecificInfoImpl original = new TBusySpecificInfoImpl(busyCause, true, true, forwardingDestinationNumber);
 
-		// Writes the area to a file.
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
-		// writer.setBinding(binding); // Optional.
-		writer.setIndentation("\t"); // Optional (use tabulation for
-										// indentation).
-		writer.write(original, "tBusySpecificInfo", TBusySpecificInfoImpl.class);
-		writer.close();
+        // Writes the area to a file.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for
+                                     // indentation).
+        writer.write(original, "tBusySpecificInfo", TBusySpecificInfoImpl.class);
+        writer.close();
 
-		byte[] rawData = baos.toByteArray();
-		String serializedEvent = new String(rawData);
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
 
-		System.out.println(serializedEvent);
+        System.out.println(serializedEvent);
 
-		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
-		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
-		TBusySpecificInfoImpl copy = reader.read("tBusySpecificInfo", TBusySpecificInfoImpl.class);
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        TBusySpecificInfoImpl copy = reader.read("tBusySpecificInfo", TBusySpecificInfoImpl.class);
 
-		assertEquals(copy.getForwardingDestinationNumber().getCalledPartyNumber().getAddress(), original
-				.getForwardingDestinationNumber().getCalledPartyNumber().getAddress());
-		assertEquals(copy.getCallForwarded(), original.getCallForwarded());
-		assertEquals(copy.getRouteNotPermitted(), original.getRouteNotPermitted());
-		assertEquals(copy.getBusyCause().getCauseIndicators().getCauseValue(), original.getBusyCause()
-				.getCauseIndicators().getCauseValue());
-	}
+        assertEquals(copy.getForwardingDestinationNumber().getCalledPartyNumber().getAddress(), original
+                .getForwardingDestinationNumber().getCalledPartyNumber().getAddress());
+        assertEquals(copy.getCallForwarded(), original.getCallForwarded());
+        assertEquals(copy.getRouteNotPermitted(), original.getRouteNotPermitted());
+        assertEquals(copy.getBusyCause().getCauseIndicators().getCauseValue(), original.getBusyCause().getCauseIndicators()
+                .getCauseValue());
+    }
 }

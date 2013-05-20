@@ -31,28 +31,28 @@ import org.mobicents.protocols.ss7.map.service.supplementary.MAPServiceSupplemen
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextNameImpl;
 
 public class MAPServiceSupplementaryImplWrapper extends MAPServiceSupplementaryImpl {
-	
-	private int testMode = 0;
 
-	public MAPServiceSupplementaryImplWrapper(MAPProviderImpl mapProviderImpl) {
-		super(mapProviderImpl);
-	}
+    private int testMode = 0;
 
-	public ServingCheckData isServingService(MAPApplicationContext dialogApplicationContext) {
-		if(this.testMode == 1) {
-			// For reproducing FunctionalTestScenario.actionC MAPFunctionalTest
-			//   - remove temporally this comment comment 
-			ApplicationContextNameImpl ac = new ApplicationContextNameImpl();
-			ac.setOid(new long[] { 1, 2, 3 });
-			ServingCheckDataImpl i1 = new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect, ac);
-			return i1;
-		}
+    public MAPServiceSupplementaryImplWrapper(MAPProviderImpl mapProviderImpl) {
+        super(mapProviderImpl);
+    }
 
-		return super.isServingService(dialogApplicationContext);
-	}
+    public ServingCheckData isServingService(MAPApplicationContext dialogApplicationContext) {
+        if (this.testMode == 1) {
+            // For reproducing FunctionalTestScenario.actionC MAPFunctionalTest
+            // - remove temporally this comment comment
+            ApplicationContextNameImpl ac = new ApplicationContextNameImpl();
+            ac.setOid(new long[] { 1, 2, 3 });
+            ServingCheckDataImpl i1 = new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect, ac);
+            return i1;
+        }
 
-	public void setTestMode( int testMode ) {
-		this.testMode = testMode;
-	}
+        return super.isServingService(dialogApplicationContext);
+    }
+
+    public void setTestMode(int testMode) {
+        this.testMode = testMode;
+    }
 
 }

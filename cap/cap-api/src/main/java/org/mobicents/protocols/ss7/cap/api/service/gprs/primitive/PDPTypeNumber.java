@@ -21,16 +21,15 @@
  */
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
-
 /**
-*
-   PDPTypeNumber ::= OCTET STRING  (SIZE(1))
--- refer to 3GPP TS 29.060 [12] for the encoding.
- * 
+ *
+ PDPTypeNumber ::= OCTET STRING (SIZE(1)) -- refer to 3GPP TS 29.060 [12] for the encoding.
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
 public interface PDPTypeNumber {
-	public int getData();
-	public PDPTypeNumberValue getPDPTypeNumberValue();
+    int getData();
+
+    PDPTypeNumberValue getPDPTypeNumberValue();
 }

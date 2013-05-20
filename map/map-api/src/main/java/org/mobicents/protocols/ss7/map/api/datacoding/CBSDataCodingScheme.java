@@ -28,22 +28,22 @@ import org.mobicents.protocols.ss7.map.api.smstpdu.CharacterSet;
 import org.mobicents.protocols.ss7.map.api.smstpdu.DataCodingSchemaMessageClass;
 
 /**
-*
-* @author sergey vetyutnev
-* 
-*/
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface CBSDataCodingScheme extends Serializable {
 
-	public int getCode();
+    int getCode();
 
-	public CBSDataCodingGroup getDataCodingGroup();
+    CBSDataCodingGroup getDataCodingGroup();
 
-	public CBSNationalLanguage getNationalLanguageShiftTable();
+    CBSNationalLanguage getNationalLanguageShiftTable();
 
-	public CharacterSet getCharacterSet();
+    CharacterSet getCharacterSet();
 
-	public DataCodingSchemaMessageClass getMessageClass();
+    DataCodingSchemaMessageClass getMessageClass();
 
-	public boolean getIsCompressed();
+    boolean getIsCompressed();
 
 }

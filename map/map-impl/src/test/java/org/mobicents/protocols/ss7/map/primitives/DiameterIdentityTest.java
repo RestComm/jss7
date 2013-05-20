@@ -33,40 +33,40 @@ import javolution.xml.XMLObjectWriter;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
  *
  */
 public class DiameterIdentityTest {
 
-	private byte[] getData() {
-		return new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-	}
-	
-	@Test(groups = { "functional.xml.serialize", "primitives" })
-	public void testXMLSerialize() throws Exception {
+    private byte[] getData() {
+        return new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    }
 
-		DiameterIdentityImpl original = new DiameterIdentityImpl(getData());
-		
-		// Writes the area to a file.
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
-		// writer.setBinding(binding); // Optional.
-		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
-		writer.write(original, "diameterIdentity", DiameterIdentityImpl.class);
-		writer.close();
+    @Test(groups = { "functional.xml.serialize", "primitives" })
+    public void testXMLSerialize() throws Exception {
 
-		byte[] rawData = baos.toByteArray();
-		String serializedEvent = new String(rawData);
+        DiameterIdentityImpl original = new DiameterIdentityImpl(getData());
 
-		System.out.println(serializedEvent);
+        // Writes the area to a file.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+        writer.write(original, "diameterIdentity", DiameterIdentityImpl.class);
+        writer.close();
 
-		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
-		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
-		DiameterIdentityImpl copy = reader.read("diameterIdentity", DiameterIdentityImpl.class);
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
 
-		assertEquals(copy.getData(), original.getData());
-		
-	}
+        System.out.println(serializedEvent);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        DiameterIdentityImpl copy = reader.read("diameterIdentity", DiameterIdentityImpl.class);
+
+        assertEquals(copy.getData(), original.getData());
+
+    }
 
 }

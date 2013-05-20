@@ -37,155 +37,154 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.primitives.SequenceBase;
 
-
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class ODBDataImpl  extends SequenceBase implements ODBData{
-	
-	private static final long serialVersionUID = 1L;
-	
-	private ODBGeneralData oDBGeneralData;
-	private ODBHPLMNData odbHplmnData;
-	private MAPExtensionContainer extensionContainer;
-	
-	public ODBDataImpl() {
-		super("ODBData");
-	}
+public class ODBDataImpl extends SequenceBase implements ODBData {
 
-	public ODBDataImpl(ODBGeneralData oDBGeneralData,
-			ODBHPLMNData odbHplmnData, MAPExtensionContainer extensionContainer) {
-		super("ODBData");
-		this.oDBGeneralData = oDBGeneralData;
-		this.odbHplmnData = odbHplmnData;
-		this.extensionContainer = extensionContainer;
-	}
+    private static final long serialVersionUID = 1L;
 
-	@Override
-	public ODBGeneralData getODBGeneralData() {
-		return this.oDBGeneralData;
-	}
+    private ODBGeneralData oDBGeneralData;
+    private ODBHPLMNData odbHplmnData;
+    private MAPExtensionContainer extensionContainer;
 
-	@Override
-	public ODBHPLMNData getOdbHplmnData() {
-		return this.odbHplmnData;
-	}
+    public ODBDataImpl() {
+        super("ODBData");
+    }
 
-	@Override
-	public MAPExtensionContainer getExtensionContainer() {
-		return this.extensionContainer;
-	}
+    public ODBDataImpl(ODBGeneralData oDBGeneralData, ODBHPLMNData odbHplmnData, MAPExtensionContainer extensionContainer) {
+        super("ODBData");
+        this.oDBGeneralData = oDBGeneralData;
+        this.odbHplmnData = odbHplmnData;
+        this.extensionContainer = extensionContainer;
+    }
 
-	@Override
-	protected void _decode(AsnInputStream asnIS, int length)
-			throws MAPParsingComponentException, IOException, AsnException {
-		
-		this.oDBGeneralData = null;
-		this.odbHplmnData = null;
-		this.extensionContainer = null;
+    @Override
+    public ODBGeneralData getODBGeneralData() {
+        return this.oDBGeneralData;
+    }
 
-		AsnInputStream ais = asnIS.readSequenceStreamData(length);
+    @Override
+    public ODBHPLMNData getOdbHplmnData() {
+        return this.odbHplmnData;
+    }
 
-		int num = 0;
-		while (true) {
-			if (ais.available() == 0)
-				break;
+    @Override
+    public MAPExtensionContainer getExtensionContainer() {
+        return this.extensionContainer;
+    }
 
-			int tag = ais.readTag();
-			
-			switch(num){
-			case 0:
-				if (!ais.isTagPrimitive() || tag != Tag.STRING_BIT)
-					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".oDBGeneralData: bad tag or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				this.oDBGeneralData = new ODBGeneralDataImpl();
-				((ODBGeneralDataImpl) this.oDBGeneralData).decodeAll(ais);
-				break;
-			default:
-				switch(ais.getTagClass()){
-				case Tag.CLASS_UNIVERSAL: {
-					switch (tag) {
-					case Tag.STRING_BIT:
-						if (!ais.isTagPrimitive())
-							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".odbHplmnData: Parameter is not primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						this.odbHplmnData = new ODBHPLMNDataImpl();
-						((ODBHPLMNDataImpl) this.odbHplmnData).decodeAll(ais);
-						break;
-					case Tag.SEQUENCE: 
-						if (ais.isTagPrimitive())
-							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: Parameter is primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						this.extensionContainer = new MAPExtensionContainerImpl();
-						((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
-						break;
-					default:
-						ais.advanceElement();
-						break;
-					}
-				}
-				break;
-				default:
-					ais.advanceElement();
-					break;
-				}
-			
-			}
+    @Override
+    protected void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-			num++;
-		}
+        this.oDBGeneralData = null;
+        this.odbHplmnData = null;
+        this.extensionContainer = null;
 
-		if (this.oDBGeneralData == null) {
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parament oDBGeneralData is mandatory but does not found",
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-		
-	}
-	
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-			if (this.oDBGeneralData == null)
-				throw new MAPException("Error while encoding" + _PrimitiveName + ": oDBGeneralData must not be null");
+        AsnInputStream ais = asnIS.readSequenceStreamData(length);
 
-			((ODBGeneralDataImpl) this.oDBGeneralData).encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_BIT);			
+        int num = 0;
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-			if (this.odbHplmnData != null)
-				((ODBHPLMNDataImpl) this.odbHplmnData).encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_BIT);
+            int tag = ais.readTag();
 
-			if (this.extensionContainer != null)
-				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
-	}
-	
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName + " [");
+            switch (num) {
+                case 0:
+                    if (!ais.isTagPrimitive() || tag != Tag.STRING_BIT)
+                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                + ".oDBGeneralData: bad tag or not primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    this.oDBGeneralData = new ODBGeneralDataImpl();
+                    ((ODBGeneralDataImpl) this.oDBGeneralData).decodeAll(ais);
+                    break;
+                default:
+                    switch (ais.getTagClass()) {
+                        case Tag.CLASS_UNIVERSAL: {
+                            switch (tag) {
+                                case Tag.STRING_BIT:
+                                    if (!ais.isTagPrimitive())
+                                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                                + ".odbHplmnData: Parameter is not primitive",
+                                                MAPParsingComponentExceptionReason.MistypedParameter);
+                                    this.odbHplmnData = new ODBHPLMNDataImpl();
+                                    ((ODBHPLMNDataImpl) this.odbHplmnData).decodeAll(ais);
+                                    break;
+                                case Tag.SEQUENCE:
+                                    if (ais.isTagPrimitive())
+                                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                                + ".extensionContainer: Parameter is primitive",
+                                                MAPParsingComponentExceptionReason.MistypedParameter);
+                                    this.extensionContainer = new MAPExtensionContainerImpl();
+                                    ((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+                                    break;
+                                default:
+                                    ais.advanceElement();
+                                    break;
+                            }
+                        }
+                            break;
+                        default:
+                            ais.advanceElement();
+                            break;
+                    }
 
-		if (this.oDBGeneralData != null) {
-			sb.append("oDBGeneralData=");
-			sb.append(this.oDBGeneralData.toString());
-			sb.append(", ");
-		}
-		
-		if (this.odbHplmnData != null) {
-			sb.append("odbHplmnData=");
-			sb.append(this.odbHplmnData.toString());
-			sb.append(", ");
-		}
-		
-		if (this.extensionContainer != null) {
-			sb.append("extensionContainer=");
-			sb.append(this.extensionContainer.toString());
-			sb.append(" ");
-		}
-		
-		sb.append("]");
+            }
 
-		return sb.toString();
-	}
+            num++;
+        }
 
-	
+        if (this.oDBGeneralData == null) {
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": Parament oDBGeneralData is mandatory but does not found",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+
+    }
+
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
+        if (this.oDBGeneralData == null)
+            throw new MAPException("Error while encoding" + _PrimitiveName + ": oDBGeneralData must not be null");
+
+        ((ODBGeneralDataImpl) this.oDBGeneralData).encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_BIT);
+
+        if (this.odbHplmnData != null)
+            ((ODBHPLMNDataImpl) this.odbHplmnData).encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_BIT);
+
+        if (this.extensionContainer != null)
+            ((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
+
+        if (this.oDBGeneralData != null) {
+            sb.append("oDBGeneralData=");
+            sb.append(this.oDBGeneralData.toString());
+            sb.append(", ");
+        }
+
+        if (this.odbHplmnData != null) {
+            sb.append("odbHplmnData=");
+            sb.append(this.odbHplmnData.toString());
+            sb.append(", ");
+        }
+
+        if (this.extensionContainer != null) {
+            sb.append("extensionContainer=");
+            sb.append(this.extensionContainer.toString());
+            sb.append(" ");
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 
 }

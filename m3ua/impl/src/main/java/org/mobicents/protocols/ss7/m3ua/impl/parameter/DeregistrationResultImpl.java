@@ -30,12 +30,11 @@ import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 
 /**
- * 
+ *
  * @author amit bhayani
  *
  */
-public class DeregistrationResultImpl extends ParameterImpl implements
-        DeregistrationResult {
+public class DeregistrationResultImpl extends ParameterImpl implements DeregistrationResult {
 
     private RoutingContext rc;
     private DeregistrationStatus status;
@@ -43,8 +42,7 @@ public class DeregistrationResultImpl extends ParameterImpl implements
 
     private ByteBuffer buffer = ByteBuffer.allocate(16);
 
-    public DeregistrationResultImpl(RoutingContext rc,
-            DeregistrationStatus status) {
+    public DeregistrationResultImpl(RoutingContext rc, DeregistrationStatus status) {
         this.tag = Parameter.Deregistration_Result;
         this.rc = rc;
         this.status = status;
@@ -66,13 +64,13 @@ public class DeregistrationResultImpl extends ParameterImpl implements
             pos += len;
             // parameters.put(tag, factory.createParameter(tag, value));
             switch (tag) {
-            case ParameterImpl.Routing_Context:
-                this.rc = new RoutingContextImpl(value);
-                break;
+                case ParameterImpl.Routing_Context:
+                    this.rc = new RoutingContextImpl(value);
+                    break;
 
-            case ParameterImpl.Deregistration_Status:
-                this.status = new DeregistrationStatusImpl(value);
-                break;
+                case ParameterImpl.Deregistration_Status:
+                    this.status = new DeregistrationStatusImpl(value);
+                    break;
 
             }
 

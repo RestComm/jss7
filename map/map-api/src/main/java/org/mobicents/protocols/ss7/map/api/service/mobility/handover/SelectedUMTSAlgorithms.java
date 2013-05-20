@@ -25,24 +25,20 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-SelectedUMTS-Algorithms ::= SEQUENCE {
-	integrityProtectionAlgorithm	[0] 	ChosenIntegrityProtectionAlgorithm	OPTIONAL,
-	encryptionAlgorithm	[1] 	ChosenEncryptionAlgorithm	OPTIONAL,
-	extensionContainer	[2]	ExtensionContainer	OPTIONAL,
-	...}
-
- * 
+ *
+ SelectedUMTS-Algorithms ::= SEQUENCE { integrityProtectionAlgorithm [0] ChosenIntegrityProtectionAlgorithm OPTIONAL,
+ * encryptionAlgorithm [1] ChosenEncryptionAlgorithm OPTIONAL, extensionContainer [2] ExtensionContainer OPTIONAL, ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SelectedUMTSAlgorithms {
 
-	public ChosenIntegrityProtectionAlgorithm getIntegrityProtectionAlgorithm();
+    ChosenIntegrityProtectionAlgorithm getIntegrityProtectionAlgorithm();
 
-	public ChosenEncryptionAlgorithm getEncryptionAlgorithm();
+    ChosenEncryptionAlgorithm getEncryptionAlgorithm();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

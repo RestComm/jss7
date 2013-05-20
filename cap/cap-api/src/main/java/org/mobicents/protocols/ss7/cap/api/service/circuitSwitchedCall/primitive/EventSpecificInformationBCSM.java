@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -41,133 +41,65 @@ import org.mobicents.protocols.ss7.cap.api.EsiBcsm.TNoAnswerSpecificInfo;
 
 /**
  *
- * EventSpecificInformationBCSM {PARAMETERS-BOUND : bound} ::= CHOICE {
- * routeSelectFailureSpecificInfo [2] SEQUENCE {
- * failureCause [0] Cause {bound} OPTIONAL,
- * ...
- * },
- * oCalledPartyBusySpecificInfo [3] SEQUENCE {
- * busyCause [0] Cause {bound} OPTIONAL,
- * ...
- * },
- * oNoAnswerSpecificInfo [4] SEQUENCE {
- * -- no specific info defined --
- * ...
- * },
- * oAnswerSpecificInfo [5] SEQUENCE {
- * destinationAddress [50] CalledPartyNumber {bound} OPTIONAL,
- * or-Call [51] NULL OPTIONAL,
- * forwardedCall [52] NULL OPTIONAL,
- * chargeIndicator [53] ChargeIndicator OPTIONAL,
- * ext-basicServiceCode [54] Ext-BasicServiceCode OPTIONAL,
- * ext-basicServiceCode2 [55] Ext-BasicServiceCode OPTIONAL,
- * ...
- * },
- * oMidCallSpecificInfo [6] SEQUENCE {
- * midCallEvents [1] CHOICE {
- * dTMFDigitsCompleted [3] Digits {bound},
- * dTMFDigitsTimeOut [4] Digits {bound}
- * } OPTIONAL,
- * ...
- * },
- * oDisconnectSpecificInfo [7] SEQUENCE {
- * releaseCause [0] Cause {bound} OPTIONAL,
- * ...
- * },
- * tBusySpecificInfo [8] SEQUENCE {
- * busyCause [0] Cause {bound} OPTIONAL,
- * callForwarded [50] NULL OPTIONAL,
- * routeNotPermitted [51] NULL OPTIONAL,
- * forwardingDestinationNumber [52] CalledPartyNumber {bound} OPTIONAL,
- * ...
- * },
- * tNoAnswerSpecificInfo [9] SEQUENCE {
- * callForwarded [50] NULL OPTIONAL,
- * forwardingDestinationNumber [52] CalledPartyNumber {bound} OPTIONAL,
- * ...
- * },
- * tAnswerSpecificInfo [10] SEQUENCE {
- * destinationAddress [50] CalledPartyNumber {bound} OPTIONAL,
- * or-Call [51] NULL OPTIONAL,
- * forwardedCall [52] NULL OPTIONAL,
- * chargeIndicator [53] ChargeIndicator OPTIONAL,
- * ext-basicServiceCode [54] Ext-BasicServiceCode OPTIONAL,
- * ext-basicServiceCode2 [55] Ext-BasicServiceCode OPTIONAL,
- * ...
- * },
- * tMidCallSpecificInfo [11] SEQUENCE {
- * midCallEvents [1] CHOICE {
- * dTMFDigitsCompleted [3] Digits {bound},
- * dTMFDigitsTimeOut [4] Digits {bound}
- * } OPTIONAL,
- * ...
- * },
- * tDisconnectSpecificInfo [12] SEQUENCE {
- * releaseCause [0] Cause {bound} OPTIONAL,
- * ...
- * },
- * oTermSeizedSpecificInfo [13] SEQUENCE {
- * locationInformation [50] LocationInformation OPTIONAL,
- * ...
- * },
- * callAcceptedSpecificInfo [20] SEQUENCE {
- * locationInformation [50] LocationInformation OPTIONAL,
- * ...
- * },
- * oAbandonSpecificInfo [21] SEQUENCE {
- * routeNotPermitted [50] NULL OPTIONAL,
- * ...
- * },
- * oChangeOfPositionSpecificInfo [50] SEQUENCE {
- * locationInformation [50] LocationInformation OPTIONAL,
- * ...,
- * metDPCriteriaList [51] MetDPCriteriaList {bound} OPTIONAL
- * },
- * tChangeOfPositionSpecificInfo [51] SEQUENCE {
- * locationInformation [50] LocationInformation OPTIONAL,
- * ...,
- * metDPCriteriaList [51] MetDPCriteriaList {bound} OPTIONAL
- * },
- * dpSpecificInfoAlt [52] DpSpecificInfoAlt {bound}
- * }
- * -- Indicates the call related information specific to the event.
+ * EventSpecificInformationBCSM {PARAMETERS-BOUND : bound} ::= CHOICE { routeSelectFailureSpecificInfo [2] SEQUENCE {
+ * failureCause [0] Cause {bound} OPTIONAL, ... }, oCalledPartyBusySpecificInfo [3] SEQUENCE { busyCause [0] Cause {bound}
+ * OPTIONAL, ... }, oNoAnswerSpecificInfo [4] SEQUENCE { -- no specific info defined -- ... }, oAnswerSpecificInfo [5] SEQUENCE
+ * { destinationAddress [50] CalledPartyNumber {bound} OPTIONAL, or-Call [51] NULL OPTIONAL, forwardedCall [52] NULL OPTIONAL,
+ * chargeIndicator [53] ChargeIndicator OPTIONAL, ext-basicServiceCode [54] Ext-BasicServiceCode OPTIONAL, ext-basicServiceCode2
+ * [55] Ext-BasicServiceCode OPTIONAL, ... }, oMidCallSpecificInfo [6] SEQUENCE { midCallEvents [1] CHOICE { dTMFDigitsCompleted
+ * [3] Digits {bound}, dTMFDigitsTimeOut [4] Digits {bound} } OPTIONAL, ... }, oDisconnectSpecificInfo [7] SEQUENCE {
+ * releaseCause [0] Cause {bound} OPTIONAL, ... }, tBusySpecificInfo [8] SEQUENCE { busyCause [0] Cause {bound} OPTIONAL,
+ * callForwarded [50] NULL OPTIONAL, routeNotPermitted [51] NULL OPTIONAL, forwardingDestinationNumber [52] CalledPartyNumber
+ * {bound} OPTIONAL, ... }, tNoAnswerSpecificInfo [9] SEQUENCE { callForwarded [50] NULL OPTIONAL, forwardingDestinationNumber
+ * [52] CalledPartyNumber {bound} OPTIONAL, ... }, tAnswerSpecificInfo [10] SEQUENCE { destinationAddress [50] CalledPartyNumber
+ * {bound} OPTIONAL, or-Call [51] NULL OPTIONAL, forwardedCall [52] NULL OPTIONAL, chargeIndicator [53] ChargeIndicator
+ * OPTIONAL, ext-basicServiceCode [54] Ext-BasicServiceCode OPTIONAL, ext-basicServiceCode2 [55] Ext-BasicServiceCode OPTIONAL,
+ * ... }, tMidCallSpecificInfo [11] SEQUENCE { midCallEvents [1] CHOICE { dTMFDigitsCompleted [3] Digits {bound},
+ * dTMFDigitsTimeOut [4] Digits {bound} } OPTIONAL, ... }, tDisconnectSpecificInfo [12] SEQUENCE { releaseCause [0] Cause
+ * {bound} OPTIONAL, ... }, oTermSeizedSpecificInfo [13] SEQUENCE { locationInformation [50] LocationInformation OPTIONAL, ...
+ * }, callAcceptedSpecificInfo [20] SEQUENCE { locationInformation [50] LocationInformation OPTIONAL, ... },
+ * oAbandonSpecificInfo [21] SEQUENCE { routeNotPermitted [50] NULL OPTIONAL, ... }, oChangeOfPositionSpecificInfo [50] SEQUENCE
+ * { locationInformation [50] LocationInformation OPTIONAL, ..., metDPCriteriaList [51] MetDPCriteriaList {bound} OPTIONAL },
+ * tChangeOfPositionSpecificInfo [51] SEQUENCE { locationInformation [50] LocationInformation OPTIONAL, ..., metDPCriteriaList
+ * [51] MetDPCriteriaList {bound} OPTIONAL }, dpSpecificInfoAlt [52] DpSpecificInfoAlt {bound} } -- Indicates the call related
+ * information specific to the event.
  *
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface EventSpecificInformationBCSM {
 
-	public RouteSelectFailureSpecificInfo getRouteSelectFailureSpecificInfo();
+    RouteSelectFailureSpecificInfo getRouteSelectFailureSpecificInfo();
 
-	public OCalledPartyBusySpecificInfo getOCalledPartyBusySpecificInfo();
+    OCalledPartyBusySpecificInfo getOCalledPartyBusySpecificInfo();
 
-	public ONoAnswerSpecificInfo getONoAnswerSpecificInfo();
+    ONoAnswerSpecificInfo getONoAnswerSpecificInfo();
 
-	public OAnswerSpecificInfo getOAnswerSpecificInfo();
+    OAnswerSpecificInfo getOAnswerSpecificInfo();
 
-	public OMidCallSpecificInfo getOMidCallSpecificInfo();
+    OMidCallSpecificInfo getOMidCallSpecificInfo();
 
-	public ODisconnectSpecificInfo getODisconnectSpecificInfo();
+    ODisconnectSpecificInfo getODisconnectSpecificInfo();
 
-	public TBusySpecificInfo getTBusySpecificInfo();
+    TBusySpecificInfo getTBusySpecificInfo();
 
-	public TNoAnswerSpecificInfo getTNoAnswerSpecificInfo();
+    TNoAnswerSpecificInfo getTNoAnswerSpecificInfo();
 
-	public TAnswerSpecificInfo getTAnswerSpecificInfo();
+    TAnswerSpecificInfo getTAnswerSpecificInfo();
 
-	public TMidCallSpecificInfo getTMidCallSpecificInfo();
+    TMidCallSpecificInfo getTMidCallSpecificInfo();
 
-	public TDisconnectSpecificInfo getTDisconnectSpecificInfo();
+    TDisconnectSpecificInfo getTDisconnectSpecificInfo();
 
-	public OTermSeizedSpecificInfo getOTermSeizedSpecificInfo();
+    OTermSeizedSpecificInfo getOTermSeizedSpecificInfo();
 
-	public CallAcceptedSpecificInfo getCallAcceptedSpecificInfo();
+    CallAcceptedSpecificInfo getCallAcceptedSpecificInfo();
 
-	public OAbandonSpecificInfo getOAbandonSpecificInfo();
+    OAbandonSpecificInfo getOAbandonSpecificInfo();
 
-	public OChangeOfPositionSpecificInfo getOChangeOfPositionSpecificInfo();
+    OChangeOfPositionSpecificInfo getOChangeOfPositionSpecificInfo();
 
-	public TChangeOfPositionSpecificInfo getTChangeOfPositionSpecificInfo();
+    TChangeOfPositionSpecificInfo getTChangeOfPositionSpecificInfo();
 
 }

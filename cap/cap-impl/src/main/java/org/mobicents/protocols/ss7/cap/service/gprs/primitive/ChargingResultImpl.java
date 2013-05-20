@@ -37,179 +37,179 @@ import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class ChargingResultImpl  implements ChargingResult , CAPAsnPrimitive{
-	
-	public static final String _PrimitiveName = "ChargingResult";
-	
-	public static final int _ID_transferredVolume = 0;
-	public static final int _ID_elapsedTime = 1;
-	
-	private TransferredVolume transferredVolume;
-	private ElapsedTime elapsedTime;
-	
-	public ChargingResultImpl() {
+public class ChargingResultImpl implements ChargingResult, CAPAsnPrimitive {
 
-	}
-	
-	public ChargingResultImpl(TransferredVolume transferredVolume) {
-		this.transferredVolume = transferredVolume;
-	}
-	
-	public ChargingResultImpl(ElapsedTime elapsedTime) {
-		this.elapsedTime = elapsedTime;
-	}
+    public static final String _PrimitiveName = "ChargingResult";
 
-	@Override
-	public TransferredVolume getTransferredVolume(){
-		return this.transferredVolume;
-	}
+    public static final int _ID_transferredVolume = 0;
+    public static final int _ID_elapsedTime = 1;
 
-	public ElapsedTime getElapsedTime(){
-		return this.elapsedTime;
-	}
-	
-	@Override
-	public int getTag() throws CAPException {
-		if(transferredVolume!=null){
-			return _ID_transferredVolume;
-		}else{
-			return _ID_elapsedTime;
-		}		
-	}
-	
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_CONTEXT_SPECIFIC;
+    private TransferredVolume transferredVolume;
+    private ElapsedTime elapsedTime;
 
-	}
-	
-	@Override
-	public boolean getIsPrimitive() {	
-		return false;
-	}
-	
-	@Override
-	public void decodeAll(AsnInputStream ansIS)
-			throws CAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length)
-			throws CAPParsingComponentException {
+    public ChargingResultImpl() {
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-		
-	}
-	
-	private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, IOException, AsnException, MAPParsingComponentException {
-		
-		this.transferredVolume = null;
-		this.elapsedTime = null;
+    }
 
-		int tag = ais.getTag();
+    public ChargingResultImpl(TransferredVolume transferredVolume) {
+        this.transferredVolume = transferredVolume;
+    }
 
-		if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-			switch (tag) {
-			case _ID_transferredVolume:
-				this.transferredVolume = new TransferredVolumeImpl();
-				ais.readTag();
-				((TransferredVolumeImpl) this.transferredVolume).decodeAll(ais);
-				break;
-			case _ID_elapsedTime:
-				this.elapsedTime = new ElapsedTimeImpl();
-				ais.readTag();
-				((ElapsedTimeImpl) this.elapsedTime).decodeAll(ais);
-				break;
+    public ChargingResultImpl(ElapsedTime elapsedTime) {
+        this.elapsedTime = elapsedTime;
+    }
 
-			default:
-				throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tag",
-						CAPParsingComponentExceptionReason.MistypedParameter);
-			}
-		} else {
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tagClass",
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
+    @Override
+    public TransferredVolume getTransferredVolume() {
+        return this.transferredVolume;
+    }
 
-	}
-	
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-		}
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag)
-			throws CAPException {
+    public ElapsedTime getElapsedTime() {
+        return this.elapsedTime;
+    }
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
-	
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		if (this.transferredVolume == null && this.elapsedTime == null || this.transferredVolume != null && this.elapsedTime != null) {
-			throw new CAPException("Error while decoding " + _PrimitiveName + ": One and only one choice must be selected");
-		}
+    @Override
+    public int getTag() throws CAPException {
+        if (transferredVolume != null) {
+            return _ID_transferredVolume;
+        } else {
+            return _ID_elapsedTime;
+        }
+    }
 
-		if (this.transferredVolume != null) {
-			((TransferredVolumeImpl) this.transferredVolume).encodeAll(asnOs);
-		} else {
-			((ElapsedTimeImpl) this.elapsedTime).encodeAll(asnOs);
-		}	
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_CONTEXT_SPECIFIC;
 
-	}
-	
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName + " [");
+    @Override
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-		if (this.transferredVolume != null) {
-			sb.append("transferredVolume=");
-			sb.append(this.transferredVolume.toString());
-		}
-		
-		if (this.elapsedTime != null) {
-			sb.append("elapsedTime=");
-			sb.append(this.elapsedTime.toString());
-		}
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		sb.append("]");
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-		return sb.toString();
-	}
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+
+    }
+
+    private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, IOException, AsnException,
+            MAPParsingComponentException {
+
+        this.transferredVolume = null;
+        this.elapsedTime = null;
+
+        int tag = ais.getTag();
+
+        if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+            switch (tag) {
+                case _ID_transferredVolume:
+                    this.transferredVolume = new TransferredVolumeImpl();
+                    ais.readTag();
+                    ((TransferredVolumeImpl) this.transferredVolume).decodeAll(ais);
+                    break;
+                case _ID_elapsedTime:
+                    this.elapsedTime = new ElapsedTimeImpl();
+                    ais.readTag();
+                    ((ElapsedTimeImpl) this.elapsedTime).decodeAll(ais);
+                    break;
+
+                default:
+                    throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tag",
+                            CAPParsingComponentExceptionReason.MistypedParameter);
+            }
+        } else {
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tagClass",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+
+    }
+
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
+
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
+        if (this.transferredVolume == null && this.elapsedTime == null || this.transferredVolume != null
+                && this.elapsedTime != null) {
+            throw new CAPException("Error while decoding " + _PrimitiveName + ": One and only one choice must be selected");
+        }
+
+        if (this.transferredVolume != null) {
+            ((TransferredVolumeImpl) this.transferredVolume).encodeAll(asnOs);
+        } else {
+            ((ElapsedTimeImpl) this.elapsedTime).encodeAll(asnOs);
+        }
+
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
+
+        if (this.transferredVolume != null) {
+            sb.append("transferredVolume=");
+            sb.append(this.transferredVolume.toString());
+        }
+
+        if (this.elapsedTime != null) {
+            sb.append("elapsedTime=");
+            sb.append(this.elapsedTime.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 
 }

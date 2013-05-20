@@ -25,16 +25,16 @@ import java.util.List;
 
 /**
  * @author amit bhayani
- * 
+ *
  */
 public interface CommandHandler {
 
-	public boolean handles(String command);
+    boolean handles(String command);
 
-	public List<CommandLineCompleter> getCommandLineCompleterList();
+    List<CommandLineCompleter> getCommandLineCompleterList();
 
-	public boolean isAvailable(CommandContext ctx);
+    boolean isAvailable(CommandContext ctx);
 
-	public void handle(CommandContext ctx, String command);
+    void handle(CommandContext ctx, String command);
 
 }

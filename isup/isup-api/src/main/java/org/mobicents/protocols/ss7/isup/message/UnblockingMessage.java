@@ -32,20 +32,19 @@ package org.mobicents.protocols.ss7.isup.message;
  * <TR>
  * <TD style="FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: teal; HEIGHT: 28px; TEXT-ALIGN: center" colSpan="3">
  * Unblocking (UBL)</TD>
- * 
+ *
  * </TR>
- * 
+ *
  * <TR>
  * <TD style="FONT-SIZE: 9pt; BORDER-BOTTOM: silver thin solid" colSpan="3">
- * Unblocking (UBL)&nbsp;message sent to the exchange at the other end of a
- * circuit to cancel, in that exchange, the engaged condition of the circuit
- * caused by a previously sent blocking or circuit group blocking message.</TD>
+ * Unblocking (UBL)&nbsp;message sent to the exchange at the other end of a circuit to cancel, in that exchange, the engaged
+ * condition of the circuit caused by a previously sent blocking or circuit group blocking message.</TD>
  * </TR>
- * 
- * 
+ *
+ *
  * </TABLE>
  * </TD>
- * 
+ *
  * </TR>
  * <TR>
  * <TD style="FONT-WEIGHT: bold; WIDTH: 283px; HEIGHT: 30px; TEXT-ALIGN: center">
@@ -54,18 +53,19 @@ package org.mobicents.protocols.ss7.isup.message;
  * <TD style="FONT-WEIGHT: bold; HEIGHT: 30px">Length (octet)</TD>
  * </TR>
  * <TR>
- * 
+ *
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Message type</TD>
  * <TD style="WIDTH: 145px">F</TD>
  * <TD>1</TD>
  * </TR>
  * </TABLE>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface UnblockingMessage extends ISUPMessage {
-	/**
-	 * Unblocking Message, Q.763 reference table 39 <br> {@link UnblockingMessage}
-	 */
-	public static final int MESSAGE_CODE = 0x14;
+    /**
+     * Unblocking Message, Q.763 reference table 39 <br>
+     * {@link UnblockingMessage}
+     */
+    int MESSAGE_CODE = 0x14;
 }

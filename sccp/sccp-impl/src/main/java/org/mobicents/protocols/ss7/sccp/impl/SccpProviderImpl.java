@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -42,109 +42,109 @@ import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
- * 
+ *
  * @author Oleg Kulikov
  * @author baranowb
  * @author sergey vetyutnev
- * 
+ *
  */
 public class SccpProviderImpl implements SccpProvider, Serializable {
-	private static final Logger logger = Logger.getLogger(SccpProviderImpl.class);
+    private static final Logger logger = Logger.getLogger(SccpProviderImpl.class);
 
-	private transient SccpStackImpl stack;
-	protected FastMap<Integer, SccpListener> ssnToListener = new FastMap<Integer, SccpListener>();
-	protected FastList<SccpManagementEventListener> managementEventListeners = new FastList<SccpManagementEventListener>();
+    private transient SccpStackImpl stack;
+    protected FastMap<Integer, SccpListener> ssnToListener = new FastMap<Integer, SccpListener>();
+    protected FastList<SccpManagementEventListener> managementEventListeners = new FastList<SccpManagementEventListener>();
 
-	private MessageFactoryImpl messageFactory;
-	private ParameterFactoryImpl parameterFactory;
+    private MessageFactoryImpl messageFactory;
+    private ParameterFactoryImpl parameterFactory;
 
+    SccpProviderImpl(SccpStackImpl stack) {
+        this.stack = stack;
+        this.messageFactory = stack.messageFactory;
+        this.parameterFactory = new ParameterFactoryImpl();
+    }
 
-	SccpProviderImpl(SccpStackImpl stack) {
-		this.stack = stack;
-		this.messageFactory = stack.messageFactory;
-		this.parameterFactory = new ParameterFactoryImpl();
-	}
+    public MessageFactory getMessageFactory() {
+        return messageFactory;
+    }
 
-	public MessageFactory getMessageFactory() {
-		return messageFactory;
-	}
+    public ParameterFactory getParameterFactory() {
+        return parameterFactory;
+    }
 
-	public ParameterFactory getParameterFactory() {
-		return parameterFactory;
-	}
+    public void registerSccpListener(int ssn, SccpListener listener) {
+        synchronized (this) {
+            SccpListener existingListener = ssnToListener.get(ssn);
+            if (existingListener != null) {
+                if (logger.isEnabledFor(Level.WARN)) {
+                    logger.warn(String.format("Registering SccpListener=%s for already existing SccpListnere=%s for SSN=%d",
+                            listener, existingListener, ssn));
+                }
+            }
+            FastMap<Integer, SccpListener> newListener = new FastMap<Integer, SccpListener>();
+            newListener.putAll(ssnToListener);
+            newListener.put(ssn, listener);
+            ssnToListener = newListener;
 
-	public void registerSccpListener(int ssn, SccpListener listener) {
-		synchronized (this) {
-			SccpListener existingListener = ssnToListener.get(ssn);
-			if (existingListener != null) {
-				if (logger.isEnabledFor(Level.WARN)) {
-					logger.warn(String.format("Registering SccpListener=%s for already existing SccpListnere=%s for SSN=%d", listener, existingListener, ssn));
-				}
-			}
-			FastMap<Integer, SccpListener> newListener = new FastMap<Integer, SccpListener>();
-			newListener.putAll(ssnToListener);
-			newListener.put(ssn, listener);
-			ssnToListener = newListener;
-			
-			this.stack.broadcastChangedSsnState(ssn, true);
-		}
-	}
+            this.stack.broadcastChangedSsnState(ssn, true);
+        }
+    }
 
-	public void deregisterSccpListener(int ssn) {
-		synchronized (this) {
-			FastMap<Integer, SccpListener> newListener = new FastMap<Integer, SccpListener>();
-			newListener.putAll(ssnToListener);
-			SccpListener existingListener = newListener.remove(ssn);
-			if (existingListener == null) {
-				if (logger.isEnabledFor(Level.WARN)) {
-					logger.warn(String.format("No existing SccpListnere=%s for SSN=%d", existingListener, ssn));
-				}
-			}
-			ssnToListener = newListener;
+    public void deregisterSccpListener(int ssn) {
+        synchronized (this) {
+            FastMap<Integer, SccpListener> newListener = new FastMap<Integer, SccpListener>();
+            newListener.putAll(ssnToListener);
+            SccpListener existingListener = newListener.remove(ssn);
+            if (existingListener == null) {
+                if (logger.isEnabledFor(Level.WARN)) {
+                    logger.warn(String.format("No existing SccpListnere=%s for SSN=%d", existingListener, ssn));
+                }
+            }
+            ssnToListener = newListener;
 
-			this.stack.broadcastChangedSsnState(ssn, false);
-		}
-	}
+            this.stack.broadcastChangedSsnState(ssn, false);
+        }
+    }
 
-	public void registerManagementEventListener(SccpManagementEventListener listener) {
-		synchronized (this) {
-			if (this.managementEventListeners.contains(listener))
-				return;
+    public void registerManagementEventListener(SccpManagementEventListener listener) {
+        synchronized (this) {
+            if (this.managementEventListeners.contains(listener))
+                return;
 
-			FastList<SccpManagementEventListener> newManagementEventListeners = new FastList<SccpManagementEventListener>();
-			newManagementEventListeners.addAll(this.managementEventListeners);
-			newManagementEventListeners.add(listener);
-			this.managementEventListeners = newManagementEventListeners;
-		}
-	}
+            FastList<SccpManagementEventListener> newManagementEventListeners = new FastList<SccpManagementEventListener>();
+            newManagementEventListeners.addAll(this.managementEventListeners);
+            newManagementEventListeners.add(listener);
+            this.managementEventListeners = newManagementEventListeners;
+        }
+    }
 
-	public void deregisterManagementEventListener(SccpManagementEventListener listener) {
-		synchronized (this) {
-			if (!this.managementEventListeners.contains(listener))
-				return;
+    public void deregisterManagementEventListener(SccpManagementEventListener listener) {
+        synchronized (this) {
+            if (!this.managementEventListeners.contains(listener))
+                return;
 
-			FastList<SccpManagementEventListener> newManagementEventListeners = new FastList<SccpManagementEventListener>();
-			newManagementEventListeners.addAll(this.managementEventListeners);
-			newManagementEventListeners.remove(listener);
-			this.managementEventListeners = newManagementEventListeners;
-		}
-	}
+            FastList<SccpManagementEventListener> newManagementEventListeners = new FastList<SccpManagementEventListener>();
+            newManagementEventListeners.addAll(this.managementEventListeners);
+            newManagementEventListeners.remove(listener);
+            this.managementEventListeners = newManagementEventListeners;
+        }
+    }
 
-	protected SccpListener getSccpListener(int ssn) {
-		return ssnToListener.get(ssn);
-	}
+    protected SccpListener getSccpListener(int ssn) {
+        return ssnToListener.get(ssn);
+    }
 
-	protected FastMap<Integer, SccpListener> getAllSccpListeners() {
-		return ssnToListener;
-	}
+    protected FastMap<Integer, SccpListener> getAllSccpListeners() {
+        return ssnToListener;
+    }
 
-	public void send(SccpDataMessage message) throws IOException {
+    public void send(SccpDataMessage message) throws IOException {
 
-		SccpDataMessageImpl msg = ((SccpDataMessageImpl) message);
-		stack.send(msg);
-	}
+        SccpDataMessageImpl msg = ((SccpDataMessageImpl) message);
+        stack.send(msg);
+    }
 
-	public int getMaxUserDataLength(SccpAddress calledPartyAddress, SccpAddress callingPartyAddress) {
-		return this.stack.getMaxUserDataLength(calledPartyAddress, callingPartyAddress);
-	}
+    public int getMaxUserDataLength(SccpAddress calledPartyAddress, SccpAddress callingPartyAddress) {
+        return this.stack.getMaxUserDataLength(calledPartyAddress, callingPartyAddress);
+    }
 }

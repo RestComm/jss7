@@ -24,24 +24,19 @@ package org.mobicents.protocols.ss7.map.api.service.oam;
 
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
-/**	
- * 
-
-MAP V3:
-ActivateTraceModeRes ::= SEQUENCE {
-	extensionContainer	[0] ExtensionContainer	OPTIONAL,
-	...,
-	traceSupportIndicator	[1]	NULL		OPTIONAL
-	}
-
- * 
+/**
+ *
+ MAP V3: ActivateTraceModeRes ::= SEQUENCE { extensionContainer [0] ExtensionContainer OPTIONAL, ..., traceSupportIndicator
+ * [1] NULL OPTIONAL }
+ *
+ *
  * @author sergey vetyutnev
  *
  */
 public interface ActivateTraceModeResponse extends OamMessage {
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public boolean getTraceSupportIndicator();
+    boolean getTraceSupportIndicator();
 
 }

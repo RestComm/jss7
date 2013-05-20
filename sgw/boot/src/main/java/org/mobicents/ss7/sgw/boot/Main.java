@@ -47,13 +47,13 @@ import org.jboss.util.StringPropertyReplacer;
  */
 public class Main {
 
-    private final static String HOME_DIR = "SGW_HOME";
-    private final static String BOOT_URL = "/conf/bootstrap-beans.xml";
-    private final static String LOG4J_URL = "/conf/log4j.properties";
-    private final static String LOG4J_URL_XML = "/conf/log4j.xml";
+    private static final String HOME_DIR = "SGW_HOME";
+    private static final String BOOT_URL = "/conf/bootstrap-beans.xml";
+    private static final String LOG4J_URL = "/conf/log4j.properties";
+    private static final String LOG4J_URL_XML = "/conf/log4j.xml";
     public static final String SGW_HOME = "sgw.home.dir";
     public static final String SGW_BIND_ADDRESS = "sgw.bind.address";
-	private static final String LINKSET_PERSIST_DIR_KEY = "linkset.persist.dir";    
+    private static final String LINKSET_PERSIST_DIR_KEY = "linkset.persist.dir";
     private static int index = 0;
     private Kernel kernel;
     private BasicXMLDeployer kernelDeployer;
@@ -63,10 +63,10 @@ public class Main {
     public static void main(String[] args) throws Throwable {
         String homeDir = getHomeDir(args);
         System.setProperty(SGW_HOME, homeDir);
-        
-        //This is for SS7 configuration file persistence
-        System.setProperty(LINKSET_PERSIST_DIR_KEY, homeDir + File.separator + "ss7" );
-        
+
+        // This is for SS7 configuration file persistence
+        System.setProperty(LINKSET_PERSIST_DIR_KEY, homeDir + File.separator + "ss7");
+
         if (!initLOG4JProperties(homeDir) && !initLOG4JXml(homeDir)) {
             logger.error("Failed to initialize loggin, no configuration. Defaults are used.");
         }
@@ -97,7 +97,7 @@ public class Main {
         while ((c = g.getopt()) != -1) {
             switch (c) {
 
-                //
+            //
                 case 'b':
                     arg = g.getOptarg();
                     System.setProperty(SGW_BIND_ADDRESS, arg);
@@ -110,7 +110,8 @@ public class Main {
                     System.out.println();
                     System.out.println("options:");
                     System.out.println("    -h, --help                    Show this help message");
-                    System.out.println("    -b, --host=<host or ip>       Bind address for all Mobicents Media Server services");
+                    System.out
+                            .println("    -b, --host=<host or ip>       Bind address for all Mobicents Media Server services");
                     System.out.println();
                     System.exit(0);
                     break;
@@ -174,12 +175,11 @@ public class Main {
 
     /**
      * Gets the Media Server Home directory.
-     * 
-     * @param args
-     *            the command line arguments
+     *
+     * @param args the command line arguments
      * @return the path to the home directory.
      */
-    private static String getHomeDir(String args[]) {
+    private static String getHomeDir(String[] args) {
         if (System.getenv(HOME_DIR) == null) {
             if (args.length > index) {
                 return args[index++];
@@ -193,12 +193,11 @@ public class Main {
 
     /**
      * Gets the URL which points to the boot descriptor.
-     * 
-     * @param args
-     *            command line arguments.
+     *
+     * @param args command line arguments.
      * @return URL of the boot descriptor.
      */
-    private static URL getBootURL(String args[]) throws Exception {
+    private static URL getBootURL(String[] args) throws Exception {
         String bootURL = "${" + SGW_HOME + "}" + BOOT_URL;
         return getURL(bootURL);
     }
@@ -212,7 +211,6 @@ public class Main {
         kernel = bootstrap.getKernel();
         kernelDeployer = new BasicXMLDeployer(kernel);
 
-        
         kernelDeployer.deploy(bootURL);
         kernelDeployer.validate();
 
@@ -220,7 +218,7 @@ public class Main {
         start(kernel, kernelDeployer);
     }
 
-    public void start(Kernel kernel, BasicXMLDeployer kernelDeployer) throws Throwable {        
+    public void start(Kernel kernel, BasicXMLDeployer kernelDeployer) throws Throwable {
         ControllerContext context = controller.getInstalledContext("MainDeployer");
         if (context != null) {
             MainDeployer deployer = (MainDeployer) context.getTarget();

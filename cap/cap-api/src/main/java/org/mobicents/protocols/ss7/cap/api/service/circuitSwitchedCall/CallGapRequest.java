@@ -29,43 +29,30 @@ import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ControlType;
 
 /**
-*
-
-callGap {PARAMETERS-BOUND : bound} OPERATION ::= { 
- ARGUMENT  CallGapArg {bound} 
- RETURN RESULT FALSE 
- ALWAYS RESPONDS FALSE 
- CODE   opcode-callGap} 
--- Direction: gsmSCF -> gsmSSF, Timer: T  
-cg
--- This operation is used to request the gsmSSF to reduce the rate at which specific service 
--- requests are sent to the gsmSCF. 
- 
-CallGapArg {PARAMETERS-BOUND : bound}::= SEQUENCE { 
- gapCriteria       [0] GapCriteria {bound}, 
- gapIndicators      [1] GapIndicators, 
- controlType       [2] ControlType        OPTIONAL, 
- gapTreatment      [3] GapTreatment {bound}     OPTIONAL, 
- extensions       [4] Extensions {bound}      OPTIONAL, 
- ... 
- } 
--- OPTIONAL denotes network operator optional. If gapTreatment is not present, then the gsmSSF will 
--- use a default treatment depending on network operator implementation.
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ callGap {PARAMETERS-BOUND : bound} OPERATION ::= { ARGUMENT CallGapArg {bound} RETURN RESULT FALSE ALWAYS RESPONDS FALSE CODE
+ * opcode-callGap} -- Direction: gsmSCF -> gsmSSF, Timer: T cg -- This operation is used to request the gsmSSF to reduce the
+ * rate at which specific service -- requests are sent to the gsmSCF.
+ *
+ * CallGapArg {PARAMETERS-BOUND : bound}::= SEQUENCE { gapCriteria [0] GapCriteria {bound}, gapIndicators [1] GapIndicators,
+ * controlType [2] ControlType OPTIONAL, gapTreatment [3] GapTreatment {bound} OPTIONAL, extensions [4] Extensions {bound}
+ * OPTIONAL, ... } -- OPTIONAL denotes network operator optional. If gapTreatment is not present, then the gsmSSF will -- use a
+ * default treatment depending on network operator implementation.
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface CallGapRequest extends CircuitSwitchedCallMessage {
 
-	public GapCriteria getGapCriteria();
+    GapCriteria getGapCriteria();
 
-	public GapIndicators getGapIndicators();
+    GapIndicators getGapIndicators();
 
-	public ControlType getControlType();
+    ControlType getControlType();
 
-	public GapTreatment getGapTreatment();
+    GapTreatment getGapTreatment();
 
-	public CAPExtensions getExtensions();
+    CAPExtensions getExtensions();
 
 }

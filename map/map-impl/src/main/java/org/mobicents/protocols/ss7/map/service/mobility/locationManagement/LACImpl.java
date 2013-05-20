@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.map.service.mobility.locationManagement;
 
 import java.io.IOException;
 import java.util.Arrays;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -35,183 +36,183 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.L
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
-*
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class LACImpl implements LAC, MAPAsnPrimitive {
 
-	public static final String _PrimitiveName = "LAC";
-	
-	private byte[] data;
-	
-	public LACImpl() {
-	}
-	
-	public LACImpl(byte[] data) {
-		this.data = data;
-	}
+    public static final String _PrimitiveName = "LAC";
 
-	public LACImpl(int lac) throws MAPException {
+    private byte[] data;
 
-		this.data = new byte[2];
+    public LACImpl() {
+    }
 
-		data[0] = (byte)(lac / 256);
-		data[1] = (byte)(lac % 256);
-	}
+    public LACImpl(byte[] data) {
+        this.data = data;
+    }
 
-	public byte[] getData() {
-		return data;
-	}
+    public LACImpl(int lac) throws MAPException {
 
-	public int getLac() throws MAPException {
+        this.data = new byte[2];
 
-		if (data == null)
-			throw new MAPException("Data must not be empty");
-		if (data.length != 2)
-			throw new MAPException("Data length must be equal 5");
+        data[0] = (byte) (lac / 256);
+        data[1] = (byte) (lac % 256);
+    }
 
-		int res = (data[0] & 0xFF) * 256 + (data[1] & 0xFF);
-		return res;
-	}
+    public byte[] getData() {
+        return data;
+    }
 
-	public int getTag() throws MAPException {
-		return Tag.STRING_OCTET;
-	}
+    public int getLac() throws MAPException {
 
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+        if (data == null)
+            throw new MAPException("Data must not be empty");
+        if (data.length != 2)
+            throw new MAPException("Data length must be equal 5");
 
-	public boolean getIsPrimitive() {
-		return true;
-	}
+        int res = (data[0] & 0xFF) * 256 + (data[1] & 0xFF);
+        return res;
+    }
 
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public int getTag() throws MAPException {
+        return Tag.STRING_OCTET;
+    }
 
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+    public boolean getIsPrimitive() {
+        return true;
+    }
 
-		try {
-			this.data = ansIS.readOctetStringData(length);
-			if (this.data.length != 2)
-				throw new MAPParsingComponentException("Error decoding " + _PrimitiveName + ": the field must contain from 2 to 2 octets. Contains: " + length,
-						MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding LAIFixedLength: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}	
+    public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+    public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+    private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+        try {
+            this.data = ansIS.readOctetStringData(length);
+            if (this.data.length != 2)
+                throw new MAPParsingComponentException("Error decoding " + _PrimitiveName
+                        + ": the field must contain from 2 to 2 octets. Contains: " + length,
+                        MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding LAIFixedLength: " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-		if (this.data == null)
-			throw new MAPException("Error while encoding the " + _PrimitiveName + ": data is not defined");
-		if (this.data.length != 2)
-			throw new MAPException("Error while encoding the " + _PrimitiveName + ": field length must be equal 2");
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 
-		asnOs.writeOctetStringData(this.data);
-	}
-	
-	@Override
-	public String toString() {
-		
-		int lac = 0;
-		boolean goodData = false;
-		
-		try {
-			lac = this.getLac();
-			goodData = true;
-		} catch (MAPException e) {
-		}
-		
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
-		if (goodData) {
-			sb.append("Lac=");
-			sb.append(lac);
-		} else {
-			sb.append("Data=");
-			sb.append(this.printDataArr());
-		}
-		sb.append("]");
-		
-		return sb.toString();
-	}
-	
-	private String printDataArr() {
-		StringBuilder sb = new StringBuilder();
-		if( this.data!=null ) {
-			for( int b : this.data ) {
-				sb.append(b);
-				sb.append(" ");
-			}
-		}
-		
-		return sb.toString();
-	}
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + Arrays.hashCode(data);
-		return result;
-	}
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		LACImpl other = (LACImpl) obj;
-		if (!Arrays.equals(data, other.data))
-			return false;
-		return true;
-	}
+        if (this.data == null)
+            throw new MAPException("Error while encoding the " + _PrimitiveName + ": data is not defined");
+        if (this.data.length != 2)
+            throw new MAPException("Error while encoding the " + _PrimitiveName + ": field length must be equal 2");
+
+        asnOs.writeOctetStringData(this.data);
+    }
+
+    @Override
+    public String toString() {
+
+        int lac = 0;
+        boolean goodData = false;
+
+        try {
+            lac = this.getLac();
+            goodData = true;
+        } catch (MAPException e) {
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+        if (goodData) {
+            sb.append("Lac=");
+            sb.append(lac);
+        } else {
+            sb.append("Data=");
+            sb.append(this.printDataArr());
+        }
+        sb.append("]");
+
+        return sb.toString();
+    }
+
+    private String printDataArr() {
+        StringBuilder sb = new StringBuilder();
+        if (this.data != null) {
+            for (int b : this.data) {
+                sb.append(b);
+                sb.append(" ");
+            }
+        }
+
+        return sb.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(data);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        LACImpl other = (LACImpl) obj;
+        if (!Arrays.equals(data, other.data))
+            return false;
+        return true;
+    }
 }
-

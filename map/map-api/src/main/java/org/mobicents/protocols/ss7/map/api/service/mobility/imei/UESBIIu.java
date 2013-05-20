@@ -23,21 +23,17 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.imei;
 
 /**
- * 
-
-UESBI-Iu ::= SEQUENCE {
-	uesbi-IuA	[0] UESBI-IuA				OPTIONAL,
-	uesbi-IuB	[1] UESBI-IuB				OPTIONAL,
-	...}
-
- * 
+ *
+ UESBI-Iu ::= SEQUENCE { uesbi-IuA [0] UESBI-IuA OPTIONAL, uesbi-IuB [1] UESBI-IuB OPTIONAL, ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface UESBIIu {
 
-	public UESBIIuA getUESBI_IuA();
+    UESBIIuA getUESBI_IuA();
 
-	public UESBIIuB getUESBI_IuB();
+    UESBIIuB getUESBI_IuB();
 
 }

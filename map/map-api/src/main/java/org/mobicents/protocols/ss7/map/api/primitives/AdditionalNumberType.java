@@ -27,5 +27,5 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  *
  */
 public enum AdditionalNumberType {
-	msc, sgsn;
+    msc, sgsn;
 }

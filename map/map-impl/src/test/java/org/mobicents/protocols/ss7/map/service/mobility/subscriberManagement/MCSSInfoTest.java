@@ -40,55 +40,53 @@ import org.mobicents.protocols.ss7.map.service.supplementary.SSCodeImpl;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
 public class MCSSInfoTest {
-	
-	public byte[] getData() {
-		return new byte[] { 48, 53, -128, 1, 35, -127, 1, 10, -126, 1, 2, -125,
-				1, 4, -92, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14,
-				15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23,
-				24, 25, 26, -95, 3, 31, 32, 33 };
-	};
-	
-	@Test(groups = { "functional.decode", "primitives" })
-	public void testDecode() throws Exception {
-		byte[] data = this.getData();
-		AsnInputStream asn = new AsnInputStream(data);
-		int tag = asn.readTag();
-		MCSSInfoImpl prim = new MCSSInfoImpl();
-		prim.decodeAll(asn);
-		
-		assertEquals(tag, Tag.SEQUENCE);
-		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
-		
-		assertEquals(prim.getSSCode().getSupplementaryCodeValue(), SupplementaryCodeValue.cellBroadcast);
-		ExtSSStatus ssStatus = prim.getSSStatus();
-		assertFalse(ssStatus.getBitA());
-		assertFalse(ssStatus.getBitP());
-		assertTrue(ssStatus.getBitQ());
-		assertTrue(ssStatus.getBitR());
-		
-		assertEquals(prim.getNbrSB(), 2);
-		assertEquals(prim.getNbrUser(), 4);
-		
-		MAPExtensionContainer extensionContainer = prim.getExtensionContainer();
-		assertNotNull(extensionContainer);
-		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
-	}
-	
-	@Test(groups = { "functional.encode", "primitives" })
-	public void testEncode() throws Exception {
-		
-		SSCode ssCode = new SSCodeImpl(SupplementaryCodeValue.cellBroadcast);
-		ExtSSStatus ssStatus = new ExtSSStatusImpl(true, false, true, false);
-		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
-		MCSSInfoImpl prim = new MCSSInfoImpl(ssCode, ssStatus, 2, 4, extensionContainer);
-		AsnOutputStream asn = new AsnOutputStream();
-		prim.encodeAll(asn);
 
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
-	}
+    public byte[] getData() {
+        return new byte[] { 48, 53, -128, 1, 35, -127, 1, 10, -126, 1, 2, -125, 1, 4, -92, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4,
+                11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
+    };
+
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testDecode() throws Exception {
+        byte[] data = this.getData();
+        AsnInputStream asn = new AsnInputStream(data);
+        int tag = asn.readTag();
+        MCSSInfoImpl prim = new MCSSInfoImpl();
+        prim.decodeAll(asn);
+
+        assertEquals(tag, Tag.SEQUENCE);
+        assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
+
+        assertEquals(prim.getSSCode().getSupplementaryCodeValue(), SupplementaryCodeValue.cellBroadcast);
+        ExtSSStatus ssStatus = prim.getSSStatus();
+        assertFalse(ssStatus.getBitA());
+        assertFalse(ssStatus.getBitP());
+        assertTrue(ssStatus.getBitQ());
+        assertTrue(ssStatus.getBitR());
+
+        assertEquals(prim.getNbrSB(), 2);
+        assertEquals(prim.getNbrUser(), 4);
+
+        MAPExtensionContainer extensionContainer = prim.getExtensionContainer();
+        assertNotNull(extensionContainer);
+        assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+    }
+
+    @Test(groups = { "functional.encode", "primitives" })
+    public void testEncode() throws Exception {
+
+        SSCode ssCode = new SSCodeImpl(SupplementaryCodeValue.cellBroadcast);
+        ExtSSStatus ssStatus = new ExtSSStatusImpl(true, false, true, false);
+        MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
+        MCSSInfoImpl prim = new MCSSInfoImpl(ssCode, ssStatus, 2, 4, extensionContainer);
+        AsnOutputStream asn = new AsnOutputStream();
+        prim.encodeAll(asn);
+
+        assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+    }
 }

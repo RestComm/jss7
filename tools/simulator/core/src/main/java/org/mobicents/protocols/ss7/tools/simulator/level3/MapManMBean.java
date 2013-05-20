@@ -25,65 +25,62 @@ package org.mobicents.protocols.ss7.tools.simulator.level3;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MapManMBean {
 
-//	public int getLocalSsn();
-//
-//	public void setLocalSsn(int val);
-//
-//	public int getRemoteSsn();
-//
-//	public void setRemoteSsn(int val);
+    // int getLocalSsn();
+    //
+    // void setLocalSsn(int val);
+    //
+    // int getRemoteSsn();
+    //
+    // void setRemoteSsn(int val);
 
-	public String getRemoteAddressDigits();
+    String getRemoteAddressDigits();
 
-	public void setRemoteAddressDigits(String val);
+    void setRemoteAddressDigits(String val);
 
+    String getOrigReference();
 
-	public String getOrigReference();
+    void setOrigReference(String val);
 
-	public void setOrigReference(String val);
+    AddressNatureType getOrigReferenceAddressNature();
 
-	public AddressNatureType getOrigReferenceAddressNature();
+    String getOrigReferenceAddressNature_Value();
 
-	public String getOrigReferenceAddressNature_Value();
+    void setOrigReferenceAddressNature(AddressNatureType val);
 
-	public void setOrigReferenceAddressNature(AddressNatureType val);
+    NumberingPlanMapType getOrigReferenceNumberingPlan();
 
-	public NumberingPlanMapType getOrigReferenceNumberingPlan();
+    String getOrigReferenceNumberingPlan_Value();
 
-	public String getOrigReferenceNumberingPlan_Value();
+    void setOrigReferenceNumberingPlan(NumberingPlanMapType val);
 
-	public void setOrigReferenceNumberingPlan(NumberingPlanMapType val);
+    String getDestReference();
 
-	public String getDestReference();
+    void setDestReference(String val);
 
-	public void setDestReference(String val);
+    AddressNatureType getDestReferenceAddressNature();
 
-	public AddressNatureType getDestReferenceAddressNature();
+    String getDestReferenceAddressNature_Value();
 
-	public String getDestReferenceAddressNature_Value();
+    void setDestReferenceAddressNature(AddressNatureType val);
 
-	public void setDestReferenceAddressNature(AddressNatureType val);
+    NumberingPlanMapType getDestReferenceNumberingPlan();
 
-	public NumberingPlanMapType getDestReferenceNumberingPlan();
+    String getDestReferenceNumberingPlan_Value();
 
-	public String getDestReferenceNumberingPlan_Value();
+    void setDestReferenceNumberingPlan(NumberingPlanMapType val);
 
-	public void setDestReferenceNumberingPlan(NumberingPlanMapType val);
+    void putOrigReferenceAddressNature(String val);
 
+    void putOrigReferenceNumberingPlan(String val);
 
-	public void putOrigReferenceAddressNature(String val);
+    void putDestReferenceAddressNature(String val);
 
-	public void putOrigReferenceNumberingPlan(String val);
-
-	public void putDestReferenceAddressNature(String val);
-
-	public void putDestReferenceNumberingPlan(String val);
+    void putDestReferenceNumberingPlan(String val);
 
 }
-

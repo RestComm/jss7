@@ -23,24 +23,20 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
 /**
- * 
-
-BSSMAP-ServiceHandoverInfo ::= SEQUENCE {
-	bssmap-ServiceHandover	BSSMAP-ServiceHandover,
-	rab-Id		RAB-Id,
-	-- RAB Identity is needed to relate the service handovers with the radio access bearers. 
-	...}
-
-RAB-Id ::= INTEGER (1..255)
-
- * 
+ *
+ BSSMAP-ServiceHandoverInfo ::= SEQUENCE { bssmap-ServiceHandover BSSMAP-ServiceHandover, rab-Id RAB-Id, -- RAB Identity is
+ * needed to relate the service handovers with the radio access bearers. ...}
+ *
+ * RAB-Id ::= INTEGER (1..255)
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface BSSMAPServiceHandoverInfo {
 
-	public BSSMAPServiceHandover getBSSMAPServiceHandover();
+    BSSMAPServiceHandover getBSSMAPServiceHandover();
 
-	public Integer getRABId();
+    Integer getRABId();
 
 }

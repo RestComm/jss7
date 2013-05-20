@@ -26,27 +26,26 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.primitives.OctetStringLength1Base;
 
 /**
-*
-* @author daniel bichara
-*
-*/
+ *
+ * @author daniel bichara
+ *
+ */
 public class CategoryImpl extends OctetStringLength1Base implements Category {
-	
-	/**
-	 * Category
-	 * CCITTT Rec Q.767
-	 */
-	public static final int catOrdinary		 	= 0;	// ordinary-calling-subscriber
 
-	public CategoryImpl() {
-		super("Category");
-	}
+    /**
+     * Category CCITTT Rec Q.767
+     */
+    public static final int catOrdinary = 0; // ordinary-calling-subscriber
 
-	public CategoryImpl(int data) {
-		super("Category", data);
-	}
+    public CategoryImpl() {
+        super("Category");
+    }
 
-	public int getData() {
-		return data;
-	}	
+    public CategoryImpl(int data) {
+        super("Category", data);
+    }
+
+    public int getData() {
+        return data;
+    }
 }

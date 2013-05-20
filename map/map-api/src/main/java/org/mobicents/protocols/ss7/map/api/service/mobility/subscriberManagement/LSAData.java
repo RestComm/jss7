@@ -25,28 +25,23 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-LSAData ::= SEQUENCE {
-	lsaIdentity	[0] LSAIdentity,
-	lsaAttributes	[1] LSAAttributes,
-	lsaActiveModeIndicator	[2] NULL		OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
-	...}
-
- * 
- * 
+ *
+ LSAData ::= SEQUENCE { lsaIdentity [0] LSAIdentity, lsaAttributes [1] LSAAttributes, lsaActiveModeIndicator [2] NULL
+ * OPTIONAL, extensionContainer [3] ExtensionContainer OPTIONAL, ...}
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface LSAData {
 
-	public LSAIdentity getLSAIdentity();
+    LSAIdentity getLSAIdentity();
 
-	public LSAAttributes getLSAAttributes();
+    LSAAttributes getLSAAttributes();
 
-	public boolean getLsaActiveModeIndicator();
+    boolean getLsaActiveModeIndicator();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

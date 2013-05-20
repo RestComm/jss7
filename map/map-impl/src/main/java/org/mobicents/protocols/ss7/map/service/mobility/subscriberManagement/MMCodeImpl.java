@@ -26,23 +26,23 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.primitives.OctetStringLength1Base;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class MMCodeImpl extends OctetStringLength1Base implements MMCode{
+public class MMCodeImpl extends OctetStringLength1Base implements MMCode {
 
-	public MMCodeImpl() {
-		super("MMCode");
-	}
-	
-	public MMCodeImpl(MMCodeValue value) {
-		super("MMCode", value != null ? value.getCode() : 0);
-	}
+    public MMCodeImpl() {
+        super("MMCode");
+    }
 
-	@Override
-	public MMCodeValue getMMCodeValue() {
-		return MMCodeValue.getInstance(data & 0xFF);
-	}
+    public MMCodeImpl(MMCodeValue value) {
+        super("MMCode", value != null ? value.getCode() : 0);
+    }
+
+    @Override
+    public MMCodeValue getMMCodeValue() {
+        return MMCodeValue.getInstance(data & 0xFF);
+    }
 
 }

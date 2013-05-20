@@ -49,100 +49,100 @@ import org.testng.annotations.Test;
  *
  */
 public class AlertingPatternTest {
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
 
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
 
-	@BeforeTest
-	public void setUp() {
-	}
+    @BeforeTest
+    public void setUp() {
+    }
 
-	@AfterTest
-	public void tearDown() {
-	}
+    @AfterTest
+    public void tearDown() {
+    }
 
-	@Test(groups = { "functional.decode","primitives"})
-	public void testDecode() throws Exception {
-		byte[] data = new byte[] { (byte) 0x04, 0x01, 0x07 };
-		
-		AsnInputStream asn = new AsnInputStream(data);
-		int tag = asn.readTag();
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testDecode() throws Exception {
+        byte[] data = new byte[] { (byte) 0x04, 0x01, 0x07 };
 
-		AlertingPatternImpl addNum = new AlertingPatternImpl();
-		addNum.decodeAll(asn);
-		assertNull(addNum.getAlertingLevel());
-		assertNotNull(addNum.getAlertingCategory());
-		
-		assertEquals( addNum.getAlertingCategory(),AlertingCategory.Category4);
+        AsnInputStream asn = new AsnInputStream(data);
+        int tag = asn.readTag();
 
-	}
+        AlertingPatternImpl addNum = new AlertingPatternImpl();
+        addNum.decodeAll(asn);
+        assertNull(addNum.getAlertingLevel());
+        assertNotNull(addNum.getAlertingCategory());
 
-	@Test(groups = { "functional.encode","primitives"})
-	public void testEncode() throws Exception {
-		byte[] data = new byte[] { (byte) 0x04, 0x01, 0x07 };
-		
-		AlertingPatternImpl addNum = new AlertingPatternImpl(AlertingCategory.Category4);
-		
-		AsnOutputStream asnOS = new AsnOutputStream();
-		addNum.encodeAll(asnOS);
-		
-		byte[] encodedData = asnOS.toByteArray();
+        assertEquals(addNum.getAlertingCategory(), AlertingCategory.Category4);
 
-		assertTrue(Arrays.equals(data, encodedData));
-	}
-	
-	@Test(groups = { "functional.serialize", "primitives" })
-	public void testSerialization() throws Exception {
-		AlertingPatternImpl original = new AlertingPatternImpl(AlertingCategory.Category4);
+    }
 
-		// Writes the area to a file.
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
-		// writer.setBinding(binding); // Optional.
-		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
-		writer.write(original, "alertingPattern", AlertingPatternImpl.class);
-		writer.close();
+    @Test(groups = { "functional.encode", "primitives" })
+    public void testEncode() throws Exception {
+        byte[] data = new byte[] { (byte) 0x04, 0x01, 0x07 };
 
-		byte[] rawData = baos.toByteArray();
-		String serializedEvent = new String(rawData);
+        AlertingPatternImpl addNum = new AlertingPatternImpl(AlertingCategory.Category4);
 
-		System.out.println(serializedEvent);
+        AsnOutputStream asnOS = new AsnOutputStream();
+        addNum.encodeAll(asnOS);
 
-		ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
-		XMLObjectReader reader = XMLObjectReader.newInstance(bais);
-		AlertingPatternImpl copy = reader.read("alertingPattern", AlertingPatternImpl.class);
-		
-		//test result
-		assertEquals(copy.getAlertingCategory(), original.getAlertingCategory());
-		assertEquals(copy, original);
-		assertNull(copy.getAlertingLevel());
-		
-		original = new AlertingPatternImpl(AlertingLevel.Level1);
+        byte[] encodedData = asnOS.toByteArray();
 
-		// Writes the area to a file.
-		baos = new ByteArrayOutputStream();
-		writer = XMLObjectWriter.newInstance(baos);
-		// writer.setBinding(binding); // Optional.
-		writer.setIndentation("\t"); // Optional (use tabulation for indentation).
-		writer.write(original, "alertingPattern", AlertingPatternImpl.class);
-		writer.close();
+        assertTrue(Arrays.equals(data, encodedData));
+    }
 
-		rawData = baos.toByteArray();
-		serializedEvent = new String(rawData);
+    @Test(groups = { "functional.serialize", "primitives" })
+    public void testSerialization() throws Exception {
+        AlertingPatternImpl original = new AlertingPatternImpl(AlertingCategory.Category4);
 
-		System.out.println(serializedEvent);
+        // Writes the area to a file.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+        writer.write(original, "alertingPattern", AlertingPatternImpl.class);
+        writer.close();
 
-		bais = new ByteArrayInputStream(rawData);
-		reader = XMLObjectReader.newInstance(bais);
-		copy = reader.read("alertingPattern", AlertingPatternImpl.class);
-		
-		//test result
-		assertEquals(copy.getAlertingLevel(), original.getAlertingLevel());
-		assertEquals(copy, original);
-		assertNull(copy.getAlertingCategory());
-	}
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        AlertingPatternImpl copy = reader.read("alertingPattern", AlertingPatternImpl.class);
+
+        // test result
+        assertEquals(copy.getAlertingCategory(), original.getAlertingCategory());
+        assertEquals(copy, original);
+        assertNull(copy.getAlertingLevel());
+
+        original = new AlertingPatternImpl(AlertingLevel.Level1);
+
+        // Writes the area to a file.
+        baos = new ByteArrayOutputStream();
+        writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+        writer.write(original, "alertingPattern", AlertingPatternImpl.class);
+        writer.close();
+
+        rawData = baos.toByteArray();
+        serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        bais = new ByteArrayInputStream(rawData);
+        reader = XMLObjectReader.newInstance(bais);
+        copy = reader.read("alertingPattern", AlertingPatternImpl.class);
+
+        // test result
+        assertEquals(copy.getAlertingLevel(), original.getAlertingLevel());
+        assertEquals(copy, original);
+        assertNull(copy.getAlertingCategory());
+    }
 }

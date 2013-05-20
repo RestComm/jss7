@@ -35,125 +35,96 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.PDPType;
 
 /**
- * 
-
-PDP-ContextInfo ::= SEQUENCE {
-	pdp-ContextIdentifier	[0] ContextId,
-	pdp-ContextActive	[1] NULL		OPTIONAL,
-	pdp-Type		[2] PDP-Type,
-	pdp-Address	[3] PDP-Address	OPTIONAL,
-	apn-Subscribed	[4] APN		OPTIONAL,
-	apn-InUse		[5] APN		OPTIONAL,
-	nsapi		[6] NSAPI		OPTIONAL,
-	transactionId	[7] TransactionId	OPTIONAL,
-	teid-ForGnAndGp	[8] TEID		OPTIONAL,
-	teid-ForIu	[9] TEID		OPTIONAL,
-	ggsn-Address	[10] GSN-Address 	OPTIONAL,
-	qos-Subscribed	[11] Ext-QoS-Subscribed	OPTIONAL,
-	qos-Requested	[12] Ext-QoS-Subscribed	OPTIONAL,
-	qos-Negotiated	[13] Ext-QoS-Subscribed	OPTIONAL,
-	chargingId	[14] GPRSChargingID	OPTIONAL,
-	chargingCharacteristics	[15] ChargingCharacteristics	OPTIONAL,
-	rnc-Address	[16] GSN-Address	OPTIONAL,
-	extensionContainer	[17] ExtensionContainer	OPTIONAL,
-	...,
-	qos2-Subscribed	[18] Ext2-QoS-Subscribed	OPTIONAL,
-	-- qos2-Subscribed may be present only if qos-Subscribed is present.
-	qos2-Requested	[19] Ext2-QoS-Subscribed	OPTIONAL,
-	-- qos2-Requested may be present only if qos-Requested is present.
-	qos2-Negotiated	[20] Ext2-QoS-Subscribed	OPTIONAL,
-	-- qos2-Negotiated may be present only if qos-Negotiated is present.
-	qos3-Subscribed	[21] Ext3-QoS-Subscribed	OPTIONAL,
-	-- qos3-Subscribed may be present only if qos2-Subscribed is present.
-	qos3-Requested	[22] Ext3-QoS-Subscribed	OPTIONAL,
-	-- qos3-Requested may be present only if qos2-Requested is present.
-	qos3-Negotiated	[23] Ext3-QoS-Subscribed	OPTIONAL,
-	-- qos3-Negotiated may be present only if qos2-Negotiated is present.
-	qos4-Subscribed	[25] Ext4-QoS-Subscribed	OPTIONAL,
-	-- qos4-Subscribed may be present only if qos3-Subscribed is present.
-	qos4-Requested	[26] Ext4-QoS-Subscribed	OPTIONAL,
-	-- qos4-Requested may be present only if qos3-Requested is present.
-	qos4-Negotiated	[27] Ext4-QoS-Subscribed	OPTIONAL,
-	-- qos4-Negotiated may be present only if qos3-Negotiated is present. 
-	ext-pdp-Type	[28] Ext-PDP-Type	OPTIONAL,
-	-- contains the value IPv4v6 defined in 3GPP TS 29.060 [105], if the PDP can be
-	-- accessed by dual-stack UEs.
-	ext-pdp-Address	[29] PDP-Address	OPTIONAL
-	-- contains an additional IP address in case of dual-stack static IP address assignment
-	-- for the UE.
-	-- it may contain an IPv4 or an IPv6 address/prefix, and it may be present
-	-- only if pdp-Address is present; if both are present, each parameter shall
-	-- contain a different type of address (IPv4 or IPv6).
-
-}
-
-ContextId ::= INTEGER (1..50)
-
-NSAPI ::= INTEGER (0..15)
---	This type is used to indicate the Network layer Service Access Point
-
- * 
+ *
+ PDP-ContextInfo ::= SEQUENCE { pdp-ContextIdentifier [0] ContextId, pdp-ContextActive [1] NULL OPTIONAL, pdp-Type [2]
+ * PDP-Type, pdp-Address [3] PDP-Address OPTIONAL, apn-Subscribed [4] APN OPTIONAL, apn-InUse [5] APN OPTIONAL, nsapi [6] NSAPI
+ * OPTIONAL, transactionId [7] TransactionId OPTIONAL, teid-ForGnAndGp [8] TEID OPTIONAL, teid-ForIu [9] TEID OPTIONAL,
+ * ggsn-Address [10] GSN-Address OPTIONAL, qos-Subscribed [11] Ext-QoS-Subscribed OPTIONAL, qos-Requested [12]
+ * Ext-QoS-Subscribed OPTIONAL, qos-Negotiated [13] Ext-QoS-Subscribed OPTIONAL, chargingId [14] GPRSChargingID OPTIONAL,
+ * chargingCharacteristics [15] ChargingCharacteristics OPTIONAL, rnc-Address [16] GSN-Address OPTIONAL, extensionContainer [17]
+ * ExtensionContainer OPTIONAL, ..., qos2-Subscribed [18] Ext2-QoS-Subscribed OPTIONAL, -- qos2-Subscribed may be present only
+ * if qos-Subscribed is present. qos2-Requested [19] Ext2-QoS-Subscribed OPTIONAL, -- qos2-Requested may be present only if
+ * qos-Requested is present. qos2-Negotiated [20] Ext2-QoS-Subscribed OPTIONAL, -- qos2-Negotiated may be present only if
+ * qos-Negotiated is present. qos3-Subscribed [21] Ext3-QoS-Subscribed OPTIONAL, -- qos3-Subscribed may be present only if
+ * qos2-Subscribed is present. qos3-Requested [22] Ext3-QoS-Subscribed OPTIONAL, -- qos3-Requested may be present only if
+ * qos2-Requested is present. qos3-Negotiated [23] Ext3-QoS-Subscribed OPTIONAL, -- qos3-Negotiated may be present only if
+ * qos2-Negotiated is present. qos4-Subscribed [25] Ext4-QoS-Subscribed OPTIONAL, -- qos4-Subscribed may be present only if
+ * qos3-Subscribed is present. qos4-Requested [26] Ext4-QoS-Subscribed OPTIONAL, -- qos4-Requested may be present only if
+ * qos3-Requested is present. qos4-Negotiated [27] Ext4-QoS-Subscribed OPTIONAL, -- qos4-Negotiated may be present only if
+ * qos3-Negotiated is present. ext-pdp-Type [28] Ext-PDP-Type OPTIONAL, -- contains the value IPv4v6 defined in 3GPP TS 29.060
+ * [105], if the PDP can be -- accessed by dual-stack UEs. ext-pdp-Address [29] PDP-Address OPTIONAL -- contains an additional
+ * IP address in case of dual-stack static IP address assignment -- for the UE. -- it may contain an IPv4 or an IPv6
+ * address/prefix, and it may be present -- only if pdp-Address is present; if both are present, each parameter shall -- contain
+ * a different type of address (IPv4 or IPv6).
+ *
+ * }
+ *
+ * ContextId ::= INTEGER (1..50)
+ *
+ * NSAPI ::= INTEGER (0..15) -- This type is used to indicate the Network layer Service Access Point
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface PDPContextInfo {
 
-	public int getPdpContextIdentifier();
+    int getPdpContextIdentifier();
 
-	public boolean getPdpContextActive();
+    boolean getPdpContextActive();
 
-	public PDPType getPdpType();
+    PDPType getPdpType();
 
-	public PDPAddress getPdpAddress();
+    PDPAddress getPdpAddress();
 
-	public APN getApnSubscribed();
+    APN getApnSubscribed();
 
-	public APN getApnInUse();
+    APN getApnInUse();
 
-	public Integer getNsapi();
+    Integer getNsapi();
 
-	public TransactionId getTransactionId();
+    TransactionId getTransactionId();
 
-	public TEID getTeidForGnAndGp();
+    TEID getTeidForGnAndGp();
 
-	public TEID getTeidForIu();
+    TEID getTeidForIu();
 
-	public GSNAddress getGgsnAddress();
+    GSNAddress getGgsnAddress();
 
-	public ExtQoSSubscribed getQosSubscribed();
+    ExtQoSSubscribed getQosSubscribed();
 
-	public ExtQoSSubscribed getQosRequested();
+    ExtQoSSubscribed getQosRequested();
 
-	public ExtQoSSubscribed getQosNegotiated();
+    ExtQoSSubscribed getQosNegotiated();
 
-	public GPRSChargingID getChargingId();
+    GPRSChargingID getChargingId();
 
-	public ChargingCharacteristics getChargingCharacteristics();
+    ChargingCharacteristics getChargingCharacteristics();
 
-	public GSNAddress getRncAddress();
+    GSNAddress getRncAddress();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public Ext2QoSSubscribed getQos2Subscribed();
+    Ext2QoSSubscribed getQos2Subscribed();
 
-	public Ext2QoSSubscribed getQos2Requested();
+    Ext2QoSSubscribed getQos2Requested();
 
-	public Ext2QoSSubscribed getQos2Negotiated();
+    Ext2QoSSubscribed getQos2Negotiated();
 
-	public Ext3QoSSubscribed getQos3Subscribed();
+    Ext3QoSSubscribed getQos3Subscribed();
 
-	public Ext3QoSSubscribed getQos3Requested();
+    Ext3QoSSubscribed getQos3Requested();
 
-	public Ext3QoSSubscribed getQos3Negotiated();
+    Ext3QoSSubscribed getQos3Negotiated();
 
-	public Ext4QoSSubscribed getQos4Subscribed();
+    Ext4QoSSubscribed getQos4Subscribed();
 
-	public Ext4QoSSubscribed getQos4Requested();
+    Ext4QoSSubscribed getQos4Requested();
 
-	public Ext4QoSSubscribed getQos4Negotiated();
+    Ext4QoSSubscribed getQos4Negotiated();
 
-	public ExtPDPType getExtPdpType();
+    ExtPDPType getExtPdpType();
 
-	public PDPAddress getExtPdpAddress();
+    PDPAddress getExtPdpAddress();
 
 }

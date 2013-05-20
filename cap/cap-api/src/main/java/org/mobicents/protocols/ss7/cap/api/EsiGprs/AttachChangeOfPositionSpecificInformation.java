@@ -25,20 +25,15 @@ package org.mobicents.protocols.ss7.cap.api.EsiGprs;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformationGPRS;
 
 /**
-*
-
-attachChangeOfPositionSpecificInformation
-[0] SEQUENCE {
-locationInformationGPRS [0] LocationInformationGPRS OPTIONAL,
-...
-},
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ attachChangeOfPositionSpecificInformation [0] SEQUENCE { locationInformationGPRS [0] LocationInformationGPRS OPTIONAL, ... },
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface AttachChangeOfPositionSpecificInformation {
 
-	public LocationInformationGPRS getLocationInformationGPRS();
+    LocationInformationGPRS getLocationInformationGPRS();
 
 }

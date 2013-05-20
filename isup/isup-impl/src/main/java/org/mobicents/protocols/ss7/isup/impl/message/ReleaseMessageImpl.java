@@ -23,9 +23,9 @@
 /**
  * Start time:21:00:56 2009-07-17<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
- * 
+ *
  */
 package org.mobicents.protocols.ss7.isup.impl.message;
 
@@ -58,331 +58,332 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
 /**
  * Start time:21:00:56 2009-07-17<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
 class ReleaseMessageImpl extends ISUPMessageImpl implements ReleaseMessage {
 
-	public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(MESSAGE_CODE);
+    public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(MESSAGE_CODE);
 
-	private static final int _MANDATORY_VAR_COUNT = 1;
-	// mandatory fixed L
-	static final int _INDEX_F_MessageType = 0;
-	// mandatory variable L
-	static final int _INDEX_V_CauseIndicators = 0;
-	// optional
-	static final int _INDEX_O_RedirectionInformation = 0;
-	static final int _INDEX_O_RedirectionNumber = 1;
-	static final int _INDEX_O_AccessTransport = 2;
-	static final int _INDEX_O_SignalingPointCode = 3;
-	static final int _INDEX_O_U2UInformation = 4;
-	static final int _INDEX_O_AutomaticCongestionLevel = 5;
-	static final int _INDEX_O_NetworkSpecificFacility = 6;
-	static final int _INDEX_O_AccessDeliveryInformation = 7;
-	static final int _INDEX_O_ParameterCompatibilityInformation = 8;
-	static final int _INDEX_O_U2UIndicators = 9;
-	static final int _INDEX_O_DisplayInformation = 10;
-	static final int _INDEX_O_RemoteOperations = 11;
-	static final int _INDEX_O_HTRInformation = 12;
-	static final int _INDEX_O_RedirectCounter = 13;
-	static final int _INDEX_O_RedirectBackwardInformation = 14;
-	static final int _INDEX_O_EndOfOptionalParameters = 15;
+    private static final int _MANDATORY_VAR_COUNT = 1;
+    // mandatory fixed L
+    static final int _INDEX_F_MessageType = 0;
+    // mandatory variable L
+    static final int _INDEX_V_CauseIndicators = 0;
+    // optional
+    static final int _INDEX_O_RedirectionInformation = 0;
+    static final int _INDEX_O_RedirectionNumber = 1;
+    static final int _INDEX_O_AccessTransport = 2;
+    static final int _INDEX_O_SignalingPointCode = 3;
+    static final int _INDEX_O_U2UInformation = 4;
+    static final int _INDEX_O_AutomaticCongestionLevel = 5;
+    static final int _INDEX_O_NetworkSpecificFacility = 6;
+    static final int _INDEX_O_AccessDeliveryInformation = 7;
+    static final int _INDEX_O_ParameterCompatibilityInformation = 8;
+    static final int _INDEX_O_U2UIndicators = 9;
+    static final int _INDEX_O_DisplayInformation = 10;
+    static final int _INDEX_O_RemoteOperations = 11;
+    static final int _INDEX_O_HTRInformation = 12;
+    static final int _INDEX_O_RedirectCounter = 13;
+    static final int _INDEX_O_RedirectBackwardInformation = 14;
+    static final int _INDEX_O_EndOfOptionalParameters = 15;
 
-	ReleaseMessageImpl(Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
-			Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) {
-		super(mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index, optionalCode2Index);
+    ReleaseMessageImpl(Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes,
+            Map<Integer, Integer> mandatoryCode2Index, Map<Integer, Integer> mandatoryVariableCode2Index,
+            Map<Integer, Integer> optionalCode2Index) {
+        super(mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index,
+                optionalCode2Index);
 
-		super.f_Parameters.put(_INDEX_F_MessageType, this.getMessageType());
-		super.o_Parameters.put(_INDEX_O_EndOfOptionalParameters, _END_OF_OPTIONAL_PARAMETERS);
+        super.f_Parameters.put(_INDEX_F_MessageType, this.getMessageType());
+        super.o_Parameters.put(_INDEX_O_EndOfOptionalParameters, _END_OF_OPTIONAL_PARAMETERS);
 
-	}
-	
-	/**
-	 * @param parameterBody
-	 * @param parameterCode
-	 * @throws ParameterException
-	 */
-	protected void decodeMandatoryVariableBody(ISUPParameterFactory parameterFactory, byte[] parameterBody, int parameterIndex) throws ParameterException {
-		switch (parameterIndex) {
-		case _INDEX_V_CauseIndicators:
-			CauseIndicators cpn = parameterFactory.createCauseIndicators();
-			((AbstractISUPParameter) cpn).decode(parameterBody);
-			this.setCauseIndicators(cpn);
-			break;
-		default:
-			throw new ParameterException("Unrecognized parameter index for mandatory variable part: " + parameterIndex);
-		}
+    }
 
-	}
+    /**
+     * @param parameterBody
+     * @param parameterCode
+     * @throws ParameterException
+     */
+    protected void decodeMandatoryVariableBody(ISUPParameterFactory parameterFactory, byte[] parameterBody, int parameterIndex)
+            throws ParameterException {
+        switch (parameterIndex) {
+            case _INDEX_V_CauseIndicators:
+                CauseIndicators cpn = parameterFactory.createCauseIndicators();
+                ((AbstractISUPParameter) cpn).decode(parameterBody);
+                this.setCauseIndicators(cpn);
+                break;
+            default:
+                throw new ParameterException("Unrecognized parameter index for mandatory variable part: " + parameterIndex);
+        }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.messages.ISUPMessage#decodeOptionalBody(byte[],
-	 * byte)
-	 */
-	
-	protected void decodeOptionalBody(ISUPParameterFactory parameterFactory, byte[] parameterBody, byte parameterCode) throws ParameterException {
+    }
 
-		switch (parameterCode & 0xFF) {
-		case RedirectionNumber._PARAMETER_CODE:
-			RedirectionNumber rn = parameterFactory.createRedirectionNumber();
-			((AbstractISUPParameter) rn).decode(parameterBody);
-			this.setRedirectionNumber(rn);
-			break;
-		case RedirectionInformation._PARAMETER_CODE:
-			RedirectionInformation ri = parameterFactory.createRedirectionInformation();
-			((AbstractISUPParameter) ri).decode(parameterBody);
-			this.setRedirectionInformation(ri);
-			break;
-		case AccessTransport._PARAMETER_CODE:
-			AccessTransport at = parameterFactory.createAccessTransport();
-			((AbstractISUPParameter) at).decode(parameterBody);
-			this.setAccessTransport(at);
-			break;
-		case SignalingPointCode._PARAMETER_CODE:
-			SignalingPointCode v = parameterFactory.createSignalingPointCode();
-			((AbstractISUPParameter) v).decode(parameterBody);
-			this.setSignalingPointCode(v);
-			break;
-		case UserToUserInformation._PARAMETER_CODE:
-			UserToUserInformation u2ui = parameterFactory.createUserToUserInformation();
-			((AbstractISUPParameter) u2ui).decode(parameterBody);
-			this.setU2UInformation(u2ui);
-			break;
-		case AutomaticCongestionLevel._PARAMETER_CODE:
-			AutomaticCongestionLevel acl = parameterFactory.createAutomaticCongestionLevel();
-			((AbstractISUPParameter) acl).decode(parameterBody);
-			this.setAutomaticCongestionLevel(acl);
-			break;
-		case NetworkSpecificFacility._PARAMETER_CODE:
-			NetworkSpecificFacility nsf = parameterFactory.createNetworkSpecificFacility();
-			((AbstractISUPParameter) nsf).decode(parameterBody);
-			this.setNetworkSpecificFacility(nsf);
-			break;
-		case AccessDeliveryInformation._PARAMETER_CODE:
-			AccessDeliveryInformation adi = parameterFactory.createAccessDeliveryInformation();
-			((AbstractISUPParameter) adi).decode(parameterBody);
-			this.setAccessDeliveryInformation(adi);
-			break;
-		case ParameterCompatibilityInformation._PARAMETER_CODE:
-			ParameterCompatibilityInformation pci = parameterFactory.createParameterCompatibilityInformation();
-			((AbstractISUPParameter) pci).decode(parameterBody);
-			this.setParameterCompatibilityInformation(pci);
-			break;
-		case UserToUserIndicators._PARAMETER_CODE:
-			UserToUserIndicators utui = parameterFactory.createUserToUserIndicators();
-			((AbstractISUPParameter) utui).decode(parameterBody);
-			this.setU2UIndicators(utui);
-			break;
-		case DisplayInformation._PARAMETER_CODE:
-			DisplayInformation di = parameterFactory.createDisplayInformation();
-			((AbstractISUPParameter) di).decode(parameterBody);
-			this.setDisplayInformation(di);
-			break;
-		case RemoteOperations._PARAMETER_CODE:
-			RemoteOperations ro = parameterFactory.createRemoteOperations();
-			((AbstractISUPParameter) ro).decode(parameterBody);
-			this.setRemoteOperations(ro);
-			break;
-		case HTRInformation._PARAMETER_CODE:
-			HTRInformation htri = parameterFactory.createHTRInformation();
-			((AbstractISUPParameter) htri).decode(parameterBody);
-			this.setHTRInformation(htri);
-			break;
-		case RedirectBackwardInformation._PARAMETER_CODE:
-			RedirectBackwardInformation rbi = parameterFactory.createRedirectBackwardInformation();
-			((AbstractISUPParameter) rbi).decode(parameterBody);
-			this.setRedirectBackwardInformation(rbi);
-			break;
-		case RedirectCounter._PARAMETER_CODE:
-			RedirectCounter rc = parameterFactory.createRedirectCounter();
-			((AbstractISUPParameter) rc).decode(parameterBody);
-			this.setRedirectCounter(rc);
-			break;
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.isup.messages.ISUPMessage#decodeOptionalBody(byte[], byte)
+     */
 
-		default:
-			throw new ParameterException("Unrecognized parameter code for optional part: " + parameterCode);
-		}
+    protected void decodeOptionalBody(ISUPParameterFactory parameterFactory, byte[] parameterBody, byte parameterCode)
+            throws ParameterException {
 
-	}
+        switch (parameterCode & 0xFF) {
+            case RedirectionNumber._PARAMETER_CODE:
+                RedirectionNumber rn = parameterFactory.createRedirectionNumber();
+                ((AbstractISUPParameter) rn).decode(parameterBody);
+                this.setRedirectionNumber(rn);
+                break;
+            case RedirectionInformation._PARAMETER_CODE:
+                RedirectionInformation ri = parameterFactory.createRedirectionInformation();
+                ((AbstractISUPParameter) ri).decode(parameterBody);
+                this.setRedirectionInformation(ri);
+                break;
+            case AccessTransport._PARAMETER_CODE:
+                AccessTransport at = parameterFactory.createAccessTransport();
+                ((AbstractISUPParameter) at).decode(parameterBody);
+                this.setAccessTransport(at);
+                break;
+            case SignalingPointCode._PARAMETER_CODE:
+                SignalingPointCode v = parameterFactory.createSignalingPointCode();
+                ((AbstractISUPParameter) v).decode(parameterBody);
+                this.setSignalingPointCode(v);
+                break;
+            case UserToUserInformation._PARAMETER_CODE:
+                UserToUserInformation u2ui = parameterFactory.createUserToUserInformation();
+                ((AbstractISUPParameter) u2ui).decode(parameterBody);
+                this.setU2UInformation(u2ui);
+                break;
+            case AutomaticCongestionLevel._PARAMETER_CODE:
+                AutomaticCongestionLevel acl = parameterFactory.createAutomaticCongestionLevel();
+                ((AbstractISUPParameter) acl).decode(parameterBody);
+                this.setAutomaticCongestionLevel(acl);
+                break;
+            case NetworkSpecificFacility._PARAMETER_CODE:
+                NetworkSpecificFacility nsf = parameterFactory.createNetworkSpecificFacility();
+                ((AbstractISUPParameter) nsf).decode(parameterBody);
+                this.setNetworkSpecificFacility(nsf);
+                break;
+            case AccessDeliveryInformation._PARAMETER_CODE:
+                AccessDeliveryInformation adi = parameterFactory.createAccessDeliveryInformation();
+                ((AbstractISUPParameter) adi).decode(parameterBody);
+                this.setAccessDeliveryInformation(adi);
+                break;
+            case ParameterCompatibilityInformation._PARAMETER_CODE:
+                ParameterCompatibilityInformation pci = parameterFactory.createParameterCompatibilityInformation();
+                ((AbstractISUPParameter) pci).decode(parameterBody);
+                this.setParameterCompatibilityInformation(pci);
+                break;
+            case UserToUserIndicators._PARAMETER_CODE:
+                UserToUserIndicators utui = parameterFactory.createUserToUserIndicators();
+                ((AbstractISUPParameter) utui).decode(parameterBody);
+                this.setU2UIndicators(utui);
+                break;
+            case DisplayInformation._PARAMETER_CODE:
+                DisplayInformation di = parameterFactory.createDisplayInformation();
+                ((AbstractISUPParameter) di).decode(parameterBody);
+                this.setDisplayInformation(di);
+                break;
+            case RemoteOperations._PARAMETER_CODE:
+                RemoteOperations ro = parameterFactory.createRemoteOperations();
+                ((AbstractISUPParameter) ro).decode(parameterBody);
+                this.setRemoteOperations(ro);
+                break;
+            case HTRInformation._PARAMETER_CODE:
+                HTRInformation htri = parameterFactory.createHTRInformation();
+                ((AbstractISUPParameter) htri).decode(parameterBody);
+                this.setHTRInformation(htri);
+                break;
+            case RedirectBackwardInformation._PARAMETER_CODE:
+                RedirectBackwardInformation rbi = parameterFactory.createRedirectBackwardInformation();
+                ((AbstractISUPParameter) rbi).decode(parameterBody);
+                this.setRedirectBackwardInformation(rbi);
+                break;
+            case RedirectCounter._PARAMETER_CODE:
+                RedirectCounter rc = parameterFactory.createRedirectCounter();
+                ((AbstractISUPParameter) rc).decode(parameterBody);
+                this.setRedirectCounter(rc);
+                break;
 
-	public CauseIndicators getCauseIndicators() {
-		return (CauseIndicators) super.v_Parameters.get(_INDEX_V_CauseIndicators);
-	}
+            default:
+                throw new ParameterException("Unrecognized parameter code for optional part: " + parameterCode);
+        }
 
-	public void setCauseIndicators(CauseIndicators v) {
-		super.v_Parameters.put(_INDEX_V_CauseIndicators, v);
-	}
+    }
 
-	public RedirectionInformation getRedirectionInformation() {
-		return (RedirectionInformation) super.o_Parameters.get(_INDEX_O_RedirectionInformation);
-	}
+    public CauseIndicators getCauseIndicators() {
+        return (CauseIndicators) super.v_Parameters.get(_INDEX_V_CauseIndicators);
+    }
 
-	public void setRedirectionInformation(RedirectionInformation v) {
-		super.o_Parameters.put(_INDEX_O_RedirectionInformation, v);
-	}
+    public void setCauseIndicators(CauseIndicators v) {
+        super.v_Parameters.put(_INDEX_V_CauseIndicators, v);
+    }
 
-	public RedirectionNumber getRedirectionNumber() {
-		return (RedirectionNumber) super.o_Parameters.get(_INDEX_O_RedirectionNumber);
-	}
+    public RedirectionInformation getRedirectionInformation() {
+        return (RedirectionInformation) super.o_Parameters.get(_INDEX_O_RedirectionInformation);
+    }
 
-	public void setRedirectionNumber(RedirectionNumber v) {
-		super.o_Parameters.put(_INDEX_O_RedirectionNumber, v);
-	}
+    public void setRedirectionInformation(RedirectionInformation v) {
+        super.o_Parameters.put(_INDEX_O_RedirectionInformation, v);
+    }
 
-	public AccessTransport getAccessTransport() {
-		return (AccessTransport) super.o_Parameters.get(_INDEX_O_AccessTransport);
-	}
+    public RedirectionNumber getRedirectionNumber() {
+        return (RedirectionNumber) super.o_Parameters.get(_INDEX_O_RedirectionNumber);
+    }
 
-	public void setAccessTransport(AccessTransport v) {
-		super.o_Parameters.put(_INDEX_O_AccessTransport, v);
-	}
+    public void setRedirectionNumber(RedirectionNumber v) {
+        super.o_Parameters.put(_INDEX_O_RedirectionNumber, v);
+    }
 
-	public SignalingPointCode getSignalingPointCode() {
-		return (SignalingPointCode) super.o_Parameters.get(_INDEX_O_SignalingPointCode);
-	}
+    public AccessTransport getAccessTransport() {
+        return (AccessTransport) super.o_Parameters.get(_INDEX_O_AccessTransport);
+    }
 
-	public void setSignalingPointCode(SignalingPointCode v) {
-		super.o_Parameters.put(_INDEX_O_SignalingPointCode, v);
-	}
+    public void setAccessTransport(AccessTransport v) {
+        super.o_Parameters.put(_INDEX_O_AccessTransport, v);
+    }
 
-	public UserToUserInformation getU2UInformation() {
-		return (UserToUserInformation) super.o_Parameters.get(_INDEX_O_U2UInformation);
-	}
+    public SignalingPointCode getSignalingPointCode() {
+        return (SignalingPointCode) super.o_Parameters.get(_INDEX_O_SignalingPointCode);
+    }
 
-	public void setU2UInformation(UserToUserInformation v) {
-		super.o_Parameters.put(_INDEX_O_U2UInformation, v);
-	}
+    public void setSignalingPointCode(SignalingPointCode v) {
+        super.o_Parameters.put(_INDEX_O_SignalingPointCode, v);
+    }
 
-	public AutomaticCongestionLevel getAutomaticCongestionLevel() {
-		return (AutomaticCongestionLevel) super.o_Parameters.get(_INDEX_O_AutomaticCongestionLevel);
-	}
+    public UserToUserInformation getU2UInformation() {
+        return (UserToUserInformation) super.o_Parameters.get(_INDEX_O_U2UInformation);
+    }
 
-	public void setAutomaticCongestionLevel(AutomaticCongestionLevel v) {
-		super.o_Parameters.put(_INDEX_O_AutomaticCongestionLevel, v);
-	}
+    public void setU2UInformation(UserToUserInformation v) {
+        super.o_Parameters.put(_INDEX_O_U2UInformation, v);
+    }
 
-	public NetworkSpecificFacility getNetworkSpecificFacility() {
-		return (NetworkSpecificFacility) super.o_Parameters.get(_INDEX_O_NetworkSpecificFacility);
-	}
+    public AutomaticCongestionLevel getAutomaticCongestionLevel() {
+        return (AutomaticCongestionLevel) super.o_Parameters.get(_INDEX_O_AutomaticCongestionLevel);
+    }
 
-	public void setNetworkSpecificFacility(NetworkSpecificFacility v) {
-		super.o_Parameters.put(_INDEX_O_NetworkSpecificFacility, v);
-	}
+    public void setAutomaticCongestionLevel(AutomaticCongestionLevel v) {
+        super.o_Parameters.put(_INDEX_O_AutomaticCongestionLevel, v);
+    }
 
-	public AccessDeliveryInformation getAccessDeliveryInformation() {
-		return (AccessDeliveryInformation) super.o_Parameters.get(_INDEX_O_AccessDeliveryInformation);
-	}
+    public NetworkSpecificFacility getNetworkSpecificFacility() {
+        return (NetworkSpecificFacility) super.o_Parameters.get(_INDEX_O_NetworkSpecificFacility);
+    }
 
-	public void setAccessDeliveryInformation(AccessDeliveryInformation v) {
-		super.o_Parameters.put(_INDEX_O_AccessDeliveryInformation, v);
-	}
+    public void setNetworkSpecificFacility(NetworkSpecificFacility v) {
+        super.o_Parameters.put(_INDEX_O_NetworkSpecificFacility, v);
+    }
 
-	public ParameterCompatibilityInformation getParameterCompatibilityInformation() {
-		return (ParameterCompatibilityInformation) super.o_Parameters.get(_INDEX_O_ParameterCompatibilityInformation);
-	}
+    public AccessDeliveryInformation getAccessDeliveryInformation() {
+        return (AccessDeliveryInformation) super.o_Parameters.get(_INDEX_O_AccessDeliveryInformation);
+    }
 
-	public void setParameterCompatibilityInformation(ParameterCompatibilityInformation v) {
-		super.o_Parameters.put(_INDEX_O_ParameterCompatibilityInformation, v);
-	}
+    public void setAccessDeliveryInformation(AccessDeliveryInformation v) {
+        super.o_Parameters.put(_INDEX_O_AccessDeliveryInformation, v);
+    }
 
-	public UserToUserIndicators getU2UIndicators() {
-		return (UserToUserIndicators) super.o_Parameters.get(_INDEX_O_U2UIndicators);
-	}
+    public ParameterCompatibilityInformation getParameterCompatibilityInformation() {
+        return (ParameterCompatibilityInformation) super.o_Parameters.get(_INDEX_O_ParameterCompatibilityInformation);
+    }
 
-	public void setU2UIndicators(UserToUserIndicators v) {
-		super.o_Parameters.put(_INDEX_O_U2UIndicators, v);
-	}
+    public void setParameterCompatibilityInformation(ParameterCompatibilityInformation v) {
+        super.o_Parameters.put(_INDEX_O_ParameterCompatibilityInformation, v);
+    }
 
-	public DisplayInformation getDisplayInformation() {
-		return (DisplayInformation) super.o_Parameters.get(_INDEX_O_DisplayInformation);
-	}
+    public UserToUserIndicators getU2UIndicators() {
+        return (UserToUserIndicators) super.o_Parameters.get(_INDEX_O_U2UIndicators);
+    }
 
-	public void setDisplayInformation(DisplayInformation v) {
-		super.o_Parameters.put(_INDEX_O_DisplayInformation, v);
-	}
+    public void setU2UIndicators(UserToUserIndicators v) {
+        super.o_Parameters.put(_INDEX_O_U2UIndicators, v);
+    }
 
-	public RemoteOperations getRemoteOperations() {
-		return (RemoteOperations) super.o_Parameters.get(_INDEX_O_RemoteOperations);
-	}
+    public DisplayInformation getDisplayInformation() {
+        return (DisplayInformation) super.o_Parameters.get(_INDEX_O_DisplayInformation);
+    }
 
-	public void setRemoteOperations(RemoteOperations v) {
-		super.o_Parameters.put(_INDEX_O_RemoteOperations, v);
-	}
+    public void setDisplayInformation(DisplayInformation v) {
+        super.o_Parameters.put(_INDEX_O_DisplayInformation, v);
+    }
 
-	public HTRInformation getHTRInformation() {
-		return (HTRInformation) super.o_Parameters.get(_INDEX_O_HTRInformation);
-	}
+    public RemoteOperations getRemoteOperations() {
+        return (RemoteOperations) super.o_Parameters.get(_INDEX_O_RemoteOperations);
+    }
 
-	public void setHTRInformation(HTRInformation v) {
-		super.o_Parameters.put(_INDEX_O_HTRInformation, v);
-	}
+    public void setRemoteOperations(RemoteOperations v) {
+        super.o_Parameters.put(_INDEX_O_RemoteOperations, v);
+    }
 
-	public RedirectCounter getRedirectCounter() {
-		return (RedirectCounter) super.o_Parameters.get(_INDEX_O_RedirectCounter);
-	}
+    public HTRInformation getHTRInformation() {
+        return (HTRInformation) super.o_Parameters.get(_INDEX_O_HTRInformation);
+    }
 
-	public void setRedirectCounter(RedirectCounter v) {
-		super.o_Parameters.put(_INDEX_O_RedirectCounter, v);
-	}
+    public void setHTRInformation(HTRInformation v) {
+        super.o_Parameters.put(_INDEX_O_HTRInformation, v);
+    }
 
-	public RedirectBackwardInformation getRedirectBackwardInformation() {
-		return (RedirectBackwardInformation) super.o_Parameters.get(_INDEX_O_RedirectBackwardInformation);
-	}
+    public RedirectCounter getRedirectCounter() {
+        return (RedirectCounter) super.o_Parameters.get(_INDEX_O_RedirectCounter);
+    }
 
-	public void setRedirectBackwardInformation(RedirectBackwardInformation v) {
-		super.o_Parameters.put(_INDEX_O_RedirectBackwardInformation, v);
-	}
+    public void setRedirectCounter(RedirectCounter v) {
+        super.o_Parameters.put(_INDEX_O_RedirectCounter, v);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.messages.ISUPMessage#getMessageType()
-	 */
-	
-	public MessageType getMessageType() {
-		return this._MESSAGE_TYPE;
-	}
+    public RedirectBackwardInformation getRedirectBackwardInformation() {
+        return (RedirectBackwardInformation) super.o_Parameters.get(_INDEX_O_RedirectBackwardInformation);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.mobicents.isup.messages.ISUPMessage#
-	 * getNumberOfMandatoryVariableLengthParameters()
-	 */
-	
-	protected int getNumberOfMandatoryVariableLengthParameters() {
+    public void setRedirectBackwardInformation(RedirectBackwardInformation v) {
+        super.o_Parameters.put(_INDEX_O_RedirectBackwardInformation, v);
+    }
 
-		return _MANDATORY_VAR_COUNT;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.isup.messages.ISUPMessage#getMessageType()
+     */
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.isup.messages.ISUPMessage#hasAllMandatoryParameters()
-	 */
-	
-	public boolean hasAllMandatoryParameters() {
-		if (this.f_Parameters.get(_INDEX_F_MessageType) == null || this.f_Parameters.get(_INDEX_F_MessageType).getCode() != this.getMessageType().getCode()) {
-			return false;
-		}
-		if (this.v_Parameters.get(_INDEX_V_CauseIndicators) == null) {
-			return false;
-		}
-		return true;
-	}
+    public MessageType getMessageType() {
+        return this._MESSAGE_TYPE;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.isup.impl.ISUPMessageImpl#optionalPartIsPossible
-	 * ()
-	 */
-	
-	protected boolean optionalPartIsPossible() {
+    /*
+     * (non-Javadoc)
+     *
+     * @seeorg.mobicents.isup.messages.ISUPMessage# getNumberOfMandatoryVariableLengthParameters()
+     */
 
-		return true;
-	}
+    protected int getNumberOfMandatoryVariableLengthParameters() {
+
+        return _MANDATORY_VAR_COUNT;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.isup.messages.ISUPMessage#hasAllMandatoryParameters()
+     */
+
+    public boolean hasAllMandatoryParameters() {
+        if (this.f_Parameters.get(_INDEX_F_MessageType) == null
+                || this.f_Parameters.get(_INDEX_F_MessageType).getCode() != this.getMessageType().getCode()) {
+            return false;
+        }
+        if (this.v_Parameters.get(_INDEX_V_CauseIndicators) == null) {
+            return false;
+        }
+        return true;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.isup.impl.ISUPMessageImpl#optionalPartIsPossible ()
+     */
+
+    protected boolean optionalPartIsPossible() {
+
+        return true;
+    }
 }

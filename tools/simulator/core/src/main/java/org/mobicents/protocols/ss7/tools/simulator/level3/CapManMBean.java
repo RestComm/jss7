@@ -23,22 +23,22 @@
 package org.mobicents.protocols.ss7.tools.simulator.level3;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CapManMBean {
 
-//	public int getLocalSsn();
-//
-//	public void setLocalSsn(int val);
-//
-//	public int getRemoteSsn();
-//
-//	public void setRemoteSsn(int val);
+    // int getLocalSsn();
+    //
+    // void setLocalSsn(int val);
+    //
+    // int getRemoteSsn();
+    //
+    // void setRemoteSsn(int val);
 
-	public String getRemoteAddressDigits();
+    String getRemoteAddressDigits();
 
-	public void setRemoteAddressDigits(String val);
+    void setRemoteAddressDigits(String val);
 
 }

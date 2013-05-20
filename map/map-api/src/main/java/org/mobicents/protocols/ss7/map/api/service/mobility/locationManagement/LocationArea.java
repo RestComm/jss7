@@ -24,23 +24,19 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
 
 import org.mobicents.protocols.ss7.map.api.primitives.LAIFixedLength;
 
-
 /**
- * 
-LocationArea ::= CHOICE {
-	laiFixedLength	[0] LAIFixedLength,
-	lac			[1] LAC}
-
-
- * 
+ *
+ LocationArea ::= CHOICE { laiFixedLength [0] LAIFixedLength, lac [1] LAC}
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface LocationArea {
 
-	public LAIFixedLength getLAIFixedLength();
+    LAIFixedLength getLAIFixedLength();
 
-	public LAC getLAC();
+    LAC getLAC();
 
 }
-

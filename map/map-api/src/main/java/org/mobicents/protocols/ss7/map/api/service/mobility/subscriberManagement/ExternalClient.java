@@ -26,30 +26,24 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientExternalID;
 
 /**
- * 
-
-ExternalClient ::= SEQUENCE {
-	clientIdentity	LCSClientExternalID,
-	gmlc-Restriction	[0] GMLC-Restriction	OPTIONAL,
-	notificationToMSUser	[1] NotificationToMSUser	OPTIONAL,
-	-- If notificationToMSUser is not received, the default value according to 
-	-- 3GPP TS 23.271 shall be assumed.
-	extensionContainer	[2] ExtensionContainer	OPTIONAL,
-	... }
-
- * 
- * 
+ *
+ ExternalClient ::= SEQUENCE { clientIdentity LCSClientExternalID, gmlc-Restriction [0] GMLC-Restriction OPTIONAL,
+ * notificationToMSUser [1] NotificationToMSUser OPTIONAL, -- If notificationToMSUser is not received, the default value
+ * according to -- 3GPP TS 23.271 shall be assumed. extensionContainer [2] ExtensionContainer OPTIONAL, ... }
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ExternalClient {
 
-	public LCSClientExternalID getClientIdentity();
+    LCSClientExternalID getClientIdentity();
 
-	public GMLCRestriction getGMLCRestriction();
+    GMLCRestriction getGMLCRestriction();
 
-	public NotificationToMSUser getNotificationToMSUser();
+    NotificationToMSUser getNotificationToMSUser();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -40,103 +40,103 @@ import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class RouteSelectFailureSpecificInfoImpl extends SequenceBase implements RouteSelectFailureSpecificInfo {
 
-	private static final String CAUSE_CAP = "causeCap";
+    private static final String CAUSE_CAP = "causeCap";
 
-	public static final int _ID_failureCause = 0;
+    public static final int _ID_failureCause = 0;
 
-	private CauseCap failureCause;
+    private CauseCap failureCause;
 
-	public RouteSelectFailureSpecificInfoImpl() {
-		super("RouteSelectFailureSpecificInfo");
-	}
+    public RouteSelectFailureSpecificInfoImpl() {
+        super("RouteSelectFailureSpecificInfo");
+    }
 
-	public RouteSelectFailureSpecificInfoImpl(CauseCap failureCause) {
-		super("RouteSelectFailureSpecificInfo");
-		this.failureCause = failureCause;
-	}
+    public RouteSelectFailureSpecificInfoImpl(CauseCap failureCause) {
+        super("RouteSelectFailureSpecificInfo");
+        this.failureCause = failureCause;
+    }
 
-	@Override
-	public CauseCap getFailureCause() {
-		return failureCause;
-	}
+    @Override
+    public CauseCap getFailureCause() {
+        return failureCause;
+    }
 
-	protected void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException,
-			MAPParsingComponentException, IOException, AsnException {
+    protected void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException,
+            IOException, AsnException {
 
-		this.failureCause = null;
+        this.failureCause = null;
 
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-			int tag = ais.readTag();
+            int tag = ais.readTag();
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_failureCause:
-					this.failureCause = new CauseCapImpl();
-					((CauseCapImpl) this.failureCause).decodeAll(ais);
-					break;
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_failureCause:
+                        this.failureCause = new CauseCapImpl();
+                        ((CauseCapImpl) this.failureCause).decodeAll(ais);
+                        break;
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
-	}
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream aos) throws CAPException {
-		if (this.failureCause != null) {
-			((CauseCapImpl) this.failureCause).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_failureCause);
-		}
-	}
+    @Override
+    public void encodeData(AsnOutputStream aos) throws CAPException {
+        if (this.failureCause != null) {
+            ((CauseCapImpl) this.failureCause).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_failureCause);
+        }
+    }
 
-	@Override
-	public String toString() {
+    @Override
+    public String toString() {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
-		if (this.failureCause != null) {
-			sb.append("failureCause= {");
-			sb.append(failureCause);
-			sb.append("]");
-		}
-		sb.append("]");
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+        if (this.failureCause != null) {
+            sb.append("failureCause= {");
+            sb.append(failureCause);
+            sb.append("]");
+        }
+        sb.append("]");
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 
-	/**
-	 * XML Serialization/Deserialization
-	 */
-	protected static final XMLFormat<RouteSelectFailureSpecificInfoImpl> ROUTE_SELECT_FAILURE_SPECIFIC_INFO_XML = new XMLFormat<RouteSelectFailureSpecificInfoImpl>(
-			RouteSelectFailureSpecificInfoImpl.class) {
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<RouteSelectFailureSpecificInfoImpl> ROUTE_SELECT_FAILURE_SPECIFIC_INFO_XML = new XMLFormat<RouteSelectFailureSpecificInfoImpl>(
+            RouteSelectFailureSpecificInfoImpl.class) {
 
-		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml,
-				RouteSelectFailureSpecificInfoImpl routeSelectFailureSpecificInfo) throws XMLStreamException {
-			routeSelectFailureSpecificInfo.failureCause = xml.get(CAUSE_CAP, CauseCapImpl.class);
-		}
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml,
+                RouteSelectFailureSpecificInfoImpl routeSelectFailureSpecificInfo) throws XMLStreamException {
+            routeSelectFailureSpecificInfo.failureCause = xml.get(CAUSE_CAP, CauseCapImpl.class);
+        }
 
-		@Override
-		public void write(RouteSelectFailureSpecificInfoImpl routeSelectFailureSpecificInfo,
-				javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+        @Override
+        public void write(RouteSelectFailureSpecificInfoImpl routeSelectFailureSpecificInfo,
+                javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
 
-			if (routeSelectFailureSpecificInfo.failureCause != null) {
-				xml.add(((CauseCapImpl) routeSelectFailureSpecificInfo.failureCause), CAUSE_CAP, CauseCapImpl.class);
-			}
-		}
-	};
+            if (routeSelectFailureSpecificInfo.failureCause != null) {
+                xml.add(((CauseCapImpl) routeSelectFailureSpecificInfo.failureCause), CAUSE_CAP, CauseCapImpl.class);
+            }
+        }
+    };
 }

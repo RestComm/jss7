@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -25,9 +25,9 @@ import javolution.util.FastMap;
 
 /**
  * @author amit bhayani
- * 
+ *
  */
 public class ConcernedSignalingPointCodeMap<Integer, ConcernedSignalingPointCodeImpl> extends
-		FastMap<Integer, ConcernedSignalingPointCodeImpl> {
+        FastMap<Integer, ConcernedSignalingPointCodeImpl> {
 
 }

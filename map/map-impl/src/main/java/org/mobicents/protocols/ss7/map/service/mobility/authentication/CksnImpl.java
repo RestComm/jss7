@@ -26,23 +26,23 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.Cksn;
 import org.mobicents.protocols.ss7.map.primitives.OctetStringLength1Base;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class CksnImpl  extends OctetStringLength1Base implements Cksn{
+public class CksnImpl extends OctetStringLength1Base implements Cksn {
 
-	public CksnImpl( int data) {
-		super("Cksn", data);
-	}
-	
-	public CksnImpl() {
-		super("Cksn");
-	}
+    public CksnImpl(int data) {
+        super("Cksn", data);
+    }
 
-	@Override
-	public int getData() {
-		return this.data;
-	}
+    public CksnImpl() {
+        super("Cksn");
+    }
+
+    @Override
+    public int getData() {
+        return this.data;
+    }
 
 }

@@ -25,34 +25,27 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-ServiceType ::= SEQUENCE {
-	serviceTypeIdentity	LCSServiceTypeID,
-	gmlc-Restriction	[0] GMLC-Restriction	OPTIONAL,
-	notificationToMSUser	[1] NotificationToMSUser	OPTIONAL,
-	-- If notificationToMSUser is not received, the default value according to 
-	-- 3GPP TS 23.271 shall be assumed.
-	extensionContainer	[2] ExtensionContainer	OPTIONAL,
-	... }
-
-LCSServiceTypeID ::= INTEGER (0..127)
-	-- the integer values 0-63 are reserved for Standard LCS service types
-	-- the integer values 64-127 are reserved for Non Standard LCS service types
-
- * 
- * 
+ *
+ ServiceType ::= SEQUENCE { serviceTypeIdentity LCSServiceTypeID, gmlc-Restriction [0] GMLC-Restriction OPTIONAL,
+ * notificationToMSUser [1] NotificationToMSUser OPTIONAL, -- If notificationToMSUser is not received, the default value
+ * according to -- 3GPP TS 23.271 shall be assumed. extensionContainer [2] ExtensionContainer OPTIONAL, ... }
+ *
+ * LCSServiceTypeID ::= INTEGER (0..127) -- the integer values 0-63 are reserved for Standard LCS service types -- the integer
+ * values 64-127 are reserved for Non Standard LCS service types
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ServiceType {
 
-	public int getServiceTypeIdentity();
+    int getServiceTypeIdentity();
 
-	public GMLCRestriction getGMLCRestriction();
+    GMLCRestriction getGMLCRestriction();
 
-	public NotificationToMSUser getNotificationToMSUser();
+    NotificationToMSUser getNotificationToMSUser();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

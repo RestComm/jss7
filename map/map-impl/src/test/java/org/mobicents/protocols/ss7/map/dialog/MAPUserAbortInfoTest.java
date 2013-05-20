@@ -22,9 +22,12 @@
 
 package org.mobicents.protocols.ss7.map.dialog;
 
-import java.util.Arrays;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
-import static org.testng.Assert.*;import org.testng.*;import org.testng.annotations.*;
+import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -33,390 +36,378 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.dialog.ProcedureCancellationReason;
 import org.mobicents.protocols.ss7.map.api.dialog.ResourceUnavailableReason;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
+import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author amit bhayani
  * @author sergey vetyutnev
- * 
+ *
  */
-public class MAPUserAbortInfoTest  {
-
-	
-// TODO: to Amit: please check this commented tests. They contradict the specification and my live traces 
-//
-//	@Test(groups = { "functional.decode","dialog"})
-//	public void testProcedureCancellationReasonDecode() throws Exception {
-//
-//		// The raw data is hand made
-//		byte[] data = new byte[] { (byte) 0xa4, 0x05, 0x03, 0x03, 0x0a, 0x01,
-//				0x04 };
-//
-//		ByteArrayInputStream baIs = new ByteArrayInputStream(data);
-//		AsnInputStream asnIs = new AsnInputStream(baIs);
-//
-//		int tag = asnIs.readTag();
-//
-//		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
-//		mapUserAbortInfo.decode(asnIs);
-//
-//		MAPUserAbortChoice mapUserAbortChoice = mapUserAbortInfo
-//				.getMAPUserAbortChoice();
-//
-//		assertNotNull(mapUserAbortChoice);
-//
-//		assertFalse(mapUserAbortChoice.isUserSpecificReason());
-//		assertTrue(mapUserAbortChoice.isProcedureCancellationReason());
-//		assertFalse(mapUserAbortChoice.isResourceUnavailableReason());
-//		assertFalse(mapUserAbortChoice.isUserResourceLimitation());
-//
-//		ProcedureCancellationReason procdCancellReasn = mapUserAbortChoice
-//				.getProcedureCancellationReason();
-//		
-//		assertNotNull(procdCancellReasn);
-//		
-//		assertEquals( ProcedureCancellationReason.associatedProcedureFailure,procdCancellReasn);
-//
-//	}
-//
-//	@Test(groups = { "functional.encode","dialog"})
-//	public void testResourceUnavailableEncode() throws Exception {
-//		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
-//
-//		MAPUserAbortChoiceImpl mapUserAbortChoice = new MAPUserAbortChoiceImpl();
-//		mapUserAbortChoice
-//				.setResourceUnavailableReason(ResourceUnavailableReason.longTermResourceLimitation);
-//
-//		mapUserAbortInfo.setMAPUserAbortChoice(mapUserAbortChoice);
-//
-//		AsnOutputStream asnOS = new AsnOutputStream();
-//
-//		mapUserAbortInfo.encode(asnOS);
-//
-//		byte[] data = asnOS.toByteArray();
-//
-//		System.out.println(Utils.dump(data, data.length, false));
-//
-//		assertTrue( (byte, 0x05,Arrays.equals(new byte[] { (byte) 0xA4) 0x02,
-//				0x03, 0x0A, 0x01, 0x01 }, data));
-//	}
-//
-//	@Test(groups = { "functional.encode","dialog"})
-//	public void testProcedureCancellationReasonEncode() throws Exception {
-//		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
-//
-//		MAPUserAbortChoiceImpl mapUserAbortChoice = new MAPUserAbortChoiceImpl();
-//		mapUserAbortChoice
-//				.setProcedureCancellationReason(ProcedureCancellationReason.associatedProcedureFailure);
-//
-//		mapUserAbortInfo.setMAPUserAbortChoice(mapUserAbortChoice);
-//
-//		AsnOutputStream asnOS = new AsnOutputStream();
-//
-//		mapUserAbortInfo.encode(asnOS);
-//
-//		byte[] data = asnOS.toByteArray();
-//
-//		System.out.println(Utils.dump(data, data.length, false));
-//
-//		assertTrue( (byte, 0x05,Arrays.equals(new byte[] { (byte) 0xA4) 0x03,
-//				0x03, 0x0A, 0x01, 0x04 }, data));
-//	}
-	
-	
-	private byte[] getDataUserSpecificReason() {
-		return new byte[] { (byte) 164, 2, (byte) 128, 0 };
-	}
-
-	private byte[] getUserResourceLimitationReason() {
-		return new byte[] { (byte) 164, 2, (byte) 129, 0 };
-	}
-
-	private byte[] getResourceUnavailableReason() {
-		return new byte[] { (byte) 164, 3, (byte) 130, 1, 0 };
-	}
-
-	private byte[] getProcedureCancellationReason() {
-		return new byte[] { (byte) 164, 3, (byte) 131, 1, 4 };
-//		return new byte[] { (byte) 0xA4, 0x05, (byte) 0x03, 0x03, 0x0A, 0x01, 0x04 };
-	}
-
-	private byte[] getDataFull() {
-		return new byte[] { -92, 44, -125, 1, 3, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5,
-				21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
-	}
+public class MAPUserAbortInfoTest {
+
+    // TODO: to Amit: please check this commented tests. They contradict the specification and my live traces
+    //
+    // @Test(groups = { "functional.decode","dialog"})
+    // public void testProcedureCancellationReasonDecode() throws Exception {
+    //
+    // // The raw data is hand made
+    // byte[] data = new byte[] { (byte) 0xa4, 0x05, 0x03, 0x03, 0x0a, 0x01,
+    // 0x04 };
+    //
+    // ByteArrayInputStream baIs = new ByteArrayInputStream(data);
+    // AsnInputStream asnIs = new AsnInputStream(baIs);
+    //
+    // int tag = asnIs.readTag();
+    //
+    // MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
+    // mapUserAbortInfo.decode(asnIs);
+    //
+    // MAPUserAbortChoice mapUserAbortChoice = mapUserAbortInfo
+    // .getMAPUserAbortChoice();
+    //
+    // assertNotNull(mapUserAbortChoice);
+    //
+    // assertFalse(mapUserAbortChoice.isUserSpecificReason());
+    // assertTrue(mapUserAbortChoice.isProcedureCancellationReason());
+    // assertFalse(mapUserAbortChoice.isResourceUnavailableReason());
+    // assertFalse(mapUserAbortChoice.isUserResourceLimitation());
+    //
+    // ProcedureCancellationReason procdCancellReasn = mapUserAbortChoice
+    // .getProcedureCancellationReason();
+    //
+    // assertNotNull(procdCancellReasn);
+    //
+    // assertEquals( ProcedureCancellationReason.associatedProcedureFailure,procdCancellReasn);
+    //
+    // }
+    //
+    // @Test(groups = { "functional.encode","dialog"})
+    // public void testResourceUnavailableEncode() throws Exception {
+    // MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
+    //
+    // MAPUserAbortChoiceImpl mapUserAbortChoice = new MAPUserAbortChoiceImpl();
+    // mapUserAbortChoice
+    // .setResourceUnavailableReason(ResourceUnavailableReason.longTermResourceLimitation);
+    //
+    // mapUserAbortInfo.setMAPUserAbortChoice(mapUserAbortChoice);
+    //
+    // AsnOutputStream asnOS = new AsnOutputStream();
+    //
+    // mapUserAbortInfo.encode(asnOS);
+    //
+    // byte[] data = asnOS.toByteArray();
+    //
+    // System.out.println(Utils.dump(data, data.length, false));
+    //
+    // assertTrue( (byte, 0x05,Arrays.equals(new byte[] { (byte) 0xA4) 0x02,
+    // 0x03, 0x0A, 0x01, 0x01 }, data));
+    // }
+    //
+    // @Test(groups = { "functional.encode","dialog"})
+    // public void testProcedureCancellationReasonEncode() throws Exception {
+    // MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
+    //
+    // MAPUserAbortChoiceImpl mapUserAbortChoice = new MAPUserAbortChoiceImpl();
+    // mapUserAbortChoice
+    // .setProcedureCancellationReason(ProcedureCancellationReason.associatedProcedureFailure);
+    //
+    // mapUserAbortInfo.setMAPUserAbortChoice(mapUserAbortChoice);
+    //
+    // AsnOutputStream asnOS = new AsnOutputStream();
+    //
+    // mapUserAbortInfo.encode(asnOS);
+    //
+    // byte[] data = asnOS.toByteArray();
+    //
+    // System.out.println(Utils.dump(data, data.length, false));
+    //
+    // assertTrue( (byte, 0x05,Arrays.equals(new byte[] { (byte) 0xA4) 0x03,
+    // 0x03, 0x0A, 0x01, 0x04 }, data));
+    // }
+
+    private byte[] getDataUserSpecificReason() {
+        return new byte[] { (byte) 164, 2, (byte) 128, 0 };
+    }
+
+    private byte[] getUserResourceLimitationReason() {
+        return new byte[] { (byte) 164, 2, (byte) 129, 0 };
+    }
+
+    private byte[] getResourceUnavailableReason() {
+        return new byte[] { (byte) 164, 3, (byte) 130, 1, 0 };
+    }
+
+    private byte[] getProcedureCancellationReason() {
+        return new byte[] { (byte) 164, 3, (byte) 131, 1, 4 };
+        // return new byte[] { (byte) 0xA4, 0x05, (byte) 0x03, 0x03, 0x0A, 0x01, 0x04 };
+    }
+
+    private byte[] getDataFull() {
+        return new byte[] { -92, 44, -125, 1, 3, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42,
+                3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
+    }
 
-	private byte[] getBadlyEncodedFromLiveTrace() {
-		return new byte[] { -92, 1, -128 };
-	}
+    private byte[] getBadlyEncodedFromLiveTrace() {
+        return new byte[] { -92, 1, -128 };
+    }
 
-	@Test(groups = { "functional.decode","dialog"})
-	public void testUserSpecificReasonDecode() throws Exception {
+    @Test(groups = { "functional.decode", "dialog" })
+    public void testUserSpecificReasonDecode() throws Exception {
 
-		// The raw data is hand made
-		byte[] data = getDataUserSpecificReason();
-		AsnInputStream asnIs = new AsnInputStream(data);
+        // The raw data is hand made
+        byte[] data = getDataUserSpecificReason();
+        AsnInputStream asnIs = new AsnInputStream(data);
 
-		int tag = asnIs.readTag();
-		assertEquals( tag,4);
+        int tag = asnIs.readTag();
+        assertEquals(tag, 4);
 
-		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
-		mapUserAbortInfo.decodeAll(asnIs);
+        MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
+        mapUserAbortInfo.decodeAll(asnIs);
 
-		MAPUserAbortChoice mapUserAbortChoice = mapUserAbortInfo
-				.getMAPUserAbortChoice();
+        MAPUserAbortChoice mapUserAbortChoice = mapUserAbortInfo.getMAPUserAbortChoice();
 
-		assertNotNull(mapUserAbortChoice);
+        assertNotNull(mapUserAbortChoice);
 
-		assertTrue(mapUserAbortChoice.isUserSpecificReason());
-		assertFalse(mapUserAbortChoice.isProcedureCancellationReason());
-		assertFalse(mapUserAbortChoice.isResourceUnavailableReason());
-		assertFalse(mapUserAbortChoice.isUserResourceLimitation());
+        assertTrue(mapUserAbortChoice.isUserSpecificReason());
+        assertFalse(mapUserAbortChoice.isProcedureCancellationReason());
+        assertFalse(mapUserAbortChoice.isResourceUnavailableReason());
+        assertFalse(mapUserAbortChoice.isUserResourceLimitation());
 
-	}
+    }
 
-	@Test(groups = { "functional.encode","dialog"})
-	public void testUserSpecificReasonEncode() throws Exception {
-		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
-		MAPUserAbortChoiceImpl mapUserAbortChoice = new MAPUserAbortChoiceImpl();
-		mapUserAbortChoice.setUserSpecificReason();
+    @Test(groups = { "functional.encode", "dialog" })
+    public void testUserSpecificReasonEncode() throws Exception {
+        MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
+        MAPUserAbortChoiceImpl mapUserAbortChoice = new MAPUserAbortChoiceImpl();
+        mapUserAbortChoice.setUserSpecificReason();
 
-		mapUserAbortInfo.setMAPUserAbortChoice(mapUserAbortChoice);
+        mapUserAbortInfo.setMAPUserAbortChoice(mapUserAbortChoice);
 
-		AsnOutputStream asnOS = new AsnOutputStream();
+        AsnOutputStream asnOS = new AsnOutputStream();
 
-		mapUserAbortInfo.encodeAll(asnOS);
+        mapUserAbortInfo.encodeAll(asnOS);
 
-		byte[] data = asnOS.toByteArray();
+        byte[] data = asnOS.toByteArray();
 
-		System.out.println(Utils.dump(data, data.length, false));
+        System.out.println(Utils.dump(data, data.length, false));
 
-		assertTrue(Arrays.equals(getDataUserSpecificReason(),data));
-	}
-	
-	@Test(groups = { "functional.decode","dialog"})
-	public void testUserResourceLimitationDecode() throws Exception {
+        assertTrue(Arrays.equals(getDataUserSpecificReason(), data));
+    }
 
-		// The raw data is hand made
-		byte[] data = getUserResourceLimitationReason();
-		AsnInputStream asnIs = new AsnInputStream(data);
+    @Test(groups = { "functional.decode", "dialog" })
+    public void testUserResourceLimitationDecode() throws Exception {
 
-		int tag = asnIs.readTag();
-		assertEquals( tag,4);
+        // The raw data is hand made
+        byte[] data = getUserResourceLimitationReason();
+        AsnInputStream asnIs = new AsnInputStream(data);
 
-		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
-		mapUserAbortInfo.decodeAll(asnIs);
+        int tag = asnIs.readTag();
+        assertEquals(tag, 4);
 
-		MAPUserAbortChoice mapUserAbortChoice = mapUserAbortInfo
-				.getMAPUserAbortChoice();
+        MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
+        mapUserAbortInfo.decodeAll(asnIs);
 
-		assertNotNull(mapUserAbortChoice);
+        MAPUserAbortChoice mapUserAbortChoice = mapUserAbortInfo.getMAPUserAbortChoice();
 
-		assertFalse(mapUserAbortChoice.isUserSpecificReason());
-		assertFalse(mapUserAbortChoice.isProcedureCancellationReason());
-		assertFalse(mapUserAbortChoice.isResourceUnavailableReason());
-		assertTrue(mapUserAbortChoice.isUserResourceLimitation());
+        assertNotNull(mapUserAbortChoice);
 
-	}
+        assertFalse(mapUserAbortChoice.isUserSpecificReason());
+        assertFalse(mapUserAbortChoice.isProcedureCancellationReason());
+        assertFalse(mapUserAbortChoice.isResourceUnavailableReason());
+        assertTrue(mapUserAbortChoice.isUserResourceLimitation());
 
-	@Test(groups = { "functional.encode","dialog"})
-	public void testUserResourceLimitationEncode() throws Exception {
-		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
-		MAPUserAbortChoiceImpl mapUserAbortChoice = new MAPUserAbortChoiceImpl();
-		mapUserAbortChoice.setUserResourceLimitation();
+    }
 
-		mapUserAbortInfo.setMAPUserAbortChoice(mapUserAbortChoice);
+    @Test(groups = { "functional.encode", "dialog" })
+    public void testUserResourceLimitationEncode() throws Exception {
+        MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
+        MAPUserAbortChoiceImpl mapUserAbortChoice = new MAPUserAbortChoiceImpl();
+        mapUserAbortChoice.setUserResourceLimitation();
 
-		AsnOutputStream asnOS = new AsnOutputStream();
+        mapUserAbortInfo.setMAPUserAbortChoice(mapUserAbortChoice);
 
-		mapUserAbortInfo.encodeAll(asnOS);
+        AsnOutputStream asnOS = new AsnOutputStream();
 
-		byte[] data = asnOS.toByteArray();
+        mapUserAbortInfo.encodeAll(asnOS);
 
-		System.out.println(Utils.dump(data, data.length, false));
+        byte[] data = asnOS.toByteArray();
 
-		assertTrue( Arrays.equals(getUserResourceLimitationReason(),data));
-	}
-	
-	@Test(groups = { "functional.decode","dialog"})
-	public void testResourceUnavailableDecode() throws Exception {
+        System.out.println(Utils.dump(data, data.length, false));
 
-		// The raw data is hand made
-		byte[] data = getResourceUnavailableReason();
-		AsnInputStream asnIs = new AsnInputStream(data);
+        assertTrue(Arrays.equals(getUserResourceLimitationReason(), data));
+    }
 
-		int tag = asnIs.readTag();
-		assertEquals( tag,4);
+    @Test(groups = { "functional.decode", "dialog" })
+    public void testResourceUnavailableDecode() throws Exception {
 
-		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
-		mapUserAbortInfo.decodeAll(asnIs);
+        // The raw data is hand made
+        byte[] data = getResourceUnavailableReason();
+        AsnInputStream asnIs = new AsnInputStream(data);
 
-		MAPUserAbortChoice mapUserAbortChoice = mapUserAbortInfo
-				.getMAPUserAbortChoice();
+        int tag = asnIs.readTag();
+        assertEquals(tag, 4);
 
-		assertNotNull(mapUserAbortChoice);
+        MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
+        mapUserAbortInfo.decodeAll(asnIs);
 
-		assertFalse(mapUserAbortChoice.isUserSpecificReason());
-		assertFalse(mapUserAbortChoice.isProcedureCancellationReason());
-		assertTrue(mapUserAbortChoice.isResourceUnavailableReason());
-		assertFalse(mapUserAbortChoice.isUserResourceLimitation());
-		assertEquals( mapUserAbortChoice.getResourceUnavailableReason(),ResourceUnavailableReason.shortTermResourceLimitation);
+        MAPUserAbortChoice mapUserAbortChoice = mapUserAbortInfo.getMAPUserAbortChoice();
 
-	}
+        assertNotNull(mapUserAbortChoice);
 
-	@Test(groups = { "functional.encode","dialog"})
-	public void testResourceUnavailableEncode() throws Exception {
-		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
+        assertFalse(mapUserAbortChoice.isUserSpecificReason());
+        assertFalse(mapUserAbortChoice.isProcedureCancellationReason());
+        assertTrue(mapUserAbortChoice.isResourceUnavailableReason());
+        assertFalse(mapUserAbortChoice.isUserResourceLimitation());
+        assertEquals(mapUserAbortChoice.getResourceUnavailableReason(), ResourceUnavailableReason.shortTermResourceLimitation);
 
-		MAPUserAbortChoiceImpl mapUserAbortChoice = new MAPUserAbortChoiceImpl();
-		mapUserAbortChoice
-				.setResourceUnavailableReason(ResourceUnavailableReason.shortTermResourceLimitation);
+    }
 
-		mapUserAbortInfo.setMAPUserAbortChoice(mapUserAbortChoice);
+    @Test(groups = { "functional.encode", "dialog" })
+    public void testResourceUnavailableEncode() throws Exception {
+        MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
 
-		AsnOutputStream asnOS = new AsnOutputStream();
+        MAPUserAbortChoiceImpl mapUserAbortChoice = new MAPUserAbortChoiceImpl();
+        mapUserAbortChoice.setResourceUnavailableReason(ResourceUnavailableReason.shortTermResourceLimitation);
 
-		mapUserAbortInfo.encodeAll(asnOS);
+        mapUserAbortInfo.setMAPUserAbortChoice(mapUserAbortChoice);
 
-		byte[] data = asnOS.toByteArray();
+        AsnOutputStream asnOS = new AsnOutputStream();
 
-		System.out.println(Utils.dump(data, data.length, false));
+        mapUserAbortInfo.encodeAll(asnOS);
 
-		assertTrue( Arrays.equals(getResourceUnavailableReason(),data));
-	}
-	
-	@Test(groups = { "functional.decode","dialog"})
-	public void testProcedureCancellationReasonDecode() throws Exception {
+        byte[] data = asnOS.toByteArray();
 
-		// The raw data is hand made
-		byte[] data = getProcedureCancellationReason();
+        System.out.println(Utils.dump(data, data.length, false));
 
-		AsnInputStream asnIs = new AsnInputStream(data);
+        assertTrue(Arrays.equals(getResourceUnavailableReason(), data));
+    }
 
-		int tag = asnIs.readTag();
-		assertEquals( tag,4);
+    @Test(groups = { "functional.decode", "dialog" })
+    public void testProcedureCancellationReasonDecode() throws Exception {
 
-		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
-		mapUserAbortInfo.decodeAll(asnIs);
+        // The raw data is hand made
+        byte[] data = getProcedureCancellationReason();
 
-		MAPUserAbortChoice mapUserAbortChoice = mapUserAbortInfo
-				.getMAPUserAbortChoice();
+        AsnInputStream asnIs = new AsnInputStream(data);
 
-		assertNotNull(mapUserAbortChoice);
+        int tag = asnIs.readTag();
+        assertEquals(tag, 4);
 
-		assertFalse(mapUserAbortChoice.isUserSpecificReason());
-		assertTrue(mapUserAbortChoice.isProcedureCancellationReason());
-		assertFalse(mapUserAbortChoice.isResourceUnavailableReason());
-		assertFalse(mapUserAbortChoice.isUserResourceLimitation());
+        MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
+        mapUserAbortInfo.decodeAll(asnIs);
 
-		ProcedureCancellationReason procdCancellReasn = mapUserAbortChoice
-				.getProcedureCancellationReason();
-		
-		assertNotNull(procdCancellReasn);
-		
-		assertEquals( ProcedureCancellationReason.associatedProcedureFailure,procdCancellReasn);
+        MAPUserAbortChoice mapUserAbortChoice = mapUserAbortInfo.getMAPUserAbortChoice();
 
-	}
+        assertNotNull(mapUserAbortChoice);
 
-	@Test(groups = { "functional.encode","dialog"})
-	public void testProcedureCancellationReasonEncode() throws Exception {
-		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
+        assertFalse(mapUserAbortChoice.isUserSpecificReason());
+        assertTrue(mapUserAbortChoice.isProcedureCancellationReason());
+        assertFalse(mapUserAbortChoice.isResourceUnavailableReason());
+        assertFalse(mapUserAbortChoice.isUserResourceLimitation());
 
-		MAPUserAbortChoiceImpl mapUserAbortChoice = new MAPUserAbortChoiceImpl();
-		mapUserAbortChoice
-				.setProcedureCancellationReason(ProcedureCancellationReason.associatedProcedureFailure);
+        ProcedureCancellationReason procdCancellReasn = mapUserAbortChoice.getProcedureCancellationReason();
 
-		mapUserAbortInfo.setMAPUserAbortChoice(mapUserAbortChoice);
+        assertNotNull(procdCancellReasn);
 
-		AsnOutputStream asnOS = new AsnOutputStream();
+        assertEquals(ProcedureCancellationReason.associatedProcedureFailure, procdCancellReasn);
 
-		mapUserAbortInfo.encodeAll(asnOS);
+    }
 
-		byte[] data = asnOS.toByteArray();
+    @Test(groups = { "functional.encode", "dialog" })
+    public void testProcedureCancellationReasonEncode() throws Exception {
+        MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
 
-		System.out.println(Utils.dump(data, data.length, false));
+        MAPUserAbortChoiceImpl mapUserAbortChoice = new MAPUserAbortChoiceImpl();
+        mapUserAbortChoice.setProcedureCancellationReason(ProcedureCancellationReason.associatedProcedureFailure);
 
-		assertTrue( Arrays.equals(getProcedureCancellationReason(),data));
-	}
-	
-	@Test(groups = { "functional.decode","dialog"})
-	public void testFullDecode() throws Exception {
+        mapUserAbortInfo.setMAPUserAbortChoice(mapUserAbortChoice);
 
-		// The raw data is hand made
-		byte[] data = getDataFull();
+        AsnOutputStream asnOS = new AsnOutputStream();
 
-		AsnInputStream asnIs = new AsnInputStream(data);
+        mapUserAbortInfo.encodeAll(asnOS);
 
-		int tag = asnIs.readTag();
-		assertEquals( tag,4);
+        byte[] data = asnOS.toByteArray();
 
-		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
-		mapUserAbortInfo.decodeAll(asnIs);
+        System.out.println(Utils.dump(data, data.length, false));
 
-		MAPUserAbortChoice mapUserAbortChoice = mapUserAbortInfo
-				.getMAPUserAbortChoice();
+        assertTrue(Arrays.equals(getProcedureCancellationReason(), data));
+    }
 
-		assertNotNull(mapUserAbortChoice);
+    @Test(groups = { "functional.decode", "dialog" })
+    public void testFullDecode() throws Exception {
 
-		assertFalse(mapUserAbortChoice.isUserSpecificReason());
-		assertTrue(mapUserAbortChoice.isProcedureCancellationReason());
-		assertFalse(mapUserAbortChoice.isResourceUnavailableReason());
-		assertFalse(mapUserAbortChoice.isUserResourceLimitation());
+        // The raw data is hand made
+        byte[] data = getDataFull();
 
-		ProcedureCancellationReason procdCancellReasn = mapUserAbortChoice
-				.getProcedureCancellationReason();
-		
-		assertNotNull(procdCancellReasn);
-		
-		assertEquals( ProcedureCancellationReason.callRelease,procdCancellReasn);
+        AsnInputStream asnIs = new AsnInputStream(data);
 
-		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(mapUserAbortInfo.getExtensionContainer()));
-	}
+        int tag = asnIs.readTag();
+        assertEquals(tag, 4);
 
-	@Test(groups = { "functional.encode","dialog"})
-	public void testFullEncode() throws Exception {
-		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
+        MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
+        mapUserAbortInfo.decodeAll(asnIs);
 
-		MAPUserAbortChoiceImpl mapUserAbortChoice = new MAPUserAbortChoiceImpl();
-		mapUserAbortChoice.setProcedureCancellationReason(ProcedureCancellationReason.callRelease);
+        MAPUserAbortChoice mapUserAbortChoice = mapUserAbortInfo.getMAPUserAbortChoice();
 
-		mapUserAbortInfo.setMAPUserAbortChoice(mapUserAbortChoice);
-		mapUserAbortInfo.setExtensionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
+        assertNotNull(mapUserAbortChoice);
 
-		AsnOutputStream asnOS = new AsnOutputStream();
+        assertFalse(mapUserAbortChoice.isUserSpecificReason());
+        assertTrue(mapUserAbortChoice.isProcedureCancellationReason());
+        assertFalse(mapUserAbortChoice.isResourceUnavailableReason());
+        assertFalse(mapUserAbortChoice.isUserResourceLimitation());
 
-		mapUserAbortInfo.encodeAll(asnOS);
+        ProcedureCancellationReason procdCancellReasn = mapUserAbortChoice.getProcedureCancellationReason();
 
-		byte[] data = asnOS.toByteArray();
+        assertNotNull(procdCancellReasn);
 
-		System.out.println(Utils.dump(data, data.length, false));
+        assertEquals(ProcedureCancellationReason.callRelease, procdCancellReasn);
 
-		assertTrue( Arrays.equals(getDataFull(),data));
-	}
-	
-	@Test(groups = { "functional.decode","dialog"})
-	public void testBadlyEncodedFromLiveTraceDecode() throws Exception {
+        assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(mapUserAbortInfo.getExtensionContainer()));
+    }
 
-		// The raw data is hand made
-		byte[] data = getBadlyEncodedFromLiveTrace();
+    @Test(groups = { "functional.encode", "dialog" })
+    public void testFullEncode() throws Exception {
+        MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
 
-		AsnInputStream asnIs = new AsnInputStream(data);
+        MAPUserAbortChoiceImpl mapUserAbortChoice = new MAPUserAbortChoiceImpl();
+        mapUserAbortChoice.setProcedureCancellationReason(ProcedureCancellationReason.callRelease);
 
-		int tag = asnIs.readTag();
-		assertEquals( tag,4);
+        mapUserAbortInfo.setMAPUserAbortChoice(mapUserAbortChoice);
+        mapUserAbortInfo.setExtensionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
 
-		MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
-		mapUserAbortInfo.decodeAll(asnIs);
+        AsnOutputStream asnOS = new AsnOutputStream();
 
-		MAPUserAbortChoice mapUserAbortChoice = mapUserAbortInfo
-				.getMAPUserAbortChoice();
+        mapUserAbortInfo.encodeAll(asnOS);
 
-		assertNotNull(mapUserAbortChoice);
+        byte[] data = asnOS.toByteArray();
 
-		assertTrue(mapUserAbortChoice.isUserSpecificReason());
-		assertFalse(mapUserAbortChoice.isProcedureCancellationReason());
-		assertFalse(mapUserAbortChoice.isResourceUnavailableReason());
-		assertFalse(mapUserAbortChoice.isUserResourceLimitation());
-	}
+        System.out.println(Utils.dump(data, data.length, false));
+
+        assertTrue(Arrays.equals(getDataFull(), data));
+    }
+
+    @Test(groups = { "functional.decode", "dialog" })
+    public void testBadlyEncodedFromLiveTraceDecode() throws Exception {
+
+        // The raw data is hand made
+        byte[] data = getBadlyEncodedFromLiveTrace();
+
+        AsnInputStream asnIs = new AsnInputStream(data);
+
+        int tag = asnIs.readTag();
+        assertEquals(tag, 4);
+
+        MAPUserAbortInfoImpl mapUserAbortInfo = new MAPUserAbortInfoImpl();
+        mapUserAbortInfo.decodeAll(asnIs);
+
+        MAPUserAbortChoice mapUserAbortChoice = mapUserAbortInfo.getMAPUserAbortChoice();
+
+        assertNotNull(mapUserAbortChoice);
+
+        assertTrue(mapUserAbortChoice.isUserSpecificReason());
+        assertFalse(mapUserAbortChoice.isProcedureCancellationReason());
+        assertFalse(mapUserAbortChoice.isResourceUnavailableReason());
+        assertFalse(mapUserAbortChoice.isUserResourceLimitation());
+    }
 }
-

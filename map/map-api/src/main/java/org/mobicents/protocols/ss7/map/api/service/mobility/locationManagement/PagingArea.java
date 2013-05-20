@@ -25,16 +25,15 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
 import java.util.ArrayList;
 
 /**
- * 
-PagingArea ::= SEQUENCE SIZE (1..5) OF LocationArea 
-
- * 
+ *
+ PagingArea ::= SEQUENCE SIZE (1..5) OF LocationArea
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface PagingArea {
 
-	public ArrayList<LocationArea> getLocationAreas();
+    ArrayList<LocationArea> getLocationAreas();
 
 }
-

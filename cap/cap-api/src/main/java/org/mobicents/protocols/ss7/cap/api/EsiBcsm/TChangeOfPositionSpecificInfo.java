@@ -27,25 +27,20 @@ import java.util.ArrayList;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformation;
 
 /**
-*
-tChangeOfPositionSpecificInfo [51] SEQUENCE {
-locationInformation [50] LocationInformation OPTIONAL,
-...,
-metDPCriteriaList [51] MetDPCriteriaList {bound} OPTIONAL
-},
-dpSpecificInfoAlt [52] DpSpecificInfoAlt {bound}
-}
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ tChangeOfPositionSpecificInfo [51] SEQUENCE { locationInformation [50] LocationInformation OPTIONAL, ..., metDPCriteriaList
+ * [51] MetDPCriteriaList {bound} OPTIONAL }, dpSpecificInfoAlt [52] DpSpecificInfoAlt {bound} }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface TChangeOfPositionSpecificInfo {
 
-	public LocationInformation getLocationInformation();
+    LocationInformation getLocationInformation();
 
-	public ArrayList<MetDPCriterion> getMetDPCriteriaList();
+    ArrayList<MetDPCriterion> getMetDPCriteriaList();
 
-	public DpSpecificInfoAlt getDpSpecificInfoAlt();
+    DpSpecificInfoAlt getDpSpecificInfoAlt();
 
 }

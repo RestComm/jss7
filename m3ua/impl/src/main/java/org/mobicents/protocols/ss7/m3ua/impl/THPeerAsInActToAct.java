@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -29,35 +29,35 @@ import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSMState;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
 
 /**
- * 
+ *
  * @author amit bhayani
  *
  */
 public class THPeerAsInActToAct implements TransitionHandler {
 
-	private static final Logger logger = Logger.getLogger(THPeerAsInActToAct.class);
+    private static final Logger logger = Logger.getLogger(THPeerAsInActToAct.class);
 
-	private AsImpl asImpl = null;
-	private FSM fsm;
+    private AsImpl asImpl = null;
+    private FSM fsm;
 
-	THPeerAsInActToAct(AsImpl asImpl, FSM fsm) {
-		this.asImpl = asImpl;
-		this.fsm = fsm;
-	}
+    THPeerAsInActToAct(AsImpl asImpl, FSM fsm) {
+        this.asImpl = asImpl;
+        this.fsm = fsm;
+    }
 
-	@Override
-	public boolean process(FSMState state) {
-		FastSet<AsStateListener> asStateListeners = this.asImpl.getAsStateListeners();
-		for (FastSet.Record r = asStateListeners.head(), end = asStateListeners.tail(); (r = r.getNext()) != end;) {
-			AsStateListener asAsStateListener = asStateListeners.valueOf(r);
-			try {
-				asAsStateListener.onAsActive(this.asImpl);
-			} catch (Exception e) {
-				logger.error(String.format("Error while calling AsStateListener=%s onAsActive method for As=%s",
-						asAsStateListener, this.asImpl));
-			}
-		}
-		return true;
-	}
+    @Override
+    public boolean process(FSMState state) {
+        FastSet<AsStateListener> asStateListeners = this.asImpl.getAsStateListeners();
+        for (FastSet.Record r = asStateListeners.head(), end = asStateListeners.tail(); (r = r.getNext()) != end;) {
+            AsStateListener asAsStateListener = asStateListeners.valueOf(r);
+            try {
+                asAsStateListener.onAsActive(this.asImpl);
+            } catch (Exception e) {
+                logger.error(String.format("Error while calling AsStateListener=%s onAsActive method for As=%s",
+                        asAsStateListener, this.asImpl));
+            }
+        }
+        return true;
+    }
 
 }

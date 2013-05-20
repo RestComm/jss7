@@ -35,45 +35,45 @@ import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.PDPID;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
 public class FCIBCCCAMELsequence1Test {
 
-	public byte[] getData() {
-		return new byte[] {-96, 16, -128, 8, 48, 6, -128, 1, 5, -127, 1, 2, -127, 1, 2, -126, 1, 1};
-	};
-	
-	public byte[] getFreeFormatData() {
-		return new byte[] {48, 6, -128, 1, 5, -127, 1, 2};
-	};
-	
-	@Test(groups = { "functional.decode", "primitives" })
-	public void testDecode() throws Exception {
-		byte[] data = this.getData();
-		AsnInputStream asn = new AsnInputStream(data);
-		int tag = asn.readTag();
-		FCIBCCCAMELsequence1Impl prim = new FCIBCCCAMELsequence1Impl();
-		prim.decodeAll(asn);
-		
-		assertEquals(tag, FCIBCCCAMELsequence1Impl._ID_FCIBCCCAMELsequence1);
-		assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
+    public byte[] getData() {
+        return new byte[] { -96, 16, -128, 8, 48, 6, -128, 1, 5, -127, 1, 2, -127, 1, 2, -126, 1, 1 };
+    };
 
-		assertEquals(prim.getFreeFormatData().getData(),this.getFreeFormatData());
-		assertEquals(prim.getPDPID().getId(),2);
-		assertEquals(prim.getAppendFreeFormatData(), AppendFreeFormatData.append);
-	}
-	
-	@Test(groups = { "functional.encode", "primitives" })
-	public void testEncode() throws Exception {
-		
-		FreeFormatData freeFormatData = new FreeFormatDataImpl(this.getFreeFormatData());
-		PDPID pdpID = new PDPIDImpl(2);
-		FCIBCCCAMELsequence1Impl prim = new FCIBCCCAMELsequence1Impl(freeFormatData, pdpID, AppendFreeFormatData.append);
-		AsnOutputStream asn = new AsnOutputStream();
-		prim.encodeAll(asn);
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
-	}
-	
+    public byte[] getFreeFormatData() {
+        return new byte[] { 48, 6, -128, 1, 5, -127, 1, 2 };
+    };
+
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testDecode() throws Exception {
+        byte[] data = this.getData();
+        AsnInputStream asn = new AsnInputStream(data);
+        int tag = asn.readTag();
+        FCIBCCCAMELsequence1Impl prim = new FCIBCCCAMELsequence1Impl();
+        prim.decodeAll(asn);
+
+        assertEquals(tag, FCIBCCCAMELsequence1Impl._ID_FCIBCCCAMELsequence1);
+        assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
+
+        assertEquals(prim.getFreeFormatData().getData(), this.getFreeFormatData());
+        assertEquals(prim.getPDPID().getId(), 2);
+        assertEquals(prim.getAppendFreeFormatData(), AppendFreeFormatData.append);
+    }
+
+    @Test(groups = { "functional.encode", "primitives" })
+    public void testEncode() throws Exception {
+
+        FreeFormatData freeFormatData = new FreeFormatDataImpl(this.getFreeFormatData());
+        PDPID pdpID = new PDPIDImpl(2);
+        FCIBCCCAMELsequence1Impl prim = new FCIBCCCAMELsequence1Impl(freeFormatData, pdpID, AppendFreeFormatData.append);
+        AsnOutputStream asn = new AsnOutputStream();
+        prim.encodeAll(asn);
+        assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+    }
+
 }

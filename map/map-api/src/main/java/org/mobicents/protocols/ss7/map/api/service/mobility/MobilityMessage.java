@@ -25,12 +25,12 @@ package org.mobicents.protocols.ss7.map.api.service.mobility;
 import org.mobicents.protocols.ss7.map.api.MAPMessage;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MobilityMessage extends MAPMessage {
 
-	public MAPDialogMobility getMAPDialog();
+    MAPDialogMobility getMAPDialog();
 
 }

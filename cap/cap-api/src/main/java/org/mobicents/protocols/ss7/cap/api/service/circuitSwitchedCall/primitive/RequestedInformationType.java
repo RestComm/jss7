@@ -24,47 +24,39 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
 
 /**
  *
- 
-RequestedInformationType ::= ENUMERATED {
-callAttemptElapsedTime (0),
-callStopTime (1),
-callConnectedElapsedTime (2),
-releaseCause (30)
-}
- 
- * 
+ RequestedInformationType ::= ENUMERATED { callAttemptElapsedTime (0), callStopTime (1), callConnectedElapsedTime (2),
+ * releaseCause (30) }
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public enum RequestedInformationType {
 
-	callAttemptElapsedTime (0),
-	callStopTime (1),
-	callConnectedElapsedTime (2),
-	releaseCause (30);
-	
-	private int code;
+    callAttemptElapsedTime(0), callStopTime(1), callConnectedElapsedTime(2), releaseCause(30);
 
-	private RequestedInformationType(int code) {
-		this.code = code;
-	}
+    private int code;
 
-	public static RequestedInformationType getInstance(int code) {
-		switch (code) {
-		case 0:
-			return RequestedInformationType.callAttemptElapsedTime;
-		case 1:
-			return RequestedInformationType.callStopTime;
-		case 2:
-			return RequestedInformationType.callConnectedElapsedTime;
-		case 30:
-			return RequestedInformationType.releaseCause;
-		}
+    private RequestedInformationType(int code) {
+        this.code = code;
+    }
 
-		return null;
-	}
+    public static RequestedInformationType getInstance(int code) {
+        switch (code) {
+            case 0:
+                return RequestedInformationType.callAttemptElapsedTime;
+            case 1:
+                return RequestedInformationType.callStopTime;
+            case 2:
+                return RequestedInformationType.callConnectedElapsedTime;
+            case 30:
+                return RequestedInformationType.releaseCause;
+        }
 
-	public int getCode() {
-		return code;
-	}
+        return null;
+    }
+
+    public int getCode() {
+        return code;
+    }
 }

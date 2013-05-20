@@ -32,21 +32,19 @@ package org.mobicents.protocols.ss7.isup.message;
  * <TR>
  * <TD style="FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: teal; HEIGHT: 28px; TEXT-ALIGN: center" colSpan="3">
  * Overload (OLM)</TD>
- * 
+ *
  * </TR>
- * 
+ *
  * <TR>
  * <TD style="FONT-SIZE: 9pt; BORDER-BOTTOM: silver thin solid" colSpan="3">
- * Overload (OLM)&nbsp;message sent in the backward direction, on non?priority
- * calls in response to an IAM, to invoke temporary trunk blocking of the
- * circuit concerned when the exchange generating the message is subject to load
- * control.</TD>
- * 
+ * Overload (OLM)&nbsp;message sent in the backward direction, on non?priority calls in response to an IAM, to invoke temporary
+ * trunk blocking of the circuit concerned when the exchange generating the message is subject to load control.</TD>
+ *
  * </TR>
- * 
+ *
  * </TABLE>
  * </TD>
- * 
+ *
  * </TR>
  * <TR>
  * <TD style="FONT-WEIGHT: bold; WIDTH: 283px; HEIGHT: 30px; TEXT-ALIGN: center">
@@ -55,18 +53,19 @@ package org.mobicents.protocols.ss7.isup.message;
  * <TD style="FONT-WEIGHT: bold; HEIGHT: 30px">Length (octet)</TD>
  * </TR>
  * <TR>
- * 
+ *
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Message type</TD>
  * <TD style="WIDTH: 145px">F</TD>
  * <TD>1</TD>
  * </TR>
  * </TABLE>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface OverloadMessage extends ISUPMessage {
-	/**
-	 * Overload Message, Q.763 reference table 39 <br> {@link OverloadMessage}
-	 */
-	public static final int MESSAGE_CODE = 0x30;
+    /**
+     * Overload Message, Q.763 reference table 39 <br>
+     * {@link OverloadMessage}
+     */
+    int MESSAGE_CODE = 0x30;
 }

@@ -26,22 +26,22 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.primitives.OctetStringLength1Base;
 
 /**
-*
-* @author sergey vetyutnev
-*
-*/
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class CSAllocationRetentionPriorityImpl extends OctetStringLength1Base implements CSAllocationRetentionPriority {
 
-	public CSAllocationRetentionPriorityImpl() {
-		super("CSAllocationRetentionPriority");
-	}
+    public CSAllocationRetentionPriorityImpl() {
+        super("CSAllocationRetentionPriority");
+    }
 
-	public CSAllocationRetentionPriorityImpl(int data) {
-		super("CSAllocationRetentionPriority", data);
-	}
+    public CSAllocationRetentionPriorityImpl(int data) {
+        super("CSAllocationRetentionPriority", data);
+    }
 
-	public int getData() {
-		return data;
-	}
+    public int getData() {
+        return data;
+    }
 
 }

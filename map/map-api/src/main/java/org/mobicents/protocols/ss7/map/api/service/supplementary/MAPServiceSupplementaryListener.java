@@ -25,22 +25,22 @@ package org.mobicents.protocols.ss7.map.api.service.supplementary;
 import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
 
 /**
- * 
+ *
  * @author amit bhayani
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MAPServiceSupplementaryListener extends MAPServiceListener {
 
-	public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd);
+    void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd);
 
-	public void onProcessUnstructuredSSResponse(ProcessUnstructuredSSResponse procUnstrResInd);
+    void onProcessUnstructuredSSResponse(ProcessUnstructuredSSResponse procUnstrResInd);
 
-	public void onUnstructuredSSRequest(UnstructuredSSRequest unstrReqInd);
+    void onUnstructuredSSRequest(UnstructuredSSRequest unstrReqInd);
 
-	public void onUnstructuredSSResponse(UnstructuredSSResponse unstrResInd);
+    void onUnstructuredSSResponse(UnstructuredSSResponse unstrResInd);
 
-	public void onUnstructuredSSNotifyRequest(UnstructuredSSNotifyRequest unstrNotifyInd);
+    void onUnstructuredSSNotifyRequest(UnstructuredSSNotifyRequest unstrNotifyInd);
 
-	public void onUnstructuredSSNotifyResponse(UnstructuredSSNotifyResponse unstrNotifyInd);
+    void onUnstructuredSSNotifyResponse(UnstructuredSSNotifyResponse unstrNotifyInd);
 }

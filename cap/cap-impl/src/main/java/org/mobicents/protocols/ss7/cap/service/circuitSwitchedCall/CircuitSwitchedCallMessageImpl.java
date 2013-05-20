@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -31,35 +31,34 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CircuitSw
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
  * @author Amit Bhayani
- * 
+ *
  */
-public abstract class CircuitSwitchedCallMessageImpl extends MessageImpl implements CircuitSwitchedCallMessage,
-		CAPAsnPrimitive {
+public abstract class CircuitSwitchedCallMessageImpl extends MessageImpl implements CircuitSwitchedCallMessage, CAPAsnPrimitive {
 
-	public CAPDialogCircuitSwitchedCall getCAPDialog() {
-		return (CAPDialogCircuitSwitchedCall) super.getCAPDialog();
-	}
+    public CAPDialogCircuitSwitchedCall getCAPDialog() {
+        return (CAPDialogCircuitSwitchedCall) super.getCAPDialog();
+    }
 
-	/**
-	 * XML Serialization/Deserialization
-	 */
-	protected static final XMLFormat<CircuitSwitchedCallMessageImpl> CIRCUIT_SWITCHED_CALL_MESSAGE_XML = new XMLFormat<CircuitSwitchedCallMessageImpl>(
-			CircuitSwitchedCallMessageImpl.class) {
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<CircuitSwitchedCallMessageImpl> CIRCUIT_SWITCHED_CALL_MESSAGE_XML = new XMLFormat<CircuitSwitchedCallMessageImpl>(
+            CircuitSwitchedCallMessageImpl.class) {
 
-		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml, CircuitSwitchedCallMessageImpl message)
-				throws XMLStreamException {
-			CAP_MESSAGE_XML.read(xml, message);
-		}
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, CircuitSwitchedCallMessageImpl message)
+                throws XMLStreamException {
+            CAP_MESSAGE_XML.read(xml, message);
+        }
 
-		@Override
-		public void write(CircuitSwitchedCallMessageImpl message, javolution.xml.XMLFormat.OutputElement xml)
-				throws XMLStreamException {
-			CAP_MESSAGE_XML.write(message, xml);
-		}
-	};
+        @Override
+        public void write(CircuitSwitchedCallMessageImpl message, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            CAP_MESSAGE_XML.write(message, xml);
+        }
+    };
 
 }

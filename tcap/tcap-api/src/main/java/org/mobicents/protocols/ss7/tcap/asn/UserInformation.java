@@ -28,116 +28,106 @@ import org.mobicents.protocols.asn.Tag;
 
 public interface UserInformation extends Encodable {
 
-	public static final int _TAG = 0x1E;
-	public static final int _TAG_CLASS = Tag.CLASS_CONTEXT_SPECIFIC;
-	public static final boolean _TAG_PC_PRIMITIVE = false;
+    int _TAG = 0x1E;
+    int _TAG_CLASS = Tag.CLASS_CONTEXT_SPECIFIC;
+    boolean _TAG_PC_PRIMITIVE = false;
 
-	public byte[] getEncodeType() throws AsnException;
+    byte[] getEncodeType() throws AsnException;
 
-	public void setEncodeType(byte[] data);
+    void setEncodeType(byte[] data);
 
-	public BitSetStrictLength getEncodeBitStringType() throws AsnException;
+    BitSetStrictLength getEncodeBitStringType() throws AsnException;
 
-	public void setEncodeBitStringType(BitSetStrictLength data);
+    void setEncodeBitStringType(BitSetStrictLength data);
 
+    /**
+     * @return the oid
+     */
+    boolean isOid();
 
-	/**
-	 * @return the oid
-	 */
-	public boolean isOid();
+    /**
+     * @param oid the oid to set
+     */
+    void setOid(boolean oid);
 
-	/**
-	 * @param oid
-	 *            the oid to set
-	 */
-	public void setOid(boolean oid);
+    /**
+     * @return the integer
+     */
+    boolean isInteger();
 
-	/**
-	 * @return the integer
-	 */
-	public boolean isInteger();
+    /**
+     * @param integer the integer to set
+     */
+    void setInteger(boolean integer);
 
-	/**
-	 * @param integer
-	 *            the integer to set
-	 */
-	public void setInteger(boolean integer);
+    /**
+     * @return the objDescriptor
+     */
+    boolean isObjDescriptor();
 
-	/**
-	 * @return the objDescriptor
-	 */
-	public boolean isObjDescriptor();
+    /**
+     * @param objDescriptor the objDescriptor to set
+     */
+    void setObjDescriptor(boolean objDescriptor);
 
-	/**
-	 * @param objDescriptor
-	 *            the objDescriptor to set
-	 */
-	public void setObjDescriptor(boolean objDescriptor);
+    /**
+     * @return the oidValue
+     */
+    long[] getOidValue();
 
-	/**
-	 * @return the oidValue
-	 */
-	public long[] getOidValue();
+    /**
+     * @param oidValue the oidValue to set
+     */
+    void setOidValue(long[] oidValue);
 
-	/**
-	 * @param oidValue
-	 *            the oidValue to set
-	 */
-	public void setOidValue(long[] oidValue);
+    /**
+     * @return the integerValue
+     */
+    long getIndirectReference();
 
-	/**
-	 * @return the integerValue
-	 */
-	public long getIndirectReference();
+    /**
+     * @param integerValue the integerValue to set
+     */
+    void setIndirectReference(long indirectReference);
 
-	/**
-	 * @param integerValue
-	 *            the integerValue to set
-	 */
-	public void setIndirectReference(long indirectReference);
+    /**
+     * @return the objDescriptorValue
+     */
+    String getObjDescriptorValue();
 
-	/**
-	 * @return the objDescriptorValue
-	 */
-	public String getObjDescriptorValue();
+    /**
+     * @param objDescriptorValue the objDescriptorValue to set
+     */
+    void setObjDescriptorValue(String objDescriptorValue);
 
-	/**
-	 * @param objDescriptorValue
-	 *            the objDescriptorValue to set
-	 */
-	public void setObjDescriptorValue(String objDescriptorValue);
+    /**
+     * @return the asn
+     */
+    boolean isAsn();
 
-	/**
-	 * @return the asn
-	 */
-	public boolean isAsn();
+    /**
+     * @param asn the asn to set
+     */
+    void setAsn(boolean asn);
 
-	/**
-	 * @param asn
-	 *            the asn to set
-	 */
-	public void setAsn(boolean asn);
+    /**
+     * @return the octet
+     */
+    boolean isOctet();
 
-	/**
-	 * @return the octet
-	 */
-	public boolean isOctet();
+    /**
+     * @param octet the octet to set
+     */
+    void setOctet(boolean octet);
 
-	/**
-	 * @param octet
-	 *            the octet to set
-	 */
-	public void setOctet(boolean octet);
+    /**
+     * @return the arbitrary
+     */
+    boolean isArbitrary();
 
-	/**
-	 * @return the arbitrary
-	 */
-	public boolean isArbitrary();
-
-	/**
-	 * @param arbitrary
-	 *            the arbitrary to set
-	 */
-	public void setArbitrary(boolean arbitrary);
+    /**
+     * @param arbitrary the arbitrary to set
+     */
+    void setArbitrary(boolean arbitrary);
 
 }

@@ -25,18 +25,15 @@ package org.mobicents.protocols.ss7.map.api.service.pdpContextActivation;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-NoteMsPresentForGprsRes ::= SEQUENCE {
-	extensionContainer		[0] ExtensionContainer	OPTIONAL,
-	...}
-
- * 
+ *
+ NoteMsPresentForGprsRes ::= SEQUENCE { extensionContainer [0] ExtensionContainer OPTIONAL, ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface NoteMsPresentForGprsResponse extends PdpContextActivationMessage {
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

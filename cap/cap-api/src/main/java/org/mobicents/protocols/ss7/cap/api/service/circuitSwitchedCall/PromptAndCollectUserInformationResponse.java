@@ -25,18 +25,15 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall;
 import org.mobicents.protocols.ss7.cap.api.isup.Digits;
 
 /**
-*
-
-ReceivedInformationArg {PARAMETERS-BOUND : bound}::= CHOICE {
-digitsResponse [0] Digits {bound}
-}
- 
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ ReceivedInformationArg {PARAMETERS-BOUND : bound}::= CHOICE { digitsResponse [0] Digits {bound} }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface PromptAndCollectUserInformationResponse extends CircuitSwitchedCallMessage {
 
-	public Digits getDigitsResponse();
+    Digits getDigitsResponse();
 
 }

@@ -26,20 +26,20 @@ import org.mobicents.protocols.ss7.inap.api.INAPException;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionInformation;
 
 /**
-*
-ISUP RedirectionInformation wrapper
-
-RedirectionInformation::= OCTET STRING (SIZE (2))
---  Indicates redirection information. Refer to ETS 300 356-1 [7] Redirection Information for encoding.
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ ISUP RedirectionInformation wrapper
+ *
+ * RedirectionInformation::= OCTET STRING (SIZE (2)) -- Indicates redirection information. Refer to ETS 300 356-1 [7]
+ * Redirection Information for encoding.
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface RedirectionInformationInap {
 
-	public byte[] getData();
+    byte[] getData();
 
-	public RedirectionInformation getRedirectionInformation() throws INAPException;
+    RedirectionInformation getRedirectionInformation() throws INAPException;
 
 }

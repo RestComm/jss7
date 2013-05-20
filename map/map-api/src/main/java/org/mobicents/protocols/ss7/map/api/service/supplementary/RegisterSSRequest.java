@@ -28,63 +28,41 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
 
 /**
- * 
-
-MAP V2:
-
-registerSS  OPERATION ::= {				--Timer m
-	ARGUMENT
-		RegisterSS-Arg
-	RESULT
-		SS-Info
-		-- optional
-	ERRORS {
-		systemFailure |
-		dataMissing |
-		unexpectedDataValue |
-		bearerServiceNotProvisioned |
-		teleserviceNotProvisioned |
-		callBarred |
-		illegalSS-Operation |
-		ss-ErrorStatus |
-		ss-Incompatibility}
-	CODE	local:10 }
-
-RegisterSS-Arg ::= SEQUENCE {
-	ss-Code		SS-Code,
-	basicService	BasicServiceCode	OPTIONAL,
-	forwardedToNumber	[4] AddressString	OPTIONAL,
-	forwardedToSubaddress	[6] ISDN-SubaddressString	OPTIONAL,
-	noReplyConditionTime	[5] NoReplyConditionTime	OPTIONAL,
-	...,
-	defaultPriority	[7] EMLPP-Priority	OPTIONAL,
-	nbrUser		[8] MC-Bearers	OPTIONAL,
-	longFTN-Supported	[9]	NULL		OPTIONAL }
-
-NoReplyConditionTime ::= INTEGER (5..30)
-
-MC-Bearers ::= INTEGER (1..7)
-
- * 
+ *
+ MAP V2:
+ *
+ * registerSS OPERATION ::= { --Timer m ARGUMENT RegisterSS-Arg RESULT SS-Info -- optional ERRORS { systemFailure | dataMissing
+ * | unexpectedDataValue | bearerServiceNotProvisioned | teleserviceNotProvisioned | callBarred | illegalSS-Operation |
+ * ss-ErrorStatus | ss-Incompatibility} CODE local:10 }
+ *
+ * RegisterSS-Arg ::= SEQUENCE { ss-Code SS-Code, basicService BasicServiceCode OPTIONAL, forwardedToNumber [4] AddressString
+ * OPTIONAL, forwardedToSubaddress [6] ISDN-SubaddressString OPTIONAL, noReplyConditionTime [5] NoReplyConditionTime OPTIONAL,
+ * ..., defaultPriority [7] EMLPP-Priority OPTIONAL, nbrUser [8] MC-Bearers OPTIONAL, longFTN-Supported [9] NULL OPTIONAL }
+ *
+ * NoReplyConditionTime ::= INTEGER (5..30)
+ *
+ * MC-Bearers ::= INTEGER (1..7)
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface RegisterSSRequest extends SupplementaryMessage {
 
-	public SSCode getSsCode();
+    SSCode getSsCode();
 
-	public BasicServiceCode getBasicService();
+    BasicServiceCode getBasicService();
 
-	public AddressString getForwardedToNumber();
+    AddressString getForwardedToNumber();
 
-	public ISDNAddressString getForwardedToSubaddress();
+    ISDNAddressString getForwardedToSubaddress();
 
-	public Integer getNoReplyConditionTime();
+    Integer getNoReplyConditionTime();
 
-	public EMLPPPriority getDefaultPriority();
+    EMLPPPriority getDefaultPriority();
 
-	public Integer getNbrUser();
+    Integer getNbrUser();
 
-	public ISDNAddressString getLongFTNSupported();
+    ISDNAddressString getLongFTNSupported();
 
 }

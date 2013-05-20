@@ -23,36 +23,26 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
 
 /**
-*
-AuthenticationQuintuplet ::= SEQUENCE {
-	rand			RAND,
-	xres			XRES,
-	ck			CK,
-	ik			IK,
-	autn			AUTN,
-	...}
-
-*
-* RAND ::= OCTET STRING (SIZE (16))
-* XRES ::= OCTET STRING (SIZE (4..16))
-* CK ::= OCTET STRING (SIZE (16))
-* IK ::= OCTET STRING (SIZE (16))
-* AUTN ::= OCTET STRING (SIZE (16))
-*
-* @author sergey vetyutnev
-* 
-*/
+ *
+ AuthenticationQuintuplet ::= SEQUENCE { rand RAND, xres XRES, ck CK, ik IK, autn AUTN, ...}
+ *
+ *
+ * RAND ::= OCTET STRING (SIZE (16)) XRES ::= OCTET STRING (SIZE (4..16)) CK ::= OCTET STRING (SIZE (16)) IK ::= OCTET STRING
+ * (SIZE (16)) AUTN ::= OCTET STRING (SIZE (16))
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface AuthenticationQuintuplet {
 
-	public byte[] getRand();
+    byte[] getRand();
 
-	public byte[] getXres();
+    byte[] getXres();
 
-	public byte[] getCk();
+    byte[] getCk();
 
-	public byte[] getIk();
+    byte[] getIk();
 
-	public byte[] getAutn();
+    byte[] getAutn();
 
 }
-

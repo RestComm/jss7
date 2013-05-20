@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -41,249 +41,248 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CallSegmentToCancelImpl;
 
 /**
- * 
- * 
+ *
+ *
  * @author sergey vetyutnev
  * @author Amit Bhayani
- * 
+ *
  */
 public class CancelRequestImpl extends CircuitSwitchedCallMessageImpl implements CancelRequest {
 
-	private static final String INVOKE_ID = "invokeID";
-	private static final String ALL_REQUESTS = "allRequests";
-	private static final String CALL_SEGMENT_TO_CANCEL = "callSegmentToCancel";
+    private static final String INVOKE_ID = "invokeID";
+    private static final String ALL_REQUESTS = "allRequests";
+    private static final String CALL_SEGMENT_TO_CANCEL = "callSegmentToCancel";
 
-	public static final int _ID_invokeID = 0;
-	public static final int _ID_allRequests = 1;
-	public static final int _ID_callSegmentToCancel = 2;
+    public static final int _ID_invokeID = 0;
+    public static final int _ID_allRequests = 1;
+    public static final int _ID_callSegmentToCancel = 2;
 
-	public static final String _PrimitiveName = "CancelRequest";
+    public static final String _PrimitiveName = "CancelRequest";
 
-	private Integer invokeID;
-	private boolean allRequests;
-	private CallSegmentToCancel callSegmentToCancel;
+    private Integer invokeID;
+    private boolean allRequests;
+    private CallSegmentToCancel callSegmentToCancel;
 
-	public CancelRequestImpl() {
-	}
+    public CancelRequestImpl() {
+    }
 
-	public CancelRequestImpl(Integer invokeID) {
-		this.invokeID = invokeID;
-	}
+    public CancelRequestImpl(Integer invokeID) {
+        this.invokeID = invokeID;
+    }
 
-	public CancelRequestImpl(boolean allRequests) {
-		this.allRequests = allRequests;
-	}
+    public CancelRequestImpl(boolean allRequests) {
+        this.allRequests = allRequests;
+    }
 
-	public CancelRequestImpl(CallSegmentToCancel callSegmentToCancel) {
-		this.callSegmentToCancel = callSegmentToCancel;
-	}
+    public CancelRequestImpl(CallSegmentToCancel callSegmentToCancel) {
+        this.callSegmentToCancel = callSegmentToCancel;
+    }
 
-	@Override
-	public CAPMessageType getMessageType() {
-		return CAPMessageType.cancel_Request;
-	}
+    @Override
+    public CAPMessageType getMessageType() {
+        return CAPMessageType.cancel_Request;
+    }
 
-	@Override
-	public int getOperationCode() {
-		return CAPOperationCode.cancelCode;
-	}
+    @Override
+    public int getOperationCode() {
+        return CAPOperationCode.cancelCode;
+    }
 
-	@Override
-	public Integer getInvokeID() {
-		return invokeID;
-	}
+    @Override
+    public Integer getInvokeID() {
+        return invokeID;
+    }
 
-	@Override
-	public boolean getAllRequests() {
-		return allRequests;
-	}
+    @Override
+    public boolean getAllRequests() {
+        return allRequests;
+    }
 
-	@Override
-	public CallSegmentToCancel getCallSegmentToCancel() {
-		return callSegmentToCancel;
-	}
+    @Override
+    public CallSegmentToCancel getCallSegmentToCancel() {
+        return callSegmentToCancel;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
+    @Override
+    public int getTag() throws CAPException {
 
-		if (this.invokeID != null) {
-			return _ID_invokeID;
-		} else if (this.allRequests) {
-			return _ID_allRequests;
-		} else if (this.callSegmentToCancel != null) {
-			return _ID_callSegmentToCancel;
-		} else {
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": no of choices has been definite");
-		}
-	}
+        if (this.invokeID != null) {
+            return _ID_invokeID;
+        } else if (this.allRequests) {
+            return _ID_allRequests;
+        } else if (this.callSegmentToCancel != null) {
+            return _ID_callSegmentToCancel;
+        } else {
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": no of choices has been definite");
+        }
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_CONTEXT_SPECIFIC;
-	}
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_CONTEXT_SPECIFIC;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		if (this.callSegmentToCancel != null)
-			return false;
-		else
-			return true;
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        if (this.callSegmentToCancel != null)
+            return false;
+        else
+            return true;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
-					+ e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, IOException, AsnException {
+    private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		this.invokeID = null;
-		this.allRequests = false;
-		this.callSegmentToCancel = null;
+        this.invokeID = null;
+        this.allRequests = false;
+        this.callSegmentToCancel = null;
 
-		if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tagClass",
-					CAPParsingComponentExceptionReason.MistypedParameter);
+        if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tagClass",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
 
-		switch (ais.getTag()) {
-		case _ID_invokeID:
-			this.invokeID = (int) ais.readIntegerData(length);
-			break;
-		case _ID_allRequests:
-			ais.readNullData(length);
-			this.allRequests = true;
-			break;
-		case _ID_callSegmentToCancel:
-			this.callSegmentToCancel = new CallSegmentToCancelImpl();
-			((CallSegmentToCancelImpl) this.callSegmentToCancel).decodeData(ais, length);
-			break;
-		default:
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag: "
-					+ ais.getTag(), CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        switch (ais.getTag()) {
+            case _ID_invokeID:
+                this.invokeID = (int) ais.readIntegerData(length);
+                break;
+            case _ID_allRequests:
+                ais.readNullData(length);
+                this.allRequests = true;
+                break;
+            case _ID_callSegmentToCancel:
+                this.callSegmentToCancel = new CallSegmentToCancelImpl();
+                ((CallSegmentToCancelImpl) this.callSegmentToCancel).decodeData(ais, length);
+                break;
+            default:
+                throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag: " + ais.getTag(),
+                        CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream aos) throws CAPException {
+    @Override
+    public void encodeData(AsnOutputStream aos) throws CAPException {
 
-		int choiceCnt = 0;
-		if (this.invokeID != null)
-			choiceCnt++;
-		if (this.allRequests)
-			choiceCnt++;
-		if (this.callSegmentToCancel != null)
-			choiceCnt++;
+        int choiceCnt = 0;
+        if (this.invokeID != null)
+            choiceCnt++;
+        if (this.allRequests)
+            choiceCnt++;
+        if (this.callSegmentToCancel != null)
+            choiceCnt++;
 
-		if (choiceCnt != 1)
-			throw new CAPException("Error while encoding " + _PrimitiveName
-					+ ": only one choice must be definite, found: " + choiceCnt);
+        if (choiceCnt != 1)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": only one choice must be definite, found: "
+                    + choiceCnt);
 
-		try {
-			if (this.invokeID != null)
-				aos.writeIntegerData(this.invokeID);
-			if (this.allRequests)
-				aos.writeNullData();
-			if (this.callSegmentToCancel != null)
-				((CallSegmentToCancelImpl) this.callSegmentToCancel).encodeData(aos);
-		} catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        try {
+            if (this.invokeID != null)
+                aos.writeIntegerData(this.invokeID);
+            if (this.allRequests)
+                aos.writeNullData();
+            if (this.callSegmentToCancel != null)
+                ((CallSegmentToCancelImpl) this.callSegmentToCancel).encodeData(aos);
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public String toString() {
+    @Override
+    public String toString() {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		if (this.invokeID != null) {
-			sb.append("invokeID=");
-			sb.append(invokeID);
-		}
-		if (this.allRequests) {
-			sb.append(" allRequests");
-		}
-		if (this.callSegmentToCancel != null) {
-			sb.append(" callSegmentToCancel=");
-			sb.append(callSegmentToCancel.toString());
-		}
+        if (this.invokeID != null) {
+            sb.append("invokeID=");
+            sb.append(invokeID);
+        }
+        if (this.allRequests) {
+            sb.append(" allRequests");
+        }
+        if (this.callSegmentToCancel != null) {
+            sb.append(" callSegmentToCancel=");
+            sb.append(callSegmentToCancel.toString());
+        }
 
-		sb.append("]");
+        sb.append("]");
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 
-	/**
-	 * XML Serialization/Deserialization
-	 */
-	protected static final XMLFormat<CancelRequestImpl> CANCEL_REQUEST_XML = new XMLFormat<CancelRequestImpl>(
-			CancelRequestImpl.class) {
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<CancelRequestImpl> CANCEL_REQUEST_XML = new XMLFormat<CancelRequestImpl>(
+            CancelRequestImpl.class) {
 
-		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml, CancelRequestImpl cancelRequest)
-				throws XMLStreamException {
-			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, cancelRequest);
-			cancelRequest.invokeID = xml.get(INVOKE_ID, Integer.class);
-			Boolean bval = xml.get(ALL_REQUESTS, Boolean.class);
-			if (bval != null)
-				cancelRequest.allRequests = bval;
-			cancelRequest.callSegmentToCancel = xml.get(CALL_SEGMENT_TO_CANCEL, CallSegmentToCancelImpl.class);
-		}
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, CancelRequestImpl cancelRequest) throws XMLStreamException {
+            CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, cancelRequest);
+            cancelRequest.invokeID = xml.get(INVOKE_ID, Integer.class);
+            Boolean bval = xml.get(ALL_REQUESTS, Boolean.class);
+            if (bval != null)
+                cancelRequest.allRequests = bval;
+            cancelRequest.callSegmentToCancel = xml.get(CALL_SEGMENT_TO_CANCEL, CallSegmentToCancelImpl.class);
+        }
 
-		@Override
-		public void write(CancelRequestImpl cancelRequest, javolution.xml.XMLFormat.OutputElement xml)
-				throws XMLStreamException {
-			
-			CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(cancelRequest, xml);
-			
-			xml.add(cancelRequest.invokeID, INVOKE_ID, Integer.class);
-			if (cancelRequest.allRequests)
-				xml.add(cancelRequest.allRequests, ALL_REQUESTS, Boolean.class);
-			xml.add((CallSegmentToCancelImpl) cancelRequest.callSegmentToCancel, CALL_SEGMENT_TO_CANCEL,
-					CallSegmentToCancelImpl.class);
-		}
-	};
+        @Override
+        public void write(CancelRequestImpl cancelRequest, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+
+            CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(cancelRequest, xml);
+
+            xml.add(cancelRequest.invokeID, INVOKE_ID, Integer.class);
+            if (cancelRequest.allRequests)
+                xml.add(cancelRequest.allRequests, ALL_REQUESTS, Boolean.class);
+            xml.add((CallSegmentToCancelImpl) cancelRequest.callSegmentToCancel, CALL_SEGMENT_TO_CANCEL,
+                    CallSegmentToCancelImpl.class);
+        }
+    };
 }

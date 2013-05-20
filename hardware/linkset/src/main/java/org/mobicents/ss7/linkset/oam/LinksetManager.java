@@ -24,25 +24,41 @@ package org.mobicents.ss7.linkset.oam;
 import javolution.util.FastMap;
 
 public interface LinksetManager {
-    public LinksetFactoryFactory getLinksetFactoryFactory();
-    public void setLinksetFactoryFactory(LinksetFactoryFactory linksetFactoryFactory);
-    public FastMap<String, Linkset> getLinksets();
-    public String getPersistDir();
-    public void setPersistDir(String persistDir);
-    public Layer4 getLayer4();
-    public void setLayer4(Layer4 layer4);
-    public void start();
-    public void stop();
-    public String getName();
-    
-    public String showLinkset(String[] options) throws Exception;
-    public String createLinkset(String[] options) throws Exception ;
-    public String deleteLinkset(String[] options) throws Exception ;
-    public String activateLinkset(String[] options) throws Exception;
-    public String deactivateLinkset(String[] options) throws Exception;
-    
-    public String createLink(String[] options) throws Exception;
-    public String deleteLink(String[] options) throws Exception ;
-    public String activateLink(String[] options) throws Exception;
-    public String deactivateLink(String[] options) throws Exception;
+    LinksetFactoryFactory getLinksetFactoryFactory();
+
+    void setLinksetFactoryFactory(LinksetFactoryFactory linksetFactoryFactory);
+
+    FastMap<String, Linkset> getLinksets();
+
+    String getPersistDir();
+
+    void setPersistDir(String persistDir);
+
+    Layer4 getLayer4();
+
+    void setLayer4(Layer4 layer4);
+
+    void start();
+
+    void stop();
+
+    String getName();
+
+    String showLinkset(String[] options) throws Exception;
+
+    String createLinkset(String[] options) throws Exception;
+
+    String deleteLinkset(String[] options) throws Exception;
+
+    String activateLinkset(String[] options) throws Exception;
+
+    String deactivateLinkset(String[] options) throws Exception;
+
+    String createLink(String[] options) throws Exception;
+
+    String deleteLink(String[] options) throws Exception;
+
+    String activateLink(String[] options) throws Exception;
+
+    String deactivateLink(String[] options) throws Exception;
 }

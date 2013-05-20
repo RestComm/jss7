@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -22,33 +22,33 @@
 package org.mobicents.protocols.ss7.m3ua;
 
 /**
- * 
+ *
  * @author amit bhayani
  *
  */
 public enum IPSPType {
-	CLIENT("CLIENT"), SERVER("SERVER");
+    CLIENT("CLIENT"), SERVER("SERVER");
 
-	private static final String TYPE_CLIENT = "CLIENT";
-	private static final String TYPE_SERVER = "SERVER";
+    private static final String TYPE_CLIENT = "CLIENT";
+    private static final String TYPE_SERVER = "SERVER";
 
-	private String type = null;
+    private String type = null;
 
-	private IPSPType(String type) {
-		this.type = type;
-	}
+    private IPSPType(String type) {
+        this.type = type;
+    }
 
-	public static IPSPType getIPSPType(String type) {
-		if (TYPE_CLIENT.equalsIgnoreCase(type)) {
-			return CLIENT;
-		} else if (TYPE_SERVER.equalsIgnoreCase(type)) {
-			return SERVER;
-		}
+    public static IPSPType getIPSPType(String type) {
+        if (TYPE_CLIENT.equalsIgnoreCase(type)) {
+            return CLIENT;
+        } else if (TYPE_SERVER.equalsIgnoreCase(type)) {
+            return SERVER;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public String getType() {
-		return this.type;
-	}
+    public String getType() {
+        return this.type;
+    }
 }
