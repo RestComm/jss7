@@ -235,19 +235,19 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
             throw new NullPointerException("LocalAddress must not be null");
         }
 
-		synchronized (this.dialogs) {
-			Long id = this.getAvailableTxId();
-			if (structured) {
-				DialogImpl di = new DialogImpl(localAddress, remoteAddress, id, structured, this._EXECUTOR, this, seqControl, this.stack.getPreviewMode());
+        synchronized (this.dialogs) {
+            Long id = this.getAvailableTxId();
+            if (structured) {
+                DialogImpl di = new DialogImpl(localAddress, remoteAddress, id, structured, this._EXECUTOR, this, seqControl, this.stack.getPreviewMode());
 
-				this.dialogs.put(id, di);
+                this.dialogs.put(id, di);
 
-				return di;
-			} else {
-				DialogImpl di = new DialogImpl(localAddress, remoteAddress, id, structured, this._EXECUTOR, this, seqControl, this.stack.getPreviewMode());
-				return di;
-			}
-		}
+                return di;
+            } else {
+                DialogImpl di = new DialogImpl(localAddress, remoteAddress, id, structured, this._EXECUTOR, this, seqControl, this.stack.getPreviewMode());
+                return di;
+            }
+        }
     }
 
     public void send(byte[] data, boolean returnMessageOnError, SccpAddress destinationAddress, SccpAddress originatingAddress,
