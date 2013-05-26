@@ -1251,8 +1251,8 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 			// this is an empty first TC-BEGIN for MO SMS
 			try {
 				mapDialog.send();
-				currentRequestDef += "Rcvd emptTBeg;Sent emptTCont;";
 				if (!this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().isOneNotificationFor100Dialogs()) {
+//					currentRequestDef += "Rcvd emptTBeg;Sent emptTCont;";
 					this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: emptTBeg", "", Level.DEBUG);
 					this.testerHost.sendNotif(SOURCE_NAME, "Sent: emptTCont", "", Level.DEBUG);
 				}
