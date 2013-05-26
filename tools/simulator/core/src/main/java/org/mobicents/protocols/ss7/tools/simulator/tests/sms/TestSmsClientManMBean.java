@@ -108,6 +108,10 @@ public interface TestSmsClientManMBean {
 
 	public void setSmsCodingType(SmsCodingType val);
 
+	public boolean isOneNotificationFor100Dialogs();
+
+	public void setOneNotificationFor100Dialogs(boolean val);
+
 
 	public void putAddressNature(String val);
 

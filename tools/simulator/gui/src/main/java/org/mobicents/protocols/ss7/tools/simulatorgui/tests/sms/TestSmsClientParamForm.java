@@ -78,6 +78,7 @@ public class TestSmsClientParamForm extends JDialog {
 	private JComboBox cbSRIInformServiceCenter;
 	private JCheckBox cbSRIScAddressNotIncluded;
 	private JComboBox cbMtFSMReaction;
+	private JCheckBox cbOneNotificationFor100Dialogs;
 
 	public TestSmsClientParamForm(JFrame owner) {
 		super(owner, true);
@@ -112,6 +113,10 @@ public class TestSmsClientParamForm extends JDialog {
 		tbSmscSsn.setColumns(10);
 		tbSmscSsn.setBounds(435, 41, 86, 20);
 		panel_gen.add(tbSmscSsn);
+		
+		cbOneNotificationFor100Dialogs = new JCheckBox("One notification for 100 dialogs (recommended for bulk message mode)");
+		cbOneNotificationFor100Dialogs.setBounds(10, 67, 511, 23);
+		panel_gen.add(cbOneNotificationFor100Dialogs);
 		
 		JPanel panel_sri = new JPanel();
 		tabbedPane.addTab("SRI response", panel_sri);
@@ -317,6 +322,7 @@ public class TestSmsClientParamForm extends JDialog {
 		tbSmscSsn.setText(((Integer)this.smsClient.getSmscSsn()).toString());
 		
 		cbSRIScAddressNotIncluded.setSelected(this.smsClient.isSRIScAddressNotIncluded());
+		cbOneNotificationFor100Dialogs.setSelected(this.smsClient.isOneNotificationFor100Dialogs());
 	}
 
 	private void loadDataA() {
@@ -339,6 +345,7 @@ public class TestSmsClientParamForm extends JDialog {
 		tbSmscSsn.setText("8");
 		
 		cbSRIScAddressNotIncluded.setSelected(false);
+		cbOneNotificationFor100Dialogs.setSelected(false);
 	}
 
 	private void loadDataB() {
@@ -372,6 +379,7 @@ public class TestSmsClientParamForm extends JDialog {
 		this.smsClient.setSmscSsn(smscSsn);
 
 		this.smsClient.setSRIScAddressNotIncluded(cbSRIScAddressNotIncluded.isSelected());
+		this.smsClient.setOneNotificationFor100Dialogs(cbOneNotificationFor100Dialogs.isSelected());
 
 		return true;
 	}

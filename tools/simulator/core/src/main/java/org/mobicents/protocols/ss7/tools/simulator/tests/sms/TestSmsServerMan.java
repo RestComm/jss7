@@ -349,13 +349,13 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 		sb.append(countMoFsmResp);
 		sb.append(", countIscReq-");
 		sb.append(countIscReq);
-		sb.append(", countRsmdsReq-");
+		sb.append("<br>countRsmdsReq-");
 		sb.append(countRsmdsReq);
 		sb.append(", countRsmdsResp-");
 		sb.append(countRsmdsResp);
 		sb.append(", countAscReq-");
 		sb.append(countAscReq);
-		sb.append(", countAscResp-");
+		sb.append("<br>countAscResp-");
 		sb.append(countAscResp);
 		sb.append(", countErrRcvd-");
 		sb.append(countErrRcvd);
@@ -366,6 +366,20 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 	}
 
 	public boolean start() {
+		this.countSriReq = 0;
+		this.countSriResp = 0;
+		this.countMtFsmReq = 0;
+		this.countMtFsmResp = 0;
+		this.countMoFsmReq = 0;
+		this.countMoFsmResp = 0;
+		this.countIscReq = 0;
+		this.countErrRcvd = 0;
+		this.countErrSent = 0;
+		this.countRsmdsReq = 0;
+		this.countRsmdsResp = 0;
+		this.countAscReq = 0;
+		this.countAscResp = 0;
+
 		MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
 		mapProvider.getMAPServiceSms().acivate();
 		mapProvider.getMAPServiceSms().addMAPServiceListener(this);

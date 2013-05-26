@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.tools.simulator.tests.sms;
 
+import javolution.text.CharArray;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
@@ -52,6 +53,7 @@ public class TestSmsClientConfigurationData {
 	protected static final String SRI_INFORM_SERVICE_CENTER = "sriInformServiceCenter";
 	protected static final String SRI_SC_ADDRESS_NOT_INCLUDED = "sriScAddressNotIncluded";
 	protected static final String MT_FSM_REACTION = "mtFSMReaction";
+	protected static final String ONE_NOTIFICATION_FOR_100_DIALOGS = "oneNotificationFor100Dialogs";
 
 	protected AddressNature addressNature = AddressNature.international_number;
 	protected NumberingPlan numberingPlan = NumberingPlan.ISDN;
@@ -68,6 +70,7 @@ public class TestSmsClientConfigurationData {
 	protected SRIInformServiceCenter sriInformServiceCenter = new SRIInformServiceCenter(SRIInformServiceCenter.MWD_NO);
 	protected boolean sriScAddressNotIncluded = false;
 	protected MtFSMReaction mtFSMReaction = new MtFSMReaction(MtFSMReaction.VAL_RETURN_SUCCESS);
+	protected boolean oneNotificationFor100Dialogs = false;
 	
 	public AddressNature getAddressNature() {
 		return addressNature;
@@ -181,11 +184,21 @@ public class TestSmsClientConfigurationData {
 		this.smsCodingType = smsCodingType;
 	}
 
+	public boolean isOneNotificationFor100Dialogs() {
+		return oneNotificationFor100Dialogs;
+	}
+
+	public void setOneNotificationFor100Dialogs(boolean oneNotificationFor100Dialogs) {
+		this.oneNotificationFor100Dialogs = oneNotificationFor100Dialogs;
+	}
+
 	protected static final XMLFormat<TestSmsClientConfigurationData> XML = new XMLFormat<TestSmsClientConfigurationData>(TestSmsClientConfigurationData.class) {
 
 		public void write(TestSmsClientConfigurationData srv, OutputElement xml) throws XMLStreamException {
 			xml.setAttribute(SMSC_SSN, srv.smscSsn);
 			xml.setAttribute(SRI_SC_ADDRESS_NOT_INCLUDED, srv.sriScAddressNotIncluded);
+
+			xml.setAttribute(ONE_NOTIFICATION_FOR_100_DIALOGS, srv.oneNotificationFor100Dialogs);
 
 			xml.add(srv.serviceCenterAddress, SERVICE_CENTER_ADDRESS, String.class);
 			xml.add(srv.sriResponseImsi, SRI_RESPONSE_IMSI, String.class);
@@ -206,6 +219,10 @@ public class TestSmsClientConfigurationData {
 		public void read(InputElement xml, TestSmsClientConfigurationData srv) throws XMLStreamException {
 			srv.smscSsn = xml.getAttribute(SMSC_SSN).toInt();
 			srv.sriScAddressNotIncluded = xml.getAttribute(SRI_SC_ADDRESS_NOT_INCLUDED).toBoolean();
+
+			CharArray chArr = xml.getAttribute(ONE_NOTIFICATION_FOR_100_DIALOGS);
+			if (chArr != null)
+				srv.oneNotificationFor100Dialogs = chArr.toBoolean();
 
 			srv.serviceCenterAddress = (String) xml.get(SERVICE_CENTER_ADDRESS, String.class);
 			srv.sriResponseImsi = (String) xml.get(SRI_RESPONSE_IMSI, String.class);
