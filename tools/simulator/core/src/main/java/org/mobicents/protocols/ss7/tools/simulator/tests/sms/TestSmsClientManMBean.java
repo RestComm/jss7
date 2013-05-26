@@ -33,107 +33,114 @@ import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
  */
 public interface TestSmsClientManMBean {
 
-    AddressNatureType getAddressNature();
+	public AddressNatureType getAddressNature();
 
-    String getAddressNature_Value();
+	public String getAddressNature_Value();
 
-    void setAddressNature(AddressNatureType val);
+	public void setAddressNature(AddressNatureType val);
 
-    NumberingPlanMapType getNumberingPlan();
+	public NumberingPlanMapType getNumberingPlan();
 
-    String getNumberingPlan_Value();
+	public String getNumberingPlan_Value();
 
-    void setNumberingPlan(NumberingPlanMapType val);
+	public void setNumberingPlan(NumberingPlanMapType val);	
 
-    String getServiceCenterAddress();
+	public String getServiceCenterAddress();
 
-    void setServiceCenterAddress(String val);
+	public void setServiceCenterAddress(String val);	
 
-    MapProtocolVersion getMapProtocolVersion();
+	public MapProtocolVersion getMapProtocolVersion();
 
-    String getMapProtocolVersion_Value();
+	public String getMapProtocolVersion_Value();
 
-    void setMapProtocolVersion(MapProtocolVersion val);
+	public void setMapProtocolVersion(MapProtocolVersion val);	
 
-    SRIReaction getSRIReaction();
+	public SRIReaction getSRIReaction();
 
-    String getSRIReaction_Value();
+	public String getSRIReaction_Value();
 
-    void setSRIReaction(SRIReaction val);
+	public void setSRIReaction(SRIReaction val);	
 
-    SRIInformServiceCenter getSRIInformServiceCenter();
+	public SRIInformServiceCenter getSRIInformServiceCenter();
 
-    String getSRIInformServiceCenter_Value();
+	public String getSRIInformServiceCenter_Value();
 
-    void setSRIInformServiceCenter(SRIInformServiceCenter val);
+	public void setSRIInformServiceCenter(SRIInformServiceCenter val);	
 
-    boolean isSRIScAddressNotIncluded();
+	public boolean isSRIScAddressNotIncluded();
 
-    void setSRIScAddressNotIncluded(boolean val);
+	public void setSRIScAddressNotIncluded(boolean val);	
 
-    MtFSMReaction getMtFSMReaction();
+	public MtFSMReaction getMtFSMReaction();
 
-    String getMtFSMReaction_Value();
+	public String getMtFSMReaction_Value();
 
-    void setMtFSMReaction(MtFSMReaction val);
+	public void setMtFSMReaction(MtFSMReaction val);	
 
-    String getSRIResponseImsi();
 
-    void setSRIResponseImsi(String val);
+	public String getSRIResponseImsi();
 
-    String getSRIResponseVlr();
+	public void setSRIResponseImsi(String val);	
 
-    void setSRIResponseVlr(String val);
+	public String getSRIResponseVlr();
 
-    int getSmscSsn();
+	public void setSRIResponseVlr(String val);	
 
-    void setSmscSsn(int val);
+	public int getSmscSsn();
 
-    TypeOfNumberType getTypeOfNumber();
+	public void setSmscSsn(int val);
 
-    String getTypeOfNumber_Value();
+	public TypeOfNumberType getTypeOfNumber();
 
-    void setTypeOfNumber(TypeOfNumberType val);
+	public String getTypeOfNumber_Value();
 
-    NumberingPlanIdentificationType getNumberingPlanIdentification();
+	public void setTypeOfNumber(TypeOfNumberType val);
 
-    String getNumberingPlanIdentification_Value();
+	public NumberingPlanIdentificationType getNumberingPlanIdentification();
 
-    void setNumberingPlanIdentification(NumberingPlanIdentificationType val);
+	public String getNumberingPlanIdentification_Value();
 
-    SmsCodingType getSmsCodingType();
+	public void setNumberingPlanIdentification(NumberingPlanIdentificationType val);
 
-    String getSmsCodingType_Value();
+	public SmsCodingType getSmsCodingType();
 
-    void setSmsCodingType(SmsCodingType val);
+	public String getSmsCodingType_Value();
 
-    void putAddressNature(String val);
+	public void setSmsCodingType(SmsCodingType val);
 
-    void putNumberingPlan(String val);
+	public boolean isOneNotificationFor100Dialogs();
 
-    void putMapProtocolVersion(String val);
+	public void setOneNotificationFor100Dialogs(boolean val);
 
-    void putSRIReaction(String val);
 
-    void putSRIInformServiceCenter(String val);
+	public void putAddressNature(String val);
 
-    void putMtFSMReaction(String val);
+	public void putNumberingPlan(String val);
 
-    void putTypeOfNumber(String val);
+	public void putMapProtocolVersion(String val);
 
-    void putNumberingPlanIdentification(String val);
+	public void putSRIReaction(String val);
 
-    void putSmsCodingType(String val);
+	public void putSRIInformServiceCenter(String val);
 
-    String getCurrentRequestDef();
+	public void putMtFSMReaction(String val);
 
-    String performMoForwardSM(String msg, String destIsdnNumber, String origIsdnNumber);
+	public void putTypeOfNumber(String val);
 
-    String performMoForwardSMPartial(String msg, String destIsdnNumber, String origIsdnNumber, int msgRef, int segmCnt,
-            int segmNum);
+	public void putNumberingPlanIdentification(String val);
 
-    String performAlertServiceCentre(String destIsdnNumber);
+	public void putSmsCodingType(String val);
 
-    String closeCurrentDialog();
+
+	public String getCurrentRequestDef();
+
+
+	public String performMoForwardSM(String msg, String destIsdnNumber, String origIsdnNumber);
+
+	public String performMoForwardSMPartial(String msg, String destIsdnNumber, String origIsdnNumber, int msgRef, int segmCnt, int segmNum);
+
+	public String performAlertServiceCentre(String destIsdnNumber);
+
+	public String closeCurrentDialog();
 
 }
