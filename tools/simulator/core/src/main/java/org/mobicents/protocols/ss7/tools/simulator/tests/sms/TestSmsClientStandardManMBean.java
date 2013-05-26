@@ -70,6 +70,9 @@ public class TestSmsClientStandardManMBean extends StandardMBean {
 				new MBeanAttributeInfo("NumberingPlanIdentification_Value", String.class.getName(), "NumberingPlanIdentification parameter for SMS tpdu destAddress", true, false, false),
 				new MBeanAttributeInfo("CurrentRequestDef", String.class.getName(), "Get information of the current request", true, false, false),
 				new MBeanAttributeInfo("SmsCodingType", SmsCodingType.class.getName(), "Character set for SMS encoding", true, true, false),
+				new MBeanAttributeInfo("OneNotificationFor100Dialogs", boolean.class.getName(), 
+						"If true there will be only one notification per every 100 received dialogs (recommended for the auto answering mode)", 
+						true, true, true),
 		};
 
 		MBeanParameterInfo[] signString = new MBeanParameterInfo[] { new MBeanParameterInfo("val", String.class.getName(), "Index number or value") };

@@ -106,6 +106,7 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 	private int countSriReq = 0;
 	private int countSriResp = 0;
 	private int countMtFsmReq = 0;
+	private int countMtFsmReqNot = 0;
 	private int countMtFsmResp = 0;
 	private int countMoFsmReq = 0;
 	private int countMoFsmResp = 0;
@@ -255,6 +256,17 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 	@Override
 	public void setMtFSMReaction(MtFSMReaction val) {
 		this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().setMtFSMReaction(val);
+		this.testerHost.markStore();
+	}
+
+	@Override
+	public boolean isOneNotificationFor100Dialogs() {
+		return this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().isOneNotificationFor100Dialogs();
+	}
+
+	@Override
+	public void setOneNotificationFor100Dialogs(boolean val) {
+		this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().setOneNotificationFor100Dialogs(val);
 		this.testerHost.markStore();
 	}
 
@@ -424,19 +436,19 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 		sb.append(countMtFsmReq);
 		sb.append(", countMtFsmResp-");
 		sb.append(countMtFsmResp);
-		sb.append("<br> countMoFsmReq-");
+		sb.append("<br>countMoFsmReq-");
 		sb.append(countMoFsmReq);
 		sb.append(", countMoFsmResp-");
 		sb.append(countMoFsmResp);
 		sb.append(", countIscReq-");
 		sb.append(countIscReq);
-		sb.append(", countRsmdsReq-");
+		sb.append("<br>countRsmdsReq-");
 		sb.append(countRsmdsReq);
 		sb.append(", countRsmdsResp-");
 		sb.append(countRsmdsResp);
 		sb.append(", countAscReq-");
 		sb.append(countAscReq);
-		sb.append(", countAscResp-");
+		sb.append("<br>countAscResp-");
 		sb.append(countAscResp);
 		sb.append(", countErrRcvd-");
 		sb.append(countErrRcvd);
@@ -447,6 +459,21 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 	}
 
 	public boolean start() {
+		this.countSriReq = 0;
+		this.countSriResp = 0;
+		this.countMtFsmReq = 0;
+		this.countMtFsmReqNot = 0;
+		this.countMtFsmResp = 0;
+		this.countMoFsmReq = 0;
+		this.countMoFsmResp = 0;
+		this.countIscReq = 0;
+		this.countRsmdsReq = 0;
+		this.countRsmdsResp = 0;
+		this.countAscReq = 0;
+		this.countAscResp = 0;
+		this.countErrRcvd = 0;
+		this.countErrSent = 0;
+
 		MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
 		mapProvider.getMAPServiceSms().acivate();
 		mapProvider.getMAPServiceSms().addMAPServiceListener(this);
@@ -697,7 +724,10 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 				if (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getMtFSMReaction().intValue() == MtFSMReaction.VAL_RETURN_SUCCESS) {
 					curDialog.addForwardShortMessageResponse(invokeId);
 					this.countMtFsmResp++;
-					this.testerHost.sendNotif(SOURCE_NAME, "Sent: mtResp", "", Level.DEBUG);
+
+					if (!this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().isOneNotificationFor100Dialogs()) {
+						this.testerHost.sendNotif(SOURCE_NAME, "Sent: mtResp", "", Level.DEBUG);
+					}
 				} else {
 					sendMtError(curDialog, invokeId);
 				}
@@ -800,8 +830,17 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 					}
 				}
 			}
-			String uData = this.createMtData(curDialog, destImsi, dTpdu, serviceCentreAddr);
-			this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: mtReq: " + msg, uData, Level.DEBUG);
+
+			if (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().isOneNotificationFor100Dialogs()) {
+				int i1 = countMtFsmReq / 100;
+				if (countMtFsmReqNot < i1) {
+					countMtFsmReqNot = i1;
+					this.testerHost.sendNotif(SOURCE_NAME, "Rsvd: Ms messages: " + (countMtFsmReqNot * 100), "", Level.DEBUG);
+				}
+			} else {
+				String uData = this.createMtData(curDialog, destImsi, dTpdu, serviceCentreAddr);
+				this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: mtReq: " + msg, uData, Level.DEBUG);
+			}
 		} catch (MAPException e) {
 			this.testerHost.sendNotif(SOURCE_NAME, "Exception when decoding MtForwardShortMessageRequest tpdu : " + e.getMessage(), e, Level.ERROR);
 		}
@@ -856,7 +895,9 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 			if (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getMtFSMReaction().intValue() == MtFSMReaction.VAL_RETURN_SUCCESS) {
 				curDialog.addMtForwardShortMessageResponse(invokeId, null, null);
 				this.countMtFsmResp++;
-				this.testerHost.sendNotif(SOURCE_NAME, "Sent: mtResp", "", Level.DEBUG);
+				if (!this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().isOneNotificationFor100Dialogs()) {
+					this.testerHost.sendNotif(SOURCE_NAME, "Sent: mtResp", "", Level.DEBUG);
+				}
 			} else {
 				sendMtError(curDialog, invokeId);
 			}
@@ -904,9 +945,11 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 		MAPDialogSms curDialog = ind.getMAPDialog();
 		long invokeId = ind.getInvokeId();
 
-		String uData = this.createSriData(ind);
-		this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: sriReq", uData, Level.DEBUG);
-
+		String uData;
+		if (!this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().isOneNotificationFor100Dialogs()) {
+			uData = this.createSriData(ind);
+			this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: sriReq", uData, Level.DEBUG);
+		}
 
 		IMSI imsi = mapProvider.getMAPParameterFactory().createIMSI(
 				this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getSriResponseImsi());
@@ -924,8 +967,10 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 				curDialog.addSendRoutingInfoForSMResponse(invokeId, imsi, li, null, null);
 
 				this.countSriResp++;
-				uData = this.createSriRespData(curDialog.getLocalDialogId(), imsi, li);
-				this.testerHost.sendNotif(SOURCE_NAME, "Sent: sriResp", uData, Level.DEBUG);
+				if (!this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().isOneNotificationFor100Dialogs()) {
+					uData = this.createSriRespData(curDialog.getLocalDialogId(), imsi, li);
+					this.testerHost.sendNotif(SOURCE_NAME, "Sent: sriResp", uData, Level.DEBUG);
+				}
 
 				if (curDialog.getApplicationContext().getApplicationContextVersion().getVersion() > 1)
 					informServiceCentrePossible = true;
@@ -1206,9 +1251,11 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 			// this is an empty first TC-BEGIN for MO SMS
 			try {
 				mapDialog.send();
-				currentRequestDef += "Rcvd emptTBeg;Sent emptTCont;";
-				this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: emptTBeg", "", Level.DEBUG);
-				this.testerHost.sendNotif(SOURCE_NAME, "Sent: emptTCont", "", Level.DEBUG);
+				if (!this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().isOneNotificationFor100Dialogs()) {
+//					currentRequestDef += "Rcvd emptTBeg;Sent emptTCont;";
+					this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: emptTBeg", "", Level.DEBUG);
+					this.testerHost.sendNotif(SOURCE_NAME, "Sent: emptTCont", "", Level.DEBUG);
+				}
 			} catch (Exception e) {
 				this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking send() : " + e.getMessage(), e, Level.ERROR);
 			}
