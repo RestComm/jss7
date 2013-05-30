@@ -66,6 +66,8 @@ public class TraceReaderDriverPcap extends TraceReaderDriverBase implements Trac
             byte[] globHeader = new byte[24];
             if (fis.read(globHeader) < 24)
                 throw new Exception("Not enouph data for a global header");
+            
+            int network = ((globHeader[20] & 0xFF) << 0) + ((globHeader[21] & 0xFF) << 8) + ((globHeader[22] & 0xFF) << 16) + ((globHeader[23] & 0xFF) << 24);
 
             int recCnt = 0;
             while (fis.available() > 0) {
@@ -102,7 +104,7 @@ public class TraceReaderDriverPcap extends TraceReaderDriverBase implements Trac
                     throw new Exception("Not enouph data for a packet data");
                 recCnt++;
 
-                this.parsePacket(data);
+                this.parsePacket(data, network);
             }
 
         } catch (Throwable e) {
@@ -118,32 +120,60 @@ public class TraceReaderDriverPcap extends TraceReaderDriverBase implements Trac
         }
     }
 
-    private void parsePacket(byte[] data) throws TraceReaderException {
+    private void parsePacket(byte[] data, int network) throws TraceReaderException {
 
-        // check the min possible length
-        if (data == null || data.length < 34) {
-            return;
+        switch (network) {
+        case 1: // DLT_EN10MB
+            // check the min possible length
+            if (data == null || data.length < 34) {
+                return;
+            }
+
+            // Ethernet II level
+            if (data[12] != 8 || data[13] != 0) {
+                // this is not IP protocol - return
+                return;
+            }
+
+            byte[] ipData = new byte[data.length - 14];
+            System.arraycopy(data, 14, ipData, 0, data.length - 14);
+            this.parseIpV4Packet(ipData);
+            break;
+
+        case 113: // DLT_LINUX_SLL
+            // check the min possible length
+            if (data == null || data.length < 36) {
+                return;
+            }
+
+            // Ethernet II level
+            if (data[14] != 8 || data[15] != 0) {
+                // this is not IP protocol - return
+                return;
+            }
+
+            ipData = new byte[data.length - 16];
+            System.arraycopy(data, 16, ipData, 0, data.length - 16);
+            this.parseIpV4Packet(ipData);
+            break;
         }
-
-        // Ethernet II level
-        if (data[12] != 8 || data[13] != 0) {
-            // this is not IP protocol - return
-            return;
-        }
-
+    }
+    
+    private void parseIpV4Packet(byte[] data) throws TraceReaderException {
+        
         // IP protocol level
-        int version = (data[14] & 0xF0) >> 4;
-        int ipHeaderLen = (data[14] & 0x0F) * 4;
+        int version = (data[0] & 0xF0) >> 4; // 14
+        int ipHeaderLen = (data[0] & 0x0F) * 4;
         if (version != 4) {
             // TODO: add support for IP V6
             return;
         }
-        int ipProtocolId = data[23] & 0xFF;
+        int ipProtocolId = data[9] & 0xFF; // 23
         if (ipProtocolId != 132) { // 132 == SCTP protocol
             // TODO: add support for TCP protocol
             return;
         }
-        int startSctpBlock = 14 + ipHeaderLen;
+        int startSctpBlock = ipHeaderLen; // int startSctpBlock = 14 + ipHeaderLen
 
         // SCTP
         // skip SCTP header
@@ -151,7 +181,7 @@ public class TraceReaderDriverPcap extends TraceReaderDriverBase implements Trac
 
         while (true) {
             // check if else sctp block exists
-            if (data.length < startSctpBlock + 4)
+            if (data.length < startSctpBlock + 4) // data.length < startSctpBlock + 4
                 break;
 
             int blockType = data[startSctpBlock] & 0xFF;
