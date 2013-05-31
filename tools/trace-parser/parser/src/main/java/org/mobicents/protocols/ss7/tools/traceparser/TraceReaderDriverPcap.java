@@ -66,7 +66,7 @@ public class TraceReaderDriverPcap extends TraceReaderDriverBase implements Trac
             byte[] globHeader = new byte[24];
             if (fis.read(globHeader) < 24)
                 throw new Exception("Not enouph data for a global header");
-            
+
             int network = ((globHeader[20] & 0xFF) << 0) + ((globHeader[21] & 0xFF) << 8) + ((globHeader[22] & 0xFF) << 16) + ((globHeader[23] & 0xFF) << 24);
 
             int recCnt = 0;
@@ -158,9 +158,9 @@ public class TraceReaderDriverPcap extends TraceReaderDriverBase implements Trac
             break;
         }
     }
-    
+
     private void parseIpV4Packet(byte[] data) throws TraceReaderException {
-        
+
         // IP protocol level
         int version = (data[0] & 0xF0) >> 4; // 14
         int ipHeaderLen = (data[0] & 0x0F) * 4;
