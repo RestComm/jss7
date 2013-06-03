@@ -69,14 +69,19 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
     /*
      * Creating a new outgoing MAP SMS dialog and adding it to the MAPProvider.dialog collection
      */
-    public MAPDialogSms createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress, AddressString origReference,
-            SccpAddress destAddress, AddressString destReference) throws MAPException {
+    public MAPDialogSms createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress, AddressString origReference, SccpAddress destAddress,
+            AddressString destReference) throws MAPException {
+        return this.createNewDialog(appCntx, origAddress, origReference, destAddress, destReference, null);
+    }
+
+    public MAPDialogSms createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress, AddressString origReference, SccpAddress destAddress,
+            AddressString destReference, Long localTrId) throws MAPException {
 
         // We cannot create a dialog if the service is not activated
         if (!this.isActivated())
             throw new MAPException("Cannot create MAPDialogSms because MAPServiceSms is not activated");
 
-        Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress);
+        Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress, localTrId);
         MAPDialogSmsImpl dialog = new MAPDialogSmsImpl(appCntx, tcapDialog, this.mapProviderImpl, this, origReference,
                 destReference);
 

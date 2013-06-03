@@ -79,9 +79,9 @@ public abstract class CAPServiceBaseImpl implements CAPServiceBase {
      * @return
      * @throws CAPException
      */
-    protected Dialog createNewTCAPDialog(SccpAddress origAddress, SccpAddress destAddress) throws CAPException {
+    protected Dialog createNewTCAPDialog(SccpAddress origAddress, SccpAddress destAddress, Long localTrId) throws CAPException {
         try {
-            return this.capProviderImpl.getTCAPProvider().getNewDialog(origAddress, destAddress);
+            return this.capProviderImpl.getTCAPProvider().getNewDialog(origAddress, destAddress, localTrId);
         } catch (TCAPException e) {
             throw new CAPException(e.getMessage(), e);
         }

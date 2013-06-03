@@ -44,6 +44,19 @@ public interface TCAPProvider extends Serializable {
     Dialog getNewDialog(SccpAddress localAddress, SccpAddress remoteAddress) throws TCAPException;
 
     /**
+     * Create new structured dialog with predefined local TransactionId.
+     * We do not normally invoke this method. Use it only when you need this and only this local TransactionId
+     * (for example if we need of recreating a Dialog for which a peer already has in memory)
+     * If a Dialog with local TransactionId is already present there will be TCAPException
+     *
+     * @param localAddress - desired local address
+     * @param remoteAddress - initial remote address, it can change after first TCContinue.
+     * @param localTrId - predefined local TransactionId
+     * @return
+     */
+    Dialog getNewDialog(SccpAddress localAddress, SccpAddress remoteAddress, Long localTrId) throws TCAPException;
+
+    /**
      * Create new unstructured dialog.
      *
      * @param localAddress

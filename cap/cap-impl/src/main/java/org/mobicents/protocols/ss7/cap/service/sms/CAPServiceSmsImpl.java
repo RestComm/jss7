@@ -57,14 +57,18 @@ public class CAPServiceSmsImpl extends CAPServiceBaseImpl implements CAPServiceS
     }
 
     @Override
-    public CAPDialogSms createNewDialog(CAPApplicationContext appCntx, SccpAddress origAddress, SccpAddress destAddress)
-            throws CAPException {
+    public CAPDialogSms createNewDialog(CAPApplicationContext appCntx, SccpAddress origAddress, SccpAddress destAddress) throws CAPException {
+        return this.createNewDialog(appCntx, origAddress, destAddress, null);
+    }
+
+    @Override
+    public CAPDialogSms createNewDialog(CAPApplicationContext appCntx, SccpAddress origAddress, SccpAddress destAddress, Long localTrId) throws CAPException {
 
         // We cannot create a dialog if the service is not activated
         if (!this.isActivated())
             throw new CAPException("Cannot create CAPDialogSms because CAPServiceSms is not activated");
 
-        Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress);
+        Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress, localTrId);
         CAPDialogSmsImpl dialog = new CAPDialogSmsImpl(appCntx, tcapDialog, this.capProviderImpl, this);
 
         this.putCAPDialogIntoCollection(dialog);

@@ -154,6 +154,13 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
     }
 
+    private boolean checkAvailableTxId(Long id) {
+        if (!this.dialogs.containsKey(id))
+            return true;
+        else
+            return false;
+    }
+
     // some help methods... crude but will work for first impl.
     private Long getAvailableTxId() throws TCAPException {
         if (this.dialogs.size() >= this.stack.getMaxDialogs())
@@ -165,7 +172,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
             if (++this.curDialogId > this.stack.getDialogIdRangeEnd())
                 this.curDialogId = this.stack.getDialogIdRangeStart();
             Long id = this.curDialogId;
-            if (!this.dialogs.containsKey(id))
+            if (checkAvailableTxId(id))
                 return id;
         }
     }
@@ -207,7 +214,17 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
      * .protocols.ss7.sccp.parameter.SccpAddress, org.mobicents.protocols.ss7.sccp.parameter.SccpAddress)
      */
     public Dialog getNewDialog(SccpAddress localAddress, SccpAddress remoteAddress) throws TCAPException {
-        return getNewDialog(localAddress, remoteAddress, getNextSeqControl());
+        return getNewDialog(localAddress, remoteAddress, getNextSeqControl(), null);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.tcap.api.TCAPProvider#getNewDialog(org.mobicents
+     * .protocols.ss7.sccp.parameter.SccpAddress, org.mobicents.protocols.ss7.sccp.parameter.SccpAddress, Long id)
+     */
+    public Dialog getNewDialog(SccpAddress localAddress, SccpAddress remoteAddress, Long id) throws TCAPException {
+        return getNewDialog(localAddress, remoteAddress, getNextSeqControl(), id);
     }
 
     /*
@@ -217,14 +234,14 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
      * (org.mobicents.protocols.ss7.sccp.parameter.SccpAddress, org.mobicents.protocols.ss7.sccp.parameter.SccpAddress)
      */
     public Dialog getNewUnstructuredDialog(SccpAddress localAddress, SccpAddress remoteAddress) throws TCAPException {
-        return _getDialog(localAddress, remoteAddress, false, getNextSeqControl());
+        return _getDialog(localAddress, remoteAddress, false, getNextSeqControl(), null);
     }
 
-    private Dialog getNewDialog(SccpAddress localAddress, SccpAddress remoteAddress, int seqControl) throws TCAPException {
-        return _getDialog(localAddress, remoteAddress, true, seqControl);
+    private Dialog getNewDialog(SccpAddress localAddress, SccpAddress remoteAddress, int seqControl, Long id) throws TCAPException {
+        return _getDialog(localAddress, remoteAddress, true, seqControl, id);
     }
 
-    private Dialog _getDialog(SccpAddress localAddress, SccpAddress remoteAddress, boolean structured, int seqControl)
+    private Dialog _getDialog(SccpAddress localAddress, SccpAddress remoteAddress, boolean structured, int seqControl, Long id)
             throws TCAPException {
 
         if (this.stack.getPreviewMode()) {
@@ -236,7 +253,13 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         }
 
         synchronized (this.dialogs) {
-            Long id = this.getAvailableTxId();
+            if (id == null) {
+                id = this.getAvailableTxId();
+            } else {
+                if (!checkAvailableTxId(id)) {
+                    throw new TCAPException("Suggested local TransactionId is already present in system: " + id);
+                }
+            }
             if (structured) {
                 DialogImpl di = new DialogImpl(localAddress, remoteAddress, id, structured, this._EXECUTOR, this, seqControl, this.stack.getPreviewMode());
 
@@ -622,7 +645,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                                     .getSubsystemNumber(), dId);
                             di = (DialogImpl) this.createPreviewDialog(ky, localAddress, remoteAddress, seqControl);
                         } else {
-                            di = (DialogImpl) this.getNewDialog(localAddress, remoteAddress, message.getSls());
+                            di = (DialogImpl) this.getNewDialog(localAddress, remoteAddress, message.getSls(), null);
                         }
 
                     } catch (TCAPException e) {

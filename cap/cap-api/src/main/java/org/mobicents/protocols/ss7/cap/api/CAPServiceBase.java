@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -53,6 +53,14 @@ public interface CAPServiceBase {
      */
     CAPDialog createNewDialog(CAPApplicationContext appCntx, SccpAddress origAddress, SccpAddress destAddress)
             throws CAPException;
+
+    /**
+     * Create new structured dialog with predefined local TransactionId.
+     * We do not normally invoke this method. Use it only when you need this and only this local TransactionId
+     * (for example if we need of recreating a Dialog for which a peer already has in memory)
+     * If a Dialog with local TransactionId is already present there will be CAPException
+     */
+    CAPDialog createNewDialog(CAPApplicationContext appCntx, SccpAddress origAddress, SccpAddress destAddress, Long localTrId) throws CAPException;
 
     /**
      * Returns true if the service can perform dialogs with given ApplicationContext

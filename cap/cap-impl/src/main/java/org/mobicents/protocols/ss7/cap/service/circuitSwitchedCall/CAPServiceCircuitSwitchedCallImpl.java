@@ -62,15 +62,20 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
     }
 
     @Override
-    public CAPDialogCircuitSwitchedCall createNewDialog(CAPApplicationContext appCntx, SccpAddress origAddress,
-            SccpAddress destAddress) throws CAPException {
+    public CAPDialogCircuitSwitchedCall createNewDialog(CAPApplicationContext appCntx, SccpAddress origAddress, SccpAddress destAddress) throws CAPException {
+        return this.createNewDialog(appCntx, origAddress, destAddress, null);
+    }
+
+    @Override
+    public CAPDialogCircuitSwitchedCall createNewDialog(CAPApplicationContext appCntx, SccpAddress origAddress, SccpAddress destAddress, Long localTrId)
+            throws CAPException {
 
         // We cannot create a dialog if the service is not activated
         if (!this.isActivated())
             throw new CAPException(
                     "Cannot create CAPDialogCircuitSwitchedCall because CAPServiceCircuitSwitchedCall is not activated");
 
-        Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress);
+        Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress, localTrId);
         CAPDialogCircuitSwitchedCallImpl dialog = new CAPDialogCircuitSwitchedCallImpl(appCntx, tcapDialog,
                 this.capProviderImpl, this);
 

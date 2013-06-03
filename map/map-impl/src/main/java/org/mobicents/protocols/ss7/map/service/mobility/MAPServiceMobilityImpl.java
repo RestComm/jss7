@@ -85,14 +85,19 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
     /*
      * Creating a new outgoing MAP Mobility dialog and adding it to the MAPProvider.dialog collection
      */
-    public MAPDialogMobility createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress,
-            AddressString origReference, SccpAddress destAddress, AddressString destReference) throws MAPException {
+    public MAPDialogMobility createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress, AddressString origReference, SccpAddress destAddress,
+            AddressString destReference) throws MAPException {
+        return this.createNewDialog(appCntx, origAddress, origReference, destAddress, destReference, null);
+    }
+
+    public MAPDialogMobility createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress, AddressString origReference, SccpAddress destAddress,
+            AddressString destReference, Long localTrId) throws MAPException {
 
         // We cannot create a dialog if the service is not activated
         if (!this.isActivated())
             throw new MAPException("Cannot create MAPDialogMobility because MAPServiceMobility is not activated");
 
-        Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress);
+        Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress, localTrId);
         MAPDialogMobilityImpl dialog = new MAPDialogMobilityImpl(appCntx, tcapDialog, this.mapProviderImpl, this,
                 origReference, destReference);
 

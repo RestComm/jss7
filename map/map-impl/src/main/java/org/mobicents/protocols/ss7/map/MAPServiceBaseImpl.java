@@ -79,9 +79,9 @@ public abstract class MAPServiceBaseImpl implements MAPServiceBase {
      * @return
      * @throws MAPException
      */
-    protected Dialog createNewTCAPDialog(SccpAddress origAddress, SccpAddress destAddress) throws MAPException {
+    protected Dialog createNewTCAPDialog(SccpAddress origAddress, SccpAddress destAddress, Long localTrId) throws MAPException {
         try {
-            return this.mapProviderImpl.getTCAPProvider().getNewDialog(origAddress, destAddress);
+            return this.mapProviderImpl.getTCAPProvider().getNewDialog(origAddress, destAddress, localTrId);
         } catch (TCAPException e) {
             throw new MAPException(e.getMessage(), e);
         }

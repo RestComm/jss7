@@ -62,14 +62,18 @@ public class CAPServiceGprsImpl extends CAPServiceBaseImpl implements CAPService
     }
 
     @Override
-    public CAPDialogGprs createNewDialog(CAPApplicationContext appCntx, SccpAddress origAddress, SccpAddress destAddress)
-            throws CAPException {
+    public CAPDialogGprs createNewDialog(CAPApplicationContext appCntx, SccpAddress origAddress, SccpAddress destAddress) throws CAPException {
+        return this.createNewDialog(appCntx, origAddress, destAddress, null);
+    }
+
+    @Override
+    public CAPDialogGprs createNewDialog(CAPApplicationContext appCntx, SccpAddress origAddress, SccpAddress destAddress, Long localTrId) throws CAPException {
 
         // We cannot create a dialog if the service is not activated
         if (!this.isActivated())
             throw new CAPException("Cannot create CAPDialogGprs because CAPServiceGprsl is not activated");
 
-        Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress);
+        Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress, localTrId);
         CAPDialogGprsImpl dialog = new CAPDialogGprsImpl(appCntx, tcapDialog, this.capProviderImpl, this);
 
         this.putCAPDialogIntoCollection(dialog);

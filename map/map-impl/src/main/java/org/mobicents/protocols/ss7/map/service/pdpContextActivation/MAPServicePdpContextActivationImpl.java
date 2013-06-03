@@ -60,15 +60,20 @@ public class MAPServicePdpContextActivationImpl extends MAPServiceBaseImpl imple
     /*
      * Creating a new outgoing MAP PdpContextActivation dialog and adding it to the MAPProvider.dialog collection
      */
-    public MAPDialogPdpContextActivation createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress,
-            AddressString origReference, SccpAddress destAddress, AddressString destReference) throws MAPException {
+    public MAPDialogPdpContextActivation createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress, AddressString origReference,
+            SccpAddress destAddress, AddressString destReference) throws MAPException {
+        return this.createNewDialog(appCntx, origAddress, origReference, destAddress, destReference, null);
+    }
+
+    public MAPDialogPdpContextActivation createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress, AddressString origReference,
+            SccpAddress destAddress, AddressString destReference, Long localTrId) throws MAPException {
 
         // We cannot create a dialog if the service is not activated
         if (!this.isActivated())
             throw new MAPException(
                     "Cannot create MAPDialogPdpContextActivation because MAPServicePdpContextActivation is not activated");
 
-        Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress);
+        Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress, localTrId);
         MAPDialogPdpContextActivationImpl dialog = new MAPDialogPdpContextActivationImpl(appCntx, tcapDialog,
                 this.mapProviderImpl, this, origReference, destReference);
 

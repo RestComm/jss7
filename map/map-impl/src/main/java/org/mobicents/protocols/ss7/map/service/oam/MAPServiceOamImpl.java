@@ -60,14 +60,19 @@ public class MAPServiceOamImpl extends MAPServiceBaseImpl implements MAPServiceO
     /*
      * Creating a new outgoing MAP OAM dialog and adding it to the MAPProvider.dialog collection
      */
-    public MAPDialogOam createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress, AddressString origReference,
-            SccpAddress destAddress, AddressString destReference) throws MAPException {
+    public MAPDialogOam createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress, AddressString origReference, SccpAddress destAddress,
+            AddressString destReference) throws MAPException {
+        return this.createNewDialog(appCntx, origAddress, origReference, destAddress, destReference, null);
+    }
+
+    public MAPDialogOam createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress, AddressString origReference, SccpAddress destAddress,
+            AddressString destReference, Long localTrId) throws MAPException {
 
         // We cannot create a dialog if the service is not activated
         if (!this.isActivated())
             throw new MAPException("Cannot create MAPDialogOam because MAPServiceOam is not activated");
 
-        Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress);
+        Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress, localTrId);
         MAPDialogOamImpl dialog = new MAPDialogOamImpl(appCntx, tcapDialog, this.mapProviderImpl, this, origReference,
                 destReference);
 

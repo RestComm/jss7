@@ -73,11 +73,16 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
      */
     public MAPDialogLsm createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress, AddressString origReference,
             SccpAddress destAddress, AddressString destReference) throws MAPException {
+        return this.createNewDialog(appCntx, origAddress, origReference, destAddress, destReference, null);
+    }
+
+    public MAPDialogLsm createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress, AddressString origReference,
+            SccpAddress destAddress, AddressString destReference, Long localTrId) throws MAPException {
         // We cannot create a dialog if the service is not activated
         if (!this.isActivated())
             throw new MAPException("Cannot create MAPDialogLsm because MAPServiceLsm is not activated");
 
-        Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress);
+        Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress, localTrId);
 
         MAPDialogLsmImpl dialog = new MAPDialogLsmImpl(appCntx, tcapDialog, this.mapProviderImpl, this, origReference,
                 destReference);
