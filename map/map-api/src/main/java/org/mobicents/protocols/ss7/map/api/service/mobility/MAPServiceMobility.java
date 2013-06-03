@@ -35,6 +35,9 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  */
 public interface MAPServiceMobility extends MAPServiceBase {
 
+    MAPDialogMobility createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress, AddressString origReference, SccpAddress destAddress,
+            AddressString destReference, Long localTrId) throws MAPException;
+
     MAPDialogMobility createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress,
             AddressString origReference, SccpAddress destAddress, AddressString destReference) throws MAPException;
 
