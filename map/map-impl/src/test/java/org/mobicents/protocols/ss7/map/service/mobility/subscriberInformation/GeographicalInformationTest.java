@@ -64,8 +64,8 @@ public class GeographicalInformationTest {
         impl.decodeAll(asn);
 
         assertEquals(impl.getTypeOfShape(), TypeOfShape.EllipsoidPointWithUncertaintyCircle);
-        assertTrue(Math.abs(impl.getLatitude() - 21.5) < 0.01);
-        assertTrue(Math.abs(impl.getLongitude() - 171) < 0.01);
+        assertTrue(Math.abs(impl.getLatitude() - 21.5) < 0.0001);
+        assertTrue(Math.abs(impl.getLongitude() - 171) < 0.0001);
         assertTrue(Math.abs(impl.getUncertainty() - 0) < 0.01);
 
         rawData = getEncodedData2();
@@ -75,9 +75,9 @@ public class GeographicalInformationTest {
         impl.decodeAll(asn);
 
         assertEquals(impl.getTypeOfShape(), TypeOfShape.EllipsoidPointWithUncertaintyCircle);
-        assertTrue(Math.abs(impl.getLatitude() - (-70.33)) < 0.01);
-        assertTrue(Math.abs(impl.getLongitude() - (-0.5)) < 0.01);
-        assertTrue(Math.abs(impl.getUncertainty() - 57.28) < 0.01);
+        assertTrue(Math.abs(impl.getLatitude() - (-70.33)) < 0.0001);
+        assertTrue(Math.abs(impl.getLongitude() - (-0.5)) < 0.0001);
+        assertTrue(Math.abs(impl.getUncertainty() - 57.27) < 0.01);
     }
 
     @Test(groups = { "functional.encode", "subscriberInformation" })

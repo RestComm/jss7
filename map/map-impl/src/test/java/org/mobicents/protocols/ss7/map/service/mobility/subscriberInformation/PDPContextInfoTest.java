@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
+package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
@@ -36,6 +36,15 @@ import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.GP
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.PDPContextInfoImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.TEIDImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.TransactionIdImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.APNImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ChargingCharacteristicsImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Ext2QoSSubscribedImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Ext3QoSSubscribedImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Ext4QoSSubscribedImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtPDPTypeImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtQoSSubscribedImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.PDPAddressImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.PDPTypeImpl;
 import org.testng.annotations.Test;
 
 /**
@@ -141,7 +150,7 @@ public class PDPContextInfoTest {
         return new byte[] { 60 };
     }
 
-    @Test(groups = { "functional.decode", "subscriberManagement" })
+    @Test(groups = { "functional.decode", "subscriberInformation" })
     public void testDecode() throws Exception {
 
         byte[] rawData = getEncodedData();
@@ -185,7 +194,7 @@ public class PDPContextInfoTest {
 
     }
 
-    @Test(groups = { "functional.encode", "subscriberManagement" })
+    @Test(groups = { "functional.encode", "subscriberInformation" })
     public void testEncode() throws Exception {
 
         PDPTypeImpl pdpType = new PDPTypeImpl(getEncodedPDPType());

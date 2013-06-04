@@ -92,7 +92,7 @@ public class GeographicalInformationImpl extends OctetStringBase implements Geog
     }
 
     public static double decodeLatitude(byte[] data, int begin) {
-        int i1 = ((data[begin] & 0xFF) << 16) + ((data[begin + 1] & 0xFF) << 8) + (data[begin + 1] & 0xFF);
+        int i1 = ((data[begin] & 0xFF) << 16) + ((data[begin + 1] & 0xFF) << 8) + (data[begin + 2] & 0xFF);
 
         int sign = 1;
         if ((i1 & 0x800000) != 0) {
@@ -104,7 +104,7 @@ public class GeographicalInformationImpl extends OctetStringBase implements Geog
     }
 
     public static double decodeLongitude(byte[] data, int begin) {
-        int i1 = ((data[begin] & 0xFF) << 16) + ((data[begin + 1] & 0xFF) << 8) + (data[begin + 1] & 0xFF);
+        int i1 = ((data[begin] & 0xFF) << 16) + ((data[begin + 1] & 0xFF) << 8) + (data[begin + 2] & 0xFF);
 
         int sign = 1;
         if ((i1 & 0x800000) != 0) {

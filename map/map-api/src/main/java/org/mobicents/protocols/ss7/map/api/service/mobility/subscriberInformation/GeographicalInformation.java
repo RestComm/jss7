@@ -24,10 +24,14 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformati
 
 /**
  *
- GeographicalInformation ::= OCTET STRING (SIZE (8)) -- Refers to geographical Information defined in 3GPP TS 23.032. -- Only
- * the description of an ellipsoid point with uncertainty circle -- as specified in 3GPP TS 23.032 is allowed to be used -- The
- * internal structure according to 3GPP TS 23.032 is as follows: -- Type of shape (ellipsoid point with uncertainty circle) 1
- * octet -- Degrees of Latitude 3 octets -- Degrees of Longitude 3 octets -- Uncertainty code 1 octet
+ GeographicalInformation ::= OCTET STRING (SIZE (8))
+ -- Refers to geographical Information defined in 3GPP TS 23.032. -- Only the description of an ellipsoid point with uncertainty circle
+ -- as specified in 3GPP TS 23.032 is allowed to be used
+ -- The internal structure according to 3GPP TS 23.032 is as follows:
+ -- Type of shape (ellipsoid point with uncertainty circle) 1 octet
+ -- Degrees of Latitude 3 octets
+ -- Degrees of Longitude 3 octets
+ -- Uncertainty code 1 octet
  *
  * @author sergey vetyutnev
  *

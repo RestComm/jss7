@@ -36,19 +36,33 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.QoSSubscribed;
 
 /**
- * PDP-Context ::= SEQUENCE { pdp-ContextId ContextId, pdp-Type [16] PDP-Type, pdp-Address [17] PDP-Address OPTIONAL,
- * qos-Subscribed [18] QoS-Subscribed, vplmnAddressAllowed [19] NULL OPTIONAL, apn [20] APN, extensionContainer [21]
- * ExtensionContainer OPTIONAL, ... , ext-QoS-Subscribed [0] Ext-QoS-Subscribed OPTIONAL, pdp-ChargingCharacteristics [1]
- * ChargingCharacteristics OPTIONAL, ext2-QoS-Subscribed [2] Ext2-QoS-Subscribed OPTIONAL, -- ext2-QoS-Subscribed may be present
- * only if ext-QoS-Subscribed is present. ext3-QoS-Subscribed [3] Ext3-QoS-Subscribed OPTIONAL, -- ext3-QoS-Subscribed may be
- * present only if ext2-QoS-Subscribed is present. ext4-QoS-Subscribed [4] Ext4-QoS-Subscribed OPTIONAL, -- ext4-QoS-Subscribed
- * may be present only if ext3-QoS-Subscribed is present. apn-oi-Replacement [5] APN-OI-Replacement OPTIONAL, -- this
- * apn-oi-Replacement refers to the APN level apn-oi-Replacement and has -- higher priority than UE level apn-oi-Replacement.
- * ext-pdp-Type [6] Ext-PDP-Type OPTIONAL, -- contains the value IPv4v6 defined in 3GPP TS 29.060 [105], if the PDP can be --
- * accessed by dual-stack UEs ext-pdp-Address [7] PDP-Address OPTIONAL, -- contains an additional IP address in case of
- * dual-stack static IP address assignment -- for the UE. -- it may contain an IPv4 or an IPv6 address/prefix, and it may be
- * present -- only if pdp-Address is present; if both are present, each parameter shall -- contain a different type of address
- * (IPv4 or IPv6). sipto-Permission [8] SIPTO-Permission OPTIONAL, lipa-Permission [9] LIPA-Permission OPTIONAL }
+PDP-Context ::= SEQUENCE {
+  pdp-ContextId ContextId,
+  pdp-Type [16] PDP-Type,
+  pdp-Address [17] PDP-Address OPTIONAL,
+  qos-Subscribed [18] QoS-Subscribed,
+  vplmnAddressAllowed [19] NULL OPTIONAL,
+  apn [20] APN,
+  extensionContainer [21] ExtensionContainer OPTIONAL,
+  ... ,
+  ext-QoS-Subscribed [0] Ext-QoS-Subscribed OPTIONAL,
+  pdp-ChargingCharacteristics [1] ChargingCharacteristics OPTIONAL,
+  ext2-QoS-Subscribed [2] Ext2-QoS-Subscribed OPTIONAL,
+    -- ext2-QoS-Subscribed may be present only if ext-QoS-Subscribed is present. ext3-QoS-Subscribed [3] Ext3-QoS-Subscribed OPTIONAL,
+    -- ext3-QoS-Subscribed may be present only if ext2-QoS-Subscribed is present. ext4-QoS-Subscribed [4] Ext4-QoS-Subscribed OPTIONAL,
+    -- ext4-QoS-Subscribed may be present only if ext3-QoS-Subscribed is present. apn-oi-Replacement [5] APN-OI-Replacement OPTIONAL,
+    -- this apn-oi-Replacement refers to the APN level apn-oi-Replacement and has -- higher priority than UE level apn-oi-Replacement.
+    ext-pdp-Type [6] Ext-PDP-Type OPTIONAL,
+    -- contains the value IPv4v6 defined in 3GPP TS 29.060 [105], if the PDP can be
+    -- accessed by dual-stack UEs ext-pdp-Address [7] PDP-Address OPTIONAL,
+    -- contains an additional IP address in case of dual-stack static IP address assignment
+    -- for the UE.
+    -- it may contain an IPv4 or an IPv6 address/prefix, and it may be present
+    -- only if pdp-Address is present; if both are present, each parameter shall
+    -- contain a different type of address (IPv4 or IPv6).
+    sipto-Permission [8] SIPTO-Permission OPTIONAL,
+    lipa-Permission [9] LIPA-Permission OPTIONAL
+}
  *
  * ContextId ::= INTEGER (1..maxNumOfPDP-Contexts) maxNumOfPDP-Contexts INTEGER ::= 50
  *

@@ -577,8 +577,7 @@ public class PDPContextImpl extends SequenceBase implements PDPContext {
                 ((PDPAddressImpl) this.extpdpAddress).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_ext_pdp_Address);
 
             if (this.sipToPermission != null)
-                ((PDPAddressImpl) this.pdpAddress).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_pdp_Address);
-            asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_sipto_Permission, this.sipToPermission.getCode());
+                asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_sipto_Permission, this.sipToPermission.getCode());
 
             if (this.lipaPermission != null)
                 asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_lipa_Permission, this.lipaPermission.getCode());

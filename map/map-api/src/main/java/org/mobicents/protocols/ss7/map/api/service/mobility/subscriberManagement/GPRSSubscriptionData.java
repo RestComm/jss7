@@ -29,10 +29,16 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 
 /**
  *
- GPRSSubscriptionData ::= SEQUENCE { completeDataListIncluded NULL OPTIONAL, -- If segmentation is used,
- * completeDataListIncluded may only be present in the -- first segment of GPRSSubscriptionData. gprsDataList [1] GPRSDataList,
- * extensionContainer [2] ExtensionContainer OPTIONAL, ..., apn-oi-Replacement [3] APN-OI-Replacement OPTIONAL -- this
- * apn-oi-Replacement refers to the UE level apn-oi-Replacement. }
+ GPRSSubscriptionData ::= SEQUENCE {
+   completeDataListIncluded NULL OPTIONAL,
+   -- If segmentation is used, completeDataListIncluded may only be present in the
+   -- first segment of GPRSSubscriptionData.
+   gprsDataList [1] GPRSDataList,
+   extensionContainer [2] ExtensionContainer OPTIONAL,
+   ...,
+   apn-oi-Replacement [3] APN-OI-Replacement OPTIONAL
+   -- this apn-oi-Replacement refers to the UE level apn-oi-Replacement.
+}
  *
  * GPRSDataList ::= SEQUENCE SIZE (1..50) OF PDP-Context
  *

@@ -61,8 +61,8 @@ public class GeodeticInformationTest {
 
         assertEquals(impl.getScreeningAndPresentationIndicators(), 3);
         assertEquals(impl.getTypeOfShape(), TypeOfShape.EllipsoidPointWithUncertaintyCircle);
-        assertTrue(Math.abs(impl.getLatitude() - 21.5) < 0.01);
-        assertTrue(Math.abs(impl.getLongitude() - 171) < 0.01);
+        assertTrue(Math.abs(impl.getLatitude() - 21.5) < 0.0001);
+        assertTrue(Math.abs(impl.getLongitude() - 171) < 0.0001);
         assertTrue(Math.abs(impl.getUncertainty() - 0) < 0.01);
         assertEquals(impl.getConfidence(), 11);
     }
