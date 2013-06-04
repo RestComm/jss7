@@ -22,11 +22,7 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.message;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
-
+import static org.testng.Assert.*;
 import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 
@@ -50,11 +46,12 @@ import org.testng.annotations.Test;
 public class SccpRemoveSpcTest {
 
     private Logger logger;
-    private SccpStackImpl stack = new SccpStackImpl("SccpRemoveSpcTest");
+    private SccpStackImpl stack;
     private MessageFactoryImpl messageFactory;
 
     @BeforeMethod
     public void setUp() {
+        this.stack = new SccpStackImpl("SccpRemoveSpcTest");
         this.stack.setPersistDir(Util.getTmpTestDir());
         this.stack.start();
         this.messageFactory = new MessageFactoryImpl(stack);
@@ -198,14 +195,30 @@ public class SccpRemoveSpcTest {
 
         logger.debug("*************\n" + Arrays.toString(res.getSolidData()));
 
-        assertTrue(Arrays.equals(res.getSolidData(), this.getDataUdt_GT_WithOutDpc()));
+        assertTrue(Arrays.equals(res.getSolidData(), this.getDataUdt_GT_WithOutDpc()),
+                "A1: " + arrToString(res.getSolidData()) + " --- " + arrToString(this.getDataUdt_GT_WithOutDpc()));
 
         // ---- removeSpc off
         this.stack.setRemoveSpc(false);
 
         res = msg.encode(LongMessageRuleType.LongMessagesForbidden, 272, logger);
         assertEquals(res.getEncodingResult(), EncodingResult.Success);
-        assertTrue(Arrays.equals(res.getSolidData(), this.getDataUdt_GT_WithDpc()));
+
+//        logger.debug("--------------------------");
+//        logger.debug(arrToString(res.getSolidData()));
+//        logger.debug("--------------------------");
+//        logger.debug(arrToString(this.getDataUdt_GT_WithDpc()));
+//        logger.debug("--------------------------");
+//        
+//        String s1 = arrToString(res.getSolidData());
+//        s1 = s1 + "\nXXX\n";
+//        s1 = s1 + arrToString(this.getDataUdt_GT_WithDpc());
+//        boolean b1 = Arrays.equals(res.getSolidData(), this.getDataUdt_GT_WithDpc());
+//        s1 = s1 + "\n\nResult: " + b1;
+//        fail(s1);
+        
+        assertTrue(Arrays.equals(res.getSolidData(), this.getDataUdt_GT_WithDpc()),
+                "B1: " + arrToString(res.getSolidData()) + " --- " + arrToString(this.getDataUdt_GT_WithDpc()));
 
         // ---- Encoding based on DPC+SSN - removeSpc on
         // ---- removeSpc on
@@ -225,5 +238,18 @@ public class SccpRemoveSpcTest {
         res = msg.encode(LongMessageRuleType.LongMessagesForbidden, 272, logger);
         assertEquals(res.getEncodingResult(), EncodingResult.Success);
         assertTrue(Arrays.equals(res.getSolidData(), this.getDataUdt_DpcSsn()));
+    }
+
+    private String arrToString(byte[] arr) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Size=");
+        sb.append(arr.length);
+        sb.append("; ");
+        for (int i1 = 0; i1 < arr.length; i1++) {
+            if (i1 > 0)
+                sb.append(", ");
+            sb.append(arr[i1]);
+        }
+        return sb.toString();
     }
 }
