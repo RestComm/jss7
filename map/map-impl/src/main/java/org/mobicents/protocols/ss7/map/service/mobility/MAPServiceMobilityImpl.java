@@ -346,7 +346,8 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
 		// -- Subscriber management services
 		case MAPOperationCode.insertSubscriberData:
-			if (acn == MAPApplicationContextName.subscriberDataMngtContext) {
+            if (acn == MAPApplicationContextName.subscriberDataMngtContext || acn == MAPApplicationContextName.networkLocUpContext
+                    || acn == MAPApplicationContextName.gprsLocationUpdateContext) {
 				if (compType == ComponentType.Invoke)
 					this.processInsertSubscriberDataRequest(parameter, mapDialogMobilityImpl, invokeId);
 				else
