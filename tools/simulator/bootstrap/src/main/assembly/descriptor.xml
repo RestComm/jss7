@@ -48,6 +48,8 @@
 				<include>org.mobicents.protocols.ss7.tcap:tcap-impl</include>
 				<include>org.mobicents.protocols.ss7.map:map-api</include>
 				<include>org.mobicents.protocols.ss7.map:map-impl</include>
+				<include>org.mobicents.protocols.ss7.cap:cap-api</include>
+				<include>org.mobicents.protocols.ss7.cap:cap-impl</include>
 				<include>org.mobicents.protocols.ss7.m3ua:m3ua-api</include>
 				<include>org.mobicents.protocols.ss7.m3ua:m3ua-impl</include>
 				<include>org.mobicents.protocols.ss7.mtp:mtp</include>

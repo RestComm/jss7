@@ -8,3 +8,9 @@
 /sspTestSccpStack1_sccprouter2.xml
 /sspTestSccpStack2_sccpresource2.xml
 /sspTestSccpStack2_sccprouter2.xml
+/SccpNoticeMessageTestStack_management2.xml
+/SccpNoticeMessageTestStack_sccpresource2.xml
+/SccpNoticeMessageTestStack_sccprouter2.xml
+/SccpRemoveSpcTest_management2.xml
+/SccpRemoveSpcTest_sccpresource2.xml
+/SccpRemoveSpcTest_sccprouter2.xml
