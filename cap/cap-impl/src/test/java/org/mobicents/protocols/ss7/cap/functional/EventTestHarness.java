@@ -81,6 +81,14 @@ import org.mobicents.protocols.ss7.cap.api.service.gprs.ReleaseGPRSRequest;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.RequestReportGPRSEventRequest;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.ResetTimerGPRSRequest;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.SendChargingInformationGPRSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.sms.CAPServiceSmsListener;
+import org.mobicents.protocols.ss7.cap.api.service.sms.ConnectSMSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.sms.EventReportSMSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.sms.FurnishChargingInformationSMSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.sms.InitialDPSMSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.sms.ReleaseSMSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.sms.RequestReportSMSEventRequest;
+import org.mobicents.protocols.ss7.cap.api.service.sms.ResetTimerSMSRequest;
 import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 
@@ -90,7 +98,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
  * @author servey vetyutnev
  *
  */
-public class EventTestHarness implements CAPDialogListener, CAPServiceCircuitSwitchedCallListener, CAPServiceGprsListener {
+public class EventTestHarness implements CAPDialogListener, CAPServiceCircuitSwitchedCallListener, CAPServiceGprsListener,CAPServiceSmsListener {
 
     private Logger logger = null;
 
@@ -521,4 +529,54 @@ public class EventTestHarness implements CAPDialogListener, CAPServiceCircuitSwi
         TestEvent te = TestEvent.createReceivedEvent(EventType.ActivityTestGPRSResponse, ind, sequence++);
         this.observerdEvents.add(te);
     }
+
+    @Override
+    public void onConnectSMSRequest(ConnectSMSRequest ind) {
+        this.logger.debug("ConnectSMSRequest");
+        TestEvent te = TestEvent.createReceivedEvent(EventType.ConnectSMSRequest, ind, sequence++);
+        this.observerdEvents.add(te);
+    }
+
+    @Override
+    public void onEventReportSMSRequest(EventReportSMSRequest ind) {
+        this.logger.debug("EventReportSMSRequest");
+        TestEvent te = TestEvent.createReceivedEvent(EventType.EventReportSMSRequest, ind, sequence++);
+        this.observerdEvents.add(te);
+    }
+
+    @Override
+    public void onFurnishChargingInformationSMSRequest(FurnishChargingInformationSMSRequest ind) {
+        this.logger.debug("FurnishChargingInformationSMSRequest");
+        TestEvent te = TestEvent.createReceivedEvent(EventType.FurnishChargingInformationSMSRequest, ind, sequence++);
+        this.observerdEvents.add(te);
+    }
+
+    @Override
+    public void onInitialDPSMSRequest(InitialDPSMSRequest ind) {
+        this.logger.debug("InitialDPSMSRequest");
+        TestEvent te = TestEvent.createReceivedEvent(EventType.InitialDPSMSRequest, ind, sequence++);
+        this.observerdEvents.add(te);
+    }
+
+    @Override
+    public void onReleaseSMSRequest(ReleaseSMSRequest ind) {
+        this.logger.debug("ReleaseSMSRequest");
+        TestEvent te = TestEvent.createReceivedEvent(EventType.ReleaseSMSRequest, ind, sequence++);
+        this.observerdEvents.add(te);
+    }
+
+    @Override
+    public void onRequestReportSMSEventRequest(RequestReportSMSEventRequest ind) {
+        this.logger.debug("RequestReportSMSEventRequest");
+        TestEvent te = TestEvent.createReceivedEvent(EventType.RequestReportSMSEventRequest, ind, sequence++);
+        this.observerdEvents.add(te);
+    }
+
+    @Override
+    public void onResetTimerSMSRequest(ResetTimerSMSRequest ind) {
+        this.logger.debug("ResetTimerSMSRequest");
+        TestEvent te = TestEvent.createReceivedEvent(EventType.ResetTimerSMSRequest, ind, sequence++);
+        this.observerdEvents.add(te);
+    }
+   
 }

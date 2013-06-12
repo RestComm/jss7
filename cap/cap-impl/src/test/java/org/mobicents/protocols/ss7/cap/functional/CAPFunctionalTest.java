@@ -128,6 +128,8 @@ import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FreeFormatData
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSEventSpecificInformation;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSEventType;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.PDPID;
+import org.mobicents.protocols.ss7.cap.api.service.sms.CAPDialogSms;
+import org.mobicents.protocols.ss7.cap.api.service.sms.ReleaseSMSRequest;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCallImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.AOCSubsequentImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CAI_GSM0224Impl;
@@ -4189,6 +4191,99 @@ public class CAPFunctionalTest extends SccpHarness {
 
     }
 
+    /**
+     * SMS test messageflow 1 ACN=CapV3_gsmSCF_gprsSSF
+     * 
+     * TC-BEGIN + ReleaseSMSRequest + destinationReference=1001 +
+     * originationReference=2001 TC-END + destinationReference=2001 +
+     * originationReference=1001
+     */
+    @Test(groups = { "functional.flow", "dialog" })
+    public void testSMS1() throws Exception {
+
+        Client client = new Client(stack1, this, peer1Address, peer2Address) {
+            @Override
+            public void onDialogDelimiter(CAPDialog capDialog) {
+                super.onDialogDelimiter(capDialog);
+            }
+        };
+
+        Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+
+            private int dialogStep = 0;
+
+            @Override
+            public void onReleaseSMSRequest(ReleaseSMSRequest ind) {
+                super.onReleaseSMSRequest(ind);
+                assertEquals(ind.getRPCause().getData(), 3);
+                ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+                dialogStep = 1;
+            }
+
+            @Override
+            public void onDialogDelimiter(CAPDialog capDialog) {
+                super.onDialogDelimiter(capDialog);
+
+                CAPDialogSms dlg = (CAPDialogSms) capDialog;
+
+                try {
+                    switch (dialogStep) {
+                    case 1:
+                        dlg.close(false);
+                        dialogStep = 0;
+                        break;
+                    }
+                } catch (CAPException e) {
+                    this.error("Error while trying to close() Dialog", e);
+                }
+            }
+
+        };
+
+        long stamp = System.currentTimeMillis();
+        int count = 0;
+        // Client side events
+        List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+        TestEvent te = TestEvent.createSentEvent(EventType.ReleaseSMSRequest, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++,
+                (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        clientExpectedEvents.add(te);
+
+        count = 0;
+        // Server side events
+        List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+        te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.ReleaseSMSRequest, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++,
+                (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        serverExpectedEvents.add(te);
+
+        client.suppressInvokeTimeout();
+        client.sendReleaseSmsRequest(CAPApplicationContext.CapV3_cap3_sms);
+
+        waitForEnd();
+
+        client.compareEvents(clientExpectedEvents);
+        server.compareEvents(serverExpectedEvents);
+
+    }
+    
+    
     private void waitForEnd() {
         try {
             Date startTime = new Date();

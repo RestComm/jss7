@@ -105,5 +105,5 @@ public interface InitialDPSMSRequest extends SmsMessage {
     GPRSMSClass getGPRSMSClass();
 
     IMEI getImei();
-
+    ISDNAddressString getCalledPartyNumber();
 }

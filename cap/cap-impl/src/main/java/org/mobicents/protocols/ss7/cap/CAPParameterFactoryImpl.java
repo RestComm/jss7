@@ -63,6 +63,10 @@ import org.mobicents.protocols.ss7.cap.api.EsiGprs.DisconnectSpecificInformation
 import org.mobicents.protocols.ss7.cap.api.EsiGprs.PDPContextEstablishmentAcknowledgementSpecificInformation;
 import org.mobicents.protocols.ss7.cap.api.EsiGprs.PDPContextEstablishmentSpecificInformation;
 import org.mobicents.protocols.ss7.cap.api.EsiGprs.PdpContextchangeOfPositionSpecificInformation;
+import org.mobicents.protocols.ss7.cap.api.EsiSms.OSmsFailureSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiSms.OSmsSubmissionSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiSms.TSmsDeliverySpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiSms.TSmsFailureSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.isup.BearerCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
@@ -165,6 +169,16 @@ import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.TimeGPRSIfTari
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.TransferredVolume;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.TransferredVolumeRollOver;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.VolumeIfTariffSwitch;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.EventSpecificInformationSMS;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.EventTypeSMS;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.MTSMSCause;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.RPCause;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.SMSAddressString;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.SMSEvent;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.TPDataCodingScheme;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.TPProtocolIdentifier;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.TPShortMessageSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.TPValidityPeriod;
 import org.mobicents.protocols.ss7.cap.dialog.CAPGprsReferenceNumberImpl;
 import org.mobicents.protocols.ss7.cap.isup.BearerCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
@@ -245,6 +259,15 @@ import org.mobicents.protocols.ss7.cap.service.gprs.primitive.TimeGPRSIfTariffSw
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.TransferredVolumeImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.TransferredVolumeRollOverImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.VolumeIfTariffSwitchImpl;
+import org.mobicents.protocols.ss7.cap.service.sms.primitive.EventSpecificInformationSMSImpl;
+import org.mobicents.protocols.ss7.cap.service.sms.primitive.MTSMSCauseImpl;
+import org.mobicents.protocols.ss7.cap.service.sms.primitive.RPCauseImpl;
+import org.mobicents.protocols.ss7.cap.service.sms.primitive.SMSAddressStringImpl;
+import org.mobicents.protocols.ss7.cap.service.sms.primitive.SMSEventImpl;
+import org.mobicents.protocols.ss7.cap.service.sms.primitive.TPDataCodingSchemeImpl;
+import org.mobicents.protocols.ss7.cap.service.sms.primitive.TPProtocolIdentifierImpl;
+import org.mobicents.protocols.ss7.cap.service.sms.primitive.TPShortMessageSpecificInfoImpl;
+import org.mobicents.protocols.ss7.cap.service.sms.primitive.TPValidityPeriodImpl;
 import org.mobicents.protocols.ss7.inap.api.isup.HighLayerCompatibilityInap;
 import org.mobicents.protocols.ss7.inap.api.primitives.BothwayThroughConnectionInd;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
@@ -1201,5 +1224,82 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
             PDPInitiationType pdpInitiationType, boolean secondaryPDPContext) {
         return new PDPContextEstablishmentSpecificInformationImpl(accessPointName, endUserAddress, qualityOfService,
                 locationInformationGPRS, timeAndTimezone, pdpInitiationType, secondaryPDPContext);
+    }
+
+    @Override
+    public TPValidityPeriod getTPValidityPeriod(byte[] data) {
+        return new TPValidityPeriodImpl(data);
+    }
+
+    @Override
+    public TPShortMessageSpecificInfo getTPShortMessageSpecificInfo(int data) {
+        return new TPShortMessageSpecificInfoImpl(data);
+    }
+
+    @Override
+    public TPProtocolIdentifier getTPProtocolIdentifier(int data) {
+        return new TPProtocolIdentifierImpl(data);
+    }
+
+    @Override
+    public TPDataCodingScheme getTPDataCodingScheme(int data) {
+        return new TPDataCodingSchemeImpl(data);
+    }
+
+    @Override
+    public SMSEvent getSMSEvent(EventTypeSMS eventTypeSMS, MonitorMode monitorMode) {
+        return new SMSEventImpl(eventTypeSMS, monitorMode);
+    }
+
+    @Override
+    public SMSAddressString getSMSAddressString(AddressNature addressNature, NumberingPlan numberingPlan, String address) {
+        return new SMSAddressStringImpl(addressNature, numberingPlan, address);
+    }
+
+    @Override
+    public RPCause getRPCause(int data) {
+        return new RPCauseImpl(data);
+    }
+
+    @Override
+    public MTSMSCause getMTSMSCause(int data) {
+        return new MTSMSCauseImpl(data);
+    }
+
+    @Override
+    public org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FreeFormatData getFreeFormatData(byte[] data) {
+        return new org.mobicents.protocols.ss7.cap.service.sms.primitive.FreeFormatDataImpl(data);
+    }
+
+    @Override
+    public org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FCIBCCCAMELsequence1 getFCIBCCCAMELsequence1(
+            org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FreeFormatData freeFormatData,
+            AppendFreeFormatData appendFreeFormatData) {
+        return new org.mobicents.protocols.ss7.cap.service.sms.primitive.FCIBCCCAMELsequence1Impl(freeFormatData,
+                appendFreeFormatData);
+    }
+
+    @Override
+    public EventSpecificInformationSMS getEventSpecificInformationSMSImpl(
+            OSmsFailureSpecificInfo oSmsFailureSpecificInfo) {
+        return new EventSpecificInformationSMSImpl(oSmsFailureSpecificInfo);
+    }
+
+    @Override
+    public EventSpecificInformationSMS getEventSpecificInformationSMSImpl(
+            OSmsSubmissionSpecificInfo oSmsSubmissionSpecificInfo) {
+        return new EventSpecificInformationSMSImpl(oSmsSubmissionSpecificInfo);
+    }
+
+    @Override
+    public EventSpecificInformationSMS getEventSpecificInformationSMSImpl(
+            TSmsFailureSpecificInfo tSmsFailureSpecificInfo) {
+        return new EventSpecificInformationSMSImpl(tSmsFailureSpecificInfo);
+    }
+
+    @Override
+    public EventSpecificInformationSMS getEventSpecificInformationSMSImpl(
+            TSmsDeliverySpecificInfo tSmsDeliverySpecificInfo) {
+        return new EventSpecificInformationSMSImpl(tSmsDeliverySpecificInfo);
     }
 }

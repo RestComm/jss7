@@ -64,6 +64,7 @@ import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSEventSpeci
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSEventType;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.PDPID;
 import org.mobicents.protocols.ss7.cap.api.service.sms.CAPDialogSms;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.RPCause;
 import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.primitives.TimeAndTimezoneImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.InitialDPRequestImpl;
@@ -73,6 +74,7 @@ import org.mobicents.protocols.ss7.cap.service.gprs.primitive.ElapsedTimeImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.GPRSCauseImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.GPRSEventSpecificInformationImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.PDPIDImpl;
+import org.mobicents.protocols.ss7.cap.service.sms.primitive.RPCauseImpl;
 import org.mobicents.protocols.ss7.inap.api.INAPParameterFactory;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
@@ -783,6 +785,16 @@ public class Client extends EventTestHarness {
         clientGprsDialog.addReleaseGPRSRequest(gprsCause, pdpID);
         this.observerdEvents.add(TestEvent.createSentEvent(EventType.ReleaseGPRSRequest, null, sequence++));
         clientGprsDialog.send();
+    }
+
+    public void sendReleaseSmsRequest(CAPApplicationContext appCnt) throws CAPException {
+
+        clientSmsDialog = this.capProvider.getCAPServiceSms().createNewDialog(appCnt, this.thisAddress,
+                this.remoteAddress);
+        RPCause rpCause = new RPCauseImpl(3);
+        clientSmsDialog.addReleaseSMSRequest(rpCause);
+        this.observerdEvents.add(TestEvent.createSentEvent(EventType.ReleaseSMSRequest, null, sequence++));
+        clientSmsDialog.send();
     }
 
     public void debug(String message) {

@@ -34,9 +34,6 @@ import org.mobicents.protocols.ss7.cap.api.primitives.AppendFreeFormatData;
  *
  */
 public interface FCIBCCCAMELsequence1 {
-
-    byte[] getData();
-
+    FreeFormatData getFreeFormatData();
     AppendFreeFormatData getAppendFreeFormatData();
-
 }

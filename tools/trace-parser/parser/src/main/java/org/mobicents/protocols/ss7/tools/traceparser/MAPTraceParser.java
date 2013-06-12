@@ -91,6 +91,13 @@ import org.mobicents.protocols.ss7.cap.api.service.gprs.RequestReportGPRSEventRe
 import org.mobicents.protocols.ss7.cap.api.service.gprs.ResetTimerGPRSRequest;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.SendChargingInformationGPRSRequest;
 import org.mobicents.protocols.ss7.cap.api.service.sms.CAPServiceSmsListener;
+import org.mobicents.protocols.ss7.cap.api.service.sms.ConnectSMSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.sms.EventReportSMSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.sms.FurnishChargingInformationSMSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.sms.InitialDPSMSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.sms.ReleaseSMSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.sms.RequestReportSMSEventRequest;
+import org.mobicents.protocols.ss7.cap.api.service.sms.ResetTimerSMSRequest;
 import org.mobicents.protocols.ss7.map.MAPDialogImpl;
 import org.mobicents.protocols.ss7.map.MAPProviderImpl;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
@@ -2150,6 +2157,48 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
     public void onUpdateGprsLocationResponse(UpdateGprsLocationResponse response) {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public void onConnectSMSRequest(ConnectSMSRequest ind) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onEventReportSMSRequest(EventReportSMSRequest ind) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onFurnishChargingInformationSMSRequest(FurnishChargingInformationSMSRequest ind) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onInitialDPSMSRequest(InitialDPSMSRequest ind) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onReleaseSMSRequest(ReleaseSMSRequest ind) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onRequestReportSMSEventRequest(RequestReportSMSEventRequest ind) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onResetTimerSMSRequest(ResetTimerSMSRequest ind) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

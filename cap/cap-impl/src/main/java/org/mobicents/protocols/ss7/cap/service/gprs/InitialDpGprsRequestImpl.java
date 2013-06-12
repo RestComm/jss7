@@ -440,7 +440,7 @@ public class InitialDpGprsRequestImpl extends GprsMessageImpl implements Initial
                     case _ID_extensions:
                         if (ais.isTagPrimitive())
                             throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + ".shortQoSFormat: Parameter is primitive",
+                                    + ".extensions: Parameter is primitive",
                                     CAPParsingComponentExceptionReason.MistypedParameter);
                         this.extensions = new CAPExtensionsImpl();
                         ((CAPExtensionsImpl) this.extensions).decodeAll(ais);

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,22 +19,29 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.mobicents.protocols.ss7.cap.service.sms.primitive;
 
-package org.mobicents.protocols.ss7.cap.api.service.sms;
-
-import org.mobicents.protocols.ss7.cap.api.CAPServiceListener;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.MTSMSCause;
+import org.mobicents.protocols.ss7.cap.primitives.OctetStringLength1Base;
 
 /**
  *
- * @author sergey vetyutnev
+ * @author Lasith Waruna Perera
  *
  */
-public interface CAPServiceSmsListener extends CAPServiceListener {
-    void onConnectSMSRequest(ConnectSMSRequest ind);
-    void onEventReportSMSRequest(EventReportSMSRequest ind);
-    void onFurnishChargingInformationSMSRequest(FurnishChargingInformationSMSRequest ind);
-    void onInitialDPSMSRequest(InitialDPSMSRequest ind);
-    void onReleaseSMSRequest(ReleaseSMSRequest ind);
-    void onRequestReportSMSEventRequest(RequestReportSMSEventRequest ind);
-    void onResetTimerSMSRequest(ResetTimerSMSRequest ind);
+public class MTSMSCauseImpl extends OctetStringLength1Base implements MTSMSCause {
+
+    public MTSMSCauseImpl() {
+        super("MTSMSCause");
+    }
+
+    public MTSMSCauseImpl(int data) {
+        super("MTSMSCause", data);
+    }
+
+    @Override
+    public int getData() {
+        return data;
+    }
+
 }

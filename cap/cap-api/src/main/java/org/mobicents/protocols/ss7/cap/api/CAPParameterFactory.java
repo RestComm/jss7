@@ -46,6 +46,10 @@ import org.mobicents.protocols.ss7.cap.api.EsiGprs.DisconnectSpecificInformation
 import org.mobicents.protocols.ss7.cap.api.EsiGprs.PDPContextEstablishmentAcknowledgementSpecificInformation;
 import org.mobicents.protocols.ss7.cap.api.EsiGprs.PDPContextEstablishmentSpecificInformation;
 import org.mobicents.protocols.ss7.cap.api.EsiGprs.PdpContextchangeOfPositionSpecificInformation;
+import org.mobicents.protocols.ss7.cap.api.EsiSms.OSmsFailureSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiSms.OSmsSubmissionSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiSms.TSmsDeliverySpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiSms.TSmsFailureSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.isup.BearerCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
@@ -147,6 +151,16 @@ import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.TimeGPRSIfTari
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.TransferredVolume;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.TransferredVolumeRollOver;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.VolumeIfTariffSwitch;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.EventSpecificInformationSMS;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.EventTypeSMS;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.MTSMSCause;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.RPCause;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.SMSAddressString;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.SMSEvent;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.TPDataCodingScheme;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.TPProtocolIdentifier;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.TPShortMessageSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.TPValidityPeriod;
 import org.mobicents.protocols.ss7.inap.api.isup.HighLayerCompatibilityInap;
 import org.mobicents.protocols.ss7.inap.api.primitives.BothwayThroughConnectionInd;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
@@ -577,5 +591,18 @@ public interface CAPParameterFactory {
             AccessPointName accessPointName, EndUserAddress endUserAddress, QualityOfService qualityOfService,
             LocationInformationGPRS locationInformationGPRS, TimeAndTimezone timeAndTimezone,
             PDPInitiationType pdpInitiationType, boolean secondaryPDPContext);
-
+    TPValidityPeriod getTPValidityPeriod(byte[] data);
+    TPShortMessageSpecificInfo getTPShortMessageSpecificInfo(int data);
+    TPProtocolIdentifier getTPProtocolIdentifier( int data);
+    TPDataCodingScheme getTPDataCodingScheme( int data);
+    SMSEvent getSMSEvent( EventTypeSMS eventTypeSMS, MonitorMode monitorMode);
+    SMSAddressString getSMSAddressString(AddressNature addressNature, NumberingPlan numberingPlan, String address);
+    RPCause getRPCause( int data);
+    MTSMSCause getMTSMSCause( int data);
+    org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FreeFormatData getFreeFormatData(byte[] data);
+    org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FCIBCCCAMELsequence1 getFCIBCCCAMELsequence1(org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FreeFormatData freeFormatData,AppendFreeFormatData appendFreeFormatData);
+    EventSpecificInformationSMS getEventSpecificInformationSMSImpl(OSmsFailureSpecificInfo oSmsFailureSpecificInfo);
+    EventSpecificInformationSMS getEventSpecificInformationSMSImpl(OSmsSubmissionSpecificInfo oSmsSubmissionSpecificInfo) ;
+    EventSpecificInformationSMS getEventSpecificInformationSMSImpl(TSmsFailureSpecificInfo tSmsFailureSpecificInfo) ;
+    EventSpecificInformationSMS getEventSpecificInformationSMSImpl(TSmsDeliverySpecificInfo tSmsDeliverySpecificInfo);
 }
